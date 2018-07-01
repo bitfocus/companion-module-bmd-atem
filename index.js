@@ -15,12 +15,25 @@ var models = {
 	9: '4ME?'
 };
 
+var inputs = {
+	0: 8,
+	1: 8,
+	2: 8,
+	3: 16,
+	4: 8,
+	5: 10,
+	6: 20,
+	7: 20,
+	8: 8,
+	9: 20
+};
+
 var auxes = {
 	0: 3,
 	1: 1,
 	2: 3,
 	3: 6,
-	4: 6,
+	4: 1,
 	5: 3,
 	6: 6,
 	7: 6,
@@ -88,6 +101,14 @@ instance.prototype.init = function() {
 				debug('Program set to ' + state.properties.source + ' on ME ' + state.mixEffect);
 				break;
 
+			case 'DownstreamKeyOnAirCommand':
+				debug('DSK on air:', state);
+				break;
+
+			case 'MixEffectKeyOnAirCommand':
+				debug('USK on air:', state);
+				break;
+
 			case 'ProductIdentifierCommand':
 				self.model = state.properties.model;
 				self.actions();
@@ -145,8 +166,7 @@ instance.prototype.actions = function(system) {
 	self.CHOICES_INPUTS = [
 		{ label: 'Black', id: 0 }
 	];
-	// TODO: Find number of inputs from model-number
-	for (var i = 1; i <= 20; ++i) {
+	for (var i = 1; i <= inputs[self.model]; ++i) {
 		self.CHOICES_INPUTS.push({
 			label: 'Input ' + i,
 			id: i
@@ -239,6 +259,32 @@ instance.prototype.actions = function(system) {
 				}
 			]
 		},
+		'usk': {
+			label: 'Set Upstream KEY OnAir',
+			options: [
+				{
+					id: 'onair',
+					type: 'dropdown',
+					label: 'On Air',
+					default: 'true',
+					choices: self.CHOICES_YESNO_BOOLEAN
+				},
+				{
+					type: 'dropdown',
+					id: 'mixeffect',
+					label: 'M/E',
+					default: 0,
+					choices: self.CHOICES_ME.slice(0, MEs[self.model])
+				},
+				{
+					type: 'dropdown',
+					label: 'Key',
+					id: 'key',
+					default: '0',
+					choices: self.CHOICES_AUXES.slice(0, 4)
+				}
+			]
+		},
 		'cut': {
 			label: 'CUT operation',
 			options: [
@@ -304,6 +350,10 @@ instance.prototype.action = function(action) {
 			self.atem.cut(parseInt(opt.mixeffect));
 			break;
 
+		case 'usk':
+			self.atem.setUpstreamKeyerOnAir(opt.onair == 'true', parseInt(opt.mixeffect), parseInt(opt.key));
+			break;
+
 		case 'auto':
 			self.atem.autoTransition(parseInt(opt.mixeffect));
 			break;
@@ -321,7 +371,7 @@ instance.prototype.action = function(action) {
 instance.module_info = {
 	label: 'BMD Atem',
 	id: 'atem',
-	version: '0.0.1'
+	version: '0.0.2'
 };
 
 instance_skel.extendedBy(instance);
