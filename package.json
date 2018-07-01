@@ -1,6 +1,6 @@
 {
   "name": "companion-module-atem",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,10 +10,13 @@
     "type": "git",
     "url": "git+https://github.com/bitfocus/companion-module-atem.git"
   },
-  "author": "",
+  "author": "Håkon Nessjøen <haakon@bitfocus.io>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/bitfocus/companion-module-atem/issues"
   },
-  "homepage": "https://github.com/bitfocus/companion-module-atem#readme"
+  "homepage": "https://github.com/bitfocus/companion-module-atem#readme",
+  "dependencies": {
+    "atem-connection": "0.2.1"
+  }
 }
