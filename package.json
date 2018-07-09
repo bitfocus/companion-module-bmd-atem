@@ -11,7 +11,7 @@
     "url": "git+https://github.com/bitfocus/companion-module-atem.git"
   },
   "author": "Håkon Nessjøen <haakon@bitfocus.io>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/bitfocus/companion-module-atem/issues"
   },
