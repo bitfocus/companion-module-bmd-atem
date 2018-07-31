@@ -343,7 +343,7 @@ instance.prototype.action = function(action) {
 			break;
 
 		case 'aux':
-			self.atem.setAuxSource(parseInt(opt.input), parseInt(opt.auxbus));
+			self.atem.setAuxSource(parseInt(opt.input), parseInt(opt.aux));
 			break;
 
 		case 'cut':
