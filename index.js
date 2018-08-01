@@ -88,17 +88,30 @@ instance.prototype.init = function() {
 	}
 
 	self.atem.on('stateChanged', function(err, state) {
+
 		switch (state.constructor.name) {
 			case 'AuxSourceCommand':
 				debug("AUX " + state.auxBus + ' set to ' + state.properties.source);
+				self['aux' + state.auxBus] = state.properties.source;
+				if (typeof self.checkFeedbacks == 'function') {
+					self.checkFeedbacks('aux_bg');
+				}
 				break;
 
 			case 'PreviewInputCommand':
 				debug('Preview set to ' + state.properties.source + ' on ME ' + state.mixEffect);
+				self['preview' + state.mixEffect] = state.properties.source;
+				if (typeof self.checkFeedbacks == 'function') {
+					self.checkFeedbacks('preview_bg');
+				}
 				break;
 
 			case 'ProgramInputCommand':
 				debug('Program set to ' + state.properties.source + ' on ME ' + state.mixEffect);
+				self['program' + state.mixEffect] = state.properties.source;
+				if (typeof self.checkFeedbacks == 'function') {
+					self.checkFeedbacks('program_bg');
+				}
 				break;
 
 			case 'DownstreamKeyOnAirCommand':
@@ -115,8 +128,142 @@ instance.prototype.init = function() {
 				self.log('info', 'Connected to a ' + state.properties.deviceName);
 				break;
 		}
-
 	});
+
+	// Feedback variable support, temporary if
+	// TODO: Remove
+	if (typeof self.setVariableDefinitions != 'function') {
+		return;
+	}
+
+	// feedbacks
+	var feedbacks = {};
+
+	feedbacks['preview_bg'] = {
+		label: 'Change background from preview',
+		description: 'If the input specified is in use by preview on the M/E stage specified, change background color of the bank',
+		options: [
+			{
+				type: 'colorpicker',
+				label: 'Background color',
+				id: 'bg',
+				default: self.rgb(0,255,0)
+			},
+			{
+				 type: 'dropdown',
+				 label: 'Input',
+				 id: 'input',
+				 default: 1,
+				 choices: self.CHOICES_INPUTS
+			},
+			{
+				type: 'dropdown',
+				id: 'mixeffect',
+				label: 'M/E',
+				default: 0,
+				choices: self.CHOICES_ME.slice(0, MEs[self.model])
+			}
+		]
+	};
+	feedbacks['program_bg'] = {
+		label: 'Change background from program',
+		description: 'If the input specified is in use by program on the M/E stage specified, change background color of the bank',
+		options: [
+			{
+				type: 'colorpicker',
+				label: 'Background color',
+				id: 'bg',
+				default: self.rgb(255,0,0)
+			},
+			{
+				 type: 'dropdown',
+				 label: 'Input',
+				 id: 'input',
+				 default: 1,
+				 choices: self.CHOICES_INPUTS
+			},
+			{
+				type: 'dropdown',
+				id: 'mixeffect',
+				label: 'M/E',
+				default: 0,
+				choices: self.CHOICES_ME.slice(0, MEs[self.model])
+			}
+		]
+	};
+	feedbacks['aux_bg'] = {
+		label: 'Change background from AUX bus',
+		description: 'If the input specified is in use by the aux bus specified, change background color of the bank',
+		options: [
+			{
+				type: 'colorpicker',
+				label: 'Background color',
+				id: 'bg',
+				default: self.rgb(255,255,0)
+			},
+			{
+				 type: 'dropdown',
+				 label: 'Input',
+				 id: 'input',
+				 default: 1,
+				 choices: self.CHOICES_INPUTS
+			},
+			{
+				type: 'dropdown',
+				id: 'aux',
+				label: 'AUX',
+				default: 0,
+				choices: self.CHOICES_AUXES.slice(0, auxes[self.model])
+			}
+		]
+	};
+
+	self.setFeedbackDefinitions(feedbacks);
+};
+
+instance.prototype.feedback = function(feedback, bank) {
+	var self = this;
+
+	if (feedback.type == 'preview_bg') {
+		var bg = feedback.options.bg;
+		if (bg === undefined) {
+			bg = feedback.default;
+		}
+
+		if (self['preview' + feedback.options.mixeffect] == parseInt(feedback.options.input)) {
+			return {
+				bgcolor: bg
+			};
+		}
+	}
+
+	else if (feedback.type == 'program_bg') {
+		var bg = feedback.options.bg;
+		if (bg === undefined) {
+			bg = feedback.default;
+		}
+
+		if (self['program' + feedback.options.mixeffect] == parseInt(feedback.options.input)) {
+			return {
+				bgcolor: bg
+			};
+		}
+	}
+
+	else if (feedback.type == 'aux_bg') {
+		var bg = feedback.options.bg;
+		if (bg === undefined) {
+			bg = feedback.default;
+		}
+
+		if (self['aux' + feedback.options.aux] == parseInt(feedback.options.input)) {
+			return {
+				bgcolor: bg
+			};
+		}
+	}
+
+	return {};
 };
 
 instance.prototype.updateConfig = function(config) {
@@ -124,6 +271,12 @@ instance.prototype.updateConfig = function(config) {
 	self.config = config;
 
 	if (self.config.host !== undefined) {
+		if (self.atem !== undefined && self.atem.socket !== undefined && self.atem.socket._socket !== undefined) {
+			try {
+				self.atem.disconnect();
+			} catch (e) {}
+		}
+
 		self.atem.connect(self.config.host);
 	}
 };
