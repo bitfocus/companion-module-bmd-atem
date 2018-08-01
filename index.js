@@ -58,6 +58,7 @@ function instance(system, id, config) {
 	var self = this;
 
 	self.model = 0;
+	self.states = {};
 
 	// super-constructor
 	instance_skel.apply(this, arguments);
@@ -92,7 +93,7 @@ instance.prototype.init = function() {
 		switch (state.constructor.name) {
 			case 'AuxSourceCommand':
 				debug("AUX " + state.auxBus + ' set to ' + state.properties.source);
-				self['aux' + state.auxBus] = state.properties.source;
+				self.states['aux' + state.auxBus] = state.properties.source;
 				if (typeof self.checkFeedbacks == 'function') {
 					self.checkFeedbacks('aux_bg');
 				}
@@ -100,7 +101,7 @@ instance.prototype.init = function() {
 
 			case 'PreviewInputCommand':
 				debug('Preview set to ' + state.properties.source + ' on ME ' + state.mixEffect);
-				self['preview' + state.mixEffect] = state.properties.source;
+				self.states['preview' + state.mixEffect] = state.properties.source;
 				if (typeof self.checkFeedbacks == 'function') {
 					self.checkFeedbacks('preview_bg');
 				}
@@ -108,7 +109,7 @@ instance.prototype.init = function() {
 
 			case 'ProgramInputCommand':
 				debug('Program set to ' + state.properties.source + ' on ME ' + state.mixEffect);
-				self['program' + state.mixEffect] = state.properties.source;
+				self.states['program' + state.mixEffect] = state.properties.source;
 				if (typeof self.checkFeedbacks == 'function') {
 					self.checkFeedbacks('program_bg');
 				}
@@ -120,6 +121,10 @@ instance.prototype.init = function() {
 
 			case 'MixEffectKeyOnAirCommand':
 				debug('USK on air:', state);
+				self.states['usk' + state.mixEffect + '-' + state.upstreamKeyerId] = state.properties.onAir;
+				if (typeof self.checkFeedbacks == 'function') {
+					self.checkFeedbacks('usk_bg');
+				}
 				break;
 
 			case 'ProductIdentifierCommand':
@@ -217,6 +222,38 @@ instance.prototype.init = function() {
 			}
 		]
 	};
+	feedbacks['usk_bg'] = {
+		label: 'Change background from upstream keyer state',
+		description: 'If the specified upstream keyer is active, change color of the bank',
+		options: [
+			{
+				type: 'colorpicker',
+				label: 'Color',
+				id: 'fg',
+				default: self.rgb(255,255,255)
+			},
+			{
+				type: 'colorpicker',
+				label: 'Background color',
+				id: 'bg',
+				default: self.rgb(255,0,0)
+			},
+			{
+				type: 'dropdown',
+				id: 'mixeffect',
+				label: 'M/E',
+				default: 0,
+				choices: self.CHOICES_ME.slice(0, MEs[self.model])
+			},
+			{
+				type: 'dropdown',
+				label: 'Key',
+				id: 'key',
+				default: '0',
+				choices: self.CHOICES_AUXES.slice(0, 4)
+			}
+		]
+	};
 
 	self.setFeedbackDefinitions(feedbacks);
 };
@@ -225,44 +262,28 @@ instance.prototype.feedback = function(feedback, bank) {
 	var self = this;
 
 	if (feedback.type == 'preview_bg') {
-		var bg = feedback.options.bg;
-		if (bg === undefined) {
-			bg = feedback.default;
-		}
-
-		if (self['preview' + feedback.options.mixeffect] == parseInt(feedback.options.input)) {
-			return {
-				bgcolor: bg
-			};
+		if (self.states['preview' + feedback.options.mixeffect] == parseInt(feedback.options.input)) {
+			return { bgcolor: feedback.options.bg };
 		}
 	}
 
 	else if (feedback.type == 'program_bg') {
-		var bg = feedback.options.bg;
-		if (bg === undefined) {
-			bg = feedback.default;
-		}
-
-		if (self['program' + feedback.options.mixeffect] == parseInt(feedback.options.input)) {
-			return {
-				bgcolor: bg
-			};
+		if (self.states['program' + feedback.options.mixeffect] == parseInt(feedback.options.input)) {
+			return { bgcolor: feedback.options.bg };
 		}
 	}
 
 	else if (feedback.type == 'aux_bg') {
-		var bg = feedback.options.bg;
-		if (bg === undefined) {
-			bg = feedback.default;
-		}
-
-		if (self['aux' + feedback.options.aux] == parseInt(feedback.options.input)) {
-			return {
-				bgcolor: bg
-			};
+		if (self.states['aux' + feedback.options.aux] == parseInt(feedback.options.input)) {
+			return { bgcolor: feedback.options.bg };
 		}
 	}
 
+	else if (feedback.type == 'usk_bg') {
+		if (self.states['usk' + feedback.options.mixeffect + '-' + feedback.options.key]) {
+			return { color: feedback.options.fg, bgcolor: feedback.options.bg };
+		}
+	}
 	return {};
 };
 
@@ -420,7 +441,7 @@ instance.prototype.actions = function(system) {
 					type: 'dropdown',
 					label: 'On Air',
 					default: 'true',
-					choices: self.CHOICES_YESNO_BOOLEAN
+					choices: [ { label: 'On Air', id: 'true' }, { label: 'Off', id: 'false' }, { label: 'Toggle', id: 'toggle' }]
 				},
 				{
 					type: 'dropdown',
@@ -504,7 +525,11 @@ instance.prototype.action = function(action) {
 			break;
 
 		case 'usk':
-			self.atem.setUpstreamKeyerOnAir(opt.onair == 'true', parseInt(opt.mixeffect), parseInt(opt.key));
+			if (opt.onair == 'toggle') {
+				self.atem.setUpstreamKeyerOnAir(!self.states['usk' + opt.mixeffect + '-' + opt.key], parseInt(opt.mixeffect), parseInt(opt.key));
+			} else {
+				self.atem.setUpstreamKeyerOnAir(opt.onair == 'true', parseInt(opt.mixeffect), parseInt(opt.key));
+			}
 			break;
 
 		case 'auto':
