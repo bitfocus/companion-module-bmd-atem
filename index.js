@@ -59,6 +59,8 @@ function instance(system, id, config) {
 
 	self.model = 0;
 
+	self.inputs = {};
+
 	// super-constructor
 	instance_skel.apply(this, arguments);
 
@@ -93,6 +95,7 @@ instance.prototype.init = function() {
 			case 'AuxSourceCommand':
 				debug("AUX " + state.auxBus + ' set to ' + state.properties.source);
 				self['aux' + state.auxBus] = state.properties.source;
+
 				if (typeof self.checkFeedbacks == 'function') {
 					self.checkFeedbacks('aux_bg');
 				}
@@ -101,6 +104,9 @@ instance.prototype.init = function() {
 			case 'PreviewInputCommand':
 				debug('Preview set to ' + state.properties.source + ' on ME ' + state.mixEffect);
 				self['preview' + state.mixEffect] = state.properties.source;
+
+				self.setVariable('pvw' + state.mixEffect + '_input', self.inputs[state.properties.source].shortName);
+
 				if (typeof self.checkFeedbacks == 'function') {
 					self.checkFeedbacks('preview_bg');
 				}
@@ -109,9 +115,28 @@ instance.prototype.init = function() {
 			case 'ProgramInputCommand':
 				debug('Program set to ' + state.properties.source + ' on ME ' + state.mixEffect);
 				self['program' + state.mixEffect] = state.properties.source;
+
+				self.setVariable('pgm' + state.mixEffect + '_input', self.inputs[state.properties.source].shortName);
+
 				if (typeof self.checkFeedbacks == 'function') {
 					self.checkFeedbacks('program_bg');
 				}
+				break;
+
+			case 'InputPropertiesCommand':
+				debug('Input properties', state);
+				self.inputs[state.inputId] = state.properties;
+
+				// resend everything, since names of routes might have changed
+				self.init_variables();
+				break;
+
+			case 'InitCompleteCommand':
+				debug('Init done');
+				self.actions();
+				self.init_variables();
+				self.init_feedbacks();
+				self.init_presets();
 				break;
 
 			case 'DownstreamKeyOnAirCommand':
@@ -124,11 +149,14 @@ instance.prototype.init = function() {
 
 			case 'ProductIdentifierCommand':
 				self.model = state.properties.model;
-				self.actions();
 				self.log('info', 'Connected to a ' + state.properties.deviceName);
 				break;
 		}
 	});
+};
+
+instance.prototype.init_feedbacks = function() {
+	var self = this;
 
 	// Feedback variable support, temporary if
 	// TODO: Remove
@@ -220,6 +248,162 @@ instance.prototype.init = function() {
 
 	self.setFeedbackDefinitions(feedbacks);
 };
+
+instance.prototype.init_variables = function() {
+	var self = this;
+
+	// Feedback variable support, temporary if
+	// TODO: Remove
+	if (typeof self.setVariableDefinitions != 'function') {
+		return;
+	}
+
+	// variable_set
+	var variables = [];
+
+	for (var i = 0; i < MEs[self.model]; ++i) {
+		variables.push({
+			label: 'Label of input active on program bus (M/E ' + (i+1) + ')',
+			name: 'pgm' + (i+1) + '_input'
+		});
+		if (self.inputs[self['program' + i]] !== undefined) {
+			self.setVariable('pgm' + (i+1) + '_input', self.inputs[self['program' + i]].shortName);
+		}
+		variables.push({
+			label: 'Label of input active on preview bus (M/E ' + (i+1) + ')',
+			name: 'pvw' + (i+1) + '_input'
+		});
+		if (self.inputs[self['preview' + i]] !== undefined) {
+			self.setVariable('pvw' + (i+1) + '_input', self.inputs[self['preview' + i]].shortName);
+		}
+	}
+
+	for (var key in self.inputs) {
+		variables.push({
+			label: 'Long name of input id ' + key,
+			name: 'long_' + key
+		});
+		variables.push({
+			label: 'Short name of input id ' + key,
+			name: 'short_' + key
+		});
+
+		if (self.inputs[key] !== undefined) {
+			self.setVariable('long_' + key, self.inputs[key].longName);
+			self.setVariable('short_' + key, self.inputs[key].shortName);
+		}
+	}
+	self.setVariableDefinitions(variables);
+};
+
+instance.prototype.init_presets = function () {
+	var self = this;
+	var presets = [];
+
+	for (var me = 0; me < MEs[self.model]; ++me) {
+		for (var input in self.inputs) {
+			presets.push({
+				category: 'Preview (M/E ' + (me+1) + ')',
+				label: 'Preview button for ' + self.inputs[input].shortName,
+				bank: {
+					style: 'text',
+					text: '$(attem:short_' + input + ')',
+					size: '18',
+					color: '16777215',
+					bgcolor: 0
+				},
+				feedbacks: [
+					{
+						type: 'preview_bg',
+						options: {
+							bg: 65280,
+							input: input,
+							mixeffect: me
+						}
+					}
+				],
+				actions: [
+					{
+						action: 'preview',
+						options: {
+							mixeffext: me,
+							input: input
+						}
+					}
+				]
+			});
+			presets.push({
+				category: 'Program (M/E ' + (me+1) + ')',
+				label: 'Program button for ' + self.inputs[input].shortName,
+				bank: {
+					style: 'text',
+					text: '$(attem:short_' + input + ')',
+					size: '18',
+					color: '16777215',
+					bgcolor: 0
+				},
+				feedbacks: [
+					{
+						type: 'program_bg',
+						options: {
+							bg: 16711680,
+							input: input,
+							mixeffect: me
+						}
+					}
+				],
+				actions: [
+					{
+						action: 'program',
+						options: {
+							mixeffext: me,
+							input: input
+						}
+					}
+				]
+			});
+		}
+	}
+
+	for (var i = 0; i < auxes[self.model]; ++i) {
+		for (var input in self.inputs) {
+			presets.push({
+				category: 'AUX ' + (i+1),
+				label: 'AUX' + (i+1) + ' button for ' + self.inputs[input].shortName,
+				bank: {
+					style: 'text',
+					text: '$(attem:short_' + input + ')',
+					size: '18',
+					color: '16777215',
+					bgcolor: 0
+				},
+				feedbacks: [
+					{
+						type: 'aux_bg',
+						options: {
+							bg: 16776960,
+							input: input,
+							aux: i
+						}
+					}
+				],
+				actions: [
+					{
+						action: 'aux',
+						options: {
+							aux: i,
+							input: input
+						}
+					}
+				]
+			});
+		}
+	}
+
+	if (typeof self.setPresetDefinitions == 'function') {
+		self.setPresetDefinitions(presets);
+	}
+}
 
 instance.prototype.feedback = function(feedback, bank) {
 	var self = this;
@@ -528,4 +712,10 @@ instance.module_info = {
 };
 
 instance_skel.extendedBy(instance);
+
+// TODO: Remove when feedback is in main
+if (typeof instance.prototype.setVariable != 'function') {
+	instance.prototype.setVariable = function () {};
+}
+
 exports = module.exports = instance;
