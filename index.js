@@ -97,9 +97,7 @@ instance.prototype.init = function() {
 				debug("AUX " + state.auxBus + ' set to ' + state.properties.source);
 				self.states['aux' + state.auxBus] = state.properties.source;
 
-				if (typeof self.checkFeedbacks == 'function') {
-					self.checkFeedbacks('aux_bg');
-				}
+				self.checkFeedbacks('aux_bg');
 				break;
 
 			case 'PreviewInputCommand':
@@ -107,9 +105,7 @@ instance.prototype.init = function() {
 				self.states['preview' + state.mixEffect] = state.properties.source;
 				self.setVariable('pvw' + state.mixEffect + '_input', self.inputs[state.properties.source].shortName);
 
-				if (typeof self.checkFeedbacks == 'function') {
-					self.checkFeedbacks('preview_bg');
-				}
+				self.checkFeedbacks('preview_bg');
 				break;
 
 			case 'ProgramInputCommand':
@@ -117,9 +113,7 @@ instance.prototype.init = function() {
 				self.states['program' + state.mixEffect] = state.properties.source;
 				self.setVariable('pgm' + state.mixEffect + '_input', self.inputs[state.properties.source].shortName);
 
-				if (typeof self.checkFeedbacks == 'function') {
-					self.checkFeedbacks('program_bg');
-				}
+				self.checkFeedbacks('program_bg');
 				break;
 
 			case 'InputPropertiesCommand':
@@ -145,9 +139,7 @@ instance.prototype.init = function() {
 			case 'MixEffectKeyOnAirCommand':
 				debug('USK on air:', state);
 				self.states['usk' + state.mixEffect + '-' + state.upstreamKeyerId] = state.properties.onAir;
-				if (typeof self.checkFeedbacks == 'function') {
-					self.checkFeedbacks('usk_bg');
-				}
+				self.checkFeedbacks('usk_bg');
 				break;
 
 			case 'ProductIdentifierCommand':
@@ -160,12 +152,6 @@ instance.prototype.init = function() {
 
 instance.prototype.init_feedbacks = function() {
 	var self = this;
-
-	// Feedback variable support, temporary if
-	// TODO: Remove
-	if (typeof self.setVariableDefinitions != 'function') {
-		return;
-	}
 
 	// feedbacks
 	var feedbacks = {};
@@ -286,12 +272,6 @@ instance.prototype.init_feedbacks = function() {
 
 instance.prototype.init_variables = function() {
 	var self = this;
-
-	// Feedback variable support, temporary if
-	// TODO: Remove
-	if (typeof self.setVariableDefinitions != 'function') {
-		return;
-	}
 
 	// variable_set
 	var variables = [];
@@ -435,9 +415,7 @@ instance.prototype.init_presets = function () {
 		}
 	}
 
-	if (typeof self.setPresetDefinitions == 'function') {
-		self.setPresetDefinitions(presets);
-	}
+	self.setPresetDefinitions(presets);
 }
 
 instance.prototype.feedback = function(feedback, bank) {
@@ -735,10 +713,5 @@ instance.module_info = {
 };
 
 instance_skel.extendedBy(instance);
-
-// TODO: Remove when feedback is in main
-if (typeof instance.prototype.setVariable != 'function') {
-	instance.prototype.setVariable = function () {};
-}
 
 exports = module.exports = instance;
