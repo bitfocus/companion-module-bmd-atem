@@ -103,7 +103,9 @@ instance.prototype.init = function() {
 			case 'PreviewInputCommand':
 				debug('Preview set to ' + state.properties.source + ' on ME ' + state.mixEffect);
 				self.states['preview' + state.mixEffect] = state.properties.source;
-				self.setVariable('pvw' + state.mixEffect + '_input', self.inputs[state.properties.source].shortName);
+				if (self.inputs[state.properties.source] !== undefined) {
+					self.setVariable('pvw' + (state.mixEffect + 1) + '_input', self.inputs[state.properties.source].shortName);
+				}
 
 				self.checkFeedbacks('preview_bg');
 				break;
@@ -111,7 +113,9 @@ instance.prototype.init = function() {
 			case 'ProgramInputCommand':
 				debug('Program set to ' + state.properties.source + ' on ME ' + state.mixEffect);
 				self.states['program' + state.mixEffect] = state.properties.source;
-				self.setVariable('pgm' + state.mixEffect + '_input', self.inputs[state.properties.source].shortName);
+				if (self.inputs[state.properties.source] !== undefined) {
+					self.setVariable('pgm' + (state.mixEffect + 1) + '_input', self.inputs[state.properties.source].shortName);
+				}
 
 				self.checkFeedbacks('program_bg');
 				break;
@@ -130,6 +134,7 @@ instance.prototype.init = function() {
 				self.init_variables();
 				self.init_feedbacks();
 				self.init_presets();
+				self.log('info', 'Connected to a ' + self.model);
 				break;
 
 			case 'DownstreamKeyOnAirCommand':
@@ -144,7 +149,6 @@ instance.prototype.init = function() {
 
 			case 'ProductIdentifierCommand':
 				self.model = state.properties.model;
-				self.log('info', 'Connected to a ' + state.properties.deviceName);
 				break;
 		}
 	});
@@ -157,9 +161,15 @@ instance.prototype.init_feedbacks = function() {
 	var feedbacks = {};
 
 	feedbacks['preview_bg'] = {
-		label: 'Change background from preview',
-		description: 'If the input specified is in use by preview on the M/E stage specified, change background color of the bank',
+		label: 'Change colors from preview',
+		description: 'If the input specified is in use by preview on the M/E stage specified, change colors of the bank',
 		options: [
+			{
+				type: 'colorpicker',
+				label: 'Foreground color',
+				id: 'fg',
+				default: self.rgb(255,255,255)
+			},
 			{
 				type: 'colorpicker',
 				label: 'Background color',
@@ -183,9 +193,15 @@ instance.prototype.init_feedbacks = function() {
 		]
 	};
 	feedbacks['program_bg'] = {
-		label: 'Change background from program',
-		description: 'If the input specified is in use by program on the M/E stage specified, change background color of the bank',
+		label: 'Change colors from program',
+		description: 'If the input specified is in use by program on the M/E stage specified, change colors of the bank',
 		options: [
+			{
+				type: 'colorpicker',
+				label: 'Foreground color',
+				id: 'fg',
+				default: self.rgb(255,255,255)
+			},
 			{
 				type: 'colorpicker',
 				label: 'Background color',
@@ -209,9 +225,15 @@ instance.prototype.init_feedbacks = function() {
 		]
 	};
 	feedbacks['aux_bg'] = {
-		label: 'Change background from AUX bus',
-		description: 'If the input specified is in use by the aux bus specified, change background color of the bank',
+		label: 'Change colors from AUX bus',
+		description: 'If the input specified is in use by the aux bus specified, change colors of the bank',
 		options: [
+			{
+				type: 'colorpicker',
+				label: 'Foreground color',
+				id: 'fg',
+				default: self.rgb(0,0,0)
+			},
 			{
 				type: 'colorpicker',
 				label: 'Background color',
@@ -332,6 +354,7 @@ instance.prototype.init_presets = function () {
 						type: 'preview_bg',
 						options: {
 							bg: 65280,
+							fg: 16777215,
 							input: input,
 							mixeffect: me
 						}
@@ -362,6 +385,7 @@ instance.prototype.init_presets = function () {
 						type: 'program_bg',
 						options: {
 							bg: 16711680,
+							fg: 16777215,
 							input: input,
 							mixeffect: me
 						}
@@ -397,6 +421,7 @@ instance.prototype.init_presets = function () {
 						type: 'aux_bg',
 						options: {
 							bg: 16776960,
+							fg: 0,
 							input: input,
 							aux: i
 						}
@@ -423,19 +448,19 @@ instance.prototype.feedback = function(feedback, bank) {
 
 	if (feedback.type == 'preview_bg') {
 		if (self.states['preview' + feedback.options.mixeffect] == parseInt(feedback.options.input)) {
-			return { bgcolor: feedback.options.bg };
+			return { color: feedback.options.fg, bgcolor: feedback.options.bg };
 		}
 	}
 
 	else if (feedback.type == 'program_bg') {
 		if (self.states['program' + feedback.options.mixeffect] == parseInt(feedback.options.input)) {
-			return { bgcolor: feedback.options.bg };
+			return { color: feedback.options.fg, bgcolor: feedback.options.bg };
 		}
 	}
 
 	else if (feedback.type == 'aux_bg') {
 		if (self.states['aux' + feedback.options.aux] == parseInt(feedback.options.input)) {
-			return { bgcolor: feedback.options.bg };
+			return { color: feedback.options.fg, bgcolor: feedback.options.bg };
 		}
 	}
 
