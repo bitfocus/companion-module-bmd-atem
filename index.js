@@ -541,8 +541,14 @@ instance.prototype.actions = function(system) {
 	self.CHOICES_INPUTS.push({ label: 'Super Source', id: 6000 });
 	self.CHOICES_INPUTS.push({ label: 'Clean Feed 1', id: 7001 });
 	self.CHOICES_INPUTS.push({ label: 'Clean Feed 2', id: 7002 });
-	self.CHOICES_INPUTS.push({ label: 'Program', id: 10010 });
-	self.CHOICES_INPUTS.push({ label: 'Preview', id: 10011 });
+	self.CHOICES_INPUTS.push({ label: 'ME 1 Program', id: 10010 });
+	self.CHOICES_INPUTS.push({ label: 'ME 1 Preview', id: 10011 });
+	self.CHOICES_INPUTS.push({ label: 'ME 2 Program', id: 10020 });
+	self.CHOICES_INPUTS.push({ label: 'ME 2 Preview', id: 10021 });
+	self.CHOICES_INPUTS.push({ label: 'ME 3 Program', id: 10030 });
+	self.CHOICES_INPUTS.push({ label: 'ME 3 Preview', id: 10031 });
+	self.CHOICES_INPUTS.push({ label: 'ME 4 Program', id: 10040 });
+	self.CHOICES_INPUTS.push({ label: 'ME 4 Preview', id: 10041 });
 
 	self.CHOICES_AUXES = [
 		{ label: '1', id: 0 },
