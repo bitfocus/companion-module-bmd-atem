@@ -366,7 +366,7 @@ instance.prototype.init_presets = function () {
 					{
 						action: 'preview',
 						options: {
-							mixeffext: me,
+							mixeffect: me,
 							input: input
 						}
 					}
@@ -397,7 +397,7 @@ instance.prototype.init_presets = function () {
 					{
 						action: 'program',
 						options: {
-							mixeffext: me,
+							mixeffect: me,
 							input: input
 						}
 					}
@@ -752,7 +752,7 @@ instance.prototype.action = function(action) {
 instance.module_info = {
 	label: 'BMD Atem',
 	id: 'atem',
-	version: '1.0.0'
+	version: '1.0.1'
 };
 
 instance_skel.extendedBy(instance);
