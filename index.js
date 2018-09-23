@@ -752,7 +752,7 @@ instance.prototype.action = function(action) {
 instance.module_info = {
 	label: 'BMD Atem',
 	id: 'atem',
-	version: '0.0.2'
+	version: '1.0.0'
 };
 
 instance_skel.extendedBy(instance);
