@@ -134,7 +134,7 @@ instance.prototype.init = function() {
 				self.init_variables();
 				self.init_feedbacks();
 				self.init_presets();
-				self.log('info', 'Connected to a ' + self.model);
+				self.log('info', 'Connected to a ' + self.deviceName);
 				break;
 
 			case 'DownstreamKeyOnAirCommand':
@@ -149,6 +149,8 @@ instance.prototype.init = function() {
 
 			case 'ProductIdentifierCommand':
 				self.model = state.properties.model;
+				debug('ATEM Model: ' + self.model);
+				self.deviceName = state.properties.deviceName;
 				break;
 		}
 	});
@@ -541,14 +543,24 @@ instance.prototype.actions = function(system) {
 	self.CHOICES_INPUTS.push({ label: 'Super Source', id: 6000 });
 	self.CHOICES_INPUTS.push({ label: 'Clean Feed 1', id: 7001 });
 	self.CHOICES_INPUTS.push({ label: 'Clean Feed 2', id: 7002 });
+
 	self.CHOICES_INPUTS.push({ label: 'ME 1 Program', id: 10010 });
 	self.CHOICES_INPUTS.push({ label: 'ME 1 Preview', id: 10011 });
-	self.CHOICES_INPUTS.push({ label: 'ME 2 Program', id: 10020 });
-	self.CHOICES_INPUTS.push({ label: 'ME 2 Preview', id: 10021 });
-	self.CHOICES_INPUTS.push({ label: 'ME 3 Program', id: 10030 });
-	self.CHOICES_INPUTS.push({ label: 'ME 3 Preview', id: 10031 });
-	self.CHOICES_INPUTS.push({ label: 'ME 4 Program', id: 10040 });
-	self.CHOICES_INPUTS.push({ label: 'ME 4 Preview', id: 10041 });
+
+	if (MEs[self.model] >= 2) {
+		self.CHOICES_INPUTS.push({ label: 'ME 2 Program', id: 10020 });
+		self.CHOICES_INPUTS.push({ label: 'ME 2 Preview', id: 10021 });
+	}
+
+	if (MEs[self.model] >= 3) {
+		self.CHOICES_INPUTS.push({ label: 'ME 3 Program', id: 10030 });
+		self.CHOICES_INPUTS.push({ label: 'ME 3 Preview', id: 10031 });
+	}
+
+	if (MEs[self.model] >= 4) {
+		self.CHOICES_INPUTS.push({ label: 'ME 4 Program', id: 10040 });
+		self.CHOICES_INPUTS.push({ label: 'ME 4 Preview', id: 10041 });
+	}
 
 	self.CHOICES_AUXES = [
 		{ label: '1', id: 0 },
