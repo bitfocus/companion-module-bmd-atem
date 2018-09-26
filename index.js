@@ -536,10 +536,19 @@ instance.prototype.actions = function(system) {
 	self.CHOICES_INPUTS.push({ label: 'Bars', id: 1000 });
 	self.CHOICES_INPUTS.push({ label: 'Color 1', id: 2001 });
 	self.CHOICES_INPUTS.push({ label: 'Color 2', id: 2002 });
+
 	self.CHOICES_INPUTS.push({ label: 'Mediaplayer 1', id: 3010 });
 	self.CHOICES_INPUTS.push({ label: 'Mediaplayer 1 Key', id: 3011 });
 	self.CHOICES_INPUTS.push({ label: 'Mediaplayer 2', id: 3020 });
 	self.CHOICES_INPUTS.push({ label: 'Mediaplayer 2 Key', id: 3021 });
+
+	if (MEs[self.model] >= 4) {
+		self.CHOICES_INPUTS.push({ label: 'Mediaplayer 3', id: 3030 });
+		self.CHOICES_INPUTS.push({ label: 'Mediaplayer 3 Key', id: 3031 });
+		self.CHOICES_INPUTS.push({ label: 'Mediaplayer 4', id: 3040 });
+		self.CHOICES_INPUTS.push({ label: 'Mediaplayer 4 Key', id: 3041 });
+	}
+
 	self.CHOICES_INPUTS.push({ label: 'Super Source', id: 6000 });
 	self.CHOICES_INPUTS.push({ label: 'Clean Feed 1', id: 7001 });
 	self.CHOICES_INPUTS.push({ label: 'Clean Feed 2', id: 7002 });
