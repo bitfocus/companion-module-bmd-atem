@@ -543,10 +543,10 @@ instance.prototype.actions = function(system) {
 	self.CHOICES_INPUTS.push({ label: 'Mediaplayer 2 Key', id: 3021 });
 
 	if (MEs[self.model] >= 4) {
-	self.CHOICES_INPUTS.push({ label: 'Mediaplayer 3', id: 3030 });
-	self.CHOICES_INPUTS.push({ label: 'Mediaplayer 3 Key', id: 3031 });
-	self.CHOICES_INPUTS.push({ label: 'Mediaplayer 4', id: 3040 });
-	self.CHOICES_INPUTS.push({ label: 'Mediaplayer 4 Key', id: 3041 });
+		self.CHOICES_INPUTS.push({ label: 'Mediaplayer 3', id: 3030 });
+		self.CHOICES_INPUTS.push({ label: 'Mediaplayer 3 Key', id: 3031 });
+		self.CHOICES_INPUTS.push({ label: 'Mediaplayer 4', id: 3040 });
+		self.CHOICES_INPUTS.push({ label: 'Mediaplayer 4 Key', id: 3041 });
 	}
 
 	self.CHOICES_INPUTS.push({ label: 'Super Source', id: 6000 });
