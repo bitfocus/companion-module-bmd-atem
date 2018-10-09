@@ -8,9 +8,9 @@ var models = {
 	2: 'OneME',
 	3: 'TwoME',
 	4: 'PS4K',
-	5: 'OneME4K',
-	6: 'TwoME4K',
-	7: 'TwoMEBS4K',
+	5: 'OneMEPS4K',
+	6: 'TwoMEPS4K',
+	7: 'FourMEBS4K',
 	8: 'TVSHD',
 	9: '4ME?'
 };
@@ -48,6 +48,19 @@ var MEs = {
 	3: 2,
 	4: 1,
 	5: 1,
+	6: 2,
+	7: 4,
+	8: 1,
+	9: 4
+};
+
+var USKs = {
+	0: 1,
+	1: 1,
+	2: 4,
+	3: 4,
+	4: 1,
+	5: 4,
 	6: 2,
 	7: 4,
 	8: 1,
@@ -580,6 +593,13 @@ instance.prototype.actions = function(system) {
 		{ label: '6', id: 5 },
 	];
 
+	self.CHOICES_USKS = [
+		{ label: '1', id: 0 },
+		{ label: '2', id: 1 },
+		{ label: '3', id: 2 },
+		{ label: '4', id: 3 },
+	];
+
 	self.CHOICES_ME = [
 		{ label: 'M/E 1', id: 0 },
 		{ label: 'M/E 2', id: 1 },
@@ -667,7 +687,7 @@ instance.prototype.actions = function(system) {
 					label: 'Key',
 					id: 'key',
 					default: '0',
-					choices: self.CHOICES_AUXES.slice(0, 4)
+					choices: self.CHOICES_USKS.slice(0, USKs[self.model])
 				}
 			]
 		},
