@@ -67,6 +67,19 @@ var USKs = {
 	9: 4
 };
 
+var DSKs = {
+	0: 2,
+	1: 2,
+	2: 2,
+	3: 2,
+	4: 2,
+	5: 2,
+	6: 2,
+	7: 2,
+	8: 2,
+	9: 2
+};
+
 function instance(system, id, config) {
 	var self = this;
 
@@ -107,14 +120,12 @@ instance.prototype.init = function() {
 
 		switch (state.constructor.name) {
 			case 'AuxSourceCommand':
-				debug("AUX " + state.auxBus + ' set to ' + state.properties.source);
 				self.states['aux' + state.auxBus] = state.properties.source;
 
 				self.checkFeedbacks('aux_bg');
 				break;
 
 			case 'PreviewInputCommand':
-				debug('Preview set to ' + state.properties.source + ' on ME ' + state.mixEffect);
 				self.states['preview' + state.mixEffect] = state.properties.source;
 				if (self.inputs[state.properties.source] !== undefined) {
 					self.setVariable('pvw' + (state.mixEffect + 1) + '_input', self.inputs[state.properties.source].shortName);
@@ -124,7 +135,6 @@ instance.prototype.init = function() {
 				break;
 
 			case 'ProgramInputCommand':
-				debug('Program set to ' + state.properties.source + ' on ME ' + state.mixEffect);
 				self.states['program' + state.mixEffect] = state.properties.source;
 				if (self.inputs[state.properties.source] !== undefined) {
 					self.setVariable('pgm' + (state.mixEffect + 1) + '_input', self.inputs[state.properties.source].shortName);
@@ -134,7 +144,6 @@ instance.prototype.init = function() {
 				break;
 
 			case 'InputPropertiesCommand':
-				debug('Input properties', state);
 				self.inputs[state.inputId] = state.properties;
 
 				// resend everything, since names of routes might have changed
@@ -150,12 +159,12 @@ instance.prototype.init = function() {
 				self.log('info', 'Connected to a ' + self.deviceName);
 				break;
 
-			case 'DownstreamKeyOnAirCommand':
-				debug('DSK on air:', state);
+			case 'DownstreamKeyStateCommand':
+				self.states['dsk' + state.downstreamKeyId] = state.properties.onAir;
+				self.checkFeedbacks('dsk_bg');
 				break;
 
 			case 'MixEffectKeyOnAirCommand':
-				debug('USK on air:', state);
 				self.states['usk' + state.mixEffect + '-' + state.upstreamKeyerId] = state.properties.onAir;
 				self.checkFeedbacks('usk_bg');
 				break;
@@ -299,11 +308,35 @@ instance.prototype.init_feedbacks = function() {
 				label: 'Key',
 				id: 'key',
 				default: '0',
-				choices: self.CHOICES_AUXES.slice(0, 4)
+				choices: self.CHOICES_USKS.slice(0, USKs[self.model])
 			}
 		]
 	};
-
+	feedbacks['dsk_bg'] = {
+		label: 'Change background from downstream keyer state',
+		description: 'If the specified downstream keyer is active, change color of the bank',
+		options: [
+			{
+				type: 'colorpicker',
+				label: 'Color',
+				id: 'fg',
+				default: self.rgb(255,255,255)
+			},
+			{
+				type: 'colorpicker',
+				label: 'Background color',
+				id: 'bg',
+				default: self.rgb(255,0,0)
+			},
+			{
+				type: 'dropdown',
+				label: 'Key',
+				id: 'key',
+				default: '0',
+				choices: self.CHOICES_DSKS.slice(0, DSKs[self.model])
+			}
+		]
+	};
 	self.setFeedbackDefinitions(feedbacks);
 };
 
@@ -455,6 +488,77 @@ instance.prototype.init_presets = function () {
 		}
 	}
 
+	// Upstream keyers
+	for (var me = 0; me < MEs[self.model]; ++me) {
+		for (var i = 0; i < USKs[self.model]; ++i) {
+			presets.push({
+				category: 'KEYs',
+				label: 'Toggle upstream KEY' + (i+1) + '(M/E ' + (me+1) + ')',
+				bank: {
+					style: 'text',
+					text: 'KEY ' + (i+1),
+					size: 'auto',
+					color: self.rgb(255,255,255),
+					bgcolor: 0
+				},
+				feedbacks: [
+					{
+						type: 'usk_bg',
+						options: {
+							bg: self.rgb(255,0,0),
+							fg: self.rgb(255,255,255),
+							key: i,
+							mixeffect: me
+						}
+					}
+				],
+				actions: [
+					{
+						action: 'usk',
+						options: {
+							onair: 'toggle',
+							key: i,
+							mixeffect: me
+						}
+					}
+				]
+			});
+		}
+	}
+
+	// Downstream keyers
+	for (var i = 0; i < DSKs[self.model]; ++i) {
+		presets.push({
+			category: 'KEYs',
+			label: 'Toggle downstream KEY' + (i+1),
+			bank: {
+				style: 'text',
+				text: 'DSK ' + (i+1),
+				size: 'auto',
+				color: self.rgb(255,255,255),
+				bgcolor: 0
+			},
+			feedbacks: [
+				{
+					type: 'dsk_bg',
+					options: {
+						bg: self.rgb(255,0,0),
+						fg: self.rgb(255,255,255),
+						key: i
+					}
+				}
+			],
+			actions: [
+				{
+					action: 'dsk',
+					options: {
+						onair: 'toggle',
+						key: i
+					}
+				}
+			]
+		});
+	}
 	self.setPresetDefinitions(presets);
 }
 
@@ -481,6 +585,12 @@ instance.prototype.feedback = function(feedback, bank) {
 
 	else if (feedback.type == 'usk_bg') {
 		if (self.states['usk' + feedback.options.mixeffect + '-' + feedback.options.key]) {
+			return { color: feedback.options.fg, bgcolor: feedback.options.bg };
+		}
+	}
+
+	else if (feedback.type == 'dsk_bg') {
+		if (self.states['dsk' + feedback.options.key]) {
 			return { color: feedback.options.fg, bgcolor: feedback.options.bg };
 		}
 	}
@@ -600,6 +710,11 @@ instance.prototype.actions = function(system) {
 		{ label: '4', id: 3 },
 	];
 
+	self.CHOICES_DSKS = [
+		{ label: '1', id: 0 },
+		{ label: '2', id: 1 },
+	];
+
 	self.CHOICES_ME = [
 		{ label: 'M/E 1', id: 0 },
 		{ label: 'M/E 2', id: 1 },
@@ -691,6 +806,25 @@ instance.prototype.actions = function(system) {
 				}
 			]
 		},
+		'dsk': {
+			label: 'Set Downstream KEY OnAir',
+			options: [
+				{
+					id: 'onair',
+					type: 'dropdown',
+					label: 'On Air',
+					default: 'true',
+					choices: [ { label: 'On Air', id: 'true' }, { label: 'Off', id: 'false' }, { label: 'Toggle', id: 'toggle' }]
+				},
+				{
+					type: 'dropdown',
+					label: 'Key',
+					id: 'key',
+					default: '0',
+					choices: self.CHOICES_DSKS.slice(0, DSKs[self.model])
+				}
+			]
+		},
 		'cut': {
 			label: 'CUT operation',
 			options: [
@@ -761,6 +895,14 @@ instance.prototype.action = function(action) {
 				self.atem.setUpstreamKeyerOnAir(!self.states['usk' + opt.mixeffect + '-' + opt.key], parseInt(opt.mixeffect), parseInt(opt.key));
 			} else {
 				self.atem.setUpstreamKeyerOnAir(opt.onair == 'true', parseInt(opt.mixeffect), parseInt(opt.key));
+			}
+			break;
+
+		case 'dsk':
+			if (opt.onair == 'toggle') {
+				self.atem.setDownstreamKeyOnAir(!self.states['dsk' + opt.key], parseInt(opt.key));
+			} else {
+				self.atem.setDownstreamKeyOnAir(opt.onair == 'true', parseInt(opt.key));
 			}
 			break;
 
