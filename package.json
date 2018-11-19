@@ -23,6 +23,6 @@
   },
   "homepage": "https://github.com/bitfocus/companion-module-atem#readme",
   "dependencies": {
-    "atem-connection": "0.2.1"
+    "atem-connection": "0.8.0"
   }
 }
