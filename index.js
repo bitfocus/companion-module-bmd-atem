@@ -108,8 +108,11 @@ instance.prototype.init = function() {
 	self.atem.on('connected', function () {
 		self.status(self.STATE_OK);
 	});
+	self.atem.on('error', function (e) {
+		self.status(self.STATUS_ERROR, 'Error');
+	});
 	self.atem.on('disconnected', function () {
-		self.status(self.STATE_ERROR, 'Disconnected');
+		self.status(self.STATUS_UNKNOWN, 'Disconnected');
 	});
 
 	if (self.config.host !== undefined) {
@@ -637,7 +640,7 @@ instance.prototype.config_fields = function () {
 instance.prototype.destroy = function() {
 	var self = this;
 
-	if (self.atem !== undefined && self.atem.socket !== undefined && self.atem.socket._socket !== undefined) {
+	if (self.atem !== undefined) {
 		self.atem.disconnect();
 		delete self.atem;
 	}
