@@ -163,7 +163,7 @@ instance.prototype.init = function() {
 				break;
 
 			case 'DownstreamKeyStateCommand':
-				self.states['dsk' + state.downstreamKeyId] = state.properties.onAir;
+				self.states['dsk' + state.downstreamKeyerId] = state.properties.onAir;
 				self.checkFeedbacks('dsk_bg');
 				break;
 
