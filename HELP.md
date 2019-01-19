@@ -10,3 +10,6 @@ Should work with all models of Blackmagic Design ATEM mixers
 * CUT operation
 * AUTO transition operation
 * Run MACRO
+* Continue MACRO
+* Stop MACROS
+* Change MV window source
