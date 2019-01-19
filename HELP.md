@@ -5,8 +5,13 @@ Should work with all models of Blackmagic Design ATEM mixers
 
 * Set input on Program
 * Set input on Preview
+* Set inputs on Upstream KEY
+* Set inputs on Downstream KEY
 * Set AUX bus
 * Set Upstream KEY OnAir
 * CUT operation
 * AUTO transition operation
 * Run MACRO
+* Continue MACRO
+* Stop MACROS
+* Change MV window source
