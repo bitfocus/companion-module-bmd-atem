@@ -1,29 +1,29 @@
 {
-  "name": "atem",
-  "version": "1.1.0",
-  "api_version": "1.0.0",
-  "description": "Blackmagic Design",
-  "keywords": [
-    "Vision Mixer"
-  ],
-  "manufacturer": "Blackmagic Design",
-  "product": "ATEM",
-  "shortname": "atem",
-  "homepage": "https://github.com/bitfocus/companion-module-atem#readme",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/bitfocus/companion-module-atem.git"
-  },
-  "author": "Håkon Nessjøen <haakon@bitfocus.io>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/bitfocus/companion-module-atem/issues"
-  },
-  "dependencies": {
-    "atem-connection": "0.8.1"
-  }
+	"name": "atem",
+	"version": "1.1.2",
+	"api_version": "1.0.0",
+	"description": "Blackmagic Design",
+	"keywords": [
+		"Vision Mixer"
+	],
+	"manufacturer": "Blackmagic Design",
+	"product": "ATEM",
+	"shortname": "atem",
+	"homepage": "https://github.com/bitfocus/companion-module-atem#readme",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/bitfocus/companion-module-atem.git"
+	},
+	"author": "Håkon Nessjøen <haakon@bitfocus.io>",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/bitfocus/companion-module-atem/issues"
+	},
+	"dependencies": {
+		"atem-connection": "0.8.1"
+	}
 }
