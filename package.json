@@ -24,6 +24,6 @@
 		"url": "https://github.com/bitfocus/companion-module-atem/issues"
 	},
 	"dependencies": {
-		"atem-connection": "0.8.1"
+		"atem-connection": "0.8.2"
 	}
 }
