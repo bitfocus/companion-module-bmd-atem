@@ -1709,7 +1709,7 @@ class instance extends instance_skel {
 				break;
 
 			case 'TransitionPositionCommand':
-				this.updateME(state.mixEffect) = state.properties;
+				this.updateME(state.mixEffect, state.properties);
 
 				var iconId = state.properties.handlePosition / 100;
 				iconId = ( iconId >= 90 ? 90 : ( iconId >= 70 ? 70 : ( iconId >= 50 ? 50 : ( iconId >= 30 ? 30 : ( iconId >= 10 ? 10 : 0 )))));
@@ -1725,7 +1725,7 @@ class instance extends instance_skel {
 				break;
 
 			case 'TransitionPropertiesCommand':
-				this.updateME(state.mixEffect) = state.properties;
+				this.updateME(state.mixEffect, state.properties);
 
 				if (this.initDone === true) {
 					this.checkFeedbacks('trans_mods');
@@ -1844,7 +1844,7 @@ class instance extends instance_skel {
 				this.status(this.STATE_OK);
 			});
 			this.atem.on('error', (e) => {
-				this.status(this.STATUS_ERROR, 'Error');
+				this.status(this.STATUS_ERROR, e.message);
 			});
 			this.atem.on('disconnected', () => {
 				this.status(this.STATUS_UNKNOWN, 'Disconnected');

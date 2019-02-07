@@ -6,9 +6,10 @@ alawmulaw@^5.0.2:
   version "5.0.2"
   resolved "https://registry.yarnpkg.com/alawmulaw/-/alawmulaw-5.0.2.tgz#885a914933e3f3bc0bdd67534af669a20f17d4aa"
 
-atem-connection@0.8.1:
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/atem-connection/-/atem-connection-0.8.1.tgz#e7fadeab3a33ff5d15db157c8c8f1c2ca2ce23b8"
+atem-connection@0.8.2:
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/atem-connection/-/atem-connection-0.8.2.tgz#ccabdc3dcda4283905787e52e810abf3daa629a4"
+  integrity sha512-sJrYhKDwYZG2fUcPDiM22g9d8IxhboMALjaJXJe5b4m2Lkix0dA94ejfnIVvQuXZEPoctQGZ/JDjCrdNnsY+/Q==
   dependencies:
     exit-hook "^2.0.0"
     nanotimer "^0.3.15"
