@@ -1836,24 +1836,23 @@ class instance extends instance_skel {
 	 */
 	setupAtemConnection() {
 
+		this.atem = new Atem({ externalLog: this.debug.bind(this) });
+
+		this.atem.on('connected', () => {
+			this.status(this.STATE_OK);
+		});
+		this.atem.on('error', (e) => {
+			this.status(this.STATUS_ERROR, e.message);
+		});
+		this.atem.on('disconnected', () => {
+			this.status(this.STATUS_UNKNOWN, 'Disconnected');
+			this.initDone = false;
+		});
+		this.atem.on('stateChanged', this.processStateChange.bind(this));
+
+
 		if (this.config.host !== undefined) {
-
-			this.atem = new Atem({ externalLog: this.debug.bind(this) });
-
-			this.atem.on('connected', () => {
-				this.status(this.STATE_OK);
-			});
-			this.atem.on('error', (e) => {
-				this.status(this.STATUS_ERROR, e.message);
-			});
-			this.atem.on('disconnected', () => {
-				this.status(this.STATUS_UNKNOWN, 'Disconnected');
-				this.initDone = false;
-			});
-
 			this.atem.connect(this.config.host);
-
-			this.atem.on('stateChanged', this.processStateChange.bind(this));
 		}
 	}
 
