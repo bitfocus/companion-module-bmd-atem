@@ -530,7 +530,7 @@ class instance extends instance_skel {
 			}
 		}
 		else if (feedback.type == 'aux_bg') {
-			if (this.getAux(opt.aux).source == parseInt(opt.input)) {
+			if (this.getAux(parseInt(opt.aux)).source == parseInt(opt.input)) {
 				out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
