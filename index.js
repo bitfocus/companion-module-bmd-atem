@@ -525,17 +525,17 @@ class instance extends instance_skel {
 			}
 		}
 		else if (feedback.type == 'preview_bg_2') {
-			if ((this.getME(opt.mixeffect1).pgmSrc == parseInt(opt.input1)) && (this.getME(opt.mixeffect2).pgmSrc == parseInt(opt.input2))){
+			if ((this.getME(opt.mixeffect1).pvwSrc == parseInt(opt.input1)) && (this.getME(opt.mixeffect2).pvwSrc == parseInt(opt.input2))){
 				out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
 		else if (feedback.type == 'preview_bg_3') {
-			if ((this.getME(opt.mixeffect1).pgmSrc == parseInt(opt.input1)) && (this.getME(opt.mixeffect2).pgmSrc == parseInt(opt.input2)) && (this.getME(opt.mixeffect3).pgmSrc == parseInt(opt.input3))){
+			if ((this.getME(opt.mixeffect1).pvwSrc == parseInt(opt.input1)) && (this.getME(opt.mixeffect2).pvwSrc == parseInt(opt.input2)) && (this.getME(opt.mixeffect3).pvwSrc == parseInt(opt.input3))){
 				out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
 		else if (feedback.type == 'preview_bg_4') {
-			if ((this.getME(opt.mixeffect1).pgmSrc == parseInt(opt.input1)) && (this.getME(opt.mixeffect2).pgmSrc == parseInt(opt.input2)) && (this.getME(opt.mixeffect3).pgmSrc == parseInt(opt.input3)) && (this.getME(opt.mixeffect4).pgmSrc == parseInt(opt.input4))){
+			if ((this.getME(opt.mixeffect1).pvwSrc == parseInt(opt.input1)) && (this.getME(opt.mixeffect2).pvwSrc == parseInt(opt.input2)) && (this.getME(opt.mixeffect3).pvwSrc == parseInt(opt.input3)) && (this.getME(opt.mixeffect4).pvwSrc == parseInt(opt.input4))){
 				out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
@@ -870,7 +870,7 @@ class instance extends instance_skel {
 						type: 'colorpicker',
 						label: 'Background color',
 						id: 'bg',
-						default: this.rgb(255,0,0)
+						default: this.rgb(0,255,0)
 					},
 					{
 						type: 'dropdown',
@@ -897,8 +897,8 @@ class instance extends instance_skel {
 						type: 'dropdown',
 						id: 'mixeffect2',
 						label: 'M/E Option 2',
-						default: 0,
-						choices: this.CHOICES_ME.slice(0, this.model.MEs)
+						default: 1,
+						choices: this.CHOICES_ME.slice(1, this.model.MEs)
 					}
 				]
 			};
@@ -918,7 +918,7 @@ class instance extends instance_skel {
 						type: 'colorpicker',
 						label: 'Background color',
 						id: 'bg',
-						default: this.rgb(255,0,0)
+						default: this.rgb(0,255,0)
 					},
 					{
 						type: 'dropdown',
@@ -980,7 +980,7 @@ class instance extends instance_skel {
 						type: 'colorpicker',
 						label: 'Background color',
 						id: 'bg',
-						default: this.rgb(255,0,0)
+						default: this.rgb(0,255,0)
 					},
 					{
 						type: 'dropdown',
@@ -1007,8 +1007,8 @@ class instance extends instance_skel {
 						type: 'dropdown',
 						id: 'mixeffect2',
 						label: 'M/E Option 2',
-						default: 0,
-						choices: this.CHOICES_ME.slice(0, this.model.MEs)
+						default: 1,
+						choices: this.CHOICES_ME.slice(1, this.model.MEs)
 					},
 					{
 						type: 'dropdown',
@@ -1021,8 +1021,8 @@ class instance extends instance_skel {
 						type: 'dropdown',
 						id: 'mixeffect3',
 						label: 'M/E Option 3',
-						default: 0,
-						choices: this.CHOICES_ME.slice(0, this.model.MEs)
+						default: 2,
+						choices: this.CHOICES_ME.slice(2, this.model.MEs)
 					},
 					{
 						type: 'dropdown',
@@ -1035,8 +1035,8 @@ class instance extends instance_skel {
 						type: 'dropdown',
 						id: 'mixeffect4',
 						label: 'M/E Option 4',
-						default: 0,
-						choices: this.CHOICES_ME.slice(0, this.model.MEs)
+						default: 3,
+						choices: this.CHOICES_ME.slice(3, this.model.MEs)
 					}
 				]
 			};
@@ -1115,8 +1115,8 @@ class instance extends instance_skel {
 						type: 'dropdown',
 						id: 'mixeffect2',
 						label: 'M/E Option 2',
-						default: 0,
-						choices: this.CHOICES_ME.slice(0, this.model.MEs)
+						default: 1,
+						choices: this.CHOICES_ME.slice(1, this.model.MEs)
 					}
 				]
 			};
@@ -1225,8 +1225,8 @@ class instance extends instance_skel {
 						type: 'dropdown',
 						id: 'mixeffect2',
 						label: 'M/E Option 2',
-						default: 0,
-						choices: this.CHOICES_ME.slice(0, this.model.MEs)
+						default: 1,
+						choices: this.CHOICES_ME.slice(1, this.model.MEs)
 					},
 					{
 						type: 'dropdown',
@@ -1239,8 +1239,8 @@ class instance extends instance_skel {
 						type: 'dropdown',
 						id: 'mixeffect3',
 						label: 'M/E Option 3',
-						default: 0,
-						choices: this.CHOICES_ME.slice(0, this.model.MEs)
+						default: 2,
+						choices: this.CHOICES_ME.slice(2, this.model.MEs)
 					},
 					{
 						type: 'dropdown',
@@ -1253,8 +1253,8 @@ class instance extends instance_skel {
 						type: 'dropdown',
 						id: 'mixeffect4',
 						label: 'M/E Option 4',
-						default: 0,
-						choices: this.CHOICES_ME.slice(0, this.model.MEs)
+						default: 3,
+						choices: this.CHOICES_ME.slice(3, this.model.MEs)
 					}
 				]
 			};
