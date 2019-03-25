@@ -117,10 +117,10 @@ class instance extends instance_skel {
 		];
 
 		if (this.config.modelID !== undefined){
-			this.config.modelID = 0;
 			this.model = this.CONFIG_MODEL[this.config.modelID];
 		}
 		else {
+			this.config.modelID = 0;
 			this.model = this.CONFIG_MODEL[0];
 		}
 
