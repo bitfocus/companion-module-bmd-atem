@@ -529,6 +529,21 @@ class instance extends instance_skel {
 				out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
+		else if (feedback.type == 'program_bg_2') {
+			if ((this.getME(opt.mixeffect1).pgmSrc == parseInt(opt.input1)) && (this.getME(opt.mixeffect2).pgmSrc == parseInt(opt.input2))){
+				out = { color: opt.fg, bgcolor: opt.bg };
+			}
+		}
+		else if (feedback.type == 'program_bg_3') {
+			if ((this.getME(opt.mixeffect1).pgmSrc == parseInt(opt.input1)) && (this.getME(opt.mixeffect2).pgmSrc == parseInt(opt.input2)) && (this.getME(opt.mixeffect3).pgmSrc == parseInt(opt.input3)) && (this.getME(opt.mixeffect4).pgmSrc == parseInt(opt.input4))){
+				out = { color: opt.fg, bgcolor: opt.bg };
+			}
+		}
+		else if (feedback.type == 'program_bg_4') {
+			if ((this.getME(opt.mixeffect1).pgmSrc == parseInt(opt.input1)) && (this.getME(opt.mixeffect2).pgmSrc == parseInt(opt.input2)) && (this.getME(opt.mixeffect3).pgmSrc == parseInt(opt.input3)) && (this.getME(opt.mixeffect4).pgmSrc == parseInt(opt.input4))){
+				out = { color: opt.fg, bgcolor: opt.bg };
+			}
+		}
 		else if (feedback.type == 'aux_bg') {
 			if (this.getAux(parseInt(opt.aux)).source == parseInt(opt.input)) {
 				out = { color: opt.fg, bgcolor: opt.bg };
@@ -856,6 +871,192 @@ class instance extends instance_skel {
 					choices: this.CHOICES_ME.slice(0, this.model.MEs)
 				}
 			]
+		};
+		if (this.model.MEs >= 2) {
+			feedbacks['program_bg_2'] = {
+				label: 'Change colors from two program sources',
+				description: 'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
+				options: [
+					{
+						type: 'colorpicker',
+						label: 'Foreground color',
+						id: 'fg',
+						default: this.rgb(255,255,255)
+					},
+					{
+						type: 'colorpicker',
+						label: 'Background color',
+						id: 'bg',
+						default: this.rgb(255,0,0)
+					},
+					{
+						type: 'dropdown',
+						label: 'Input Option 1',
+						id: 'input1',
+						default: 1,
+						choices: this.CHOICES_MESOURCES
+					},
+					{
+						type: 'dropdown',
+						id: 'mixeffect1',
+						label: 'M/E Option 1',
+						default: 0,
+						choices: this.CHOICES_ME.slice(0, this.model.MEs)
+					},
+					{
+						type: 'dropdown',
+						label: 'Input Option 2',
+						id: 'input2',
+						default: 1,
+						choices: this.CHOICES_MESOURCES
+					},
+					{
+						type: 'dropdown',
+						id: 'mixeffect2',
+						label: 'M/E Option 2',
+						default: 0,
+						choices: this.CHOICES_ME.slice(0, this.model.MEs)
+					}
+				]
+			};
+		};
+		if (this.model.MEs >= 3) {
+			feedbacks['program_bg_3'] = {
+				label: 'Change colors from three program sources',
+				description: 'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
+				options: [
+					{
+						type: 'colorpicker',
+						label: 'Foreground color',
+						id: 'fg',
+						default: this.rgb(255,255,255)
+					},
+					{
+						type: 'colorpicker',
+						label: 'Background color',
+						id: 'bg',
+						default: this.rgb(255,0,0)
+					},
+					{
+						type: 'dropdown',
+						label: 'Input Option 1',
+						id: 'input1',
+						default: 1,
+						choices: this.CHOICES_MESOURCES
+					},
+					{
+						type: 'dropdown',
+						id: 'mixeffect1',
+						label: 'M/E Option 1',
+						default: 0,
+						choices: this.CHOICES_ME.slice(0, this.model.MEs)
+					},
+					{
+						type: 'dropdown',
+						label: 'Input Option 2',
+						id: 'input2',
+						default: 1,
+						choices: this.CHOICES_MESOURCES
+					},
+					{
+						type: 'dropdown',
+						id: 'mixeffect2',
+						label: 'M/E Option 2',
+						default: 0,
+						choices: this.CHOICES_ME.slice(0, this.model.MEs)
+					},
+					{
+						type: 'dropdown',
+						label: 'Input Option 3',
+						id: 'input3',
+						default: 1,
+						choices: this.CHOICES_MESOURCES
+					},
+					{
+						type: 'dropdown',
+						id: 'mixeffect3',
+						label: 'M/E Option 3',
+						default: 0,
+						choices: this.CHOICES_ME.slice(0, this.model.MEs)
+					}
+				]
+			};
+		};
+		if (this.model.MEs >= 4) {
+			feedbacks['program_bg_4'] = {
+				label: 'Change colors from four program sources',
+				description: 'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
+				options: [
+					{
+						type: 'colorpicker',
+						label: 'Foreground color',
+						id: 'fg',
+						default: this.rgb(255,255,255)
+					},
+					{
+						type: 'colorpicker',
+						label: 'Background color',
+						id: 'bg',
+						default: this.rgb(255,0,0)
+					},
+					{
+						type: 'dropdown',
+						label: 'Input Option 1',
+						id: 'input1',
+						default: 1,
+						choices: this.CHOICES_MESOURCES
+					},
+					{
+						type: 'dropdown',
+						id: 'mixeffect1',
+						label: 'M/E Option 1',
+						default: 0,
+						choices: this.CHOICES_ME.slice(0, this.model.MEs)
+					},
+					{
+						type: 'dropdown',
+						label: 'Input Option 2',
+						id: 'input2',
+						default: 1,
+						choices: this.CHOICES_MESOURCES
+					},
+					{
+						type: 'dropdown',
+						id: 'mixeffect2',
+						label: 'M/E Option 2',
+						default: 0,
+						choices: this.CHOICES_ME.slice(0, this.model.MEs)
+					},
+					{
+						type: 'dropdown',
+						label: 'Input Option 3',
+						id: 'input3',
+						default: 1,
+						choices: this.CHOICES_MESOURCES
+					},
+					{
+						type: 'dropdown',
+						id: 'mixeffect3',
+						label: 'M/E Option 3',
+						default: 0,
+						choices: this.CHOICES_ME.slice(0, this.model.MEs)
+					},
+					{
+						type: 'dropdown',
+						label: 'Input Option 4',
+						id: 'input4',
+						default: 1,
+						choices: this.CHOICES_MESOURCES
+					},
+					{
+						type: 'dropdown',
+						id: 'mixeffect4',
+						label: 'M/E Option 4',
+						default: 0,
+						choices: this.CHOICES_ME.slice(0, this.model.MEs)
+					}
+				]
+			};
 		};
 		feedbacks['aux_bg'] = {
 			label: 'Change colors from AUX bus',
@@ -1606,6 +1807,9 @@ class instance extends instance_skel {
 				this.checkFeedbacks('aux_bg');
 				this.checkFeedbacks('preview_bg');
 				this.checkFeedbacks('program_bg');
+				this.checkFeedbacks('program_bg_2');
+				this.checkFeedbacks('program_bg_3');
+				this.checkFeedbacks('program_bg_4');
 				this.checkFeedbacks('dsk_bg');
 				this.checkFeedbacks('dsk_source');
 				this.checkFeedbacks('usk_bg');
@@ -1686,6 +1890,9 @@ class instance extends instance_skel {
 
 				if (this.initDone === true) {
 					this.checkFeedbacks('program_bg');
+					this.checkFeedbacks('program_bg_2');
+					this.checkFeedbacks('program_bg_3');
+					this.checkFeedbacks('program_bg_4');
 				}
 				break;
 
@@ -1801,7 +2008,7 @@ class instance extends instance_skel {
 	 * @since 1.1.0
 	 */
 	setSource(id, useME, useAux, useMV, shortLabel, label) {
-		
+
 		var source = this.getSource(id);
 
 		// Use ATEM names if we got um
