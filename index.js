@@ -535,7 +535,7 @@ class instance extends instance_skel {
 			}
 		}
 		else if (feedback.type == 'program_bg_3') {
-			if ((this.getME(opt.mixeffect1).pgmSrc == parseInt(opt.input1)) && (this.getME(opt.mixeffect2).pgmSrc == parseInt(opt.input2)) && (this.getME(opt.mixeffect3).pgmSrc == parseInt(opt.input3)) && (this.getME(opt.mixeffect4).pgmSrc == parseInt(opt.input4))){
+			if ((this.getME(opt.mixeffect1).pgmSrc == parseInt(opt.input1)) && (this.getME(opt.mixeffect2).pgmSrc == parseInt(opt.input2)) && (this.getME(opt.mixeffect3).pgmSrc == parseInt(opt.input3))){
 				out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
