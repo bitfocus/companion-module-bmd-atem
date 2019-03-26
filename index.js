@@ -61,9 +61,9 @@ class instance extends instance_skel {
 		];
 
 		this.CHOICES_KEYTRANS = [
-			{ id: 'true',   label: 'On Air', },
-			{ id: 'false',  label: 'Off', },
-			{ id: 'toggle', label: 'Toggle', }
+			{ id: 'true',   label: 'On Air' },
+			{ id: 'false',  label: 'Off' },
+			{ id: 'toggle', label: 'Toggle' }
 		];
 
 		this.CHOICES_MACRORUN = [
@@ -120,6 +120,7 @@ class instance extends instance_skel {
 			this.model = this.CONFIG_MODEL[this.config.modelID];
 		}
 		else {
+			this.config.modelID = 0;
 			this.model = this.CONFIG_MODEL[0];
 		}
 
@@ -454,7 +455,7 @@ class instance extends instance_skel {
 	 * @access public
 	 * @since 1.0.0
 	 */
-	config_fields () {
+	config_fields() {
 
 		return [
 			{
@@ -488,7 +489,7 @@ class instance extends instance_skel {
 				default: 0
 			}
 		]
-	};
+	}
 
 	/**
 	 * Clean up the instance before it is destroyed.
@@ -504,7 +505,7 @@ class instance extends instance_skel {
 		}
 
 		debug("destroy", this.id);
-	};
+	}
 
 	/**
 	 * Processes a feedback state.
@@ -1492,7 +1493,7 @@ class instance extends instance_skel {
 		};
 
 		this.setFeedbackDefinitions(feedbacks);
-	};
+	}
 
 	/**
 	 * INTERNAL: initialize presets.
@@ -1951,7 +1952,7 @@ class instance extends instance_skel {
 		}
 
 		this.setVariableDefinitions(variables);
-	};
+	}
 
 	/**
 	 * INTERNAL: Callback for ATEM connection to state change responses.
