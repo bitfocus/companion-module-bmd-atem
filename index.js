@@ -1854,13 +1854,13 @@ class instance extends instance_skel {
 		}
 
 // Check for atem 8k 16 MV Windows
-		if (this.model.MVs >= 4) {
-				var mvwindows = 16
-				var startMV = 0
+	if (this.model.MVs >= 4) {
+		var mvwindows = 16;
+		var startMV = 0;
 		}	else {
 				var mvwindows = 10;
 				var startMV = 2;
-		};
+			};
 
 		for (var i = 0; i < this.model.MVs; i++) {
 
@@ -2317,16 +2317,15 @@ class instance extends instance_skel {
 	setupMvWindowChoices() {
 		this.CHOICES_MVWINDOW = [];
 
-			if (this.config.modelID == (9)){
-				for (var i = 0; i < 16; i++) {
-					this.CHOICES_MVWINDOW.push({ id: i, label: 'Window '+ (i+1) });
-				};
-			}
-			else {
+		if (this.config.modelID == (9)){
+			for (var i = 0; i < 16; i++) {
+				this.CHOICES_MVWINDOW.push({ id: i, label: 'Window '+ (i+1) });
+			};
+		}	else {
 				for (var i = 2; i < 10; i++) {
 					this.CHOICES_MVWINDOW.push({ id: i, label: 'Window '+ (i+1) });
-				};
-			}
+			};
+		}
 	}
 
 	/**
