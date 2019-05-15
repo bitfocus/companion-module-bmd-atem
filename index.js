@@ -1855,10 +1855,10 @@ class instance extends instance_skel {
 
 // Check for atem 8k 16 MV Windows
 	if (this.model.MVs >= 4) {
-		var mvwindows = 16;
+		var mvWindows = 16;
 		var startMV = 0;
 		}	else {
-				var mvwindows = 10;
+				var mvWindows = 10;
 				var startMV = 2;
 			};
 
