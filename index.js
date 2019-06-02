@@ -7,7 +7,7 @@ var log;
  * Companion instance class for the Blackmagic ATEM Switchers.
  *
  * @extends instance_skel
- * @version 1.1.0
+ * @version 1.1.7
  * @since 1.0.0
  * @author Håkon Nessjøen <haakon@bitfocus.io>
  * @author Keith Rocheck <keith.rocheck@gmail.com>
@@ -107,6 +107,13 @@ class instance extends instance_skel {
 		this.CHOICES_PRESETSTYLE = [
 			{ id: 0, label: 'Short Names' },
 			{ id: 1, label: 'Long Names' }
+		];
+
+		this.CHOICES_SSRCBOXES = [
+			{ id: 0, label: 'Box 1' },
+			{ id: 1, label: 'Box 2' },
+			{ id: 2, label: 'Box 3' },
+			{ id: 3, label: 'Box 4' }
 		];
 
 		this.CHOICES_USKS = [
@@ -381,6 +388,25 @@ class instance extends instance_skel {
 						choices: this.CHOICES_MVSOURCES
 					}
 				]
+			},
+			'setSsrcBoxSource': {
+				label: 'Change SuperSource box source',
+				options: [
+					{
+						type:    'dropdown',
+						id:      'boxIndex',
+						label:   'Box #',
+						default: 0,
+						choices: this.CHOICES_SSRCBOXES
+					},
+					{
+						type:    'dropdown',
+						id:      'source',
+						label:   'Source',
+						default: 0,
+						choices: this.CHOICES_MESOURCES
+					}
+				]
 			}
 		});
 	}
@@ -457,6 +483,11 @@ class instance extends instance_skel {
 				break;
 			case 'setMvSource':
 				this.atem.setMultiViewerSource( { 'windowIndex': opt.windowIndex, 'source': opt.source }, opt.multiViewerId);
+				break;
+			case 'setSsrcBoxSource':
+				var box = Object.assign({}, this.getSuperSourceBox(opt.boxIndex, 0));
+				box.source = opt.source;
+				this.atem.setSuperSourceBoxSettings( box, opt.boxIndex);
 				break;
 			default:
 				debug('Unknown action: ' + action.action);
@@ -607,6 +638,11 @@ class instance extends instance_skel {
 		}
 		else if (feedback.type == 'mv_source') {
 			if (this.getMvWindow(opt.multiViewerId, opt.windowIndex).source == opt.source) {
+					out = { color: opt.fg, bgcolor: opt.bg };
+			}
+		}
+		else if (feedback.type == 'ssrc_box_source') {
+			if (this.getSuperSourceBox(opt.boxIndex, 0).source == opt.source) {
 					out = { color: opt.fg, bgcolor: opt.bg };
 			}
 		}
@@ -780,6 +816,73 @@ class instance extends instance_skel {
 		}
 
 		return this.sources[id];
+	}
+
+	/**
+	 * INTERNAL: returns the desired SuperSource object.
+	 *
+	 * @param {number} id - the ssrc id to fetch
+	 * @returns {Object} the desired ssrc object
+	 * @access protected
+	 * @since 1.1.7
+	 */
+	getSuperSource(id = 0) {
+
+		if (this.states['ssrc' + id] === undefined) {
+			this.states['ssrc' + id] = {
+				artFillSource:              0,
+				artCutSource:               0,
+				artOption:                  0,
+				artPreMultiplied:           0,
+				artClip:                    0,
+				artGain:                    0,
+				artInvertKey:               0,
+				borderEnabled:              0,
+				borderBevel:                0,
+				borderOuterWidth:           0,
+				borderInnerWidth:           0,
+				borderOuterSoftness:        0,
+				borderInnerSoftness:        0,
+				borderBevelSoftness:        0,
+				borderBevelPosition:        0,
+				borderHue:                  0,
+				borderSaturation:           0,
+				borderLuma:                 0,
+				borderLightSourceDirection: 0,
+				borderLightSourceAltitude:  0
+			};
+		}
+
+		return this.states['ssrc' + id];
+	}
+
+	/**
+	 * INTERNAL: returns the desired SuperSource box object.
+	 *
+	 * @param {number} box - the ssrc box to fetch
+	 * @param {number} id - the ssrc id to fetch
+	 * @returns {Object} the desired ssrc object
+	 * @access protected
+	 * @since 1.1.7
+	 */
+	getSuperSourceBox(box, id = 0) {
+
+		if (this.states['ssrc' + id + 'box' + box] === undefined) {
+			this.states['ssrc' + id + 'box' + box] = {
+				enabled:    0,
+				source:     0,
+				x:          0,
+				y:          0,
+				size:       0,
+				cropped:    0,
+				cropTop:    0,
+				cropBottom: 0,
+				cropLeft:   0,
+				cropRight:  0
+			};
+		}
+
+		return this.states['ssrc' + id + 'box' + box];
 	}
 
 	/**
@@ -1506,6 +1609,38 @@ class instance extends instance_skel {
 				}
 			]
 		};
+		feedbacks['ssrc_box_source'] = {
+			label: 'Change colors from SuperSorce box source',
+			description: 'If the specified SuperSource box is set to the specified source, change color of the bank',
+			options: [
+				{
+					type: 'colorpicker',
+					label: 'Foreground color',
+					id: 'fg',
+					default: this.rgb(0,0,0)
+				},
+				{
+					type: 'colorpicker',
+					label: 'Background color',
+					id: 'bg',
+					default: this.rgb(255,255,0)
+				},
+				{
+					type:    'dropdown',
+					id:      'boxIndex',
+					label:   'Box #',
+					default: 2,
+					choices: this.CHOICES_SSRCBOXES
+				},
+				{
+					type:    'dropdown',
+					id:      'source',
+					label:   'Source',
+					default: 0,
+					choices: this.CHOICES_MESOURCES
+				}
+			]
+		};
 
 		this.setFeedbackDefinitions(feedbacks);
 	}
@@ -1883,6 +2018,50 @@ class instance extends instance_skel {
 			}
 		}
 
+		//Future loop for multiple SSRC
+		for (var i = 0; i < 1; i++) {
+
+			for (var j = 0; j < 4; j++) {
+
+				for (var k in this.CHOICES_MESOURCES) {
+
+					presets.push({
+						category: 'SSrc ' + (i+1) + ' Box ' + (j+1),
+						label: 'Set SuperSource '+(i+1)+', box '+(j+1)+' to source '+this.CHOICES_MESOURCES[k].label,
+						bank: {
+							style:   'text',
+							text:    '$(attem:' + pstText + this.CHOICES_MESOURCES[k].id + ')',
+							size:    pstSize,
+							color:   this.rgb(255,255,255),
+							bgcolor: this.rgb(0,0,0)
+						},
+						feedbacks: [
+							{
+								type: 'ssrc_box_source',
+								options: {
+									bg:        this.rgb(255,255,0),
+									fg:        this.rgb(0,0,0),
+									//ssrcId:    i,
+									source:    this.CHOICES_MESOURCES[k].id,
+									boxIndex:  j
+								}
+							}
+						],
+						actions: [
+							{
+								action: 'setSsrcBoxSource',
+								options: {
+									//ssrcId:    i,
+									source:    this.CHOICES_MESOURCES[k].id,
+									boxIndex:  j
+								}
+							}
+						]
+					});
+				}
+			}
+		}
+
 		this.setPresetDefinitions(presets);
 	}
 
@@ -2021,21 +2200,7 @@ class instance extends instance_skel {
 				this.log('info', 'Connected to a ' + this.deviceName);
 
 				this.setAtemModel(this.deviceModel, true);
-				this.checkFeedbacks('aux_bg');
-				this.checkFeedbacks('preview_bg');
-				this.checkFeedbacks('preview_bg_2');
-				this.checkFeedbacks('preview_bg_3');
-				this.checkFeedbacks('preview_bg_4');
-				this.checkFeedbacks('program_bg');
-				this.checkFeedbacks('program_bg_2');
-				this.checkFeedbacks('program_bg_3');
-				this.checkFeedbacks('program_bg_4');
-				this.checkFeedbacks('dsk_bg');
-				this.checkFeedbacks('dsk_source');
-				this.checkFeedbacks('usk_bg');
-				this.checkFeedbacks('usk_source');
-				this.checkFeedbacks('macro');
-				this.checkFeedbacks('mv_source');
+				this.checkFeedbacks();
 				break;
 
 			case 'InputPropertiesCommand':
@@ -2135,6 +2300,22 @@ class instance extends instance_skel {
 
 				if (this.initDone === true) {
 					this.checkFeedbacks('trans_pvw');
+				}
+				break;
+
+			case 'SuperSourceBoxPropertiesCommand':
+				this.updateSuperSourceBox(state.boxId, 0, state.properties)
+
+				if (this.initDone === true) {
+					this.checkFeedbacks('ssrc_box_source');
+				}
+				break;
+
+			case 'SuperSourcePropertiesCommand':
+				this.updateSuperSource(0, state.properties)
+
+				if (this.initDone === true) {
+					//this.checkFeedbacks('ssrc_');
 				}
 				break;
 
@@ -2508,6 +2689,43 @@ class instance extends instance_skel {
 		if (typeof properties === 'object') {
 			for (var x in properties) {
 				source[x] = properties[x];
+			}
+		}
+	}
+
+	/**
+	 * Update an array of properties for a SuperSource.
+	 *
+	 * @param {number} id - the SuperSource id
+	 * @param {Object} properties - the new properties
+	 * @access public
+	 * @since 1.1.7
+	 */
+	updateSuperSource(id, properties) {
+		var ssrc = this.getSuperSource(id);
+
+		if (typeof properties === 'object') {
+			for (var x in properties) {
+				ssrc[x] = properties[x];
+			}
+		}
+	}
+
+	/**
+	 * Update an array of properties for a SuperSource.
+	 *
+	 * @param {number} box - the box id
+	 * @param {number} id - the SuperSource id
+	 * @param {Object} properties - the new properties
+	 * @access public
+	 * @since 1.1.7
+	 */
+	updateSuperSourceBox(box, id, properties) {
+		var box = this.getSuperSourceBox(box, id);
+
+		if (typeof properties === 'object') {
+			for (var x in properties) {
+				box[x] = properties[x];
 			}
 		}
 	}
