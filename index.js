@@ -34,50 +34,30 @@ class instance extends instance_skel {
 		this.initDone    = false;
 
 		this.CONFIG_MODEL = {
-			0: { id: 0, label: 'Auto Detect',           inputs: 8,  auxes: 3,  MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, SSrc: 1, macros: 100 },
-			1: { id: 1, label: 'TV Studio',             inputs: 8,  auxes: 1,  MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, SSrc: 0, macros: 100 },
-			2: { id: 2, label: '1 ME Production',       inputs: 8,  auxes: 3,  MEs: 1, USKs: 4, DSKs: 2, MPs: 2, MVs: 1, SSrc: 1, macros: 100 },
-			3: { id: 3, label: '2 ME Production',       inputs: 16, auxes: 6,  MEs: 2, USKs: 4, DSKs: 2, MPs: 2, MVs: 2, SSrc: 1, macros: 100 },
-			4: { id: 4, label: 'Production Studio 4K',  inputs: 8,  auxes: 1,  MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, SSrc: 0, macros: 100 },
-			5: { id: 5, label: '1 ME Production 4K',    inputs: 10, auxes: 3,  MEs: 1, USKs: 4, DSKs: 2, MPs: 2, MVs: 1, SSrc: 1, macros: 100 },
-			6: { id: 6, label: '2 ME Production 4K',    inputs: 20, auxes: 6,  MEs: 2, USKs: 2, DSKs: 2, MPs: 2, MVs: 2, SSrc: 1, macros: 100 },
-			7: { id: 7, label: '4 ME Broadcast 4K',     inputs: 20, auxes: 6,  MEs: 4, USKs: 4, DSKs: 2, MPs: 4, MVs: 2, SSrc: 1, macros: 100 },
-			8: { id: 8, label: 'TV Studio HD',          inputs: 8,  auxes: 1,  MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, SSrc: 0, macros: 100 },
-			9: { id: 9, label: '4 ME Constellation 8K', inputs: 40, auxes: 24, MEs: 4, USKs: 4, DSKs: 4, MPs: 4, MVs: 4, SSrc: 2, macros: 100 }
+			0: { id: 0, label: 'Auto Detect',          inputs: 8,  auxes: 3, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, SSrc: 1, macros: 100 },
+			1: { id: 1, label: 'TV Studio',            inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, SSrc: 0, macros: 100 },
+			2: { id: 2, label: '1 ME Production',      inputs: 8,  auxes: 3, MEs: 1, USKs: 4, DSKs: 2, MPs: 2, MVs: 1, SSrc: 1, macros: 100 },
+			3: { id: 3, label: '2 ME Production',      inputs: 16, auxes: 6, MEs: 2, USKs: 4, DSKs: 2, MPs: 2, MVs: 2, SSrc: 1, macros: 100 },
+			4: { id: 4, label: 'Production Studio 4K', inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, SSrc: 0, macros: 100 },
+			5: { id: 5, label: '1 ME Production 4K',   inputs: 10, auxes: 3, MEs: 1, USKs: 4, DSKs: 2, MPs: 2, MVs: 1, SSrc: 1, macros: 100 },
+			6: { id: 6, label: '2 ME Production 4K',   inputs: 20, auxes: 6, MEs: 2, USKs: 2, DSKs: 2, MPs: 2, MVs: 2, SSrc: 1, macros: 100 },
+			7: { id: 7, label: '4 ME Broadcast 4K',    inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2, MPs: 4, MVs: 2, SSrc: 1, macros: 100 },
+			8: { id: 8, label: 'TV Studio HD',         inputs: 8,  auxes: 1, MEs: 1, USKs: 1, DSKs: 2, MPs: 2, MVs: 1, SSrc: 0, macros: 100 },
+			//9: { id: 9, label: '4ME?',                 inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2, MPs: 4, MVs: 2, macros: 100 }
 		};
 
 		this.CHOICES_AUXES = [
-			{ id: 0, label: '1'  },
-			{ id: 1, label: '2'  },
-			{ id: 2, label: '3'  },
-			{ id: 3, label: '4'  },
-			{ id: 4, label: '5'  },
-			{ id: 5, label: '6'  },
-			{ id: 5, label: '7'  },
-			{ id: 5, label: '8'  },
-			{ id: 5, label: '9'  },
-			{ id: 5, label: '10' },
-			{ id: 5, label: '11' },
-			{ id: 5, label: '12' },
-			{ id: 5, label: '13' },
-			{ id: 5, label: '14' },
-			{ id: 5, label: '15' },
-			{ id: 5, label: '16' },
-			{ id: 5, label: '17' },
-			{ id: 5, label: '18' },
-			{ id: 5, label: '19' },
-			{ id: 5, label: '20' },
-			{ id: 5, label: '21' },
-			{ id: 5, label: '22' },
-			{ id: 5, label: '23' },
-			{ id: 5, label: '24' }
-		];
-
-		this.CHOICES_DSKS = [
 			{ id: 0, label: '1' },
 			{ id: 1, label: '2' },
 			{ id: 2, label: '3' },
 			{ id: 3, label: '4' },
+			{ id: 4, label: '5' },
+			{ id: 5, label: '6' }
+		];
+
+		this.CHOICES_DSKS = [
+			{ id: 0, label: '1' },
+			{ id: 1, label: '2' }
 		];
 
 		this.CHOICES_KEYTRANS = [
@@ -119,9 +99,7 @@ class instance extends instance_skel {
 
 		this.CHOICES_MV = [
 			{ id: 0, label: 'MV 1' },
-			{ id: 1, label: 'MV 2' },
-			{ id: 2, label: 'MV 3' },
-			{ id: 3, label: 'MV 4' }
+			{ id: 1, label: 'MV 2' }
 		];
 
 		this.setupMvWindowChoices();
@@ -746,22 +724,16 @@ class instance extends instance_skel {
 			this.states['mv_' + id] = {
 				multiViewerId:  id,
 				windows: {
-					window0:  { windowIndex: 0, source: 0 },
-					window1:  { windowIndex: 1, source: 0 },
-					window2:  { windowIndex: 2, source: 0 },
-					window3:  { windowIndex: 3, source: 0 },
-					window4:  { windowIndex: 4, source: 0 },
-					window5:  { windowIndex: 5, source: 0 },
-					window6:  { windowIndex: 6, source: 0 },
-					window7:  { windowIndex: 7, source: 0 },
-					window8:  { windowIndex: 8, source: 0 },
-					window9:  { windowIndex: 9, source: 0 },
-					window10: { windowIndex: 10, source: 0 },
-					window11: { windowIndex: 11, source: 0 },
-					window12: { windowIndex: 12, source: 0 },
-					window13: { windowIndex: 13, source: 0 },
-					window14: { windowIndex: 14, source: 0 },
-					window15: { windowIndex: 15, source: 0 },
+					window0: { windowIndex: 0, source: 0 },
+					window1: { windowIndex: 1, source: 0 },
+					window2: { windowIndex: 2, source: 0 },
+					window3: { windowIndex: 3, source: 0 },
+					window4: { windowIndex: 4, source: 0 },
+					window5: { windowIndex: 5, source: 0 },
+					window6: { windowIndex: 6, source: 0 },
+					window7: { windowIndex: 7, source: 0 },
+					window8: { windowIndex: 8, source: 0 },
+					window9: { windowIndex: 9, source: 0 }
 				}
 			};
 		}
@@ -1868,18 +1840,9 @@ class instance extends instance_skel {
 			});
 		}
 
-// Check for atem 8k 16 MV Windows
-		if (this.model.MVs >= 4) {
-				var mvwindows = 16
-				var startMV = 0
-		}	else {
-				var mvwindows = 10;
-				var startMV = 2;
-		};
-
 		for (var i = 0; i < this.model.MVs; i++) {
 
-			for (var j = startMV; j < mvWindows; j++) {
+			for (var j = 2; j < 10; j++) {
 
 				for (var k in this.CHOICES_MVSOURCES) {
 
@@ -2332,16 +2295,9 @@ class instance extends instance_skel {
 	setupMvWindowChoices() {
 		this.CHOICES_MVWINDOW = [];
 
-			if (this.config.modelID == (9)){
-				for (var i = 0; i < 16; i++) {
-					this.CHOICES_MVWINDOW.push({ id: i, label: 'Window '+ (i+1) });
-				};
-			}
-			else {
-				for (var i = 2; i < 10; i++) {
-					this.CHOICES_MVWINDOW.push({ id: i, label: 'Window '+ (i+1) });
-				};
-			}
+		for (var i = 2; i < 10; i++) {
+			this.CHOICES_MVWINDOW.push({ id: i, label: 'Window '+ (i+1) });
+		}
 	}
 
 	/**
@@ -2362,11 +2318,7 @@ class instance extends instance_skel {
 		this.setSource(7002, 0, 1, 1, 'Cln2', 'Clean Feed 2');
 
 		if (this.model.SSrc > 0) {
-			this.setSource(6000, 1, 1, 1, 'SSc1', 'Super Source 1');
-		}
-
-		if (this.model.SSrc > 1) {
-			this.setSource(6001, 1, 1, 1, 'SSc2', 'Super Source 2');
+			this.setSource(6000, 1, 1, 1, 'SSrc', 'Super Source');
 		}
 
 		for(var i = 1; i <= this.model.inputs; i++) {
