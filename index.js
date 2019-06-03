@@ -342,7 +342,7 @@ class instance extends instance_skel {
 					}
 				]
 			},
-			'macrorun': {
+			'macroRun': {
 				label: 'Run MACRO',
 				options: [
 					{
@@ -361,8 +361,8 @@ class instance extends instance_skel {
 					}
 				]
 			},
-			'macrocontinue': { label: 'Continue MACRO' },
-			'macrostop':     { label: 'Stop MACROS' },
+			'macroContinue': { label: 'Continue MACRO' },
+			'macroStop':     { label: 'Stop MACROS' },
 			'setMvSource': {
 				label: 'Change MV window source',
 				options: [
@@ -464,7 +464,7 @@ class instance extends instance_skel {
 			case 'auto':
 				this.atem.autoTransition(parseInt(opt.mixeffect));
 				break;
-			case 'macrorun':
+			case 'macroRun':
 				if (opt.action == 'runContinue' && this.getMacro(parseInt(opt.macro)-1).isWaiting == 1) {
 					this.atem.macroContinue();
 				}
@@ -475,10 +475,10 @@ class instance extends instance_skel {
 					this.atem.macroRun(parseInt(opt.macro)-1);
 				}
 				break;
-			case 'macrocontinue':
+			case 'macroContinue':
 				this.atem.macroContinue();
 				break;
-			case 'macrostop':
+			case 'macroStop':
 				this.atem.macroStop();
 				break;
 			case 'setMvSource':
@@ -1965,7 +1965,7 @@ class instance extends instance_skel {
 				],
 				actions: [
 					{
-						action: 'macrorun',
+						action: 'macroRun',
 						options: {
 							macro:  (i+1),
 							action: 'runContinue'
