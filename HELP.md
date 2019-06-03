@@ -9,6 +9,8 @@ Should work with all models of Blackmagic Design ATEM mixers
 * Set inputs on Downstream KEY
 * Set AUX bus
 * Set Upstream KEY OnAir
+* Auto DSK Transition
+* Set Downstream Key On Air
 * CUT operation
 * AUTO transition operation
 * Run MACRO
