@@ -287,6 +287,18 @@ class instance extends instance_skel {
 					}
 				]
 			},
+			'dskAuto': {
+				label: 'AUTO DSK Transition',
+				options: [
+					{
+						type: 'dropdown',
+						id: 'downstreamKeyerId',
+						label: 'DSK',
+						default: 0,
+						choices: this.CHOICES_DSKS.slice(0, this.model.DSKs)
+					}
+				]
+			},
 			'dsk': {
 				label: 'Set Downstream KEY OnAir',
 				options: [
@@ -438,6 +450,9 @@ class instance extends instance_skel {
 				} else {
 					this.atem.setUpstreamKeyerOnAir(opt.onair == 'true', parseInt(opt.mixeffect), parseInt(opt.key));
 				}
+				break;
+			case 'dskAuto':
+				this.atem.autoDownstreamKey(parseInt(opt.downstreamKeyerId));
 				break;
 			case 'dsk':
 				if (opt.onair == 'toggle') {
