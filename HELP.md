@@ -17,3 +17,4 @@ Should work with all models of Blackmagic Design ATEM mixers
 * Continue MACRO
 * Stop MACROS
 * Change MV window source
+* Change SuperSource box source
