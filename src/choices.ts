@@ -1,7 +1,7 @@
+import { AtemState } from 'atem-connection'
 import { DropdownChoice } from '../../../instance_skel_types'
 import { ModelSpec } from './models'
 import { iterateTimes, literal } from './util'
-import { AtemState } from 'atem-connection'
 
 export const CHOICES_SSRCBOXES: DropdownChoice[] = [
   { id: 0, label: 'Box 1' },

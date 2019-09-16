@@ -1,16 +1,16 @@
+import { AtemState } from 'atem-connection'
 import { CompanionInputFieldDropdown } from '../../../instance_skel_types'
 import {
-  GetMEIdChoices,
-  GetUSKIdChoices,
-  GetDSKIdChoices,
+  CHOICES_SSRCBOXES,
   GetAuxIdChoices,
+  GetDSKIdChoices,
+  GetMEIdChoices,
   GetMultiviewerIdChoices,
-  SourcesToChoices,
   GetSourcesListForType,
-  CHOICES_SSRCBOXES
+  GetUSKIdChoices,
+  SourcesToChoices
 } from './choices'
 import { ModelSpec } from './models'
-import { AtemState } from 'atem-connection'
 import { iterateTimes } from './util'
 
 export function AtemMESourcePicker(model: ModelSpec, state: AtemState, id: number): CompanionInputFieldDropdown {

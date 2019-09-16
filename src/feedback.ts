@@ -1,22 +1,22 @@
+import { AtemState } from 'atem-connection'
 import InstanceSkel = require('../../../instance_skel')
 import { CompanionFeedbacks, CompanionInputFieldColor } from '../../../instance_skel_types'
 import { AtemConfig } from './config'
 import {
+  AtemAuxPicker,
+  AtemAuxSourcePicker,
+  AtemDSKPicker,
+  AtemKeyFillSourcePicker,
   AtemMEPicker,
   AtemMESourcePicker,
-  AtemUSKPicker,
-  AtemDSKPicker,
-  AtemAuxPicker,
   AtemMultiviewerPicker,
-  AtemKeyFillSourcePicker,
-  AtemAuxSourcePicker,
+  AtemMultiviewSourcePicker,
+  AtemMultiviewWindowPicker,
   AtemSuperSourceBoxPicker,
   AtemSuperSourceBoxSourcePicker,
-  AtemMultiviewSourcePicker,
-  AtemMultiviewWindowPicker
+  AtemUSKPicker
 } from './input'
 import { ModelSpec } from './models'
-import { AtemState } from 'atem-connection'
 
 export enum FeedbackId {
   PreviewBG = 'preview_bg',
