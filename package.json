@@ -1,6 +1,6 @@
 {
 	"name": "atem",
-	"version": "1.1.8",
+	"version": "2.0.0-dev",
 	"api_version": "1.0.0",
 	"description": "Blackmagic Design",
 	"keywords": [
@@ -10,9 +10,15 @@
 	"product": "ATEM",
 	"shortname": "atem",
 	"homepage": "https://github.com/bitfocus/companion-module-atem#readme",
-	"main": "index.js",
+	"main": "dist/index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"build": "trash dist && yarn build:main",
+		"build:main": "tsc -p tsconfig.build.json",
+		"lint": "tslint --project tsconfig.json --config tslint.json && yarn prettier --check \"src/**/*.ts\"",
+		"lint-fix": "tslint --project tsconfig.json --config tslint.json --fix && yarn prettier --write \"src/**/*.ts\"",
+		"tslint-check": "tslint-config-prettier-check ./tslint.json",
+		"validate:dependencies": "yarn audit && yarn license-validate",
+		"license-validate": "node-license-validator -p -d --allow-licenses MIT BSD BSD-3-Clause ISC Apache Unlicense WTFPL"
 	},
 	"repository": {
 		"type": "git",
@@ -25,5 +31,12 @@
 	},
 	"dependencies": {
 		"atem-connection": "0.10.0"
+	},
+	"devDependencies": {
+		"@types/node": "^12.0.4",
+		"trash-cli": "^3.0.0",
+		"tslint": "^5.20.0",
+		"tslint-config-prettier": "^1.18.0",
+		"typescript": "^3.6.3"
 	}
 }
