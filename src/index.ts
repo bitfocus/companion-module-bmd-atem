@@ -1,20 +1,13 @@
-import { Atem, Enums } from 'atem-connection'
+import { Atem } from 'atem-connection'
 import InstanceSkel = require('../../../instance_skel')
-import { CompanionFeedbacks, CompanionVariable } from '../../../instance_skel_types'
-
-interface ModelSpec {
-  id: Enums.Model // TODO - this might not work..
-  label: string
-  inputs: number
-  auxes: number
-  MEs: number
-  USKs: number
-  DSKs: number
-  MPs: number
-  MVs: number
-  SSrc: number
-  macros: number
-}
+import {
+  CompanionConfigField,
+  CompanionFeedbacks,
+  CompanionSystem,
+  CompanionVariable
+} from '../../../instance_skel_types'
+import { AtemConfig, GetConfigFields } from './config'
+import { ModelId, ModelSpec, GetModelSpec, GetAutoDetectModel, MODEL_AUTO_DETECT } from './models'
 
 /**
  * Companion instance class for the Blackmagic ATEM Switchers.
@@ -25,17 +18,14 @@ interface ModelSpec {
  * @author Håkon Nessjøen <haakon@bitfocus.io>
  * @author Keith Rocheck <keith.rocheck@gmail.com>
  */
-class AtemInstance extends InstanceSkel {
-  private CONFIG_MODEL: { [id: number]: ModelSpec }
+class AtemInstance extends InstanceSkel<AtemConfig> {
   private CHOICES_AUXES: Array<{ id: number; label: string }>
   private CHOICES_DSKS: Array<{ id: number; label: string }>
   private CHOICES_KEYTRANS: Array<{ id: string; label: string }>
   private CHOICES_MACRORUN: Array<{ id: string; label: string }>
   private CHOICES_MACROSTATE: Array<{ id: string; label: string }>
   private CHOICES_ME: Array<{ id: number; label: string }>
-  private CHOICES_MODEL: ModelSpec[]
   private CHOICES_MV: Array<{ id: number; label: string }>
-  private CHOICES_PRESETSTYLE: Array<{ id: number; label: string }>
   private CHOICES_SSRCBOXES: Array<{ id: number; label: string }>
   private CHOICES_USKS: Array<{ id: number; label: string }>
 
@@ -62,7 +52,7 @@ class AtemInstance extends InstanceSkel {
    * @param {Object} config - saved user configuration parameters
    * @since 1.0.0
    */
-  constructor(system, id, config) {
+  constructor(system: CompanionSystem, id: string, config: AtemConfig) {
     super(system, id, config)
 
     // this.model = {}
@@ -72,127 +62,6 @@ class AtemInstance extends InstanceSkel {
     this.deviceName = ''
     this.deviceModel = 0
     this.initDone = false
-
-    this.CONFIG_MODEL = {
-      0: {
-        id: 0,
-        label: 'Auto Detect',
-        inputs: 8,
-        auxes: 3,
-        MEs: 1,
-        USKs: 1,
-        DSKs: 2,
-        MPs: 2,
-        MVs: 1,
-        SSrc: 1,
-        macros: 100
-      },
-      1: {
-        id: 1,
-        label: 'TV Studio',
-        inputs: 8,
-        auxes: 1,
-        MEs: 1,
-        USKs: 1,
-        DSKs: 2,
-        MPs: 2,
-        MVs: 1,
-        SSrc: 0,
-        macros: 100
-      },
-      2: {
-        id: 2,
-        label: '1 ME Production',
-        inputs: 8,
-        auxes: 3,
-        MEs: 1,
-        USKs: 4,
-        DSKs: 2,
-        MPs: 2,
-        MVs: 1,
-        SSrc: 1,
-        macros: 100
-      },
-      3: {
-        id: 3,
-        label: '2 ME Production',
-        inputs: 16,
-        auxes: 6,
-        MEs: 2,
-        USKs: 4,
-        DSKs: 2,
-        MPs: 2,
-        MVs: 2,
-        SSrc: 1,
-        macros: 100
-      },
-      4: {
-        id: 4,
-        label: 'Production Studio 4K',
-        inputs: 8,
-        auxes: 1,
-        MEs: 1,
-        USKs: 1,
-        DSKs: 2,
-        MPs: 2,
-        MVs: 1,
-        SSrc: 0,
-        macros: 100
-      },
-      5: {
-        id: 5,
-        label: '1 ME Production 4K',
-        inputs: 10,
-        auxes: 3,
-        MEs: 1,
-        USKs: 4,
-        DSKs: 2,
-        MPs: 2,
-        MVs: 1,
-        SSrc: 1,
-        macros: 100
-      },
-      6: {
-        id: 6,
-        label: '2 ME Production 4K',
-        inputs: 20,
-        auxes: 6,
-        MEs: 2,
-        USKs: 2,
-        DSKs: 2,
-        MPs: 2,
-        MVs: 2,
-        SSrc: 1,
-        macros: 100
-      },
-      7: {
-        id: 7,
-        label: '4 ME Broadcast 4K',
-        inputs: 20,
-        auxes: 6,
-        MEs: 4,
-        USKs: 4,
-        DSKs: 2,
-        MPs: 4,
-        MVs: 2,
-        SSrc: 1,
-        macros: 100
-      },
-      8: {
-        id: 8,
-        label: 'TV Studio HD',
-        inputs: 8,
-        auxes: 1,
-        MEs: 1,
-        USKs: 1,
-        DSKs: 2,
-        MPs: 2,
-        MVs: 1,
-        SSrc: 0,
-        macros: 100
-      }
-      //9: { id: 9, label: '4ME?',                 inputs: 20, auxes: 6, MEs: 4, USKs: 4, DSKs: 2, MPs: 4, MVs: 2, macros: 100 }
-    }
 
     this.CHOICES_AUXES = [
       { id: 0, label: '1' },
@@ -227,31 +96,9 @@ class AtemInstance extends InstanceSkel {
       { id: 3, label: 'M/E 4' }
     ]
 
-    this.CHOICES_MODEL = Object.values(this.CONFIG_MODEL)
-    // Sort alphabetical but leave index 0 at the top (Auto Detect)
-    this.CHOICES_MODEL.sort(function(a, b) {
-      let x = a.label.toLowerCase()
-      let y = b.label.toLowerCase()
-      if (a.id == 0) {
-        return -1
-      }
-      if (b.id == 0) {
-        return 1
-      }
-      if (x < y) {
-        return -1
-      }
-      if (x > y) {
-        return 1
-      }
-      return 0
-    })
-
     this.CHOICES_MV = [{ id: 0, label: 'MV 1' }, { id: 1, label: 'MV 2' }]
 
     this.setupMvWindowChoices()
-
-    this.CHOICES_PRESETSTYLE = [{ id: 0, label: 'Short Names' }, { id: 1, label: 'Long Names' }]
 
     this.CHOICES_SSRCBOXES = [
       { id: 0, label: 'Box 1' },
@@ -262,12 +109,9 @@ class AtemInstance extends InstanceSkel {
 
     this.CHOICES_USKS = [{ id: 0, label: '1' }, { id: 1, label: '2' }, { id: 2, label: '3' }, { id: 3, label: '4' }]
 
-    if (this.config.modelID !== undefined) {
-      this.model = this.CONFIG_MODEL[this.config.modelID]
-    } else {
-      this.config.modelID = 0
-      this.model = this.CONFIG_MODEL[0]
-    }
+    const newModel = this.config.modelID ? GetModelSpec(this.config.modelID) : undefined
+    this.model = newModel || GetAutoDetectModel()
+    this.config.modelID = this.model.id
 
     this.actions() // export actions
   }
@@ -298,22 +142,20 @@ class AtemInstance extends InstanceSkel {
    * @access public
    * @since 1.0.0
    */
-  public updateConfig(config) {
+  public updateConfig(config: AtemConfig) {
     this.config = config
 
     this.setupMvWindowChoices()
-    this.setAtemModel(config.modelID)
+    this.setAtemModel(config.modelID || MODEL_AUTO_DETECT)
 
     if (this.config.host !== undefined) {
-      // TODO - how else to check if connected?
-      if (
-        this.atem !== undefined &&
-        (this.atem as any).socket !== undefined &&
-        (this.atem as any).socket._socket !== undefined
-      ) {
+      // TODO - how better to check if connected?
+      if (this.atem && (this.atem as any).socket && (this.atem as any).socket._socket) {
         try {
           this.atem.disconnect()
-        } catch (e) {}
+        } catch (e) {
+          // Ignore
+        }
       }
 
       this.atem.connect(this.config.host)
@@ -334,7 +176,7 @@ class AtemInstance extends InstanceSkel {
   actions() {
     this.setupSourceChoices()
 
-    this.system.emit('instance_actions', this.id, {
+    this.setActions({
       program: {
         label: 'Set input on Program',
         options: [
@@ -608,7 +450,7 @@ class AtemInstance extends InstanceSkel {
    * @access public
    * @since 1.0.0
    */
-  action(action) {
+  public action(action) {
     // let id = action.action
     // let cmd
     let opt = action.options
@@ -693,40 +535,8 @@ class AtemInstance extends InstanceSkel {
    * @access public
    * @since 1.0.0
    */
-  config_fields() {
-    return [
-      {
-        type: 'text',
-        id: 'info',
-        width: 12,
-        label: 'Information',
-        value:
-          "Should work with all models of Blackmagic Design ATEM mixers.<br />In general this should be left in 'Auto Detect', however a specific model can be selected below for offline programming."
-      },
-      {
-        type: 'textinput',
-        id: 'host',
-        label: 'Target IP',
-        width: 6,
-        regex: this.REGEX_IP
-      },
-      {
-        type: 'dropdown',
-        id: 'modelID',
-        label: 'Model',
-        width: 6,
-        choices: this.CHOICES_MODEL,
-        default: 0
-      },
-      {
-        type: 'dropdown',
-        id: 'presets',
-        label: 'Preset Style',
-        width: 6,
-        choices: this.CHOICES_PRESETSTYLE,
-        default: 0
-      }
-    ]
+  public config_fields(): CompanionConfigField[] {
+    return GetConfigFields(this)
   }
 
   /**
@@ -735,8 +545,8 @@ class AtemInstance extends InstanceSkel {
    * @access public
    * @since 1.0.0
    */
-  destroy() {
-    if (this.atem !== undefined) {
+  public destroy() {
+    if (this.atem) {
       this.atem.disconnect()
       delete this.atem
     }
@@ -2579,22 +2389,23 @@ class AtemInstance extends InstanceSkel {
    * @access protected
    * @since 1.1.0
    */
-  private setAtemModel(modelID: Enums.Model, live?: boolean) {
+  private setAtemModel(modelID: ModelId, live?: boolean) {
     if (!live) {
       live = false
     }
 
-    if (this.CONFIG_MODEL[modelID] !== undefined) {
+    const newModel = GetModelSpec(modelID)
+    if (newModel) {
       // Still not sure about this
       if ((live === true && this.config.modelID == 0) || (live == false && (this.deviceModel == 0 || modelID > 0))) {
-        this.model = this.CONFIG_MODEL[modelID]
+        this.model = newModel
         this.debug('ATEM Model: ' + this.model.id)
       }
 
       // This is a funky test, but necessary.  Can it somehow be an else if of the above ... or simply an else?
       if (
         (live === false && this.deviceModel > 0 && modelID > 0 && modelID != this.deviceModel) ||
-        (live === true && this.config.modelID > 0 && this.deviceModel != this.config.modelID)
+        (live === true && this.config.modelID && this.config.modelID > 0 && this.deviceModel != this.config.modelID)
       ) {
         this.log(
           'error',
