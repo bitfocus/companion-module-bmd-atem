@@ -24,7 +24,7 @@
 		"type": "git",
 		"url": "git+https://github.com/bitfocus/companion-module-atem.git"
 	},
-	"author": "Håkon Nessjøen <haakon@bitfocus.io>",
+	"author": "Julian Waller <julian@superfly.tv>",
 	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/bitfocus/companion-module-atem/issues"

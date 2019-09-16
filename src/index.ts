@@ -1,7 +1,6 @@
 import { Atem, Enums } from 'atem-connection'
 import InstanceSkel = require('../../../instance_skel')
-
-type CompanionFeedbacks = { [id: string]: InstanceSkel.CompanionFeedback }
+import { CompanionFeedbacks, CompanionVariable } from '../../../instance_skel_types'
 
 interface ModelSpec {
   id: Enums.Model // TODO - this might not work..
@@ -26,7 +25,7 @@ interface ModelSpec {
  * @author Håkon Nessjøen <haakon@bitfocus.io>
  * @author Keith Rocheck <keith.rocheck@gmail.com>
  */
-export default class AtemInstance extends InstanceSkel.default {
+class AtemInstance extends InstanceSkel {
   private CONFIG_MODEL: { [id: number]: ModelSpec }
   private CHOICES_AUXES: Array<{ id: number; label: string }>
   private CHOICES_DSKS: Array<{ id: number; label: string }>
@@ -1110,7 +1109,7 @@ export default class AtemInstance extends InstanceSkel.default {
    */
   private initFeedbacks() {
     // feedbacks
-    let feedbacks: CompanionFeedbacks = {}
+    const feedbacks: CompanionFeedbacks = {}
 
     feedbacks['preview_bg'] = {
       label: 'Change colors from preview',
@@ -2244,7 +2243,7 @@ export default class AtemInstance extends InstanceSkel.default {
    */
   private initVariables() {
     // variable_set
-    const variables: InstanceSkel.CompanionVariable[] = []
+    const variables: CompanionVariable[] = []
 
     // PGM/PV busses
     for (let i = 0; i < this.model.MEs; ++i) {
@@ -2939,4 +2938,4 @@ export default class AtemInstance extends InstanceSkel.default {
   }
 }
 
-// exports = module.exports = instance
+export = AtemInstance
