@@ -7,9 +7,16 @@ import {
   AtemUSKPicker,
   AtemDSKPicker,
   AtemAuxPicker,
-  AtemMultiviewerPicker
+  AtemMultiviewerPicker,
+  AtemKeyFillSourcePicker,
+  AtemAuxSourcePicker,
+  AtemSuperSourceBoxPicker,
+  AtemSuperSourceBoxSourcePicker,
+  AtemMultiviewSourcePicker,
+  AtemMultiviewWindowPicker
 } from './input'
 import { ModelSpec } from './models'
+import { AtemState } from 'atem-connection'
 
 export enum FeedbackId {
   PreviewBG = 'preview_bg',
@@ -47,7 +54,7 @@ export function BackgroundPicker(color: number): CompanionInputFieldColor {
   }
 }
 
-export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: ModelSpec) {
+export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
   const feedbacks: CompanionFeedbacks = {}
 
   // Preview
@@ -57,7 +64,7 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
     options: [
       ForegroundPicker(instance.rgb(255, 255, 255)),
       BackgroundPicker(instance.rgb(0, 255, 0)),
-      AtemMESourcePicker(instance, 0),
+      AtemMESourcePicker(model, state, 0),
       AtemMEPicker(model, 0)
     ]
   }
@@ -69,9 +76,9 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
       options: [
         ForegroundPicker(instance.rgb(255, 255, 255)),
         BackgroundPicker(instance.rgb(0, 255, 0)),
-        AtemMESourcePicker(instance, 1),
+        AtemMESourcePicker(model, state, 1),
         AtemMEPicker(model, 1),
-        AtemMESourcePicker(instance, 2),
+        AtemMESourcePicker(model, state, 2),
         AtemMEPicker(model, 2)
       ]
     }
@@ -84,11 +91,11 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
       options: [
         ForegroundPicker(instance.rgb(255, 255, 255)),
         BackgroundPicker(instance.rgb(0, 255, 0)),
-        AtemMESourcePicker(instance, 1),
+        AtemMESourcePicker(model, state, 1),
         AtemMEPicker(model, 1),
-        AtemMESourcePicker(instance, 2),
+        AtemMESourcePicker(model, state, 2),
         AtemMEPicker(model, 2),
-        AtemMESourcePicker(instance, 3),
+        AtemMESourcePicker(model, state, 3),
         AtemMEPicker(model, 3)
       ]
     }
@@ -101,13 +108,13 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
       options: [
         ForegroundPicker(instance.rgb(255, 255, 255)),
         BackgroundPicker(instance.rgb(0, 255, 0)),
-        AtemMESourcePicker(instance, 1),
+        AtemMESourcePicker(model, state, 1),
         AtemMEPicker(model, 1),
-        AtemMESourcePicker(instance, 2),
+        AtemMESourcePicker(model, state, 2),
         AtemMEPicker(model, 2),
-        AtemMESourcePicker(instance, 3),
+        AtemMESourcePicker(model, state, 3),
         AtemMEPicker(model, 3),
-        AtemMESourcePicker(instance, 4),
+        AtemMESourcePicker(model, state, 4),
         AtemMEPicker(model, 4)
       ]
     }
@@ -120,7 +127,7 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
     options: [
       ForegroundPicker(instance.rgb(255, 255, 255)),
       BackgroundPicker(instance.rgb(255, 0, 0)),
-      AtemMESourcePicker(instance, 0),
+      AtemMESourcePicker(model, state, 0),
       AtemMEPicker(model, 0)
     ]
   }
@@ -132,9 +139,9 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
       options: [
         ForegroundPicker(instance.rgb(255, 255, 255)),
         BackgroundPicker(instance.rgb(255, 0, 0)),
-        AtemMESourcePicker(instance, 1),
+        AtemMESourcePicker(model, state, 1),
         AtemMEPicker(model, 1),
-        AtemMESourcePicker(instance, 2),
+        AtemMESourcePicker(model, state, 2),
         AtemMEPicker(model, 2)
       ]
     }
@@ -147,11 +154,11 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
       options: [
         ForegroundPicker(instance.rgb(255, 255, 255)),
         BackgroundPicker(instance.rgb(255, 0, 0)),
-        AtemMESourcePicker(instance, 1),
+        AtemMESourcePicker(model, state, 1),
         AtemMEPicker(model, 1),
-        AtemMESourcePicker(instance, 2),
+        AtemMESourcePicker(model, state, 2),
         AtemMEPicker(model, 2),
-        AtemMESourcePicker(instance, 3),
+        AtemMESourcePicker(model, state, 3),
         AtemMEPicker(model, 3)
       ]
     }
@@ -164,13 +171,13 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
       options: [
         ForegroundPicker(instance.rgb(255, 255, 255)),
         BackgroundPicker(instance.rgb(255, 0, 0)),
-        AtemMESourcePicker(instance, 1),
+        AtemMESourcePicker(model, state, 1),
         AtemMEPicker(model, 1),
-        AtemMESourcePicker(instance, 2),
+        AtemMESourcePicker(model, state, 2),
         AtemMEPicker(model, 2),
-        AtemMESourcePicker(instance, 3),
+        AtemMESourcePicker(model, state, 3),
         AtemMEPicker(model, 3),
-        AtemMESourcePicker(instance, 4),
+        AtemMESourcePicker(model, state, 4),
         AtemMEPicker(model, 4)
       ]
     }
@@ -184,14 +191,8 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
       options: [
         ForegroundPicker(instance.rgb(0, 0, 0)),
         BackgroundPicker(instance.rgb(255, 255, 0)),
-        {
-          type: 'dropdown',
-          label: 'Input',
-          id: 'input',
-          default: 1,
-          choices: this.CHOICES_AUXSOURCES
-        },
-        AtemAuxPicker(model)
+        AtemAuxPicker(model),
+        AtemAuxSourcePicker(model, state)
       ]
     }
   }
@@ -215,13 +216,7 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
         BackgroundPicker(instance.rgb(238, 238, 0)),
         AtemMEPicker(model, 0),
         AtemUSKPicker(model),
-        {
-          type: 'dropdown',
-          label: 'Fill Source',
-          id: 'fill',
-          default: 1,
-          choices: this.CHOICES_MESOURCES
-        }
+        AtemKeyFillSourcePicker(model, state)
       ]
     }
   }
@@ -243,13 +238,7 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
         ForegroundPicker(instance.rgb(0, 0, 0)),
         BackgroundPicker(instance.rgb(238, 238, 0)),
         AtemDSKPicker(model),
-        {
-          type: 'dropdown',
-          label: 'Fill Source',
-          id: 'fill',
-          default: 1,
-          choices: this.CHOICES_MESOURCES
-        }
+        AtemKeyFillSourcePicker(model, state)
       ]
     }
   }
@@ -292,20 +281,8 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
         ForegroundPicker(instance.rgb(0, 0, 0)),
         BackgroundPicker(instance.rgb(255, 255, 0)),
         AtemMultiviewerPicker(model),
-        {
-          type: 'dropdown',
-          id: 'windowIndex',
-          label: 'Window #',
-          default: 2,
-          choices: this.CHOICES_MVWINDOW
-        },
-        {
-          type: 'dropdown',
-          id: 'source',
-          label: 'Source',
-          default: 0,
-          choices: this.CHOICES_MVSOURCES
-        }
+        AtemMultiviewWindowPicker(),
+        AtemMultiviewSourcePicker(model, state)
       ]
     }
   }
@@ -317,20 +294,8 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
       options: [
         ForegroundPicker(instance.rgb(0, 0, 0)),
         BackgroundPicker(instance.rgb(255, 255, 0)),
-        {
-          type: 'dropdown',
-          id: 'boxIndex',
-          label: 'Box #',
-          default: 2,
-          choices: this.CHOICES_SSRCBOXES
-        },
-        {
-          type: 'dropdown',
-          id: 'source',
-          label: 'Source',
-          default: 0,
-          choices: this.CHOICES_MESOURCES
-        }
+        AtemSuperSourceBoxPicker(),
+        AtemSuperSourceBoxSourcePicker(model, state)
       ]
     }
   }

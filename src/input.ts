@@ -1,16 +1,25 @@
-import InstanceSkel = require('../../../instance_skel')
 import { CompanionInputFieldDropdown } from '../../../instance_skel_types'
-import { GetMEIdChoices, GetUSKIdChoices, GetDSKIdChoices, GetAuxIdChoices, GetMultiviewerIdChoices } from './choices'
-import { AtemConfig } from './config'
+import {
+  GetMEIdChoices,
+  GetUSKIdChoices,
+  GetDSKIdChoices,
+  GetAuxIdChoices,
+  GetMultiviewerIdChoices,
+  SourcesToChoices,
+  GetSourcesListForType,
+  CHOICES_SSRCBOXES
+} from './choices'
 import { ModelSpec } from './models'
+import { AtemState } from 'atem-connection'
+import { iterateTimes } from './util'
 
-export function AtemMESourcePicker(instance: InstanceSkel<AtemConfig>, id: number): CompanionInputFieldDropdown {
+export function AtemMESourcePicker(model: ModelSpec, state: AtemState, id: number): CompanionInputFieldDropdown {
   return {
     id: `input${id ? id : ''}`,
     label: `Input${id ? ` Option ${id}` : ''}`,
     type: 'dropdown',
     default: 1,
-    choices: this.CHOICES_MESOURCES
+    choices: SourcesToChoices(GetSourcesListForType(model, state, 'me'))
   }
 }
 export function AtemMEPicker(model: ModelSpec, id: number): CompanionInputFieldDropdown {
@@ -56,5 +65,72 @@ export function AtemMultiviewerPicker(model: ModelSpec): CompanionInputFieldDrop
     label: 'MV',
     default: 0,
     choices: GetMultiviewerIdChoices(model)
+  }
+}
+export function AtemKeyFillSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
+  return {
+    type: 'dropdown',
+    label: 'Fill Source',
+    id: 'fill',
+    default: 1,
+    choices: SourcesToChoices(GetSourcesListForType(model, state, 'me'))
+  }
+}
+export function AtemKeyCutSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
+  return {
+    type: 'dropdown',
+    label: 'Key Source',
+    id: 'cut',
+    default: 0,
+    choices: SourcesToChoices(GetSourcesListForType(model, state, 'me'))
+  }
+}
+export function AtemAuxSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
+  return {
+    type: 'dropdown',
+    label: 'Input',
+    id: 'input',
+    default: 1,
+    choices: SourcesToChoices(GetSourcesListForType(model, state, 'aux'))
+  }
+}
+export function AtemSuperSourceBoxPicker(): CompanionInputFieldDropdown {
+  return {
+    type: 'dropdown',
+    id: 'boxIndex',
+    label: 'Box #',
+    default: 0,
+    choices: CHOICES_SSRCBOXES
+  }
+}
+export function AtemSuperSourceBoxSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
+  return {
+    type: 'dropdown',
+    id: 'source',
+    label: 'Source',
+    default: 0,
+    choices: SourcesToChoices(GetSourcesListForType(model, state, 'me'))
+  }
+}
+export function AtemMultiviewSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
+  return {
+    type: 'dropdown',
+    id: 'source',
+    label: 'Source',
+    default: 0,
+    choices: SourcesToChoices(GetSourcesListForType(model, state, 'mv'))
+  }
+}
+export function AtemMultiviewWindowPicker(): CompanionInputFieldDropdown {
+  return {
+    type: 'dropdown',
+    id: 'windowIndex',
+    label: 'Window #',
+    default: 2,
+    choices: iterateTimes(8, i => ({
+      // TODO - this needs to be a different range for the 8k
+      id: i + 2,
+      label: `Window ${i + 3}`
+    }))
   }
 }

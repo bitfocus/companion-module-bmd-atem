@@ -1,11 +1,25 @@
 import { Atem, AtemState } from 'atem-connection'
 import InstanceSkel = require('../../../instance_skel')
 import { CompanionConfigField, CompanionSystem, CompanionVariable } from '../../../instance_skel_types'
-import { CHOICES_KEYTRANS, CHOICES_SSRCBOXES, GetMultiviewerIdChoices } from './choices'
+import { CHOICES_KEYTRANS, GetSourcesListForType } from './choices'
 import { AtemConfig, GetConfigFields } from './config'
 import { FeedbackId, GetFeedbacksList } from './feedback'
 import { GetAutoDetectModel, GetModelSpec, MODEL_AUTO_DETECT, ModelId, ModelSpec } from './models'
-import { AtemMEPicker, AtemUSKPicker, AtemDSKPicker, AtemAuxPicker, AtemMultiviewerPicker } from './input'
+import {
+  AtemMEPicker,
+  AtemUSKPicker,
+  AtemDSKPicker,
+  AtemAuxPicker,
+  AtemMultiviewerPicker,
+  AtemAuxSourcePicker,
+  AtemMESourcePicker,
+  AtemKeyFillSourcePicker,
+  AtemKeyCutSourcePicker,
+  AtemSuperSourceBoxPicker,
+  AtemSuperSourceBoxSourcePicker,
+  AtemMultiviewSourcePicker,
+  AtemMultiviewWindowPicker
+} from './input'
 
 /**
  * Companion instance class for the Blackmagic ATEM Switchers.
@@ -19,28 +33,15 @@ import { AtemMEPicker, AtemUSKPicker, AtemDSKPicker, AtemAuxPicker, AtemMultivie
 class AtemInstance extends InstanceSkel<AtemConfig> {
   private CHOICES_MACRORUN: Array<{ id: string; label: string }>
 
-  private CHOICES_MESOURCES: any
-  private CHOICES_MVWINDOW: any
-  private CHOICES_MVSOURCES: any
-  private CHOICES_AUXSOURCES: any
+  // private CHOICES_MESOURCES: any
+  // private CHOICES_MVWINDOW: any
+  // private CHOICES_MVSOURCES: any
 
   private model: ModelSpec
   private atem: Atem
   private atemState: AtemState
 
   private states: any
-  private sources: Array<{
-    id: number
-    init: boolean
-    label: string
-    shortLabel: string
-    useME: boolean
-    useAux: boolean
-    useMV: boolean
-    longName: string
-    shortName: string
-    auxSource?: number
-  }>
   private macros: any
   private deviceName: any
   private deviceModel: any
@@ -61,7 +62,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
     // this.model = {}
     this.states = {}
-    this.sources = []
+    // this.sources = []
     this.macros = []
     this.deviceName = ''
     this.deviceModel = 0
@@ -69,7 +70,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
     this.CHOICES_MACRORUN = [{ id: 'run', label: 'Run' }, { id: 'runContinue', label: 'Run/Continue' }]
 
-    this.setupMvWindowChoices()
+    // this.setupMvWindowChoices()
 
     const newModel = this.config.modelID ? GetModelSpec(this.config.modelID) : undefined
     this.model = newModel || GetAutoDetectModel()
@@ -114,7 +115,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   public updateConfig(config: AtemConfig) {
     this.config = config
 
-    this.setupMvWindowChoices()
+    // this.setupMvWindowChoices()
     this.setAtemModel(config.modelID || MODEL_AUTO_DETECT)
 
     if (this.config.host !== undefined) {
@@ -143,88 +144,37 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
    * @since 1.0.0
    */
   actions() {
-    this.setupSourceChoices()
+    // this.setupSourceChoices()
 
     this.setActions({
       program: {
         label: 'Set input on Program',
-        options: [
-          {
-            type: 'dropdown',
-            label: 'Input',
-            id: 'input',
-            default: 1,
-            choices: this.CHOICES_MESOURCES
-          },
-          AtemMEPicker(this.model, 0)
-        ]
+        options: [AtemMEPicker(this.model, 0), AtemMESourcePicker(this.model, this.atemState, 0)]
       },
       preview: {
         label: 'Set input on Preview',
-        options: [
-          {
-            type: 'dropdown',
-            label: 'Input',
-            id: 'input',
-            default: 1,
-            choices: this.CHOICES_MESOURCES
-          },
-          AtemMEPicker(this.model, 0)
-        ]
+        options: [AtemMEPicker(this.model, 0), AtemMESourcePicker(this.model, this.atemState, 0)]
       },
       uskSource: {
         label: 'Set inputs on Upstream KEY',
         options: [
           AtemMEPicker(this.model, 0),
           AtemUSKPicker(this.model),
-          {
-            type: 'dropdown',
-            label: 'Fill Source',
-            id: 'fill',
-            default: 1,
-            choices: this.CHOICES_MESOURCES
-          },
-          {
-            type: 'dropdown',
-            label: 'Key Source',
-            id: 'cut',
-            default: 0,
-            choices: this.CHOICES_MESOURCES
-          }
+          AtemKeyFillSourcePicker(this.model, this.atemState),
+          AtemKeyCutSourcePicker(this.model, this.atemState)
         ]
       },
       dskSource: {
         label: 'Set inputs on Downstream KEY',
         options: [
           AtemDSKPicker(this.model),
-          {
-            type: 'dropdown',
-            label: 'Fill Source',
-            id: 'fill',
-            default: 1,
-            choices: this.CHOICES_MESOURCES
-          },
-          {
-            type: 'dropdown',
-            label: 'Key Source',
-            id: 'cut',
-            default: 0,
-            choices: this.CHOICES_MESOURCES
-          }
+          AtemKeyFillSourcePicker(this.model, this.atemState),
+          AtemKeyCutSourcePicker(this.model, this.atemState)
         ]
       },
       aux: {
         label: 'Set AUX bus',
-        options: [
-          AtemAuxPicker(this.model),
-          {
-            type: 'dropdown',
-            label: 'Input',
-            id: 'input',
-            default: 1,
-            choices: this.CHOICES_AUXSOURCES
-          }
-        ]
+        options: [AtemAuxPicker(this.model), AtemAuxSourcePicker(this.model, this.atemState)]
       },
       usk: {
         label: 'Set Upstream KEY OnAir',
@@ -290,40 +240,13 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
         label: 'Change MV window source',
         options: [
           AtemMultiviewerPicker(this.model),
-          {
-            type: 'dropdown',
-            id: 'windowIndex',
-            label: 'Window #',
-            default: 2,
-            choices: this.CHOICES_MVWINDOW
-          },
-          {
-            type: 'dropdown',
-            id: 'source',
-            label: 'Source',
-            default: 0,
-            choices: this.CHOICES_MVSOURCES
-          }
+          AtemMultiviewWindowPicker(),
+          AtemMultiviewSourcePicker(this.model, this.atemState)
         ]
       },
       setSsrcBoxSource: {
         label: 'Change SuperSource box source',
-        options: [
-          {
-            type: 'dropdown',
-            id: 'boxIndex',
-            label: 'Box #',
-            default: 0,
-            choices: CHOICES_SSRCBOXES
-          },
-          {
-            type: 'dropdown',
-            id: 'source',
-            label: 'Source',
-            default: 0,
-            choices: this.CHOICES_MESOURCES
-          }
-        ]
+        options: [AtemSuperSourceBoxPicker(), AtemSuperSourceBoxSourcePicker(this.model, this.atemState)]
       }
     })
   }
@@ -508,8 +431,9 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
       ) {
         out = { color: opt.fg, bgcolor: opt.bg }
       }
-    } else if (feedback.type == 'aux_bg') {
-      if (this.getAux(parseInt(opt.aux)).auxSource == parseInt(opt.input)) {
+    } else if (feedback.type === 'aux_bg') {
+      const auxSource = this.atemState.video.auxilliaries[opt.aux]
+      if (auxSource === parseInt(opt.input, 10)) {
         out = { color: opt.fg, bgcolor: opt.bg }
       }
     } else if (feedback.type == 'usk_bg') {
@@ -545,17 +469,17 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     return out
   }
 
-  /**
-   * INTERNAL: returns the desired Aux state object.
-   *
-   * @param {number} id - the aux id to fetch
-   * @returns {Object} the desired aux object
-   * @access protected
-   * @since 1.1.0
-   */
-  private getAux(id) {
-    return this.getSource(8000 + id + 1)
-  }
+  // /**
+  //  * INTERNAL: returns the desired Aux state object.
+  //  *
+  //  * @param {number} id - the aux id to fetch
+  //  * @returns {Object} the desired aux object
+  //  * @access protected
+  //  * @since 1.1.0
+  //  */
+  // private getAux(id) {
+  //   return this.getSource(8000 + id + 1)
+  // }
 
   /**
    * INTERNAL: returns the desired DSK state object.
@@ -681,68 +605,68 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     return this.getMV(mv).windows['window' + window]
   }
 
-  /**
-   * INTERNAL: returns the desired source object.
-   *
-   * @param {number} id - the source to fetch
-   * @returns {Object} the desired source object
-   * @access protected
-   * @since 1.1.0
-   */
-  private getSource(id) {
-    if (this.sources[id] === undefined) {
-      this.sources[id] = {
-        id,
-        init: false,
-        label: '',
-        shortLabel: '',
-        useME: false,
-        useAux: false,
-        useMV: false,
-        longName: '',
-        shortName: ''
-      }
-    }
+  // /**
+  //  * INTERNAL: returns the desired source object.
+  //  *
+  //  * @param {number} id - the source to fetch
+  //  * @returns {Object} the desired source object
+  //  * @access protected
+  //  * @since 1.1.0
+  //  */
+  // private getSource(id) {
+  //   if (this.sources[id] === undefined) {
+  //     this.sources[id] = {
+  //       id,
+  //       init: false,
+  //       label: '',
+  //       // shortLabel: '',
+  //       useME: false,
+  //       useAux: false,
+  //       useMV: false,
+  //       longName: '',
+  //       shortName: ''
+  //     }
+  //   }
 
-    return this.sources[id]
-  }
+  //   return this.sources[id]
+  // }
 
-  /**
-   * INTERNAL: returns the desired SuperSource object.
-   *
-   * @param {number} id - the ssrc id to fetch
-   * @returns {Object} the desired ssrc object
-   * @access protected
-   * @since 1.1.7
-   */
-  private getSuperSource(id = 0) {
-    if (this.states['ssrc' + id] === undefined) {
-      this.states['ssrc' + id] = {
-        artFillSource: 0,
-        artCutSource: 0,
-        artOption: 0,
-        artPreMultiplied: 0,
-        artClip: 0,
-        artGain: 0,
-        artInvertKey: 0,
-        borderEnabled: 0,
-        borderBevel: 0,
-        borderOuterWidth: 0,
-        borderInnerWidth: 0,
-        borderOuterSoftness: 0,
-        borderInnerSoftness: 0,
-        borderBevelSoftness: 0,
-        borderBevelPosition: 0,
-        borderHue: 0,
-        borderSaturation: 0,
-        borderLuma: 0,
-        borderLightSourceDirection: 0,
-        borderLightSourceAltitude: 0
-      }
-    }
+  // /**
+  //  * INTERNAL: returns the desired SuperSource object.
+  //  *
+  //  * @param {number} id - the ssrc id to fetch
+  //  * @returns {Object} the desired ssrc object
+  //  * @access protected
+  //  * @since 1.1.7
+  //  */
+  // private getSuperSource(id = 0) {
+  //   if (this.states['ssrc' + id] === undefined) {
+  //     this.states['ssrc' + id] = {
+  //       artFillSource: 0,
+  //       artCutSource: 0,
+  //       artOption: 0,
+  //       artPreMultiplied: 0,
+  //       artClip: 0,
+  //       artGain: 0,
+  //       artInvertKey: 0,
+  //       borderEnabled: 0,
+  //       borderBevel: 0,
+  //       borderOuterWidth: 0,
+  //       borderInnerWidth: 0,
+  //       borderOuterSoftness: 0,
+  //       borderInnerSoftness: 0,
+  //       borderBevelSoftness: 0,
+  //       borderBevelPosition: 0,
+  //       borderHue: 0,
+  //       borderSaturation: 0,
+  //       borderLuma: 0,
+  //       borderLightSourceDirection: 0,
+  //       borderLightSourceAltitude: 0
+  //     }
+  //   }
 
-    return this.states['ssrc' + id]
-  }
+  //   return this.states['ssrc' + id]
+  // }
 
   /**
    * INTERNAL: returns the desired SuperSource box object.
@@ -803,7 +727,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
    * @since 1.0.0
    */
   private initFeedbacks() {
-    this.setFeedbackDefinitions(GetFeedbacksList(this, this.model))
+    this.setFeedbackDefinitions(GetFeedbacksList(this, this.model, this.atemState))
   }
 
   /**
@@ -1221,6 +1145,15 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     this.setPresetDefinitions(presets)
   }
 
+  private getSourcePresetName(id: number) {
+    const input = this.atemState.inputs[id]
+    if (input) {
+      return this.config.presets == 1 ? input.longName : input.shortName
+    } else {
+      return `Unknown (${id})`
+    }
+  }
+
   /**
    * INTERNAL: initialize variables.
    *
@@ -1240,10 +1173,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
       {
         let id = this.getME(i).pgmSrc
-        this.setVariable(
-          'pgm' + (i + 1) + '_input',
-          this.config.presets == 1 ? this.getSource(id).longName : this.getSource(id).shortName
-        )
+        this.setVariable('pgm' + (i + 1) + '_input', this.getSourcePresetName(id))
       }
       variables.push({
         label: 'Label of input active on preview bus (M/E ' + (i + 1) + ')',
@@ -1252,10 +1182,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
       {
         let id = this.getME(i).pvwSrc
-        this.setVariable(
-          'pvw' + (i + 1) + '_input',
-          this.config.presets == 1 ? this.getSource(id).longName : this.getSource(id).shortName
-        )
+        this.setVariable('pvw' + (i + 1) + '_input', this.getSourcePresetName(id))
       }
 
       for (let k = 0; k < this.model.USKs; ++k) {
@@ -1265,10 +1192,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
         })
 
         let id = this.getUSK(i, k).fillSource
-        this.setVariable(
-          'usk_' + (i + 1) + '_' + (k + 1) + '_input',
-          this.config.presets == 1 ? this.getSource(id).longName : this.getSource(id).shortName
-        )
+        this.setVariable('usk_' + (i + 1) + '_' + (k + 1) + '_input', this.getSourcePresetName(id))
       }
     }
 
@@ -1280,25 +1204,22 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
       })
 
       let id = this.getDSK(k).fillSource
-      this.setVariable(
-        'dsk_' + (k + 1) + '_input',
-        this.config.presets == 1 ? this.getSource(id).longName : this.getSource(id).shortName
-      )
+      this.setVariable('dsk_' + (k + 1) + '_input', this.getSourcePresetName(id))
     }
 
     // Input names
-    for (let key in this.sources) {
+    for (const src of GetSourcesListForType(this.model, this.atemState)) {
       variables.push({
-        label: 'Long name of input id ' + key,
-        name: 'long_' + key
+        label: 'Long name of input id ' + src.id,
+        name: 'long_' + src.id
       })
       variables.push({
-        label: 'Short name of input id ' + key,
-        name: 'short_' + key
+        label: 'Short name of input id ' + src.id,
+        name: 'short_' + src.id
       })
 
-      this.setVariable('long_' + key, this.getSource(key).longName)
-      this.setVariable('short_' + key, this.getSource(key).shortName)
+      this.setVariable('long_' + src.id, src.longName)
+      this.setVariable('short_' + src.id, src.shortName)
     }
 
     // Macros
@@ -1326,9 +1247,13 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
    * @since 1.1.0
    */
   private processStateChange(_err, state) {
+    if (this.initDone) {
+      this.atemState = state
+    }
+
     switch (state.constructor.name) {
       case 'AuxSourceCommand': {
-        this.getAux(state.auxBus).auxSource = state.properties.source
+        // this.getAux(state.auxBus).auxSource = state.properties.source
 
         this.checkFeedbacks(FeedbackId.AuxBG)
         break
@@ -1344,10 +1269,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
         this.updateDSK(state.downstreamKeyerId, state.properties)
 
         let id = state.properties.fillSource
-        this.setVariable(
-          'dsk_' + (state.downstreamKeyerId + 1) + '_input',
-          this.config.presets == 1 ? this.getSource(id).longName : this.getSource(id).shortName
-        )
+        this.setVariable('dsk_' + (state.downstreamKeyerId + 1) + '_input', this.getSourcePresetName(id))
 
         this.checkFeedbacks(FeedbackId.DSKSource)
         break
@@ -1362,6 +1284,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
       case 'InitCompleteCommand': {
         this.debug('Init done')
         this.initDone = true
+        this.atemState = state
         this.log('info', 'Connected to a ' + this.deviceName)
 
         this.setAtemModel(this.deviceModel, true)
@@ -1370,9 +1293,11 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
       }
 
       case 'InputPropertiesCommand': {
-        this.updateSource(state.inputId, state.properties)
-        // resend everything, since names of routes might have changed
+        // this.updateSource(state.inputId, state.properties)
+        // reset everything, since names of inputs might have changed
         this.initVariables()
+        this.initFeedbacks()
+        this.actions()
         break
       }
 
@@ -1388,7 +1313,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
         let id = state.properties.fillSource
         this.setVariable(
           'usk_' + (state.mixEffect + 1) + '_' + (state.properties.upstreamKeyerId + 1) + '_input',
-          this.config.presets == 1 ? this.getSource(id).longName : this.getSource(id).shortName
+          this.getSourcePresetName(id)
         )
 
         this.checkFeedbacks(FeedbackId.USKSource)
@@ -1431,10 +1356,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
         this.getME(state.mixEffect).pgmSrc = state.properties.source
 
         let id = state.properties.source
-        this.setVariable(
-          'pgm' + (state.mixEffect + 1) + '_input',
-          this.config.presets == 1 ? this.getSource(id).longName : this.getSource(id).shortName
-        )
+        this.setVariable('pgm' + (state.mixEffect + 1) + '_input', this.getSourcePresetName(id))
 
         this.checkFeedbacks(FeedbackId.ProgramBG)
         this.checkFeedbacks(FeedbackId.ProgramBG2)
@@ -1447,10 +1369,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
         this.getME(state.mixEffect).pvwSrc = state.properties.source
 
         let id = state.properties.source
-        this.setVariable(
-          'pvw' + (state.mixEffect + 1) + '_input',
-          this.config.presets == 1 ? this.getSource(id).longName : this.getSource(id).shortName
-        )
+        this.setVariable('pvw' + (state.mixEffect + 1) + '_input', this.getSourcePresetName(id))
 
         this.checkFeedbacks(FeedbackId.PreviewBG)
         this.checkFeedbacks(FeedbackId.PreviewBG2)
@@ -1506,18 +1425,18 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     }
   }
 
-  /**
-   * INTERNAL: Resets the init flag in the sources so that the now mode
-   * can be processed without deleting the existing data.
-   *
-   * @access protected
-   * @since 1.1.0
-   */
-  private resetSources() {
-    for (let x in this.sources) {
-      this.sources[x].init = false
-    }
-  }
+  // /**
+  //  * INTERNAL: Resets the init flag in the sources so that the now mode
+  //  * can be processed without deleting the existing data.
+  //  *
+  //  * @access protected
+  //  * @since 1.1.0
+  //  */
+  // private resetSources() {
+  //   for (let x in this.sources) {
+  //     this.sources[x].init = false
+  //   }
+  // }
 
   /**
    * INTERNAL: Fires a bunch of setup and cleanup when we switch models.
@@ -1566,42 +1485,42 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     }
   }
 
-  /**
-   * INTERNAL: populate base source data into its object.
-   *
-   * @param {number} id - the source id
-   * @param {number} useME - number, but 0,1, if the source is available to MEs
-   * @param {number} useAux - number, but 0,1, if the source is available to Auxes
-   * @param {number} useMV - number, but 0,1, if the source is available to MVs
-   * @param {String} shortLabel - the source's base short name
-   * @param {String} label - the source's base long name
-   * @access protected
-   * @since 1.1.0
-   */
-  private setSource(id: number, useME: boolean, useAux: boolean, useMV: boolean, shortLabel: string, label: string) {
-    let source = this.getSource(id)
+  // /**
+  //  * INTERNAL: populate base source data into its object.
+  //  *
+  //  * @param {number} id - the source id
+  //  * @param {number} useME - number, but 0,1, if the source is available to MEs
+  //  * @param {number} useAux - number, but 0,1, if the source is available to Auxes
+  //  * @param {number} useMV - number, but 0,1, if the source is available to MVs
+  //  * @param {String} shortLabel - the source's base short name
+  //  * @param {String} label - the source's base long name
+  //  * @access protected
+  //  * @since 1.1.0
+  //  */
+  // private setSource(id: number, useME: boolean, useAux: boolean, useMV: boolean, shortLabel: string, label: string) {
+  //   let source = this.getSource(id)
 
-    // Use ATEM names if we got um
-    if (source.longName != '') {
-      source.label = source.longName
-    } else {
-      source.label = label
-      source.longName = label
-    }
+  //   // Use ATEM names if we got um
+  //   if (source.longName != '') {
+  //     source.label = source.longName
+  //   } else {
+  //     source.label = label
+  //     source.longName = label
+  //   }
 
-    if (source.shortName != '') {
-      source.shortLabel = source.shortName
-    } else {
-      source.shortLabel = shortLabel
-      source.shortName = shortLabel
-    }
+  //   // if (source.shortName != '') {
+  //   //   source.shortLabel = source.shortName
+  //   // } else {
+  //   //   source.shortLabel = shortLabel
+  //   //   source.shortName = shortLabel
+  //   // }
 
-    source.id = id
-    source.useME = useME
-    source.useAux = useAux
-    source.useMV = useMV
-    source.init = true
-  }
+  //   source.id = id
+  //   source.useME = useME
+  //   source.useAux = useAux
+  //   source.useMV = useMV
+  //   source.init = true
+  // }
 
   /**
    * INTERNAL: use setup data to initalize the atem-connection object.
@@ -1621,6 +1540,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     this.atem.on('disconnected', () => {
       this.status(this.STATUS_UNKNOWN, 'Disconnected')
       this.initDone = false
+      // TODO - clear cached state after some timeout
     })
     this.atem.on('stateChanged', this.processStateChange.bind(this))
 
@@ -1629,87 +1549,87 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     }
   }
 
-  /**
-   * INTERNAL: use config data to define the choices for the MV Window dropdowns.
-   *
-   * @access protected
-   * @since 1.1.0
-   */
-  private setupMvWindowChoices() {
-    this.CHOICES_MVWINDOW = []
+  // /**
+  //  * INTERNAL: use config data to define the choices for the MV Window dropdowns.
+  //  *
+  //  * @access protected
+  //  * @since 1.1.0
+  //  */
+  // private setupMvWindowChoices() {
+  //   this.CHOICES_MVWINDOW = []
 
-    for (let i = 2; i < 10; i++) {
-      this.CHOICES_MVWINDOW.push({ id: i, label: 'Window ' + (i + 1) })
-    }
-  }
+  //   for (let i = 2; i < 10; i++) {
+  //     this.CHOICES_MVWINDOW.push({ id: i, label: 'Window ' + (i + 1) })
+  //   }
+  // }
 
-  /**
-   * INTERNAL: use model data to define the choices for the source dropdowns.
-   *
-   * @access protected
-   * @since 1.1.0
-   */
-  private setupSourceChoices() {
-    this.resetSources()
+  // /**
+  //  * INTERNAL: use model data to define the choices for the source dropdowns.
+  //  *
+  //  * @access protected
+  //  * @since 1.1.0
+  //  */
+  // private setupSourceChoices() {
+  //   this.resetSources()
 
-    this.setSource(0, true, true, true, 'Blck', 'Black')
-    this.setSource(1000, true, true, true, 'Bars', 'Bars')
-    this.setSource(2001, true, true, true, 'Col1', 'Color 1')
-    this.setSource(2002, true, true, true, 'Col2', 'Color 2')
-    this.setSource(7001, false, true, true, 'Cln1', 'Clean Feed 1')
-    this.setSource(7002, false, true, true, 'Cln2', 'Clean Feed 2')
+  //   // this.setSource(0, true, true, true, 'Blck', 'Black')
+  //   // this.setSource(1000, true, true, true, 'Bars', 'Bars')
+  //   // this.setSource(2001, true, true, true, 'Col1', 'Color 1')
+  //   // // this.setSource(2002, true, true, true, 'Col2', 'Color 2')
+  //   // this.setSource(7001, false, true, true, 'Cln1', 'Clean Feed 1')
+  //   // this.setSource(7002, false, true, true, 'Cln2', 'Clean Feed 2')
 
-    if (this.model.SSrc > 0) {
-      this.setSource(6000, true, true, true, 'SSrc', 'Super Source')
-    }
+  //   // if (this.model.SSrc > 0) {
+  //   //   this.setSource(6000, true, true, true, 'SSrc', 'Super Source')
+  //   // }
 
-    for (let i = 1; i <= this.model.inputs; i++) {
-      this.setSource(i, true, true, true, i < 10 ? 'In ' + i : 'In' + i, 'Input ' + i)
-    }
+  //   // for (let i = 1; i <= this.model.inputs; i++) {
+  //   //   this.setSource(i, true, true, true, i < 10 ? 'In ' + i : 'In' + i, 'Input ' + i)
+  //   // }
 
-    for (let i = 1; i <= this.model.MPs; i++) {
-      this.setSource(3000 + i * 10, true, true, true, 'MP ' + i, 'Media Player ' + i)
-      this.setSource(3000 + i * 10 + 1, true, true, true, 'MP' + i + 'K', 'Media Player ' + i + ' Key')
-    }
+  //   // for (let i = 1; i <= this.model.MPs; i++) {
+  //   //   this.setSource(3000 + i * 10, true, true, true, 'MP ' + i, 'Media Player ' + i)
+  //   //   this.setSource(3000 + i * 10 + 1, true, true, true, 'MP' + i + 'K', 'Media Player ' + i + ' Key')
+  //   // }
 
-    for (let i = 1; i <= this.model.MEs; i++) {
-      // ME 1 can't be used as an ME source, hence i>1 for useME
-      this.setSource(10000 + i * 10, i > 1, true, true, 'M' + i + 'PG', 'ME ' + i + ' Program')
-      this.setSource(10000 + i * 10 + 1, i > 1, true, true, 'M' + i + 'PV', 'ME ' + i + ' Preview')
-    }
+  //   // for (let i = 1; i <= this.model.MEs; i++) {
+  //   //   // ME 1 can't be used as an ME source, hence i>1 for useME
+  //   //   this.setSource(10000 + i * 10, i > 1, true, true, 'M' + i + 'PG', 'ME ' + i + ' Program')
+  //   //   this.setSource(10000 + i * 10 + 1, i > 1, true, true, 'M' + i + 'PV', 'ME ' + i + ' Preview')
+  //   // }
 
-    for (let i = 1; i <= this.model.auxes; i++) {
-      this.setSource(8000 + i, false, false, true, 'Aux' + i, 'Auxilary ' + i)
-    }
+  //   // for (let i = 1; i <= this.model.auxes; i++) {
+  //   //   this.setSource(8000 + i, false, false, true, 'Aux' + i, 'Auxilary ' + i)
+  //   // }
 
-    this.CHOICES_AUXSOURCES = []
-    this.CHOICES_MESOURCES = []
-    this.CHOICES_MVSOURCES = []
+  //   this.CHOICES_AUXSOURCES = []
+  //   this.CHOICES_MESOURCES = []
+  //   this.CHOICES_MVSOURCES = []
 
-    for (let key in this.sources) {
-      if (this.sources[key].init == true && this.sources[key].useAux === true) {
-        this.CHOICES_AUXSOURCES.push({ id: key, label: this.sources[key].label })
-      }
+  //   for (let key in this.sources) {
+  //     if (this.sources[key].init == true && this.sources[key].useAux === true) {
+  //       this.CHOICES_AUXSOURCES.push({ id: key, label: this.sources[key].label })
+  //     }
 
-      if (this.sources[key].init == true && this.sources[key].useME === true) {
-        this.CHOICES_MESOURCES.push({ id: key, label: this.sources[key].label })
-      }
+  //     if (this.sources[key].init == true && this.sources[key].useME === true) {
+  //       this.CHOICES_MESOURCES.push({ id: key, label: this.sources[key].label })
+  //     }
 
-      if (this.sources[key].init == true && this.sources[key].useMV === true) {
-        this.CHOICES_MVSOURCES.push({ id: key, label: this.sources[key].label })
-      }
-    }
+  //     if (this.sources[key].init == true && this.sources[key].useMV === true) {
+  //       this.CHOICES_MVSOURCES.push({ id: key, label: this.sources[key].label })
+  //     }
+  //   }
 
-    this.CHOICES_AUXSOURCES.sort(function(a, b) {
-      return a.id - b.id
-    })
-    this.CHOICES_MESOURCES.sort(function(a, b) {
-      return a.id - b.id
-    })
-    this.CHOICES_MVSOURCES.sort(function(a, b) {
-      return a.id - b.id
-    })
-  }
+  //   this.CHOICES_AUXSOURCES.sort(function(a, b) {
+  //     return a.id - b.id
+  //   })
+  //   this.CHOICES_MESOURCES.sort(function(a, b) {
+  //     return a.id - b.id
+  //   })
+  //   this.CHOICES_MVSOURCES.sort(function(a, b) {
+  //     return a.id - b.id
+  //   })
+  // }
 
   /**
    * Update an array of properties for a DSK.
@@ -1814,23 +1734,23 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     }
   }
 
-  /**
-   * Update an array of properties for a source.
-   *
-   * @param {number} id - the source id
-   * @param {Object} properties - the new properties
-   * @access public
-   * @since 1.1.0
-   */
-  private updateSource(id, properties) {
-    let source = this.getSource(id)
+  // /**
+  //  * Update an array of properties for a source.
+  //  *
+  //  * @param {number} id - the source id
+  //  * @param {Object} properties - the new properties
+  //  * @access public
+  //  * @since 1.1.0
+  //  */
+  // private updateSource(id, properties) {
+  //   let source = this.getSource(id)
 
-    if (typeof properties === 'object') {
-      for (let x in properties) {
-        source[x] = properties[x]
-      }
-    }
-  }
+  //   if (typeof properties === 'object') {
+  //     for (let x in properties) {
+  //       source[x] = properties[x]
+  //     }
+  //   }
+  // }
 
   // /**
   //  * Update an array of properties for a SuperSource.
