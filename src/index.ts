@@ -1,13 +1,11 @@
-import { Atem } from 'atem-connection'
+import { Atem, AtemState } from 'atem-connection'
 import InstanceSkel = require('../../../instance_skel')
-import {
-  CompanionConfigField,
-  CompanionFeedbacks,
-  CompanionSystem,
-  CompanionVariable
-} from '../../../instance_skel_types'
+import { CompanionConfigField, CompanionSystem, CompanionVariable } from '../../../instance_skel_types'
+import { CHOICES_KEYTRANS, CHOICES_SSRCBOXES, GetMultiviewerIdChoices } from './choices'
 import { AtemConfig, GetConfigFields } from './config'
-import { ModelId, ModelSpec, GetModelSpec, GetAutoDetectModel, MODEL_AUTO_DETECT } from './models'
+import { FeedbackId, GetFeedbacksList } from './feedback'
+import { GetAutoDetectModel, GetModelSpec, MODEL_AUTO_DETECT, ModelId, ModelSpec } from './models'
+import { AtemMEPicker, AtemUSKPicker, AtemDSKPicker, AtemAuxPicker, AtemMultiviewerPicker } from './input'
 
 /**
  * Companion instance class for the Blackmagic ATEM Switchers.
@@ -19,15 +17,7 @@ import { ModelId, ModelSpec, GetModelSpec, GetAutoDetectModel, MODEL_AUTO_DETECT
  * @author Keith Rocheck <keith.rocheck@gmail.com>
  */
 class AtemInstance extends InstanceSkel<AtemConfig> {
-  private CHOICES_AUXES: Array<{ id: number; label: string }>
-  private CHOICES_DSKS: Array<{ id: number; label: string }>
-  private CHOICES_KEYTRANS: Array<{ id: string; label: string }>
   private CHOICES_MACRORUN: Array<{ id: string; label: string }>
-  private CHOICES_MACROSTATE: Array<{ id: string; label: string }>
-  private CHOICES_ME: Array<{ id: number; label: string }>
-  private CHOICES_MV: Array<{ id: number; label: string }>
-  private CHOICES_SSRCBOXES: Array<{ id: number; label: string }>
-  private CHOICES_USKS: Array<{ id: number; label: string }>
 
   private CHOICES_MESOURCES: any
   private CHOICES_MVWINDOW: any
@@ -36,13 +26,25 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
   private model: ModelSpec
   private atem: Atem
+  private atemState: AtemState
 
   private states: any
-  private sources: any
+  private sources: Array<{
+    id: number
+    init: boolean
+    label: string
+    shortLabel: string
+    useME: boolean
+    useAux: boolean
+    useMV: boolean
+    longName: string
+    shortName: string
+    auxSource?: number
+  }>
   private macros: any
   private deviceName: any
   private deviceModel: any
-  private initDone: any
+  private initDone: boolean
 
   /**
    * Create an instance of an ATEM module.
@@ -55,6 +57,8 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   constructor(system: CompanionSystem, id: string, config: AtemConfig) {
     super(system, id, config)
 
+    this.atemState = new AtemState()
+
     // this.model = {}
     this.states = {}
     this.sources = []
@@ -63,57 +67,22 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     this.deviceModel = 0
     this.initDone = false
 
-    this.CHOICES_AUXES = [
-      { id: 0, label: '1' },
-      { id: 1, label: '2' },
-      { id: 2, label: '3' },
-      { id: 3, label: '4' },
-      { id: 4, label: '5' },
-      { id: 5, label: '6' }
-    ]
-
-    this.CHOICES_DSKS = [{ id: 0, label: '1' }, { id: 1, label: '2' }]
-
-    this.CHOICES_KEYTRANS = [
-      { id: 'true', label: 'On Air' },
-      { id: 'false', label: 'Off' },
-      { id: 'toggle', label: 'Toggle' }
-    ]
-
     this.CHOICES_MACRORUN = [{ id: 'run', label: 'Run' }, { id: 'runContinue', label: 'Run/Continue' }]
 
-    this.CHOICES_MACROSTATE = [
-      { id: 'isRunning', label: 'Is Running' },
-      { id: 'isWaiting', label: 'Is Waiting' },
-      { id: 'isRecording', label: 'Is Recording' },
-      { id: 'isUsed', label: 'Is Used' }
-    ]
-
-    this.CHOICES_ME = [
-      { id: 0, label: 'M/E 1' },
-      { id: 1, label: 'M/E 2' },
-      { id: 2, label: 'M/E 3' },
-      { id: 3, label: 'M/E 4' }
-    ]
-
-    this.CHOICES_MV = [{ id: 0, label: 'MV 1' }, { id: 1, label: 'MV 2' }]
-
     this.setupMvWindowChoices()
-
-    this.CHOICES_SSRCBOXES = [
-      { id: 0, label: 'Box 1' },
-      { id: 1, label: 'Box 2' },
-      { id: 2, label: 'Box 3' },
-      { id: 3, label: 'Box 4' }
-    ]
-
-    this.CHOICES_USKS = [{ id: 0, label: '1' }, { id: 1, label: '2' }, { id: 2, label: '3' }, { id: 3, label: '4' }]
 
     const newModel = this.config.modelID ? GetModelSpec(this.config.modelID) : undefined
     this.model = newModel || GetAutoDetectModel()
     this.config.modelID = this.model.id
 
     this.actions() // export actions
+  }
+
+  // Override base types to make types stricter
+  public checkFeedbacks(feedbackId?: FeedbackId, ignoreInitDone?: boolean) {
+    if (ignoreInitDone || this.initDone) {
+      super.checkFeedbacks(feedbackId)
+    }
   }
 
   /**
@@ -187,13 +156,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
             default: 1,
             choices: this.CHOICES_MESOURCES
           },
-          {
-            type: 'dropdown',
-            id: 'mixeffect',
-            label: 'M/E',
-            default: 0,
-            choices: this.CHOICES_ME.slice(0, this.model.MEs)
-          }
+          AtemMEPicker(this.model, 0)
         ]
       },
       preview: {
@@ -206,32 +169,14 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
             default: 1,
             choices: this.CHOICES_MESOURCES
           },
-          {
-            type: 'dropdown',
-            id: 'mixeffect',
-            label: 'M/E',
-            default: 0,
-            choices: this.CHOICES_ME.slice(0, this.model.MEs)
-          }
+          AtemMEPicker(this.model, 0)
         ]
       },
       uskSource: {
         label: 'Set inputs on Upstream KEY',
         options: [
-          {
-            type: 'dropdown',
-            id: 'mixeffect',
-            label: 'M/E',
-            default: 0,
-            choices: this.CHOICES_ME.slice(0, this.model.MEs)
-          },
-          {
-            type: 'dropdown',
-            label: 'Key',
-            id: 'key',
-            default: '0',
-            choices: this.CHOICES_USKS.slice(0, this.model.USKs)
-          },
+          AtemMEPicker(this.model, 0),
+          AtemUSKPicker(this.model),
           {
             type: 'dropdown',
             label: 'Fill Source',
@@ -251,13 +196,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
       dskSource: {
         label: 'Set inputs on Downstream KEY',
         options: [
-          {
-            type: 'dropdown',
-            label: 'Key',
-            id: 'key',
-            default: '0',
-            choices: this.CHOICES_DSKS.slice(0, this.model.DSKs)
-          },
+          AtemDSKPicker(this.model),
           {
             type: 'dropdown',
             label: 'Fill Source',
@@ -277,13 +216,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
       aux: {
         label: 'Set AUX bus',
         options: [
-          {
-            type: 'dropdown',
-            id: 'aux',
-            label: 'AUX Output',
-            default: 0,
-            choices: this.CHOICES_AUXES.slice(0, this.model.auxes)
-          },
+          AtemAuxPicker(this.model),
           {
             type: 'dropdown',
             label: 'Input',
@@ -301,35 +234,15 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
             type: 'dropdown',
             label: 'On Air',
             default: 'true',
-            choices: this.CHOICES_KEYTRANS
+            choices: CHOICES_KEYTRANS
           },
-          {
-            type: 'dropdown',
-            id: 'mixeffect',
-            label: 'M/E',
-            default: 0,
-            choices: this.CHOICES_ME.slice(0, this.model.MEs)
-          },
-          {
-            type: 'dropdown',
-            label: 'Key',
-            id: 'key',
-            default: '0',
-            choices: this.CHOICES_USKS.slice(0, this.model.USKs)
-          }
+          AtemMEPicker(this.model, 0),
+          AtemUSKPicker(this.model)
         ]
       },
       dskAuto: {
         label: 'AUTO DSK Transition',
-        options: [
-          {
-            type: 'dropdown',
-            id: 'downstreamKeyerId',
-            label: 'DSK',
-            default: 0,
-            choices: this.CHOICES_DSKS.slice(0, this.model.DSKs)
-          }
-        ]
+        options: [AtemDSKPicker(this.model)]
       },
       dsk: {
         label: 'Set Downstream KEY OnAir',
@@ -339,40 +252,18 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
             type: 'dropdown',
             label: 'On Air',
             default: 'true',
-            choices: this.CHOICES_KEYTRANS
+            choices: CHOICES_KEYTRANS
           },
-          {
-            type: 'dropdown',
-            label: 'Key',
-            id: 'key',
-            default: '0',
-            choices: this.CHOICES_DSKS.slice(0, this.model.DSKs)
-          }
+          AtemDSKPicker(this.model)
         ]
       },
       cut: {
         label: 'CUT operation',
-        options: [
-          {
-            type: 'dropdown',
-            id: 'mixeffect',
-            label: 'M/E',
-            default: 0,
-            choices: this.CHOICES_ME.slice(0, this.model.MEs)
-          }
-        ]
+        options: [AtemMEPicker(this.model, 0)]
       },
       auto: {
         label: 'AUTO transition operation',
-        options: [
-          {
-            type: 'dropdown',
-            id: 'mixeffect',
-            label: 'M/E',
-            default: 0,
-            choices: this.CHOICES_ME.slice(0, this.model.MEs)
-          }
-        ]
+        options: [AtemMEPicker(this.model, 0)]
       },
       macrorun: {
         label: 'Run MACRO',
@@ -398,13 +289,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
       setMvSource: {
         label: 'Change MV window source',
         options: [
-          {
-            type: 'dropdown',
-            id: 'multiViewerId',
-            label: 'MV',
-            default: 0,
-            choices: this.CHOICES_MV.slice(0, this.model.MVs)
-          },
+          AtemMultiviewerPicker(this.model),
           {
             type: 'dropdown',
             id: 'windowIndex',
@@ -429,7 +314,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
             id: 'boxIndex',
             label: 'Box #',
             default: 0,
-            choices: this.CHOICES_SSRCBOXES
+            choices: CHOICES_SSRCBOXES
           },
           {
             type: 'dropdown',
@@ -624,7 +509,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
         out = { color: opt.fg, bgcolor: opt.bg }
       }
     } else if (feedback.type == 'aux_bg') {
-      if (this.getAux(parseInt(opt.aux)).source == parseInt(opt.input)) {
+      if (this.getAux(parseInt(opt.aux)).auxSource == parseInt(opt.input)) {
         out = { color: opt.fg, bgcolor: opt.bg }
       }
     } else if (feedback.type == 'usk_bg') {
@@ -807,13 +692,13 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   private getSource(id) {
     if (this.sources[id] === undefined) {
       this.sources[id] = {
-        inputId: 0,
-        init: 0,
+        id,
+        init: false,
         label: '',
         shortLabel: '',
-        useME: 0,
-        useAux: 0,
-        useMV: 0,
+        useME: false,
+        useAux: false,
+        useMV: false,
         longName: '',
         shortName: ''
       }
@@ -918,716 +803,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
    * @since 1.0.0
    */
   private initFeedbacks() {
-    // feedbacks
-    const feedbacks: CompanionFeedbacks = {}
-
-    feedbacks['preview_bg'] = {
-      label: 'Change colors from preview',
-      description: 'If the input specified is in use by preview on the M/E stage specified, change colors of the bank',
-      options: [
-        {
-          type: 'colorpicker',
-          label: 'Foreground color',
-          id: 'fg',
-          default: this.rgb(255, 255, 255)
-        },
-        {
-          type: 'colorpicker',
-          label: 'Background color',
-          id: 'bg',
-          default: this.rgb(0, 255, 0)
-        },
-        {
-          type: 'dropdown',
-          label: 'Input',
-          id: 'input',
-          default: 1,
-          choices: this.CHOICES_MESOURCES
-        },
-        {
-          type: 'dropdown',
-          id: 'mixeffect',
-          label: 'M/E',
-          default: 0,
-          choices: this.CHOICES_ME.slice(0, this.model.MEs)
-        }
-      ]
-    }
-    if (this.model.MEs >= 2) {
-      feedbacks['preview_bg_2'] = {
-        label: 'Change colors from two preview sources',
-        description:
-          'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
-        options: [
-          {
-            type: 'colorpicker',
-            label: 'Foreground color',
-            id: 'fg',
-            default: this.rgb(255, 255, 255)
-          },
-          {
-            type: 'colorpicker',
-            label: 'Background color',
-            id: 'bg',
-            default: this.rgb(0, 255, 0)
-          },
-          {
-            type: 'dropdown',
-            label: 'Input Option 1',
-            id: 'input1',
-            default: 1,
-            choices: this.CHOICES_MESOURCES
-          },
-          {
-            type: 'dropdown',
-            id: 'mixeffect1',
-            label: 'M/E Option 1',
-            default: 0,
-            choices: this.CHOICES_ME.slice(0, this.model.MEs)
-          },
-          {
-            type: 'dropdown',
-            label: 'Input Option 2',
-            id: 'input2',
-            default: 1,
-            choices: this.CHOICES_MESOURCES
-          },
-          {
-            type: 'dropdown',
-            id: 'mixeffect2',
-            label: 'M/E Option 2',
-            default: 1,
-            choices: this.CHOICES_ME.slice(1, this.model.MEs)
-          }
-        ]
-      }
-    }
-    if (this.model.MEs >= 3) {
-      feedbacks['preview_bg_3'] = {
-        label: 'Change colors from three preview sources',
-        description:
-          'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
-        options: [
-          {
-            type: 'colorpicker',
-            label: 'Foreground color',
-            id: 'fg',
-            default: this.rgb(255, 255, 255)
-          },
-          {
-            type: 'colorpicker',
-            label: 'Background color',
-            id: 'bg',
-            default: this.rgb(0, 255, 0)
-          },
-          {
-            type: 'dropdown',
-            label: 'Input Option 1',
-            id: 'input1',
-            default: 1,
-            choices: this.CHOICES_MESOURCES
-          },
-          {
-            type: 'dropdown',
-            id: 'mixeffect1',
-            label: 'M/E Option 1',
-            default: 0,
-            choices: this.CHOICES_ME.slice(0, this.model.MEs)
-          },
-          {
-            type: 'dropdown',
-            label: 'Input Option 2',
-            id: 'input2',
-            default: 1,
-            choices: this.CHOICES_MESOURCES
-          },
-          {
-            type: 'dropdown',
-            id: 'mixeffect2',
-            label: 'M/E Option 2',
-            default: 0,
-            choices: this.CHOICES_ME.slice(0, this.model.MEs)
-          },
-          {
-            type: 'dropdown',
-            label: 'Input Option 3',
-            id: 'input3',
-            default: 1,
-            choices: this.CHOICES_MESOURCES
-          },
-          {
-            type: 'dropdown',
-            id: 'mixeffect3',
-            label: 'M/E Option 3',
-            default: 0,
-            choices: this.CHOICES_ME.slice(0, this.model.MEs)
-          }
-        ]
-      }
-    }
-    if (this.model.MEs >= 4) {
-      feedbacks['preview_bg_4'] = {
-        label: 'Change colors from four preview sources',
-        description:
-          'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
-        options: [
-          {
-            type: 'colorpicker',
-            label: 'Foreground color',
-            id: 'fg',
-            default: this.rgb(255, 255, 255)
-          },
-          {
-            type: 'colorpicker',
-            label: 'Background color',
-            id: 'bg',
-            default: this.rgb(0, 255, 0)
-          },
-          {
-            type: 'dropdown',
-            label: 'Input Option 1',
-            id: 'input1',
-            default: 1,
-            choices: this.CHOICES_MESOURCES
-          },
-          {
-            type: 'dropdown',
-            id: 'mixeffect1',
-            label: 'M/E Option 1',
-            default: 0,
-            choices: this.CHOICES_ME.slice(0, this.model.MEs)
-          },
-          {
-            type: 'dropdown',
-            label: 'Input Option 2',
-            id: 'input2',
-            default: 1,
-            choices: this.CHOICES_MESOURCES
-          },
-          {
-            type: 'dropdown',
-            id: 'mixeffect2',
-            label: 'M/E Option 2',
-            default: 1,
-            choices: this.CHOICES_ME.slice(1, this.model.MEs)
-          },
-          {
-            type: 'dropdown',
-            label: 'Input Option 3',
-            id: 'input3',
-            default: 1,
-            choices: this.CHOICES_MESOURCES
-          },
-          {
-            type: 'dropdown',
-            id: 'mixeffect3',
-            label: 'M/E Option 3',
-            default: 2,
-            choices: this.CHOICES_ME.slice(2, this.model.MEs)
-          },
-          {
-            type: 'dropdown',
-            label: 'Input Option 4',
-            id: 'input4',
-            default: 1,
-            choices: this.CHOICES_MESOURCES
-          },
-          {
-            type: 'dropdown',
-            id: 'mixeffect4',
-            label: 'M/E Option 4',
-            default: 3,
-            choices: this.CHOICES_ME.slice(3, this.model.MEs)
-          }
-        ]
-      }
-    }
-    feedbacks['program_bg'] = {
-      label: 'Change colors from program',
-      description: 'If the input specified is in use by program on the M/E stage specified, change colors of the bank',
-      options: [
-        {
-          type: 'colorpicker',
-          label: 'Foreground color',
-          id: 'fg',
-          default: this.rgb(255, 255, 255)
-        },
-        {
-          type: 'colorpicker',
-          label: 'Background color',
-          id: 'bg',
-          default: this.rgb(255, 0, 0)
-        },
-        {
-          type: 'dropdown',
-          label: 'Input',
-          id: 'input',
-          default: 1,
-          choices: this.CHOICES_MESOURCES
-        },
-        {
-          type: 'dropdown',
-          id: 'mixeffect',
-          label: 'M/E',
-          default: 0,
-          choices: this.CHOICES_ME.slice(0, this.model.MEs)
-        }
-      ]
-    }
-    if (this.model.MEs >= 2) {
-      feedbacks['program_bg_2'] = {
-        label: 'Change colors from two program sources',
-        description:
-          'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
-        options: [
-          {
-            type: 'colorpicker',
-            label: 'Foreground color',
-            id: 'fg',
-            default: this.rgb(255, 255, 255)
-          },
-          {
-            type: 'colorpicker',
-            label: 'Background color',
-            id: 'bg',
-            default: this.rgb(255, 0, 0)
-          },
-          {
-            type: 'dropdown',
-            label: 'Input Option 1',
-            id: 'input1',
-            default: 1,
-            choices: this.CHOICES_MESOURCES
-          },
-          {
-            type: 'dropdown',
-            id: 'mixeffect1',
-            label: 'M/E Option 1',
-            default: 0,
-            choices: this.CHOICES_ME.slice(0, this.model.MEs)
-          },
-          {
-            type: 'dropdown',
-            label: 'Input Option 2',
-            id: 'input2',
-            default: 1,
-            choices: this.CHOICES_MESOURCES
-          },
-          {
-            type: 'dropdown',
-            id: 'mixeffect2',
-            label: 'M/E Option 2',
-            default: 1,
-            choices: this.CHOICES_ME.slice(1, this.model.MEs)
-          }
-        ]
-      }
-    }
-    if (this.model.MEs >= 3) {
-      feedbacks['program_bg_3'] = {
-        label: 'Change colors from three program sources',
-        description:
-          'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
-        options: [
-          {
-            type: 'colorpicker',
-            label: 'Foreground color',
-            id: 'fg',
-            default: this.rgb(255, 255, 255)
-          },
-          {
-            type: 'colorpicker',
-            label: 'Background color',
-            id: 'bg',
-            default: this.rgb(255, 0, 0)
-          },
-          {
-            type: 'dropdown',
-            label: 'Input Option 1',
-            id: 'input1',
-            default: 1,
-            choices: this.CHOICES_MESOURCES
-          },
-          {
-            type: 'dropdown',
-            id: 'mixeffect1',
-            label: 'M/E Option 1',
-            default: 0,
-            choices: this.CHOICES_ME.slice(0, this.model.MEs)
-          },
-          {
-            type: 'dropdown',
-            label: 'Input Option 2',
-            id: 'input2',
-            default: 1,
-            choices: this.CHOICES_MESOURCES
-          },
-          {
-            type: 'dropdown',
-            id: 'mixeffect2',
-            label: 'M/E Option 2',
-            default: 0,
-            choices: this.CHOICES_ME.slice(0, this.model.MEs)
-          },
-          {
-            type: 'dropdown',
-            label: 'Input Option 3',
-            id: 'input3',
-            default: 1,
-            choices: this.CHOICES_MESOURCES
-          },
-          {
-            type: 'dropdown',
-            id: 'mixeffect3',
-            label: 'M/E Option 3',
-            default: 0,
-            choices: this.CHOICES_ME.slice(0, this.model.MEs)
-          }
-        ]
-      }
-    }
-    if (this.model.MEs >= 4) {
-      feedbacks['program_bg_4'] = {
-        label: 'Change colors from four program sources',
-        description:
-          'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
-        options: [
-          {
-            type: 'colorpicker',
-            label: 'Foreground color',
-            id: 'fg',
-            default: this.rgb(255, 255, 255)
-          },
-          {
-            type: 'colorpicker',
-            label: 'Background color',
-            id: 'bg',
-            default: this.rgb(255, 0, 0)
-          },
-          {
-            type: 'dropdown',
-            label: 'Input Option 1',
-            id: 'input1',
-            default: 1,
-            choices: this.CHOICES_MESOURCES
-          },
-          {
-            type: 'dropdown',
-            id: 'mixeffect1',
-            label: 'M/E Option 1',
-            default: 0,
-            choices: this.CHOICES_ME.slice(0, this.model.MEs)
-          },
-          {
-            type: 'dropdown',
-            label: 'Input Option 2',
-            id: 'input2',
-            default: 1,
-            choices: this.CHOICES_MESOURCES
-          },
-          {
-            type: 'dropdown',
-            id: 'mixeffect2',
-            label: 'M/E Option 2',
-            default: 1,
-            choices: this.CHOICES_ME.slice(1, this.model.MEs)
-          },
-          {
-            type: 'dropdown',
-            label: 'Input Option 3',
-            id: 'input3',
-            default: 1,
-            choices: this.CHOICES_MESOURCES
-          },
-          {
-            type: 'dropdown',
-            id: 'mixeffect3',
-            label: 'M/E Option 3',
-            default: 2,
-            choices: this.CHOICES_ME.slice(2, this.model.MEs)
-          },
-          {
-            type: 'dropdown',
-            label: 'Input Option 4',
-            id: 'input4',
-            default: 1,
-            choices: this.CHOICES_MESOURCES
-          },
-          {
-            type: 'dropdown',
-            id: 'mixeffect4',
-            label: 'M/E Option 4',
-            default: 3,
-            choices: this.CHOICES_ME.slice(3, this.model.MEs)
-          }
-        ]
-      }
-    }
-    feedbacks['aux_bg'] = {
-      label: 'Change colors from AUX bus',
-      description: 'If the input specified is in use by the aux bus specified, change colors of the bank',
-      options: [
-        {
-          type: 'colorpicker',
-          label: 'Foreground color',
-          id: 'fg',
-          default: this.rgb(0, 0, 0)
-        },
-        {
-          type: 'colorpicker',
-          label: 'Background color',
-          id: 'bg',
-          default: this.rgb(255, 255, 0)
-        },
-        {
-          type: 'dropdown',
-          label: 'Input',
-          id: 'input',
-          default: 1,
-          choices: this.CHOICES_AUXSOURCES
-        },
-        {
-          type: 'dropdown',
-          id: 'aux',
-          label: 'AUX',
-          default: 0,
-          choices: this.CHOICES_AUXES.slice(0, this.model.auxes)
-        }
-      ]
-    }
-    feedbacks['usk_bg'] = {
-      label: 'Change colors from upstream keyer state',
-      description: 'If the specified upstream keyer is active, change color of the bank',
-      options: [
-        {
-          type: 'colorpicker',
-          label: 'Foreground color',
-          id: 'fg',
-          default: this.rgb(255, 255, 255)
-        },
-        {
-          type: 'colorpicker',
-          label: 'Background color',
-          id: 'bg',
-          default: this.rgb(255, 0, 0)
-        },
-        {
-          type: 'dropdown',
-          id: 'mixeffect',
-          label: 'M/E',
-          default: 0,
-          choices: this.CHOICES_ME.slice(0, this.model.MEs)
-        },
-        {
-          type: 'dropdown',
-          label: 'Key',
-          id: 'key',
-          default: '0',
-          choices: this.CHOICES_USKS.slice(0, this.model.USKs)
-        }
-      ]
-    }
-    feedbacks['usk_source'] = {
-      label: 'Change colors from upstream keyer fill source',
-      description: 'If the input specified is in use by the USK specified, change colors of the bank',
-      options: [
-        {
-          type: 'colorpicker',
-          label: 'Foreground color',
-          id: 'fg',
-          default: this.rgb(0, 0, 0)
-        },
-        {
-          type: 'colorpicker',
-          label: 'Background color',
-          id: 'bg',
-          default: this.rgb(238, 238, 0)
-        },
-        {
-          type: 'dropdown',
-          id: 'mixeffect',
-          label: 'M/E',
-          default: 0,
-          choices: this.CHOICES_ME.slice(0, this.model.MEs)
-        },
-        {
-          type: 'dropdown',
-          label: 'Key',
-          id: 'key',
-          default: '0',
-          choices: this.CHOICES_USKS.slice(0, this.model.USKs)
-        },
-        {
-          type: 'dropdown',
-          label: 'Fill Source',
-          id: 'fill',
-          default: 1,
-          choices: this.CHOICES_MESOURCES
-        }
-      ]
-    }
-    feedbacks['dsk_bg'] = {
-      label: 'Change colors from downstream keyer state',
-      description: 'If the specified downstream keyer is active, change color of the bank',
-      options: [
-        {
-          type: 'colorpicker',
-          label: 'Foreground color',
-          id: 'fg',
-          default: this.rgb(255, 255, 255)
-        },
-        {
-          type: 'colorpicker',
-          label: 'Background color',
-          id: 'bg',
-          default: this.rgb(255, 0, 0)
-        },
-        {
-          type: 'dropdown',
-          label: 'Key',
-          id: 'key',
-          default: '0',
-          choices: this.CHOICES_DSKS.slice(0, this.model.DSKs)
-        }
-      ]
-    }
-    feedbacks['dsk_source'] = {
-      label: 'Change colors from downstream keyer fill source',
-      description: 'If the input specified is in use by the DSK specified, change colors of the bank',
-      options: [
-        {
-          type: 'colorpicker',
-          label: 'Foreground color',
-          id: 'fg',
-          default: this.rgb(0, 0, 0)
-        },
-        {
-          type: 'colorpicker',
-          label: 'Background color',
-          id: 'bg',
-          default: this.rgb(238, 238, 0)
-        },
-        {
-          type: 'dropdown',
-          label: 'Key',
-          id: 'key',
-          default: '0',
-          choices: this.CHOICES_DSKS.slice(0, this.model.DSKs)
-        },
-        {
-          type: 'dropdown',
-          label: 'Fill Source',
-          id: 'fill',
-          default: 1,
-          choices: this.CHOICES_MESOURCES
-        }
-      ]
-    }
-    feedbacks['macro'] = {
-      label: 'Change colors from macro state',
-      description: 'If the specified macro is running or waiting, change color of the bank',
-      options: [
-        {
-          type: 'colorpicker',
-          label: 'Foreground color',
-          id: 'fg',
-          default: this.rgb(255, 255, 255)
-        },
-        {
-          type: 'colorpicker',
-          label: 'Background color',
-          id: 'bg',
-          default: this.rgb(238, 238, 0)
-        },
-        {
-          type: 'textinput',
-          label: 'Macro Number (1-100)',
-          id: 'macroIndex',
-          default: '1',
-          regex: '/^([1-9]|[1-9][0-9]|100)$/'
-        },
-        {
-          type: 'dropdown',
-          label: 'State',
-          id: 'state',
-          default: 'isWaiting',
-          choices: this.CHOICES_MACROSTATE
-        }
-      ]
-    }
-    feedbacks['mv_source'] = {
-      label: 'Change colors from MV window',
-      description: 'If the specified MV window is set to the specified source, change color of the bank',
-      options: [
-        {
-          type: 'colorpicker',
-          label: 'Foreground color',
-          id: 'fg',
-          default: this.rgb(0, 0, 0)
-        },
-        {
-          type: 'colorpicker',
-          label: 'Background color',
-          id: 'bg',
-          default: this.rgb(255, 255, 0)
-        },
-        {
-          type: 'dropdown',
-          id: 'multiViewerId',
-          label: 'MV',
-          default: 0,
-          choices: this.CHOICES_MV.slice(0, this.model.MVs)
-        },
-        {
-          type: 'dropdown',
-          id: 'windowIndex',
-          label: 'Window #',
-          default: 2,
-          choices: this.CHOICES_MVWINDOW
-        },
-        {
-          type: 'dropdown',
-          id: 'source',
-          label: 'Source',
-          default: 0,
-          choices: this.CHOICES_MVSOURCES
-        }
-      ]
-    }
-    feedbacks['ssrc_box_source'] = {
-      label: 'Change colors from SuperSorce box source',
-      description: 'If the specified SuperSource box is set to the specified source, change color of the bank',
-      options: [
-        {
-          type: 'colorpicker',
-          label: 'Foreground color',
-          id: 'fg',
-          default: this.rgb(0, 0, 0)
-        },
-        {
-          type: 'colorpicker',
-          label: 'Background color',
-          id: 'bg',
-          default: this.rgb(255, 255, 0)
-        },
-        {
-          type: 'dropdown',
-          id: 'boxIndex',
-          label: 'Box #',
-          default: 2,
-          choices: this.CHOICES_SSRCBOXES
-        },
-        {
-          type: 'dropdown',
-          id: 'source',
-          label: 'Source',
-          default: 0,
-          choices: this.CHOICES_MESOURCES
-        }
-      ]
-    }
-
-    this.setFeedbackDefinitions(feedbacks)
+    this.setFeedbackDefinitions(GetFeedbacksList(this, this.model))
   }
 
   /**
@@ -1637,7 +813,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
    * @since 1.0.0
    */
   private initPresets() {
-    let presets = []
+    const presets = []
     // let pstText = this.config.presets == 1 ? 'long_' : 'short_'
     // let pstSize = this.config.presets == 1 ? 'auto' : '18'
 
@@ -2152,19 +1328,15 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   private processStateChange(_err, state) {
     switch (state.constructor.name) {
       case 'AuxSourceCommand': {
-        this.getAux(state.auxBus).source = state.properties.source
+        this.getAux(state.auxBus).auxSource = state.properties.source
 
-        if (this.initDone === true) {
-          this.checkFeedbacks('aux_bg')
-        }
+        this.checkFeedbacks(FeedbackId.AuxBG)
         break
       }
       case 'DownstreamKeyPropertiesCommand': {
         this.updateDSK(state.downstreamKeyerId, state.properties)
 
-        if (this.initDone === true) {
-          this.checkFeedbacks('dsk_bg')
-        }
+        this.checkFeedbacks(FeedbackId.DSKBG)
         break
       }
 
@@ -2177,17 +1349,13 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
           this.config.presets == 1 ? this.getSource(id).longName : this.getSource(id).shortName
         )
 
-        if (this.initDone === true) {
-          this.checkFeedbacks('dsk_source')
-        }
+        this.checkFeedbacks(FeedbackId.DSKSource)
         break
       }
       case 'DownstreamKeyStateCommand': {
         this.updateDSK(state.downstreamKeyerId, state.properties)
 
-        if (this.initDone === true) {
-          this.checkFeedbacks('dsk_bg')
-        }
+        this.checkFeedbacks(FeedbackId.DSKBG)
         break
       }
 
@@ -2204,18 +1372,14 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
       case 'InputPropertiesCommand': {
         this.updateSource(state.inputId, state.properties)
         // resend everything, since names of routes might have changed
-        if (this.initDone === true) {
-          this.initVariables()
-        }
+        this.initVariables()
         break
       }
 
       case 'MixEffectKeyOnAirCommand': {
         this.updateUSK(state.mixEffect, state.upstreamKeyerId, state.properties)
 
-        if (this.initDone === true) {
-          this.checkFeedbacks('usk_bg')
-        }
+        this.checkFeedbacks(FeedbackId.USKBG)
         break
       }
       case 'MixEffectKeyPropertiesGetCommand': {
@@ -2227,43 +1391,33 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
           this.config.presets == 1 ? this.getSource(id).longName : this.getSource(id).shortName
         )
 
-        if (this.initDone === true) {
-          this.checkFeedbacks('usk_source')
-        }
+        this.checkFeedbacks(FeedbackId.USKSource)
         break
       }
 
       case 'MacroPropertiesCommand': {
         this.updateMacro(state.properties.macroIndex, state.properties)
 
-        if (this.initDone === true) {
-          this.checkFeedbacks('macro')
-        }
+        this.checkFeedbacks(FeedbackId.Macro)
         break
       }
       case 'MacroRecordingStatusCommand': {
         this.updateMacro(state.properties.macroIndex, state.properties)
 
-        if (this.initDone === true) {
-          this.checkFeedbacks('macro')
-        }
+        this.checkFeedbacks(FeedbackId.Macro)
         break
       }
       case 'MacroRunStatusCommand': {
         this.updateMacro(state.properties.macroIndex, state.properties)
 
-        if (this.initDone === true) {
-          this.checkFeedbacks('macro')
-        }
+        this.checkFeedbacks(FeedbackId.Macro)
         break
       }
 
       case 'MultiViewerSourceCommand': {
         this.updateMvWindow(state.multiViewerId, state.properties.windowIndex, state.properties)
 
-        if (this.initDone === true) {
-          this.checkFeedbacks('mv_source')
-        }
+        this.checkFeedbacks(FeedbackId.MVSource)
         break
       }
 
@@ -2282,12 +1436,10 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
           this.config.presets == 1 ? this.getSource(id).longName : this.getSource(id).shortName
         )
 
-        if (this.initDone === true) {
-          this.checkFeedbacks('program_bg')
-          this.checkFeedbacks('program_bg_2')
-          this.checkFeedbacks('program_bg_3')
-          this.checkFeedbacks('program_bg_4')
-        }
+        this.checkFeedbacks(FeedbackId.ProgramBG)
+        this.checkFeedbacks(FeedbackId.ProgramBG2)
+        this.checkFeedbacks(FeedbackId.ProgramBG3)
+        this.checkFeedbacks(FeedbackId.ProgramBG4)
         break
       }
 
@@ -2300,69 +1452,57 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
           this.config.presets == 1 ? this.getSource(id).longName : this.getSource(id).shortName
         )
 
-        if (this.initDone === true) {
-          this.checkFeedbacks('preview_bg')
-          this.checkFeedbacks('preview_bg_2')
-          this.checkFeedbacks('preview_bg_3')
-          this.checkFeedbacks('preview_bg_4')
-        }
+        this.checkFeedbacks(FeedbackId.PreviewBG)
+        this.checkFeedbacks(FeedbackId.PreviewBG2)
+        this.checkFeedbacks(FeedbackId.PreviewBG3)
+        this.checkFeedbacks(FeedbackId.PreviewBG4)
         break
       }
 
-      case 'PreviewTransitionCommand': {
-        this.getME(state.mixEffect).preview = state.properties.preview
+      // case 'PreviewTransitionCommand': {
+      //   this.getME(state.mixEffect).preview = state.properties.preview
 
-        if (this.initDone === true) {
-          this.checkFeedbacks('trans_pvw')
-        }
-        break
-      }
+      //     this.checkFeedbacks('trans_pvw')
+      //   break
+      // }
       case 'SuperSourceBoxPropertiesCommand': {
         this.updateSuperSourceBox(state.boxId, 0, state.properties)
 
-        if (this.initDone === true) {
-          this.checkFeedbacks('ssrc_box_source')
-        }
+        this.checkFeedbacks(FeedbackId.SSrcBoxSource)
         break
       }
 
-      case 'SuperSourcePropertiesCommand': {
-        this.updateSuperSource(0, state.properties)
+      // case 'SuperSourcePropertiesCommand': {
+      //   this.updateSuperSource(0, state.properties)
 
-        if (this.initDone === true) {
-          //this.checkFeedbacks('ssrc_');
-        }
-        break
-      }
+      //     //this.checkFeedbacks('ssrc_');
+      //   break
+      // }
 
-      case 'TransitionPositionCommand': {
-        this.updateME(state.mixEffect, state.properties)
+      // case 'TransitionPositionCommand': {
+      //   this.updateME(state.mixEffect, state.properties)
 
-        let iconId = state.properties.handlePosition / 100
-        iconId = iconId >= 90 ? 90 : iconId >= 70 ? 70 : iconId >= 50 ? 50 : iconId >= 30 ? 30 : iconId >= 10 ? 10 : 0
-        let newIcon = 'trans' + iconId
+      //   let iconId = state.properties.handlePosition / 100
+      //   iconId = iconId >= 90 ? 90 : iconId >= 70 ? 70 : iconId >= 50 ? 50 : iconId >= 30 ? 30 : iconId >= 10 ? 10 : 0
+      //   let newIcon = 'trans' + iconId
 
-        if (
-          newIcon != this.getME(state.mixEffect).transIcon ||
-          state.properties.inTransition != this.getME(state.mixEffect).inTransition
-        ) {
-          this.getME(state.mixEffect).transIcon = newIcon
+      //   if (
+      //     newIcon != this.getME(state.mixEffect).transIcon ||
+      //     state.properties.inTransition != this.getME(state.mixEffect).inTransition
+      //   ) {
+      //     this.getME(state.mixEffect).transIcon = newIcon
 
-          if (this.initDone === true) {
-            this.checkFeedbacks('trans_state')
-          }
-        }
-        break
-      }
+      //       this.checkFeedbacks('trans_state')
+      //   }
+      //   break
+      // }
 
-      case 'TransitionPropertiesCommand': {
-        this.updateME(state.mixEffect, state.properties)
+      // case 'TransitionPropertiesCommand': {
+      //   this.updateME(state.mixEffect, state.properties)
 
-        if (this.initDone === true) {
-          this.checkFeedbacks('trans_mods')
-        }
-        break
-      }
+      //     this.checkFeedbacks('trans_mods')
+      //   break
+      // }
     }
   }
 
@@ -2375,7 +1515,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
    */
   private resetSources() {
     for (let x in this.sources) {
-      this.sources[x].init = 0
+      this.sources[x].init = false
     }
   }
 
@@ -2438,7 +1578,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
    * @access protected
    * @since 1.1.0
    */
-  private setSource(id, useME, useAux, useMV, shortLabel, label) {
+  private setSource(id: number, useME: boolean, useAux: boolean, useMV: boolean, shortLabel: string, label: string) {
     let source = this.getSource(id)
 
     // Use ATEM names if we got um
@@ -2460,7 +1600,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     source.useME = useME
     source.useAux = useAux
     source.useMV = useMV
-    source.init = 1
+    source.init = true
   }
 
   /**
@@ -2512,34 +1652,34 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   private setupSourceChoices() {
     this.resetSources()
 
-    this.setSource(0, 1, 1, 1, 'Blck', 'Black')
-    this.setSource(1000, 1, 1, 1, 'Bars', 'Bars')
-    this.setSource(2001, 1, 1, 1, 'Col1', 'Color 1')
-    this.setSource(2002, 1, 1, 1, 'Col2', 'Color 2')
-    this.setSource(7001, 0, 1, 1, 'Cln1', 'Clean Feed 1')
-    this.setSource(7002, 0, 1, 1, 'Cln2', 'Clean Feed 2')
+    this.setSource(0, true, true, true, 'Blck', 'Black')
+    this.setSource(1000, true, true, true, 'Bars', 'Bars')
+    this.setSource(2001, true, true, true, 'Col1', 'Color 1')
+    this.setSource(2002, true, true, true, 'Col2', 'Color 2')
+    this.setSource(7001, false, true, true, 'Cln1', 'Clean Feed 1')
+    this.setSource(7002, false, true, true, 'Cln2', 'Clean Feed 2')
 
     if (this.model.SSrc > 0) {
-      this.setSource(6000, 1, 1, 1, 'SSrc', 'Super Source')
+      this.setSource(6000, true, true, true, 'SSrc', 'Super Source')
     }
 
     for (let i = 1; i <= this.model.inputs; i++) {
-      this.setSource(i, 1, 1, 1, i < 10 ? 'In ' + i : 'In' + i, 'Input ' + i)
+      this.setSource(i, true, true, true, i < 10 ? 'In ' + i : 'In' + i, 'Input ' + i)
     }
 
     for (let i = 1; i <= this.model.MPs; i++) {
-      this.setSource(3000 + i * 10, 1, 1, 1, 'MP ' + i, 'Media Player ' + i)
-      this.setSource(3000 + i * 10 + 1, 1, 1, 1, 'MP' + i + 'K', 'Media Player ' + i + ' Key')
+      this.setSource(3000 + i * 10, true, true, true, 'MP ' + i, 'Media Player ' + i)
+      this.setSource(3000 + i * 10 + 1, true, true, true, 'MP' + i + 'K', 'Media Player ' + i + ' Key')
     }
 
     for (let i = 1; i <= this.model.MEs; i++) {
       // ME 1 can't be used as an ME source, hence i>1 for useME
-      this.setSource(10000 + i * 10, i > 1 ? 1 : 0, 1, 1, 'M' + i + 'PG', 'ME ' + i + ' Program')
-      this.setSource(10000 + i * 10 + 1, i > 1 ? 1 : 0, 1, 1, 'M' + i + 'PV', 'ME ' + i + ' Preview')
+      this.setSource(10000 + i * 10, i > 1, true, true, 'M' + i + 'PG', 'ME ' + i + ' Program')
+      this.setSource(10000 + i * 10 + 1, i > 1, true, true, 'M' + i + 'PV', 'ME ' + i + ' Preview')
     }
 
     for (let i = 1; i <= this.model.auxes; i++) {
-      this.setSource(8000 + i, 0, 0, 1, 'Aux' + i, 'Auxilary ' + i)
+      this.setSource(8000 + i, false, false, true, 'Aux' + i, 'Auxilary ' + i)
     }
 
     this.CHOICES_AUXSOURCES = []
@@ -2547,15 +1687,15 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     this.CHOICES_MVSOURCES = []
 
     for (let key in this.sources) {
-      if (this.sources[key].init == 1 && this.sources[key].useAux === 1) {
+      if (this.sources[key].init == true && this.sources[key].useAux === true) {
         this.CHOICES_AUXSOURCES.push({ id: key, label: this.sources[key].label })
       }
 
-      if (this.sources[key].init == 1 && this.sources[key].useME === 1) {
+      if (this.sources[key].init == true && this.sources[key].useME === true) {
         this.CHOICES_MESOURCES.push({ id: key, label: this.sources[key].label })
       }
 
-      if (this.sources[key].init == 1 && this.sources[key].useMV === 1) {
+      if (this.sources[key].init == true && this.sources[key].useMV === true) {
         this.CHOICES_MVSOURCES.push({ id: key, label: this.sources[key].label })
       }
     }
@@ -2619,23 +1759,23 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     }
   }
 
-  /**
-   * Update an array of properties for a ME.
-   *
-   * @param {number} id - the ME id
-   * @param {Object} properties - the new properties
-   * @access public
-   * @since 1.1.0
-   */
-  private updateME(id, properties) {
-    let me = this.getME(id)
+  // /**
+  //  * Update an array of properties for a ME.
+  //  *
+  //  * @param {number} id - the ME id
+  //  * @param {Object} properties - the new properties
+  //  * @access public
+  //  * @since 1.1.0
+  //  */
+  // private updateME(id, properties) {
+  //   let me = this.getME(id)
 
-    if (typeof properties === 'object') {
-      for (let x in properties) {
-        me[x] = properties[x]
-      }
-    }
-  }
+  //   if (typeof properties === 'object') {
+  //     for (let x in properties) {
+  //       me[x] = properties[x]
+  //     }
+  //   }
+  // }
 
   // /**
   //  * Update an array of properties for a MV.
@@ -2692,23 +1832,23 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     }
   }
 
-  /**
-   * Update an array of properties for a SuperSource.
-   *
-   * @param {number} id - the SuperSource id
-   * @param {Object} properties - the new properties
-   * @access public
-   * @since 1.1.7
-   */
-  private updateSuperSource(id, properties) {
-    let ssrc = this.getSuperSource(id)
+  // /**
+  //  * Update an array of properties for a SuperSource.
+  //  *
+  //  * @param {number} id - the SuperSource id
+  //  * @param {Object} properties - the new properties
+  //  * @access public
+  //  * @since 1.1.7
+  //  */
+  // private updateSuperSource(id, properties) {
+  //   let ssrc = this.getSuperSource(id)
 
-    if (typeof properties === 'object') {
-      for (let x in properties) {
-        ssrc[x] = properties[x]
-      }
-    }
-  }
+  //   if (typeof properties === 'object') {
+  //     for (let x in properties) {
+  //       ssrc[x] = properties[x]
+  //     }
+  //   }
+  // }
 
   /**
    * Update an array of properties for a SuperSource.
