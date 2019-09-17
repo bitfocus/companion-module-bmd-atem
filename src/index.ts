@@ -9,7 +9,7 @@ import {
 import { GetActionsList, HandleAction } from './actions'
 import { AtemConfig, GetConfigFields } from './config'
 import { ExecuteFeedback, FeedbackId, GetFeedbacksList } from './feedback'
-import { GetAutoDetectModel, GetModelSpec, MODEL_AUTO_DETECT, ModelId, ModelSpec } from './models'
+import { GetAutoDetectModel, GetModelSpec, MODEL_AUTO_DETECT, ModelSpec } from './models'
 import { GetPresetsList } from './presets'
 import {
   InitVariables,
@@ -76,7 +76,10 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     this.config = config
 
     this.initDone = false
-    this.setAtemModel(config.modelID || MODEL_AUTO_DETECT)
+
+    const newModel = GetModelSpec(config.modelID || MODEL_AUTO_DETECT) || GetAutoDetectModel()
+    this.model = newModel
+    this.debug('ATEM changed model: ' + this.model.id)
 
     // Force clear the cached state
     this.atemState = new AtemState()
@@ -279,52 +282,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     // }
   }
 
-  /**
-   * Do some setup and cleanup when we switch models.
-   * This is a tricky function because both Config and Atem use this.
-   * Logic has to track who's who and make sure we don't init over a live switcher.
-   */
-  private setAtemModel(modelID: ModelId, live?: boolean) {
-    if (!live) {
-      live = false
-    }
-
-    const newModel = GetModelSpec(modelID)
-    if (newModel) {
-      // Still not sure about this
-      if (
-        (live && this.config.modelID === MODEL_AUTO_DETECT) ||
-        (!live && (this.atemState.info.model === MODEL_AUTO_DETECT || modelID !== MODEL_AUTO_DETECT))
-      ) {
-        this.model = newModel
-        this.debug('ATEM Model: ' + this.model.id)
-      }
-
-      // This is a funky test, but necessary.  Can it somehow be an else if of the above ... or simply an else?
-      if (
-        (!live &&
-          this.atemState.info.model !== MODEL_AUTO_DETECT &&
-          modelID !== MODEL_AUTO_DETECT &&
-          modelID !== this.atemState.info.model) ||
-        (live &&
-          this.config.modelID &&
-          this.config.modelID !== MODEL_AUTO_DETECT &&
-          this.atemState.info.model !== this.config.modelID)
-      ) {
-        this.log(
-          'error',
-          'Connected to a ' +
-            this.atemState.info.productIdentifier +
-            ', but instance is configured for ' +
-            this.model.label +
-            ".  Change instance to 'Auto Detect' or the appropriate model to ensure stability."
-        )
-      }
-    } else {
-      this.debug('ATEM Model: ' + modelID + 'NOT FOUND')
-    }
-  }
-
   private setupAtemConnection() {
     this.atem = new Atem({ externalLog: this.debug.bind(this) })
 
@@ -332,11 +289,34 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
       this.initDone = true
       this.atemState = this.atem.state
 
-      this.log('info', 'Connected to a ' + this.atemState.info.productIdentifier)
+      const atemInfo = this.atemState.info
+      this.log('info', 'Connected to a ' + atemInfo.productIdentifier)
       this.status(this.STATUS_OK)
 
+      const newModelSpec = GetModelSpec(atemInfo.model)
+      if (newModelSpec) {
+        this.model = newModelSpec
+      } else {
+        this.model = GetAutoDetectModel()
+        this.status(this.STATUS_WARNING, `Unknown model: ${atemInfo.model}. Some bits may be missing`)
+      }
+
+      // Log if the config mismatches the device
+      if (
+        (this.config.modelID === MODEL_AUTO_DETECT || this.config.modelID === undefined) &&
+        atemInfo.model !== this.config.modelID
+      ) {
+        this.log(
+          'error',
+          'Connected to a ' +
+            atemInfo.productIdentifier +
+            ', but instance is configured for ' +
+            this.model.label +
+            ".  Change instance to 'Auto Detect' or the appropriate model to ensure stability."
+        )
+      }
+
       // TODO - is this ok to do here?
-      this.setAtemModel(this.atemState.info.model, true)
       this.updateCompanionBits()
     })
     this.atem.on('error', e => {
