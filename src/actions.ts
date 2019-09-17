@@ -1,7 +1,7 @@
 import { Atem, AtemState } from 'atem-connection'
 import InstanceSkel = require('../../../instance_skel')
 import { CompanionActionEvent, CompanionActions } from '../../../instance_skel_types'
-import { CHOICES_KEYTRANS, GetDSKIdChoices } from './choices'
+import { CHOICES_KEYTRANS, GetDSKIdChoices, GetMacroChoices } from './choices'
 import { AtemConfig } from './config'
 import {
   AtemAuxPicker,
@@ -123,11 +123,11 @@ export function GetActionsList(model: ModelSpec, state: AtemState) {
     label: 'Run MACRO',
     options: [
       {
-        type: 'textinput',
+        type: 'dropdown',
         id: 'macro',
-        label: 'Macro number',
-        default: '1',
-        regex: '/^([1-9]|[1-9][0-9]|100)$/'
+        label: 'Macro',
+        default: 1,
+        choices: GetMacroChoices(model, state)
       },
       {
         type: 'dropdown',

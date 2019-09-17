@@ -24,6 +24,7 @@ import {
 import { ModelSpec } from './models'
 import { getDSK, getME, getMultiviewerWindow, getSuperSourceBox, getUSK } from './state'
 import { assertUnreachable } from './util'
+import { GetMacroChoices } from './choices'
 
 export enum FeedbackId {
   PreviewBG = 'preview_bg',
@@ -265,11 +266,11 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
         ForegroundPicker(instance.rgb(255, 255, 255)),
         BackgroundPicker(instance.rgb(238, 238, 0)),
         {
-          type: 'textinput',
+          type: 'dropdown',
           label: 'Macro Number (1-100)',
           id: 'macroIndex',
-          default: '1',
-          regex: '/^([1-9]|[1-9][0-9]|100)$/'
+          default: 1,
+          choices: GetMacroChoices(model, state)
         },
         {
           type: 'dropdown',

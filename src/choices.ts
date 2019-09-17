@@ -51,6 +51,16 @@ export function GetMultiviewerIdChoices(model: ModelSpec): DropdownChoice[] {
   }))
 }
 
+export function GetMacroChoices(model: ModelSpec, state: AtemState): DropdownChoice[] {
+  return iterateTimes(model.macros, i => {
+    const macro = state.macro.macroProperties[i]
+    return {
+      id: i,
+      label: (macro && macro.isUsed ? `${macro.name} (#${i + 1})` : undefined) || `Macro ${i + 1}`
+    }
+  })
+}
+
 export interface SourceInfo {
   id: number
   shortName: string

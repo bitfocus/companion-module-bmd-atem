@@ -295,13 +295,14 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
         this.model = newModelSpec
       } else {
         this.model = GetParsedModelSpec(this.atemState)
-        this.status(this.STATUS_WARNING, `Unknown model: ${atemInfo.model}. Some bits may be missing`)
+        this.status(this.STATUS_WARNING, `Unknown model: ${atemInfo.productIdentifier}. Some bits may be missing`)
       }
 
       // Log if the config mismatches the device
       if (
-        (this.config.modelID === MODEL_AUTO_DETECT || this.config.modelID === undefined) &&
-        atemInfo.model !== this.config.modelID
+        this.config.modelID !== MODEL_AUTO_DETECT &&
+        this.config.modelID !== undefined &&
+        this.config.modelID !== atemInfo.model
       ) {
         this.log(
           'error',
@@ -316,7 +317,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
       // TODO - is this ok to do here?
       this.updateCompanionBits()
     })
-    this.atem.on('error', e => {
+    this.atem.on('error', (e: any) => {
       this.status(this.STATUS_ERROR, e.message)
     })
     this.atem.on('disconnected', () => {
