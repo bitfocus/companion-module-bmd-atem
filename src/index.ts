@@ -185,7 +185,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
         case ActionId.MacroRun:
           const macroIndex = getOptInt('macro') - 1
           const { macroPlayer, macroRecorder } = this.atemState.macro
-          if (opt.action == 'runContinue' && macroPlayer.isWaiting && macroPlayer.macroIndex === macroIndex) {
+          if (opt.action === 'runContinue' && macroPlayer.isWaiting && macroPlayer.macroIndex === macroIndex) {
             this.atem.macroContinue()
           } else if (macroRecorder.isRecording && macroRecorder.macroIndex === macroIndex) {
             this.atem.macroStopRecord()
