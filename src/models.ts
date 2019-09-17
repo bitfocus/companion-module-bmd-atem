@@ -1,4 +1,5 @@
 import { Enums } from 'atem-connection'
+import { DropdownChoice } from '../../../instance_skel_types'
 
 export const MODEL_AUTO_DETECT = 0
 export type ModelId = 0 | Enums.Model
@@ -137,7 +138,7 @@ export const ALL_MODELS: ModelSpec[] = [
   }
 ]
 
-export const ALL_MODEL_CHOICES = ALL_MODELS.map(({ id, label }) => ({ id, label }))
+export const ALL_MODEL_CHOICES: DropdownChoice[] = ALL_MODELS.map(({ id, label }) => ({ id, label }))
 ALL_MODEL_CHOICES.sort((a, b) => {
   const aStr = a.label.toLowerCase()
   const bStr = b.label.toLowerCase()

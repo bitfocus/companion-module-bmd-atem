@@ -1,9 +1,10 @@
 import { Atem, AtemState } from 'atem-connection'
+import { MacroPropertiesState } from 'atem-connection/dist/state/macro'
 import InstanceSkel = require('../../../instance_skel')
 import { CompanionConfigField, CompanionSystem, CompanionVariable } from '../../../instance_skel_types'
 import { ActionId, GetActionsList } from './actions'
 import { GetSourcesListForType } from './choices'
-import { AtemConfig, GetConfigFields } from './config'
+import { AtemConfig, GetConfigFields, PresetStyleName } from './config'
 import { FeedbackId, GetFeedbacksList } from './feedback'
 import { GetAutoDetectModel, GetModelSpec, MODEL_AUTO_DETECT, ModelId, ModelSpec } from './models'
 import { assertUnreachable } from './util'
@@ -23,9 +24,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   private atemState: AtemState
 
   private states: any
-  private macros: any
-  private deviceName: any
-  private deviceModel: any
   private initDone: boolean
 
   /**
@@ -39,17 +37,15 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   constructor(system: CompanionSystem, id: string, config: AtemConfig) {
     super(system, id, config)
 
-    this.atemState = new AtemState()
-
-    this.states = {}
-    this.macros = []
-    this.deviceName = ''
-    this.deviceModel = MODEL_AUTO_DETECT
-    this.initDone = false
-
     const newModel = this.config.modelID ? GetModelSpec(this.config.modelID) : undefined
     this.model = newModel || GetAutoDetectModel()
     this.config.modelID = this.model.id
+
+    this.atem = new Atem({ externalLog: this.debug.bind(this) })
+    this.atemState = new AtemState()
+
+    this.states = {}
+    this.initDone = false
 
     this.actions() // export actions
   }
@@ -182,12 +178,14 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
         this.atem.autoTransition(parseInt(opt.mixeffect))
         break
       case ActionId.MacroRun:
-        if (opt.action == 'runContinue' && this.getMacro(parseInt(opt.macro) - 1).isWaiting == 1) {
+        const macroIndex = parseInt(opt.macro, 10) - 1
+        const { macroPlayer, macroRecorder } = this.atemState.macro
+        if (opt.action == 'runContinue' && macroPlayer.isWaiting && macroPlayer.macroIndex === macroIndex) {
           this.atem.macroContinue()
-        } else if (this.getMacro(parseInt(opt.macro) - 1).isRecording == 1) {
+        } else if (macroRecorder.isRecording && macroRecorder.macroIndex === macroIndex) {
           this.atem.macroStopRecord()
         } else {
-          this.atem.macroRun(parseInt(opt.macro) - 1)
+          this.atem.macroRun(macroIndex)
         }
         break
       case ActionId.MacroContinue:
@@ -342,7 +340,9 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
         }
         break
       case FeedbackId.Macro:
-        if (this.getMacro(opt.macroIndex - 1)[opt.state] == 1) {
+        const macro = this.atemState.macro.macroProperties[opt.macroIndex - 1] as MacroPropertiesState | undefined
+        // TODO - tighten up typings from opt.state
+        if (macro && macro[opt.state]) {
           out = { color: opt.fg, bgcolor: opt.bg }
         }
         break
@@ -389,33 +389,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     }
 
     return this.states['dsk_' + id]
-  }
-
-  /**
-   * INTERNAL: returns the desired macro state object.
-   * These are indexed -1 of the human value.
-   *
-   * @param {number} id - the macro id to fetch
-   * @returns {Object} the desired macro object
-   * @access protected
-   * @since 1.1.0
-   */
-  private getMacro(id) {
-    if (this.macros[id] === undefined) {
-      this.macros[id] = {
-        macroIndex: id,
-        isRunning: 0,
-        isWaiting: 0,
-        isUsed: 0,
-        isRecording: 0,
-        loop: 0,
-        label: 'Macro ' + (id + 1),
-        name: 'Macro ' + (id + 1),
-        description: ''
-      }
-    }
-
-    return this.macros[id]
   }
 
   /**
@@ -968,7 +941,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   private getSourcePresetName(id: number) {
     const input = this.atemState.inputs[id]
     if (input) {
-      return this.config.presets == 1 ? input.longName : input.shortName
+      return this.config.presets === PresetStyleName.Long ? input.longName : input.shortName
     } else {
       return `Unknown (${id})`
     }
@@ -1045,17 +1018,22 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     // Macros
     for (let i = 0; i < this.model.macros; i++) {
       variables.push({
-        label: 'Name of macro id ' + (i + 1),
-        name: 'macro_' + (i + 1)
+        label: `Name of macro #${i + 1}`,
+        name: `macro_${i + 1}`
       })
 
-      this.setVariable(
-        'macro_' + (i + 1),
-        this.getMacro(i).description != '' ? this.getMacro(i).description : this.getMacro(i).label
-      )
+      this.updateMacroVariable(i)
     }
 
     this.setVariableDefinitions(variables)
+  }
+
+  private updateMacroVariable(id: number) {
+    const macro = this.atemState.macro.macroProperties[id]
+    this.setVariable(
+      `macro_${id + 1}`,
+      (macro && macro.description ? macro.description : macro.name) || `Macro ${id + 1}`
+    )
   }
 
   /**
@@ -1105,9 +1083,9 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
         this.debug('Init done')
         this.initDone = true
         this.atemState = state
-        this.log('info', 'Connected to a ' + this.deviceName)
+        this.log('info', 'Connected to a ' + this.atemState.info.productIdentifier)
 
-        this.setAtemModel(this.deviceModel, true)
+        this.setAtemModel(this.atemState.info.model, true)
         this.checkFeedbacks()
         break
       }
@@ -1141,20 +1119,16 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
       }
 
       case 'MacroPropertiesCommand': {
-        this.updateMacro(state.properties.macroIndex, state.properties)
+        this.updateMacroVariable(state.properties.index) // TODO - check this
 
         this.checkFeedbacks(FeedbackId.Macro)
         break
       }
       case 'MacroRecordingStatusCommand': {
-        this.updateMacro(state.properties.macroIndex, state.properties)
-
         this.checkFeedbacks(FeedbackId.Macro)
         break
       }
       case 'MacroRunStatusCommand': {
-        this.updateMacro(state.properties.macroIndex, state.properties)
-
         this.checkFeedbacks(FeedbackId.Macro)
         break
       }
@@ -1163,12 +1137,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
         this.updateMvWindow(state.multiViewerId, state.properties.windowIndex, state.properties)
 
         this.checkFeedbacks(FeedbackId.MVSource)
-        break
-      }
-
-      case 'ProductIdentifierCommand': {
-        this.deviceModel = state.properties.model
-        this.deviceName = state.properties.deviceName
         break
       }
 
@@ -1263,20 +1231,29 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     const newModel = GetModelSpec(modelID)
     if (newModel) {
       // Still not sure about this
-      if ((live === true && this.config.modelID == 0) || (live == false && (this.deviceModel == 0 || modelID > 0))) {
+      if (
+        (live && this.config.modelID === MODEL_AUTO_DETECT) ||
+        (!live && (this.atemState.info.model === MODEL_AUTO_DETECT || modelID !== MODEL_AUTO_DETECT))
+      ) {
         this.model = newModel
         this.debug('ATEM Model: ' + this.model.id)
       }
 
       // This is a funky test, but necessary.  Can it somehow be an else if of the above ... or simply an else?
       if (
-        (live === false && this.deviceModel > 0 && modelID > 0 && modelID != this.deviceModel) ||
-        (live === true && this.config.modelID && this.config.modelID > 0 && this.deviceModel != this.config.modelID)
+        (!live &&
+          this.atemState.info.model !== MODEL_AUTO_DETECT &&
+          modelID !== MODEL_AUTO_DETECT &&
+          modelID !== this.atemState.info.model) ||
+        (live &&
+          this.config.modelID &&
+          this.config.modelID !== MODEL_AUTO_DETECT &&
+          this.atemState.info.model !== this.config.modelID)
       ) {
         this.log(
           'error',
           'Connected to a ' +
-            this.deviceName +
+            this.atemState.info.productIdentifier +
             ', but instance is configured for ' +
             this.model.label +
             ".  Change instance to 'Auto Detect' or the appropriate model to ensure stability."
@@ -1299,8 +1276,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
    * @since 1.1.0
    */
   private setupAtemConnection() {
-    this.atem = new Atem({ externalLog: this.debug.bind(this) })
-
     this.atem.on('connected', () => {
       this.status(this.STATUS_OK)
     })
@@ -1314,7 +1289,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     })
     this.atem.on('stateChanged', this.processStateChange.bind(this))
 
-    if (this.config.host !== undefined) {
+    if (this.config.host) {
       this.atem.connect(this.config.host)
     }
   }
@@ -1337,35 +1312,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     }
   }
 
-  /**
-   * Update an array of properties for a macro.
-   *
-   * @param {number} id - the macro id
-   * @param {Object} properties - the new properties
-   * @access public
-   * @since 1.1.0
-   */
-  private updateMacro(id, properties) {
-    if (typeof properties === 'object') {
-      if (id == 65535) {
-        for (const x in properties) {
-          if (properties[x] == 0) {
-            for (const i in this.macros) {
-              this.macros[i][x] = properties[x]
-            }
-          }
-        }
-      } else {
-        const macro = this.getMacro(id)
-
-        for (const x in properties) {
-          macro[x] = properties[x]
-        }
-
-        this.setVariable('macro_' + (id + 1), macro.description != '' ? macro.description : macro.label)
-      }
-    }
-  }
   /**
    * Update an array of properties for a MV window.
    *

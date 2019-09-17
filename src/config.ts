@@ -2,10 +2,15 @@ import InstanceSkel = require('../../../instance_skel')
 import { SomeCompanionConfigField } from '../../../instance_skel_types'
 import { ALL_MODEL_CHOICES, ModelId } from './models'
 
+export enum PresetStyleName {
+  Short = 0,
+  Long = 1
+}
+
 export interface AtemConfig {
   host?: string
   modelID?: ModelId
-  presets?: any // TODO
+  presets?: PresetStyleName
 }
 
 export function GetConfigFields(self: InstanceSkel<AtemConfig>): SomeCompanionConfigField[] {
@@ -38,8 +43,8 @@ export function GetConfigFields(self: InstanceSkel<AtemConfig>): SomeCompanionCo
       id: 'presets',
       label: 'Preset Style',
       width: 6,
-      choices: [{ id: 0, label: 'Short Names' }, { id: 1, label: 'Long Names' }],
-      default: 0
+      choices: [{ id: PresetStyleName.Short, label: 'Short Names' }, { id: PresetStyleName.Long, label: 'Long Names' }],
+      default: PresetStyleName.Short
     }
   ]
 }
