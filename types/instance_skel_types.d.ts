@@ -2,7 +2,6 @@
 import { EventEmitter } from "events"
 
 export interface CompanionSystem extends EventEmitter {
-
 }
 
 export interface CompanionAction {
@@ -69,7 +68,23 @@ export interface CompanionFeedback {
   options: SomeCompanionInputField[]
 }
 export interface CompanionPreset {
-  // TODO
+  category: string
+  label: string
+  bank: {
+    style: 'text'
+    text: string
+    size: 'auto' | number
+    color: number
+    bgcolor: number
+  }
+  feedbacks: Array<{
+    type: string
+    options: { [key: string]: number | string }
+  }>
+  actions: Array<{
+    action: string
+    options: { [key: string]: number | string }
+  }>
 }
 
 export interface CompanionFeedbacks { [id: string]: CompanionFeedback }

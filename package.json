@@ -12,6 +12,7 @@
 	"homepage": "https://github.com/bitfocus/companion-module-atem#readme",
 	"main": "dist/index.js",
 	"scripts": {
+		"fix-types": "cp types/* ../../../",
 		"build": "trash dist && yarn build:main",
 		"build:main": "tsc -p tsconfig.build.json",
 		"lint": "tslint --project tsconfig.json --config tslint.json && yarn prettier --check \"src/**/*.ts\"",
