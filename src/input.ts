@@ -27,7 +27,7 @@ export function AtemMEPicker(model: ModelSpec, id: number): CompanionInputFieldD
     id: `mixeffect${id ? id : ''}`,
     label: `M/E${id ? ` Option ${id}` : ''}`,
     type: 'dropdown',
-    default: id,
+    default: id > 0 ? id - 1 : 0,
     choices: GetMEIdChoices(model)
   }
 }

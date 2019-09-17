@@ -64,7 +64,7 @@ export const ALL_MODELS: ModelSpec[] = [
     inputs: 16,
     auxes: 6,
     MEs: 2,
-    USKs: 4,
+    USKs: 2,
     DSKs: 2,
     MPs: 2,
     MVs: 2,

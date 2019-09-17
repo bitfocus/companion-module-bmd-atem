@@ -55,7 +55,7 @@ export function GetMacroChoices(model: ModelSpec, state: AtemState): DropdownCho
   return iterateTimes(model.macros, i => {
     const macro = state.macro.macroProperties[i]
     return {
-      id: i,
+      id: i + 1,
       label: (macro && macro.isUsed ? `${macro.name} (#${i + 1})` : undefined) || `Macro ${i + 1}`
     }
   })

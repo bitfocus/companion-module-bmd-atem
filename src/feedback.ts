@@ -6,6 +6,7 @@ import {
   CompanionFeedbacks,
   CompanionInputFieldColor
 } from '../../../instance_skel_types'
+import { GetMacroChoices } from './choices'
 import { AtemConfig } from './config'
 import {
   AtemAuxPicker,
@@ -24,7 +25,6 @@ import {
 import { ModelSpec } from './models'
 import { getDSK, getME, getMultiviewerWindow, getSuperSourceBox, getUSK } from './state'
 import { assertUnreachable } from './util'
-import { GetMacroChoices } from './choices'
 
 export enum FeedbackId {
   PreviewBG = 'preview_bg',
