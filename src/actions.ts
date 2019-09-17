@@ -1,6 +1,8 @@
-import { AtemState } from 'atem-connection'
-import { CompanionActions } from '../../../instance_skel_types'
+import { Atem, AtemState } from 'atem-connection'
+import InstanceSkel = require('../../../instance_skel')
+import { CompanionActionEvent, CompanionActions } from '../../../instance_skel_types'
 import { CHOICES_KEYTRANS, GetDSKIdChoices } from './choices'
+import { AtemConfig } from './config'
 import {
   AtemAuxPicker,
   AtemAuxSourcePicker,
@@ -17,6 +19,8 @@ import {
   AtemUSKPicker
 } from './input'
 import { ModelSpec } from './models'
+import { getDSK, getUSK } from './state'
+import { assertUnreachable } from './util'
 
 export enum ActionId {
   Program = 'program',
@@ -147,4 +151,112 @@ export function GetActionsList(model: ModelSpec, state: AtemState) {
   }
 
   return actions
+}
+
+export function HandleAction(
+  instance: InstanceSkel<AtemConfig>,
+  atem: Atem,
+  state: AtemState,
+  action: CompanionActionEvent
+) {
+  const opt = action.options
+  const getOptInt = (key: string) => {
+    const val = parseInt(opt[key], 10)
+    if (isNaN(val)) {
+      throw new Error(`Invalid option '${key}'`)
+    }
+    return val
+  }
+
+  try {
+    const actionId = action.action as ActionId
+    switch (actionId) {
+      case ActionId.Program:
+        atem.changeProgramInput(getOptInt('input'), getOptInt('mixeffect'))
+        break
+      case ActionId.Preview:
+        atem.changePreviewInput(getOptInt('input'), getOptInt('mixeffect'))
+        break
+      case ActionId.USKSource:
+        atem.setUpstreamKeyerFillSource(getOptInt('fill'), getOptInt('mixeffect'), getOptInt('key'))
+        atem.setUpstreamKeyerCutSource(getOptInt('cut'), getOptInt('mixeffect'), getOptInt('key'))
+        break
+      case ActionId.DSKSource:
+        atem.setDownstreamKeyFillSource(getOptInt('fill'), getOptInt('key'))
+        atem.setDownstreamKeyCutSource(getOptInt('cut'), getOptInt('key'))
+        break
+      case ActionId.Aux:
+        atem.setAuxSource(getOptInt('input'), getOptInt('aux'))
+        break
+      case ActionId.Cut:
+        atem.cut(getOptInt('mixeffect'))
+        break
+      case ActionId.USKOnAir: {
+        const meIndex = getOptInt('mixeffect')
+        const keyIndex = getOptInt('key')
+        if (opt.onair === 'toggle') {
+          const usk = getUSK(state, meIndex, keyIndex)
+          atem.setUpstreamKeyerOnAir(!usk || !usk.onAir, meIndex, keyIndex)
+        } else {
+          atem.setUpstreamKeyerOnAir(opt.onair === 'true', meIndex, keyIndex)
+        }
+        break
+      }
+      case ActionId.DSKAuto:
+        atem.autoDownstreamKey(getOptInt('downstreamKeyerId'))
+        break
+      case ActionId.DSKOnAir: {
+        const keyIndex = getOptInt('key')
+        if (opt.onair === 'toggle') {
+          const dsk = getDSK(state, keyIndex)
+          atem.setDownstreamKeyOnAir(!dsk || !dsk.onAir, keyIndex)
+        } else {
+          atem.setDownstreamKeyOnAir(opt.onair === 'true', keyIndex)
+        }
+        break
+      }
+      case ActionId.Auto:
+        atem.autoTransition(getOptInt('mixeffect'))
+        break
+      case ActionId.MacroRun:
+        const macroIndex = getOptInt('macro') - 1
+        const { macroPlayer, macroRecorder } = state.macro
+        if (opt.action === 'runContinue' && macroPlayer.isWaiting && macroPlayer.macroIndex === macroIndex) {
+          atem.macroContinue()
+        } else if (macroRecorder.isRecording && macroRecorder.macroIndex === macroIndex) {
+          atem.macroStopRecord()
+        } else {
+          atem.macroRun(macroIndex)
+        }
+        break
+      case ActionId.MacroContinue:
+        atem.macroContinue()
+        break
+      case ActionId.MacroStop:
+        atem.macroStop()
+        break
+      case ActionId.MultiviewerWindowSource:
+        atem.setMultiViewerSource(
+          {
+            windowIndex: getOptInt('windowIndex'),
+            source: getOptInt('source')
+          },
+          getOptInt('multiViewerId')
+        )
+        break
+      case ActionId.SuperSourceBoxSource:
+        atem.setSuperSourceBoxSettings(
+          {
+            source: getOptInt('source')
+          },
+          getOptInt('boxIndex')
+        )
+        break
+      default:
+        assertUnreachable(actionId)
+        instance.debug('Unknown action: ' + action.action)
+    }
+  } catch (e) {
+    instance.debug('Action failed: ' + e)
+  }
 }

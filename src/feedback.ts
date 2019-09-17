@@ -1,6 +1,11 @@
 import { AtemState } from 'atem-connection'
 import InstanceSkel = require('../../../instance_skel')
-import { CompanionFeedbacks, CompanionInputFieldColor } from '../../../instance_skel_types'
+import {
+  CompanionFeedbackEvent,
+  CompanionFeedbackResult,
+  CompanionFeedbacks,
+  CompanionInputFieldColor
+} from '../../../instance_skel_types'
 import { AtemConfig } from './config'
 import {
   AtemAuxPicker,
@@ -17,6 +22,8 @@ import {
   AtemUSKPicker
 } from './input'
 import { ModelSpec } from './models'
+import { getDSK, getME, getMultiviewerWindow, getSuperSourceBox, getUSK } from './state'
+import { assertUnreachable } from './util'
 
 export enum FeedbackId {
   PreviewBG = 'preview_bg',
@@ -308,4 +315,208 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
   }
 
   return feedbacks
+}
+
+export function ExecuteFeedback(state: AtemState, feedback: CompanionFeedbackEvent): CompanionFeedbackResult {
+  const opt = feedback.options
+  const getOptColors = () => ({ color: parseInt(opt.fg, 10), bgcolor: parseInt(opt.bg, 10) })
+
+  const feedbackType = feedback.type as FeedbackId
+  switch (feedbackType) {
+    case FeedbackId.PreviewBG: {
+      const me = getME(state, opt.mixeffect)
+      if (me && me.previewInput === parseInt(opt.input, 10)) {
+        return getOptColors()
+      }
+      break
+    }
+    case FeedbackId.PreviewBG2: {
+      const me1 = getME(state, opt.mixeffect1)
+      const me2 = getME(state, opt.mixeffect2)
+      if (
+        me1 &&
+        me1.previewInput === parseInt(opt.input1, 10) &&
+        me2 &&
+        me2.previewInput === parseInt(opt.input2, 10)
+      ) {
+        return getOptColors()
+      }
+      break
+    }
+    case FeedbackId.PreviewBG3: {
+      const me1 = getME(state, opt.mixeffect1)
+      const me2 = getME(state, opt.mixeffect2)
+      const me3 = getME(state, opt.mixeffect3)
+      if (
+        me1 &&
+        me1.previewInput === parseInt(opt.input1, 10) &&
+        me2 &&
+        me2.previewInput === parseInt(opt.input2, 10) &&
+        me3 &&
+        me3.previewInput === parseInt(opt.input3, 10)
+      ) {
+        return getOptColors()
+      }
+      break
+    }
+    case FeedbackId.PreviewBG4: {
+      const me1 = getME(state, opt.mixeffect1)
+      const me2 = getME(state, opt.mixeffect2)
+      const me3 = getME(state, opt.mixeffect3)
+      const me4 = getME(state, opt.mixeffect4)
+      if (
+        me1 &&
+        me1.previewInput === parseInt(opt.input1, 10) &&
+        me2 &&
+        me2.previewInput === parseInt(opt.input2, 10) &&
+        me3 &&
+        me3.previewInput === parseInt(opt.input3, 10) &&
+        me4 &&
+        me4.previewInput === parseInt(opt.input4, 10)
+      ) {
+        return getOptColors()
+      }
+      break
+    }
+    case FeedbackId.ProgramBG: {
+      const me = getME(state, opt.mixeffect)
+      if (me && me.programInput === parseInt(opt.input, 10)) {
+        return getOptColors()
+      }
+      break
+    }
+    case FeedbackId.ProgramBG2: {
+      const me1 = getME(state, opt.mixeffect1)
+      const me2 = getME(state, opt.mixeffect2)
+      if (
+        me1 &&
+        me1.programInput === parseInt(opt.input1, 10) &&
+        me2 &&
+        me2.programInput === parseInt(opt.input2, 10)
+      ) {
+        return getOptColors()
+      }
+      break
+    }
+    case FeedbackId.ProgramBG3: {
+      const me1 = getME(state, opt.mixeffect1)
+      const me2 = getME(state, opt.mixeffect2)
+      const me3 = getME(state, opt.mixeffect3)
+      if (
+        me1 &&
+        me1.programInput === parseInt(opt.input1, 10) &&
+        me2 &&
+        me2.programInput === parseInt(opt.input2, 10) &&
+        me3 &&
+        me3.programInput === parseInt(opt.input3, 10)
+      ) {
+        return getOptColors()
+      }
+      break
+    }
+    case FeedbackId.ProgramBG4: {
+      const me1 = getME(state, opt.mixeffect1)
+      const me2 = getME(state, opt.mixeffect2)
+      const me3 = getME(state, opt.mixeffect3)
+      const me4 = getME(state, opt.mixeffect4)
+      if (
+        me1 &&
+        me1.programInput === parseInt(opt.input1, 10) &&
+        me2 &&
+        me2.programInput === parseInt(opt.input2, 10) &&
+        me3 &&
+        me3.programInput === parseInt(opt.input3, 10) &&
+        me4 &&
+        me4.programInput === parseInt(opt.input4, 10)
+      ) {
+        return getOptColors()
+      }
+      break
+    }
+    case FeedbackId.AuxBG:
+      const auxSource = state.video.auxilliaries[opt.aux]
+      if (auxSource === parseInt(opt.input, 10)) {
+        return getOptColors()
+      }
+      break
+    case FeedbackId.USKBG: {
+      const usk = getUSK(state, opt.mixeffect, opt.key)
+      if (usk && usk.onAir) {
+        return getOptColors()
+      }
+      break
+    }
+    case FeedbackId.USKSource: {
+      const usk = getUSK(state, opt.mixeffect, opt.key)
+      if (usk && usk.fillSource === parseInt(opt.fill, 10)) {
+        return getOptColors()
+      }
+      break
+    }
+    case FeedbackId.DSKBG: {
+      const dsk = getDSK(state, opt.key)
+      if (dsk && dsk.onAir) {
+        return getOptColors()
+      }
+      break
+    }
+    case FeedbackId.DSKSource: {
+      const dsk = getDSK(state, opt.key)
+      if (dsk && dsk.sources.fillSource === parseInt(opt.fill, 10)) {
+        return getOptColors()
+      }
+      break
+    }
+    case FeedbackId.Macro: {
+      let macroIndex = parseInt(opt.macroIndex, 10)
+      if (!isNaN(macroIndex)) {
+        macroIndex -= 1
+        const { macroPlayer, macroRecorder } = state.macro
+        const type = opt.state as MacroFeedbackType
+
+        let isActive = false
+        switch (type) {
+          case MacroFeedbackType.IsUsed:
+            const macro = state.macro.macroProperties[macroIndex]
+            isActive = macro && macro.isUsed
+            break
+          case MacroFeedbackType.IsRecording:
+            isActive = macroRecorder.isRecording && macroRecorder.macroIndex === macroIndex
+            break
+          case MacroFeedbackType.IsRunning:
+            isActive = macroPlayer.isRunning && macroPlayer.macroIndex === macroIndex
+            break
+          case MacroFeedbackType.IsWaiting:
+            isActive = macroPlayer.isWaiting && macroPlayer.macroIndex === macroIndex
+            break
+          default:
+            assertUnreachable(type)
+        }
+
+        if (isActive) {
+          return getOptColors()
+        }
+      }
+      break
+    }
+    case FeedbackId.MVSource: {
+      const window = getMultiviewerWindow(state, opt.multiViewerId, opt.windowIndex)
+      if (window && window.source === parseInt(opt.source, 10)) {
+        return getOptColors()
+      }
+      break
+    }
+    case FeedbackId.SSrcBoxSource: {
+      const box = getSuperSourceBox(state, opt.boxIndex, 0) // TODO - ssrcIndex
+      if (box && box.source === parseInt(opt.source, 10)) {
+        return getOptColors()
+      }
+      break
+    }
+    default:
+      assertUnreachable(feedbackType)
+    // TODO - log
+  }
+
+  return {}
 }
