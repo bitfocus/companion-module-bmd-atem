@@ -1,4 +1,4 @@
-import { Enums, AtemState } from 'atem-connection'
+import { AtemState, Enums } from 'atem-connection'
 import { DropdownChoice } from '../../../instance_skel_types'
 
 export const MODEL_AUTO_DETECT = 0

@@ -15,7 +15,7 @@ export function getUSK(
   keyIndex: number | string
 ): UpstreamKeyer | undefined {
   const me = getME(state, meIndex)
-  return me ? me.upstreamKeyers[keyIndex] : undefined
+  return me ? me.upstreamKeyers[keyIndex as number] : undefined
 }
 export function getDSK(state: AtemState, keyIndex: number | string): DownstreamKeyer | undefined {
   return state.video.downstreamKeyers[keyIndex]

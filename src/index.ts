@@ -9,7 +9,7 @@ import {
 import { GetActionsList, HandleAction } from './actions'
 import { AtemConfig, GetConfigFields } from './config'
 import { ExecuteFeedback, FeedbackId, GetFeedbacksList } from './feedback'
-import { GetAutoDetectModel, GetModelSpec, MODEL_AUTO_DETECT, ModelSpec, GetParsedModelSpec } from './models'
+import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, MODEL_AUTO_DETECT, ModelSpec } from './models'
 import { GetPresetsList } from './presets'
 import {
   InitVariables,
@@ -74,12 +74,11 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   public updateConfig(config: AtemConfig) {
     this.config = config
 
-    this.initDone = false
-
     this.model = GetModelSpec(config.modelID || MODEL_AUTO_DETECT) || GetAutoDetectModel()
     this.debug('ATEM changed model: ' + this.model.id)
 
     // Force clear the cached state
+    this.initDone = false
     this.atemState = new AtemState()
     this.updateCompanionBits()
 
