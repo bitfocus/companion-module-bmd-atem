@@ -9,8 +9,10 @@ function getSourcePresetName(instance: InstanceSkel<AtemConfig>, state: AtemStat
   const input = state.inputs[id]
   if (input) {
     return instance.config.presets === PresetStyleName.Long ? input.longName : input.shortName
+  } else if (id === 0) {
+    return 'Unknown'
   } else {
-    return `Unknown (${id})`
+    return `Unknown input (${id})`
   }
 }
 
