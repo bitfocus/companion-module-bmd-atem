@@ -19,7 +19,8 @@
 		"lint-fix": "tslint --project tsconfig.json --config tslint.json --fix && yarn prettier --write \"src/**/*.ts\"",
 		"tslint-check": "tslint-config-prettier-check ./tslint.json",
 		"validate:dependencies": "yarn audit && yarn license-validate",
-		"license-validate": "node-license-validator -p -d --allow-licenses MIT BSD BSD-3-Clause ISC Apache Unlicense WTFPL"
+		"license-validate": "node-license-validator -p -d --allow-licenses MIT BSD BSD-3-Clause ISC Apache Unlicense WTFPL",
+		"postinstall": "yarn fix-types && yarn build"
 	},
 	"repository": {
 		"type": "git",
