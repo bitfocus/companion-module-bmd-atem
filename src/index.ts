@@ -1,13 +1,18 @@
 import { Atem, AtemState } from 'atem-connection'
 import { MacroPropertiesState } from 'atem-connection/dist/state/macro'
 import InstanceSkel = require('../../../instance_skel')
-import { CompanionConfigField, CompanionSystem, CompanionVariable } from '../../../instance_skel_types'
+import {
+  CompanionActionEvent,
+  CompanionConfigField,
+  CompanionFeedbackEvent,
+  CompanionSystem
+} from '../../../instance_skel_types'
 import { ActionId, GetActionsList } from './actions'
-import { GetSourcesListForType } from './choices'
-import { AtemConfig, GetConfigFields, PresetStyleName } from './config'
+import { AtemConfig, GetConfigFields } from './config'
 import { FeedbackId, GetFeedbacksList } from './feedback'
 import { GetAutoDetectModel, GetModelSpec, MODEL_AUTO_DETECT, ModelId, ModelSpec } from './models'
 import { assertUnreachable } from './util'
+import { InitVariables } from './variables'
 
 /**
  * Companion instance class for the Blackmagic ATEM Switchers.
@@ -41,13 +46,14 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     this.model = newModel || GetAutoDetectModel()
     this.config.modelID = this.model.id
 
-    this.atem = new Atem({ externalLog: this.debug.bind(this) })
+    this.atem = new Atem({}) // To ensure that there arent undefined bugs
     this.atemState = new AtemState()
 
     this.states = {}
     this.initDone = false
 
-    this.actions() // export actions
+    // this.actions() // export actions
+    // this.updateCompanionBits() // TODO - should this be done here ot is init ok?
   }
 
   // Override base types to make types stricter
@@ -69,9 +75,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
     // Unfortunately this is redundant if the switcher goes
     // online right away, but necessary for offline programming
-    this.initVariables()
-    this.initFeedbacks()
-    this.initPresets()
+    this.updateCompanionBits()
 
     this.setupAtemConnection()
   }
@@ -108,25 +112,13 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   }
 
   /**
-   * Setup the actions.
-   *
-   * @param {EventEmitter} system - the brains of the operation
-   * @access public
-   * @since 1.0.0
-   */
-  public actions() {
-    // TODO - should it be public?
-    this.setActions(GetActionsList(this.model, this.atemState))
-  }
-
-  /**
    * Executes the provided action.
    *
    * @param {Object} action - the action to be executed
    * @access public
    * @since 1.0.0
    */
-  public action(action) {
+  public action(action: CompanionActionEvent) {
     // let id = action.action
     // let cmd
     const opt = action.options
@@ -195,12 +187,15 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
         this.atem.macroStop()
         break
       case ActionId.MultiviewerWindowSource:
-        this.atem.setMultiViewerSource({ windowIndex: opt.windowIndex, source: opt.source }, opt.multiViewerId)
+        this.atem.setMultiViewerSource(
+          { windowIndex: parseInt(opt.windowIndex), source: parseInt(opt.source) },
+          parseInt(opt.multiViewerId)
+        )
         break
       case ActionId.SuperSourceBoxSource:
         const box = { ...this.getSuperSourceBox(opt.boxIndex, 0) }
         box.source = opt.source
-        this.atem.setSuperSourceBoxSettings(box, opt.boxIndex)
+        this.atem.setSuperSourceBoxSettings(box, parseInt(opt.boxIndex))
         break
       default:
         assertUnreachable(actionId)
@@ -243,7 +238,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
    * @access public
    * @since 1.0.0
    */
-  public feedback(feedback, _bank) {
+  public feedback(feedback: CompanionFeedbackEvent) {
     let out = {}
     const opt = feedback.options
 
@@ -340,7 +335,9 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
         }
         break
       case FeedbackId.Macro:
-        const macro = this.atemState.macro.macroProperties[opt.macroIndex - 1] as MacroPropertiesState | undefined
+        const macro = this.atemState.macro.macroProperties[parseInt(opt.macroIndex) - 1] as
+          | MacroPropertiesState
+          | undefined
         // TODO - tighten up typings from opt.state
         if (macro && macro[opt.state]) {
           out = { color: opt.fg, bgcolor: opt.bg }
@@ -362,6 +359,14 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     }
 
     return out
+  }
+
+  private updateCompanionBits() {
+    InitVariables(this, this.model, this.atemState)
+    this.initPresets()
+
+    this.setFeedbackDefinitions(GetFeedbacksList(this, this.model, this.atemState))
+    this.setActions(GetActionsList(this.model, this.atemState))
   }
 
   /**
@@ -511,16 +516,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     }
 
     return this.states['usk_' + me + '_' + keyer]
-  }
-
-  /**
-   * INTERNAL: initialize feedbacks.
-   *
-   * @access protected
-   * @since 1.0.0
-   */
-  private initFeedbacks() {
-    this.setFeedbackDefinitions(GetFeedbacksList(this, this.model, this.atemState))
   }
 
   /**
@@ -938,104 +933,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     this.setPresetDefinitions(presets)
   }
 
-  private getSourcePresetName(id: number) {
-    const input = this.atemState.inputs[id]
-    if (input) {
-      return this.config.presets === PresetStyleName.Long ? input.longName : input.shortName
-    } else {
-      return `Unknown (${id})`
-    }
-  }
-
-  /**
-   * INTERNAL: initialize variables.
-   *
-   * @access protected
-   * @since 1.0.0
-   */
-  private initVariables() {
-    // variable_set
-    const variables: CompanionVariable[] = []
-
-    // PGM/PV busses
-    for (let i = 0; i < this.model.MEs; ++i) {
-      variables.push({
-        label: 'Label of input active on program bus (M/E ' + (i + 1) + ')',
-        name: 'pgm' + (i + 1) + '_input'
-      })
-
-      {
-        const id = this.getME(i).pgmSrc
-        this.setVariable('pgm' + (i + 1) + '_input', this.getSourcePresetName(id))
-      }
-      variables.push({
-        label: 'Label of input active on preview bus (M/E ' + (i + 1) + ')',
-        name: 'pvw' + (i + 1) + '_input'
-      })
-
-      {
-        const id = this.getME(i).pvwSrc
-        this.setVariable('pvw' + (i + 1) + '_input', this.getSourcePresetName(id))
-      }
-
-      for (let k = 0; k < this.model.USKs; ++k) {
-        variables.push({
-          label: 'Label of input active on M/E ' + (i + 1) + ' Key ' + (k + 1),
-          name: 'usk_' + (i + 1) + '_' + (k + 1) + '_input'
-        })
-
-        const id = this.getUSK(i, k).fillSource
-        this.setVariable('usk_' + (i + 1) + '_' + (k + 1) + '_input', this.getSourcePresetName(id))
-      }
-    }
-
-    // DSKs
-    for (let k = 0; k < this.model.DSKs; ++k) {
-      variables.push({
-        label: 'Label of input active on DSK ' + (k + 1),
-        name: 'dsk_' + (k + 1) + '_input'
-      })
-
-      const id = this.getDSK(k).fillSource
-      this.setVariable('dsk_' + (k + 1) + '_input', this.getSourcePresetName(id))
-    }
-
-    // Input names
-    for (const src of GetSourcesListForType(this.model, this.atemState)) {
-      variables.push({
-        label: 'Long name of input id ' + src.id,
-        name: 'long_' + src.id
-      })
-      variables.push({
-        label: 'Short name of input id ' + src.id,
-        name: 'short_' + src.id
-      })
-
-      this.setVariable('long_' + src.id, src.longName)
-      this.setVariable('short_' + src.id, src.shortName)
-    }
-
-    // Macros
-    for (let i = 0; i < this.model.macros; i++) {
-      variables.push({
-        label: `Name of macro #${i + 1}`,
-        name: `macro_${i + 1}`
-      })
-
-      this.updateMacroVariable(i)
-    }
-
-    this.setVariableDefinitions(variables)
-  }
-
-  private updateMacroVariable(id: number) {
-    const macro = this.atemState.macro.macroProperties[id]
-    this.setVariable(
-      `macro_${id + 1}`,
-      (macro && macro.description ? macro.description : macro.name) || `Macro ${id + 1}`
-    )
-  }
-
   /**
    * INTERNAL: Callback for ATEM connection to state change responses.
    *
@@ -1044,173 +941,172 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
    * @access protected
    * @since 1.1.0
    */
-  private processStateChange(_err, state) {
+  private processStateChange(newState: AtemState, path: string) {
     if (this.initDone) {
-      this.atemState = state
+      this.atemState = newState
     }
 
-    switch (state.constructor.name) {
-      case 'AuxSourceCommand': {
-        // this.getAux(state.auxBus).auxSource = state.properties.source
-
-        this.checkFeedbacks(FeedbackId.AuxBG)
-        break
-      }
-      case 'DownstreamKeyPropertiesCommand': {
-        this.updateDSK(state.downstreamKeyerId, state.properties)
-
-        this.checkFeedbacks(FeedbackId.DSKBG)
-        break
-      }
-
-      case 'DownstreamKeySourcesCommand': {
-        this.updateDSK(state.downstreamKeyerId, state.properties)
-
-        const id = state.properties.fillSource
-        this.setVariable('dsk_' + (state.downstreamKeyerId + 1) + '_input', this.getSourcePresetName(id))
-
-        this.checkFeedbacks(FeedbackId.DSKSource)
-        break
-      }
-      case 'DownstreamKeyStateCommand': {
-        this.updateDSK(state.downstreamKeyerId, state.properties)
-
-        this.checkFeedbacks(FeedbackId.DSKBG)
-        break
-      }
-
-      case 'InitCompleteCommand': {
-        this.debug('Init done')
-        this.initDone = true
-        this.atemState = state
-        this.log('info', 'Connected to a ' + this.atemState.info.productIdentifier)
-
-        this.setAtemModel(this.atemState.info.model, true)
-        this.checkFeedbacks()
-        break
-      }
-
-      case 'InputPropertiesCommand': {
-        // this.updateSource(state.inputId, state.properties)
-        // reset everything, since names of inputs might have changed
-        this.initVariables()
-        this.initFeedbacks()
-        this.actions()
-        break
-      }
-
-      case 'MixEffectKeyOnAirCommand': {
-        this.updateUSK(state.mixEffect, state.upstreamKeyerId, state.properties)
-
-        this.checkFeedbacks(FeedbackId.USKBG)
-        break
-      }
-      case 'MixEffectKeyPropertiesGetCommand': {
-        this.updateUSK(state.mixEffect, state.properties.upstreamKeyerId, state.properties)
-
-        const id = state.properties.fillSource
-        this.setVariable(
-          'usk_' + (state.mixEffect + 1) + '_' + (state.properties.upstreamKeyerId + 1) + '_input',
-          this.getSourcePresetName(id)
-        )
-
-        this.checkFeedbacks(FeedbackId.USKSource)
-        break
-      }
-
-      case 'MacroPropertiesCommand': {
-        this.updateMacroVariable(state.properties.index) // TODO - check this
-
-        this.checkFeedbacks(FeedbackId.Macro)
-        break
-      }
-      case 'MacroRecordingStatusCommand': {
-        this.checkFeedbacks(FeedbackId.Macro)
-        break
-      }
-      case 'MacroRunStatusCommand': {
-        this.checkFeedbacks(FeedbackId.Macro)
-        break
-      }
-
-      case 'MultiViewerSourceCommand': {
-        this.updateMvWindow(state.multiViewerId, state.properties.windowIndex, state.properties)
-
-        this.checkFeedbacks(FeedbackId.MVSource)
-        break
-      }
-
-      case 'ProgramInputCommand': {
-        this.getME(state.mixEffect).pgmSrc = state.properties.source
-
-        const id = state.properties.source
-        this.setVariable('pgm' + (state.mixEffect + 1) + '_input', this.getSourcePresetName(id))
-
-        this.checkFeedbacks(FeedbackId.ProgramBG)
-        this.checkFeedbacks(FeedbackId.ProgramBG2)
-        this.checkFeedbacks(FeedbackId.ProgramBG3)
-        this.checkFeedbacks(FeedbackId.ProgramBG4)
-        break
-      }
-
-      case 'PreviewInputCommand': {
-        this.getME(state.mixEffect).pvwSrc = state.properties.source
-
-        const id = state.properties.source
-        this.setVariable('pvw' + (state.mixEffect + 1) + '_input', this.getSourcePresetName(id))
-
-        this.checkFeedbacks(FeedbackId.PreviewBG)
-        this.checkFeedbacks(FeedbackId.PreviewBG2)
-        this.checkFeedbacks(FeedbackId.PreviewBG3)
-        this.checkFeedbacks(FeedbackId.PreviewBG4)
-        break
-      }
-
-      // case 'PreviewTransitionCommand': {
-      //   this.getME(state.mixEffect).preview = state.properties.preview
-
-      //     this.checkFeedbacks('trans_pvw')
-      //   break
-      // }
-      case 'SuperSourceBoxPropertiesCommand': {
-        this.updateSuperSourceBox(state.boxId, 0, state.properties)
-
-        this.checkFeedbacks(FeedbackId.SSrcBoxSource)
-        break
-      }
-
-      // case 'SuperSourcePropertiesCommand': {
-      //   this.updateSuperSource(0, state.properties)
-
-      //     //this.checkFeedbacks('ssrc_');
-      //   break
-      // }
-
-      // case 'TransitionPositionCommand': {
-      //   this.updateME(state.mixEffect, state.properties)
-
-      //   let iconId = state.properties.handlePosition / 100
-      //   iconId = iconId >= 90 ? 90 : iconId >= 70 ? 70 : iconId >= 50 ? 50 : iconId >= 30 ? 30 : iconId >= 10 ? 10 : 0
-      //   let newIcon = 'trans' + iconId
-
-      //   if (
-      //     newIcon != this.getME(state.mixEffect).transIcon ||
-      //     state.properties.inTransition != this.getME(state.mixEffect).inTransition
-      //   ) {
-      //     this.getME(state.mixEffect).transIcon = newIcon
-
-      //       this.checkFeedbacks('trans_state')
-      //   }
-      //   break
-      // }
-
-      // case 'TransitionPropertiesCommand': {
-      //   this.updateME(state.mixEffect, state.properties)
-
-      //     this.checkFeedbacks('trans_mods')
-      //   break
-      // }
+    if (path.match(/video.auxilliaries/)) {
+      this.checkFeedbacks(FeedbackId.AuxBG)
     }
+
+    // switch (state.constructor.name) {
+    //   case 'AuxSourceCommand': {
+    //     // this.getAux(state.auxBus).auxSource = state.properties.source
+
+    //     this.checkFeedbacks(FeedbackId.AuxBG)
+    //     break
+    //   }
+    //   case 'DownstreamKeyPropertiesCommand': {
+    //     this.updateDSK(state.downstreamKeyerId, state.properties)
+
+    //     this.checkFeedbacks(FeedbackId.DSKBG)
+    //     break
+    //   }
+
+    //   case 'DownstreamKeySourcesCommand': {
+    //     this.updateDSK(state.downstreamKeyerId, state.properties)
+
+    //     const id = state.properties.fillSource
+    // updateDSKVariable(this, this.atemState, state.downstreamKeyerId)
+
+    //     this.checkFeedbacks(FeedbackId.DSKSource)
+    //     break
+    //   }
+    //   case 'DownstreamKeyStateCommand': {
+    //     this.updateDSK(state.downstreamKeyerId, state.properties)
+
+    //     this.checkFeedbacks(FeedbackId.DSKBG)
+    //     break
+    //   }
+
+    //   case 'InitCompleteCommand': {
+    //     this.debug('Init done')
+    //     this.initDone = true
+    //     this.atemState = state
+    //     this.log('info', 'Connected to a ' + this.atemState.info.productIdentifier)
+
+    //     this.setAtemModel(this.atemState.info.model, true)
+    //     this.checkFeedbacks()
+    //     break
+    //   }
+
+    //   case 'InputPropertiesCommand': {
+    //     // this.updateSource(state.inputId, state.properties)
+    //     // reset everything, since names of inputs might have changed
+    //     this.updateCompanionBits()
+    //     break
+    //   }
+
+    //   case 'MixEffectKeyOnAirCommand': {
+    //     this.updateUSK(state.mixEffect, state.upstreamKeyerId, state.properties)
+
+    //     this.checkFeedbacks(FeedbackId.USKBG)
+    //     break
+    //   }
+    //   case 'MixEffectKeyPropertiesGetCommand': {
+    //     this.updateUSK(state.mixEffect, state.properties.upstreamKeyerId, state.properties)
+
+    //     const id = state.properties.fillSource
+    // updateUSKVariable(this, this.atemState, state.mixEffect, state.upstreamKeyerId)
+
+    //     this.checkFeedbacks(FeedbackId.USKSource)
+    //     break
+    //   }
+
+    //   case 'MacroPropertiesCommand': {
+    //     this.updateMacroVariable(state.properties.index) // TODO - check this
+
+    //     this.checkFeedbacks(FeedbackId.Macro)
+    //     break
+    //   }
+    //   case 'MacroRecordingStatusCommand': {
+    //     this.checkFeedbacks(FeedbackId.Macro)
+    //     break
+    //   }
+    //   case 'MacroRunStatusCommand': {
+    //     this.checkFeedbacks(FeedbackId.Macro)
+    //     break
+    //   }
+
+    //   case 'MultiViewerSourceCommand': {
+    //     this.updateMvWindow(state.multiViewerId, state.properties.windowIndex, state.properties)
+
+    //     this.checkFeedbacks(FeedbackId.MVSource)
+    //     break
+    //   }
+
+    //   case 'ProgramInputCommand': {
+    //     this.getME(state.mixEffect).pgmSrc = state.properties.source
+
+    //     const id = state.properties.source
+    // this.updateMEProgramVariable(state.mixEffect)
+
+    //     this.checkFeedbacks(FeedbackId.ProgramBG)
+    //     this.checkFeedbacks(FeedbackId.ProgramBG2)
+    //     this.checkFeedbacks(FeedbackId.ProgramBG3)
+    //     this.checkFeedbacks(FeedbackId.ProgramBG4)
+    //     break
+    //   }
+
+    //   case 'PreviewInputCommand': {
+    //     this.getME(state.mixEffect).pvwSrc = state.properties.source
+
+    //     const id = state.properties.source
+    // this.updateMEPreviewVariable(state.mixEffect)
+
+    //     this.checkFeedbacks(FeedbackId.PreviewBG)
+    //     this.checkFeedbacks(FeedbackId.PreviewBG2)
+    //     this.checkFeedbacks(FeedbackId.PreviewBG3)
+    //     this.checkFeedbacks(FeedbackId.PreviewBG4)
+    //     break
+    //   }
+
+    //   // case 'PreviewTransitionCommand': {
+    //   //   this.getME(state.mixEffect).preview = state.properties.preview
+
+    //   //     this.checkFeedbacks('trans_pvw')
+    //   //   break
+    //   // }
+    //   case 'SuperSourceBoxPropertiesCommand': {
+    //     this.updateSuperSourceBox(state.boxId, 0, state.properties)
+
+    //     this.checkFeedbacks(FeedbackId.SSrcBoxSource)
+    //     break
+    //   }
+
+    //   // case 'SuperSourcePropertiesCommand': {
+    //   //   this.updateSuperSource(0, state.properties)
+
+    //   //     //this.checkFeedbacks('ssrc_');
+    //   //   break
+    //   // }
+
+    //   // case 'TransitionPositionCommand': {
+    //   //   this.updateME(state.mixEffect, state.properties)
+
+    //   //   let iconId = state.properties.handlePosition / 100
+    //   //   iconId = iconId >= 90 ? 90 : iconId >= 70 ? 70 : iconId >= 50 ? 50 : iconId >= 30 ? 30 : iconId >= 10 ? 10 : 0
+    //   //   let newIcon = 'trans' + iconId
+
+    //   //   if (
+    //   //     newIcon != this.getME(state.mixEffect).transIcon ||
+    //   //     state.properties.inTransition != this.getME(state.mixEffect).inTransition
+    //   //   ) {
+    //   //     this.getME(state.mixEffect).transIcon = newIcon
+
+    //   //       this.checkFeedbacks('trans_state')
+    //   //   }
+    //   //   break
+    //   // }
+
+    //   // case 'TransitionPropertiesCommand': {
+    //   //   this.updateME(state.mixEffect, state.properties)
+
+    //   //     this.checkFeedbacks('trans_mods')
+    //   //   break
+    //   // }
+    // }
   }
 
   /**
@@ -1260,10 +1156,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
         )
       }
 
-      this.actions()
-      this.initVariables()
-      this.initFeedbacks()
-      this.initPresets()
+      this.updateCompanionBits()
     } else {
       this.debug('ATEM Model: ' + modelID + 'NOT FOUND')
     }
@@ -1276,6 +1169,8 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
    * @since 1.1.0
    */
   private setupAtemConnection() {
+    this.atem = new Atem({ externalLog: this.debug.bind(this) })
+
     this.atem.on('connected', () => {
       this.status(this.STATUS_OK)
     })

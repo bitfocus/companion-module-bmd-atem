@@ -114,7 +114,7 @@ export function GetActionsList(model: ModelSpec, state: AtemState) {
         type: 'textinput',
         id: 'macro',
         label: 'Macro number',
-        default: 1,
+        default: '1',
         regex: '/^([1-9]|[1-9][0-9]|100)$/'
       },
       {
@@ -126,8 +126,8 @@ export function GetActionsList(model: ModelSpec, state: AtemState) {
       }
     ]
   }
-  actions[ActionId.MacroContinue] = { label: 'Continue MACRO' }
-  actions[ActionId.MacroStop] = { label: 'Stop MACROS' }
+  actions[ActionId.MacroContinue] = { label: 'Continue MACRO', options: [] }
+  actions[ActionId.MacroStop] = { label: 'Stop MACROS', options: [] }
 
   actions[ActionId.MultiviewerWindowSource] = {
     label: 'Change MV window source',
