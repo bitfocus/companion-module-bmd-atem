@@ -318,7 +318,11 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
   return feedbacks
 }
 
-export function ExecuteFeedback(state: AtemState, feedback: CompanionFeedbackEvent): CompanionFeedbackResult {
+export function ExecuteFeedback(
+  instance: InstanceSkel<AtemConfig>,
+  state: AtemState,
+  feedback: CompanionFeedbackEvent
+): CompanionFeedbackResult {
   const opt = feedback.options
   const getOptColors = () => ({ color: parseInt(opt.fg, 10), bgcolor: parseInt(opt.bg, 10) })
 
@@ -516,7 +520,7 @@ export function ExecuteFeedback(state: AtemState, feedback: CompanionFeedbackEve
     }
     default:
       assertUnreachable(feedbackType)
-    // TODO - log
+      instance.debug('Unknown action: ' + feedback.type)
   }
 
   return {}

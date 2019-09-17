@@ -4,6 +4,7 @@ import {
   CompanionActionEvent,
   CompanionConfigField,
   CompanionFeedbackEvent,
+  CompanionFeedbackResult,
   CompanionSystem
 } from '../../../instance_skel_types'
 import { GetActionsList, HandleAction } from './actions'
@@ -42,9 +43,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     this.atemState = new AtemState()
 
     this.initDone = false
-
-    // this.actions() // export actions
-    // this.updateCompanionBits() // TODO - should this be done here ot is init ok?
   }
 
   // Override base types to make types stricter
@@ -83,7 +81,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     this.updateCompanionBits()
 
     if (this.config.host !== undefined) {
-      // TODO - how better to check if connected?
+      // TODO - needs a better way to check if connected?
       if (this.atem && (this.atem as any).socket && (this.atem as any).socket._socket) {
         try {
           this.atem.disconnect()
@@ -129,8 +127,8 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   /**
    * Processes a feedback state.
    */
-  public feedback(feedback: CompanionFeedbackEvent) {
-    return ExecuteFeedback(this.atemState, feedback)
+  public feedback(feedback: CompanionFeedbackEvent): CompanionFeedbackResult {
+    return ExecuteFeedback(this, this.atemState, feedback)
   }
 
   private updateCompanionBits() {
@@ -158,7 +156,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
       return
     }
 
-    // TODO - refine this with some atem-connection changes
     const dskMatch = path.match(/video.downstreamKeyers.(\d+)/)
     if (dskMatch) {
       updateDSKVariable(this, this.atemState, parseInt(dskMatch[1], 10))
@@ -314,7 +311,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
         )
       }
 
-      // TODO - is this ok to do here?
       this.updateCompanionBits()
     })
     this.atem.on('error', (e: any) => {

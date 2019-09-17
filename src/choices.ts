@@ -116,8 +116,12 @@ export function GetSourcesListForType(model: ModelSpec, state: AtemState, subset
   }
 
   for (let i = 1; i <= model.MEs; i++) {
-    // Lower ME's can't be referenced by higher
-    // TODO - filter out to block that
+    if (i === 1 && subset === 'me') {
+      // Lower ME's can't be referenced by higher
+      // We can't do anything beyond ME1 as it is a static list
+      continue
+    }
+
     sources.push(getSource(10000 + i * 10, `M${i}PG`, `ME ${i} Program`))
     sources.push(getSource(10000 + i * 10 + 1, `M${i}PV`, `ME ${i} Preview`))
   }
