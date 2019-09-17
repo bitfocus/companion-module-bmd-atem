@@ -148,13 +148,13 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
    * Handle ATEM state changes
    */
   private processStateChange(newState: AtemState, path: string) {
-    if (this.initDone) {
-      // Only update the used state after initDone, so that cached data can be used while reconnecting
-      this.atemState = newState
-      // TODO - do we need to clone this object?
+    if (!this.initDone) {
+      // Only run after initDone, otherwise we spam with updates
+      return
     }
 
-    // TODO - verify this doesnt get spammed during init
+    // TODO - do we need to clone this object?
+    this.atemState = newState
 
     if (path.match(/video.auxilliaries/)) {
       this.checkFeedbacks(FeedbackId.AuxBG)
