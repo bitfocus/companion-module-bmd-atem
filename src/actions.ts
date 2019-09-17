@@ -1,6 +1,6 @@
 import { AtemState } from 'atem-connection'
 import { CompanionActions } from '../../../instance_skel_types'
-import { CHOICES_KEYTRANS } from './choices'
+import { CHOICES_KEYTRANS, GetDSKIdChoices } from './choices'
 import {
   AtemAuxPicker,
   AtemAuxSourcePicker,
@@ -91,7 +91,15 @@ export function GetActionsList(model: ModelSpec, state: AtemState) {
   }
   actions[ActionId.DSKAuto] = {
     label: 'AUTO DSK Transition',
-    options: [AtemDSKPicker(model)]
+    options: [
+      {
+        type: 'dropdown',
+        id: 'downstreamKeyerId',
+        label: 'DSK',
+        default: 0,
+        choices: GetDSKIdChoices(model)
+      }
+    ]
   }
   actions[ActionId.DSKOnAir] = {
     label: 'Set Downstream KEY OnAir',

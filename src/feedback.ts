@@ -37,6 +37,13 @@ export enum FeedbackId {
   SSrcBoxSource = 'ssrc_box_source'
 }
 
+export enum MacroFeedbackType {
+  IsRunning = 'isRunning',
+  IsWaiting = 'isWaiting',
+  IsRecording = 'isRecording',
+  IsUsed = 'isUsed'
+}
+
 export function ForegroundPicker(color: number): CompanionInputFieldColor {
   return {
     type: 'colorpicker',
@@ -261,12 +268,12 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
           type: 'dropdown',
           label: 'State',
           id: 'state',
-          default: 'isWaiting',
+          default: MacroFeedbackType.IsWaiting,
           choices: [
-            { id: 'isRunning', label: 'Is Running' },
-            { id: 'isWaiting', label: 'Is Waiting' },
-            { id: 'isRecording', label: 'Is Recording' },
-            { id: 'isUsed', label: 'Is Used' }
+            { id: MacroFeedbackType.IsRunning, label: 'Is Running' },
+            { id: MacroFeedbackType.IsWaiting, label: 'Is Waiting' },
+            { id: MacroFeedbackType.IsRecording, label: 'Is Recording' },
+            { id: MacroFeedbackType.IsUsed, label: 'Is Used' }
           ]
         }
       ]

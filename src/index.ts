@@ -1,5 +1,4 @@
 import { Atem, AtemState } from 'atem-connection'
-import { MacroPropertiesState } from 'atem-connection/dist/state/macro'
 import InstanceSkel = require('../../../instance_skel')
 import {
   CompanionActionEvent,
@@ -9,10 +8,16 @@ import {
 } from '../../../instance_skel_types'
 import { ActionId, GetActionsList } from './actions'
 import { AtemConfig, GetConfigFields } from './config'
-import { FeedbackId, GetFeedbacksList } from './feedback'
+import { FeedbackId, GetFeedbacksList, MacroFeedbackType } from './feedback'
 import { GetAutoDetectModel, GetModelSpec, MODEL_AUTO_DETECT, ModelId, ModelSpec } from './models'
 import { assertUnreachable } from './util'
 import { InitVariables } from './variables'
+
+// TODO - these should be exported more cleanly from atem-connection
+type MixEffect = AtemState['video']['ME'][0]
+type UpstreamKeyer = MixEffect['upstreamKeyers'][0]
+type DownstreamKeyer = AtemState['video']['downstreamKeyers'][0]
+type MultiViewer = AtemState['settings']['multiViewers'][0]
 
 /**
  * Companion instance class for the Blackmagic ATEM Switchers.
@@ -27,8 +32,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   private model: ModelSpec
   private atem: Atem
   private atemState: AtemState
-
-  private states: any
   private initDone: boolean
 
   /**
@@ -49,7 +52,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     this.atem = new Atem({}) // To ensure that there arent undefined bugs
     this.atemState = new AtemState()
 
-    this.states = {}
     this.initDone = false
 
     // this.actions() // export actions
@@ -122,84 +124,104 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     // let id = action.action
     // let cmd
     const opt = action.options
+    const getOptInt = (key: string) => {
+      const val = parseInt(opt[key], 10)
+      if (isNaN(val)) {
+        throw new Error(`Invalid option '${key}'`)
+      }
+      return val
+    }
 
-    const actionId = action.action as ActionId
-    switch (actionId) {
-      case ActionId.Program:
-        this.atem.changeProgramInput(parseInt(opt.input), parseInt(opt.mixeffect))
-        break
-      case ActionId.Preview:
-        this.atem.changePreviewInput(parseInt(opt.input), parseInt(opt.mixeffect))
-        break
-      case ActionId.USKSource:
-        this.atem.setUpstreamKeyerFillSource(parseInt(opt.fill), parseInt(opt.mixeffect), parseInt(opt.key))
-        this.atem.setUpstreamKeyerCutSource(parseInt(opt.cut), parseInt(opt.mixeffect), parseInt(opt.key))
-        break
-      case ActionId.DSKSource:
-        this.atem.setDownstreamKeyFillSource(parseInt(opt.fill), parseInt(opt.key))
-        this.atem.setDownstreamKeyCutSource(parseInt(opt.cut), parseInt(opt.key))
-        break
-      case ActionId.Aux:
-        this.atem.setAuxSource(parseInt(opt.input), parseInt(opt.aux))
-        break
-      case ActionId.Cut:
-        this.atem.cut(parseInt(opt.mixeffect))
-        break
-      case ActionId.USKOnAir:
-        if (opt.onair == 'toggle') {
-          this.atem.setUpstreamKeyerOnAir(
-            !this.getUSK(opt.mixeffect, opt.key).onAir,
-            parseInt(opt.mixeffect),
-            parseInt(opt.key)
-          )
-        } else {
-          this.atem.setUpstreamKeyerOnAir(opt.onair == 'true', parseInt(opt.mixeffect), parseInt(opt.key))
+    try {
+      const actionId = action.action as ActionId
+      switch (actionId) {
+        case ActionId.Program:
+          this.atem.changeProgramInput(getOptInt('input'), getOptInt('mixeffect'))
+          break
+        case ActionId.Preview:
+          this.atem.changePreviewInput(getOptInt('input'), getOptInt('mixeffect'))
+          break
+        case ActionId.USKSource:
+          this.atem.setUpstreamKeyerFillSource(getOptInt('fill'), getOptInt('mixeffect'), getOptInt('key'))
+          this.atem.setUpstreamKeyerCutSource(getOptInt('cut'), getOptInt('mixeffect'), getOptInt('key'))
+          break
+        case ActionId.DSKSource:
+          this.atem.setDownstreamKeyFillSource(getOptInt('fill'), getOptInt('key'))
+          this.atem.setDownstreamKeyCutSource(getOptInt('cut'), getOptInt('key'))
+          break
+        case ActionId.Aux:
+          this.atem.setAuxSource(getOptInt('input'), getOptInt('aux'))
+          break
+        case ActionId.Cut:
+          this.atem.cut(getOptInt('mixeffect'))
+          break
+        case ActionId.USKOnAir: {
+          const meIndex = getOptInt('mixeffect')
+          const keyIndex = getOptInt('key')
+          if (opt.onair === 'toggle') {
+            const usk = this.getUSK(meIndex, keyIndex)
+            this.atem.setUpstreamKeyerOnAir(!usk || !usk.onAir, meIndex, keyIndex)
+          } else {
+            this.atem.setUpstreamKeyerOnAir(opt.onair === 'true', meIndex, keyIndex)
+          }
+          break
         }
-        break
-      case ActionId.DSKAuto:
-        this.atem.autoDownstreamKey(parseInt(opt.downstreamKeyerId))
-        break
-      case ActionId.DSKOnAir:
-        if (opt.onair == 'toggle') {
-          this.atem.setDownstreamKeyOnAir(!this.getDSK(opt.key).onAir, parseInt(opt.key))
-        } else {
-          this.atem.setDownstreamKeyOnAir(opt.onair == 'true', parseInt(opt.key))
+        case ActionId.DSKAuto:
+          this.atem.autoDownstreamKey(getOptInt('downstreamKeyerId'))
+          break
+        case ActionId.DSKOnAir: {
+          const keyIndex = getOptInt('key')
+          if (opt.onair === 'toggle') {
+            const dsk = this.getDSK(keyIndex)
+            this.atem.setDownstreamKeyOnAir(!dsk || !dsk.onAir, keyIndex)
+          } else {
+            this.atem.setDownstreamKeyOnAir(opt.onair === 'true', keyIndex)
+          }
+          break
         }
-        break
-      case ActionId.Auto:
-        this.atem.autoTransition(parseInt(opt.mixeffect))
-        break
-      case ActionId.MacroRun:
-        const macroIndex = parseInt(opt.macro, 10) - 1
-        const { macroPlayer, macroRecorder } = this.atemState.macro
-        if (opt.action == 'runContinue' && macroPlayer.isWaiting && macroPlayer.macroIndex === macroIndex) {
+        case ActionId.Auto:
+          this.atem.autoTransition(getOptInt('mixeffect'))
+          break
+        case ActionId.MacroRun:
+          const macroIndex = getOptInt('macro') - 1
+          const { macroPlayer, macroRecorder } = this.atemState.macro
+          if (opt.action == 'runContinue' && macroPlayer.isWaiting && macroPlayer.macroIndex === macroIndex) {
+            this.atem.macroContinue()
+          } else if (macroRecorder.isRecording && macroRecorder.macroIndex === macroIndex) {
+            this.atem.macroStopRecord()
+          } else {
+            this.atem.macroRun(macroIndex)
+          }
+          break
+        case ActionId.MacroContinue:
           this.atem.macroContinue()
-        } else if (macroRecorder.isRecording && macroRecorder.macroIndex === macroIndex) {
-          this.atem.macroStopRecord()
-        } else {
-          this.atem.macroRun(macroIndex)
-        }
-        break
-      case ActionId.MacroContinue:
-        this.atem.macroContinue()
-        break
-      case ActionId.MacroStop:
-        this.atem.macroStop()
-        break
-      case ActionId.MultiviewerWindowSource:
-        this.atem.setMultiViewerSource(
-          { windowIndex: parseInt(opt.windowIndex), source: parseInt(opt.source) },
-          parseInt(opt.multiViewerId)
-        )
-        break
-      case ActionId.SuperSourceBoxSource:
-        const box = { ...this.getSuperSourceBox(opt.boxIndex, 0) }
-        box.source = opt.source
-        this.atem.setSuperSourceBoxSettings(box, parseInt(opt.boxIndex))
-        break
-      default:
-        assertUnreachable(actionId)
-        this.debug('Unknown action: ' + action.action)
+          break
+        case ActionId.MacroStop:
+          this.atem.macroStop()
+          break
+        case ActionId.MultiviewerWindowSource:
+          this.atem.setMultiViewerSource(
+            {
+              windowIndex: getOptInt('windowIndex'),
+              source: getOptInt('source')
+            },
+            getOptInt('multiViewerId')
+          )
+          break
+        case ActionId.SuperSourceBoxSource:
+          this.atem.setSuperSourceBoxSettings(
+            {
+              source: getOptInt('source')
+            },
+            getOptInt('boxIndex')
+          )
+          break
+        default:
+          assertUnreachable(actionId)
+          this.debug('Unknown action: ' + action.action)
+      }
+    } catch (e) {
+      this.debug('Action failed: ' + e)
     }
   }
 
@@ -239,126 +261,207 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
    * @since 1.0.0
    */
   public feedback(feedback: CompanionFeedbackEvent) {
-    let out = {}
     const opt = feedback.options
+    const getOptColors = () => ({ color: opt.fg, bgcolor: opt.bg })
 
     const feedbackType = feedback.type as FeedbackId
     switch (feedbackType) {
-      case FeedbackId.PreviewBG:
-        if (this.getME(opt.mixeffect).pvwSrc == parseInt(opt.input)) {
-          out = { color: opt.fg, bgcolor: opt.bg }
+      case FeedbackId.PreviewBG: {
+        const me = this.getME(opt.mixeffect)
+        if (me && me.previewInput === parseInt(opt.input, 10)) {
+          return getOptColors()
         }
         break
-      case FeedbackId.PreviewBG2:
+      }
+      case FeedbackId.PreviewBG2: {
+        const me1 = this.getME(opt.mixeffect1)
+        const me2 = this.getME(opt.mixeffect2)
         if (
-          this.getME(opt.mixeffect1).pvwSrc == parseInt(opt.input1) &&
-          this.getME(opt.mixeffect2).pvwSrc == parseInt(opt.input2)
+          me1 &&
+          me1.previewInput === parseInt(opt.input1, 10) &&
+          me2 &&
+          me2.previewInput === parseInt(opt.input2, 10)
         ) {
-          out = { color: opt.fg, bgcolor: opt.bg }
+          return getOptColors()
         }
         break
-      case FeedbackId.PreviewBG3:
+      }
+      case FeedbackId.PreviewBG3: {
+        const me1 = this.getME(opt.mixeffect1)
+        const me2 = this.getME(opt.mixeffect2)
+        const me3 = this.getME(opt.mixeffect3)
         if (
-          this.getME(opt.mixeffect1).pvwSrc == parseInt(opt.input1) &&
-          this.getME(opt.mixeffect2).pvwSrc == parseInt(opt.input2) &&
-          this.getME(opt.mixeffect3).pvwSrc == parseInt(opt.input3)
+          me1 &&
+          me1.previewInput === parseInt(opt.input1, 10) &&
+          me2 &&
+          me2.previewInput === parseInt(opt.input2, 10) &&
+          me3 &&
+          me3.previewInput === parseInt(opt.input3, 10)
         ) {
-          out = { color: opt.fg, bgcolor: opt.bg }
+          return getOptColors()
         }
         break
-      case FeedbackId.PreviewBG4:
+      }
+      case FeedbackId.PreviewBG4: {
+        const me1 = this.getME(opt.mixeffect1)
+        const me2 = this.getME(opt.mixeffect2)
+        const me3 = this.getME(opt.mixeffect3)
+        const me4 = this.getME(opt.mixeffect4)
         if (
-          this.getME(opt.mixeffect1).pvwSrc == parseInt(opt.input1) &&
-          this.getME(opt.mixeffect2).pvwSrc == parseInt(opt.input2) &&
-          this.getME(opt.mixeffect3).pvwSrc == parseInt(opt.input3) &&
-          this.getME(opt.mixeffect4).pvwSrc == parseInt(opt.input4)
+          me1 &&
+          me1.previewInput === parseInt(opt.input1, 10) &&
+          me2 &&
+          me2.previewInput === parseInt(opt.input2, 10) &&
+          me3 &&
+          me3.previewInput === parseInt(opt.input3, 10) &&
+          me4 &&
+          me4.previewInput === parseInt(opt.input4, 10)
         ) {
-          out = { color: opt.fg, bgcolor: opt.bg }
+          return getOptColors()
         }
         break
-      case FeedbackId.ProgramBG:
-        if (this.getME(opt.mixeffect).pgmSrc == parseInt(opt.input)) {
-          out = { color: opt.fg, bgcolor: opt.bg }
+      }
+      case FeedbackId.ProgramBG: {
+        const me = this.getME(opt.mixeffect)
+        if (me && me.programInput === parseInt(opt.input, 10)) {
+          return getOptColors()
         }
         break
-      case FeedbackId.ProgramBG2:
+      }
+      case FeedbackId.ProgramBG2: {
+        const me1 = this.getME(opt.mixeffect1)
+        const me2 = this.getME(opt.mixeffect2)
         if (
-          this.getME(opt.mixeffect1).pgmSrc == parseInt(opt.input1) &&
-          this.getME(opt.mixeffect2).pgmSrc == parseInt(opt.input2)
+          me1 &&
+          me1.programInput === parseInt(opt.input1, 10) &&
+          me2 &&
+          me2.programInput === parseInt(opt.input2, 10)
         ) {
-          out = { color: opt.fg, bgcolor: opt.bg }
+          return getOptColors()
         }
         break
-      case FeedbackId.ProgramBG3:
+      }
+      case FeedbackId.ProgramBG3: {
+        const me1 = this.getME(opt.mixeffect1)
+        const me2 = this.getME(opt.mixeffect2)
+        const me3 = this.getME(opt.mixeffect3)
         if (
-          this.getME(opt.mixeffect1).pgmSrc == parseInt(opt.input1) &&
-          this.getME(opt.mixeffect2).pgmSrc == parseInt(opt.input2) &&
-          this.getME(opt.mixeffect3).pgmSrc == parseInt(opt.input3)
+          me1 &&
+          me1.programInput === parseInt(opt.input1, 10) &&
+          me2 &&
+          me2.programInput === parseInt(opt.input2, 10) &&
+          me3 &&
+          me3.programInput === parseInt(opt.input3, 10)
         ) {
-          out = { color: opt.fg, bgcolor: opt.bg }
+          return getOptColors()
         }
         break
-      case FeedbackId.ProgramBG4:
+      }
+      case FeedbackId.ProgramBG4: {
+        const me1 = this.getME(opt.mixeffect1)
+        const me2 = this.getME(opt.mixeffect2)
+        const me3 = this.getME(opt.mixeffect3)
+        const me4 = this.getME(opt.mixeffect4)
         if (
-          this.getME(opt.mixeffect1).pgmSrc == parseInt(opt.input1) &&
-          this.getME(opt.mixeffect2).pgmSrc == parseInt(opt.input2) &&
-          this.getME(opt.mixeffect3).pgmSrc == parseInt(opt.input3) &&
-          this.getME(opt.mixeffect4).pgmSrc == parseInt(opt.input4)
+          me1 &&
+          me1.programInput === parseInt(opt.input1, 10) &&
+          me2 &&
+          me2.programInput === parseInt(opt.input2, 10) &&
+          me3 &&
+          me3.programInput === parseInt(opt.input3, 10) &&
+          me4 &&
+          me4.programInput === parseInt(opt.input4, 10)
         ) {
-          out = { color: opt.fg, bgcolor: opt.bg }
+          return getOptColors()
         }
         break
+      }
       case FeedbackId.AuxBG:
         const auxSource = this.atemState.video.auxilliaries[opt.aux]
         if (auxSource === parseInt(opt.input, 10)) {
-          out = { color: opt.fg, bgcolor: opt.bg }
+          return getOptColors()
         }
         break
-      case FeedbackId.USKBG:
-        if (this.getUSK(opt.mixeffect, opt.key).onAir) {
-          out = { color: opt.fg, bgcolor: opt.bg }
+      case FeedbackId.USKBG: {
+        const usk = this.getUSK(opt.mixeffect, opt.key)
+        if (usk && usk.onAir) {
+          return getOptColors()
         }
         break
-      case FeedbackId.USKSource:
-        if (this.getUSK(opt.mixeffect, opt.key).fillSource == parseInt(opt.fill)) {
-          out = { color: opt.fg, bgcolor: opt.bg }
+      }
+      case FeedbackId.USKSource: {
+        const usk = this.getUSK(opt.mixeffect, opt.key)
+        if (usk && usk.fillSource === parseInt(opt.fill, 10)) {
+          return getOptColors()
         }
         break
-      case FeedbackId.DSKBG:
-        if (this.getDSK(opt.key).onAir) {
-          out = { color: opt.fg, bgcolor: opt.bg }
+      }
+      case FeedbackId.DSKBG: {
+        const dsk = this.getDSK(opt.key)
+        if (dsk && dsk.onAir) {
+          return getOptColors()
         }
         break
-      case FeedbackId.DSKSource:
-        if (this.getDSK(opt.key).fillSource == parseInt(opt.fill)) {
-          out = { color: opt.fg, bgcolor: opt.bg }
+      }
+      case FeedbackId.DSKSource: {
+        const dsk = this.getDSK(opt.key)
+        if (dsk && dsk.sources.fillSource === parseInt(opt.fill, 10)) {
+          return getOptColors()
         }
         break
-      case FeedbackId.Macro:
-        const macro = this.atemState.macro.macroProperties[parseInt(opt.macroIndex) - 1] as
-          | MacroPropertiesState
-          | undefined
-        // TODO - tighten up typings from opt.state
-        if (macro && macro[opt.state]) {
-          out = { color: opt.fg, bgcolor: opt.bg }
+      }
+      case FeedbackId.Macro: {
+        let macroIndex = parseInt(opt.macroIndex, 10)
+        if (!isNaN(macroIndex)) {
+          macroIndex -= 1
+          const { macroPlayer, macroRecorder } = this.atemState.macro
+          const type = opt.state as MacroFeedbackType
+
+          let isActive = false
+          switch (type) {
+            case MacroFeedbackType.IsUsed:
+              const macro = this.atemState.macro.macroProperties[macroIndex]
+              isActive = macro && macro.isUsed
+              break
+            case MacroFeedbackType.IsRecording:
+              isActive = macroRecorder.isRecording && macroRecorder.macroIndex === macroIndex
+              break
+            case MacroFeedbackType.IsRunning:
+              isActive = macroPlayer.isRunning && macroPlayer.macroIndex === macroIndex
+              break
+            case MacroFeedbackType.IsWaiting:
+              isActive = macroPlayer.isWaiting && macroPlayer.macroIndex === macroIndex
+              break
+            default:
+              assertUnreachable(type)
+          }
+
+          if (isActive) {
+            return getOptColors()
+          }
         }
         break
-      case FeedbackId.MVSource:
-        if (this.getMvWindow(opt.multiViewerId, opt.windowIndex).source == opt.source) {
-          out = { color: opt.fg, bgcolor: opt.bg }
+      }
+      case FeedbackId.MVSource: {
+        const window = this.getMultiviewerWindow(opt.multiViewerId, opt.windowIndex)
+        if (window && window.source === parseInt(opt.source, 10)) {
+          return getOptColors()
         }
         break
-      case FeedbackId.SSrcBoxSource:
-        if (this.getSuperSourceBox(opt.boxIndex, 0).source == opt.source) {
-          out = { color: opt.fg, bgcolor: opt.bg }
+      }
+      case FeedbackId.SSrcBoxSource: {
+        const box = this.getSuperSourceBox(opt.boxIndex, 0) // TODO - ssrcIndex
+        if (box && box.source === parseInt(opt.source, 10)) {
+          return getOptColors()
         }
         break
+      }
       default:
         assertUnreachable(feedbackType)
       // TODO - log
     }
 
-    return out
+    return {}
   }
 
   private updateCompanionBits() {
@@ -369,153 +472,26 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     this.setActions(GetActionsList(this.model, this.atemState))
   }
 
-  /**
-   * INTERNAL: returns the desired DSK state object.
-   *
-   * @param {number} id - the DSK id to fetch
-   * @returns {Object} the desired DSK object
-   * @access protected
-   * @since 1.1.0
-   */
-  private getDSK(id) {
-    if (this.states['dsk_' + id] === undefined) {
-      this.states['dsk_' + id] = {
-        downstreamKeyerId: id,
-        fillSource: 0,
-        cutSource: 0,
-        onAir: 0,
-        tie: 0,
-        rate: 30,
-        inTransition: 0,
-        transIcon: 'trans0',
-        isAuto: 0,
-        remaingFrames: 0
-      }
-    }
-
-    return this.states['dsk_' + id]
+  private getME(meIndex: number | string): MixEffect | undefined {
+    return this.atemState.video.ME[meIndex]
   }
-
-  /**
-   * INTERNAL: returns the desired ME state object.
-   *
-   * @param {number} id - the ME to fetch
-   * @returns {Object} the desired ME object
-   * @access protected
-   * @since 1.1.0
-   */
-  private getME(id) {
-    if (this.states['me_' + id] === undefined) {
-      this.states['me_' + id] = {
-        mixEffect: id,
-        handlePosition: 0,
-        remainingFrames: 0,
-        inTransition: 0,
-        style: 0,
-        transIcon: 'trans0',
-        selection: 1,
-        preview: 0,
-        pgmSrc: 0,
-        pvwSrc: 0
-      }
-    }
-
-    return this.states['me_' + id]
+  private getUSK(meIndex: number | string, keyIndex: number | string): UpstreamKeyer | undefined {
+    const me = this.getME(meIndex)
+    return me ? me.upstreamKeyers[keyIndex] : undefined
   }
-
-  /**
-   * INTERNAL: returns the desired MV state object.
-   *
-   * @param {number} id - the MV to fetch
-   * @returns {Object} the desired MV object
-   * @access protected
-   * @since 1.1.0
-   */
-  private getMV(id) {
-    if (this.states['mv_' + id] === undefined) {
-      this.states['mv_' + id] = {
-        multiViewerId: id,
-        windows: {
-          window0: { windowIndex: 0, source: 0 },
-          window1: { windowIndex: 1, source: 0 },
-          window2: { windowIndex: 2, source: 0 },
-          window3: { windowIndex: 3, source: 0 },
-          window4: { windowIndex: 4, source: 0 },
-          window5: { windowIndex: 5, source: 0 },
-          window6: { windowIndex: 6, source: 0 },
-          window7: { windowIndex: 7, source: 0 },
-          window8: { windowIndex: 8, source: 0 },
-          window9: { windowIndex: 9, source: 0 }
-        }
-      }
-    }
-
-    return this.states['mv_' + id]
+  private getDSK(keyIndex: number | string): DownstreamKeyer | undefined {
+    return this.atemState.video.downstreamKeyers[keyIndex]
   }
-
-  /**
-   * INTERNAL: returns the desired mv window state object.
-   *
-   * @param {number} mv - the MV of the window to fetch
-   * @param {number} window - the index of the window to fetch
-   * @returns {Object} the desired MV window object
-   * @access protected
-   * @since 1.1.0
-   */
-  private getMvWindow(mv, window) {
-    return this.getMV(mv).windows['window' + window]
+  private getSuperSourceBox(boxIndex: number | string, ssrcId?: number | string) {
+    const ssrc = this.atemState.video.superSources[ssrcId || 0]
+    return ssrc ? ssrc.boxes[boxIndex] : undefined
   }
-
-  /**
-   * INTERNAL: returns the desired SuperSource box object.
-   *
-   * @param {number} box - the ssrc box to fetch
-   * @param {number} id - the ssrc id to fetch
-   * @returns {Object} the desired ssrc object
-   * @access protected
-   * @since 1.1.7
-   */
-  private getSuperSourceBox(box, id = 0) {
-    if (this.states['ssrc' + id + 'box' + box] === undefined) {
-      this.states['ssrc' + id + 'box' + box] = {
-        enabled: 0,
-        source: 0,
-        x: 0,
-        y: 0,
-        size: 0,
-        cropped: 0,
-        cropTop: 0,
-        cropBottom: 0,
-        cropLeft: 0,
-        cropRight: 0
-      }
-    }
-
-    return this.states['ssrc' + id + 'box' + box]
+  private getMultiviewer(index: number | string): MultiViewer | undefined {
+    return this.atemState.settings.multiViewers[index]
   }
-
-  /**
-   * INTERNAL: returns the desired USK state object.
-   *
-   * @param {number} me - the ME of the USK to fetch
-   * @param {number} keyer - the ID of the USK to fetch
-   * @returns {Object} the desired USK object
-   * @access protected
-   * @since 1.1.0
-   */
-  private getUSK(me, keyer) {
-    if (this.states['usk_' + me + '_' + keyer] === undefined) {
-      this.states['usk_' + me + '_' + keyer] = {
-        mixEffect: me,
-        upstreamKeyerId: keyer,
-        mixEffectKeyType: 0,
-        fillSource: 0,
-        cutSource: 0,
-        onAir: 0
-      }
-    }
-
-    return this.states['usk_' + me + '_' + keyer]
+  private getMultiviewerWindow(mvIndex: number | string, windowIndex: number | string) {
+    const mv = this.getMultiviewer(mvIndex)
+    return mv ? mv.windows[windowIndex] : undefined
   }
 
   /**
@@ -1037,7 +1013,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     //   }
 
     //   case 'ProgramInputCommand': {
-    //     this.getME(state.mixEffect).pgmSrc = state.properties.source
+    //     this.getME(state.mixEffect).programInput = state.properties.source
 
     //     const id = state.properties.source
     // this.updateMEProgramVariable(state.mixEffect)
@@ -1050,7 +1026,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     //   }
 
     //   case 'PreviewInputCommand': {
-    //     this.getME(state.mixEffect).pvwSrc = state.properties.source
+    //     this.getME(state.mixEffect).previewInput = state.properties.source
 
     //     const id = state.properties.source
     // this.updateMEPreviewVariable(state.mixEffect)
@@ -1186,81 +1162,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
     if (this.config.host) {
       this.atem.connect(this.config.host)
-    }
-  }
-
-  /**
-   * Update an array of properties for a DSK.
-   *
-   * @param {number} id - the source id
-   * @param {Object} properties - the new properties
-   * @access public
-   * @since 1.1.0
-   */
-  private updateDSK(id, properties) {
-    const dsk = this.getDSK(id)
-
-    if (typeof properties === 'object') {
-      for (const x in properties) {
-        dsk[x] = properties[x]
-      }
-    }
-  }
-
-  /**
-   * Update an array of properties for a MV window.
-   *
-   * @param {number} mv - the MV of the window
-   * @param {number} window - the index of the window
-   * @param {Object} properties - the new properties
-   * @access public
-   * @since 1.1.0
-   */
-  private updateMvWindow(mv, window, properties) {
-    const index = this.getMvWindow(mv, window)
-
-    if (typeof properties === 'object') {
-      for (const x in properties) {
-        index[x] = properties[x]
-      }
-    }
-  }
-
-  /**
-   * Update an array of properties for a SuperSource.
-   *
-   * @param {number} box - the box id
-   * @param {number} id - the SuperSource id
-   * @param {Object} properties - the new properties
-   * @access public
-   * @since 1.1.7
-   */
-  private updateSuperSourceBox(boxId, id, properties) {
-    const box = this.getSuperSourceBox(boxId, id)
-
-    if (typeof properties === 'object') {
-      for (const x in properties) {
-        box[x] = properties[x]
-      }
-    }
-  }
-
-  /**
-   * Update an array of properties for a USK.
-   *
-   * @param {number} me - the ME of the USK
-   * @param {number} keyer - the ID of the USK
-   * @param {Object} properties - the new properties
-   * @access public
-   * @since 1.1.0
-   */
-  private updateUSK(me, keyer, properties) {
-    const usk = this.getUSK(me, keyer)
-
-    if (typeof properties === 'object') {
-      for (const x in properties) {
-        usk[x] = properties[x]
-      }
     }
   }
 }
