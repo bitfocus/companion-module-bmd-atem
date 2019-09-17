@@ -9,7 +9,7 @@ import {
 import { GetActionsList, HandleAction } from './actions'
 import { AtemConfig, GetConfigFields } from './config'
 import { ExecuteFeedback, FeedbackId, GetFeedbacksList } from './feedback'
-import { GetAutoDetectModel, GetModelSpec, MODEL_AUTO_DETECT, ModelSpec } from './models'
+import { GetAutoDetectModel, GetModelSpec, MODEL_AUTO_DETECT, ModelSpec, GetParsedModelSpec } from './models'
 import { GetPresetsList } from './presets'
 import {
   InitVariables,
@@ -35,8 +35,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   constructor(system: CompanionSystem, id: string, config: AtemConfig) {
     super(system, id, config)
 
-    const newModel = this.config.modelID ? GetModelSpec(this.config.modelID) : undefined
-    this.model = newModel || GetAutoDetectModel()
+    this.model = GetModelSpec(this.config.modelID || MODEL_AUTO_DETECT) || GetAutoDetectModel()
     this.config.modelID = this.model.id
 
     this.atem = new Atem({}) // To ensure that there arent undefined bugs
@@ -77,8 +76,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
     this.initDone = false
 
-    const newModel = GetModelSpec(config.modelID || MODEL_AUTO_DETECT) || GetAutoDetectModel()
-    this.model = newModel
+    this.model = GetModelSpec(config.modelID || MODEL_AUTO_DETECT) || GetAutoDetectModel()
     this.debug('ATEM changed model: ' + this.model.id)
 
     // Force clear the cached state
@@ -297,7 +295,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
       if (newModelSpec) {
         this.model = newModelSpec
       } else {
-        this.model = GetAutoDetectModel()
+        this.model = GetParsedModelSpec(this.atemState)
         this.status(this.STATUS_WARNING, `Unknown model: ${atemInfo.model}. Some bits may be missing`)
       }
 

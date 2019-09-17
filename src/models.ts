@@ -1,4 +1,4 @@
-import { Enums } from 'atem-connection'
+import { Enums, AtemState } from 'atem-connection'
 import { DropdownChoice } from '../../../instance_skel_types'
 
 export const MODEL_AUTO_DETECT = 0
@@ -163,4 +163,20 @@ export function GetModelSpec(id: ModelId) {
 
 export function GetAutoDetectModel() {
   return ALL_MODELS[0]
+}
+
+export function GetParsedModelSpec({ info, macro, inputs, settings }: AtemState): ModelSpec {
+  return {
+    id: info.model,
+    label: info.productIdentifier,
+    inputs: inputs.filter(i => i.isExternal).length,
+    auxes: info.capabilities.auxilliaries,
+    MEs: info.capabilities.MEs,
+    USKs: 2, // TODO
+    DSKs: 2, // TODO
+    MPs: info.capabilities.mediaPlayers,
+    MVs: Object.values(settings.multiViewers).length,
+    SSrc: info.capabilities.superSources,
+    macros: macro.macroProperties.length
+  }
 }
