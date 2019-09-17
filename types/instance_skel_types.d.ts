@@ -1,8 +1,7 @@
 /// <reference types="node" />
-import { EventEmitter } from "events"
+import { EventEmitter } from 'events'
 
-export interface CompanionSystem extends EventEmitter {
-}
+export interface CompanionSystem extends EventEmitter {}
 
 export interface CompanionAction {
   label: string
@@ -28,7 +27,11 @@ export interface DropdownChoice {
   label: string
 }
 
-export type SomeCompanionInputField = CompanionInputFieldText | CompanionInputFieldColor | CompanionInputFieldTextInput | CompanionInputFieldDropdown
+export type SomeCompanionInputField =
+  | CompanionInputFieldText
+  | CompanionInputFieldColor
+  | CompanionInputFieldTextInput
+  | CompanionInputFieldDropdown
 export interface CompanionInputField {
   id: string
   type: 'text' | 'textinput' | 'dropdown' | 'colorpicker'
@@ -73,7 +76,7 @@ export interface CompanionPreset {
   bank: {
     style: 'text'
     text: string
-    size: 'auto' | number
+    size: 'auto' | '7' | '14' | '18' | '24' | '30' | '44'
     color: number
     bgcolor: number
   }
@@ -87,5 +90,9 @@ export interface CompanionPreset {
   }>
 }
 
-export interface CompanionFeedbacks { [id: string]: CompanionFeedback }
-export interface CompanionActions { [id: string]: CompanionAction }
+export interface CompanionFeedbacks {
+  [id: string]: CompanionFeedback
+}
+export interface CompanionActions {
+  [id: string]: CompanionAction
+}

@@ -120,9 +120,10 @@ asap@^2.0.0:
   resolved "https://registry.yarnpkg.com/asap/-/asap-2.0.6.tgz#e50347611d7e690943208bbdafebcbc2fb866d46"
   integrity sha1-5QNHYR1+aQlDIIu9r+vLwvuGbUY=
 
-atem-connection@nrkno/tv-automation-atem-connection#develop:
-  version "0.9.0"
-  resolved "https://codeload.github.com/nrkno/tv-automation-atem-connection/tar.gz/b3af54b9e47c56a2d269de4a6d7d0d76689cdb83"
+atem-connection@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/atem-connection/-/atem-connection-1.0.0.tgz#0492e69e212e4c3c7ae247163d4d5a76d78c36fb"
+  integrity sha512-MEZWHiF3Dmtq0iIzjeMfxOJkKcu1XY2DujUVno4sGJhPbbyM3e8vB5Nd0/3CxVu6WT5wvCYdvs/ZcfJo7/mC2w==
   dependencies:
     exit-hook "^2.0.0"
     nanotimer "^0.3.15"
