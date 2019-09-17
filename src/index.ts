@@ -21,12 +21,6 @@ import {
 
 /**
  * Companion instance class for the Blackmagic ATEM Switchers.
- *
- * @extends InstanceSkel
- * @version 1.1.7
- * @since 1.0.0
- * @author Håkon Nessjøen <haakon@bitfocus.io>
- * @author Keith Rocheck <keith.rocheck@gmail.com>
  */
 class AtemInstance extends InstanceSkel<AtemConfig> {
   private model: ModelSpec
@@ -36,11 +30,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
   /**
    * Create an instance of an ATEM module.
-   *
-   * @param {EventEmitter} system - the brains of the operation
-   * @param {string} id - the instance ID
-   * @param {Object} config - saved user configuration parameters
-   * @since 1.0.0
    */
   constructor(system: CompanionSystem, id: string, config: AtemConfig) {
     super(system, id, config)
@@ -68,9 +57,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   /**
    * Main initialization function called once the module
    * is OK to start doing things.
-   *
-   * @access public
-   * @since 1.0.0
    */
   public init() {
     this.status(this.STATUS_UNKNOWN)
@@ -84,14 +70,11 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
   /**
    * Process an updated configuration array.
-   *
-   * @param {Object} config - the new configuration
-   * @access public
-   * @since 1.0.0
    */
   public updateConfig(config: AtemConfig) {
     this.config = config
 
+    this.initDone = false
     this.setAtemModel(config.modelID || MODEL_AUTO_DETECT)
 
     // Force clear the cached state
@@ -118,10 +101,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
   /**
    * Executes the provided action.
-   *
-   * @param {Object} action - the action to be executed
-   * @access public
-   * @since 1.0.0
    */
   public action(action: CompanionActionEvent) {
     HandleAction(this, this.atem, this.atemState, action)
@@ -129,10 +108,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
   /**
    * Creates the configuration fields for web config.
-   *
-   * @returns {Array} the config fields
-   * @access public
-   * @since 1.0.0
    */
   public config_fields(): CompanionConfigField[] {
     return GetConfigFields(this)
@@ -140,9 +115,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
   /**
    * Clean up the instance before it is destroyed.
-   *
-   * @access public
-   * @since 1.0.0
    */
   public destroy() {
     if (this.atem) {
@@ -155,12 +127,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
   /**
    * Processes a feedback state.
-   *
-   * @param {Object} feedback - the feedback type to process
-   * @param {Object} bank - the bank this feedback is associated with
-   * @returns {Object} feedback information for the bank
-   * @access public
-   * @since 1.0.0
    */
   public feedback(feedback: CompanionFeedbackEvent) {
     return ExecuteFeedback(this.atemState, feedback)
@@ -175,12 +141,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     this.checkFeedbacks()
   }
 
-  /**
-   * INTERNAL: initialize presets.
-   *
-   * @access protected
-   * @since 1.0.0
-   */
   private initPresets() {
     const presets = []
     // let pstText = this.config.presets == 1 ? 'long_' : 'short_'
@@ -591,12 +551,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   }
 
   /**
-   * INTERNAL: Callback for ATEM connection to state change responses.
-   *
-   * @param {?boolean} err - null if a normal result, true if there was an error
-   * @param {Object} state - state details in object array
-   * @access protected
-   * @since 1.1.0
+   * Handle ATEM state changes
    */
   private processStateChange(newState: AtemState, path: string) {
     if (this.initDone) {
@@ -734,14 +689,9 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   }
 
   /**
-   * INTERNAL: Fires a bunch of setup and cleanup when we switch models.
+   * Do some setup and cleanup when we switch models.
    * This is a tricky function because both Config and Atem use this.
    * Logic has to track who's who and make sure we don't init over a live switcher.
-   *
-   * @param {number} modelID - the new model
-   * @param {boolean} [live] - optional, true if this is the live switcher model; defaults to false
-   * @access protected
-   * @since 1.1.0
    */
   private setAtemModel(modelID: ModelId, live?: boolean) {
     if (!live) {
@@ -784,12 +734,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     }
   }
 
-  /**
-   * INTERNAL: use setup data to initalize the atem-connection object.
-   *
-   * @access protected
-   * @since 1.1.0
-   */
   private setupAtemConnection() {
     this.atem = new Atem({ externalLog: this.debug.bind(this) })
 
