@@ -27,8 +27,8 @@ export function GetPresetsList(
 ): CompanionPreset[] {
   const presets: CompanionPresetExt[] = []
 
-  const pstText = instance.config.presets === PresetStyleName.Long ? 'long_' : 'short_'
-  const pstSize = instance.config.presets === PresetStyleName.Long ? 'auto' : 18
+  const pstText = instance.config.presets === PresetStyleName.Long + '' ? 'long_' : 'short_'
+  const pstSize = instance.config.presets === PresetStyleName.Long + '' ? 'auto' : '18'
 
   const meSources = GetSourcesListForType(model, state, 'me')
 
@@ -145,7 +145,7 @@ export function GetPresetsList(
         bank: {
           style: 'text',
           text: 'KEY ' + (key + 1),
-          size: 24,
+          size: '24',
           color: instance.rgb(255, 255, 255),
           bgcolor: instance.rgb(0, 0, 0)
         },
@@ -219,7 +219,7 @@ export function GetPresetsList(
       bank: {
         style: 'text',
         text: `DSK ${dsk + 1}`,
-        size: 24,
+        size: '24',
         color: instance.rgb(255, 255, 255),
         bgcolor: instance.rgb(0, 0, 0)
       },

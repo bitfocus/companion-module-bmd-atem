@@ -36,8 +36,8 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   constructor(system: CompanionSystem, id: string, config: AtemConfig) {
     super(system, id, config)
 
-    this.model = GetModelSpec(this.config.modelID || MODEL_AUTO_DETECT) || GetAutoDetectModel()
-    this.config.modelID = this.model.id
+    this.model = GetModelSpec(parseInt(this.config.modelID || MODEL_AUTO_DETECT + '', 10)) || GetAutoDetectModel()
+    this.config.modelID = this.model.id + ''
 
     this.atem = new Atem({}) // To ensure that there arent undefined bugs
     this.atemState = new AtemState()
@@ -72,7 +72,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   public updateConfig(config: AtemConfig) {
     this.config = config
 
-    this.model = GetModelSpec(config.modelID || MODEL_AUTO_DETECT) || GetAutoDetectModel()
+    this.model = GetModelSpec(parseInt(this.config.modelID || MODEL_AUTO_DETECT + '', 10)) || GetAutoDetectModel()
     this.debug('ATEM changed model: ' + this.model.id)
 
     // Force clear the cached state
@@ -296,11 +296,8 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
       }
 
       // Log if the config mismatches the device
-      if (
-        this.config.modelID !== MODEL_AUTO_DETECT &&
-        this.config.modelID !== undefined &&
-        this.config.modelID !== atemInfo.model
-      ) {
+      const configModelId = this.config.modelID ? parseInt(this.config.modelID, 10) : undefined
+      if (configModelId !== MODEL_AUTO_DETECT && configModelId !== undefined && configModelId !== atemInfo.model) {
         this.log(
           'error',
           'Connected to a ' +

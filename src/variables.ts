@@ -8,7 +8,7 @@ import { ModelSpec } from './models'
 function getSourcePresetName(instance: InstanceSkel<AtemConfig>, state: AtemState, id: number) {
   const input = state.inputs[id]
   if (input) {
-    return instance.config.presets === PresetStyleName.Long ? input.longName : input.shortName
+    return instance.config.presets === PresetStyleName.Long + '' ? input.longName : input.shortName
   } else if (id === 0) {
     return 'Unknown'
   } else {

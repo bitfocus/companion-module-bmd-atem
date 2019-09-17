@@ -1,6 +1,6 @@
 import InstanceSkel = require('../../../instance_skel')
 import { SomeCompanionConfigField } from '../../../instance_skel_types'
-import { ALL_MODEL_CHOICES, ModelId } from './models'
+import { ALL_MODEL_CHOICES } from './models'
 
 export enum PresetStyleName {
   Short = 0,
@@ -9,8 +9,8 @@ export enum PresetStyleName {
 
 export interface AtemConfig {
   host?: string
-  modelID?: ModelId
-  presets?: PresetStyleName
+  modelID?: string
+  presets?: string
 }
 
 export function GetConfigFields(self: InstanceSkel<AtemConfig>): SomeCompanionConfigField[] {
