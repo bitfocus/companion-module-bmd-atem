@@ -1,25 +1,12 @@
 import { Atem, AtemState } from 'atem-connection'
 import InstanceSkel = require('../../../instance_skel')
 import { CompanionConfigField, CompanionSystem, CompanionVariable } from '../../../instance_skel_types'
-import { CHOICES_KEYTRANS, GetSourcesListForType } from './choices'
+import { ActionId, GetActionsList } from './actions'
+import { GetSourcesListForType } from './choices'
 import { AtemConfig, GetConfigFields } from './config'
 import { FeedbackId, GetFeedbacksList } from './feedback'
-import {
-  AtemAuxPicker,
-  AtemAuxSourcePicker,
-  AtemDSKPicker,
-  AtemKeyCutSourcePicker,
-  AtemKeyFillSourcePicker,
-  AtemMEPicker,
-  AtemMESourcePicker,
-  AtemMultiviewerPicker,
-  AtemMultiviewSourcePicker,
-  AtemMultiviewWindowPicker,
-  AtemSuperSourceBoxPicker,
-  AtemSuperSourceBoxSourcePicker,
-  AtemUSKPicker
-} from './input'
 import { GetAutoDetectModel, GetModelSpec, MODEL_AUTO_DETECT, ModelId, ModelSpec } from './models'
+import { assertUnreachable } from './util'
 
 /**
  * Companion instance class for the Blackmagic ATEM Switchers.
@@ -31,8 +18,6 @@ import { GetAutoDetectModel, GetModelSpec, MODEL_AUTO_DETECT, ModelId, ModelSpec
  * @author Keith Rocheck <keith.rocheck@gmail.com>
  */
 class AtemInstance extends InstanceSkel<AtemConfig> {
-  private CHOICES_MACRORUN: Array<{ id: string; label: string }>
-
   private model: ModelSpec
   private atem: Atem
   private atemState: AtemState
@@ -59,10 +44,8 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     this.states = {}
     this.macros = []
     this.deviceName = ''
-    this.deviceModel = 0
+    this.deviceModel = MODEL_AUTO_DETECT
     this.initDone = false
-
-    this.CHOICES_MACRORUN = [{ id: 'run', label: 'Run' }, { id: 'runContinue', label: 'Run/Continue' }]
 
     const newModel = this.config.modelID ? GetModelSpec(this.config.modelID) : undefined
     this.model = newModel || GetAutoDetectModel()
@@ -136,111 +119,8 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
    * @since 1.0.0
    */
   public actions() {
-    // this.setupSourceChoices()
-
-    this.setActions({
-      program: {
-        label: 'Set input on Program',
-        options: [AtemMEPicker(this.model, 0), AtemMESourcePicker(this.model, this.atemState, 0)]
-      },
-      preview: {
-        label: 'Set input on Preview',
-        options: [AtemMEPicker(this.model, 0), AtemMESourcePicker(this.model, this.atemState, 0)]
-      },
-      uskSource: {
-        label: 'Set inputs on Upstream KEY',
-        options: [
-          AtemMEPicker(this.model, 0),
-          AtemUSKPicker(this.model),
-          AtemKeyFillSourcePicker(this.model, this.atemState),
-          AtemKeyCutSourcePicker(this.model, this.atemState)
-        ]
-      },
-      dskSource: {
-        label: 'Set inputs on Downstream KEY',
-        options: [
-          AtemDSKPicker(this.model),
-          AtemKeyFillSourcePicker(this.model, this.atemState),
-          AtemKeyCutSourcePicker(this.model, this.atemState)
-        ]
-      },
-      aux: {
-        label: 'Set AUX bus',
-        options: [AtemAuxPicker(this.model), AtemAuxSourcePicker(this.model, this.atemState)]
-      },
-      usk: {
-        label: 'Set Upstream KEY OnAir',
-        options: [
-          {
-            id: 'onair',
-            type: 'dropdown',
-            label: 'On Air',
-            default: 'true',
-            choices: CHOICES_KEYTRANS
-          },
-          AtemMEPicker(this.model, 0),
-          AtemUSKPicker(this.model)
-        ]
-      },
-      dskAuto: {
-        label: 'AUTO DSK Transition',
-        options: [AtemDSKPicker(this.model)]
-      },
-      dsk: {
-        label: 'Set Downstream KEY OnAir',
-        options: [
-          {
-            id: 'onair',
-            type: 'dropdown',
-            label: 'On Air',
-            default: 'true',
-            choices: CHOICES_KEYTRANS
-          },
-          AtemDSKPicker(this.model)
-        ]
-      },
-      cut: {
-        label: 'CUT operation',
-        options: [AtemMEPicker(this.model, 0)]
-      },
-      auto: {
-        label: 'AUTO transition operation',
-        options: [AtemMEPicker(this.model, 0)]
-      },
-      macrorun: {
-        label: 'Run MACRO',
-        options: [
-          {
-            type: 'textinput',
-            id: 'macro',
-            label: 'Macro number',
-            default: 1,
-            regex: '/^([1-9]|[1-9][0-9]|100)$/'
-          },
-          {
-            type: 'dropdown',
-            id: 'action',
-            label: 'Action',
-            default: 'run',
-            choices: this.CHOICES_MACRORUN
-          }
-        ]
-      },
-      macrocontinue: { label: 'Continue MACRO' },
-      macrostop: { label: 'Stop MACROS' },
-      setMvSource: {
-        label: 'Change MV window source',
-        options: [
-          AtemMultiviewerPicker(this.model),
-          AtemMultiviewWindowPicker(),
-          AtemMultiviewSourcePicker(this.model, this.atemState)
-        ]
-      },
-      setSsrcBoxSource: {
-        label: 'Change SuperSource box source',
-        options: [AtemSuperSourceBoxPicker(), AtemSuperSourceBoxSourcePicker(this.model, this.atemState)]
-      }
-    })
+    // TODO - should it be public?
+    this.setActions(GetActionsList(this.model, this.atemState))
   }
 
   /**
@@ -255,28 +135,29 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     // let cmd
     const opt = action.options
 
-    switch (action.action) {
-      case 'program':
+    const actionId = action.action as ActionId
+    switch (actionId) {
+      case ActionId.Program:
         this.atem.changeProgramInput(parseInt(opt.input), parseInt(opt.mixeffect))
         break
-      case 'preview':
+      case ActionId.Preview:
         this.atem.changePreviewInput(parseInt(opt.input), parseInt(opt.mixeffect))
         break
-      case 'uskSource':
+      case ActionId.USKSource:
         this.atem.setUpstreamKeyerFillSource(parseInt(opt.fill), parseInt(opt.mixeffect), parseInt(opt.key))
         this.atem.setUpstreamKeyerCutSource(parseInt(opt.cut), parseInt(opt.mixeffect), parseInt(opt.key))
         break
-      case 'dskSource':
+      case ActionId.DSKSource:
         this.atem.setDownstreamKeyFillSource(parseInt(opt.fill), parseInt(opt.key))
         this.atem.setDownstreamKeyCutSource(parseInt(opt.cut), parseInt(opt.key))
         break
-      case 'aux':
+      case ActionId.Aux:
         this.atem.setAuxSource(parseInt(opt.input), parseInt(opt.aux))
         break
-      case 'cut':
+      case ActionId.Cut:
         this.atem.cut(parseInt(opt.mixeffect))
         break
-      case 'usk':
+      case ActionId.USKOnAir:
         if (opt.onair == 'toggle') {
           this.atem.setUpstreamKeyerOnAir(
             !this.getUSK(opt.mixeffect, opt.key).onAir,
@@ -287,20 +168,20 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
           this.atem.setUpstreamKeyerOnAir(opt.onair == 'true', parseInt(opt.mixeffect), parseInt(opt.key))
         }
         break
-      case 'dskAuto':
+      case ActionId.DSKAuto:
         this.atem.autoDownstreamKey(parseInt(opt.downstreamKeyerId))
         break
-      case 'dsk':
+      case ActionId.DSKOnAir:
         if (opt.onair == 'toggle') {
           this.atem.setDownstreamKeyOnAir(!this.getDSK(opt.key).onAir, parseInt(opt.key))
         } else {
           this.atem.setDownstreamKeyOnAir(opt.onair == 'true', parseInt(opt.key))
         }
         break
-      case 'auto':
+      case ActionId.Auto:
         this.atem.autoTransition(parseInt(opt.mixeffect))
         break
-      case 'macrorun':
+      case ActionId.MacroRun:
         if (opt.action == 'runContinue' && this.getMacro(parseInt(opt.macro) - 1).isWaiting == 1) {
           this.atem.macroContinue()
         } else if (this.getMacro(parseInt(opt.macro) - 1).isRecording == 1) {
@@ -309,21 +190,22 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
           this.atem.macroRun(parseInt(opt.macro) - 1)
         }
         break
-      case 'macrocontinue':
+      case ActionId.MacroContinue:
         this.atem.macroContinue()
         break
-      case 'macrostop':
+      case ActionId.MacroStop:
         this.atem.macroStop()
         break
-      case 'setMvSource':
+      case ActionId.MultiviewerWindowSource:
         this.atem.setMultiViewerSource({ windowIndex: opt.windowIndex, source: opt.source }, opt.multiViewerId)
         break
-      case 'setSsrcBoxSource':
+      case ActionId.SuperSourceBoxSource:
         const box = { ...this.getSuperSourceBox(opt.boxIndex, 0) }
         box.source = opt.source
         this.atem.setSuperSourceBoxSettings(box, opt.boxIndex)
         break
       default:
+        assertUnreachable(actionId)
         this.debug('Unknown action: ' + action.action)
     }
   }
@@ -367,95 +249,116 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     let out = {}
     const opt = feedback.options
 
-    if (feedback.type == 'preview_bg') {
-      if (this.getME(opt.mixeffect).pvwSrc == parseInt(opt.input)) {
-        out = { color: opt.fg, bgcolor: opt.bg }
-      }
-    } else if (feedback.type == 'preview_bg_2') {
-      if (
-        this.getME(opt.mixeffect1).pvwSrc == parseInt(opt.input1) &&
-        this.getME(opt.mixeffect2).pvwSrc == parseInt(opt.input2)
-      ) {
-        out = { color: opt.fg, bgcolor: opt.bg }
-      }
-    } else if (feedback.type == 'preview_bg_3') {
-      if (
-        this.getME(opt.mixeffect1).pvwSrc == parseInt(opt.input1) &&
-        this.getME(opt.mixeffect2).pvwSrc == parseInt(opt.input2) &&
-        this.getME(opt.mixeffect3).pvwSrc == parseInt(opt.input3)
-      ) {
-        out = { color: opt.fg, bgcolor: opt.bg }
-      }
-    } else if (feedback.type == 'preview_bg_4') {
-      if (
-        this.getME(opt.mixeffect1).pvwSrc == parseInt(opt.input1) &&
-        this.getME(opt.mixeffect2).pvwSrc == parseInt(opt.input2) &&
-        this.getME(opt.mixeffect3).pvwSrc == parseInt(opt.input3) &&
-        this.getME(opt.mixeffect4).pvwSrc == parseInt(opt.input4)
-      ) {
-        out = { color: opt.fg, bgcolor: opt.bg }
-      }
-    } else if (feedback.type == 'program_bg') {
-      if (this.getME(opt.mixeffect).pgmSrc == parseInt(opt.input)) {
-        out = { color: opt.fg, bgcolor: opt.bg }
-      }
-    } else if (feedback.type == 'program_bg_2') {
-      if (
-        this.getME(opt.mixeffect1).pgmSrc == parseInt(opt.input1) &&
-        this.getME(opt.mixeffect2).pgmSrc == parseInt(opt.input2)
-      ) {
-        out = { color: opt.fg, bgcolor: opt.bg }
-      }
-    } else if (feedback.type == 'program_bg_3') {
-      if (
-        this.getME(opt.mixeffect1).pgmSrc == parseInt(opt.input1) &&
-        this.getME(opt.mixeffect2).pgmSrc == parseInt(opt.input2) &&
-        this.getME(opt.mixeffect3).pgmSrc == parseInt(opt.input3)
-      ) {
-        out = { color: opt.fg, bgcolor: opt.bg }
-      }
-    } else if (feedback.type == 'program_bg_4') {
-      if (
-        this.getME(opt.mixeffect1).pgmSrc == parseInt(opt.input1) &&
-        this.getME(opt.mixeffect2).pgmSrc == parseInt(opt.input2) &&
-        this.getME(opt.mixeffect3).pgmSrc == parseInt(opt.input3) &&
-        this.getME(opt.mixeffect4).pgmSrc == parseInt(opt.input4)
-      ) {
-        out = { color: opt.fg, bgcolor: opt.bg }
-      }
-    } else if (feedback.type === 'aux_bg') {
-      const auxSource = this.atemState.video.auxilliaries[opt.aux]
-      if (auxSource === parseInt(opt.input, 10)) {
-        out = { color: opt.fg, bgcolor: opt.bg }
-      }
-    } else if (feedback.type == 'usk_bg') {
-      if (this.getUSK(opt.mixeffect, opt.key).onAir) {
-        out = { color: opt.fg, bgcolor: opt.bg }
-      }
-    } else if (feedback.type == 'usk_source') {
-      if (this.getUSK(opt.mixeffect, opt.key).fillSource == parseInt(opt.fill)) {
-        out = { color: opt.fg, bgcolor: opt.bg }
-      }
-    } else if (feedback.type == 'dsk_bg') {
-      if (this.getDSK(opt.key).onAir) {
-        out = { color: opt.fg, bgcolor: opt.bg }
-      }
-    } else if (feedback.type == 'dsk_source') {
-      if (this.getDSK(opt.key).fillSource == parseInt(opt.fill)) {
-        out = { color: opt.fg, bgcolor: opt.bg }
-      }
-    } else if (feedback.type == 'macro') {
-      if (this.getMacro(opt.macroIndex - 1)[opt.state] == 1) {
-        out = { color: opt.fg, bgcolor: opt.bg }
-      }
-    } else if (feedback.type == 'mv_source') {
-      if (this.getMvWindow(opt.multiViewerId, opt.windowIndex).source == opt.source) {
-        out = { color: opt.fg, bgcolor: opt.bg }
-      }
-    } else if (feedback.type == 'ssrc_box_source') {
-      if (this.getSuperSourceBox(opt.boxIndex, 0).source == opt.source) {
-        out = { color: opt.fg, bgcolor: opt.bg }
-      }
+    const feedbackType = feedback.type as FeedbackId
+    switch (feedbackType) {
+      case FeedbackId.PreviewBG:
+        if (this.getME(opt.mixeffect).pvwSrc == parseInt(opt.input)) {
+          out = { color: opt.fg, bgcolor: opt.bg }
+        }
+        break
+      case FeedbackId.PreviewBG2:
+        if (
+          this.getME(opt.mixeffect1).pvwSrc == parseInt(opt.input1) &&
+          this.getME(opt.mixeffect2).pvwSrc == parseInt(opt.input2)
+        ) {
+          out = { color: opt.fg, bgcolor: opt.bg }
+        }
+        break
+      case FeedbackId.PreviewBG3:
+        if (
+          this.getME(opt.mixeffect1).pvwSrc == parseInt(opt.input1) &&
+          this.getME(opt.mixeffect2).pvwSrc == parseInt(opt.input2) &&
+          this.getME(opt.mixeffect3).pvwSrc == parseInt(opt.input3)
+        ) {
+          out = { color: opt.fg, bgcolor: opt.bg }
+        }
+        break
+      case FeedbackId.PreviewBG4:
+        if (
+          this.getME(opt.mixeffect1).pvwSrc == parseInt(opt.input1) &&
+          this.getME(opt.mixeffect2).pvwSrc == parseInt(opt.input2) &&
+          this.getME(opt.mixeffect3).pvwSrc == parseInt(opt.input3) &&
+          this.getME(opt.mixeffect4).pvwSrc == parseInt(opt.input4)
+        ) {
+          out = { color: opt.fg, bgcolor: opt.bg }
+        }
+        break
+      case FeedbackId.ProgramBG:
+        if (this.getME(opt.mixeffect).pgmSrc == parseInt(opt.input)) {
+          out = { color: opt.fg, bgcolor: opt.bg }
+        }
+        break
+      case FeedbackId.ProgramBG2:
+        if (
+          this.getME(opt.mixeffect1).pgmSrc == parseInt(opt.input1) &&
+          this.getME(opt.mixeffect2).pgmSrc == parseInt(opt.input2)
+        ) {
+          out = { color: opt.fg, bgcolor: opt.bg }
+        }
+        break
+      case FeedbackId.ProgramBG3:
+        if (
+          this.getME(opt.mixeffect1).pgmSrc == parseInt(opt.input1) &&
+          this.getME(opt.mixeffect2).pgmSrc == parseInt(opt.input2) &&
+          this.getME(opt.mixeffect3).pgmSrc == parseInt(opt.input3)
+        ) {
+          out = { color: opt.fg, bgcolor: opt.bg }
+        }
+        break
+      case FeedbackId.ProgramBG4:
+        if (
+          this.getME(opt.mixeffect1).pgmSrc == parseInt(opt.input1) &&
+          this.getME(opt.mixeffect2).pgmSrc == parseInt(opt.input2) &&
+          this.getME(opt.mixeffect3).pgmSrc == parseInt(opt.input3) &&
+          this.getME(opt.mixeffect4).pgmSrc == parseInt(opt.input4)
+        ) {
+          out = { color: opt.fg, bgcolor: opt.bg }
+        }
+        break
+      case FeedbackId.AuxBG:
+        const auxSource = this.atemState.video.auxilliaries[opt.aux]
+        if (auxSource === parseInt(opt.input, 10)) {
+          out = { color: opt.fg, bgcolor: opt.bg }
+        }
+        break
+      case FeedbackId.USKBG:
+        if (this.getUSK(opt.mixeffect, opt.key).onAir) {
+          out = { color: opt.fg, bgcolor: opt.bg }
+        }
+        break
+      case FeedbackId.USKSource:
+        if (this.getUSK(opt.mixeffect, opt.key).fillSource == parseInt(opt.fill)) {
+          out = { color: opt.fg, bgcolor: opt.bg }
+        }
+        break
+      case FeedbackId.DSKBG:
+        if (this.getDSK(opt.key).onAir) {
+          out = { color: opt.fg, bgcolor: opt.bg }
+        }
+        break
+      case FeedbackId.DSKSource:
+        if (this.getDSK(opt.key).fillSource == parseInt(opt.fill)) {
+          out = { color: opt.fg, bgcolor: opt.bg }
+        }
+        break
+      case FeedbackId.Macro:
+        if (this.getMacro(opt.macroIndex - 1)[opt.state] == 1) {
+          out = { color: opt.fg, bgcolor: opt.bg }
+        }
+        break
+      case FeedbackId.MVSource:
+        if (this.getMvWindow(opt.multiViewerId, opt.windowIndex).source == opt.source) {
+          out = { color: opt.fg, bgcolor: opt.bg }
+        }
+        break
+      case FeedbackId.SSrcBoxSource:
+        if (this.getSuperSourceBox(opt.boxIndex, 0).source == opt.source) {
+          out = { color: opt.fg, bgcolor: opt.bg }
+        }
+        break
+      default:
+        assertUnreachable(feedbackType)
+      // TODO - log
     }
 
     return out
