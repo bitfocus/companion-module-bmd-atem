@@ -1,3 +1,4 @@
+import * as _ from 'underscore'
 import { AtemState } from 'atem-connection'
 import InstanceSkel = require('../../../instance_skel')
 import {
@@ -20,7 +21,8 @@ import {
   AtemMultiviewWindowPicker,
   AtemSuperSourceBoxPicker,
   AtemSuperSourceBoxSourcePicker,
-  AtemUSKPicker
+  AtemUSKPicker,
+  AtemSuperSourceIdPicker
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getME, getMultiviewerWindow, getSuperSourceBox, getUSK } from './state'
@@ -296,7 +298,7 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
         ForegroundPicker(instance.rgb(0, 0, 0)),
         BackgroundPicker(instance.rgb(255, 255, 0)),
         AtemMultiviewerPicker(model),
-        AtemMultiviewWindowPicker(),
+        AtemMultiviewWindowPicker(model),
         AtemMultiviewSourcePicker(model, state)
       ]
     }
@@ -306,12 +308,13 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
     feedbacks[FeedbackId.SSrcBoxSource] = {
       label: 'Change colors from SuperSorce box source',
       description: 'If the specified SuperSource box is set to the specified source, change color of the bank',
-      options: [
+      options: _.compact([
         ForegroundPicker(instance.rgb(0, 0, 0)),
         BackgroundPicker(instance.rgb(255, 255, 0)),
+        AtemSuperSourceIdPicker(model),
         AtemSuperSourceBoxPicker(),
         AtemSuperSourceBoxSourcePicker(model, state)
-      ]
+      ])
     }
   }
 
@@ -512,7 +515,7 @@ export function ExecuteFeedback(
       break
     }
     case FeedbackId.SSrcBoxSource: {
-      const box = getSuperSourceBox(state, opt.boxIndex, 0) // TODO - ssrcIndex
+      const box = getSuperSourceBox(state, opt.boxIndex, opt.ssrcId || 0)
       if (box && box.source === parseInt(opt.source, 10)) {
         return getOptColors()
       }

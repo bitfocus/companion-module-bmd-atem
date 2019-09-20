@@ -36,11 +36,12 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   constructor(system: CompanionSystem, id: string, config: AtemConfig) {
     super(system, id, config)
 
-    this.model = GetModelSpec(parseInt(this.config.modelID || MODEL_AUTO_DETECT + '', 10)) || GetAutoDetectModel()
+    this.atemState = new AtemState()
+
+    this.model = GetModelSpec(this.getBestModelId() || MODEL_AUTO_DETECT) || GetAutoDetectModel()
     this.config.modelID = this.model.id + ''
 
     this.atem = new Atem({}) // To ensure that there arent undefined bugs
-    this.atemState = new AtemState()
 
     this.initDone = false
   }
@@ -72,7 +73,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   public updateConfig(config: AtemConfig) {
     this.config = config
 
-    this.model = GetModelSpec(parseInt(this.config.modelID || MODEL_AUTO_DETECT + '', 10)) || GetAutoDetectModel()
+    this.model = GetModelSpec(this.getBestModelId() || MODEL_AUTO_DETECT) || GetAutoDetectModel()
     this.debug('ATEM changed model: ' + this.model.id)
 
     // Force clear the cached state
@@ -102,7 +103,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
    * Executes the provided action.
    */
   public action(action: CompanionActionEvent) {
-    HandleAction(this, this.atem, this.atemState, action)
+    HandleAction(this, this.atem, this.model, this.atemState, action)
   }
 
   /**
@@ -129,6 +130,20 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
    */
   public feedback(feedback: CompanionFeedbackEvent): CompanionFeedbackResult {
     return ExecuteFeedback(this, this.atemState, feedback)
+  }
+
+  private getBestModelId(): number | undefined {
+    const configModel = this.config.modelID ? parseInt(this.config.modelID, 10) : undefined
+    if (configModel) {
+      return configModel
+    } else {
+      const info = this.atemState.info
+      if (info && info.model) {
+        return info.model
+      } else {
+        return undefined
+      }
+    }
   }
 
   private updateCompanionBits() {
@@ -287,7 +302,8 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
       this.log('info', 'Connected to a ' + atemInfo.productIdentifier)
       this.status(this.STATUS_OK)
 
-      const newModelSpec = GetModelSpec(atemInfo.model)
+      const newBestModelId = this.getBestModelId()
+      const newModelSpec = newBestModelId ? GetModelSpec(newBestModelId) : undefined
       if (newModelSpec) {
         this.model = newModelSpec
       } else {
@@ -297,7 +313,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
       // Log if the config mismatches the device
       const configModelId = this.config.modelID ? parseInt(this.config.modelID, 10) : undefined
-      if (configModelId !== MODEL_AUTO_DETECT && configModelId !== undefined && configModelId !== atemInfo.model) {
+      if (configModelId !== MODEL_AUTO_DETECT && configModelId !== undefined && configModelId !== this.model.id) {
         this.log(
           'error',
           'Connected to a ' +
@@ -311,6 +327,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
       this.updateCompanionBits()
     })
     this.atem.on('error', (e: any) => {
+      this.log('error', e.message)
       this.status(this.STATUS_ERROR, e.message)
     })
     this.atem.on('disconnected', () => {

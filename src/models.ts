@@ -1,3 +1,4 @@
+import * as _ from 'underscore'
 import { AtemState, Enums } from 'atem-connection'
 import { DropdownChoice } from '../../../instance_skel_types'
 
@@ -14,6 +15,7 @@ export interface ModelSpec {
   DSKs: number
   MPs: number
   MVs: number
+  multiviewerFullGrid: boolean
   SSrc: number
   macros: number
 }
@@ -29,6 +31,7 @@ export const ALL_MODELS: ModelSpec[] = [
     DSKs: 2,
     MPs: 2,
     MVs: 1,
+    multiviewerFullGrid: false,
     SSrc: 1,
     macros: 100
   },
@@ -42,6 +45,7 @@ export const ALL_MODELS: ModelSpec[] = [
     DSKs: 2,
     MPs: 2,
     MVs: 1,
+    multiviewerFullGrid: false,
     SSrc: 0,
     macros: 100
   },
@@ -55,6 +59,7 @@ export const ALL_MODELS: ModelSpec[] = [
     DSKs: 2,
     MPs: 2,
     MVs: 1,
+    multiviewerFullGrid: false,
     SSrc: 1,
     macros: 100
   },
@@ -68,6 +73,7 @@ export const ALL_MODELS: ModelSpec[] = [
     DSKs: 2,
     MPs: 2,
     MVs: 2,
+    multiviewerFullGrid: false,
     SSrc: 1,
     macros: 100
   },
@@ -81,6 +87,7 @@ export const ALL_MODELS: ModelSpec[] = [
     DSKs: 2,
     MPs: 2,
     MVs: 1,
+    multiviewerFullGrid: false,
     SSrc: 0,
     macros: 100
   },
@@ -94,6 +101,7 @@ export const ALL_MODELS: ModelSpec[] = [
     DSKs: 2,
     MPs: 2,
     MVs: 1,
+    multiviewerFullGrid: false,
     SSrc: 1,
     macros: 100
   },
@@ -107,6 +115,7 @@ export const ALL_MODELS: ModelSpec[] = [
     DSKs: 2,
     MPs: 2,
     MVs: 2,
+    multiviewerFullGrid: false,
     SSrc: 1,
     macros: 100
   },
@@ -120,6 +129,7 @@ export const ALL_MODELS: ModelSpec[] = [
     DSKs: 2,
     MPs: 4,
     MVs: 2,
+    multiviewerFullGrid: false,
     SSrc: 1,
     macros: 100
   },
@@ -133,7 +143,36 @@ export const ALL_MODELS: ModelSpec[] = [
     DSKs: 2,
     MPs: 2,
     MVs: 1,
+    multiviewerFullGrid: false,
     SSrc: 0,
+    macros: 100
+  },
+  {
+    id: Enums.Model.Constellation,
+    label: 'Constellation',
+    inputs: 40,
+    auxes: 24,
+    MEs: 4,
+    USKs: 16,
+    DSKs: 4,
+    MPs: 4,
+    MVs: 4,
+    multiviewerFullGrid: true,
+    SSrc: 2,
+    macros: 100
+  },
+  {
+    id: Enums.Model.Constellation8K,
+    label: 'Constellation 8K',
+    inputs: 10,
+    auxes: 6,
+    MEs: 1,
+    USKs: 4,
+    DSKs: 2,
+    MPs: 1,
+    MVs: 1,
+    multiviewerFullGrid: true,
+    SSrc: 1,
     macros: 100
   }
 ]
@@ -165,7 +204,7 @@ export function GetAutoDetectModel() {
   return ALL_MODELS[0]
 }
 
-export function GetParsedModelSpec({ info, macro, inputs, settings }: AtemState): ModelSpec {
+export function GetParsedModelSpec({ info, macro, inputs, settings, video }: AtemState): ModelSpec {
   return {
     id: info.model,
     label: info.productIdentifier,
@@ -173,9 +212,10 @@ export function GetParsedModelSpec({ info, macro, inputs, settings }: AtemState)
     auxes: info.capabilities.auxilliaries,
     MEs: info.capabilities.MEs,
     USKs: 2, // TODO
-    DSKs: 2, // TODO
+    DSKs:  _.values(video.downstreamKeyers).length,
     MPs: info.capabilities.mediaPlayers,
-    MVs: Object.values(settings.multiViewers).length,
+    MVs: _.values(settings.multiViewers).length,
+    multiviewerFullGrid: false, // TODO
     SSrc: info.capabilities.superSources,
     macros: macro.macroProperties.length
   }

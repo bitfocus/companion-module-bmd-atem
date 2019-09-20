@@ -1,3 +1,4 @@
+import * as _ from 'underscore'
 import { Atem, AtemState } from 'atem-connection'
 import InstanceSkel = require('../../../instance_skel')
 import { CompanionActionEvent, CompanionActions } from '../../../instance_skel_types'
@@ -16,7 +17,8 @@ import {
   AtemMultiviewWindowPicker,
   AtemSuperSourceBoxPicker,
   AtemSuperSourceBoxSourcePicker,
-  AtemUSKPicker
+  AtemUSKPicker,
+  AtemSuperSourceIdPicker
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getUSK } from './state'
@@ -143,11 +145,15 @@ export function GetActionsList(model: ModelSpec, state: AtemState) {
 
   actions[ActionId.MultiviewerWindowSource] = {
     label: 'Change MV window source',
-    options: [AtemMultiviewerPicker(model), AtemMultiviewWindowPicker(), AtemMultiviewSourcePicker(model, state)]
+    options: [AtemMultiviewerPicker(model), AtemMultiviewWindowPicker(model), AtemMultiviewSourcePicker(model, state)]
   }
   actions[ActionId.SuperSourceBoxSource] = {
     label: 'Change SuperSource box source',
-    options: [AtemSuperSourceBoxPicker(), AtemSuperSourceBoxSourcePicker(model, state)]
+    options: _.compact([
+      AtemSuperSourceBoxPicker(),
+      AtemSuperSourceIdPicker(model),
+      AtemSuperSourceBoxSourcePicker(model, state)
+    ])
   }
 
   return actions
@@ -156,6 +162,7 @@ export function GetActionsList(model: ModelSpec, state: AtemState) {
 export function HandleAction(
   instance: InstanceSkel<AtemConfig>,
   atem: Atem,
+  model: ModelSpec,
   state: AtemState,
   action: CompanionActionEvent
 ) {
@@ -249,7 +256,8 @@ export function HandleAction(
           {
             source: getOptInt('source')
           },
-          getOptInt('boxIndex')
+          getOptInt('boxIndex'),
+          opt['ssrcId'] && model.SSrc > 1 ? parseInt(opt['ssrcId'], 10) : 0
         )
         break
       default:

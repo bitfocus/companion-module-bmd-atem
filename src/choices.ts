@@ -51,6 +51,13 @@ export function GetMultiviewerIdChoices(model: ModelSpec): DropdownChoice[] {
   }))
 }
 
+export function GetSuperSourceIdChoices(model: ModelSpec): DropdownChoice[] {
+  return iterateTimes(model.SSrc, i => ({
+    id: i,
+    label: `Super Source ${i + 1}`
+  }))
+}
+
 export function GetMacroChoices(model: ModelSpec, state: AtemState): DropdownChoice[] {
   return iterateTimes(model.macros, i => {
     const macro = state.macro.macroProperties[i]

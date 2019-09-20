@@ -401,7 +401,7 @@ export function GetPresetsList(
               options: {
                 bg: instance.rgb(255, 255, 0),
                 fg: instance.rgb(0, 0, 0),
-                // ssrcId: ssrc,
+                ssrcId: ssrc,
                 source: src.id,
                 boxIndex: box
               }
@@ -411,7 +411,7 @@ export function GetPresetsList(
             {
               action: ActionId.SuperSourceBoxSource,
               options: {
-                // ssrcId: ssrc,
+                ssrcId: ssrc,
                 source: src.id,
                 boxIndex: box
               }
