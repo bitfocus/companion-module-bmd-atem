@@ -7,9 +7,9 @@ import {
   GetMEIdChoices,
   GetMultiviewerIdChoices,
   GetSourcesListForType,
+  GetSuperSourceIdChoices,
   GetUSKIdChoices,
-  SourcesToChoices,
-  GetSuperSourceIdChoices
+  SourcesToChoices
 } from './choices'
 import { ModelSpec } from './models'
 import { iterateTimes } from './util'
@@ -112,7 +112,7 @@ export function AtemSuperSourceIdPicker(model: ModelSpec): CompanionInputFieldDr
       id: 'ssrcId',
       label: 'Super Source',
       default: 0,
-      choices: choices
+      choices
     }
   } else {
     return undefined
@@ -137,19 +137,21 @@ export function AtemMultiviewSourcePicker(model: ModelSpec, state: AtemState): C
   }
 }
 export function AtemMultiviewWindowPicker(model: ModelSpec): CompanionInputFieldDropdown {
-  const choices = model.multiviewerFullGrid ? iterateTimes(16, i => ({
-    id: i,
-    label: `Window ${i + 1}`
-  })) : iterateTimes(8, i => ({
-    id: i + 2,
-    label: `Window ${i + 3}`
-  }))
-  
+  const choices = model.multiviewerFullGrid
+    ? iterateTimes(16, i => ({
+        id: i,
+        label: `Window ${i + 1}`
+      }))
+    : iterateTimes(8, i => ({
+        id: i + 2,
+        label: `Window ${i + 3}`
+      }))
+
   return {
     type: 'dropdown',
     id: 'windowIndex',
     label: 'Window #',
     default: 2,
-    choices: choices
+    choices
   }
 }

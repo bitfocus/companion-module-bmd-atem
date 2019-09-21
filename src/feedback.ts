@@ -1,5 +1,5 @@
-import * as _ from 'underscore'
 import { AtemState } from 'atem-connection'
+import * as _ from 'underscore'
 import InstanceSkel = require('../../../instance_skel')
 import {
   CompanionFeedbackEvent,
@@ -21,8 +21,8 @@ import {
   AtemMultiviewWindowPicker,
   AtemSuperSourceBoxPicker,
   AtemSuperSourceBoxSourcePicker,
-  AtemUSKPicker,
-  AtemSuperSourceIdPicker
+  AtemSuperSourceIdPicker,
+  AtemUSKPicker
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getME, getMultiviewerWindow, getSuperSourceBox, getUSK } from './state'

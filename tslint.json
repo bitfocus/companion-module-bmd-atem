@@ -1,6 +1,7 @@
 {
-  "extends": ["tslint:latest", "tslint-config-prettier"],
+  "extends": ["tslint-plugin-prettier", "tslint:latest", "tslint-config-prettier"],
   "rules": {
+    "prettier": true,
     "interface-name": false,
     "object-literal-sort-keys": false,
     "no-implicit-dependencies": [false, "optional", ["ts-jest"]],

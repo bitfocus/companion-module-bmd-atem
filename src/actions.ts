@@ -1,5 +1,5 @@
-import * as _ from 'underscore'
 import { Atem, AtemState } from 'atem-connection'
+import * as _ from 'underscore'
 import InstanceSkel = require('../../../instance_skel')
 import { CompanionActionEvent, CompanionActions } from '../../../instance_skel_types'
 import { CHOICES_KEYTRANS, GetDSKIdChoices, GetMacroChoices } from './choices'
@@ -17,8 +17,8 @@ import {
   AtemMultiviewWindowPicker,
   AtemSuperSourceBoxPicker,
   AtemSuperSourceBoxSourcePicker,
-  AtemUSKPicker,
-  AtemSuperSourceIdPicker
+  AtemSuperSourceIdPicker,
+  AtemUSKPicker
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getUSK } from './state'
@@ -257,7 +257,7 @@ export function HandleAction(
             source: getOptInt('source')
           },
           getOptInt('boxIndex'),
-          opt['ssrcId'] && model.SSrc > 1 ? parseInt(opt['ssrcId'], 10) : 0
+          opt.ssrcId && model.SSrc > 1 ? parseInt(opt.ssrcId, 10) : 0
         )
         break
       default:
