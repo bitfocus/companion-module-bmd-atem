@@ -33,7 +33,7 @@
 		"url": "https://github.com/bitfocus/companion-module-atem/issues"
 	},
 	"dependencies": {
-		"atem-connection": "^1.0.0",
+		"atem-connection": "^1.0.1",
 		"underscore": "^1.9.1"
 	},
 	"devDependencies": {

@@ -125,10 +125,10 @@ asap@^2.0.0:
   resolved "https://registry.yarnpkg.com/asap/-/asap-2.0.6.tgz#e50347611d7e690943208bbdafebcbc2fb866d46"
   integrity sha1-5QNHYR1+aQlDIIu9r+vLwvuGbUY=
 
-atem-connection@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/atem-connection/-/atem-connection-1.0.0.tgz#0492e69e212e4c3c7ae247163d4d5a76d78c36fb"
-  integrity sha512-MEZWHiF3Dmtq0iIzjeMfxOJkKcu1XY2DujUVno4sGJhPbbyM3e8vB5Nd0/3CxVu6WT5wvCYdvs/ZcfJo7/mC2w==
+atem-connection@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/atem-connection/-/atem-connection-1.0.1.tgz#2c1a0d9c1580f70f7dbbf304f2278d814abfc309"
+  integrity sha512-cyd+M00OSPElrIIB1RydVrHQuYWTMcVkCfXXw5ZyCz4L4arp26Ju95Smj2G228vlJv3az2VcKK9/lmsPz08sJA==
   dependencies:
     exit-hook "^2.0.0"
     nanotimer "^0.3.15"
