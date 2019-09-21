@@ -1,4 +1,4 @@
-import { AtemState } from 'atem-connection'
+import { AtemState, Enums } from 'atem-connection'
 import * as _ from 'underscore'
 import InstanceSkel = require('../../../instance_skel')
 import {
@@ -22,6 +22,8 @@ import {
   AtemSuperSourceBoxPicker,
   AtemSuperSourceBoxSourcePicker,
   AtemSuperSourceIdPicker,
+  AtemTransitionRatePicker,
+  AtemTransitionStylePicker,
   AtemUSKPicker
 } from './input'
 import { ModelSpec } from './models'
@@ -44,7 +46,9 @@ export enum FeedbackId {
   DSKSource = 'dsk_source',
   Macro = 'macro',
   MVSource = 'mv_source',
-  SSrcBoxSource = 'ssrc_box_source'
+  SSrcBoxSource = 'ssrc_box_source',
+  TransitionStyle = 'transitionStyle',
+  TransitionRate = 'transitionRate'
 }
 
 export enum MacroFeedbackType {
@@ -318,6 +322,28 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
     }
   }
 
+  feedbacks[FeedbackId.TransitionStyle] = {
+    label: 'Change colors from transition style',
+    description: 'If the specified tansition style is active, change color of the bank',
+    options: [
+      ForegroundPicker(instance.rgb(0, 0, 0)),
+      BackgroundPicker(instance.rgb(255, 255, 0)),
+      AtemMEPicker(model, 0),
+      AtemTransitionStylePicker()
+    ]
+  }
+  feedbacks[FeedbackId.TransitionRate] = {
+    label: 'Change colors from transition rate',
+    description: 'If the specified tansition rate is active, change color of the bank',
+    options: [
+      ForegroundPicker(instance.rgb(0, 0, 0)),
+      BackgroundPicker(instance.rgb(255, 255, 0)),
+      AtemMEPicker(model, 0),
+      AtemTransitionStylePicker(),
+      AtemTransitionRatePicker()
+    ]
+  }
+
   return feedbacks
 }
 
@@ -518,6 +544,47 @@ export function ExecuteFeedback(
       const box = getSuperSourceBox(state, opt.boxIndex, opt.ssrcId || 0)
       if (box && box.source === parseInt(opt.source, 10)) {
         return getOptColors()
+      }
+      break
+    }
+    case FeedbackId.TransitionStyle: {
+      const me = getME(state, opt.mixeffect)
+      if (me && me.transitionProperties.style === parseInt(opt.style, 10)) {
+        return getOptColors()
+      }
+      break
+    }
+    case FeedbackId.TransitionRate: {
+      const me = getME(state, opt.mixeffect)
+      if (me && me.transitionSettings) {
+        const style = parseInt(opt.style, 10) as Enums.TransitionStyle
+        const rate = parseInt(opt.rate, 10)
+        switch (style) {
+          case Enums.TransitionStyle.MIX:
+            if (me.transitionSettings.mix.rate === rate) {
+              return getOptColors()
+            }
+            break
+          case Enums.TransitionStyle.DIP:
+            if (me.transitionSettings.dip.rate === rate) {
+              return getOptColors()
+            }
+            break
+          case Enums.TransitionStyle.WIPE:
+            if (me.transitionSettings.wipe.rate === rate) {
+              return getOptColors()
+            }
+            break
+          case Enums.TransitionStyle.DVE:
+            if (me.transitionSettings.DVE.rate === rate) {
+              return getOptColors()
+            }
+            break
+          case Enums.TransitionStyle.STING:
+            break
+          default:
+            assertUnreachable(style)
+        }
       }
       break
     }

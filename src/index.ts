@@ -247,6 +247,13 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
       return
     }
 
+    if (path.match(/video.ME.(\d+).transitionProperties/)) {
+      this.checkFeedbacks(FeedbackId.TransitionStyle)
+    }
+    if (path.match(/video.ME.(\d+).transitionSettings/)) {
+      this.checkFeedbacks(FeedbackId.TransitionRate)
+    }
+
     /**
      * Old unused cases below
      * TODO - implement or trash them
@@ -280,13 +287,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
     //       this.checkFeedbacks('trans_state')
     //   }
-    //   break
-    // }
-
-    // case 'TransitionPropertiesCommand': {
-    //   this.updateME(state.mixEffect, state.properties)
-
-    //     this.checkFeedbacks('trans_mods')
     //   break
     // }
   }

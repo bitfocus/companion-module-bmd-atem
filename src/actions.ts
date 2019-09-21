@@ -1,4 +1,4 @@
-import { Atem, AtemState } from 'atem-connection'
+import { Atem, AtemState, Enums } from 'atem-connection'
 import * as _ from 'underscore'
 import InstanceSkel = require('../../../instance_skel')
 import { CompanionActionEvent, CompanionActions } from '../../../instance_skel_types'
@@ -18,6 +18,8 @@ import {
   AtemSuperSourceBoxPicker,
   AtemSuperSourceBoxSourcePicker,
   AtemSuperSourceIdPicker,
+  AtemTransitionRatePicker,
+  AtemTransitionStylePicker,
   AtemUSKPicker
 } from './input'
 import { ModelSpec } from './models'
@@ -39,7 +41,9 @@ export enum ActionId {
   MacroContinue = 'macrocontinue',
   MacroStop = 'macrostop',
   MultiviewerWindowSource = 'setMvSource',
-  SuperSourceBoxSource = 'setSsrcBoxSource'
+  SuperSourceBoxSource = 'setSsrcBoxSource',
+  TransitionStyle = 'transitionStyle',
+  TransitionRate = 'transitionRate'
 }
 
 export function GetActionsList(model: ModelSpec, state: AtemState) {
@@ -156,6 +160,15 @@ export function GetActionsList(model: ModelSpec, state: AtemState) {
     ])
   }
 
+  actions[ActionId.TransitionStyle] = {
+    label: 'Change transition style',
+    options: [AtemMEPicker(model, 0), AtemTransitionStylePicker()]
+  }
+  actions[ActionId.TransitionRate] = {
+    label: 'Change transition rate',
+    options: [AtemMEPicker(model, 0), AtemTransitionStylePicker(true), AtemTransitionRatePicker()]
+  }
+
   return actions
 }
 
@@ -259,6 +272,57 @@ export function HandleAction(
           getOptInt('boxIndex'),
           opt.ssrcId && model.SSrc > 1 ? parseInt(opt.ssrcId, 10) : 0
         )
+        break
+      case ActionId.TransitionStyle:
+        atem.setTransitionStyle(
+          {
+            style: getOptInt('style')
+          },
+          getOptInt('mixeffect')
+        )
+        break
+      case ActionId.TransitionRate:
+        const style = getOptInt('style') as Enums.TransitionStyle
+        switch (style) {
+          case Enums.TransitionStyle.MIX:
+            atem.setMixTransitionSettings(
+              {
+                rate: getOptInt('rate')
+              },
+              getOptInt('mixeffect')
+            )
+            break
+          case Enums.TransitionStyle.DIP:
+            atem.setDipTransitionSettings(
+              {
+                rate: getOptInt('rate')
+              },
+              getOptInt('mixeffect')
+            )
+            break
+          case Enums.TransitionStyle.WIPE:
+            atem.setWipeTransitionSettings(
+              {
+                rate: getOptInt('rate')
+              },
+              getOptInt('mixeffect')
+            )
+            break
+          case Enums.TransitionStyle.DVE:
+            atem.setDVETransitionSettings(
+              {
+                rate: getOptInt('rate')
+              },
+              getOptInt('mixeffect')
+            )
+            break
+          case Enums.TransitionStyle.STING:
+            break
+          default:
+            assertUnreachable(style)
+            instance.debug('Unknown transition style: ' + style)
+            break
+        }
         break
       default:
         assertUnreachable(actionId)

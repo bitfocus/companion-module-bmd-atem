@@ -2,7 +2,7 @@ import { AtemState } from 'atem-connection'
 import InstanceSkel = require('../../../instance_skel')
 import { CompanionPreset } from '../../../instance_skel_types'
 import { ActionId } from './actions'
-import { GetSourcesListForType } from './choices'
+import { GetSourcesListForType, GetTransitionStyleChoices } from './choices'
 import { AtemConfig, PresetStyleName } from './config'
 import { FeedbackId, MacroFeedbackType } from './feedback'
 import { ModelSpec } from './models'
@@ -97,6 +97,81 @@ export function GetPresetsList(
           }
         ]
       })
+    }
+  }
+
+  for (let me = 0; me < model.MEs; ++me) {
+    for (const opt of GetTransitionStyleChoices()) {
+      presets.push({
+        category: `Transitions (M/E ${me + 1})`,
+        label: `Transition style ${opt.label}`,
+        bank: {
+          style: 'text',
+          text: opt.label,
+          size: pstSize,
+          color: instance.rgb(255, 255, 255),
+          bgcolor: instance.rgb(0, 0, 0)
+        },
+        feedbacks: [
+          {
+            type: FeedbackId.TransitionStyle,
+            options: {
+              bg: instance.rgb(255, 255, 0),
+              fg: instance.rgb(255, 255, 255),
+              mixeffect: me,
+              style: opt.id
+            }
+          }
+        ],
+        actions: [
+          {
+            action: ActionId.TransitionStyle,
+            options: {
+              mixeffect: me,
+              style: opt.id
+            }
+          }
+        ]
+      })
+    }
+
+    const rateOptions = [12, 15, 25, 30, 37, 45, 50, 60]
+    for (const opt of GetTransitionStyleChoices(true)) {
+      for (const rate of rateOptions) {
+        presets.push({
+          category: `Transitions (M/E ${me + 1})`,
+          label: `Transition ${opt.label} rate ${rate}`,
+          bank: {
+            style: 'text',
+            text: `${opt.label} ${rate}`,
+            size: pstSize,
+            color: instance.rgb(255, 255, 255),
+            bgcolor: instance.rgb(0, 0, 0)
+          },
+          feedbacks: [
+            {
+              type: FeedbackId.TransitionRate,
+              options: {
+                bg: instance.rgb(255, 255, 0),
+                fg: instance.rgb(255, 255, 255),
+                mixeffect: me,
+                style: opt.id,
+                rate
+              }
+            }
+          ],
+          actions: [
+            {
+              action: ActionId.TransitionRate,
+              options: {
+                mixeffect: me,
+                style: opt.id,
+                rate
+              }
+            }
+          ]
+        })
+      }
     }
   }
 

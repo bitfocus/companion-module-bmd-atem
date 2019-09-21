@@ -32,10 +32,12 @@ export type SomeCompanionInputField =
   | CompanionInputFieldColor
   | CompanionInputFieldTextInput
   | CompanionInputFieldDropdown
+  | CompanionInputFieldNumber
 export interface CompanionInputField {
   id: string
-  type: 'text' | 'textinput' | 'dropdown' | 'colorpicker'
+  type: 'text' | 'textinput' | 'dropdown' | 'colorpicker' | 'number' // TODO - multiselect, checkbox
   label: string
+  tooltip?: string
 }
 export interface CompanionInputFieldText extends CompanionInputField {
   type: 'text'
@@ -47,13 +49,21 @@ export interface CompanionInputFieldColor extends CompanionInputField {
 }
 export interface CompanionInputFieldTextInput extends CompanionInputField {
   type: 'textinput'
-  regex: string
+  regex?: string
   default?: string
 }
 export interface CompanionInputFieldDropdown extends CompanionInputField {
   type: 'dropdown'
   default: ConfigValue
   choices: DropdownChoice[]
+}
+export interface CompanionInputFieldNumber extends CompanionInputField {
+  type: 'number'
+  min: number
+  max: number
+  range?: boolean
+  required?: boolean
+  default: number
 }
 
 export interface CompanionConfigField extends CompanionInputField {

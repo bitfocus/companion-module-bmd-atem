@@ -1,4 +1,4 @@
-import { AtemState } from 'atem-connection'
+import { AtemState, Enums } from 'atem-connection'
 import { DropdownChoice } from '../../../instance_skel_types'
 import { ModelSpec } from './models'
 import { iterateTimes, literal } from './util'
@@ -15,6 +15,19 @@ export const CHOICES_KEYTRANS: DropdownChoice[] = [
   { id: 'false', label: 'Off' },
   { id: 'toggle', label: 'Toggle' }
 ]
+
+export function GetTransitionStyleChoices(skipSting?: boolean) {
+  const options = [
+    { id: Enums.TransitionStyle.MIX, label: 'Mix' },
+    { id: Enums.TransitionStyle.DIP, label: 'Dip' },
+    { id: Enums.TransitionStyle.WIPE, label: 'Wipe' },
+    { id: Enums.TransitionStyle.DVE, label: 'DVE' }
+  ]
+  if (!skipSting) {
+    options.push({ id: Enums.TransitionStyle.STING, label: 'Sting' })
+  }
+  return options
+}
 
 export function GetMEIdChoices(model: ModelSpec): DropdownChoice[] {
   return iterateTimes(model.MEs, i => ({

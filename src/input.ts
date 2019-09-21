@@ -1,5 +1,5 @@
-import { AtemState } from 'atem-connection'
-import { CompanionInputFieldDropdown } from '../../../instance_skel_types'
+import { AtemState, Enums } from 'atem-connection'
+import { CompanionInputFieldDropdown, CompanionInputFieldNumber } from '../../../instance_skel_types'
 import {
   CHOICES_SSRCBOXES,
   GetAuxIdChoices,
@@ -8,6 +8,7 @@ import {
   GetMultiviewerIdChoices,
   GetSourcesListForType,
   GetSuperSourceIdChoices,
+  GetTransitionStyleChoices,
   GetUSKIdChoices,
   SourcesToChoices
 } from './choices'
@@ -21,6 +22,26 @@ export function AtemMESourcePicker(model: ModelSpec, state: AtemState, id: numbe
     type: 'dropdown',
     default: 1,
     choices: SourcesToChoices(GetSourcesListForType(model, state, 'me'))
+  }
+}
+export function AtemTransitionStylePicker(skipSting?: boolean): CompanionInputFieldDropdown {
+  return {
+    type: 'dropdown',
+    id: 'style',
+    label: 'Transition Style',
+    default: Enums.TransitionStyle.MIX,
+    choices: GetTransitionStyleChoices(skipSting)
+  }
+}
+export function AtemTransitionRatePicker(): CompanionInputFieldNumber {
+  return {
+    type: 'number',
+    id: 'rate',
+    label: 'Transition Rate',
+    min: 1,
+    max: 250,
+    range: true,
+    default: 25
   }
 }
 export function AtemMEPicker(model: ModelSpec, id: number): CompanionInputFieldDropdown {
