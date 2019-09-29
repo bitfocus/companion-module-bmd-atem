@@ -211,7 +211,7 @@ export function GetParsedModelSpec({ info, macro, inputs, settings, video }: Ate
     inputs: inputs.filter(i => i.isExternal).length,
     auxes: info.capabilities.auxilliaries,
     MEs: info.capabilities.MEs,
-    USKs: 2, // TODO
+    USKs: video.ME[0] ? _.values(video.ME[0].upstreamKeyers).length : 0,
     DSKs: _.values(video.downstreamKeyers).length,
     MPs: info.capabilities.mediaPlayers,
     MVs: _.values(settings.multiViewers).length,
