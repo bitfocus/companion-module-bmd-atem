@@ -91,14 +91,14 @@ export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSp
     updateDSKVariable(instance, state, k)
   }
 
-  // Input names
+  // Source names
   for (const src of GetSourcesListForType(model, state)) {
     variables.push({
-      label: `Long name of input id ${src.id}`,
+      label: `Long name of source id ${src.id}`,
       name: `long_${src.id}`
     })
     variables.push({
-      label: `Short name of input id ${src.id}`,
+      label: `Short name of source id ${src.id}`,
       name: `short_${src.id}`
     })
 

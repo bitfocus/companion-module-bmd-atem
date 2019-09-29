@@ -102,15 +102,15 @@ export function GetSourcesListForType(model: ModelSpec, state: AtemState, subset
   const sources: SourceInfo[] = [
     getSource(0, 'Blck', 'Black'),
     getSource(1000, 'Bars', 'Bars'),
-    getSource(2001, 'Col2', 'Color 2'),
-    getSource(2002, 'Col1', 'Color 1')
+    getSource(2001, 'Col1', 'Color 1'),
+    getSource(2002, 'Col2', 'Color 2')
   ]
 
   for (let i = 0; i < model.SSrc; i++) {
     if (model.SSrc === 1) {
       sources.push(getSource(6000, 'SSrc', 'Super Source'))
     } else {
-      sources.push(getSource(6000 + i, `SSc${i}`, `Super Source ${i}`))
+      sources.push(getSource(6000 + i, `SSc${i + 1}`, `Super Source ${i + 1}`))
     }
   }
 
@@ -125,7 +125,7 @@ export function GetSourcesListForType(model: ModelSpec, state: AtemState, subset
 
   if (!subset || subset === 'mv') {
     for (let i = 1; i <= model.auxes; i++) {
-      sources.push(getSource(8000 + i, `Aux${i}`, `Auxilary ${i}`))
+      sources.push(getSource(8000 + i, `Aux${i}`, `Auxiliary ${i}`))
     }
   }
 
