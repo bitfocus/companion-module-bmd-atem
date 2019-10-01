@@ -12,6 +12,12 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.1.0
+
+- Change transition selection
+- Set SuperSource box On Air
+- Change SuperSource geometry properties
+
 ### v2.0.0
 
 - Update atem-connection to support v8 firmware.
