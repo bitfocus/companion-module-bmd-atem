@@ -129,7 +129,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
    * Processes a feedback state.
    */
   public feedback(feedback: CompanionFeedbackEvent): CompanionFeedbackResult {
-    return ExecuteFeedback(this, this.atemState, feedback)
+    return ExecuteFeedback(this, this.model, this.atemState, feedback)
   }
 
   private getBestModelId(): number | undefined {
@@ -249,6 +249,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
     if (path.match(/video.ME.(\d+).transitionProperties/)) {
       this.checkFeedbacks(FeedbackId.TransitionStyle)
+      this.checkFeedbacks(FeedbackId.TransitionSelection)
     }
     if (path.match(/video.ME.(\d+).transitionSettings/)) {
       this.checkFeedbacks(FeedbackId.TransitionRate)

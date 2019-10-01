@@ -6,6 +6,7 @@ import { GetSourcesListForType, GetTransitionStyleChoices } from './choices'
 import { AtemConfig, PresetStyleName } from './config'
 import { FeedbackId, MacroFeedbackType } from './feedback'
 import { ModelSpec } from './models'
+import { calculateTransitionSelection } from './util'
 
 interface CompanionPresetExt extends CompanionPreset {
   feedbacks: Array<
@@ -18,6 +19,23 @@ interface CompanionPresetExt extends CompanionPreset {
       action: ActionId
     } & CompanionPreset['actions'][0]
   >
+}
+
+function getTransitionSelectionOptions(keyCount: number): boolean[][] {
+  let res: boolean[][] = []
+  res.push([true])
+  res.push([false])
+
+  for (let i = 0; i < keyCount; i++) {
+    const tmp: boolean[][] = []
+    for (const r of res) {
+      tmp.push([...r, false])
+      tmp.push([...r, true])
+    }
+    res = tmp
+  }
+
+  return res
 }
 
 export function GetPresetsList(
@@ -172,6 +190,58 @@ export function GetPresetsList(
           ]
         })
       }
+    }
+
+    for (const opt of getTransitionSelectionOptions(model.USKs)) {
+      const transitionStringParts = opt[0] ? ['BG'] : []
+      const selectionProps: any = {
+        background: opt[0]
+      }
+      for (let i = 0; i < model.USKs; i++) {
+        if (opt[i + 1]) {
+          transitionStringParts.push(`K${i + 1}`)
+        }
+        selectionProps[`key${i}`] = opt[i + 1]
+      }
+
+      if (calculateTransitionSelection(model.USKs, selectionProps) === 0) {
+        // The 0 case is not supported on the atem
+        continue
+      }
+
+      const transitionString = transitionStringParts.join(' & ')
+
+      presets.push({
+        category: `Transitions (M/E ${me + 1})`,
+        label: `Transition Selection ${transitionString.trim()}`,
+        bank: {
+          style: 'text',
+          text: transitionString.trim(),
+          size: pstSize,
+          color: instance.rgb(255, 255, 255),
+          bgcolor: instance.rgb(0, 0, 0)
+        },
+        feedbacks: [
+          {
+            type: FeedbackId.TransitionSelection,
+            options: {
+              bg: instance.rgb(255, 255, 0),
+              fg: instance.rgb(255, 255, 255),
+              mixeffect: me,
+              ...selectionProps
+            }
+          }
+        ],
+        actions: [
+          {
+            action: ActionId.TransitionSelection,
+            options: {
+              mixeffect: me,
+              ...selectionProps
+            }
+          }
+        ]
+      })
     }
   }
 

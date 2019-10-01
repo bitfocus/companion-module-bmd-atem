@@ -1,5 +1,9 @@
 import { AtemState, Enums } from 'atem-connection'
-import { CompanionInputFieldDropdown, CompanionInputFieldNumber } from '../../../instance_skel_types'
+import {
+  CompanionInputFieldCheckbox,
+  CompanionInputFieldDropdown,
+  CompanionInputFieldNumber
+} from '../../../instance_skel_types'
 import {
   CHOICES_SSRCBOXES,
   GetAuxIdChoices,
@@ -43,6 +47,27 @@ export function AtemTransitionRatePicker(): CompanionInputFieldNumber {
     range: true,
     default: 25
   }
+}
+export function AtemTransitionSelectionPickers(model: ModelSpec): CompanionInputFieldCheckbox[] {
+  const pickers: CompanionInputFieldCheckbox[] = [
+    {
+      type: 'checkbox',
+      id: 'background',
+      label: 'Background',
+      default: true
+    }
+  ]
+
+  for (let i = 0; i < model.USKs; i++) {
+    pickers.push({
+      type: 'checkbox',
+      id: `key${i}`,
+      label: `Key ${i + 1}`,
+      default: false
+    })
+  }
+
+  return pickers
 }
 export function AtemMEPicker(model: ModelSpec, id: number): CompanionInputFieldDropdown {
   return {

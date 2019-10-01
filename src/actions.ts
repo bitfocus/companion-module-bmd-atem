@@ -19,12 +19,13 @@ import {
   AtemSuperSourceBoxSourcePicker,
   AtemSuperSourceIdPicker,
   AtemTransitionRatePicker,
+  AtemTransitionSelectionPickers,
   AtemTransitionStylePicker,
   AtemUSKPicker
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getUSK } from './state'
-import { assertUnreachable } from './util'
+import { assertUnreachable, calculateTransitionSelection } from './util'
 
 export enum ActionId {
   Program = 'program',
@@ -43,6 +44,7 @@ export enum ActionId {
   MultiviewerWindowSource = 'setMvSource',
   SuperSourceBoxSource = 'setSsrcBoxSource',
   TransitionStyle = 'transitionStyle',
+  TransitionSelection = 'transitionSelection',
   TransitionRate = 'transitionRate'
 }
 
@@ -167,6 +169,10 @@ export function GetActionsList(model: ModelSpec, state: AtemState) {
   actions[ActionId.TransitionRate] = {
     label: 'Change transition rate',
     options: [AtemMEPicker(model, 0), AtemTransitionStylePicker(true), AtemTransitionRatePicker()]
+  }
+  actions[ActionId.TransitionSelection] = {
+    label: 'Change transition selection',
+    options: [AtemMEPicker(model, 0), ...AtemTransitionSelectionPickers(model)]
   }
 
   return actions
@@ -324,6 +330,15 @@ export function HandleAction(
             break
         }
         break
+      case ActionId.TransitionSelection: {
+        atem.setTransitionStyle(
+          {
+            selection: calculateTransitionSelection(model.USKs, action.options)
+          },
+          getOptInt('mixeffect')
+        )
+        break
+      }
       default:
         assertUnreachable(actionId)
         instance.debug('Unknown action: ' + action.action)

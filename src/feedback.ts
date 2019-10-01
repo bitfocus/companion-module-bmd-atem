@@ -23,12 +23,13 @@ import {
   AtemSuperSourceBoxSourcePicker,
   AtemSuperSourceIdPicker,
   AtemTransitionRatePicker,
+  AtemTransitionSelectionPickers,
   AtemTransitionStylePicker,
   AtemUSKPicker
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getME, getMultiviewerWindow, getSuperSourceBox, getUSK } from './state'
-import { assertUnreachable } from './util'
+import { assertUnreachable, calculateTransitionSelection } from './util'
 
 export enum FeedbackId {
   PreviewBG = 'preview_bg',
@@ -48,6 +49,7 @@ export enum FeedbackId {
   MVSource = 'mv_source',
   SSrcBoxSource = 'ssrc_box_source',
   TransitionStyle = 'transitionStyle',
+  TransitionSelection = 'transitionSelection',
   TransitionRate = 'transitionRate'
 }
 
@@ -332,6 +334,16 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
       AtemTransitionStylePicker()
     ]
   }
+  feedbacks[FeedbackId.TransitionSelection] = {
+    label: 'Change colors from transition selection',
+    description: 'If the specified tansition selection is active, change color of the bank',
+    options: [
+      ForegroundPicker(instance.rgb(0, 0, 0)),
+      BackgroundPicker(instance.rgb(255, 255, 0)),
+      AtemMEPicker(model, 0),
+      ...AtemTransitionSelectionPickers(model)
+    ]
+  }
   feedbacks[FeedbackId.TransitionRate] = {
     label: 'Change colors from transition rate',
     description: 'If the specified tansition rate is active, change color of the bank',
@@ -349,6 +361,7 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
 
 export function ExecuteFeedback(
   instance: InstanceSkel<AtemConfig>,
+  model: ModelSpec,
   state: AtemState,
   feedback: CompanionFeedbackEvent
 ): CompanionFeedbackResult {
@@ -550,6 +563,14 @@ export function ExecuteFeedback(
     case FeedbackId.TransitionStyle: {
       const me = getME(state, opt.mixeffect)
       if (me && me.transitionProperties.style === parseInt(opt.style, 10)) {
+        return getOptColors()
+      }
+      break
+    }
+    case FeedbackId.TransitionSelection: {
+      const me = getME(state, opt.mixeffect)
+      const expectedSelection = calculateTransitionSelection(model.USKs, opt)
+      if (me && me.transitionProperties.selection === expectedSelection) {
         return getOptColors()
       }
       break
