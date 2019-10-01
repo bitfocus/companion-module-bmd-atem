@@ -97,11 +97,11 @@ export interface CompanionPreset {
   }
   feedbacks: Array<{
     type: string
-    options: { [key: string]: number | string }
+    options: { [key: string]: number | string | boolean }
   }>
   actions: Array<{
     action: string
-    options: { [key: string]: number | string }
+    options: { [key: string]: number | string | boolean }
   }>
 }
 

@@ -296,7 +296,7 @@ export function GetPresetsList(
         },
         feedbacks: [
           {
-            type: FeedbackId.USKBG,
+            type: FeedbackId.USKOnAir,
             options: {
               bg: instance.rgb(255, 0, 0),
               fg: instance.rgb(255, 255, 255),
@@ -370,7 +370,7 @@ export function GetPresetsList(
       },
       feedbacks: [
         {
-          type: FeedbackId.DSKBG,
+          type: FeedbackId.DSKOnAir,
           options: {
             bg: instance.rgb(255, 0, 0),
             fg: instance.rgb(255, 255, 255),
@@ -529,10 +529,43 @@ export function GetPresetsList(
 
   for (let ssrc = 0; ssrc < model.SSrc; ssrc++) {
     for (let box = 0; box < 4; box++) {
+      presets.push({
+        category: `SSrc ${ssrc + 1} Boxes`,
+        label: `Toggle SuperSource ${ssrc + 1} Box ${box + 1} visibility`,
+        bank: {
+          style: 'text',
+          text: `Box ${box + 1}`,
+          size: pstSize,
+          color: instance.rgb(255, 255, 255),
+          bgcolor: instance.rgb(0, 0, 0)
+        },
+        feedbacks: [
+          {
+            type: FeedbackId.SSrcBoxOnAir,
+            options: {
+              bg: instance.rgb(255, 255, 0),
+              fg: instance.rgb(0, 0, 0),
+              ssrcId: ssrc,
+              boxIndex: box
+            }
+          }
+        ],
+        actions: [
+          {
+            action: ActionId.SuperSourceBoxOnAir,
+            options: {
+              ssrcId: ssrc,
+              onair: 'toggle',
+              boxIndex: box
+            }
+          }
+        ]
+      })
+
       for (const src of meSources) {
         presets.push({
           category: `SSrc ${ssrc + 1} Box ${box + 1}`,
-          label: `Set SuperSource ${ssrc + 1} Box ${box + 1} to source  ${src.shortName}`,
+          label: `Set SuperSource ${ssrc + 1} Box ${box + 1} to source ${src.shortName}`,
           bank: {
             style: 'text',
             text: `$(atem:${pstText}${src.id})`,

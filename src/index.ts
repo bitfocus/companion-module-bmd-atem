@@ -174,7 +174,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     const dskMatch = path.match(/video.downstreamKeyers.(\d+)/)
     if (dskMatch) {
       updateDSKVariable(this, this.atemState, parseInt(dskMatch[1], 10))
-      this.checkFeedbacks(FeedbackId.DSKBG)
+      this.checkFeedbacks(FeedbackId.DSKOnAir)
       return
     }
 
@@ -185,7 +185,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     }
 
     if (path.match(/video.ME.(\d+).upstreamKeyers.(\d+).onAir/)) {
-      this.checkFeedbacks(FeedbackId.USKBG)
+      this.checkFeedbacks(FeedbackId.USKOnAir)
       return
     }
 
@@ -244,6 +244,8 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
     if (path.match(/video.superSources.(\d+).boxes.(\d+)/)) {
       this.checkFeedbacks(FeedbackId.SSrcBoxSource)
+      this.checkFeedbacks(FeedbackId.SSrcBoxOnAir)
+      this.checkFeedbacks(FeedbackId.SSrcBoxProperties)
       return
     }
 

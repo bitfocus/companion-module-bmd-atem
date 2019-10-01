@@ -164,6 +164,79 @@ export function AtemSuperSourceIdPicker(model: ModelSpec): CompanionInputFieldDr
     return undefined
   }
 }
+export function AtemSuperSourcePropertiesPickers(): Array<CompanionInputFieldNumber | CompanionInputFieldCheckbox> {
+  return [
+    {
+      type: 'number',
+      id: 'size',
+      label: 'Size',
+      min: 0,
+      max: 1000,
+      range: true,
+      default: 500
+    },
+    {
+      type: 'number',
+      id: 'x',
+      label: 'X',
+      min: -4800,
+      max: 4800,
+      range: true,
+      default: 0
+    },
+    {
+      type: 'number',
+      id: 'y',
+      label: 'Y',
+      min: -2700,
+      max: 2700,
+      range: true,
+      default: 0
+    },
+    {
+      type: 'checkbox',
+      id: 'cropEnable',
+      label: 'Crop Enable',
+      default: false
+    },
+    {
+      type: 'number',
+      id: 'cropTop',
+      label: 'Crop Top',
+      min: 0,
+      max: 1800,
+      range: true,
+      default: 0
+    },
+    {
+      type: 'number',
+      id: 'cropBottom',
+      label: 'Crop Bottom',
+      min: 0,
+      max: 1800,
+      range: true,
+      default: 0
+    },
+    {
+      type: 'number',
+      id: 'cropLeft',
+      label: 'Crop Left',
+      min: 0,
+      max: 3200,
+      range: true,
+      default: 0
+    },
+    {
+      type: 'number',
+      id: 'cropRight',
+      label: 'Crop Right',
+      min: 0,
+      max: 3200,
+      range: true,
+      default: 0
+    }
+  ]
+}
 export function AtemSuperSourceBoxSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
   return {
     type: 'dropdown',

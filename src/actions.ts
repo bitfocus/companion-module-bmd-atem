@@ -21,10 +21,11 @@ import {
   AtemTransitionRatePicker,
   AtemTransitionSelectionPickers,
   AtemTransitionStylePicker,
-  AtemUSKPicker
+  AtemUSKPicker,
+  AtemSuperSourcePropertiesPickers
 } from './input'
 import { ModelSpec } from './models'
-import { getDSK, getUSK } from './state'
+import { getDSK, getUSK, getSuperSourceBox } from './state'
 import { assertUnreachable, calculateTransitionSelection } from './util'
 
 export enum ActionId {
@@ -43,6 +44,8 @@ export enum ActionId {
   MacroStop = 'macrostop',
   MultiviewerWindowSource = 'setMvSource',
   SuperSourceBoxSource = 'setSsrcBoxSource',
+  SuperSourceBoxOnAir = 'setSsrcBoxEnable',
+  SuperSourceBoxProperties = 'setSsrcBoxProperties',
   TransitionStyle = 'transitionStyle',
   TransitionSelection = 'transitionSelection',
   TransitionRate = 'transitionRate'
@@ -156,9 +159,31 @@ export function GetActionsList(model: ModelSpec, state: AtemState) {
   actions[ActionId.SuperSourceBoxSource] = {
     label: 'Change SuperSource box source',
     options: _.compact([
-      AtemSuperSourceBoxPicker(),
       AtemSuperSourceIdPicker(model),
+      AtemSuperSourceBoxPicker(),
       AtemSuperSourceBoxSourcePicker(model, state)
+    ])
+  }
+  actions[ActionId.SuperSourceBoxOnAir] = {
+    label: 'Change SuperSource box enabled',
+    options: _.compact([
+      AtemSuperSourceIdPicker(model),
+      AtemSuperSourceBoxPicker(),
+      {
+        id: 'onair',
+        type: 'dropdown',
+        label: 'On Air',
+        default: 'true',
+        choices: CHOICES_KEYTRANS
+      }
+    ])
+  }
+  actions[ActionId.SuperSourceBoxProperties] = {
+    label: 'Change SuperSource box properties',
+    options: _.compact([
+      AtemSuperSourceIdPicker(model),
+      AtemSuperSourceBoxPicker(),
+      ...AtemSuperSourcePropertiesPickers()
     ])
   }
 
@@ -192,6 +217,9 @@ export function HandleAction(
       throw new Error(`Invalid option '${key}'`)
     }
     return val
+  }
+  const getOptBool = (key: string) => {
+    return !!opt[key]
   }
 
   try {
@@ -270,10 +298,49 @@ export function HandleAction(
           getOptInt('multiViewerId')
         )
         break
+      case ActionId.SuperSourceBoxOnAir:
+        const ssrcId = opt.ssrcId && model.SSrc > 1 ? parseInt(opt.ssrcId, 10) : 0
+        const boxIndex = getOptInt('boxIndex')
+
+        if (opt.onair === 'toggle') {
+          const box = getSuperSourceBox(state, boxIndex, ssrcId)
+          atem.setSuperSourceBoxSettings(
+            {
+              enabled: !box || !box.enabled
+            },
+            boxIndex,
+            ssrcId
+          )
+        } else {
+          atem.setSuperSourceBoxSettings(
+            {
+              enabled: opt.onair === 'true'
+            },
+            boxIndex,
+            ssrcId
+          )
+        }
+        break
       case ActionId.SuperSourceBoxSource:
         atem.setSuperSourceBoxSettings(
           {
             source: getOptInt('source')
+          },
+          getOptInt('boxIndex'),
+          opt.ssrcId && model.SSrc > 1 ? parseInt(opt.ssrcId, 10) : 0
+        )
+        break
+      case ActionId.SuperSourceBoxProperties:
+        atem.setSuperSourceBoxSettings(
+          {
+            size: getOptInt('size'),
+            x: getOptInt('x'),
+            y: getOptInt('y'),
+            cropped: getOptBool('cropEnable'),
+            cropTop: getOptInt('cropTop'),
+            cropBottom: getOptInt('cropBottom'),
+            cropLeft: getOptInt('cropLeft'),
+            cropRight: getOptInt('cropRight')
           },
           getOptInt('boxIndex'),
           opt.ssrcId && model.SSrc > 1 ? parseInt(opt.ssrcId, 10) : 0

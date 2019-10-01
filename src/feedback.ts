@@ -25,7 +25,8 @@ import {
   AtemTransitionRatePicker,
   AtemTransitionSelectionPickers,
   AtemTransitionStylePicker,
-  AtemUSKPicker
+  AtemUSKPicker,
+  AtemSuperSourcePropertiesPickers
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getME, getMultiviewerWindow, getSuperSourceBox, getUSK } from './state'
@@ -41,13 +42,15 @@ export enum FeedbackId {
   ProgramBG3 = 'program_bg_3',
   ProgramBG4 = 'program_bg_4',
   AuxBG = 'aux_bg',
-  USKBG = 'usk_bg',
+  USKOnAir = 'usk_bg',
   USKSource = 'usk_source',
-  DSKBG = 'dsk_bg',
+  DSKOnAir = 'dsk_bg',
   DSKSource = 'dsk_source',
   Macro = 'macro',
   MVSource = 'mv_source',
+  SSrcBoxOnAir = 'ssrc_box_enable',
   SSrcBoxSource = 'ssrc_box_source',
+  SSrcBoxProperties = 'ssrc_box_properties',
   TransitionStyle = 'transitionStyle',
   TransitionSelection = 'transitionSelection',
   TransitionRate = 'transitionRate'
@@ -221,7 +224,7 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
   }
 
   if (model.USKs) {
-    feedbacks[FeedbackId.USKBG] = {
+    feedbacks[FeedbackId.USKOnAir] = {
       label: 'Change colors from upstream keyer state',
       description: 'If the specified upstream keyer is active, change color of the bank',
       options: [
@@ -245,7 +248,7 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
   }
 
   if (model.DSKs) {
-    feedbacks[FeedbackId.DSKBG] = {
+    feedbacks[FeedbackId.DSKOnAir] = {
       label: 'Change colors from downstream keyer state',
       description: 'If the specified downstream keyer is active, change color of the bank',
       options: [
@@ -320,6 +323,27 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
         AtemSuperSourceIdPicker(model),
         AtemSuperSourceBoxPicker(),
         AtemSuperSourceBoxSourcePicker(model, state)
+      ])
+    }
+    feedbacks[FeedbackId.SSrcBoxOnAir] = {
+      label: 'Change colors from SuperSorce box state',
+      description: 'If the specified SuperSource box is enabled, change color of the bank',
+      options: _.compact([
+        ForegroundPicker(instance.rgb(0, 0, 0)),
+        BackgroundPicker(instance.rgb(255, 255, 0)),
+        AtemSuperSourceIdPicker(model),
+        AtemSuperSourceBoxPicker()
+      ])
+    }
+    feedbacks[FeedbackId.SSrcBoxProperties] = {
+      label: 'Change colors from SuperSorce box properties',
+      description: 'If the specified SuperSource box properties match, change color of the bank',
+      options: _.compact([
+        ForegroundPicker(instance.rgb(0, 0, 0)),
+        BackgroundPicker(instance.rgb(255, 255, 0)),
+        AtemSuperSourceIdPicker(model),
+        AtemSuperSourceBoxPicker(),
+        ...AtemSuperSourcePropertiesPickers()
       ])
     }
   }
@@ -486,7 +510,7 @@ export function ExecuteFeedback(
         return getOptColors()
       }
       break
-    case FeedbackId.USKBG: {
+    case FeedbackId.USKOnAir: {
       const usk = getUSK(state, opt.mixeffect, opt.key)
       if (usk && usk.onAir) {
         return getOptColors()
@@ -500,7 +524,7 @@ export function ExecuteFeedback(
       }
       break
     }
-    case FeedbackId.DSKBG: {
+    case FeedbackId.DSKOnAir: {
       const dsk = getDSK(state, opt.key)
       if (dsk && dsk.onAir) {
         return getOptColors()
@@ -553,9 +577,38 @@ export function ExecuteFeedback(
       }
       break
     }
+    case FeedbackId.SSrcBoxOnAir: {
+      const box = getSuperSourceBox(state, opt.boxIndex, opt.ssrcId || 0)
+      if (box && box.enabled) {
+        return getOptColors()
+      }
+      break
+    }
     case FeedbackId.SSrcBoxSource: {
       const box = getSuperSourceBox(state, opt.boxIndex, opt.ssrcId || 0)
       if (box && box.source === parseInt(opt.source, 10)) {
+        return getOptColors()
+      }
+      break
+    }
+    case FeedbackId.SSrcBoxProperties: {
+      const box = getSuperSourceBox(state, opt.boxIndex, opt.ssrcId || 0)
+      const boxCroppingMatches =
+        box &&
+        (!box.cropped ||
+          (box.cropTop === parseInt(opt.cropTop, 10) &&
+            box.cropBottom === parseInt(opt.cropBottom, 10) &&
+            box.cropLeft === parseInt(opt.cropLeft, 10) &&
+            box.cropRight === parseInt(opt.cropRight, 10)))
+
+      if (
+        box &&
+        box.size === parseInt(opt.size, 10) &&
+        box.x === parseInt(opt.x, 10) &&
+        box.y === parseInt(opt.y, 10) &&
+        box.cropped === !!opt.cropEnable &&
+        boxCroppingMatches
+      ) {
         return getOptColors()
       }
       break
