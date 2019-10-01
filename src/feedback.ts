@@ -515,13 +515,13 @@ export function ExecuteFeedback(
             isActive = macro && macro.isUsed
             break
           case MacroFeedbackType.IsRecording:
-            isActive = macroRecorder.isRecording && macroRecorder.macroIndex === macroIndex
+            isActive = macroRecorder && macroRecorder.isRecording && macroRecorder.macroIndex === macroIndex
             break
           case MacroFeedbackType.IsRunning:
-            isActive = macroPlayer.isRunning && macroPlayer.macroIndex === macroIndex
+            isActive = macroPlayer && macroPlayer.isRunning && macroPlayer.macroIndex === macroIndex
             break
           case MacroFeedbackType.IsWaiting:
-            isActive = macroPlayer.isWaiting && macroPlayer.macroIndex === macroIndex
+            isActive = macroPlayer && macroPlayer.isWaiting && macroPlayer.macroIndex === macroIndex
             break
           default:
             assertUnreachable(type)
