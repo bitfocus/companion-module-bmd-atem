@@ -680,12 +680,16 @@ export function ExecuteFeedback(
     }
     case FeedbackId.MediaPlayerSource: {
       const player = state.media.players[Number(opt.mediaplayer)]
-      if (player && player.sourceType === Enums.MediaSourceType.Clip && player.clipIndex === parseInt(opt.source, 10)) {
+      if (
+        player &&
+        player.sourceType === Enums.MediaSourceType.Still &&
+        player.stillIndex === parseInt(opt.source, 10)
+      ) {
         return getOptColors()
       } else if (
         player &&
-        player.sourceType === Enums.MediaSourceType.Still &&
-        player.stillIndex + MEDIA_PLAYER_SOURCE_CLIP_OFFSET === parseInt(opt.source, 10)
+        player.sourceType === Enums.MediaSourceType.Clip &&
+        player.clipIndex + MEDIA_PLAYER_SOURCE_CLIP_OFFSET === parseInt(opt.source, 10)
       ) {
         return getOptColors()
       }

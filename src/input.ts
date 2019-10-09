@@ -301,8 +301,6 @@ export function AtemMediaPlayerSourcePicker(model: ModelSpec, state: AtemState):
       }),
       ...iterateTimes(model.media.stills, i => {
         const still = state.media.stillPool[i]
-        console.log(still, i)
-
         return {
           id: i,
           label: still && still.fileName ? `Still #${i + 1}: ${still.fileName}` : `Still #${i + 1}`

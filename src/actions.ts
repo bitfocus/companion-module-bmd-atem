@@ -435,7 +435,7 @@ export function HandleAction(
           atem.setMediaPlayerSource(
             {
               sourceType: Enums.MediaSourceType.Clip,
-              stillIndex: source - MEDIA_PLAYER_SOURCE_CLIP_OFFSET
+              clipIndex: source - MEDIA_PLAYER_SOURCE_CLIP_OFFSET
             },
             getOptInt('mediaplayer')
           )

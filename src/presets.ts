@@ -6,7 +6,7 @@ import { GetSourcesListForType, GetTransitionStyleChoices } from './choices'
 import { AtemConfig, PresetStyleName } from './config'
 import { FeedbackId, MacroFeedbackType } from './feedback'
 import { ModelSpec } from './models'
-import { calculateTransitionSelection } from './util'
+import { calculateTransitionSelection, MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util'
 
 interface CompanionPresetExt extends CompanionPreset {
   feedbacks: Array<
@@ -599,6 +599,76 @@ export function GetPresetsList(
           ]
         })
       }
+    }
+  }
+
+  for (let player = 0; player < model.media.players; player++) {
+    for (let clip = 0; clip < model.media.clips; clip++) {
+      presets.push({
+        category: `Mediaplayer ${player + 1}`,
+        label: `Set Mediaplayer ${player + 1} source to clip ${clip + 1}`,
+        bank: {
+          style: 'text',
+          text: `MP ${player + 1} Clip ${clip + 1}`,
+          size: pstSize,
+          color: instance.rgb(255, 255, 255),
+          bgcolor: instance.rgb(0, 0, 0)
+        },
+        feedbacks: [
+          {
+            type: FeedbackId.MediaPlayerSource,
+            options: {
+              bg: instance.rgb(255, 255, 0),
+              fg: instance.rgb(0, 0, 0),
+              mediaplayer: player,
+              source: clip + MEDIA_PLAYER_SOURCE_CLIP_OFFSET
+            }
+          }
+        ],
+        actions: [
+          {
+            action: ActionId.MediaPlayerSource,
+            options: {
+              mediaplayer: player,
+              source: clip + MEDIA_PLAYER_SOURCE_CLIP_OFFSET
+            }
+          }
+        ]
+      })
+    }
+
+    for (let still = 0; still < model.media.stills; still++) {
+      presets.push({
+        category: `Mediaplayer ${player + 1}`,
+        label: `Set Mediaplayer ${player + 1} source to still ${still + 1}`,
+        bank: {
+          style: 'text',
+          text: `MP ${player + 1} Still ${still + 1}`,
+          size: pstSize,
+          color: instance.rgb(255, 255, 255),
+          bgcolor: instance.rgb(0, 0, 0)
+        },
+        feedbacks: [
+          {
+            type: FeedbackId.MediaPlayerSource,
+            options: {
+              bg: instance.rgb(255, 255, 0),
+              fg: instance.rgb(0, 0, 0),
+              mediaplayer: player,
+              source: still
+            }
+          }
+        ],
+        actions: [
+          {
+            action: ActionId.MediaPlayerSource,
+            options: {
+              mediaplayer: player,
+              source: still
+            }
+          }
+        ]
+      })
     }
   }
   return presets
