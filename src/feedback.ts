@@ -28,12 +28,11 @@ import {
   AtemUSKPicker,
   AtemSuperSourcePropertiesPickers,
   AtemMediaPlayerPicker,
-  AtemMediaPlayerClipPicker,
-  AtemMediaPlayerStillPicker
+  AtemMediaPlayerSourcePicker
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getME, getMultiviewerWindow, getSuperSourceBox, getUSK } from './state'
-import { assertUnreachable, calculateTransitionSelection } from './util'
+import { assertUnreachable, calculateTransitionSelection, MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util'
 
 export enum FeedbackId {
   PreviewBG = 'preview_bg',
@@ -57,8 +56,7 @@ export enum FeedbackId {
   TransitionStyle = 'transitionStyle',
   TransitionSelection = 'transitionSelection',
   TransitionRate = 'transitionRate',
-  MediaPlayerSourceClip = 'mediaPlayerSourceClip',
-  MediaPlayerSourceStill = 'mediaPlayerSourceStill'
+  MediaPlayerSource = 'mediaPlayerSource'
 }
 
 export enum MacroFeedbackType {
@@ -386,24 +384,14 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
   }
 
   if (model.media.players > 0) {
-    feedbacks[FeedbackId.MediaPlayerSourceClip] = {
-      label: 'Change colors from media player clip source',
-      description: 'If the specified media player has the specified clip as the source, change color of the bank',
+    feedbacks[FeedbackId.MediaPlayerSource] = {
+      label: 'Change colors from media player source',
+      description: 'If the specified media player has the specified source, change color of the bank',
       options: [
         ForegroundPicker(instance.rgb(0, 0, 0)),
         BackgroundPicker(instance.rgb(255, 255, 0)),
         AtemMediaPlayerPicker(model),
-        AtemMediaPlayerClipPicker(model, state)
-      ]
-    }
-    feedbacks[FeedbackId.MediaPlayerSourceStill] = {
-      label: 'Change colors from media player still source',
-      description: 'If the specified media player has the specified still as the source, change color of the bank',
-      options: [
-        ForegroundPicker(instance.rgb(0, 0, 0)),
-        BackgroundPicker(instance.rgb(255, 255, 0)),
-        AtemMediaPlayerPicker(model),
-        AtemMediaPlayerStillPicker(model, state)
+        AtemMediaPlayerSourcePicker(model, state)
       ]
     }
   }
@@ -690,19 +678,14 @@ export function ExecuteFeedback(
       }
       break
     }
-    case FeedbackId.MediaPlayerSourceClip: {
+    case FeedbackId.MediaPlayerSource: {
       const player = state.media.players[Number(opt.mediaplayer)]
       if (player && player.sourceType === Enums.MediaSourceType.Clip && player.clipIndex === parseInt(opt.source, 10)) {
         return getOptColors()
-      }
-      break
-    }
-    case FeedbackId.MediaPlayerSourceStill: {
-      const player = state.media.players[Number(opt.mediaplayer)]
-      if (
+      } else if (
         player &&
         player.sourceType === Enums.MediaSourceType.Still &&
-        player.stillIndex === parseInt(opt.source, 10)
+        player.stillIndex + MEDIA_PLAYER_SOURCE_CLIP_OFFSET === parseInt(opt.source, 10)
       ) {
         return getOptColors()
       }

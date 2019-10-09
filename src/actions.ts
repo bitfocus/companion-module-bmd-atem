@@ -24,12 +24,11 @@ import {
   AtemUSKPicker,
   AtemSuperSourcePropertiesPickers,
   AtemMediaPlayerPicker,
-  AtemMediaPlayerClipPicker,
-  AtemMediaPlayerStillPicker
+  AtemMediaPlayerSourcePicker
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getUSK, getSuperSourceBox } from './state'
-import { assertUnreachable, calculateTransitionSelection } from './util'
+import { assertUnreachable, calculateTransitionSelection, MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util'
 
 export enum ActionId {
   Program = 'program',
@@ -52,8 +51,7 @@ export enum ActionId {
   TransitionStyle = 'transitionStyle',
   TransitionSelection = 'transitionSelection',
   TransitionRate = 'transitionRate',
-  MediaPlayerSourceClip = 'mediaPlayerSourceClip',
-  MediaPlayerSourceStill = 'mediaPlayerSourceStill'
+  MediaPlayerSource = 'mediaPlayerSource'
 }
 
 export function GetActionsList(model: ModelSpec, state: AtemState) {
@@ -206,13 +204,9 @@ export function GetActionsList(model: ModelSpec, state: AtemState) {
   }
 
   if (model.media.players > 0) {
-    actions[ActionId.MediaPlayerSourceClip] = {
-      label: 'Change media player clip source',
-      options: [AtemMediaPlayerPicker(model), AtemMediaPlayerClipPicker(model, state)]
-    }
-    actions[ActionId.MediaPlayerSourceStill] = {
-      label: 'Change media player still source',
-      options: [AtemMediaPlayerPicker(model), AtemMediaPlayerStillPicker(model, state)]
+    actions[ActionId.MediaPlayerSource] = {
+      label: 'Change media player source',
+      options: [AtemMediaPlayerPicker(model), AtemMediaPlayerSourcePicker(model, state)]
     }
   }
 
@@ -422,23 +416,25 @@ export function HandleAction(
         )
         break
       }
-      case ActionId.MediaPlayerSourceClip:
-        atem.setMediaPlayerSource(
-          {
-            sourceType: Enums.MediaSourceType.Clip,
-            clipIndex: getOptInt('source')
-          },
-          getOptInt('mediaplayer')
-        )
-        break
-      case ActionId.MediaPlayerSourceStill:
-        atem.setMediaPlayerSource(
-          {
-            sourceType: Enums.MediaSourceType.Still,
-            stillIndex: getOptInt('source')
-          },
-          getOptInt('mediaplayer')
-        )
+      case ActionId.MediaPlayerSource:
+        const source = getOptInt('source')
+        if (source >= MEDIA_PLAYER_SOURCE_CLIP_OFFSET) {
+          atem.setMediaPlayerSource(
+            {
+              sourceType: Enums.MediaSourceType.Clip,
+              stillIndex: source - MEDIA_PLAYER_SOURCE_CLIP_OFFSET
+            },
+            getOptInt('mediaplayer')
+          )
+        } else {
+          atem.setMediaPlayerSource(
+            {
+              sourceType: Enums.MediaSourceType.Still,
+              stillIndex: source
+            },
+            getOptInt('mediaplayer')
+          )
+        }
         break
       default:
         assertUnreachable(actionId)

@@ -18,7 +18,7 @@ import {
   GetMediaPlayerChoices
 } from './choices'
 import { ModelSpec } from './models'
-import { iterateTimes } from './util'
+import { iterateTimes, MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util'
 
 export function AtemMESourcePicker(model: ModelSpec, state: AtemState, id: number): CompanionInputFieldDropdown {
   return {
@@ -284,34 +284,30 @@ export function AtemMediaPlayerPicker(model: ModelSpec): CompanionInputFieldDrop
     choices: GetMediaPlayerChoices(model)
   }
 }
-export function AtemMediaPlayerClipPicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
-  return {
-    type: 'dropdown',
-    id: 'source',
-    label: 'Source',
-    default: 0,
-    choices: iterateTimes(model.media.clips, i => {
-      const clip = state.media.clipPool[i]
-      return {
-        id: i,
-        label: clip && clip.name ? `Clip #${i + 1}: ${clip.name}` : `Clip #${i + 1}`
-      }
-    })
-  }
-}
 
-export function AtemMediaPlayerStillPicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
+export function AtemMediaPlayerSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
   return {
     type: 'dropdown',
     id: 'source',
     label: 'Source',
     default: 0,
-    choices: iterateTimes(model.media.stills, i => {
-      const still = state.media.stillPool[i]
-      return {
-        id: i,
-        label: still && still.fileName ? `Still #${i + 1}: ${still.fileName}` : `Still #${i + 1}`
-      }
-    })
+    choices: [
+      ...iterateTimes(model.media.clips, i => {
+        const clip = state.media.clipPool[i]
+        return {
+          id: i + MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
+          label: clip && clip.name ? `Clip #${i + 1}: ${clip.name}` : `Clip #${i + 1}`
+        }
+      }),
+      ...iterateTimes(model.media.stills, i => {
+        const still = state.media.stillPool[i]
+        console.log(still, i)
+
+        return {
+          id: i,
+          label: still && still.fileName ? `Still #${i + 1}: ${still.fileName}` : `Still #${i + 1}`
+        }
+      })
+    ]
   }
 }

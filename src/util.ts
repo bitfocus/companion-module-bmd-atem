@@ -1,3 +1,5 @@
+export const MEDIA_PLAYER_SOURCE_CLIP_OFFSET = 1000
+
 export function assertUnreachable(_never: never) {
   // throw new Error('Unreachable')
 }

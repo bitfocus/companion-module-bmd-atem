@@ -257,8 +257,13 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
       this.checkFeedbacks(FeedbackId.TransitionRate)
     }
     if (path.match(/media.players.(\d+)/)) {
-      this.checkFeedbacks(FeedbackId.MediaPlayerSourceClip)
-      this.checkFeedbacks(FeedbackId.MediaPlayerSourceStill)
+      this.checkFeedbacks(FeedbackId.MediaPlayerSource)
+    }
+
+    if (path.match(/media.clipPool/) || path.match(/media.stillPool/)) {
+      // reset everything, since names of media might have changed
+      this.updateCompanionBits()
+      return
     }
 
     /**
