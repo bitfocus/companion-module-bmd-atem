@@ -74,120 +74,133 @@ export function GetActionsList(model: ModelSpec, state: AtemState) {
     options: [AtemMEPicker(model, 0)]
   }
 
-  actions[ActionId.Aux] = {
-    label: 'Set AUX bus',
-    options: [AtemAuxPicker(model), AtemAuxSourcePicker(model, state)]
+  if (model.auxes) {
+    actions[ActionId.Aux] = {
+      label: 'Set AUX bus',
+      options: [AtemAuxPicker(model), AtemAuxSourcePicker(model, state)]
+    }
   }
 
-  actions[ActionId.USKSource] = {
-    label: 'Set inputs on Upstream KEY',
-    options: [
-      AtemMEPicker(model, 0),
-      AtemUSKPicker(model),
-      AtemKeyFillSourcePicker(model, state),
-      AtemKeyCutSourcePicker(model, state)
-    ]
-  }
-  actions[ActionId.USKOnAir] = {
-    label: 'Set Upstream KEY OnAir',
-    options: [
-      {
-        id: 'onair',
-        type: 'dropdown',
-        label: 'On Air',
-        default: 'true',
-        choices: CHOICES_KEYTRANS
-      },
-      AtemMEPicker(model, 0),
-      AtemUSKPicker(model)
-    ]
-  }
-
-  actions[ActionId.DSKSource] = {
-    label: 'Set inputs on Downstream KEY',
-    options: [AtemDSKPicker(model), AtemKeyFillSourcePicker(model, state), AtemKeyCutSourcePicker(model, state)]
-  }
-  actions[ActionId.DSKAuto] = {
-    label: 'AUTO DSK Transition',
-    options: [
-      {
-        type: 'dropdown',
-        id: 'downstreamKeyerId',
-        label: 'DSK',
-        default: 0,
-        choices: GetDSKIdChoices(model)
-      }
-    ]
-  }
-  actions[ActionId.DSKOnAir] = {
-    label: 'Set Downstream KEY OnAir',
-    options: [
-      {
-        id: 'onair',
-        type: 'dropdown',
-        label: 'On Air',
-        default: 'true',
-        choices: CHOICES_KEYTRANS
-      },
-      AtemDSKPicker(model)
-    ]
+  if (model.USKs) {
+    actions[ActionId.USKSource] = {
+      label: 'Set inputs on Upstream KEY',
+      options: [
+        AtemMEPicker(model, 0),
+        AtemUSKPicker(model),
+        AtemKeyFillSourcePicker(model, state),
+        AtemKeyCutSourcePicker(model, state)
+      ]
+    }
+    actions[ActionId.USKOnAir] = {
+      label: 'Set Upstream KEY OnAir',
+      options: [
+        {
+          id: 'onair',
+          type: 'dropdown',
+          label: 'On Air',
+          default: 'true',
+          choices: CHOICES_KEYTRANS
+        },
+        AtemMEPicker(model, 0),
+        AtemUSKPicker(model)
+      ]
+    }
   }
 
-  actions[ActionId.MacroRun] = {
-    label: 'Run MACRO',
-    options: [
-      {
-        type: 'dropdown',
-        id: 'macro',
-        label: 'Macro',
-        default: 1,
-        choices: GetMacroChoices(model, state)
-      },
-      {
-        type: 'dropdown',
-        id: 'action',
-        label: 'Action',
-        default: 'run',
-        choices: [{ id: 'run', label: 'Run' }, { id: 'runContinue', label: 'Run/Continue' }]
-      }
-    ]
+  if (model.DSKs) {
+    actions[ActionId.DSKSource] = {
+      label: 'Set inputs on Downstream KEY',
+      options: [AtemDSKPicker(model), AtemKeyFillSourcePicker(model, state), AtemKeyCutSourcePicker(model, state)]
+    }
+    actions[ActionId.DSKAuto] = {
+      label: 'AUTO DSK Transition',
+      options: [
+        {
+          type: 'dropdown',
+          id: 'downstreamKeyerId',
+          label: 'DSK',
+          default: 0,
+          choices: GetDSKIdChoices(model)
+        }
+      ]
+    }
+    actions[ActionId.DSKOnAir] = {
+      label: 'Set Downstream KEY OnAir',
+      options: [
+        {
+          id: 'onair',
+          type: 'dropdown',
+          label: 'On Air',
+          default: 'true',
+          choices: CHOICES_KEYTRANS
+        },
+        AtemDSKPicker(model)
+      ]
+    }
   }
-  actions[ActionId.MacroContinue] = { label: 'Continue MACRO', options: [] }
-  actions[ActionId.MacroStop] = { label: 'Stop MACROS', options: [] }
 
-  actions[ActionId.MultiviewerWindowSource] = {
-    label: 'Change MV window source',
-    options: [AtemMultiviewerPicker(model), AtemMultiviewWindowPicker(model), AtemMultiviewSourcePicker(model, state)]
+  if (model.macros) {
+    actions[ActionId.MacroRun] = {
+      label: 'Run MACRO',
+      options: [
+        {
+          type: 'dropdown',
+          id: 'macro',
+          label: 'Macro',
+          default: 1,
+          choices: GetMacroChoices(model, state)
+        },
+        {
+          type: 'dropdown',
+          id: 'action',
+          label: 'Action',
+          default: 'run',
+          choices: [{ id: 'run', label: 'Run' }, { id: 'runContinue', label: 'Run/Continue' }]
+        }
+      ]
+    }
+    actions[ActionId.MacroContinue] = { label: 'Continue MACRO', options: [] }
+    actions[ActionId.MacroStop] = { label: 'Stop MACROS', options: [] }
   }
-  actions[ActionId.SuperSourceBoxSource] = {
-    label: 'Change SuperSource box source',
-    options: _.compact([
-      AtemSuperSourceIdPicker(model),
-      AtemSuperSourceBoxPicker(),
-      AtemSuperSourceBoxSourcePicker(model, state)
-    ])
+
+  if (model.MVs) {
+    actions[ActionId.MultiviewerWindowSource] = {
+      label: 'Change MV window source',
+      options: [AtemMultiviewerPicker(model), AtemMultiviewWindowPicker(model), AtemMultiviewSourcePicker(model, state)]
+    }
   }
-  actions[ActionId.SuperSourceBoxOnAir] = {
-    label: 'Change SuperSource box enabled',
-    options: _.compact([
-      AtemSuperSourceIdPicker(model),
-      AtemSuperSourceBoxPicker(),
-      {
-        id: 'onair',
-        type: 'dropdown',
-        label: 'On Air',
-        default: 'true',
-        choices: CHOICES_KEYTRANS
-      }
-    ])
-  }
-  actions[ActionId.SuperSourceBoxProperties] = {
-    label: 'Change SuperSource box properties',
-    options: _.compact([
-      AtemSuperSourceIdPicker(model),
-      AtemSuperSourceBoxPicker(),
-      ...AtemSuperSourcePropertiesPickers()
-    ])
+
+  if (model.SSrc) {
+    actions[ActionId.SuperSourceBoxSource] = {
+      label: 'Change SuperSource box source',
+      options: _.compact([
+        AtemSuperSourceIdPicker(model),
+        AtemSuperSourceBoxPicker(),
+        AtemSuperSourceBoxSourcePicker(model, state)
+      ])
+    }
+    actions[ActionId.SuperSourceBoxOnAir] = {
+      label: 'Change SuperSource box enabled',
+      options: _.compact([
+        AtemSuperSourceIdPicker(model),
+        AtemSuperSourceBoxPicker(),
+        {
+          id: 'onair',
+          type: 'dropdown',
+          label: 'On Air',
+          default: 'true',
+          choices: CHOICES_KEYTRANS
+        }
+      ])
+    }
+    actions[ActionId.SuperSourceBoxProperties] = {
+      label: 'Change SuperSource box properties',
+      options: _.compact([
+        AtemSuperSourceIdPicker(model),
+        AtemSuperSourceBoxPicker(),
+        ...AtemSuperSourcePropertiesPickers()
+      ])
+    }
   }
 
   actions[ActionId.TransitionStyle] = {
@@ -203,7 +216,7 @@ export function GetActionsList(model: ModelSpec, state: AtemState) {
     options: [AtemMEPicker(model, 0), ...AtemTransitionSelectionPickers(model)]
   }
 
-  if (model.media.players > 0) {
+  if (model.media.players) {
     actions[ActionId.MediaPlayerSource] = {
       label: 'Change media player source',
       options: [AtemMediaPlayerPicker(model), AtemMediaPlayerSourcePicker(model, state)]
