@@ -488,7 +488,9 @@ export function GetPresetsList(
   }
 
   for (let mv = 0; mv < model.MVs; mv++) {
-    for (let window = 2; window < 10; window++) {
+    const firstWindow = model.multiviewerFullGrid ? 0 : 2
+    const windowCount = model.multiviewerFullGrid ? 16 : 10
+    for (let window = firstWindow; window < windowCount; window++) {
       for (const src of GetSourcesListForType(model, state, 'mv')) {
         presets.push({
           category: `MV ${mv + 1} Window ${window + 1}`,
