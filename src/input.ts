@@ -14,7 +14,8 @@ import {
   GetSuperSourceIdChoices,
   GetTransitionStyleChoices,
   GetUSKIdChoices,
-  SourcesToChoices
+  SourcesToChoices,
+  GetMediaPlayerChoices
 } from './choices'
 import { ModelSpec } from './models'
 import { iterateTimes } from './util'
@@ -272,5 +273,45 @@ export function AtemMultiviewWindowPicker(model: ModelSpec): CompanionInputField
     label: 'Window #',
     default: 2,
     choices
+  }
+}
+export function AtemMediaPlayerPicker(model: ModelSpec): CompanionInputFieldDropdown {
+  return {
+    type: 'dropdown',
+    id: 'mediaplayer',
+    label: 'Media Player',
+    default: 0,
+    choices: GetMediaPlayerChoices(model)
+  }
+}
+export function AtemMediaPlayerClipPicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
+  return {
+    type: 'dropdown',
+    id: 'source',
+    label: 'Source',
+    default: 0,
+    choices: iterateTimes(model.media.clips, i => {
+      const clip = state.media.clipPool[i]
+      return {
+        id: i,
+        label: clip && clip.name ? `Clip #${i + 1}: ${clip.name}` : `Clip #${i + 1}`
+      }
+    })
+  }
+}
+
+export function AtemMediaPlayerStillPicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
+  return {
+    type: 'dropdown',
+    id: 'source',
+    label: 'Source',
+    default: 0,
+    choices: iterateTimes(model.media.stills, i => {
+      const still = state.media.stillPool[i]
+      return {
+        id: i,
+        label: still && still.fileName ? `Still #${i + 1}: ${still.fileName}` : `Still #${i + 1}`
+      }
+    })
   }
 }

@@ -80,6 +80,14 @@ export function GetMacroChoices(model: ModelSpec, state: AtemState): DropdownCho
     }
   })
 }
+export function GetMediaPlayerChoices(model: ModelSpec): DropdownChoice[] {
+  return iterateTimes(model.media.players, i => {
+    return {
+      id: i,
+      label: `Media Player ${i + 1}`
+    }
+  })
+}
 
 export interface SourceInfo {
   id: number
@@ -118,7 +126,7 @@ export function GetSourcesListForType(model: ModelSpec, state: AtemState, subset
     sources.push(getSource(i, `In ${i}`, `Input ${i}`))
   }
 
-  for (let i = 1; i <= model.MPs; i++) {
+  for (let i = 1; i <= model.media.players; i++) {
     sources.push(getSource(3000 + i * 10, `MP ${i}`, `Media Player ${i}`))
     sources.push(getSource(3001 + i * 10, `MP${i}K`, `Media Player ${i} Key`))
   }

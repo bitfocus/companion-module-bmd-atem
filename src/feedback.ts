@@ -26,7 +26,10 @@ import {
   AtemTransitionSelectionPickers,
   AtemTransitionStylePicker,
   AtemUSKPicker,
-  AtemSuperSourcePropertiesPickers
+  AtemSuperSourcePropertiesPickers,
+  AtemMediaPlayerPicker,
+  AtemMediaPlayerClipPicker,
+  AtemMediaPlayerStillPicker
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getME, getMultiviewerWindow, getSuperSourceBox, getUSK } from './state'
@@ -53,7 +56,9 @@ export enum FeedbackId {
   SSrcBoxProperties = 'ssrc_box_properties',
   TransitionStyle = 'transitionStyle',
   TransitionSelection = 'transitionSelection',
-  TransitionRate = 'transitionRate'
+  TransitionRate = 'transitionRate',
+  MediaPlayerSourceClip = 'mediaPlayerSourceClip',
+  MediaPlayerSourceStill = 'mediaPlayerSourceStill'
 }
 
 export enum MacroFeedbackType {
@@ -350,7 +355,7 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
 
   feedbacks[FeedbackId.TransitionStyle] = {
     label: 'Change colors from transition style',
-    description: 'If the specified tansition style is active, change color of the bank',
+    description: 'If the specified transition style is active, change color of the bank',
     options: [
       ForegroundPicker(instance.rgb(0, 0, 0)),
       BackgroundPicker(instance.rgb(255, 255, 0)),
@@ -370,7 +375,7 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
   }
   feedbacks[FeedbackId.TransitionRate] = {
     label: 'Change colors from transition rate',
-    description: 'If the specified tansition rate is active, change color of the bank',
+    description: 'If the specified transition rate is active, change color of the bank',
     options: [
       ForegroundPicker(instance.rgb(0, 0, 0)),
       BackgroundPicker(instance.rgb(255, 255, 0)),
@@ -378,6 +383,29 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
       AtemTransitionStylePicker(),
       AtemTransitionRatePicker()
     ]
+  }
+
+  if (model.media.players > 0) {
+    feedbacks[FeedbackId.MediaPlayerSourceClip] = {
+      label: 'Change colors from media player clip source',
+      description: 'If the specified media player has the specified clip as the source, change color of the bank',
+      options: [
+        ForegroundPicker(instance.rgb(0, 0, 0)),
+        BackgroundPicker(instance.rgb(255, 255, 0)),
+        AtemMediaPlayerPicker(model),
+        AtemMediaPlayerClipPicker(model, state)
+      ]
+    }
+    feedbacks[FeedbackId.MediaPlayerSourceStill] = {
+      label: 'Change colors from media player still source',
+      description: 'If the specified media player has the specified still as the source, change color of the bank',
+      options: [
+        ForegroundPicker(instance.rgb(0, 0, 0)),
+        BackgroundPicker(instance.rgb(255, 255, 0)),
+        AtemMediaPlayerPicker(model),
+        AtemMediaPlayerStillPicker(model, state)
+      ]
+    }
   }
 
   return feedbacks
@@ -659,6 +687,24 @@ export function ExecuteFeedback(
           default:
             assertUnreachable(style)
         }
+      }
+      break
+    }
+    case FeedbackId.MediaPlayerSourceClip: {
+      const player = state.media.players[Number(opt.mediaplayer)]
+      if (player && player.sourceType === Enums.MediaSourceType.Clip && player.clipIndex === parseInt(opt.source, 10)) {
+        return getOptColors()
+      }
+      break
+    }
+    case FeedbackId.MediaPlayerSourceStill: {
+      const player = state.media.players[Number(opt.mediaplayer)]
+      if (
+        player &&
+        player.sourceType === Enums.MediaSourceType.Still &&
+        player.stillIndex === parseInt(opt.source, 10)
+      ) {
+        return getOptColors()
       }
       break
     }

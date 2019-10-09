@@ -22,7 +22,10 @@ import {
   AtemTransitionSelectionPickers,
   AtemTransitionStylePicker,
   AtemUSKPicker,
-  AtemSuperSourcePropertiesPickers
+  AtemSuperSourcePropertiesPickers,
+  AtemMediaPlayerPicker,
+  AtemMediaPlayerClipPicker,
+  AtemMediaPlayerStillPicker
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getUSK, getSuperSourceBox } from './state'
@@ -48,7 +51,9 @@ export enum ActionId {
   SuperSourceBoxProperties = 'setSsrcBoxProperties',
   TransitionStyle = 'transitionStyle',
   TransitionSelection = 'transitionSelection',
-  TransitionRate = 'transitionRate'
+  TransitionRate = 'transitionRate',
+  MediaPlayerSourceClip = 'mediaPlayerSourceClip',
+  MediaPlayerSourceStill = 'mediaPlayerSourceStill'
 }
 
 export function GetActionsList(model: ModelSpec, state: AtemState) {
@@ -198,6 +203,17 @@ export function GetActionsList(model: ModelSpec, state: AtemState) {
   actions[ActionId.TransitionSelection] = {
     label: 'Change transition selection',
     options: [AtemMEPicker(model, 0), ...AtemTransitionSelectionPickers(model)]
+  }
+
+  if (model.media.players > 0) {
+    actions[ActionId.MediaPlayerSourceClip] = {
+      label: 'Change media player clip source',
+      options: [AtemMediaPlayerPicker(model), AtemMediaPlayerClipPicker(model, state)]
+    }
+    actions[ActionId.MediaPlayerSourceStill] = {
+      label: 'Change media player still source',
+      options: [AtemMediaPlayerPicker(model), AtemMediaPlayerStillPicker(model, state)]
+    }
   }
 
   return actions
@@ -406,6 +422,24 @@ export function HandleAction(
         )
         break
       }
+      case ActionId.MediaPlayerSourceClip:
+        atem.setMediaPlayerSource(
+          {
+            sourceType: Enums.MediaSourceType.Clip,
+            clipIndex: getOptInt('source')
+          },
+          getOptInt('mediaplayer')
+        )
+        break
+      case ActionId.MediaPlayerSourceStill:
+        atem.setMediaPlayerSource(
+          {
+            sourceType: Enums.MediaSourceType.Still,
+            stillIndex: getOptInt('source')
+          },
+          getOptInt('mediaplayer')
+        )
+        break
       default:
         assertUnreachable(actionId)
         instance.debug('Unknown action: ' + action.action)

@@ -13,11 +13,16 @@ export interface ModelSpec {
   MEs: number
   USKs: number
   DSKs: number
-  MPs: number
+  // MPs: number
   MVs: number
   multiviewerFullGrid: boolean
   SSrc: number
   macros: number
+  media: {
+    players: number
+    stills: number
+    clips: number
+  }
 }
 
 export const ALL_MODELS: ModelSpec[] = [
@@ -29,11 +34,15 @@ export const ALL_MODELS: ModelSpec[] = [
     MEs: 1,
     USKs: 1,
     DSKs: 2,
-    MPs: 2,
     MVs: 1,
     multiviewerFullGrid: false,
     SSrc: 1,
-    macros: 100
+    macros: 100,
+    media: {
+      players: 2,
+      stills: 20,
+      clips: 0
+    }
   },
   {
     id: Enums.Model.TVS,
@@ -43,11 +52,15 @@ export const ALL_MODELS: ModelSpec[] = [
     MEs: 1,
     USKs: 1,
     DSKs: 2,
-    MPs: 2,
     MVs: 1,
     multiviewerFullGrid: false,
     SSrc: 0,
-    macros: 100
+    macros: 100,
+    media: {
+      players: 2,
+      stills: 20,
+      clips: 0
+    }
   },
   {
     id: Enums.Model.OneME,
@@ -57,11 +70,15 @@ export const ALL_MODELS: ModelSpec[] = [
     MEs: 1,
     USKs: 4,
     DSKs: 2,
-    MPs: 2,
     MVs: 1,
     multiviewerFullGrid: false,
     SSrc: 1,
-    macros: 100
+    macros: 100,
+    media: {
+      players: 2,
+      stills: 32,
+      clips: 2
+    }
   },
   {
     id: Enums.Model.TwoME,
@@ -71,11 +88,15 @@ export const ALL_MODELS: ModelSpec[] = [
     MEs: 2,
     USKs: 2,
     DSKs: 2,
-    MPs: 2,
     MVs: 2,
     multiviewerFullGrid: false,
     SSrc: 1,
-    macros: 100
+    macros: 100,
+    media: {
+      players: 2,
+      stills: 32,
+      clips: 2
+    }
   },
   {
     id: Enums.Model.PS4K,
@@ -85,11 +106,15 @@ export const ALL_MODELS: ModelSpec[] = [
     MEs: 1,
     USKs: 1,
     DSKs: 2,
-    MPs: 2,
     MVs: 1,
     multiviewerFullGrid: false,
     SSrc: 0,
-    macros: 100
+    macros: 100,
+    media: {
+      players: 2,
+      stills: 20,
+      clips: 0
+    }
   },
   {
     id: Enums.Model.OneME4K,
@@ -99,11 +124,15 @@ export const ALL_MODELS: ModelSpec[] = [
     MEs: 1,
     USKs: 4,
     DSKs: 2,
-    MPs: 2,
     MVs: 1,
     multiviewerFullGrid: false,
     SSrc: 1,
-    macros: 100
+    macros: 100,
+    media: {
+      players: 2,
+      stills: 32,
+      clips: 2
+    }
   },
   {
     id: Enums.Model.TwoME4K,
@@ -113,11 +142,15 @@ export const ALL_MODELS: ModelSpec[] = [
     MEs: 2,
     USKs: 2,
     DSKs: 2,
-    MPs: 2,
     MVs: 2,
     multiviewerFullGrid: false,
     SSrc: 1,
-    macros: 100
+    macros: 100,
+    media: {
+      players: 2,
+      stills: 32,
+      clips: 2
+    }
   },
   {
     id: Enums.Model.TwoMEBS4K,
@@ -127,11 +160,15 @@ export const ALL_MODELS: ModelSpec[] = [
     MEs: 4,
     USKs: 4,
     DSKs: 2,
-    MPs: 4,
     MVs: 2,
     multiviewerFullGrid: false,
     SSrc: 1,
-    macros: 100
+    macros: 100,
+    media: {
+      players: 4,
+      stills: 64,
+      clips: 2
+    }
   },
   {
     id: Enums.Model.TVSHD,
@@ -141,11 +178,15 @@ export const ALL_MODELS: ModelSpec[] = [
     MEs: 1,
     USKs: 1,
     DSKs: 2,
-    MPs: 2,
     MVs: 1,
     multiviewerFullGrid: false,
     SSrc: 0,
-    macros: 100
+    macros: 100,
+    media: {
+      players: 2,
+      stills: 20,
+      clips: 0
+    }
   },
   {
     id: Enums.Model.Constellation,
@@ -155,11 +196,15 @@ export const ALL_MODELS: ModelSpec[] = [
     MEs: 4,
     USKs: 4,
     DSKs: 4,
-    MPs: 4,
     MVs: 4,
     multiviewerFullGrid: true,
     SSrc: 2,
-    macros: 100
+    macros: 100,
+    media: {
+      players: 4,
+      stills: 64,
+      clips: 4
+    }
   },
   {
     id: Enums.Model.Constellation8K,
@@ -169,11 +214,15 @@ export const ALL_MODELS: ModelSpec[] = [
     MEs: 1,
     USKs: 4,
     DSKs: 2,
-    MPs: 1,
     MVs: 1,
     multiviewerFullGrid: true,
     SSrc: 1,
-    macros: 100
+    macros: 100,
+    media: {
+      players: 1,
+      stills: 24,
+      clips: 2
+    }
   }
 ]
 
@@ -204,7 +253,7 @@ export function GetAutoDetectModel() {
   return ALL_MODELS[0]
 }
 
-export function GetParsedModelSpec({ info, macro, inputs, settings, video }: AtemState): ModelSpec {
+export function GetParsedModelSpec({ info, macro, media, inputs, settings, video }: AtemState): ModelSpec {
   return {
     id: info.model,
     label: info.productIdentifier,
@@ -213,10 +262,14 @@ export function GetParsedModelSpec({ info, macro, inputs, settings, video }: Ate
     MEs: info.capabilities.MEs,
     USKs: video.ME[0] ? _.values(video.ME[0].upstreamKeyers).length : 0,
     DSKs: _.values(video.downstreamKeyers).length,
-    MPs: info.capabilities.mediaPlayers,
     MVs: _.values(settings.multiViewers).length,
     multiviewerFullGrid: false, // TODO
     SSrc: info.capabilities.superSources,
-    macros: macro.macroProperties.length
+    macros: macro.macroProperties.length,
+    media: {
+      players: info.capabilities.mediaPlayers,
+      stills: media.stillPool.length,
+      clips: media.clipPool.length
+    }
   }
 }
