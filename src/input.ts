@@ -8,14 +8,14 @@ import {
   CHOICES_SSRCBOXES,
   GetAuxIdChoices,
   GetDSKIdChoices,
+  GetMediaPlayerChoices,
   GetMEIdChoices,
   GetMultiviewerIdChoices,
   GetSourcesListForType,
   GetSuperSourceIdChoices,
   GetTransitionStyleChoices,
   GetUSKIdChoices,
-  SourcesToChoices,
-  GetMediaPlayerChoices
+  SourcesToChoices
 } from './choices'
 import { ModelSpec } from './models'
 import { iterateTimes, MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util'
