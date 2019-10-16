@@ -14,6 +14,8 @@ import {
   AtemAuxSourcePicker,
   AtemDSKPicker,
   AtemKeyFillSourcePicker,
+  AtemMediaPlayerPicker,
+  AtemMediaPlayerSourcePicker,
   AtemMEPicker,
   AtemMESourcePicker,
   AtemMultiviewerPicker,
@@ -22,13 +24,11 @@ import {
   AtemSuperSourceBoxPicker,
   AtemSuperSourceBoxSourcePicker,
   AtemSuperSourceIdPicker,
+  AtemSuperSourcePropertiesPickers,
   AtemTransitionRatePicker,
   AtemTransitionSelectionPickers,
   AtemTransitionStylePicker,
-  AtemUSKPicker,
-  AtemSuperSourcePropertiesPickers,
-  AtemMediaPlayerPicker,
-  AtemMediaPlayerSourcePicker
+  AtemUSKPicker
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getME, getMultiviewerWindow, getSuperSourceBox, getUSK } from './state'

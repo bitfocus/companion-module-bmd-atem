@@ -10,6 +10,8 @@ import {
   AtemDSKPicker,
   AtemKeyCutSourcePicker,
   AtemKeyFillSourcePicker,
+  AtemMediaPlayerPicker,
+  AtemMediaPlayerSourcePicker,
   AtemMEPicker,
   AtemMESourcePicker,
   AtemMultiviewerPicker,
@@ -18,16 +20,14 @@ import {
   AtemSuperSourceBoxPicker,
   AtemSuperSourceBoxSourcePicker,
   AtemSuperSourceIdPicker,
+  AtemSuperSourcePropertiesPickers,
   AtemTransitionRatePicker,
   AtemTransitionSelectionPickers,
   AtemTransitionStylePicker,
-  AtemUSKPicker,
-  AtemSuperSourcePropertiesPickers,
-  AtemMediaPlayerPicker,
-  AtemMediaPlayerSourcePicker
+  AtemUSKPicker
 } from './input'
 import { ModelSpec } from './models'
-import { getDSK, getUSK, getSuperSourceBox } from './state'
+import { getDSK, getSuperSourceBox, getUSK } from './state'
 import { assertUnreachable, calculateTransitionSelection, MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util'
 
 export enum ActionId {
