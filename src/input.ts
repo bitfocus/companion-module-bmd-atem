@@ -205,7 +205,7 @@ export function AtemSuperSourcePropertiesPickers(): Array<CompanionInputFieldNum
       id: 'cropTop',
       label: 'Crop Top',
       min: 0,
-      max: 1800,
+      max: 18000,
       range: true,
       default: 0
     },
@@ -214,7 +214,7 @@ export function AtemSuperSourcePropertiesPickers(): Array<CompanionInputFieldNum
       id: 'cropBottom',
       label: 'Crop Bottom',
       min: 0,
-      max: 1800,
+      max: 18000,
       range: true,
       default: 0
     },
@@ -223,7 +223,7 @@ export function AtemSuperSourcePropertiesPickers(): Array<CompanionInputFieldNum
       id: 'cropLeft',
       label: 'Crop Left',
       min: 0,
-      max: 3200,
+      max: 32000,
       range: true,
       default: 0
     },
@@ -232,7 +232,7 @@ export function AtemSuperSourcePropertiesPickers(): Array<CompanionInputFieldNum
       id: 'cropRight',
       label: 'Crop Right',
       min: 0,
-      max: 3200,
+      max: 32000,
       range: true,
       default: 0
     }
