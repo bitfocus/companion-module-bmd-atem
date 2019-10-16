@@ -17,6 +17,7 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 - Change transition selection
 - Set SuperSource box On Air
 - Change SuperSource geometry properties
+- Change media player source
 
 ### v2.0.0
 

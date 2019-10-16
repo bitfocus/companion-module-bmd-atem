@@ -24,3 +24,4 @@ Should work with all models of Blackmagic Design ATEM mixers
 - Set SuperSource box On Air
 - Change SuperSource box source
 - Change SuperSource geometry properties
+- Change media player source
