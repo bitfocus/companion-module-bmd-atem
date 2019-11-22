@@ -155,7 +155,10 @@ export function GetActionsList(model: ModelSpec, state: AtemState) {
           id: 'action',
           label: 'Action',
           default: 'run',
-          choices: [{ id: 'run', label: 'Run' }, { id: 'runContinue', label: 'Run/Continue' }]
+          choices: [
+            { id: 'run', label: 'Run' },
+            { id: 'runContinue', label: 'Run/Continue' }
+          ]
         }
       ]
     }

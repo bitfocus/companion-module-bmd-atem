@@ -1,6 +1,8 @@
 ## Blackmagic Design ATEM
 
-Should work with all models of Blackmagic Design ATEM mixers
+Should work with all models of Blackmagic Design ATEM mixers.
+
+Supports firmware 7.2 & 7.5.2 - 8.1
 
 **Available commands for Blackmagic Design ATEM**
 

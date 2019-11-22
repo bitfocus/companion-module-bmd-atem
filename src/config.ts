@@ -21,7 +21,9 @@ export function GetConfigFields(self: InstanceSkel<AtemConfig>): SomeCompanionCo
       width: 12,
       label: 'Information',
       value:
-        "Should work with all models of Blackmagic Design ATEM mixers.<br />In general this should be left in 'Auto Detect', however a specific model can be selected below for offline programming."
+        'Should work with all models of Blackmagic Design ATEM mixers. <br />' +
+        'Firmware versions 7.2 and 7.5.2 - 8.1 are known to work, other versions may experience problems. <br />' +
+        "In general this should be left in 'Auto Detect', however a specific model can be selected below for offline programming."
     },
     {
       type: 'textinput',
@@ -43,7 +45,10 @@ export function GetConfigFields(self: InstanceSkel<AtemConfig>): SomeCompanionCo
       id: 'presets',
       label: 'Preset Style',
       width: 6,
-      choices: [{ id: PresetStyleName.Short, label: 'Short Names' }, { id: PresetStyleName.Long, label: 'Long Names' }],
+      choices: [
+        { id: PresetStyleName.Short, label: 'Short Names' },
+        { id: PresetStyleName.Long, label: 'Long Names' }
+      ],
       default: PresetStyleName.Short
     }
   ]
