@@ -10,6 +10,8 @@ function getSourcePresetName(instance: InstanceSkel<AtemConfig>, state: AtemStat
   if (input) {
     return instance.config.presets === PresetStyleName.Long + '' ? input.longName : input.shortName
   } else if (id === 0) {
+    return 'Black'
+  } else if (id === undefined) {
     return 'Unknown'
   } else {
     return `Unknown input (${id})`
@@ -42,6 +44,11 @@ export function updateDSKVariable(instance: InstanceSkel<AtemConfig>, state: Ate
   const key = state.video.downstreamKeyers[keyIndex]
   const input = key ? key.sources.fillSource : 0
   instance.setVariable(`dsk_${keyIndex + 1}_input`, getSourcePresetName(instance, state, input))
+}
+
+export function updateAuxVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, auxIndex: number) {
+  const input = state.video.auxilliaries[auxIndex]
+  instance.setVariable(`aux${auxIndex + 1}_input`, getSourcePresetName(instance, state, input))
 }
 
 export function updateMacroVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, id: number) {
@@ -79,6 +86,16 @@ export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSp
 
       updateUSKVariable(instance, state, i, k)
     }
+  }
+
+  // Auxs
+  for (let a = 0; a < model.auxes; ++a) {
+    variables.push({
+      label: `Label of input active on Aux ${a + 1}`,
+      name: `aux${a + 1}_input`
+    })
+
+    updateAuxVariable(instance, state, a)
   }
 
   // DSKs
