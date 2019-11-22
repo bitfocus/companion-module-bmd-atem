@@ -66,6 +66,7 @@ export interface CompanionInputFieldNumber extends CompanionInputField {
   type: 'number'
   min: number
   max: number
+  step?: number
   range?: boolean
   required?: boolean
   default: number
