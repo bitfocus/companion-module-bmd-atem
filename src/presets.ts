@@ -8,6 +8,8 @@ import { FeedbackId, MacroFeedbackType } from './feedback'
 import { ModelSpec } from './models'
 import { calculateTransitionSelection, MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util'
 
+const rateOptions = [12, 15, 25, 30, 37, 45, 50, 60]
+
 interface CompanionPresetExt extends CompanionPreset {
   feedbacks: Array<
     {
@@ -135,7 +137,7 @@ export function GetPresetsList(
             type: FeedbackId.TransitionStyle,
             options: {
               bg: instance.rgb(255, 255, 0),
-              fg: instance.rgb(255, 255, 255),
+              fg: instance.rgb(0, 0, 0),
               mixeffect: me,
               style: opt.id
             }
@@ -152,8 +154,6 @@ export function GetPresetsList(
         ]
       })
     }
-
-    const rateOptions = [12, 15, 25, 30, 37, 45, 50, 60]
     for (const opt of GetTransitionStyleChoices(true)) {
       for (const rate of rateOptions) {
         presets.push({
@@ -171,7 +171,7 @@ export function GetPresetsList(
               type: FeedbackId.TransitionRate,
               options: {
                 bg: instance.rgb(255, 255, 0),
-                fg: instance.rgb(255, 255, 255),
+                fg: instance.rgb(0, 0, 0),
                 mixeffect: me,
                 style: opt.id,
                 rate
@@ -226,7 +226,7 @@ export function GetPresetsList(
             type: FeedbackId.TransitionSelection,
             options: {
               bg: instance.rgb(255, 255, 0),
-              fg: instance.rgb(255, 255, 255),
+              fg: instance.rgb(0, 0, 0),
               mixeffect: me,
               ...selectionProps
             }
@@ -671,5 +671,90 @@ export function GetPresetsList(
       })
     }
   }
+
+  for (let me = 0; me < model.MEs; ++me) {
+    presets.push({
+      category: `Fade to black (M/E ${me + 1})`,
+      label: `Auto fade`,
+      bank: {
+        style: 'text',
+        text: `FTB Auto`,
+        size: pstSize,
+        color: instance.rgb(255, 255, 255),
+        bgcolor: instance.rgb(0, 0, 0)
+      },
+      feedbacks: [
+        {
+          type: FeedbackId.FadeToBlackIsBlack,
+          options: {
+            bg: instance.rgb(0, 255, 0),
+            fg: instance.rgb(255, 255, 255),
+            mixeffect: me,
+            state: 'off'
+          }
+        },
+        {
+          type: FeedbackId.FadeToBlackIsBlack,
+          options: {
+            bg: instance.rgb(255, 0, 0),
+            fg: instance.rgb(255, 255, 255),
+            mixeffect: me,
+            state: 'on'
+          }
+        },
+        {
+          type: FeedbackId.FadeToBlackIsBlack,
+          options: {
+            bg: instance.rgb(255, 255, 0),
+            fg: instance.rgb(0, 0, 0),
+            mixeffect: me,
+            state: 'fading'
+          }
+        }
+      ],
+      actions: [
+        {
+          action: ActionId.FadeToBlackAuto,
+          options: {
+            mixeffect: me
+          }
+        }
+      ]
+    })
+    for (const rate of rateOptions) {
+      presets.push({
+        category: `Fade to black (M/E ${me + 1})`,
+        label: `Rate ${rate}`,
+        bank: {
+          style: 'text',
+          text: `Rate ${rate}`,
+          size: pstSize,
+          color: instance.rgb(255, 255, 255),
+          bgcolor: instance.rgb(0, 0, 0)
+        },
+        feedbacks: [
+          {
+            type: FeedbackId.FadeToBlackRate,
+            options: {
+              bg: instance.rgb(255, 255, 0),
+              fg: instance.rgb(0, 0, 0),
+              mixeffect: me,
+              rate
+            }
+          }
+        ],
+        actions: [
+          {
+            action: ActionId.FadeToBlackRate,
+            options: {
+              mixeffect: me,
+              rate
+            }
+          }
+        ]
+      })
+    }
+  }
+
   return presets
 }

@@ -19,6 +19,8 @@ Supports firmware 7.2 & 7.5.2 - 8.1
 - Change transition type
 - Change transition selection
 - Change transition rate
+- Set fade to black rate
+- Execute fade to/from black
 - Run MACRO
 - Continue MACRO
 - Stop MACROS

@@ -12,6 +12,12 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.x.x
+
+- Set fade to black rate
+- Execute fade to/from black
+- Variables for current aux source
+
 ### v2.1.0
 
 - Change transition selection

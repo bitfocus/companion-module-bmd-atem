@@ -38,11 +38,11 @@ export function AtemTransitionStylePicker(skipSting?: boolean): CompanionInputFi
     choices: GetTransitionStyleChoices(skipSting)
   }
 }
-export function AtemTransitionRatePicker(): CompanionInputFieldNumber {
+export function AtemRatePicker(label: string): CompanionInputFieldNumber {
   return {
     type: 'number',
     id: 'rate',
-    label: 'Transition Rate',
+    label,
     min: 1,
     max: 250,
     range: true,
@@ -306,6 +306,29 @@ export function AtemMediaPlayerSourcePicker(model: ModelSpec, state: AtemState):
           label: still && still.fileName ? `Still #${i + 1}: ${still.fileName}` : `Still #${i + 1}`
         }
       })
+    ]
+  }
+}
+
+export function AtemFadeToBlackStatePicker(): CompanionInputFieldDropdown {
+  return {
+    type: 'dropdown',
+    label: 'State',
+    id: 'state',
+    default: 'on',
+    choices: [
+      {
+        id: 'on',
+        label: 'On'
+      },
+      {
+        id: 'off',
+        label: 'Off'
+      },
+      {
+        id: 'fading',
+        label: 'Fading'
+      }
     ]
   }
 }

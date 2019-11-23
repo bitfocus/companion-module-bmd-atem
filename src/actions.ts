@@ -17,11 +17,11 @@ import {
   AtemMultiviewerPicker,
   AtemMultiviewSourcePicker,
   AtemMultiviewWindowPicker,
+  AtemRatePicker,
   AtemSuperSourceBoxPicker,
   AtemSuperSourceBoxSourcePicker,
   AtemSuperSourceIdPicker,
   AtemSuperSourcePropertiesPickers,
-  AtemTransitionRatePicker,
   AtemTransitionSelectionPickers,
   AtemTransitionStylePicker,
   AtemUSKPicker
@@ -57,7 +57,9 @@ export enum ActionId {
   TransitionStyle = 'transitionStyle',
   TransitionSelection = 'transitionSelection',
   TransitionRate = 'transitionRate',
-  MediaPlayerSource = 'mediaPlayerSource'
+  MediaPlayerSource = 'mediaPlayerSource',
+  FadeToBlackAuto = 'fadeToBlackAuto',
+  FadeToBlackRate = 'fadeToBlackRate'
 }
 
 function meActions(model: ModelSpec, state: AtemState) {
@@ -112,11 +114,19 @@ function meActions(model: ModelSpec, state: AtemState) {
     }),
     [ActionId.TransitionRate]: literal<Required<CompanionAction>>({
       label: 'Change transition rate',
-      options: [AtemMEPicker(model, 0), AtemTransitionStylePicker(true), AtemTransitionRatePicker()]
+      options: [AtemMEPicker(model, 0), AtemTransitionStylePicker(true), AtemRatePicker('Transition Rate')]
     }),
     [ActionId.TransitionSelection]: literal<Required<CompanionAction>>({
       label: 'Change transition selection',
       options: [AtemMEPicker(model, 0), ...AtemTransitionSelectionPickers(model)]
+    }),
+    [ActionId.FadeToBlackAuto]: literal<Required<CompanionAction>>({
+      label: 'AUTO fade to black',
+      options: [AtemMEPicker(model, 0)]
+    }),
+    [ActionId.FadeToBlackRate]: literal<Required<CompanionAction>>({
+      label: 'Change fade to black rate',
+      options: [AtemMEPicker(model, 0), AtemRatePicker('Rate')]
     })
   }
 }
@@ -492,6 +502,12 @@ export function HandleAction(
             getOptInt('mediaplayer')
           )
         }
+        break
+      case ActionId.FadeToBlackAuto:
+        atem.fadeToBlack(getOptInt('mixeffect'))
+        break
+      case ActionId.FadeToBlackRate:
+        atem.setFadeToBlackRate(getOptInt('rate'), getOptInt('mixeffect'))
         break
       default:
         assertUnreachable(actionId)

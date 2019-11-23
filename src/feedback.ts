@@ -8,6 +8,7 @@ import {
   AtemAuxPicker,
   AtemAuxSourcePicker,
   AtemDSKPicker,
+  AtemFadeToBlackStatePicker,
   AtemKeyFillSourcePicker,
   AtemMediaPlayerPicker,
   AtemMediaPlayerSourcePicker,
@@ -16,11 +17,11 @@ import {
   AtemMultiviewerPicker,
   AtemMultiviewSourcePicker,
   AtemMultiviewWindowPicker,
+  AtemRatePicker,
   AtemSuperSourceBoxPicker,
   AtemSuperSourceBoxSourcePicker,
   AtemSuperSourceIdPicker,
   AtemSuperSourcePropertiesPickers,
-  AtemTransitionRatePicker,
   AtemTransitionSelectionPickers,
   AtemTransitionStylePicker,
   AtemUSKPicker
@@ -57,7 +58,9 @@ export enum FeedbackId {
   TransitionStyle = 'transitionStyle',
   TransitionSelection = 'transitionSelection',
   TransitionRate = 'transitionRate',
-  MediaPlayerSource = 'mediaPlayerSource'
+  MediaPlayerSource = 'mediaPlayerSource',
+  FadeToBlackIsBlack = 'fadeToBlackIsBlack',
+  FadeToBlackRate = 'fadeToBlackRate'
 }
 
 export enum MacroFeedbackType {
@@ -428,7 +431,7 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
         BackgroundPicker(instance.rgb(255, 255, 0)),
         AtemMEPicker(model, 0),
         AtemTransitionStylePicker(),
-        AtemTransitionRatePicker()
+        AtemRatePicker('Transition Rate')
       ],
       callback: evt => {
         const me = getME(state, evt.options.mixeffect)
@@ -461,6 +464,63 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
             default:
               assertUnreachable(style)
           }
+        }
+        return {}
+      }
+    })
+  }
+}
+
+function fadeToBlackFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
+  return {
+    [FeedbackId.FadeToBlackIsBlack]: literal<Required<CompanionFeedback>>({
+      label: 'Change colors from fade to black status',
+      description: 'If the specified fade to black is active, change color of the bank',
+      options: [
+        ForegroundPicker(instance.rgb(0, 0, 0)),
+        BackgroundPicker(instance.rgb(255, 255, 0)),
+        AtemMEPicker(model, 0),
+        AtemFadeToBlackStatePicker()
+      ],
+      callback: evt => {
+        const me = getME(state, evt.options.mixeffect)
+        if (me && me.fadeToBlack) {
+          switch (evt.options.state) {
+            case 'off':
+              if (!me.fadeToBlack.isFullyBlack && !me.fadeToBlack.inTransition) {
+                return getOptColors(evt)
+              }
+              break
+            case 'fading':
+              if (me.fadeToBlack.inTransition) {
+                return getOptColors(evt)
+              }
+              break
+            default:
+              // on
+              if (!me.fadeToBlack.inTransition && me.fadeToBlack.isFullyBlack) {
+                return getOptColors(evt)
+              }
+              break
+          }
+        }
+        return {}
+      }
+    }),
+    [FeedbackId.FadeToBlackRate]: literal<Required<CompanionFeedback>>({
+      label: 'Change colors from fade to black rate',
+      description: 'If the specified fade to black rate matches, change color of the bank',
+      options: [
+        ForegroundPicker(instance.rgb(0, 0, 0)),
+        BackgroundPicker(instance.rgb(255, 255, 0)),
+        AtemMEPicker(model, 0),
+        AtemRatePicker('Rate')
+      ],
+      callback: evt => {
+        const me = getME(state, evt.options.mixeffect)
+        const rate = parseInt(evt.options.rate, 10)
+        if (me && me.fadeToBlack && me.fadeToBlack.rate === rate) {
+          return getOptColors(evt)
         }
         return {}
       }
@@ -597,6 +657,7 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
     ...dskFeedbacks(instance, model, state),
     ...ssrcFeedbacks(instance, model, state),
     ...transitionFeedbacks(instance, model, state),
+    ...fadeToBlackFeedbacks(instance, model, state),
     [FeedbackId.AuxBG]: model.auxes
       ? {
           label: 'Change colors from AUX bus',

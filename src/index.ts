@@ -243,6 +243,10 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     if (path.match(/video.ME.(\d+).transitionSettings/)) {
       this.checkFeedbacks(FeedbackId.TransitionRate)
     }
+    if (path.match(/video.ME.(\d+).fadeToBlack/)) {
+      this.checkFeedbacks(FeedbackId.FadeToBlackRate)
+      this.checkFeedbacks(FeedbackId.FadeToBlackIsBlack)
+    }
     if (path.match(/media.players.(\d+)/)) {
       this.checkFeedbacks(FeedbackId.MediaPlayerSource)
     }
