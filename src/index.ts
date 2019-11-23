@@ -1,15 +1,9 @@
 import { Atem, AtemState } from 'atem-connection'
 import InstanceSkel = require('../../../instance_skel')
-import {
-  CompanionActionEvent,
-  CompanionConfigField,
-  CompanionFeedbackEvent,
-  CompanionFeedbackResult,
-  CompanionSystem
-} from '../../../instance_skel_types'
+import { CompanionActionEvent, CompanionConfigField, CompanionSystem } from '../../../instance_skel_types'
 import { GetActionsList, HandleAction } from './actions'
 import { AtemConfig, GetConfigFields } from './config'
-import { ExecuteFeedback, FeedbackId, GetFeedbacksList } from './feedback'
+import { FeedbackId, GetFeedbacksList } from './feedback'
 import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, MODEL_AUTO_DETECT, ModelSpec } from './models'
 import { GetPresetsList } from './presets'
 import {
@@ -123,13 +117,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     }
 
     this.debug('destroy', this.id)
-  }
-
-  /**
-   * Processes a feedback state.
-   */
-  public feedback(feedback: CompanionFeedbackEvent): CompanionFeedbackResult {
-    return ExecuteFeedback(this, this.model, this.atemState, feedback)
   }
 
   private getBestModelId(): number | undefined {

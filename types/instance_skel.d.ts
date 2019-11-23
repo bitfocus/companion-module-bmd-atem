@@ -1,13 +1,16 @@
 import {
-  CompanionAction, CompanionActions,
+  CompanionAction,
+  CompanionActions,
   CompanionInputField,
-  CompanionFeedback, CompanionFeedbacks,
+  CompanionFeedback,
+  CompanionFeedbacks,
   CompanionPreset,
   CompanionSystem,
   CompanionVariable,
   CompanionActionEvent,
-  CompanionFeedbackEvent, CompanionFeedbackResult
-} from "./instance_skel_types"
+  CompanionFeedbackEvent,
+  CompanionFeedbackResult
+} from './instance_skel_types'
 
 declare abstract class InstanceSkel<TConfig> {
   protected system: CompanionSystem
@@ -25,7 +28,7 @@ declare abstract class InstanceSkel<TConfig> {
    * is OK to start doing things.
    * @since 1.0.0
    */
-  abstract init (): void
+  abstract init(): void
 
   /**
    * Clean up the instance before it is destroyed.
@@ -37,41 +40,41 @@ declare abstract class InstanceSkel<TConfig> {
    * Process an updated configuration array.
    * @since 1.0.0
    */
-  abstract updateConfig (config: TConfig): void
-  abstract upgradeConfig (): void
+  abstract updateConfig(config: TConfig): void
+  abstract upgradeConfig(): void
 
   /**
    * Creates the configuration fields for web config.
    * @since 1.0.0
    */
-  abstract config_fields (): CompanionInputField[]
+  abstract config_fields(): CompanionInputField[]
 
   /**
    * Executes the provided action.
    * @since 1.0.0
    */
-  abstract action (action: CompanionActionEvent): void
+  abstract action(action: CompanionActionEvent): void
 
   /**
    * Processes a feedback state.
    * @since 1.0.0
    */
-  abstract feedback (feedback: CompanionFeedbackEvent): CompanionFeedbackResult
+  feedback?(feedback: CompanionFeedbackEvent): CompanionFeedbackResult
 
-  setActions (actions: CompanionActions): void
-  setVariableDefinitions (variables: CompanionVariable[]): void
-  setFeedbackDefinitions (feedbacks: CompanionFeedbacks): void
-  setPresetDefinitions (presets: CompanionPreset[]): void
+  setActions(actions: CompanionActions): void
+  setVariableDefinitions(variables: CompanionVariable[]): void
+  setFeedbackDefinitions(feedbacks: CompanionFeedbacks): void
+  setPresetDefinitions(presets: CompanionPreset[]): void
 
-  setVariable (variableId: string, value: string): void
-  checkFeedbacks (feedbackId?: string): void
+  setVariable(variableId: string, value: string): void
+  checkFeedbacks(feedbackId?: string): void
 
-  status (level: null | 0 | 1 | 2, message?: string): void
+  status(level: null | 0 | 1 | 2, message?: string): void
 
-  log (formatter: string, ...args: any[]): void
-  debug (formatter: string, ...args: any[]): void
+  log(formatter: string, ...args: any[]): void
+  debug(formatter: string, ...args: any[]): void
 
-  rgb (red: number, green: number, blue: number): number
+  rgb(red: number, green: number, blue: number): number
 
   STATUS_UNKNOWN: null
   STATUS_OK: 0

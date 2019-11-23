@@ -1,3 +1,5 @@
+import * as _ from 'underscore'
+
 export const MEDIA_PLAYER_SOURCE_CLIP_OFFSET = 1000
 
 export function assertUnreachable(_never: never) {
@@ -29,4 +31,10 @@ export function calculateTransitionSelection(keyCount: number, options: { [key: 
   }
 
   return selection
+}
+
+export type Required<T> = T extends object ? { [P in keyof T]-?: NonNullable<T[P]> } : T
+
+export function compactObj<T>(obj: { [key: string]: T | undefined }): { [key: string]: T } {
+  return _.pick(obj, Boolean) as { [key: string]: T }
 }
