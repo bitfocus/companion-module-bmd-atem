@@ -2,7 +2,10 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "es6",
-    "strictNullChecks": true,
+    "strict": true,
+    "alwaysStrict": false,
+    "strictPropertyInitialization": true,
+    "strictFunctionTypes": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
