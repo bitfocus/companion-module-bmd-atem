@@ -189,6 +189,42 @@ export const ALL_MODELS: ModelSpec[] = [
     }
   },
   {
+    id: Enums.Model.TVSProHD,
+    label: 'TV Studio Pro HD',
+    inputs: 8,
+    auxes: 1,
+    MEs: 1,
+    USKs: 1,
+    DSKs: 2,
+    MVs: 1,
+    multiviewerFullGrid: false,
+    SSrc: 0,
+    macros: 100,
+    media: {
+      players: 2,
+      stills: 20,
+      clips: 0
+    }
+  },
+  {
+    id: Enums.Model.TVSPro4K,
+    label: 'TV Studio Pro 4K',
+    inputs: 8,
+    auxes: 1,
+    MEs: 1,
+    USKs: 1,
+    DSKs: 2,
+    MVs: 1,
+    multiviewerFullGrid: false,
+    SSrc: 0,
+    macros: 100,
+    media: {
+      players: 2,
+      stills: 20,
+      clips: 2
+    }
+  },
+  {
     id: Enums.Model.Constellation,
     label: 'Constellation',
     inputs: 40,
