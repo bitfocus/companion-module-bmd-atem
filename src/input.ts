@@ -172,27 +172,30 @@ export function AtemSuperSourcePropertiesPickers(): Array<CompanionInputFieldNum
       id: 'size',
       label: 'Size',
       min: 0,
-      max: 1000,
+      max: 1,
       range: true,
-      default: 500
+      default: 0.5,
+      step: 0.01
     },
     {
       type: 'number',
       id: 'x',
       label: 'X',
-      min: -4800,
-      max: 4800,
+      min: -48,
+      max: 48,
       range: true,
-      default: 0
+      default: 0,
+      step: 0.01
     },
     {
       type: 'number',
       id: 'y',
       label: 'Y',
-      min: -2700,
-      max: 2700,
+      min: -27,
+      max: 27,
       range: true,
-      default: 0
+      default: 0,
+      step: 0.01
     },
     {
       type: 'checkbox',
@@ -205,36 +208,40 @@ export function AtemSuperSourcePropertiesPickers(): Array<CompanionInputFieldNum
       id: 'cropTop',
       label: 'Crop Top',
       min: 0,
-      max: 18000,
+      max: 18,
       range: true,
-      default: 0
+      default: 0,
+      step: 0.01
     },
     {
       type: 'number',
       id: 'cropBottom',
       label: 'Crop Bottom',
       min: 0,
-      max: 18000,
+      max: 18,
       range: true,
-      default: 0
+      default: 0,
+      step: 0.01
     },
     {
       type: 'number',
       id: 'cropLeft',
       label: 'Crop Left',
       min: 0,
-      max: 32000,
+      max: 32,
       range: true,
-      default: 0
+      default: 0,
+      step: 0.01
     },
     {
       type: 'number',
       id: 'cropRight',
       label: 'Crop Right',
       min: 0,
-      max: 32000,
+      max: 32,
       range: true,
-      default: 0
+      default: 0,
+      step: 0.01
     }
   ]
 }

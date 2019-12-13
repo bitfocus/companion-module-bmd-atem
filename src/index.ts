@@ -4,6 +4,7 @@ import { CompanionActionEvent, CompanionConfigField, CompanionSystem } from '../
 import { GetActionsList, HandleAction } from './actions'
 import { AtemConfig, GetConfigFields } from './config'
 import { FeedbackId, GetFeedbacksList } from './feedback'
+import { UpgradeV2_2_0 } from './migrations'
 import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, MODEL_AUTO_DETECT, ModelSpec } from './models'
 import { GetPresetsList } from './presets'
 import {
@@ -38,6 +39,8 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     this.atem = new Atem({}) // To ensure that there arent undefined bugs
 
     this.initDone = false
+
+    this.addUpgradeScript(UpgradeV2_2_0)
   }
 
   // Override base types to make types stricter
@@ -87,10 +90,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
       this.atem.connect(this.config.host)
     }
-  }
-
-  public upgradeConfig() {
-    // Nothing to do
   }
 
   /**

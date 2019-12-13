@@ -1,15 +1,14 @@
 import {
-  CompanionAction,
   CompanionActions,
   CompanionInputField,
-  CompanionFeedback,
   CompanionFeedbacks,
   CompanionPreset,
   CompanionSystem,
   CompanionVariable,
   CompanionActionEvent,
   CompanionFeedbackEvent,
-  CompanionFeedbackResult
+  CompanionFeedbackResult,
+  CompanionUpgradeScript
 } from './instance_skel_types'
 
 declare abstract class InstanceSkel<TConfig> {
@@ -41,7 +40,6 @@ declare abstract class InstanceSkel<TConfig> {
    * @since 1.0.0
    */
   abstract updateConfig(config: TConfig): void
-  abstract upgradeConfig(): void
 
   /**
    * Creates the configuration fields for web config.
@@ -60,6 +58,8 @@ declare abstract class InstanceSkel<TConfig> {
    * @since 1.0.0
    */
   feedback?(feedback: CompanionFeedbackEvent): CompanionFeedbackResult
+
+  addUpgradeScript(fcn: CompanionUpgradeScript<TConfig>): void
 
   setActions(actions: CompanionActions): void
   setVariableDefinitions(variables: CompanionVariable[]): void

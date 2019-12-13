@@ -528,6 +528,14 @@ function fadeToBlackFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSp
   }
 }
 
+function compareAsInt(targetStr: string, actual: number, targetScale: number, actualRounding: number = 1) {
+  const targetVal = parseFloat(targetStr) * targetScale
+  if (actualRounding) {
+    actual = actualRounding * Math.round(actual / actualRounding)
+  }
+  return targetVal === actual
+}
+
 function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
   return {
     [FeedbackId.SSrcBoxSource]: model.SSrc
@@ -585,16 +593,16 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
             const boxCroppingMatches =
               box &&
               (!box.cropped ||
-                (box.cropTop === parseInt(evt.options.cropTop, 10) &&
-                  box.cropBottom === parseInt(evt.options.cropBottom, 10) &&
-                  box.cropLeft === parseInt(evt.options.cropLeft, 10) &&
-                  box.cropRight === parseInt(evt.options.cropRight, 10)))
+                (compareAsInt(evt.options.cropTop, box.cropTop, 1000, 10) &&
+                  compareAsInt(evt.options.cropBottom, box.cropBottom, 1000, 10) &&
+                  compareAsInt(evt.options.cropLeft, box.cropLeft, 1000, 10) &&
+                  compareAsInt(evt.options.cropRight, box.cropRight, 1000, 10)))
 
             if (
               box &&
-              box.size === parseInt(evt.options.size, 10) &&
-              box.x === parseInt(evt.options.x, 10) &&
-              box.y === parseInt(evt.options.y, 10) &&
+              compareAsInt(evt.options.size, box.size, 1000, 10) &&
+              compareAsInt(evt.options.x, box.x, 100) &&
+              compareAsInt(evt.options.y, box.y, 100) &&
               box.cropped === !!evt.options.cropEnable &&
               boxCroppingMatches
             ) {

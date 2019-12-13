@@ -295,6 +295,13 @@ export function HandleAction(
     }
     return val
   }
+  const getOptFloat = (key: string) => {
+    const val = parseFloat(opt[key])
+    if (isNaN(val)) {
+      throw new Error(`Invalid option '${key}'`)
+    }
+    return val
+  }
   const getOptBool = (key: string) => {
     return !!opt[key]
   }
@@ -410,14 +417,14 @@ export function HandleAction(
       case ActionId.SuperSourceBoxProperties:
         atem.setSuperSourceBoxSettings(
           {
-            size: getOptInt('size'),
-            x: getOptInt('x'),
-            y: getOptInt('y'),
+            size: getOptFloat('size') * 1000,
+            x: getOptFloat('x') * 100,
+            y: getOptFloat('y') * 100,
             cropped: getOptBool('cropEnable'),
-            cropTop: getOptInt('cropTop'),
-            cropBottom: getOptInt('cropBottom'),
-            cropLeft: getOptInt('cropLeft'),
-            cropRight: getOptInt('cropRight')
+            cropTop: getOptFloat('cropTop') * 1000,
+            cropBottom: getOptFloat('cropBottom') * 1000,
+            cropLeft: getOptFloat('cropLeft') * 1000,
+            cropRight: getOptFloat('cropRight') * 1000
           },
           getOptInt('boxIndex'),
           opt.ssrcId && model.SSrc > 1 ? parseInt(opt.ssrcId, 10) : 0

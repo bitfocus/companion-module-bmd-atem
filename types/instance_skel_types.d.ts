@@ -9,12 +9,12 @@ export interface CompanionAction {
 }
 export interface CompanionActionEvent {
   action: string
-  options: { [key: string]: string }
+  options: { [key: string]: number | string | boolean | undefined }
 }
 
 export interface CompanionFeedbackEvent {
   type: string
-  options: { [key: string]: string }
+  options: { [key: string]: number | string | boolean | undefined }
 }
 export interface CompanionFeedbackResult {
   color?: number
@@ -99,11 +99,11 @@ export interface CompanionPreset {
   }
   feedbacks: Array<{
     type: string
-    options: { [key: string]: number | string | boolean }
+    options: { [key: string]: number | string | boolean | undefined }
   }>
   actions: Array<{
     action: string
-    options: { [key: string]: number | string | boolean }
+    options: { [key: string]: number | string | boolean | undefined }
   }>
 }
 
@@ -112,4 +112,32 @@ export interface CompanionFeedbacks {
 }
 export interface CompanionActions {
   [id: string]: CompanionAction
+}
+
+export type CompanionUpgradeScript<TConfig> = (
+  config: CompanionCoreInstanceconfig & TConfig,
+  actions: CompanionMigrationAction[],
+  release_actions: CompanionMigrationAction[],
+  feedbacks: CompanionMigrationFeedback[]
+) => boolean
+
+export interface CompanionCoreInstanceconfig {
+  instance_type: string
+  label: string
+  enabled: boolean
+}
+
+export interface CompanionMigrationAction {
+  readonly id: string
+  readonly instance: string
+  label: string
+  action: string
+  options: { [key: string]: number | string | boolean | undefined }
+}
+
+export interface CompanionMigrationFeedback {
+  readonly id: string
+  readonly instance_id: string
+  type: string
+  options: { [key: string]: number | string | boolean | undefined }
 }
