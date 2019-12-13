@@ -3,18 +3,20 @@ import { EventEmitter } from 'events'
 
 export interface CompanionSystem extends EventEmitter {}
 
+export type InputValue = number | string | boolean
+
 export interface CompanionAction {
   label: string
   options: SomeCompanionInputField[]
 }
 export interface CompanionActionEvent {
   action: string
-  options: { [key: string]: number | string | boolean | undefined }
+  options: { [key: string]: InputValue | undefined }
 }
 
 export interface CompanionFeedbackEvent {
   type: string
-  options: { [key: string]: number | string | boolean | undefined }
+  options: { [key: string]: InputValue | undefined }
 }
 export interface CompanionFeedbackResult {
   color?: number
@@ -99,11 +101,11 @@ export interface CompanionPreset {
   }
   feedbacks: Array<{
     type: string
-    options: { [key: string]: number | string | boolean | undefined }
+    options: { [key: string]: InputValue | undefined }
   }>
   actions: Array<{
     action: string
-    options: { [key: string]: number | string | boolean | undefined }
+    options: { [key: string]: InputValue | undefined }
   }>
 }
 
@@ -132,12 +134,12 @@ export interface CompanionMigrationAction {
   readonly instance: string
   label: string
   action: string
-  options: { [key: string]: number | string | boolean | undefined }
+  options: { [key: string]: InputValue | undefined }
 }
 
 export interface CompanionMigrationFeedback {
   readonly id: string
   readonly instance_id: string
   type: string
-  options: { [key: string]: number | string | boolean | undefined }
+  options: { [key: string]: InputValue | undefined }
 }

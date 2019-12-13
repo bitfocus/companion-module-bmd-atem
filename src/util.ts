@@ -1,4 +1,5 @@
 import * as _ from 'underscore'
+import { InputValue } from '../../../instance_skel_types'
 
 export const MEDIA_PLAYER_SOURCE_CLIP_OFFSET = 1000
 
@@ -18,7 +19,7 @@ export function iterateTimes<T>(count: number, cb: (i: number) => T): T[] {
   return res
 }
 
-export function calculateTransitionSelection(keyCount: number, options: { [key: string]: string | number }) {
+export function calculateTransitionSelection(keyCount: number, options: { [key: string]: InputValue | undefined }) {
   let selection = 0
   if (options.background) {
     selection |= 1 << 0

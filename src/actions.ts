@@ -288,15 +288,8 @@ export function HandleAction(
   action: CompanionActionEvent
 ) {
   const opt = action.options
-  const getOptInt = (key: string) => {
-    const val = parseInt(opt[key], 10)
-    if (isNaN(val)) {
-      throw new Error(`Invalid option '${key}'`)
-    }
-    return val
-  }
-  const getOptFloat = (key: string) => {
-    const val = parseFloat(opt[key])
+  const getOptNumber = (key: string) => {
+    const val = Number(opt[key])
     if (isNaN(val)) {
       throw new Error(`Invalid option '${key}'`)
     }
@@ -310,28 +303,28 @@ export function HandleAction(
     const actionId = action.action as ActionId
     switch (actionId) {
       case ActionId.Program:
-        atem.changeProgramInput(getOptInt('input'), getOptInt('mixeffect'))
+        atem.changeProgramInput(getOptNumber('input'), getOptNumber('mixeffect'))
         break
       case ActionId.Preview:
-        atem.changePreviewInput(getOptInt('input'), getOptInt('mixeffect'))
+        atem.changePreviewInput(getOptNumber('input'), getOptNumber('mixeffect'))
         break
       case ActionId.USKSource:
-        atem.setUpstreamKeyerFillSource(getOptInt('fill'), getOptInt('mixeffect'), getOptInt('key'))
-        atem.setUpstreamKeyerCutSource(getOptInt('cut'), getOptInt('mixeffect'), getOptInt('key'))
+        atem.setUpstreamKeyerFillSource(getOptNumber('fill'), getOptNumber('mixeffect'), getOptNumber('key'))
+        atem.setUpstreamKeyerCutSource(getOptNumber('cut'), getOptNumber('mixeffect'), getOptNumber('key'))
         break
       case ActionId.DSKSource:
-        atem.setDownstreamKeyFillSource(getOptInt('fill'), getOptInt('key'))
-        atem.setDownstreamKeyCutSource(getOptInt('cut'), getOptInt('key'))
+        atem.setDownstreamKeyFillSource(getOptNumber('fill'), getOptNumber('key'))
+        atem.setDownstreamKeyCutSource(getOptNumber('cut'), getOptNumber('key'))
         break
       case ActionId.Aux:
-        atem.setAuxSource(getOptInt('input'), getOptInt('aux'))
+        atem.setAuxSource(getOptNumber('input'), getOptNumber('aux'))
         break
       case ActionId.Cut:
-        atem.cut(getOptInt('mixeffect'))
+        atem.cut(getOptNumber('mixeffect'))
         break
       case ActionId.USKOnAir: {
-        const meIndex = getOptInt('mixeffect')
-        const keyIndex = getOptInt('key')
+        const meIndex = getOptNumber('mixeffect')
+        const keyIndex = getOptNumber('key')
         if (opt.onair === 'toggle') {
           const usk = getUSK(state, meIndex, keyIndex)
           atem.setUpstreamKeyerOnAir(!usk || !usk.onAir, meIndex, keyIndex)
@@ -341,10 +334,10 @@ export function HandleAction(
         break
       }
       case ActionId.DSKAuto:
-        atem.autoDownstreamKey(getOptInt('downstreamKeyerId'))
+        atem.autoDownstreamKey(getOptNumber('downstreamKeyerId'))
         break
       case ActionId.DSKOnAir: {
-        const keyIndex = getOptInt('key')
+        const keyIndex = getOptNumber('key')
         if (opt.onair === 'toggle') {
           const dsk = getDSK(state, keyIndex)
           atem.setDownstreamKeyOnAir(!dsk || !dsk.onAir, keyIndex)
@@ -354,10 +347,10 @@ export function HandleAction(
         break
       }
       case ActionId.Auto:
-        atem.autoTransition(getOptInt('mixeffect'))
+        atem.autoTransition(getOptNumber('mixeffect'))
         break
       case ActionId.MacroRun:
-        const macroIndex = getOptInt('macro') - 1
+        const macroIndex = getOptNumber('macro') - 1
         const { macroPlayer, macroRecorder } = state.macro
         if (opt.action === 'runContinue' && macroPlayer.isWaiting && macroPlayer.macroIndex === macroIndex) {
           atem.macroContinue()
@@ -376,15 +369,15 @@ export function HandleAction(
       case ActionId.MultiviewerWindowSource:
         atem.setMultiViewerSource(
           {
-            windowIndex: getOptInt('windowIndex'),
-            source: getOptInt('source')
+            windowIndex: getOptNumber('windowIndex'),
+            source: getOptNumber('source')
           },
-          getOptInt('multiViewerId')
+          getOptNumber('multiViewerId')
         )
         break
       case ActionId.SuperSourceBoxOnAir:
-        const ssrcId = opt.ssrcId && model.SSrc > 1 ? parseInt(opt.ssrcId, 10) : 0
-        const boxIndex = getOptInt('boxIndex')
+        const ssrcId = opt.ssrcId && model.SSrc > 1 ? Number(opt.ssrcId) : 0
+        const boxIndex = getOptNumber('boxIndex')
 
         if (opt.onair === 'toggle') {
           const box = getSuperSourceBox(state, boxIndex, ssrcId)
@@ -408,69 +401,69 @@ export function HandleAction(
       case ActionId.SuperSourceBoxSource:
         atem.setSuperSourceBoxSettings(
           {
-            source: getOptInt('source')
+            source: getOptNumber('source')
           },
-          getOptInt('boxIndex'),
-          opt.ssrcId && model.SSrc > 1 ? parseInt(opt.ssrcId, 10) : 0
+          getOptNumber('boxIndex'),
+          opt.ssrcId && model.SSrc > 1 ? Number(opt.ssrcId) : 0
         )
         break
       case ActionId.SuperSourceBoxProperties:
         atem.setSuperSourceBoxSettings(
           {
-            size: getOptFloat('size') * 1000,
-            x: getOptFloat('x') * 100,
-            y: getOptFloat('y') * 100,
+            size: getOptNumber('size') * 1000,
+            x: getOptNumber('x') * 100,
+            y: getOptNumber('y') * 100,
             cropped: getOptBool('cropEnable'),
-            cropTop: getOptFloat('cropTop') * 1000,
-            cropBottom: getOptFloat('cropBottom') * 1000,
-            cropLeft: getOptFloat('cropLeft') * 1000,
-            cropRight: getOptFloat('cropRight') * 1000
+            cropTop: getOptNumber('cropTop') * 1000,
+            cropBottom: getOptNumber('cropBottom') * 1000,
+            cropLeft: getOptNumber('cropLeft') * 1000,
+            cropRight: getOptNumber('cropRight') * 1000
           },
-          getOptInt('boxIndex'),
-          opt.ssrcId && model.SSrc > 1 ? parseInt(opt.ssrcId, 10) : 0
+          getOptNumber('boxIndex'),
+          opt.ssrcId && model.SSrc > 1 ? Number(opt.ssrcId) : 0
         )
         break
       case ActionId.TransitionStyle:
         atem.setTransitionStyle(
           {
-            style: getOptInt('style')
+            style: getOptNumber('style')
           },
-          getOptInt('mixeffect')
+          getOptNumber('mixeffect')
         )
         break
       case ActionId.TransitionRate:
-        const style = getOptInt('style') as Enums.TransitionStyle
+        const style = getOptNumber('style') as Enums.TransitionStyle
         switch (style) {
           case Enums.TransitionStyle.MIX:
             atem.setMixTransitionSettings(
               {
-                rate: getOptInt('rate')
+                rate: getOptNumber('rate')
               },
-              getOptInt('mixeffect')
+              getOptNumber('mixeffect')
             )
             break
           case Enums.TransitionStyle.DIP:
             atem.setDipTransitionSettings(
               {
-                rate: getOptInt('rate')
+                rate: getOptNumber('rate')
               },
-              getOptInt('mixeffect')
+              getOptNumber('mixeffect')
             )
             break
           case Enums.TransitionStyle.WIPE:
             atem.setWipeTransitionSettings(
               {
-                rate: getOptInt('rate')
+                rate: getOptNumber('rate')
               },
-              getOptInt('mixeffect')
+              getOptNumber('mixeffect')
             )
             break
           case Enums.TransitionStyle.DVE:
             atem.setDVETransitionSettings(
               {
-                rate: getOptInt('rate')
+                rate: getOptNumber('rate')
               },
-              getOptInt('mixeffect')
+              getOptNumber('mixeffect')
             )
             break
           case Enums.TransitionStyle.STING:
@@ -486,19 +479,19 @@ export function HandleAction(
           {
             selection: calculateTransitionSelection(model.USKs, action.options)
           },
-          getOptInt('mixeffect')
+          getOptNumber('mixeffect')
         )
         break
       }
       case ActionId.MediaPlayerSource:
-        const source = getOptInt('source')
+        const source = getOptNumber('source')
         if (source >= MEDIA_PLAYER_SOURCE_CLIP_OFFSET) {
           atem.setMediaPlayerSource(
             {
               sourceType: Enums.MediaSourceType.Clip,
               clipIndex: source - MEDIA_PLAYER_SOURCE_CLIP_OFFSET
             },
-            getOptInt('mediaplayer')
+            getOptNumber('mediaplayer')
           )
         } else {
           atem.setMediaPlayerSource(
@@ -506,15 +499,15 @@ export function HandleAction(
               sourceType: Enums.MediaSourceType.Still,
               stillIndex: source
             },
-            getOptInt('mediaplayer')
+            getOptNumber('mediaplayer')
           )
         }
         break
       case ActionId.FadeToBlackAuto:
-        atem.fadeToBlack(getOptInt('mixeffect'))
+        atem.fadeToBlack(getOptNumber('mixeffect'))
         break
       case ActionId.FadeToBlackRate:
-        atem.setFadeToBlackRate(getOptInt('rate'), getOptInt('mixeffect'))
+        atem.setFadeToBlackRate(getOptNumber('rate'), getOptNumber('mixeffect'))
         break
       default:
         assertUnreachable(actionId)

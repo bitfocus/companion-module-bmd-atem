@@ -1,7 +1,12 @@
 import { AtemState, Enums } from 'atem-connection'
 import * as _ from 'underscore'
 import InstanceSkel = require('../../../instance_skel')
-import { CompanionFeedback, CompanionFeedbackEvent, CompanionInputFieldColor } from '../../../instance_skel_types'
+import {
+  CompanionFeedback,
+  CompanionFeedbackEvent,
+  CompanionInputFieldColor,
+  InputValue
+} from '../../../instance_skel_types'
 import { GetMacroChoices } from './choices'
 import { AtemConfig } from './config'
 import {
@@ -89,8 +94,8 @@ export function BackgroundPicker(color: number): CompanionInputFieldColor {
 
 function getOptColors(evt: CompanionFeedbackEvent) {
   return {
-    color: parseInt(evt.options.fg, 10),
-    bgcolor: parseInt(evt.options.bg, 10)
+    color: Number(evt.options.fg),
+    bgcolor: Number(evt.options.bg)
   }
 }
 
@@ -107,7 +112,7 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
       ],
       callback: evt => {
         const me = getME(state, evt.options.mixeffect)
-        if (me && me.previewInput === parseInt(evt.options.input, 10)) {
+        if (me && me.previewInput === Number(evt.options.input)) {
           return getOptColors(evt)
         }
         return {}
@@ -132,9 +137,9 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
               const me2 = getME(state, evt.options.mixeffect2)
               if (
                 me1 &&
-                me1.previewInput === parseInt(evt.options.input1, 10) &&
+                me1.previewInput === Number(evt.options.input1) &&
                 me2 &&
-                me2.previewInput === parseInt(evt.options.input2, 10)
+                me2.previewInput === Number(evt.options.input2)
               ) {
                 return getOptColors(evt)
               }
@@ -164,11 +169,11 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
               const me3 = getME(state, evt.options.mixeffect3)
               if (
                 me1 &&
-                me1.previewInput === parseInt(evt.options.input1, 10) &&
+                me1.previewInput === Number(evt.options.input1) &&
                 me2 &&
-                me2.previewInput === parseInt(evt.options.input2, 10) &&
+                me2.previewInput === Number(evt.options.input2) &&
                 me3 &&
-                me3.previewInput === parseInt(evt.options.input3, 10)
+                me3.previewInput === Number(evt.options.input3)
               ) {
                 return getOptColors(evt)
               }
@@ -201,13 +206,13 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
               const me4 = getME(state, evt.options.mixeffect4)
               if (
                 me1 &&
-                me1.previewInput === parseInt(evt.options.input1, 10) &&
+                me1.previewInput === Number(evt.options.input1) &&
                 me2 &&
-                me2.previewInput === parseInt(evt.options.input2, 10) &&
+                me2.previewInput === Number(evt.options.input2) &&
                 me3 &&
-                me3.previewInput === parseInt(evt.options.input3, 10) &&
+                me3.previewInput === Number(evt.options.input3) &&
                 me4 &&
-                me4.previewInput === parseInt(evt.options.input4, 10)
+                me4.previewInput === Number(evt.options.input4)
               ) {
                 return getOptColors(evt)
               }
@@ -231,7 +236,7 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
       ],
       callback: evt => {
         const me = getME(state, evt.options.mixeffect)
-        if (me && me.programInput === parseInt(evt.options.input, 10)) {
+        if (me && me.programInput === Number(evt.options.input)) {
           return getOptColors(evt)
         }
         return {}
@@ -256,9 +261,9 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
               const me2 = getME(state, evt.options.mixeffect2)
               if (
                 me1 &&
-                me1.programInput === parseInt(evt.options.input1, 10) &&
+                me1.programInput === Number(evt.options.input1) &&
                 me2 &&
-                me2.programInput === parseInt(evt.options.input2, 10)
+                me2.programInput === Number(evt.options.input2)
               ) {
                 return getOptColors(evt)
               }
@@ -288,11 +293,11 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
               const me3 = getME(state, evt.options.mixeffect3)
               if (
                 me1 &&
-                me1.programInput === parseInt(evt.options.input1, 10) &&
+                me1.programInput === Number(evt.options.input1) &&
                 me2 &&
-                me2.programInput === parseInt(evt.options.input2, 10) &&
+                me2.programInput === Number(evt.options.input2) &&
                 me3 &&
-                me3.programInput === parseInt(evt.options.input3, 10)
+                me3.programInput === Number(evt.options.input3)
               ) {
                 return getOptColors(evt)
               }
@@ -325,13 +330,13 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
               const me4 = getME(state, evt.options.mixeffect4)
               if (
                 me1 &&
-                me1.programInput === parseInt(evt.options.input1, 10) &&
+                me1.programInput === Number(evt.options.input1) &&
                 me2 &&
-                me2.programInput === parseInt(evt.options.input2, 10) &&
+                me2.programInput === Number(evt.options.input2) &&
                 me3 &&
-                me3.programInput === parseInt(evt.options.input3, 10) &&
+                me3.programInput === Number(evt.options.input3) &&
                 me4 &&
-                me4.programInput === parseInt(evt.options.input4, 10)
+                me4.programInput === Number(evt.options.input4)
               ) {
                 return getOptColors(evt)
               }
@@ -376,7 +381,7 @@ function uskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
           ],
           callback: evt => {
             const usk = getUSK(state, evt.options.mixeffect, evt.options.key)
-            if (usk && usk.fillSource === parseInt(evt.options.fill, 10)) {
+            if (usk && usk.fillSource === Number(evt.options.fill)) {
               return getOptColors(evt)
             }
             return {}
@@ -399,7 +404,7 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
       ],
       callback: evt => {
         const me = getME(state, evt.options.mixeffect)
-        if (me && me.transitionProperties.style === parseInt(evt.options.style, 10)) {
+        if (me && me.transitionProperties.style === Number(evt.options.style)) {
           return getOptColors(evt)
         }
         return {}
@@ -436,8 +441,8 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
       callback: evt => {
         const me = getME(state, evt.options.mixeffect)
         if (me && me.transitionSettings) {
-          const style = parseInt(evt.options.style, 10) as Enums.TransitionStyle
-          const rate = parseInt(evt.options.rate, 10)
+          const style = Number(evt.options.style) as Enums.TransitionStyle
+          const rate = Number(evt.options.rate)
           switch (style) {
             case Enums.TransitionStyle.MIX:
               if (me.transitionSettings.mix.rate === rate) {
@@ -518,7 +523,7 @@ function fadeToBlackFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSp
       ],
       callback: evt => {
         const me = getME(state, evt.options.mixeffect)
-        const rate = parseInt(evt.options.rate, 10)
+        const rate = Number(evt.options.rate)
         if (me && me.fadeToBlack && me.fadeToBlack.rate === rate) {
           return getOptColors(evt)
         }
@@ -528,8 +533,17 @@ function fadeToBlackFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSp
   }
 }
 
-function compareAsInt(targetStr: string, actual: number, targetScale: number, actualRounding: number = 1) {
-  const targetVal = parseFloat(targetStr) * targetScale
+function compareAsInt(
+  targetStr: InputValue | undefined,
+  actual: number,
+  targetScale: number,
+  actualRounding: number = 1
+) {
+  if (targetStr === undefined) {
+    return false
+  }
+
+  const targetVal = Number(targetStr) * targetScale
   if (actualRounding) {
     actual = actualRounding * Math.round(actual / actualRounding)
   }
@@ -551,7 +565,7 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
           ]),
           callback: evt => {
             const box = getSuperSourceBox(state, evt.options.boxIndex, evt.options.ssrcId || 0)
-            if (box && box.source === parseInt(evt.options.source, 10)) {
+            if (box && box.source === Number(evt.options.source)) {
               return getOptColors(evt)
             }
             return {}
@@ -647,7 +661,7 @@ function dskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
           ],
           callback: evt => {
             const dsk = getDSK(state, evt.options.key)
-            if (dsk && dsk.sources.fillSource === parseInt(evt.options.fill, 10)) {
+            if (dsk && dsk.sources.fillSource === Number(evt.options.fill)) {
               return getOptColors(evt)
             }
             return {}
@@ -677,8 +691,8 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
             AtemAuxSourcePicker(model, state)
           ],
           callback: evt => {
-            const auxSource = state.video.auxilliaries[evt.options.aux]
-            if (auxSource === parseInt(evt.options.input, 10)) {
+            const auxSource = state.video.auxilliaries[Number(evt.options.aux)]
+            if (auxSource === Number(evt.options.input)) {
               return getOptColors(evt)
             }
             return {}
@@ -713,7 +727,7 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
             }
           ],
           callback: evt => {
-            let macroIndex = parseInt(evt.options.macroIndex, 10)
+            let macroIndex = Number(evt.options.macroIndex)
             if (!isNaN(macroIndex)) {
               macroIndex -= 1
               const { macroPlayer, macroRecorder } = state.macro
@@ -759,7 +773,7 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
           ],
           callback: evt => {
             const window = getMultiviewerWindow(state, evt.options.multiViewerId, evt.options.windowIndex)
-            if (window && window.source === parseInt(evt.options.source, 10)) {
+            if (window && window.source === Number(evt.options.source)) {
               return getOptColors(evt)
             }
             return {}
@@ -781,13 +795,13 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
             if (
               player &&
               player.sourceType === Enums.MediaSourceType.Still &&
-              player.stillIndex === parseInt(evt.options.source, 10)
+              player.stillIndex === Number(evt.options.source)
             ) {
               return getOptColors(evt)
             } else if (
               player &&
               player.sourceType === Enums.MediaSourceType.Clip &&
-              player.clipIndex + MEDIA_PLAYER_SOURCE_CLIP_OFFSET === parseInt(evt.options.source, 10)
+              player.clipIndex + MEDIA_PLAYER_SOURCE_CLIP_OFFSET === Number(evt.options.source)
             ) {
               return getOptColors(evt)
             }
