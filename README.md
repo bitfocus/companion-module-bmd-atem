@@ -12,6 +12,10 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.3.0
+
+- Add definitions for Mini
+
 ### v2.2.0
 
 - Set fade to black rate

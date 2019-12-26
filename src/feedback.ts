@@ -105,7 +105,7 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
       label: 'Change colors from preview',
       description: 'If the input specified is in use by preview on the M/E stage specified, change colors of the bank',
       options: [
-        ForegroundPicker(instance.rgb(255, 255, 255)),
+        ForegroundPicker(instance.rgb(0, 0, 0)),
         BackgroundPicker(instance.rgb(0, 255, 0)),
         AtemMESourcePicker(model, state, 0),
         AtemMEPicker(model, 0)
@@ -125,7 +125,7 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
             description:
               'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
             options: [
-              ForegroundPicker(instance.rgb(255, 255, 255)),
+              ForegroundPicker(instance.rgb(0, 0, 0)),
               BackgroundPicker(instance.rgb(0, 255, 0)),
               AtemMESourcePicker(model, state, 1),
               AtemMEPicker(model, 1),
@@ -154,7 +154,7 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
             description:
               'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
             options: [
-              ForegroundPicker(instance.rgb(255, 255, 255)),
+              ForegroundPicker(instance.rgb(0, 0, 0)),
               BackgroundPicker(instance.rgb(0, 255, 0)),
               AtemMESourcePicker(model, state, 1),
               AtemMEPicker(model, 1),
@@ -188,7 +188,7 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
             description:
               'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
             options: [
-              ForegroundPicker(instance.rgb(255, 255, 255)),
+              ForegroundPicker(instance.rgb(0, 0, 0)),
               BackgroundPicker(instance.rgb(0, 255, 0)),
               AtemMESourcePicker(model, state, 1),
               AtemMEPicker(model, 1),

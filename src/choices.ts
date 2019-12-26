@@ -107,12 +107,15 @@ export function GetSourcesListForType(model: ModelSpec, state: AtemState, subset
     })
   }
 
-  const sources: SourceInfo[] = [
-    getSource(0, 'Blck', 'Black'),
-    getSource(1000, 'Bars', 'Bars'),
-    getSource(2001, 'Col1', 'Color 1'),
-    getSource(2002, 'Col2', 'Color 2')
-  ]
+  const sources: SourceInfo[] = []
+  if (subset !== 'aux' || (subset === 'aux' && !model.auxInput1Direct)) {
+    sources.push(
+      getSource(0, 'Blck', 'Black'),
+      getSource(1000, 'Bars', 'Bars'),
+      getSource(2001, 'Col1', 'Color 1'),
+      getSource(2002, 'Col2', 'Color 2')
+    )
+  }
 
   for (let i = 0; i < model.SSrc; i++) {
     if (model.SSrc === 1) {
@@ -124,11 +127,17 @@ export function GetSourcesListForType(model: ModelSpec, state: AtemState, subset
 
   for (let i = 1; i <= model.inputs; i++) {
     sources.push(getSource(i, `In ${i}`, `Input ${i}`))
+
+    if ((!subset || subset === 'aux') && model.auxInput1Direct && i === 1) {
+      sources.push(getSource(11000 + i, `In${i}D`, `Input ${i} - Direct`))
+    }
   }
 
-  for (let i = 1; i <= model.media.players; i++) {
-    sources.push(getSource(3000 + i * 10, `MP ${i}`, `Media Player ${i}`))
-    sources.push(getSource(3001 + i * 10, `MP${i}K`, `Media Player ${i} Key`))
+  if (subset !== 'aux' || (subset === 'aux' && !model.auxInput1Direct)) {
+    for (let i = 1; i <= model.media.players; i++) {
+      sources.push(getSource(3000 + i * 10, `MP ${i}`, `Media Player ${i}`))
+      sources.push(getSource(3001 + i * 10, `MP${i}K`, `Media Player ${i} Key`))
+    }
   }
 
   if (!subset || subset === 'mv') {
@@ -137,7 +146,7 @@ export function GetSourcesListForType(model: ModelSpec, state: AtemState, subset
     }
   }
 
-  if (!subset || subset === 'mv' || subset === 'aux') {
+  if (!subset || subset === 'mv' || (subset === 'aux' && !model.auxInput1Direct)) {
     for (let i = 1; i <= model.DSKs; i++) {
       sources.push(getSource(7000 + i, `Cln${i}`, `Clean Feed ${i}`))
     }

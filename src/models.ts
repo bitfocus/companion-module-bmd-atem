@@ -16,6 +16,7 @@ export interface ModelSpec {
   // MPs: number
   MVs: number
   multiviewerFullGrid: boolean
+  auxInput1Direct?: boolean
   SSrc: number
   macros: number
   media: {
@@ -258,6 +259,25 @@ export const ALL_MODELS: ModelSpec[] = [
       players: 1,
       stills: 24,
       clips: 2
+    }
+  },
+  {
+    id: 13, // Enums.Model.Mini,
+    label: 'Mini',
+    inputs: 4,
+    auxes: 1,
+    MEs: 1,
+    USKs: 1,
+    DSKs: 1,
+    MVs: 0,
+    multiviewerFullGrid: false,
+    auxInput1Direct: true,
+    SSrc: 0,
+    macros: 100,
+    media: {
+      players: 1,
+      stills: 20,
+      clips: 0
     }
   }
 ]
