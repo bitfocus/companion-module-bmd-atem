@@ -17,6 +17,7 @@ import {
   AtemMultiviewerPicker,
   AtemMultiviewSourcePicker,
   AtemMultiviewWindowPicker,
+  AtemOnAirPicker,
   AtemRatePicker,
   AtemSuperSourceBoxPicker,
   AtemSuperSourceBoxSourcePicker,
@@ -27,7 +28,7 @@ import {
   AtemUSKPicker
 } from './input'
 import { ModelSpec } from './models'
-import { getDSK, getSuperSourceBox, getUSK } from './state'
+import { getME, getDSK, getSuperSourceBox, getUSK } from './state'
 import {
   assertUnreachable,
   calculateTransitionSelection,
@@ -44,6 +45,7 @@ export enum ActionId {
   Aux = 'aux',
   USKSource = 'uskSource',
   USKOnAir = 'usk',
+  USKNextTransition = 'uskNextTransition',
   DSKSource = 'dskSource',
   DSKOnAir = 'dsk',
   DSKAuto = 'dskAuto',
@@ -106,6 +108,12 @@ function meActions(model: ModelSpec, state: AtemState) {
             AtemMEPicker(model, 0),
             AtemUSKPicker(model)
           ]
+        })
+      : undefined,
+    [ActionId.USKNextTransition]: model.USKs
+      ? literal<Required<CompanionAction>>({
+          label: 'Set Upstream KEY Next Transition',
+          options: [AtemOnAirPicker(), AtemMEPicker(model, 0), AtemUSKPicker(model)]
         })
       : undefined,
     [ActionId.TransitionStyle]: literal<Required<CompanionAction>>({
@@ -330,6 +338,27 @@ export function HandleAction(
           atem.setUpstreamKeyerOnAir(!usk || !usk.onAir, meIndex, keyIndex)
         } else {
           atem.setUpstreamKeyerOnAir(opt.onair === 'true', meIndex, keyIndex)
+        }
+        break
+      }
+      case ActionId.USKNextTransition: {
+        const meIndex = getOptNumber('mixeffect')
+        const keyIndex = getOptNumber('key')
+        const usk = getUSK(state, meIndex, keyIndex)
+        const me = getME(state, meIndex)
+        if (usk && me) {
+          let selection = me.transitionProperties.selection
+          const bit = 1 << (keyIndex + 1)
+          selection &= ~bit
+          if (opt.onair != usk.onAir) {
+            selection |= bit
+          }
+          atem.setTransitionStyle(
+            {
+              selection: selection
+            },
+            meIndex
+          )
         }
         break
       }

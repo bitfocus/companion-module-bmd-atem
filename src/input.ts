@@ -70,6 +70,14 @@ export function AtemTransitionSelectionPickers(model: ModelSpec): CompanionInput
 
   return pickers
 }
+export function AtemOnAirPicker(): CompanionInputFieldCheckbox {
+  return {
+    type: 'checkbox',
+    id: 'onair',
+    label: 'On Air',
+    default: true
+  }
+}
 export function AtemMEPicker(model: ModelSpec, id: number): CompanionInputFieldDropdown {
   return {
     id: `mixeffect${id ? id : ''}`,
