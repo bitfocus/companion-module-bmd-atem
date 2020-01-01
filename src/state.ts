@@ -1,4 +1,4 @@
-import { AtemState } from 'atem-connection'
+import { AtemState, Commands } from 'atem-connection'
 import { InputValue } from '../../../instance_skel_types'
 
 // TODO - these should be exported more cleanly from atem-connection
@@ -6,6 +6,7 @@ type MixEffect = AtemState['video']['ME'][0]
 type UpstreamKeyer = MixEffect['upstreamKeyers'][0]
 type DownstreamKeyer = AtemState['video']['downstreamKeyers'][0]
 type MultiViewer = AtemState['settings']['multiViewers'][0]
+export type TallyBySource = Commands.TallyBySourceCommand['properties']
 
 export function getME(state: AtemState, meIndex: InputValue | undefined): MixEffect | undefined {
   return state.video.ME[Number(meIndex)]
