@@ -151,7 +151,8 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
       // The feedback holds a reference to the old object, so we need
       // to update it in place
       Object.assign(this.atemTally, command.properties)
-      this.checkFeedbacks(FeedbackId.Tally)
+      this.checkFeedbacks(FeedbackId.ProgramTally)
+      this.checkFeedbacks(FeedbackId.PreviewTally)
     }
   }
   /**

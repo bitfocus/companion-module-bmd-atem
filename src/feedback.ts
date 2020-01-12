@@ -60,7 +60,8 @@ export enum FeedbackId {
   MediaPlayerSource = 'mediaPlayerSource',
   FadeToBlackIsBlack = 'fadeToBlackIsBlack',
   FadeToBlackRate = 'fadeToBlackRate',
-  Tally = 'tally'
+  ProgramTally = 'program_tally',
+  PreviewTally = 'preview_tally'
 }
 
 export enum MacroFeedbackType {
@@ -96,39 +97,34 @@ function getOptColors(evt: CompanionFeedbackEvent) {
 
 function tallyFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState, tally: TallyBySource) {
   return {
-    [FeedbackId.Tally]: literal<Required<CompanionFeedback>>({
-      label: 'Change colors from tally',
-      description: 'If the input specified has an active tally light, change colors of the bank',
+    [FeedbackId.ProgramTally]: literal<Required<CompanionFeedback>>({
+      label: 'Change colors from program tally',
+      description: 'If the input specified has an active progam tally light, change colors of the bank',
       options: [
         ForegroundPicker(instance.rgb(255, 255, 255)),
-        {
-          type: 'colorpicker',
-          label: 'Program background color',
-          id: 'bgPgm',
-          default: instance.rgb(255, 0, 0)
-        },
-        {
-          type: 'colorpicker',
-          label: 'Preview background color',
-          id: 'bgPvw',
-          default: instance.rgb(0, 255, 0)
-        },
+        BackgroundPicker(instance.rgb(255, 0, 0)),
         AtemMESourcePicker(model, state, 0)
       ],
       callback: evt => {
         const source = tally[Number(evt.options.input)]
-        if (source) {
-          if (source.program) {
-            return {
-              color: Number(evt.options.fg),
-              bgcolor: Number(evt.options.bgPgm)
-            }
-          } else if (source.preview) {
-            return {
-              color: Number(evt.options.fg),
-              bgcolor: Number(evt.options.bgPvw)
-            }
-          }
+        if (source && source.program) {
+          return getOptColors(evt)
+        }
+        return {}
+      }
+    }),
+    [FeedbackId.PreviewTally]: literal<Required<CompanionFeedback>>({
+      label: 'Change colors from preview tally',
+      description: 'If the input specified has an active preview tally light, change colors of the bank',
+      options: [
+        ForegroundPicker(instance.rgb(0, 0, 0)),
+        BackgroundPicker(instance.rgb(0, 255, 0)),
+        AtemMESourcePicker(model, state, 0)
+      ],
+      callback: evt => {
+        const source = tally[Number(evt.options.input)]
+        if (source && source.preview) {
+          return getOptColors(evt)
         }
         return {}
       }
