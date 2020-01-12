@@ -1,4 +1,4 @@
-import { Atem, AtemState } from 'atem-connection'
+import { Atem, AtemState, Commands } from 'atem-connection'
 import InstanceSkel = require('../../../instance_skel')
 import { CompanionActionEvent, CompanionConfigField, CompanionSystem } from '../../../instance_skel_types'
 import { GetActionsList, HandleAction } from './actions'
@@ -7,6 +7,7 @@ import { FeedbackId, GetFeedbacksList } from './feedback'
 import { UpgradeV2_2_0 } from './migrations'
 import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, MODEL_AUTO_DETECT, ModelSpec } from './models'
 import { GetPresetsList } from './presets'
+import { TallyBySource } from './state'
 import {
   InitVariables,
   updateDSKVariable,
@@ -23,6 +24,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   private model: ModelSpec
   private atem: Atem
   private atemState: AtemState
+  private atemTally: TallyBySource
   private initDone: boolean
 
   /**
@@ -32,6 +34,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     super(system, id, config)
 
     this.atemState = new AtemState()
+    this.atemTally = {}
 
     this.model = GetModelSpec(this.getBestModelId() || MODEL_AUTO_DETECT) || GetAutoDetectModel()
     this.config.modelID = this.model.id + ''
@@ -135,11 +138,22 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   private updateCompanionBits() {
     InitVariables(this, this.model, this.atemState)
     this.setPresetDefinitions(GetPresetsList(this, this.model, this.atemState))
-    this.setFeedbackDefinitions(GetFeedbacksList(this, this.model, this.atemState))
+    this.setFeedbackDefinitions(GetFeedbacksList(this, this.model, this.atemState, this.atemTally))
     this.setActions(GetActionsList(this.model, this.atemState))
     this.checkFeedbacks()
   }
 
+  /**
+   * Handle tally packets
+   */
+  private processReceivedCommand(command: Commands.AbstractCommand) {
+    if (command instanceof Commands.TallyBySourceCommand) {
+      // The feedback holds a reference to the old object, so we need
+      // to update it in place
+      Object.assign(this.atemTally, command.properties)
+      this.checkFeedbacks(FeedbackId.Tally)
+    }
+  }
   /**
    * Handle ATEM state changes
    */
@@ -339,6 +353,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
       // TODO - clear cached state after some timeout
     })
     this.atem.on('stateChanged', this.processStateChange.bind(this))
+    this.atem.on('receivedCommand', this.processReceivedCommand.bind(this))
 
     if (this.config.host) {
       this.atem.connect(this.config.host)

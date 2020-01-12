@@ -32,7 +32,7 @@ import {
   AtemUSKPicker
 } from './input'
 import { ModelSpec } from './models'
-import { getDSK, getME, getMultiviewerWindow, getSuperSourceBox, getUSK } from './state'
+import { getDSK, getME, getMultiviewerWindow, getSuperSourceBox, getUSK, TallyBySource } from './state'
 import { assertUnreachable, calculateTransitionSelection, literal, MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util'
 
 export enum FeedbackId {
@@ -59,7 +59,8 @@ export enum FeedbackId {
   TransitionRate = 'transitionRate',
   MediaPlayerSource = 'mediaPlayerSource',
   FadeToBlackIsBlack = 'fadeToBlackIsBlack',
-  FadeToBlackRate = 'fadeToBlackRate'
+  FadeToBlackRate = 'fadeToBlackRate',
+  Tally = 'tally'
 }
 
 export enum MacroFeedbackType {
@@ -90,6 +91,48 @@ function getOptColors(evt: CompanionFeedbackEvent) {
   return {
     color: Number(evt.options.fg),
     bgcolor: Number(evt.options.bg)
+  }
+}
+
+function tallyFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState, tally: TallyBySource) {
+  return {
+    [FeedbackId.Tally]: literal<Required<CompanionFeedback>>({
+      label: 'Change colors from tally',
+      description: 'If the input specified has an active tally light, change colors of the bank',
+      options: [
+        ForegroundPicker(instance.rgb(255, 255, 255)),
+        {
+          type: 'colorpicker',
+          label: 'Program background color',
+          id: 'bgPgm',
+          default: instance.rgb(255, 0, 0)
+        },
+        {
+          type: 'colorpicker',
+          label: 'Preview background color',
+          id: 'bgPvw',
+          default: instance.rgb(0, 255, 0)
+        },
+        AtemMESourcePicker(model, state, 0)
+      ],
+      callback: evt => {
+        const source = tally[Number(evt.options.input)]
+        if (source) {
+          if (source.program) {
+            return {
+              color: Number(evt.options.fg),
+              bgcolor: Number(evt.options.bgPgm)
+            }
+          } else if (source.preview) {
+            return {
+              color: Number(evt.options.fg),
+              bgcolor: Number(evt.options.bgPvw)
+            }
+          }
+        }
+        return {}
+      }
+    })
   }
 }
 
@@ -665,8 +708,14 @@ function dskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
   }
 }
 
-export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
+export function GetFeedbacksList(
+  instance: InstanceSkel<AtemConfig>,
+  model: ModelSpec,
+  state: AtemState,
+  tally: TallyBySource
+) {
   const feedbacks: { [id in FeedbackId]: Required<CompanionFeedback> | undefined } = {
+    ...tallyFeedbacks(instance, model, state, tally),
     ...previewFeedbacks(instance, model, state),
     ...programFeedbacks(instance, model, state),
     ...uskFeedbacks(instance, model, state),
