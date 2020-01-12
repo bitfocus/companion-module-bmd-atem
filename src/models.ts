@@ -262,7 +262,7 @@ export const ALL_MODELS: ModelSpec[] = [
     }
   },
   {
-    id: 13, // Enums.Model.Mini,
+    id: Enums.Model.Mini,
     label: 'Mini',
     inputs: 4,
     auxes: 1,

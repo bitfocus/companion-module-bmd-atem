@@ -4,6 +4,8 @@ Should work with all models of Blackmagic Design ATEM mixers.
 
 Supports firmware 7.2 & 7.5.2 - 8.1
 
+Devices must be controlled over a network, USB control is NOT supported.
+
 **Available commands for Blackmagic Design ATEM**
 
 - Set input on Program
