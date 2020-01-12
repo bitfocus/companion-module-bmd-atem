@@ -15,6 +15,7 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 ### v2.3.0
 
 - Add definitions for Mini
+- Add tally feedback
 
 ### v2.2.0
 
