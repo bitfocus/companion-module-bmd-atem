@@ -28,13 +28,7 @@ import {
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getSuperSourceBox, getUSK } from './state'
-import {
-  assertUnreachable,
-  calculateTransitionSelection,
-  compactObj,
-  literal,
-  MEDIA_PLAYER_SOURCE_CLIP_OFFSET
-} from './util'
+import { assertUnreachable, calculateTransitionSelection, literal, MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util'
 
 export enum ActionId {
   Program = 'program',
@@ -110,7 +104,7 @@ function meActions(model: ModelSpec, state: AtemState) {
       : undefined,
     [ActionId.TransitionStyle]: literal<Required<CompanionAction>>({
       label: 'Change transition style',
-      options: [AtemMEPicker(model, 0), AtemTransitionStylePicker()]
+      options: [AtemMEPicker(model, 0), AtemTransitionStylePicker(model.media.clips === 0)]
     }),
     [ActionId.TransitionRate]: literal<Required<CompanionAction>>({
       label: 'Change transition rate',
@@ -277,7 +271,7 @@ export function GetActionsList(model: ModelSpec, state: AtemState) {
       : undefined
   }
 
-  return compactObj(actions)
+  return actions
 }
 
 export function HandleAction(

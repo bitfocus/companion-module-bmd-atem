@@ -33,13 +33,7 @@ import {
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getME, getMultiviewerWindow, getSuperSourceBox, getUSK } from './state'
-import {
-  assertUnreachable,
-  calculateTransitionSelection,
-  compactObj,
-  literal,
-  MEDIA_PLAYER_SOURCE_CLIP_OFFSET
-} from './util'
+import { assertUnreachable, calculateTransitionSelection, literal, MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util'
 
 export enum FeedbackId {
   PreviewBG = 'preview_bg',
@@ -400,7 +394,7 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
         ForegroundPicker(instance.rgb(0, 0, 0)),
         BackgroundPicker(instance.rgb(255, 255, 0)),
         AtemMEPicker(model, 0),
-        AtemTransitionStylePicker()
+        AtemTransitionStylePicker(model.media.clips === 0)
       ],
       callback: evt => {
         const me = getME(state, evt.options.mixeffect)
@@ -435,7 +429,7 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
         ForegroundPicker(instance.rgb(0, 0, 0)),
         BackgroundPicker(instance.rgb(255, 255, 0)),
         AtemMEPicker(model, 0),
-        AtemTransitionStylePicker(),
+        AtemTransitionStylePicker(true),
         AtemRatePicker('Transition Rate')
       ],
       callback: evt => {
@@ -811,5 +805,5 @@ export function GetFeedbacksList(instance: InstanceSkel<AtemConfig>, model: Mode
       : undefined
   }
 
-  return compactObj(feedbacks)
+  return feedbacks
 }

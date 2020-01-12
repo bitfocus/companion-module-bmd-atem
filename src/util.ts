@@ -35,7 +35,3 @@ export function calculateTransitionSelection(keyCount: number, options: { [key: 
 }
 
 export type Required<T> = T extends object ? { [P in keyof T]-?: NonNullable<T[P]> } : T
-
-export function compactObj<T>(obj: { [key: string]: T | undefined }): { [key: string]: T } {
-  return _.pick(obj, Boolean) as { [key: string]: T }
-}

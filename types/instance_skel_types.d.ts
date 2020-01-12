@@ -110,10 +110,10 @@ export interface CompanionPreset {
 }
 
 export interface CompanionFeedbacks {
-  [id: string]: CompanionFeedback
+  [id: string]: CompanionFeedback | undefined
 }
 export interface CompanionActions {
-  [id: string]: CompanionAction
+  [id: string]: CompanionAction | undefined
 }
 
 export type CompanionUpgradeScript<TConfig> = (
