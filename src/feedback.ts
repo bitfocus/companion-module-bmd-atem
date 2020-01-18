@@ -32,7 +32,7 @@ import {
   AtemUSKPicker
 } from './input'
 import { ModelSpec } from './models'
-import { getDSK, getME, getMultiviewerWindow, getSuperSourceBox, getUSK, TallyBySource } from './state'
+import { getDSK, getMixEffect, getMultiviewerWindow, getSuperSourceBox, getUSK, TallyBySource } from './state'
 import { assertUnreachable, calculateTransitionSelection, literal, MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util'
 
 export enum FeedbackId {
@@ -144,7 +144,7 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
         AtemMEPicker(model, 0)
       ],
       callback: evt => {
-        const me = getME(state, evt.options.mixeffect)
+        const me = getMixEffect(state, evt.options.mixeffect)
         if (me && me.previewInput === Number(evt.options.input)) {
           return getOptColors(evt)
         }
@@ -166,8 +166,8 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
               AtemMEPicker(model, 2)
             ],
             callback: evt => {
-              const me1 = getME(state, evt.options.mixeffect1)
-              const me2 = getME(state, evt.options.mixeffect2)
+              const me1 = getMixEffect(state, evt.options.mixeffect1)
+              const me2 = getMixEffect(state, evt.options.mixeffect2)
               if (
                 me1 &&
                 me1.previewInput === Number(evt.options.input1) &&
@@ -197,9 +197,9 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
               AtemMEPicker(model, 3)
             ],
             callback: evt => {
-              const me1 = getME(state, evt.options.mixeffect1)
-              const me2 = getME(state, evt.options.mixeffect2)
-              const me3 = getME(state, evt.options.mixeffect3)
+              const me1 = getMixEffect(state, evt.options.mixeffect1)
+              const me2 = getMixEffect(state, evt.options.mixeffect2)
+              const me3 = getMixEffect(state, evt.options.mixeffect3)
               if (
                 me1 &&
                 me1.previewInput === Number(evt.options.input1) &&
@@ -233,10 +233,10 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
               AtemMEPicker(model, 4)
             ],
             callback: evt => {
-              const me1 = getME(state, evt.options.mixeffect1)
-              const me2 = getME(state, evt.options.mixeffect2)
-              const me3 = getME(state, evt.options.mixeffect3)
-              const me4 = getME(state, evt.options.mixeffect4)
+              const me1 = getMixEffect(state, evt.options.mixeffect1)
+              const me2 = getMixEffect(state, evt.options.mixeffect2)
+              const me3 = getMixEffect(state, evt.options.mixeffect3)
+              const me4 = getMixEffect(state, evt.options.mixeffect4)
               if (
                 me1 &&
                 me1.previewInput === Number(evt.options.input1) &&
@@ -268,7 +268,7 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
         AtemMEPicker(model, 0)
       ],
       callback: evt => {
-        const me = getME(state, evt.options.mixeffect)
+        const me = getMixEffect(state, evt.options.mixeffect)
         if (me && me.programInput === Number(evt.options.input)) {
           return getOptColors(evt)
         }
@@ -290,8 +290,8 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
               AtemMEPicker(model, 2)
             ],
             callback: evt => {
-              const me1 = getME(state, evt.options.mixeffect1)
-              const me2 = getME(state, evt.options.mixeffect2)
+              const me1 = getMixEffect(state, evt.options.mixeffect1)
+              const me2 = getMixEffect(state, evt.options.mixeffect2)
               if (
                 me1 &&
                 me1.programInput === Number(evt.options.input1) &&
@@ -321,9 +321,9 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
               AtemMEPicker(model, 3)
             ],
             callback: evt => {
-              const me1 = getME(state, evt.options.mixeffect1)
-              const me2 = getME(state, evt.options.mixeffect2)
-              const me3 = getME(state, evt.options.mixeffect3)
+              const me1 = getMixEffect(state, evt.options.mixeffect1)
+              const me2 = getMixEffect(state, evt.options.mixeffect2)
+              const me3 = getMixEffect(state, evt.options.mixeffect3)
               if (
                 me1 &&
                 me1.programInput === Number(evt.options.input1) &&
@@ -357,10 +357,10 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
               AtemMEPicker(model, 4)
             ],
             callback: evt => {
-              const me1 = getME(state, evt.options.mixeffect1)
-              const me2 = getME(state, evt.options.mixeffect2)
-              const me3 = getME(state, evt.options.mixeffect3)
-              const me4 = getME(state, evt.options.mixeffect4)
+              const me1 = getMixEffect(state, evt.options.mixeffect1)
+              const me2 = getMixEffect(state, evt.options.mixeffect2)
+              const me3 = getMixEffect(state, evt.options.mixeffect3)
+              const me4 = getMixEffect(state, evt.options.mixeffect4)
               if (
                 me1 &&
                 me1.programInput === Number(evt.options.input1) &&
@@ -436,7 +436,7 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
         AtemTransitionStylePicker(model.media.clips === 0)
       ],
       callback: evt => {
-        const me = getME(state, evt.options.mixeffect)
+        const me = getMixEffect(state, evt.options.mixeffect)
         if (me && me.transitionProperties.style === Number(evt.options.style)) {
           return getOptColors(evt)
         }
@@ -453,7 +453,7 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
         ...AtemTransitionSelectionPickers(model)
       ],
       callback: evt => {
-        const me = getME(state, evt.options.mixeffect)
+        const me = getMixEffect(state, evt.options.mixeffect)
         const expectedSelection = calculateTransitionSelection(model.USKs, evt.options)
         if (me && me.transitionProperties.selection === expectedSelection) {
           return getOptColors(evt)
@@ -472,28 +472,28 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
         AtemRatePicker('Transition Rate')
       ],
       callback: evt => {
-        const me = getME(state, evt.options.mixeffect)
+        const me = getMixEffect(state, evt.options.mixeffect)
         if (me && me.transitionSettings) {
           const style = Number(evt.options.style) as Enums.TransitionStyle
           const rate = Number(evt.options.rate)
           switch (style) {
             case Enums.TransitionStyle.MIX:
-              if (me.transitionSettings.mix.rate === rate) {
+              if (me.transitionSettings.mix?.rate === rate) {
                 return getOptColors(evt)
               }
               break
             case Enums.TransitionStyle.DIP:
-              if (me.transitionSettings.dip.rate === rate) {
+              if (me.transitionSettings.dip?.rate === rate) {
                 return getOptColors(evt)
               }
               break
             case Enums.TransitionStyle.WIPE:
-              if (me.transitionSettings.wipe.rate === rate) {
+              if (me.transitionSettings.wipe?.rate === rate) {
                 return getOptColors(evt)
               }
               break
             case Enums.TransitionStyle.DVE:
-              if (me.transitionSettings.DVE.rate === rate) {
+              if (me.transitionSettings.DVE?.rate === rate) {
                 return getOptColors(evt)
               }
               break
@@ -521,7 +521,7 @@ function fadeToBlackFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSp
         AtemFadeToBlackStatePicker()
       ],
       callback: evt => {
-        const me = getME(state, evt.options.mixeffect)
+        const me = getMixEffect(state, evt.options.mixeffect)
         if (me && me.fadeToBlack) {
           switch (evt.options.state) {
             case 'off':
@@ -555,7 +555,7 @@ function fadeToBlackFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSp
         AtemRatePicker('Rate')
       ],
       callback: evt => {
-        const me = getME(state, evt.options.mixeffect)
+        const me = getMixEffect(state, evt.options.mixeffect)
         const rate = Number(evt.options.rate)
         if (me && me.fadeToBlack && me.fadeToBlack.rate === rate) {
           return getOptColors(evt)
@@ -694,7 +694,7 @@ function dskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
           ],
           callback: evt => {
             const dsk = getDSK(state, evt.options.key)
-            if (dsk && dsk.sources.fillSource === Number(evt.options.fill)) {
+            if (dsk && dsk.sources?.fillSource === Number(evt.options.fill)) {
               return getOptColors(evt)
             }
             return {}
@@ -776,16 +776,16 @@ export function GetFeedbacksList(
               switch (type) {
                 case MacroFeedbackType.IsUsed:
                   const macro = state.macro.macroProperties[macroIndex]
-                  isActive = macro && macro.isUsed
+                  isActive = !!macro?.isUsed
                   break
                 case MacroFeedbackType.IsRecording:
-                  isActive = macroRecorder && macroRecorder.isRecording && macroRecorder.macroIndex === macroIndex
+                  isActive = macroRecorder.isRecording && macroRecorder.macroIndex === macroIndex
                   break
                 case MacroFeedbackType.IsRunning:
-                  isActive = macroPlayer && macroPlayer.isRunning && macroPlayer.macroIndex === macroIndex
+                  isActive = macroPlayer.isRunning && macroPlayer.macroIndex === macroIndex
                   break
                 case MacroFeedbackType.IsWaiting:
-                  isActive = macroPlayer && macroPlayer.isWaiting && macroPlayer.macroIndex === macroIndex
+                  isActive = macroPlayer.isWaiting && macroPlayer.macroIndex === macroIndex
                   break
                 default:
                   assertUnreachable(type)

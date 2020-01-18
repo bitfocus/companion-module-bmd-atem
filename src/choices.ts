@@ -76,7 +76,7 @@ export function GetMacroChoices(model: ModelSpec, state: AtemState): DropdownCho
     const macro = state.macro.macroProperties[i]
     return {
       id: i + 1,
-      label: (macro && macro.isUsed ? `${macro.name} (#${i + 1})` : undefined) || `Macro ${i + 1}`
+      label: (macro?.isUsed ? `${macro.name} (#${i + 1})` : undefined) || `Macro ${i + 1}`
     }
   })
 }
@@ -97,8 +97,8 @@ export interface SourceInfo {
 export function GetSourcesListForType(model: ModelSpec, state: AtemState, subset?: 'me' | 'aux' | 'mv') {
   const getSource = (id: number, defShort: string, defLong: string) => {
     const input = state.inputs[id]
-    const shortName = input ? input.shortName || defShort : defShort
-    const longName = input ? input.longName || defLong : defLong
+    const shortName = input?.shortName || defShort
+    const longName = input?.longName || defLong
 
     return literal<SourceInfo>({
       id,

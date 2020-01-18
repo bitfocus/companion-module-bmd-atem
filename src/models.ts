@@ -309,23 +309,25 @@ export function GetAutoDetectModel() {
   return ALL_MODELS[0]
 }
 
-export function GetParsedModelSpec({ info, macro, media, inputs, settings, video }: AtemState): ModelSpec {
+export function GetParsedModelSpec({ info, inputs, settings }: AtemState): ModelSpec {
+  const defaults = GetAutoDetectModel()
   return {
     id: info.model,
-    label: info.productIdentifier,
-    inputs: inputs.filter(i => i.isExternal).length,
-    auxes: info.capabilities.auxilliaries,
-    MEs: info.capabilities.MEs,
-    USKs: video.ME[0] ? _.values(video.ME[0].upstreamKeyers).length : 0,
-    DSKs: _.values(video.downstreamKeyers).length,
+    label: info.productIdentifier ?? 'Blackmagic ATEM',
+    inputs: _.values(inputs).filter(i => i?.isExternal).length,
+    auxes: info.capabilities?.auxilliaries ?? defaults.auxes,
+    MEs: info.capabilities?.mixEffects ?? defaults.MEs,
+    USKs: info.mixEffects[0]?.keyCount ?? defaults.USKs,
+    DSKs: info.capabilities?.downstreamKeyers ?? defaults.DSKs,
     MVs: _.values(settings.multiViewers).length,
     multiviewerFullGrid: false, // TODO
-    SSrc: info.capabilities.superSources,
-    macros: macro.macroProperties.length,
+    auxInput1Direct: false, // TODO
+    SSrc: info.capabilities?.superSources ?? defaults.SSrc,
+    macros: info.macroPool?.macroCount ?? defaults.macros,
     media: {
-      players: info.capabilities.mediaPlayers,
-      stills: media.stillPool.length,
-      clips: media.clipPool.length
+      players: info.capabilities?.mediaPlayers ?? defaults.media.players,
+      stills: info.mediaPool?.stillCount ?? defaults.media.stills,
+      clips: info.mediaPool?.clipCount ?? defaults.media.clips
     }
   }
 }

@@ -4,6 +4,7 @@ import { CompanionVariable } from '../../../instance_skel_types'
 import { GetSourcesListForType, SourceInfo } from './choices'
 import { AtemConfig, PresetStyleName } from './config'
 import { ModelSpec } from './models'
+import { getDSK, getMixEffect, getUSK } from './state'
 
 function getSourcePresetName(instance: InstanceSkel<AtemConfig>, state: AtemState, id: number) {
   const input = state.inputs[id]
@@ -19,13 +20,11 @@ function getSourcePresetName(instance: InstanceSkel<AtemConfig>, state: AtemStat
 }
 
 export function updateMEProgramVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, meIndex: number) {
-  const me = state.video.ME[meIndex]
-  const input = me ? me.programInput : 0
+  const input = getMixEffect(state, meIndex)?.programInput ?? 0
   instance.setVariable(`pgm${meIndex + 1}_input`, getSourcePresetName(instance, state, input))
 }
 export function updateMEPreviewVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, meIndex: number) {
-  const me = state.video.ME[meIndex]
-  const input = me ? me.previewInput : 0
+  const input = getMixEffect(state, meIndex)?.previewInput ?? 0
   instance.setVariable(`pvw${meIndex + 1}_input`, getSourcePresetName(instance, state, input))
 }
 
@@ -35,19 +34,16 @@ export function updateUSKVariable(
   meIndex: number,
   keyIndex: number
 ) {
-  const me = state.video.ME[meIndex]
-  const key = me ? me.upstreamKeyers[keyIndex] : undefined
-  const input = key ? key.fillSource : 0
+  const input = getUSK(state, meIndex, keyIndex)?.fillSource ?? 0
   instance.setVariable(`usk_${meIndex + 1}_${keyIndex + 1}_input`, getSourcePresetName(instance, state, input))
 }
 export function updateDSKVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, keyIndex: number) {
-  const key = state.video.downstreamKeyers[keyIndex]
-  const input = key ? key.sources.fillSource : 0
+  const input = getDSK(state, keyIndex)?.sources?.fillSource ?? 0
   instance.setVariable(`dsk_${keyIndex + 1}_input`, getSourcePresetName(instance, state, input))
 }
 
 export function updateAuxVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, auxIndex: number) {
-  const input = state.video.auxilliaries[auxIndex]
+  const input = state.video.auxilliaries[auxIndex] ?? 0
   instance.setVariable(`aux${auxIndex + 1}_input`, getSourcePresetName(instance, state, input))
 }
 

@@ -303,14 +303,14 @@ export function AtemMediaPlayerSourcePicker(model: ModelSpec, state: AtemState):
         const clip = state.media.clipPool[i]
         return {
           id: i + MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
-          label: clip && clip.name ? `Clip #${i + 1}: ${clip.name}` : `Clip #${i + 1}`
+          label: clip?.name ? `Clip #${i + 1}: ${clip.name}` : `Clip #${i + 1}`
         }
       }),
       ...iterateTimes(model.media.stills, i => {
         const still = state.media.stillPool[i]
         return {
           id: i,
-          label: still && still.fileName ? `Still #${i + 1}: ${still.fileName}` : `Still #${i + 1}`
+          label: still?.fileName ? `Still #${i + 1}: ${still.fileName}` : `Still #${i + 1}`
         }
       })
     ]
