@@ -98,7 +98,7 @@ function getOptColors(evt: CompanionFeedbackEvent) {
 function tallyFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState, tally: TallyBySource) {
   return {
     [FeedbackId.ProgramTally]: literal<Required<CompanionFeedback>>({
-      label: 'Change colors from program tally',
+      label: 'Change colors from mixer program tally',
       description: 'If the input specified has an active progam tally light, change colors of the bank',
       options: [
         ForegroundPicker(instance.rgb(255, 255, 255)),
@@ -114,7 +114,7 @@ function tallyFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
       }
     }),
     [FeedbackId.PreviewTally]: literal<Required<CompanionFeedback>>({
-      label: 'Change colors from preview tally',
+      label: 'Change colors from mixer preview tally',
       description: 'If the input specified has an active preview tally light, change colors of the bank',
       options: [
         ForegroundPicker(instance.rgb(0, 0, 0)),
@@ -135,7 +135,7 @@ function tallyFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
   return {
     [FeedbackId.PreviewBG]: literal<Required<CompanionFeedback>>({
-      label: 'Change colors from preview',
+      label: 'Change colors from one ME preview source',
       description: 'If the input specified is in use by preview on the M/E stage specified, change colors of the bank',
       options: [
         ForegroundPicker(instance.rgb(0, 0, 0)),
@@ -154,7 +154,7 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
     [FeedbackId.PreviewBG2]:
       model.MEs >= 2
         ? literal<Required<CompanionFeedback>>({
-            label: 'Change colors from two preview sources',
+            label: 'Change colors from two ME preview sources',
             description:
               'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
             options: [
@@ -183,7 +183,7 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
     [FeedbackId.PreviewBG3]:
       model.MEs >= 2
         ? literal<Required<CompanionFeedback>>({
-            label: 'Change colors from three preview sources',
+            label: 'Change colors from three ME preview sources',
             description:
               'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
             options: [
@@ -217,7 +217,7 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
     [FeedbackId.PreviewBG4]:
       model.MEs >= 2
         ? literal<Required<CompanionFeedback>>({
-            label: 'Change colors from four preview sources',
+            label: 'Change colors from four ME preview sources',
             description:
               'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
             options: [
@@ -259,7 +259,7 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
 function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
   return {
     [FeedbackId.ProgramBG]: literal<Required<CompanionFeedback>>({
-      label: 'Change colors from program',
+      label: 'Change colors from one ME program source',
       description: 'If the input specified is in use by program on the M/E stage specified, change colors of the bank',
       options: [
         ForegroundPicker(instance.rgb(255, 255, 255)),
@@ -278,7 +278,7 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
     [FeedbackId.ProgramBG2]:
       model.MEs >= 2
         ? literal<Required<CompanionFeedback>>({
-            label: 'Change colors from two program sources',
+            label: 'Change colors from two ME program sources',
             description:
               'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
             options: [
@@ -307,7 +307,7 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
     [FeedbackId.ProgramBG3]:
       model.MEs >= 2
         ? literal<Required<CompanionFeedback>>({
-            label: 'Change colors from three program sources',
+            label: 'Change colors from three ME program sources',
             description:
               'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
             options: [
@@ -341,7 +341,7 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
     [FeedbackId.ProgramBG4]:
       model.MEs >= 2
         ? literal<Required<CompanionFeedback>>({
-            label: 'Change colors from four program sources',
+            label: 'Change colors from four ME program sources',
             description:
               'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
             options: [
