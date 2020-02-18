@@ -12,6 +12,7 @@ import {
   InitVariables,
   updateDSKVariable,
   updateMacroVariable,
+  updateMediaPlayerVariables,
   updateMEPreviewVariable,
   updateMEProgramVariable,
   updateUSKVariable
@@ -250,7 +251,11 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
         this.checkFeedbacks(FeedbackId.FadeToBlackRate)
         this.checkFeedbacks(FeedbackId.FadeToBlackIsBlack)
       }
-      if (path.match(/media.players.(\d+)/)) {
+
+      const mediaPlayerMatch = path.match(/media.players.(\d+)/)
+      if (mediaPlayerMatch) {
+        const mediaPlayer = parseInt(mediaPlayerMatch[1], 10)
+        updateMediaPlayerVariables(this, this.atemState, mediaPlayer)
         this.checkFeedbacks(FeedbackId.MediaPlayerSource)
       }
 

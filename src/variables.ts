@@ -1,4 +1,4 @@
-import { AtemState } from 'atem-connection'
+import { AtemState, Enums } from 'atem-connection'
 import InstanceSkel = require('../../../instance_skel')
 import { CompanionVariable } from '../../../instance_skel_types'
 import { GetSourcesListForType, SourceInfo } from './choices'
@@ -49,7 +49,36 @@ export function updateAuxVariable(instance: InstanceSkel<AtemConfig>, state: Ate
 
 export function updateMacroVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, id: number) {
   const macro = state.macro.macroProperties[id]
-  instance.setVariable(`macro_${id + 1}`, (macro ? macro.description || macro.name : '') || `Macro ${id + 1}`)
+  instance.setVariable(`macro_${id + 1}`, macro?.description || macro?.name || `Macro ${id + 1}`)
+}
+
+export function updateMediaStillVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, id: number) {
+  const still = state.media.stillPool[id]
+  instance.setVariable(`still_${id + 1}`, still?.fileName || `Still ${id + 1}`)
+}
+
+export function updateMediaClipVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, id: number) {
+  const clip = state.media.clipPool[id]
+  instance.setVariable(`clip_${id + 1}`, clip?.name || `Clip ${id + 1}`)
+}
+
+export function updateMediaPlayerVariables(instance: InstanceSkel<AtemConfig>, state: AtemState, id: number) {
+  const player = state.media.players[id]
+  let indexStr = '-1'
+  let sourceStr = 'Unknown'
+  if (player) {
+    if (player.sourceType === Enums.MediaSourceType.Clip) {
+      const clip = state.media.clipPool[player.clipIndex]
+      indexStr = `C${player.clipIndex + 1}`
+      sourceStr = clip?.name || `Clip ${player.clipIndex + 1}`
+    } else if (player.sourceType === Enums.MediaSourceType.Still) {
+      const still = state.media.stillPool[player.stillIndex]
+      indexStr = `S${player.stillIndex + 1}`
+      sourceStr = still?.fileName || `Still ${player.stillIndex + 1}`
+    }
+  }
+  instance.setVariable(`mp_index_${id + 1}`, indexStr)
+  instance.setVariable(`mp_source_${id + 1}`, sourceStr)
 }
 
 function updateInputVariables(instance: InstanceSkel<AtemConfig>, src: SourceInfo) {
@@ -126,6 +155,36 @@ export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSp
     })
 
     updateMacroVariable(instance, state, i)
+  }
+
+  // Media
+  for (let i = 0; i < model.media.stills; i++) {
+    variables.push({
+      label: `Name of still #${i + 1}`,
+      name: `still_${i + 1}`
+    })
+
+    updateMediaStillVariable(instance, state, i)
+  }
+  for (let i = 0; i < model.media.clips; i++) {
+    variables.push({
+      label: `Name of clip #${i + 1}`,
+      name: `clip_${i + 1}`
+    })
+
+    updateMediaClipVariable(instance, state, i)
+  }
+  for (let i = 0; i < model.media.players; i++) {
+    variables.push({
+      label: `Name of media player source #${i + 1}`,
+      name: `mp_source_${i + 1}`
+    })
+    variables.push({
+      label: `Name of media player index #${i + 1}`,
+      name: `mp_index_${i + 1}`
+    })
+
+    updateMediaPlayerVariables(instance, state, i)
   }
 
   instance.setVariableDefinitions(variables)
