@@ -12,6 +12,12 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.4.0
+
+- More stable connection library
+- Variables for media pool
+- Variables for media players
+
 ### v2.3.0
 
 - Add definitions for Mini
