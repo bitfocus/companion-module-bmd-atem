@@ -95,6 +95,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
         }
       }
 
+      this.status(this.STATUS_WARNING, 'Connecting')
       this.atem.connect(this.config.host)
     }
   }
