@@ -12,6 +12,10 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.4.1
+
+- Revert connection library change
+
 ### v2.4.0
 
 - More stable connection library
