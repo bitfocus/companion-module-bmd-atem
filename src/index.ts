@@ -27,6 +27,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   private atemState: AtemState
   private atemTally: TallyBySource
   private initDone: boolean
+  private isActive: boolean
 
   /**
    * Create an instance of an ATEM module.
@@ -43,6 +44,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     this.atem = new Atem({}) // To ensure that there arent undefined bugs
 
     this.initDone = false
+    this.isActive = false
 
     this.addUpgradeScript(UpgradeV2_2_0)
   }
@@ -59,6 +61,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
    * is OK to start doing things.
    */
   public init() {
+    this.isActive = true
     this.status(this.STATUS_UNKNOWN)
 
     // Unfortunately this is redundant if the switcher goes
@@ -114,6 +117,8 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
    * Clean up the instance before it is destroyed.
    */
   public destroy() {
+    this.isActive = false
+
     if (this.atem) {
       this.atem.disconnect()
       delete this.atem
@@ -354,7 +359,10 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
       this.status(this.STATUS_ERROR, e.message)
     })
     this.atem.on('disconnected', () => {
-      this.status(this.STATUS_UNKNOWN, 'Disconnected')
+      if (this.isActive) {
+        this.status(this.STATUS_WARNING, 'Reconnecting')
+      }
+      this.log('info', 'Lost connection')
       this.initDone = false
       // TODO - clear cached state after some timeout
     })
@@ -363,6 +371,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
     if (this.config.host) {
       this.atem.connect(this.config.host)
+      this.status(this.STATUS_WARNING, 'Connecting')
     }
   }
 }
