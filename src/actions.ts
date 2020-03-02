@@ -281,6 +281,23 @@ export function HandleAction(
   state: AtemState,
   action: CompanionActionEvent
 ) {
+  try {
+    const res = executeAction(instance, atem, model, state, action)
+    res.catch(e => {
+      instance.debug('Action execution error: ' + e)
+    })
+  } catch (e) {
+    instance.debug('Action failed: ' + e)
+  }
+}
+
+function executeAction(
+  instance: InstanceSkel<AtemConfig>,
+  atem: Atem,
+  model: ModelSpec,
+  state: AtemState,
+  action: CompanionActionEvent
+) {
   const opt = action.options
   const getOptNumber = (key: string) => {
     const val = Number(opt[key])
@@ -293,221 +310,196 @@ export function HandleAction(
     return !!opt[key]
   }
 
-  try {
-    const actionId = action.action as ActionId
-    switch (actionId) {
-      case ActionId.Program:
-        atem.changeProgramInput(getOptNumber('input'), getOptNumber('mixeffect'))
-        break
-      case ActionId.Preview:
-        atem.changePreviewInput(getOptNumber('input'), getOptNumber('mixeffect'))
-        break
-      case ActionId.USKSource:
-        atem.setUpstreamKeyerFillSource(getOptNumber('fill'), getOptNumber('mixeffect'), getOptNumber('key'))
+  /* tslint:enable:no-switch-case-fall-through */
+  const actionId = action.action as ActionId
+  switch (actionId) {
+    case ActionId.Program:
+      return atem.changeProgramInput(getOptNumber('input'), getOptNumber('mixeffect'))
+    case ActionId.Preview:
+      return atem.changePreviewInput(getOptNumber('input'), getOptNumber('mixeffect'))
+    case ActionId.USKSource:
+      return Promise.all([
+        atem.setUpstreamKeyerFillSource(getOptNumber('fill'), getOptNumber('mixeffect'), getOptNumber('key')),
         atem.setUpstreamKeyerCutSource(getOptNumber('cut'), getOptNumber('mixeffect'), getOptNumber('key'))
-        break
-      case ActionId.DSKSource:
-        atem.setDownstreamKeyFillSource(getOptNumber('fill'), getOptNumber('key'))
+      ])
+    case ActionId.DSKSource:
+      return Promise.all([
+        atem.setDownstreamKeyFillSource(getOptNumber('fill'), getOptNumber('key')),
         atem.setDownstreamKeyCutSource(getOptNumber('cut'), getOptNumber('key'))
-        break
-      case ActionId.Aux:
-        atem.setAuxSource(getOptNumber('input'), getOptNumber('aux'))
-        break
-      case ActionId.Cut:
-        atem.cut(getOptNumber('mixeffect'))
-        break
-      case ActionId.USKOnAir: {
-        const meIndex = getOptNumber('mixeffect')
-        const keyIndex = getOptNumber('key')
-        if (opt.onair === 'toggle') {
-          const usk = getUSK(state, meIndex, keyIndex)
-          atem.setUpstreamKeyerOnAir(!usk || !usk.onAir, meIndex, keyIndex)
-        } else {
-          atem.setUpstreamKeyerOnAir(opt.onair === 'true', meIndex, keyIndex)
-        }
-        break
+      ])
+    case ActionId.Aux:
+      return atem.setAuxSource(getOptNumber('input'), getOptNumber('aux'))
+    case ActionId.Cut:
+      return atem.cut(getOptNumber('mixeffect'))
+    case ActionId.USKOnAir: {
+      const meIndex = getOptNumber('mixeffect')
+      const keyIndex = getOptNumber('key')
+      if (opt.onair === 'toggle') {
+        const usk = getUSK(state, meIndex, keyIndex)
+        return atem.setUpstreamKeyerOnAir(!usk || !usk.onAir, meIndex, keyIndex)
+      } else {
+        return atem.setUpstreamKeyerOnAir(opt.onair === 'true', meIndex, keyIndex)
       }
-      case ActionId.DSKAuto:
-        atem.autoDownstreamKey(getOptNumber('downstreamKeyerId'))
-        break
-      case ActionId.DSKOnAir: {
-        const keyIndex = getOptNumber('key')
-        if (opt.onair === 'toggle') {
-          const dsk = getDSK(state, keyIndex)
-          atem.setDownstreamKeyOnAir(!dsk || !dsk.onAir, keyIndex)
-        } else {
-          atem.setDownstreamKeyOnAir(opt.onair === 'true', keyIndex)
-        }
-        break
-      }
-      case ActionId.Auto:
-        atem.autoTransition(getOptNumber('mixeffect'))
-        break
-      case ActionId.MacroRun:
-        const macroIndex = getOptNumber('macro') - 1
-        const { macroPlayer, macroRecorder } = state.macro
-        if (opt.action === 'runContinue' && macroPlayer.isWaiting && macroPlayer.macroIndex === macroIndex) {
-          atem.macroContinue()
-        } else if (macroRecorder.isRecording && macroRecorder.macroIndex === macroIndex) {
-          atem.macroStopRecord()
-        } else {
-          atem.macroRun(macroIndex)
-        }
-        break
-      case ActionId.MacroContinue:
-        atem.macroContinue()
-        break
-      case ActionId.MacroStop:
-        atem.macroStop()
-        break
-      case ActionId.MultiviewerWindowSource:
-        atem.setMultiViewerSource(
-          {
-            windowIndex: getOptNumber('windowIndex'),
-            source: getOptNumber('source')
-          },
-          getOptNumber('multiViewerId')
-        )
-        break
-      case ActionId.SuperSourceBoxOnAir:
-        const ssrcId = opt.ssrcId && model.SSrc > 1 ? Number(opt.ssrcId) : 0
-        const boxIndex = getOptNumber('boxIndex')
-
-        if (opt.onair === 'toggle') {
-          const box = getSuperSourceBox(state, boxIndex, ssrcId)
-          atem.setSuperSourceBoxSettings(
-            {
-              enabled: !box || !box.enabled
-            },
-            boxIndex,
-            ssrcId
-          )
-        } else {
-          atem.setSuperSourceBoxSettings(
-            {
-              enabled: opt.onair === 'true'
-            },
-            boxIndex,
-            ssrcId
-          )
-        }
-        break
-      case ActionId.SuperSourceBoxSource:
-        atem.setSuperSourceBoxSettings(
-          {
-            source: getOptNumber('source')
-          },
-          getOptNumber('boxIndex'),
-          opt.ssrcId && model.SSrc > 1 ? Number(opt.ssrcId) : 0
-        )
-        break
-      case ActionId.SuperSourceBoxProperties:
-        atem.setSuperSourceBoxSettings(
-          {
-            size: getOptNumber('size') * 1000,
-            x: getOptNumber('x') * 100,
-            y: getOptNumber('y') * 100,
-            cropped: getOptBool('cropEnable'),
-            cropTop: getOptNumber('cropTop') * 1000,
-            cropBottom: getOptNumber('cropBottom') * 1000,
-            cropLeft: getOptNumber('cropLeft') * 1000,
-            cropRight: getOptNumber('cropRight') * 1000
-          },
-          getOptNumber('boxIndex'),
-          opt.ssrcId && model.SSrc > 1 ? Number(opt.ssrcId) : 0
-        )
-        break
-      case ActionId.TransitionStyle:
-        atem.setTransitionStyle(
-          {
-            style: getOptNumber('style')
-          },
-          getOptNumber('mixeffect')
-        )
-        break
-      case ActionId.TransitionRate:
-        const style = getOptNumber('style') as Enums.TransitionStyle
-        switch (style) {
-          case Enums.TransitionStyle.MIX:
-            atem.setMixTransitionSettings(
-              {
-                rate: getOptNumber('rate')
-              },
-              getOptNumber('mixeffect')
-            )
-            break
-          case Enums.TransitionStyle.DIP:
-            atem.setDipTransitionSettings(
-              {
-                rate: getOptNumber('rate')
-              },
-              getOptNumber('mixeffect')
-            )
-            break
-          case Enums.TransitionStyle.WIPE:
-            atem.setWipeTransitionSettings(
-              {
-                rate: getOptNumber('rate')
-              },
-              getOptNumber('mixeffect')
-            )
-            break
-          case Enums.TransitionStyle.DVE:
-            atem.setDVETransitionSettings(
-              {
-                rate: getOptNumber('rate')
-              },
-              getOptNumber('mixeffect')
-            )
-            break
-          case Enums.TransitionStyle.STING:
-            break
-          default:
-            assertUnreachable(style)
-            instance.debug('Unknown transition style: ' + style)
-            break
-        }
-        break
-      case ActionId.TransitionSelection: {
-        atem.setTransitionStyle(
-          {
-            selection: calculateTransitionSelection(model.USKs, action.options)
-          },
-          getOptNumber('mixeffect')
-        )
-        break
-      }
-      case ActionId.MediaPlayerSource:
-        const source = getOptNumber('source')
-        if (source >= MEDIA_PLAYER_SOURCE_CLIP_OFFSET) {
-          atem.setMediaPlayerSource(
-            {
-              sourceType: Enums.MediaSourceType.Clip,
-              clipIndex: source - MEDIA_PLAYER_SOURCE_CLIP_OFFSET
-            },
-            getOptNumber('mediaplayer')
-          )
-        } else {
-          atem.setMediaPlayerSource(
-            {
-              sourceType: Enums.MediaSourceType.Still,
-              stillIndex: source
-            },
-            getOptNumber('mediaplayer')
-          )
-        }
-        break
-      case ActionId.FadeToBlackAuto:
-        atem.fadeToBlack(getOptNumber('mixeffect'))
-        break
-      case ActionId.FadeToBlackRate:
-        atem.setFadeToBlackRate(getOptNumber('rate'), getOptNumber('mixeffect'))
-        break
-      default:
-        assertUnreachable(actionId)
-        instance.debug('Unknown action: ' + action.action)
     }
-  } catch (e) {
-    instance.debug('Action failed: ' + e)
+    case ActionId.DSKAuto:
+      return atem.autoDownstreamKey(getOptNumber('downstreamKeyerId'))
+    case ActionId.DSKOnAir: {
+      const keyIndex = getOptNumber('key')
+      if (opt.onair === 'toggle') {
+        const dsk = getDSK(state, keyIndex)
+        return atem.setDownstreamKeyOnAir(!dsk || !dsk.onAir, keyIndex)
+      } else {
+        return atem.setDownstreamKeyOnAir(opt.onair === 'true', keyIndex)
+      }
+    }
+    case ActionId.Auto:
+      return atem.autoTransition(getOptNumber('mixeffect'))
+    case ActionId.MacroRun:
+      const macroIndex = getOptNumber('macro') - 1
+      const { macroPlayer, macroRecorder } = state.macro
+      if (opt.action === 'runContinue' && macroPlayer.isWaiting && macroPlayer.macroIndex === macroIndex) {
+        return atem.macroContinue()
+      } else if (macroRecorder.isRecording && macroRecorder.macroIndex === macroIndex) {
+        return atem.macroStopRecord()
+      } else {
+        return atem.macroRun(macroIndex)
+      }
+    case ActionId.MacroContinue:
+      return atem.macroContinue()
+    case ActionId.MacroStop:
+      return atem.macroStop()
+    case ActionId.MultiviewerWindowSource:
+      return atem.setMultiViewerSource(
+        {
+          windowIndex: getOptNumber('windowIndex'),
+          source: getOptNumber('source')
+        },
+        getOptNumber('multiViewerId')
+      )
+    case ActionId.SuperSourceBoxOnAir:
+      const ssrcId = opt.ssrcId && model.SSrc > 1 ? Number(opt.ssrcId) : 0
+      const boxIndex = getOptNumber('boxIndex')
+
+      if (opt.onair === 'toggle') {
+        const box = getSuperSourceBox(state, boxIndex, ssrcId)
+        return atem.setSuperSourceBoxSettings(
+          {
+            enabled: !box || !box.enabled
+          },
+          boxIndex,
+          ssrcId
+        )
+      } else {
+        return atem.setSuperSourceBoxSettings(
+          {
+            enabled: opt.onair === 'true'
+          },
+          boxIndex,
+          ssrcId
+        )
+      }
+    case ActionId.SuperSourceBoxSource:
+      return atem.setSuperSourceBoxSettings(
+        {
+          source: getOptNumber('source')
+        },
+        getOptNumber('boxIndex'),
+        opt.ssrcId && model.SSrc > 1 ? Number(opt.ssrcId) : 0
+      )
+    case ActionId.SuperSourceBoxProperties:
+      return atem.setSuperSourceBoxSettings(
+        {
+          size: getOptNumber('size') * 1000,
+          x: getOptNumber('x') * 100,
+          y: getOptNumber('y') * 100,
+          cropped: getOptBool('cropEnable'),
+          cropTop: getOptNumber('cropTop') * 1000,
+          cropBottom: getOptNumber('cropBottom') * 1000,
+          cropLeft: getOptNumber('cropLeft') * 1000,
+          cropRight: getOptNumber('cropRight') * 1000
+        },
+        getOptNumber('boxIndex'),
+        opt.ssrcId && model.SSrc > 1 ? Number(opt.ssrcId) : 0
+      )
+    case ActionId.TransitionStyle:
+      return atem.setTransitionStyle(
+        {
+          style: getOptNumber('style')
+        },
+        getOptNumber('mixeffect')
+      )
+    case ActionId.TransitionRate:
+      const style = getOptNumber('style') as Enums.TransitionStyle
+      switch (style) {
+        case Enums.TransitionStyle.MIX:
+          return atem.setMixTransitionSettings(
+            {
+              rate: getOptNumber('rate')
+            },
+            getOptNumber('mixeffect')
+          )
+        case Enums.TransitionStyle.DIP:
+          return atem.setDipTransitionSettings(
+            {
+              rate: getOptNumber('rate')
+            },
+            getOptNumber('mixeffect')
+          )
+        case Enums.TransitionStyle.WIPE:
+          return atem.setWipeTransitionSettings(
+            {
+              rate: getOptNumber('rate')
+            },
+            getOptNumber('mixeffect')
+          )
+        case Enums.TransitionStyle.DVE:
+          return atem.setDVETransitionSettings(
+            {
+              rate: getOptNumber('rate')
+            },
+            getOptNumber('mixeffect')
+          )
+        case Enums.TransitionStyle.STING:
+          return Promise.resolve()
+        default:
+          assertUnreachable(style)
+          instance.debug('Unknown transition style: ' + style)
+          return Promise.resolve()
+      }
+    case ActionId.TransitionSelection: {
+      return atem.setTransitionStyle(
+        {
+          selection: calculateTransitionSelection(model.USKs, action.options)
+        },
+        getOptNumber('mixeffect')
+      )
+    }
+    case ActionId.MediaPlayerSource:
+      const source = getOptNumber('source')
+      if (source >= MEDIA_PLAYER_SOURCE_CLIP_OFFSET) {
+        return atem.setMediaPlayerSource(
+          {
+            sourceType: Enums.MediaSourceType.Clip,
+            clipIndex: source - MEDIA_PLAYER_SOURCE_CLIP_OFFSET
+          },
+          getOptNumber('mediaplayer')
+        )
+      } else {
+        return atem.setMediaPlayerSource(
+          {
+            sourceType: Enums.MediaSourceType.Still,
+            stillIndex: source
+          },
+          getOptNumber('mediaplayer')
+        )
+      }
+    case ActionId.FadeToBlackAuto:
+      return atem.fadeToBlack(getOptNumber('mixeffect'))
+    case ActionId.FadeToBlackRate:
+      return atem.setFadeToBlackRate(getOptNumber('rate'), getOptNumber('mixeffect'))
+    default:
+      assertUnreachable(actionId)
+      instance.debug('Unknown action: ' + action.action)
+      return Promise.resolve()
   }
 }
