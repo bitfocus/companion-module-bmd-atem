@@ -12,7 +12,6 @@
 	"homepage": "https://github.com/bitfocus/companion-module-atem#readme",
 	"main": "dist/index.js",
 	"scripts": {
-		"fix-types": "cp types/* ../../",
 		"build": "trash dist && yarn build:main",
 		"build:main": "tsc -p tsconfig.build.json",
 		"build:watch": "tsc -p tsconfig.build.json --watch",
@@ -20,7 +19,7 @@
 		"tslint-check": "tslint-config-prettier-check ./tslint.json",
 		"validate:dependencies": "yarn audit && yarn license-validate",
 		"license-validate": "node-license-validator -p -d --allow-licenses MIT BSD BSD-3-Clause ISC Apache Unlicense WTFPL",
-		"postinstall": "yarn fix-types && yarn build"
+		"postinstall": "yarn build"
 	},
 	"repository": {
 		"type": "git",
