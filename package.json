@@ -1,5 +1,8 @@
 {
-	"name": "atem",
+	"name": "bmd-atem",
+	"legacy": [
+		"atem"
+	],
 	"version": "2.4.1",
 	"api_version": "1.0.0",
 	"description": "Blackmagic Design",

@@ -1,4 +1,4 @@
-# companion-module-atem
+# companion-module-bmd-atem
 
 ## Getting started
 
