@@ -35,6 +35,8 @@ import { ModelSpec } from './models'
 import { getDSK, getME, getMultiviewerWindow, getSuperSourceBox, getUSK, TallyBySource } from './state'
 import { assertUnreachable, calculateTransitionSelection, literal, MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util'
 
+type CompanionFeedbackWithCallback = CompanionFeedback & Required<Pick<CompanionFeedback, 'callback'>>
+
 export enum FeedbackId {
   PreviewBG = 'preview_bg',
   PreviewBG2 = 'preview_bg_2',
@@ -97,7 +99,7 @@ function getOptColors(evt: CompanionFeedbackEvent) {
 
 function tallyFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState, tally: TallyBySource) {
   return {
-    [FeedbackId.ProgramTally]: literal<Required<CompanionFeedback>>({
+    [FeedbackId.ProgramTally]: literal<CompanionFeedbackWithCallback>({
       label: 'Change colors from mixer program tally',
       description: 'If the input specified has an active progam tally light, change colors of the bank',
       options: [
@@ -113,7 +115,7 @@ function tallyFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
         return {}
       }
     }),
-    [FeedbackId.PreviewTally]: literal<Required<CompanionFeedback>>({
+    [FeedbackId.PreviewTally]: literal<CompanionFeedbackWithCallback>({
       label: 'Change colors from mixer preview tally',
       description: 'If the input specified has an active preview tally light, change colors of the bank',
       options: [
@@ -134,7 +136,7 @@ function tallyFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 
 function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
   return {
-    [FeedbackId.PreviewBG]: literal<Required<CompanionFeedback>>({
+    [FeedbackId.PreviewBG]: literal<CompanionFeedbackWithCallback>({
       label: 'Change colors from one ME preview source',
       description: 'If the input specified is in use by preview on the M/E stage specified, change colors of the bank',
       options: [
@@ -153,7 +155,7 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
     }),
     [FeedbackId.PreviewBG2]:
       model.MEs >= 2
-        ? literal<Required<CompanionFeedback>>({
+        ? literal<CompanionFeedbackWithCallback>({
             label: 'Change colors from two ME preview sources',
             description:
               'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
@@ -182,7 +184,7 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
         : undefined,
     [FeedbackId.PreviewBG3]:
       model.MEs >= 2
-        ? literal<Required<CompanionFeedback>>({
+        ? literal<CompanionFeedbackWithCallback>({
             label: 'Change colors from three ME preview sources',
             description:
               'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
@@ -216,7 +218,7 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
         : undefined,
     [FeedbackId.PreviewBG4]:
       model.MEs >= 2
-        ? literal<Required<CompanionFeedback>>({
+        ? literal<CompanionFeedbackWithCallback>({
             label: 'Change colors from four ME preview sources',
             description:
               'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
@@ -258,7 +260,7 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
 
 function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
   return {
-    [FeedbackId.ProgramBG]: literal<Required<CompanionFeedback>>({
+    [FeedbackId.ProgramBG]: literal<CompanionFeedbackWithCallback>({
       label: 'Change colors from one ME program source',
       description: 'If the input specified is in use by program on the M/E stage specified, change colors of the bank',
       options: [
@@ -277,7 +279,7 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
     }),
     [FeedbackId.ProgramBG2]:
       model.MEs >= 2
-        ? literal<Required<CompanionFeedback>>({
+        ? literal<CompanionFeedbackWithCallback>({
             label: 'Change colors from two ME program sources',
             description:
               'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
@@ -306,7 +308,7 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
         : undefined,
     [FeedbackId.ProgramBG3]:
       model.MEs >= 2
-        ? literal<Required<CompanionFeedback>>({
+        ? literal<CompanionFeedbackWithCallback>({
             label: 'Change colors from three ME program sources',
             description:
               'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
@@ -340,7 +342,7 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
         : undefined,
     [FeedbackId.ProgramBG4]:
       model.MEs >= 2
-        ? literal<Required<CompanionFeedback>>({
+        ? literal<CompanionFeedbackWithCallback>({
             label: 'Change colors from four ME program sources',
             description:
               'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
@@ -383,7 +385,7 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
 function uskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
   return {
     [FeedbackId.USKOnAir]: model.USKs
-      ? literal<Required<CompanionFeedback>>({
+      ? literal<CompanionFeedbackWithCallback>({
           label: 'Change colors from upstream keyer state',
           description: 'If the specified upstream keyer is active, change color of the bank',
           options: [
@@ -402,7 +404,7 @@ function uskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
         })
       : undefined,
     [FeedbackId.USKSource]: model.USKs
-      ? literal<Required<CompanionFeedback>>({
+      ? literal<CompanionFeedbackWithCallback>({
           label: 'Change colors from upstream keyer fill source',
           description: 'If the input specified is in use by the USK specified, change colors of the bank',
           options: [
@@ -426,7 +428,7 @@ function uskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
 
 function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
   return {
-    [FeedbackId.TransitionStyle]: literal<Required<CompanionFeedback>>({
+    [FeedbackId.TransitionStyle]: literal<CompanionFeedbackWithCallback>({
       label: 'Change colors from transition style',
       description: 'If the specified transition style is active, change color of the bank',
       options: [
@@ -443,7 +445,7 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
         return {}
       }
     }),
-    [FeedbackId.TransitionSelection]: literal<Required<CompanionFeedback>>({
+    [FeedbackId.TransitionSelection]: literal<CompanionFeedbackWithCallback>({
       label: 'Change colors from transition selection',
       description: 'If the specified tansition selection is active, change color of the bank',
       options: [
@@ -461,7 +463,7 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
         return {}
       }
     }),
-    [FeedbackId.TransitionRate]: literal<Required<CompanionFeedback>>({
+    [FeedbackId.TransitionRate]: literal<CompanionFeedbackWithCallback>({
       label: 'Change colors from transition rate',
       description: 'If the specified transition rate is active, change color of the bank',
       options: [
@@ -511,7 +513,7 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
 
 function fadeToBlackFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
   return {
-    [FeedbackId.FadeToBlackIsBlack]: literal<Required<CompanionFeedback>>({
+    [FeedbackId.FadeToBlackIsBlack]: literal<CompanionFeedbackWithCallback>({
       label: 'Change colors from fade to black status',
       description: 'If the specified fade to black is active, change color of the bank',
       options: [
@@ -545,7 +547,7 @@ function fadeToBlackFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSp
         return {}
       }
     }),
-    [FeedbackId.FadeToBlackRate]: literal<Required<CompanionFeedback>>({
+    [FeedbackId.FadeToBlackRate]: literal<CompanionFeedbackWithCallback>({
       label: 'Change colors from fade to black rate',
       description: 'If the specified fade to black rate matches, change color of the bank',
       options: [
@@ -586,7 +588,7 @@ function compareAsInt(
 function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
   return {
     [FeedbackId.SSrcBoxSource]: model.SSrc
-      ? literal<Required<CompanionFeedback>>({
+      ? literal<CompanionFeedbackWithCallback>({
           label: 'Change colors from SuperSorce box source',
           description: 'If the specified SuperSource box is set to the specified source, change color of the bank',
           options: _.compact([
@@ -606,7 +608,7 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
         })
       : undefined,
     [FeedbackId.SSrcBoxOnAir]: model.SSrc
-      ? literal<Required<CompanionFeedback>>({
+      ? literal<CompanionFeedbackWithCallback>({
           label: 'Change colors from SuperSorce box state',
           description: 'If the specified SuperSource box is enabled, change color of the bank',
           options: _.compact([
@@ -625,7 +627,7 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
         })
       : undefined,
     [FeedbackId.SSrcBoxProperties]: model.SSrc
-      ? literal<Required<CompanionFeedback>>({
+      ? literal<CompanionFeedbackWithCallback>({
           label: 'Change colors from SuperSorce box properties',
           description: 'If the specified SuperSource box properties match, change color of the bank',
           options: _.compact([
@@ -665,7 +667,7 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
 function dskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
   return {
     [FeedbackId.DSKOnAir]: model.DSKs
-      ? literal<Required<CompanionFeedback>>({
+      ? literal<CompanionFeedbackWithCallback>({
           label: 'Change colors from downstream keyer state',
           description: 'If the specified downstream keyer is active, change color of the bank',
           options: [
@@ -683,7 +685,7 @@ function dskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
         })
       : undefined,
     [FeedbackId.DSKSource]: model.DSKs
-      ? literal<Required<CompanionFeedback>>({
+      ? literal<CompanionFeedbackWithCallback>({
           label: 'Change colors from downstream keyer fill source',
           description: 'If the input specified is in use by the DSK specified, change colors of the bank',
           options: [
@@ -710,7 +712,7 @@ export function GetFeedbacksList(
   state: AtemState,
   tally: TallyBySource
 ) {
-  const feedbacks: { [id in FeedbackId]: Required<CompanionFeedback> | undefined } = {
+  const feedbacks: { [id in FeedbackId]: CompanionFeedbackWithCallback | undefined } = {
     ...tallyFeedbacks(instance, model, state, tally),
     ...previewFeedbacks(instance, model, state),
     ...programFeedbacks(instance, model, state),
