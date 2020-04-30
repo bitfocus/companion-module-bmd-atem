@@ -194,7 +194,7 @@ export function GetPresetsList(
 
     for (const opt of getTransitionSelectionOptions(model.USKs)) {
       const transitionStringParts = opt[0] ? ['BG'] : []
-      const selectionProps: any = {
+      const selectionProps: { [key: string]: boolean } = {
         background: opt[0]
       }
       for (let i = 0; i < model.USKs; i++) {

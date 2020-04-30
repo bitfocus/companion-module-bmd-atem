@@ -18,8 +18,7 @@
 		"build": "trash dist && yarn build:main",
 		"build:main": "tsc -p tsconfig.build.json",
 		"build:watch": "tsc -p tsconfig.build.json --watch",
-		"lint": "tslint --project tsconfig.json --config tslint.json",
-		"tslint-check": "tslint-config-prettier-check ./tslint.json",
+		"lint": "eslint . --ext .ts",
 		"validate:dependencies": "yarn audit && yarn license-validate",
 		"license-validate": "node-license-validator -p -d --allow-licenses MIT BSD BSD-3-Clause ISC Apache Unlicense WTFPL",
 		"postinstall": "yarn build"
@@ -39,8 +38,12 @@
 		}
 	},
 	"lint-staged": {
-		"*.{js,ts,css,json,md}": [
+		"*.{js,json,md}": [
 			"prettier --write",
+			"git add"
+		],
+		"*.{ts}": [
+			"yarn lint --fix --",
 			"git add"
 		]
 	},
@@ -51,14 +54,16 @@
 	"devDependencies": {
 		"@types/node": "^12.0.4",
 		"@types/underscore": "^1.9.3",
+		"@typescript-eslint/eslint-plugin": "^2.30.0",
+		"@typescript-eslint/parser": "^2.30.0",
+		"eslint": "^6.8.0",
+		"eslint-config-prettier": "^6.11.0",
+		"eslint-plugin-prettier": "^3.1.3",
 		"husky": "^3.0.5",
 		"lint-staged": "^9.2.5",
 		"node-license-validator": "^1.3.0",
 		"prettier": "^1.17.1",
 		"trash-cli": "^3.0.0",
-		"tslint": "^5.20.0",
-		"tslint-config-prettier": "^1.18.0",
-		"tslint-plugin-prettier": "^2.0.1",
 		"typescript": "^3.6.3"
 	}
 }

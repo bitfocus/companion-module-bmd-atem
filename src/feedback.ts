@@ -5,7 +5,9 @@ import {
   CompanionFeedback,
   CompanionFeedbackEvent,
   CompanionInputFieldColor,
-  InputValue
+  InputValue,
+  CompanionFeedbackResult,
+  CompanionFeedbacks
 } from '../../../instance_skel_types'
 import { GetMacroChoices } from './choices'
 import { AtemConfig } from './config'
@@ -90,13 +92,14 @@ export function BackgroundPicker(color: number): CompanionInputFieldColor {
   }
 }
 
-function getOptColors(evt: CompanionFeedbackEvent) {
+function getOptColors(evt: CompanionFeedbackEvent): CompanionFeedbackResult {
   return {
     color: Number(evt.options.fg),
     bgcolor: Number(evt.options.bg)
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function tallyFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState, tally: TallyBySource) {
   return {
     [FeedbackId.ProgramTally]: literal<CompanionFeedbackWithCallback>({
@@ -107,7 +110,7 @@ function tallyFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
         BackgroundPicker(instance.rgb(255, 0, 0)),
         AtemMESourcePicker(model, state, 0)
       ],
-      callback: evt => {
+      callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
         const source = tally[Number(evt.options.input)]
         if (source && source.program) {
           return getOptColors(evt)
@@ -123,7 +126,7 @@ function tallyFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
         BackgroundPicker(instance.rgb(0, 255, 0)),
         AtemMESourcePicker(model, state, 0)
       ],
-      callback: evt => {
+      callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
         const source = tally[Number(evt.options.input)]
         if (source && source.preview) {
           return getOptColors(evt)
@@ -134,6 +137,7 @@ function tallyFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
   return {
     [FeedbackId.PreviewBG]: literal<CompanionFeedbackWithCallback>({
@@ -145,7 +149,7 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
         AtemMESourcePicker(model, state, 0),
         AtemMEPicker(model, 0)
       ],
-      callback: evt => {
+      callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
         const me = getME(state, evt.options.mixeffect)
         if (me && me.previewInput === Number(evt.options.input)) {
           return getOptColors(evt)
@@ -167,7 +171,7 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
               AtemMESourcePicker(model, state, 2),
               AtemMEPicker(model, 2)
             ],
-            callback: evt => {
+            callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
               const me1 = getME(state, evt.options.mixeffect1)
               const me2 = getME(state, evt.options.mixeffect2)
               if (
@@ -198,7 +202,7 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
               AtemMESourcePicker(model, state, 3),
               AtemMEPicker(model, 3)
             ],
-            callback: evt => {
+            callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
               const me1 = getME(state, evt.options.mixeffect1)
               const me2 = getME(state, evt.options.mixeffect2)
               const me3 = getME(state, evt.options.mixeffect3)
@@ -234,7 +238,7 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
               AtemMESourcePicker(model, state, 4),
               AtemMEPicker(model, 4)
             ],
-            callback: evt => {
+            callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
               const me1 = getME(state, evt.options.mixeffect1)
               const me2 = getME(state, evt.options.mixeffect2)
               const me3 = getME(state, evt.options.mixeffect3)
@@ -258,6 +262,7 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
   return {
     [FeedbackId.ProgramBG]: literal<CompanionFeedbackWithCallback>({
@@ -269,7 +274,7 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
         AtemMESourcePicker(model, state, 0),
         AtemMEPicker(model, 0)
       ],
-      callback: evt => {
+      callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
         const me = getME(state, evt.options.mixeffect)
         if (me && me.programInput === Number(evt.options.input)) {
           return getOptColors(evt)
@@ -291,7 +296,7 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
               AtemMESourcePicker(model, state, 2),
               AtemMEPicker(model, 2)
             ],
-            callback: evt => {
+            callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
               const me1 = getME(state, evt.options.mixeffect1)
               const me2 = getME(state, evt.options.mixeffect2)
               if (
@@ -322,7 +327,7 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
               AtemMESourcePicker(model, state, 3),
               AtemMEPicker(model, 3)
             ],
-            callback: evt => {
+            callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
               const me1 = getME(state, evt.options.mixeffect1)
               const me2 = getME(state, evt.options.mixeffect2)
               const me3 = getME(state, evt.options.mixeffect3)
@@ -358,7 +363,7 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
               AtemMESourcePicker(model, state, 4),
               AtemMEPicker(model, 4)
             ],
-            callback: evt => {
+            callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
               const me1 = getME(state, evt.options.mixeffect1)
               const me2 = getME(state, evt.options.mixeffect2)
               const me3 = getME(state, evt.options.mixeffect3)
@@ -382,6 +387,7 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function uskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
   return {
     [FeedbackId.USKOnAir]: model.USKs
@@ -394,7 +400,7 @@ function uskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
             AtemMEPicker(model, 0),
             AtemUSKPicker(model)
           ],
-          callback: evt => {
+          callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
             const usk = getUSK(state, evt.options.mixeffect, evt.options.key)
             if (usk && usk.onAir) {
               return getOptColors(evt)
@@ -414,7 +420,7 @@ function uskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
             AtemUSKPicker(model),
             AtemKeyFillSourcePicker(model, state)
           ],
-          callback: evt => {
+          callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
             const usk = getUSK(state, evt.options.mixeffect, evt.options.key)
             if (usk && usk.fillSource === Number(evt.options.fill)) {
               return getOptColors(evt)
@@ -426,6 +432,7 @@ function uskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
   return {
     [FeedbackId.TransitionStyle]: literal<CompanionFeedbackWithCallback>({
@@ -437,7 +444,7 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
         AtemMEPicker(model, 0),
         AtemTransitionStylePicker(model.media.clips === 0)
       ],
-      callback: evt => {
+      callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
         const me = getME(state, evt.options.mixeffect)
         if (me && me.transitionProperties.style === Number(evt.options.style)) {
           return getOptColors(evt)
@@ -454,7 +461,7 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
         AtemMEPicker(model, 0),
         ...AtemTransitionSelectionPickers(model)
       ],
-      callback: evt => {
+      callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
         const me = getME(state, evt.options.mixeffect)
         const expectedSelection = calculateTransitionSelection(model.USKs, evt.options)
         if (me && me.transitionProperties.selection === expectedSelection) {
@@ -473,7 +480,7 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
         AtemTransitionStylePicker(true),
         AtemRatePicker('Transition Rate')
       ],
-      callback: evt => {
+      callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
         const me = getME(state, evt.options.mixeffect)
         if (me && me.transitionSettings) {
           const style = Number(evt.options.style) as Enums.TransitionStyle
@@ -511,6 +518,7 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function fadeToBlackFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
   return {
     [FeedbackId.FadeToBlackIsBlack]: literal<CompanionFeedbackWithCallback>({
@@ -522,7 +530,7 @@ function fadeToBlackFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSp
         AtemMEPicker(model, 0),
         AtemFadeToBlackStatePicker()
       ],
-      callback: evt => {
+      callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
         const me = getME(state, evt.options.mixeffect)
         if (me && me.fadeToBlack) {
           switch (evt.options.state) {
@@ -556,7 +564,7 @@ function fadeToBlackFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSp
         AtemMEPicker(model, 0),
         AtemRatePicker('Rate')
       ],
-      callback: evt => {
+      callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
         const me = getME(state, evt.options.mixeffect)
         const rate = Number(evt.options.rate)
         if (me && me.fadeToBlack && me.fadeToBlack.rate === rate) {
@@ -572,8 +580,8 @@ function compareAsInt(
   targetStr: InputValue | undefined,
   actual: number,
   targetScale: number,
-  actualRounding: number = 1
-) {
+  actualRounding = 1
+): boolean {
   if (targetStr === undefined) {
     return false
   }
@@ -585,6 +593,7 @@ function compareAsInt(
   return targetVal === actual
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
   return {
     [FeedbackId.SSrcBoxSource]: model.SSrc
@@ -598,7 +607,7 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
             AtemSuperSourceBoxPicker(),
             AtemSuperSourceBoxSourcePicker(model, state)
           ]),
-          callback: evt => {
+          callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
             const box = getSuperSourceBox(state, evt.options.boxIndex, evt.options.ssrcId || 0)
             if (box && box.source === Number(evt.options.source)) {
               return getOptColors(evt)
@@ -617,7 +626,7 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
             AtemSuperSourceIdPicker(model),
             AtemSuperSourceBoxPicker()
           ]),
-          callback: evt => {
+          callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
             const box = getSuperSourceBox(state, evt.options.boxIndex, evt.options.ssrcId || 0)
             if (box && box.enabled) {
               return getOptColors(evt)
@@ -637,7 +646,7 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
             AtemSuperSourceBoxPicker(),
             ...AtemSuperSourcePropertiesPickers()
           ]),
-          callback: evt => {
+          callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
             const box = getSuperSourceBox(state, evt.options.boxIndex, evt.options.ssrcId || 0)
             const boxCroppingMatches =
               box &&
@@ -664,6 +673,7 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function dskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
   return {
     [FeedbackId.DSKOnAir]: model.DSKs
@@ -675,7 +685,7 @@ function dskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
             BackgroundPicker(instance.rgb(255, 0, 0)),
             AtemDSKPicker(model)
           ],
-          callback: evt => {
+          callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
             const dsk = getDSK(state, evt.options.key)
             if (dsk && dsk.onAir) {
               return getOptColors(evt)
@@ -694,7 +704,7 @@ function dskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
             AtemDSKPicker(model),
             AtemKeyFillSourcePicker(model, state)
           ],
-          callback: evt => {
+          callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
             const dsk = getDSK(state, evt.options.key)
             if (dsk && dsk.sources.fillSource === Number(evt.options.fill)) {
               return getOptColors(evt)
@@ -711,7 +721,7 @@ export function GetFeedbacksList(
   model: ModelSpec,
   state: AtemState,
   tally: TallyBySource
-) {
+): CompanionFeedbacks {
   const feedbacks: { [id in FeedbackId]: CompanionFeedbackWithCallback | undefined } = {
     ...tallyFeedbacks(instance, model, state, tally),
     ...previewFeedbacks(instance, model, state),
@@ -731,7 +741,7 @@ export function GetFeedbacksList(
             AtemAuxPicker(model),
             AtemAuxSourcePicker(model, state)
           ],
-          callback: evt => {
+          callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
             const auxSource = state.video.auxilliaries[Number(evt.options.aux)]
             if (auxSource === Number(evt.options.input)) {
               return getOptColors(evt)
@@ -767,7 +777,7 @@ export function GetFeedbacksList(
               ]
             }
           ],
-          callback: evt => {
+          callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
             let macroIndex = Number(evt.options.macroIndex)
             if (!isNaN(macroIndex)) {
               macroIndex -= 1
@@ -776,10 +786,11 @@ export function GetFeedbacksList(
 
               let isActive = false
               switch (type) {
-                case MacroFeedbackType.IsUsed:
+                case MacroFeedbackType.IsUsed: {
                   const macro = state.macro.macroProperties[macroIndex]
                   isActive = macro && macro.isUsed
                   break
+                }
                 case MacroFeedbackType.IsRecording:
                   isActive = macroRecorder && macroRecorder.isRecording && macroRecorder.macroIndex === macroIndex
                   break
@@ -812,7 +823,7 @@ export function GetFeedbacksList(
             AtemMultiviewWindowPicker(model),
             AtemMultiviewSourcePicker(model, state)
           ],
-          callback: evt => {
+          callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
             const window = getMultiviewerWindow(state, evt.options.multiViewerId, evt.options.windowIndex)
             if (window && window.source === Number(evt.options.source)) {
               return getOptColors(evt)
@@ -831,7 +842,7 @@ export function GetFeedbacksList(
             AtemMediaPlayerPicker(model),
             AtemMediaPlayerSourcePicker(model, state)
           ],
-          callback: evt => {
+          callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
             const player = state.media.players[Number(evt.options.mediaplayer)]
             if (
               player &&

@@ -16,7 +16,7 @@ export const CHOICES_KEYTRANS: DropdownChoice[] = [
   { id: 'toggle', label: 'Toggle' }
 ]
 
-export function GetTransitionStyleChoices(skipSting?: boolean) {
+export function GetTransitionStyleChoices(skipSting?: boolean): DropdownChoice[] {
   const options = [
     { id: Enums.TransitionStyle.MIX, label: 'Mix' },
     { id: Enums.TransitionStyle.DIP, label: 'Dip' },
@@ -94,8 +94,8 @@ export interface SourceInfo {
   shortName: string
   longName: string
 }
-export function GetSourcesListForType(model: ModelSpec, state: AtemState, subset?: 'me' | 'aux' | 'mv') {
-  const getSource = (id: number, defShort: string, defLong: string) => {
+export function GetSourcesListForType(model: ModelSpec, state: AtemState, subset?: 'me' | 'aux' | 'mv'): SourceInfo[] {
+  const getSource = (id: number, defShort: string, defLong: string): SourceInfo => {
     const input = state.inputs[id]
     const shortName = input ? input.shortName || defShort : defShort
     const longName = input ? input.longName || defLong : defLong

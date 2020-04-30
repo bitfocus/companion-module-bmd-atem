@@ -5,7 +5,7 @@ import { GetSourcesListForType, SourceInfo } from './choices'
 import { AtemConfig, PresetStyleName } from './config'
 import { ModelSpec } from './models'
 
-function getSourcePresetName(instance: InstanceSkel<AtemConfig>, state: AtemState, id: number) {
+function getSourcePresetName(instance: InstanceSkel<AtemConfig>, state: AtemState, id: number): string {
   const input = state.inputs[id]
   if (input) {
     return instance.config.presets === PresetStyleName.Long + '' ? input.longName : input.shortName
@@ -18,12 +18,12 @@ function getSourcePresetName(instance: InstanceSkel<AtemConfig>, state: AtemStat
   }
 }
 
-export function updateMEProgramVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, meIndex: number) {
+export function updateMEProgramVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, meIndex: number): void {
   const me = state.video.ME[meIndex]
   const input = me ? me.programInput : 0
   instance.setVariable(`pgm${meIndex + 1}_input`, getSourcePresetName(instance, state, input))
 }
-export function updateMEPreviewVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, meIndex: number) {
+export function updateMEPreviewVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, meIndex: number): void {
   const me = state.video.ME[meIndex]
   const input = me ? me.previewInput : 0
   instance.setVariable(`pvw${meIndex + 1}_input`, getSourcePresetName(instance, state, input))
@@ -34,39 +34,39 @@ export function updateUSKVariable(
   state: AtemState,
   meIndex: number,
   keyIndex: number
-) {
+): void {
   const me = state.video.ME[meIndex]
   const key = me ? me.upstreamKeyers[keyIndex] : undefined
   const input = key ? key.fillSource : 0
   instance.setVariable(`usk_${meIndex + 1}_${keyIndex + 1}_input`, getSourcePresetName(instance, state, input))
 }
-export function updateDSKVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, keyIndex: number) {
+export function updateDSKVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, keyIndex: number): void {
   const key = state.video.downstreamKeyers[keyIndex]
   const input = key ? key.sources.fillSource : 0
   instance.setVariable(`dsk_${keyIndex + 1}_input`, getSourcePresetName(instance, state, input))
 }
 
-export function updateAuxVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, auxIndex: number) {
+export function updateAuxVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, auxIndex: number): void {
   const input = state.video.auxilliaries[auxIndex]
   instance.setVariable(`aux${auxIndex + 1}_input`, getSourcePresetName(instance, state, input))
 }
 
-export function updateMacroVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, id: number) {
+export function updateMacroVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, id: number): void {
   const macro = state.macro.macroProperties[id]
   instance.setVariable(`macro_${id + 1}`, macro?.description || macro?.name || `Macro ${id + 1}`)
 }
 
-export function updateMediaStillVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, id: number) {
+export function updateMediaStillVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, id: number): void {
   const still = state.media.stillPool[id]
   instance.setVariable(`still_${id + 1}`, still?.fileName || `Still ${id + 1}`)
 }
 
-export function updateMediaClipVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, id: number) {
+export function updateMediaClipVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, id: number): void {
   const clip = state.media.clipPool[id]
   instance.setVariable(`clip_${id + 1}`, clip?.name || `Clip ${id + 1}`)
 }
 
-export function updateMediaPlayerVariables(instance: InstanceSkel<AtemConfig>, state: AtemState, id: number) {
+export function updateMediaPlayerVariables(instance: InstanceSkel<AtemConfig>, state: AtemState, id: number): void {
   const player = state.media.players[id]
   let indexStr = '-1'
   let sourceStr = 'Unknown'
@@ -85,12 +85,12 @@ export function updateMediaPlayerVariables(instance: InstanceSkel<AtemConfig>, s
   instance.setVariable(`mp_source_${id + 1}`, sourceStr)
 }
 
-function updateInputVariables(instance: InstanceSkel<AtemConfig>, src: SourceInfo) {
+function updateInputVariables(instance: InstanceSkel<AtemConfig>, src: SourceInfo): void {
   instance.setVariable(`long_${src.id}`, src.longName)
   instance.setVariable(`short_${src.id}`, src.shortName)
 }
 
-export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
+export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState): void {
   const variables: CompanionVariable[] = []
 
   // PGM/PV busses

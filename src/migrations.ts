@@ -2,24 +2,25 @@ import * as _ from 'underscore'
 import {
   CompanionCoreInstanceconfig,
   CompanionMigrationAction,
-  CompanionMigrationFeedback
+  CompanionMigrationFeedback,
+  InputValue
 } from '../../../instance_skel_types'
 import { ActionId } from './actions'
 import { AtemConfig } from './config'
 import { FeedbackId } from './feedback'
 
-function scaleValue(obj: any, key: string, scale: number) {
+function scaleValue(obj: { [key: string]: InputValue | undefined }, key: string, scale: number): void {
   if (obj[key] !== undefined) {
-    obj[key] = parseFloat(obj[key]) * scale
+    obj[key] = parseFloat(obj[key] as string) * scale
   }
 }
 
-export function UpgradeV2_2_0(
+export function upgradeV2x2x0(
   _config: CompanionCoreInstanceconfig & AtemConfig,
   actions: CompanionMigrationAction[],
   releaseActions: CompanionMigrationAction[],
   feedbacks: CompanionMigrationFeedback[]
-) {
+): boolean {
   let changed = false
 
   const allActions = [...actions, ...releaseActions]

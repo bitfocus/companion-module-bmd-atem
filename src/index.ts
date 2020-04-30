@@ -4,7 +4,7 @@ import { CompanionActionEvent, CompanionConfigField, CompanionSystem } from '../
 import { GetActionsList, HandleAction } from './actions'
 import { AtemConfig, GetConfigFields } from './config'
 import { FeedbackId, GetFeedbacksList } from './feedback'
-import { UpgradeV2_2_0 } from './migrations'
+import { upgradeV2x2x0 } from './migrations'
 import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, MODEL_AUTO_DETECT, ModelSpec } from './models'
 import { GetPresetsList } from './presets'
 import { TallyBySource } from './state'
@@ -46,11 +46,11 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     this.initDone = false
     this.isActive = false
 
-    this.addUpgradeScript(UpgradeV2_2_0)
+    this.addUpgradeScript(upgradeV2x2x0)
   }
 
   // Override base types to make types stricter
-  public checkFeedbacks(feedbackId?: FeedbackId, ignoreInitDone?: boolean) {
+  public checkFeedbacks(feedbackId?: FeedbackId, ignoreInitDone?: boolean): void {
     if (ignoreInitDone || this.initDone) {
       super.checkFeedbacks(feedbackId)
     }
@@ -60,7 +60,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
    * Main initialization function called once the module
    * is OK to start doing things.
    */
-  public init() {
+  public init(): void {
     this.isActive = true
     this.status(this.STATUS_UNKNOWN)
 
@@ -74,7 +74,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   /**
    * Process an updated configuration array.
    */
-  public updateConfig(config: AtemConfig) {
+  public updateConfig(config: AtemConfig): void {
     this.config = config
 
     this.model = GetModelSpec(this.getBestModelId() || MODEL_AUTO_DETECT) || GetAutoDetectModel()
@@ -87,6 +87,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
     if (this.config.host !== undefined) {
       // TODO - needs a better way to check if connected?
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (this.atem && (this.atem as any).socket && (this.atem as any).socket._socket) {
         try {
           this.atem.disconnect()
@@ -103,13 +104,14 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   /**
    * Executes the provided action.
    */
-  public action(action: CompanionActionEvent) {
+  public action(action: CompanionActionEvent): void {
     HandleAction(this, this.atem, this.model, this.atemState, action)
   }
 
   /**
    * Creates the configuration fields for web config.
    */
+  // eslint-disable-next-line @typescript-eslint/camelcase
   public config_fields(): CompanionConfigField[] {
     return GetConfigFields(this)
   }
@@ -117,7 +119,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   /**
    * Clean up the instance before it is destroyed.
    */
-  public destroy() {
+  public destroy(): void {
     this.isActive = false
 
     if (this.atem) {
@@ -142,7 +144,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     }
   }
 
-  private updateCompanionBits() {
+  private updateCompanionBits(): void {
     InitVariables(this, this.model, this.atemState)
     this.setPresetDefinitions(GetPresetsList(this, this.model, this.atemState))
     this.setFeedbackDefinitions(GetFeedbacksList(this, this.model, this.atemState, this.atemTally))
@@ -153,7 +155,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   /**
    * Handle tally packets
    */
-  private processReceivedCommand(command: Commands.AbstractCommand) {
+  private processReceivedCommand(command: Commands.AbstractCommand): void {
     if (command instanceof Commands.TallyBySourceCommand) {
       // The feedback holds a reference to the old object, so we need
       // to update it in place
@@ -165,7 +167,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   /**
    * Handle ATEM state changes
    */
-  private processStateChange(newState: AtemState, path: string) {
+  private processStateChange(newState: AtemState, path: string): void {
     if (!this.initDone) {
       // Only run after initDone, otherwise we spam with updates
       return
@@ -320,7 +322,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     // }
   }
 
-  private setupAtemConnection() {
+  private setupAtemConnection(): void {
     this.atem = new Atem({ externalLog: this.debug.bind(this) })
 
     this.atem.on('connected', () => {
@@ -355,6 +357,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
       this.updateCompanionBits()
     })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.atem.on('error', (e: any) => {
       this.log('error', e.message)
       this.status(this.STATUS_ERROR, e.message)

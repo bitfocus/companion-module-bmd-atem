@@ -1,7 +1,7 @@
 import { Atem, AtemState, Enums } from 'atem-connection'
 import * as _ from 'underscore'
 import InstanceSkel = require('../../../instance_skel')
-import { CompanionAction, CompanionActionEvent } from '../../../instance_skel_types'
+import { CompanionAction, CompanionActionEvent, CompanionActions } from '../../../instance_skel_types'
 import { CHOICES_KEYTRANS, GetDSKIdChoices, GetMacroChoices } from './choices'
 import { AtemConfig } from './config'
 import {
@@ -56,6 +56,9 @@ export enum ActionId {
   FadeToBlackRate = 'fadeToBlackRate'
 }
 
+type CompanionActionsExt = { [id in ActionId]: Required<CompanionAction> | undefined }
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function meActions(model: ModelSpec, state: AtemState) {
   return {
     [ActionId.Program]: literal<Required<CompanionAction>>({
@@ -125,6 +128,7 @@ function meActions(model: ModelSpec, state: AtemState) {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function dskActions(model: ModelSpec, state: AtemState) {
   return {
     [ActionId.DSKSource]: model.DSKs
@@ -165,6 +169,7 @@ function dskActions(model: ModelSpec, state: AtemState) {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function macroActions(model: ModelSpec, state: AtemState) {
   return {
     [ActionId.MacroRun]: model.macros
@@ -200,6 +205,7 @@ function macroActions(model: ModelSpec, state: AtemState) {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function ssrcActions(model: ModelSpec, state: AtemState) {
   return {
     [ActionId.SuperSourceBoxSource]: model.SSrc
@@ -241,8 +247,8 @@ function ssrcActions(model: ModelSpec, state: AtemState) {
   }
 }
 
-export function GetActionsList(model: ModelSpec, state: AtemState) {
-  const actions: { [id in ActionId]: Required<CompanionAction> | undefined } = {
+export function GetActionsList(model: ModelSpec, state: AtemState): CompanionActions {
+  const actions: CompanionActionsExt = {
     ...meActions(model, state),
     ...dskActions(model, state),
     ...macroActions(model, state),
@@ -280,7 +286,7 @@ export function HandleAction(
   model: ModelSpec,
   state: AtemState,
   action: CompanionActionEvent
-) {
+): void {
   try {
     const res = executeAction(instance, atem, model, state, action)
     res.catch(e => {
@@ -297,16 +303,16 @@ function executeAction(
   model: ModelSpec,
   state: AtemState,
   action: CompanionActionEvent
-) {
+): Promise<unknown> {
   const opt = action.options
-  const getOptNumber = (key: string) => {
+  const getOptNumber = (key: string): number => {
     const val = Number(opt[key])
     if (isNaN(val)) {
       throw new Error(`Invalid option '${key}'`)
     }
     return val
   }
-  const getOptBool = (key: string) => {
+  const getOptBool = (key: string): boolean => {
     return !!opt[key]
   }
 
@@ -354,7 +360,7 @@ function executeAction(
     }
     case ActionId.Auto:
       return atem.autoTransition(getOptNumber('mixeffect'))
-    case ActionId.MacroRun:
+    case ActionId.MacroRun: {
       const macroIndex = getOptNumber('macro') - 1
       const { macroPlayer, macroRecorder } = state.macro
       if (opt.action === 'runContinue' && macroPlayer.isWaiting && macroPlayer.macroIndex === macroIndex) {
@@ -364,6 +370,7 @@ function executeAction(
       } else {
         return atem.macroRun(macroIndex)
       }
+    }
     case ActionId.MacroContinue:
       return atem.macroContinue()
     case ActionId.MacroStop:
@@ -376,7 +383,7 @@ function executeAction(
         },
         getOptNumber('multiViewerId')
       )
-    case ActionId.SuperSourceBoxOnAir:
+    case ActionId.SuperSourceBoxOnAir: {
       const ssrcId = opt.ssrcId && model.SSrc > 1 ? Number(opt.ssrcId) : 0
       const boxIndex = getOptNumber('boxIndex')
 
@@ -398,6 +405,7 @@ function executeAction(
           ssrcId
         )
       }
+    }
     case ActionId.SuperSourceBoxSource:
       return atem.setSuperSourceBoxSettings(
         {
@@ -428,7 +436,7 @@ function executeAction(
         },
         getOptNumber('mixeffect')
       )
-    case ActionId.TransitionRate:
+    case ActionId.TransitionRate: {
       const style = getOptNumber('style') as Enums.TransitionStyle
       switch (style) {
         case Enums.TransitionStyle.MIX:
@@ -466,6 +474,7 @@ function executeAction(
           instance.debug('Unknown transition style: ' + style)
           return Promise.resolve()
       }
+    }
     case ActionId.TransitionSelection: {
       return atem.setTransitionStyle(
         {
@@ -474,7 +483,7 @@ function executeAction(
         getOptNumber('mixeffect')
       )
     }
-    case ActionId.MediaPlayerSource:
+    case ActionId.MediaPlayerSource: {
       const source = getOptNumber('source')
       if (source >= MEDIA_PLAYER_SOURCE_CLIP_OFFSET) {
         return atem.setMediaPlayerSource(
@@ -493,6 +502,7 @@ function executeAction(
           getOptNumber('mediaplayer')
         )
       }
+    }
     case ActionId.FadeToBlackAuto:
       return atem.fadeToBlack(getOptNumber('mixeffect'))
     case ActionId.FadeToBlackRate:

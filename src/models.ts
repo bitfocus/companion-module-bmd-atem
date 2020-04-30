@@ -301,11 +301,11 @@ ALL_MODEL_CHOICES.sort((a, b) => {
   return 0
 })
 
-export function GetModelSpec(id: ModelId) {
+export function GetModelSpec(id: ModelId): ModelSpec | undefined {
   return ALL_MODELS.find(m => m.id === id)
 }
 
-export function GetAutoDetectModel() {
+export function GetAutoDetectModel(): ModelSpec {
   return ALL_MODELS[0]
 }
 

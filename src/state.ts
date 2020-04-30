@@ -1,5 +1,7 @@
 import { AtemState, Commands } from 'atem-connection'
 import { InputValue } from '../../../instance_skel_types'
+import { SuperSourceBox } from 'atem-connection/dist/state/video'
+import { MultiViewerWindowState } from 'atem-connection/dist/state/settings'
 
 // TODO - these should be exported more cleanly from atem-connection
 type MixEffect = AtemState['video']['ME'][0]
@@ -22,7 +24,11 @@ export function getUSK(
 export function getDSK(state: AtemState, keyIndex: InputValue | undefined): DownstreamKeyer | undefined {
   return state.video.downstreamKeyers[Number(keyIndex)]
 }
-export function getSuperSourceBox(state: AtemState, boxIndex: InputValue | undefined, ssrcId?: InputValue | undefined) {
+export function getSuperSourceBox(
+  state: AtemState,
+  boxIndex: InputValue | undefined,
+  ssrcId?: InputValue | undefined
+): SuperSourceBox | undefined {
   const ssrc = state.video.superSources[Number(ssrcId || 0)]
   return ssrc ? ssrc.boxes[Number(boxIndex)] : undefined
 }
@@ -33,7 +39,7 @@ export function getMultiviewerWindow(
   state: AtemState,
   mvIndex: InputValue | undefined,
   windowIndex: InputValue | undefined
-) {
+): MultiViewerWindowState | undefined {
   const mv = getMultiviewer(state, mvIndex)
   return mv ? mv.windows[Number(windowIndex)] : undefined
 }
