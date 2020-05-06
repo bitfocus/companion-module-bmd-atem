@@ -279,6 +279,25 @@ export const ALL_MODELS: ModelSpec[] = [
       stills: 20,
       clips: 0
     }
+  },
+  {
+    id: Enums.Model.MiniPro,
+    label: 'Mini Pro',
+    inputs: 4,
+    auxes: 1,
+    MEs: 1,
+    USKs: 1,
+    DSKs: 1,
+    MVs: 0,
+    multiviewerFullGrid: false,
+    auxInput1Direct: true,
+    SSrc: 0,
+    macros: 100,
+    media: {
+      players: 1,
+      stills: 20,
+      clips: 0
+    }
   }
 ]
 
