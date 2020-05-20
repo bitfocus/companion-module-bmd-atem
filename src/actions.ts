@@ -56,30 +56,31 @@ export enum ActionId {
   FadeToBlackRate = 'fadeToBlackRate'
 }
 
-type CompanionActionsExt = { [id in ActionId]: Required<CompanionAction> | undefined }
+type CompanionActionExt = CompanionAction // & Required<Pick<CompanionAction, 'callback'>>
+type CompanionActionsExt = { [id in ActionId]: CompanionActionExt | undefined }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function meActions(model: ModelSpec, state: AtemState) {
   return {
-    [ActionId.Program]: literal<Required<CompanionAction>>({
+    [ActionId.Program]: literal<CompanionActionExt>({
       label: 'Set input on Program',
       options: [AtemMEPicker(model, 0), AtemMESourcePicker(model, state, 0)]
     }),
-    [ActionId.Preview]: literal<Required<CompanionAction>>({
+    [ActionId.Preview]: literal<CompanionActionExt>({
       label: 'Set input on Preview',
       options: [AtemMEPicker(model, 0), AtemMESourcePicker(model, state, 0)]
     }),
-    [ActionId.Cut]: literal<Required<CompanionAction>>({
+    [ActionId.Cut]: literal<CompanionActionExt>({
       label: 'CUT operation',
       options: [AtemMEPicker(model, 0)]
     }),
-    [ActionId.Auto]: literal<Required<CompanionAction>>({
+    [ActionId.Auto]: literal<CompanionActionExt>({
       label: 'AUTO transition operation',
       options: [AtemMEPicker(model, 0)]
     }),
 
     [ActionId.USKSource]: model.USKs
-      ? literal<Required<CompanionAction>>({
+      ? literal<CompanionActionExt>({
           label: 'Set inputs on Upstream KEY',
           options: [
             AtemMEPicker(model, 0),
@@ -90,7 +91,7 @@ function meActions(model: ModelSpec, state: AtemState) {
         })
       : undefined,
     [ActionId.USKOnAir]: model.USKs
-      ? literal<Required<CompanionAction>>({
+      ? literal<CompanionActionExt>({
           label: 'Set Upstream KEY OnAir',
           options: [
             {
@@ -105,23 +106,23 @@ function meActions(model: ModelSpec, state: AtemState) {
           ]
         })
       : undefined,
-    [ActionId.TransitionStyle]: literal<Required<CompanionAction>>({
+    [ActionId.TransitionStyle]: literal<CompanionActionExt>({
       label: 'Change transition style',
       options: [AtemMEPicker(model, 0), AtemTransitionStylePicker(model.media.clips === 0)]
     }),
-    [ActionId.TransitionRate]: literal<Required<CompanionAction>>({
+    [ActionId.TransitionRate]: literal<CompanionActionExt>({
       label: 'Change transition rate',
       options: [AtemMEPicker(model, 0), AtemTransitionStylePicker(true), AtemRatePicker('Transition Rate')]
     }),
-    [ActionId.TransitionSelection]: literal<Required<CompanionAction>>({
+    [ActionId.TransitionSelection]: literal<CompanionActionExt>({
       label: 'Change transition selection',
       options: [AtemMEPicker(model, 0), ...AtemTransitionSelectionPickers(model)]
     }),
-    [ActionId.FadeToBlackAuto]: literal<Required<CompanionAction>>({
+    [ActionId.FadeToBlackAuto]: literal<CompanionActionExt>({
       label: 'AUTO fade to black',
       options: [AtemMEPicker(model, 0)]
     }),
-    [ActionId.FadeToBlackRate]: literal<Required<CompanionAction>>({
+    [ActionId.FadeToBlackRate]: literal<CompanionActionExt>({
       label: 'Change fade to black rate',
       options: [AtemMEPicker(model, 0), AtemRatePicker('Rate')]
     })
@@ -132,13 +133,13 @@ function meActions(model: ModelSpec, state: AtemState) {
 function dskActions(model: ModelSpec, state: AtemState) {
   return {
     [ActionId.DSKSource]: model.DSKs
-      ? literal<Required<CompanionAction>>({
+      ? literal<CompanionActionExt>({
           label: 'Set inputs on Downstream KEY',
           options: [AtemDSKPicker(model), AtemKeyFillSourcePicker(model, state), AtemKeyCutSourcePicker(model, state)]
         })
       : undefined,
     [ActionId.DSKAuto]: model.DSKs
-      ? literal<Required<CompanionAction>>({
+      ? literal<CompanionActionExt>({
           label: 'AUTO DSK Transition',
           options: [
             {
@@ -152,7 +153,7 @@ function dskActions(model: ModelSpec, state: AtemState) {
         })
       : undefined,
     [ActionId.DSKOnAir]: model.DSKs
-      ? literal<Required<CompanionAction>>({
+      ? literal<CompanionActionExt>({
           label: 'Set Downstream KEY OnAir',
           options: [
             {
@@ -173,7 +174,7 @@ function dskActions(model: ModelSpec, state: AtemState) {
 function macroActions(model: ModelSpec, state: AtemState) {
   return {
     [ActionId.MacroRun]: model.macros
-      ? literal<Required<CompanionAction>>({
+      ? literal<CompanionActionExt>({
           label: 'Run MACRO',
           options: [
             {
@@ -197,10 +198,10 @@ function macroActions(model: ModelSpec, state: AtemState) {
         })
       : undefined,
     [ActionId.MacroContinue]: model.macros
-      ? literal<Required<CompanionAction>>({ label: 'Continue MACRO', options: [] })
+      ? literal<CompanionActionExt>({ label: 'Continue MACRO', options: [] })
       : undefined,
     [ActionId.MacroStop]: model.macros
-      ? literal<Required<CompanionAction>>({ label: 'Stop MACROS', options: [] })
+      ? literal<CompanionActionExt>({ label: 'Stop MACROS', options: [] })
       : undefined
   }
 }
@@ -209,7 +210,7 @@ function macroActions(model: ModelSpec, state: AtemState) {
 function ssrcActions(model: ModelSpec, state: AtemState) {
   return {
     [ActionId.SuperSourceBoxSource]: model.SSrc
-      ? literal<Required<CompanionAction>>({
+      ? literal<CompanionActionExt>({
           label: 'Change SuperSource box source',
           options: _.compact([
             AtemSuperSourceIdPicker(model),
@@ -219,7 +220,7 @@ function ssrcActions(model: ModelSpec, state: AtemState) {
         })
       : undefined,
     [ActionId.SuperSourceBoxOnAir]: model.SSrc
-      ? literal<Required<CompanionAction>>({
+      ? literal<CompanionActionExt>({
           label: 'Change SuperSource box enabled',
           options: _.compact([
             AtemSuperSourceIdPicker(model),
@@ -235,7 +236,7 @@ function ssrcActions(model: ModelSpec, state: AtemState) {
         })
       : undefined,
     [ActionId.SuperSourceBoxProperties]: model.SSrc
-      ? literal<Required<CompanionAction>>({
+      ? literal<CompanionActionExt>({
           label: 'Change SuperSource box properties',
           options: _.compact([
             AtemSuperSourceIdPicker(model),
@@ -254,13 +255,13 @@ export function GetActionsList(model: ModelSpec, state: AtemState): CompanionAct
     ...macroActions(model, state),
     ...ssrcActions(model, state),
     [ActionId.Aux]: model.auxes
-      ? literal<Required<CompanionAction>>({
+      ? literal<CompanionActionExt>({
           label: 'Set AUX bus',
           options: [AtemAuxPicker(model), AtemAuxSourcePicker(model, state)]
         })
       : undefined,
     [ActionId.MultiviewerWindowSource]: model.MVs
-      ? literal<Required<CompanionAction>>({
+      ? literal<CompanionActionExt>({
           label: 'Change MV window source',
           options: [
             AtemMultiviewerPicker(model),
@@ -270,7 +271,7 @@ export function GetActionsList(model: ModelSpec, state: AtemState): CompanionAct
         })
       : undefined,
     [ActionId.MediaPlayerSource]: model.media.players
-      ? literal<Required<CompanionAction>>({
+      ? literal<CompanionActionExt>({
           label: 'Change media player source',
           options: [AtemMediaPlayerPicker(model), AtemMediaPlayerSourcePicker(model, state)]
         })
