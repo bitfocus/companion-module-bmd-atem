@@ -70,6 +70,22 @@ export function AtemTransitionSelectionPickers(model: ModelSpec): CompanionInput
 
   return pickers
 }
+export function AtemTransitionSelectionMatchMethod(): CompanionInputFieldDropdown {
+  return {
+    id: 'matchmethod',
+    label: 'Match method',
+    type: 'dropdown',
+    default: '0',
+    choices: [{
+      id: '0',
+      label: 'Exact'
+    },
+    {
+      id: '1',
+      label: 'At least'
+    }]
+  }
+}
 export function AtemMEPicker(model: ModelSpec, id: number): CompanionInputFieldDropdown {
   return {
     id: `mixeffect${id ? id : ''}`,

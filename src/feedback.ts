@@ -31,7 +31,8 @@ import {
   AtemSuperSourcePropertiesPickers,
   AtemTransitionSelectionPickers,
   AtemTransitionStylePicker,
-  AtemUSKPicker
+  AtemUSKPicker,
+  AtemTransitionSelectionMatchMethod
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getME, getMultiviewerWindow, getSuperSourceBox, getUSK, TallyBySource } from './state'
@@ -459,12 +460,18 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
         ForegroundPicker(instance.rgb(0, 0, 0)),
         BackgroundPicker(instance.rgb(255, 255, 0)),
         AtemMEPicker(model, 0),
-        ...AtemTransitionSelectionPickers(model)
+        ...AtemTransitionSelectionPickers(model),
+        AtemTransitionSelectionMatchMethod()
       ],
       callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
         const me = getME(state, evt.options.mixeffect)
         const expectedSelection = calculateTransitionSelection(model.USKs, evt.options)
-        if (me && me.transitionProperties.selection === expectedSelection) {
+        if (!me) {
+          return {}
+        }
+        if (evt.options.matchmethod === '1' && (me.transitionProperties.selection & expectedSelection) === expectedSelection) {
+          return getOptColors(evt)
+        } else if (evt.options.matchmethod != '1' && me.transitionProperties.selection === expectedSelection) {
           return getOptColors(evt)
         }
         return {}

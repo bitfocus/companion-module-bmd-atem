@@ -27,7 +27,7 @@ import {
   AtemUSKPicker
 } from './input'
 import { ModelSpec } from './models'
-import { getDSK, getSuperSourceBox, getUSK } from './state'
+import { getDSK, getSuperSourceBox, getUSK, getTransitionProperties } from './state'
 import { assertUnreachable, calculateTransitionSelection, literal, MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util'
 
 export enum ActionId {
@@ -38,6 +38,7 @@ export enum ActionId {
   Aux = 'aux',
   USKSource = 'uskSource',
   USKOnAir = 'usk',
+  USKToggle = 'uskToggle',
   DSKSource = 'dskSource',
   DSKOnAir = 'dsk',
   DSKAuto = 'dskAuto',
@@ -101,6 +102,15 @@ function meActions(model: ModelSpec, state: AtemState) {
               default: 'true',
               choices: CHOICES_KEYTRANS
             },
+            AtemMEPicker(model, 0),
+            AtemUSKPicker(model)
+          ]
+        })
+      : undefined,
+    [ActionId.USKToggle]: model.USKs
+      ? literal<CompanionActionExt>({
+          label: 'Toggle Upstream KEY',
+          options: [
             AtemMEPicker(model, 0),
             AtemUSKPicker(model)
           ]
@@ -346,6 +356,26 @@ function executeAction(
         return atem.setUpstreamKeyerOnAir(!usk || !usk.onAir, meIndex, keyIndex)
       } else {
         return atem.setUpstreamKeyerOnAir(opt.onair === 'true', meIndex, keyIndex)
+      }
+    }
+    case ActionId.USKToggle: {
+      const meIndex = getOptNumber('mixeffect')
+      const keyIndex = getOptNumber('key')
+      const tp = getTransitionProperties(state, meIndex);
+      const keyVal = 1 << (keyIndex + 1);
+
+      if (!tp) {
+        return Promise.resolve();
+      }
+
+      if (((tp.selection & keyVal) === keyVal)) {
+        return atem.setTransitionStyle({
+          selection: tp.selection ^ keyVal
+        }, meIndex);
+      } else {
+        return atem.setTransitionStyle({
+          selection: tp.selection | keyVal
+        }, meIndex);
       }
     }
     case ActionId.DSKAuto:

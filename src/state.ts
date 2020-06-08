@@ -1,6 +1,6 @@
 import { AtemState, Commands } from 'atem-connection'
 import { InputValue } from '../../../instance_skel_types'
-import { SuperSourceBox } from 'atem-connection/dist/state/video'
+import { SuperSourceBox, TransitionProperties } from 'atem-connection/dist/state/video'
 import { MultiViewerWindowState } from 'atem-connection/dist/state/settings'
 
 // TODO - these should be exported more cleanly from atem-connection
@@ -20,6 +20,13 @@ export function getUSK(
 ): UpstreamKeyer | undefined {
   const me = getME(state, meIndex)
   return me ? me.upstreamKeyers[Number(keyIndex)] : undefined
+}
+export function getTransitionProperties(
+  state: AtemState,
+  meIndex: InputValue | undefined
+): TransitionProperties | undefined {
+  const me = getME(state, meIndex)
+  return me ? me.transitionProperties : undefined
 }
 export function getDSK(state: AtemState, keyIndex: InputValue | undefined): DownstreamKeyer | undefined {
   return state.video.downstreamKeyers[Number(keyIndex)]

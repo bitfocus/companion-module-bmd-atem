@@ -285,8 +285,8 @@ export function GetPresetsList(
   for (let me = 0; me < model.MEs; ++me) {
     for (let key = 0; key < model.USKs; ++key) {
       presets.push({
-        category: 'KEYs',
-        label: `Toggle upstream M/E ${me + 1} KEY ${key + 1}`,
+        category: 'KEYs OnAir',
+        label: `Toggle upstream M/E ${me + 1} KEY ${key + 1} OnAir`,
         bank: {
           style: 'text',
           text: 'KEY ' + (key + 1),
@@ -310,6 +310,40 @@ export function GetPresetsList(
             action: ActionId.USKOnAir,
             options: {
               onair: 'toggle',
+              key,
+              mixeffect: me
+            }
+          }
+        ]
+      })
+
+      presets.push({
+        category: 'KEYs',
+        label: `Toggle upstream M/E ${me + 1} KEY ${key + 1}`,
+        bank: {
+          style: 'text',
+          text: 'KEY ' + (key + 1),
+          size: '24',
+          color: instance.rgb(255, 255, 255),
+          bgcolor: instance.rgb(0, 0, 0)
+        },
+        feedbacks: [
+          {
+            type: FeedbackId.TransitionSelection,
+            options: {
+              bg: instance.rgb(255, 255, 0),
+              fg: instance.rgb(255, 255, 255),
+              ['key' + key]: true,
+              mixeffect: me,
+              matchmethod: '1',
+              background: false
+            }
+          }
+        ],
+        actions: [
+          {
+            action: ActionId.USKToggle,
+            options: {
               key,
               mixeffect: me
             }
@@ -359,7 +393,7 @@ export function GetPresetsList(
   // Downstream keyers
   for (let dsk = 0; dsk < model.DSKs; ++dsk) {
     presets.push({
-      category: 'KEYs',
+      category: 'KEYs OnAir',
       label: `Toggle downstream KEY ${dsk + 1}`,
       bank: {
         style: 'text',
