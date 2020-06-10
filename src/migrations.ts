@@ -1,4 +1,3 @@
-import * as _ from 'underscore'
 import {
   CompanionCoreInstanceconfig,
   CompanionMigrationAction,
@@ -23,8 +22,7 @@ export function upgradeV2x2x0(
 ): boolean {
   let changed = false
 
-  const allActions = [...actions, ...releaseActions]
-  _.each(allActions, action => {
+  for (const action of [...actions, ...releaseActions]) {
     if (action.action === ActionId.SuperSourceBoxProperties) {
       scaleValue(action.options, 'size', 0.001)
       scaleValue(action.options, 'x', 0.01)
@@ -36,9 +34,9 @@ export function upgradeV2x2x0(
 
       changed = true
     }
-  })
+  }
 
-  _.each(feedbacks, feedback => {
+  for (const feedback of feedbacks) {
     if (feedback.type === FeedbackId.SSrcBoxProperties) {
       scaleValue(feedback.options, 'size', 0.001)
       scaleValue(feedback.options, 'x', 0.01)
@@ -50,7 +48,7 @@ export function upgradeV2x2x0(
 
       changed = true
     }
-  })
+  }
 
   return changed
 }

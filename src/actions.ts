@@ -1,5 +1,4 @@
 import { Atem, AtemState, Enums } from 'atem-connection'
-import * as _ from 'underscore'
 import InstanceSkel = require('../../../instance_skel')
 import { CompanionAction, CompanionActionEvent, CompanionActions } from '../../../instance_skel_types'
 import { CHOICES_KEYTRANS, GetDSKIdChoices, GetMacroChoices } from './choices'
@@ -28,7 +27,7 @@ import {
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getSuperSourceBox, getUSK } from './state'
-import { assertUnreachable, calculateTransitionSelection, literal, MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util'
+import { assertUnreachable, calculateTransitionSelection, literal, MEDIA_PLAYER_SOURCE_CLIP_OFFSET, compact } from './util'
 
 export enum ActionId {
   Program = 'program',
@@ -212,7 +211,7 @@ function ssrcActions(model: ModelSpec, state: AtemState) {
     [ActionId.SuperSourceBoxSource]: model.SSrc
       ? literal<CompanionActionExt>({
           label: 'Change SuperSource box source',
-          options: _.compact([
+          options: compact([
             AtemSuperSourceIdPicker(model),
             AtemSuperSourceBoxPicker(),
             AtemSuperSourceBoxSourcePicker(model, state)
@@ -222,7 +221,7 @@ function ssrcActions(model: ModelSpec, state: AtemState) {
     [ActionId.SuperSourceBoxOnAir]: model.SSrc
       ? literal<CompanionActionExt>({
           label: 'Change SuperSource box enabled',
-          options: _.compact([
+          options: compact([
             AtemSuperSourceIdPicker(model),
             AtemSuperSourceBoxPicker(),
             {
@@ -238,7 +237,7 @@ function ssrcActions(model: ModelSpec, state: AtemState) {
     [ActionId.SuperSourceBoxProperties]: model.SSrc
       ? literal<CompanionActionExt>({
           label: 'Change SuperSource box properties',
-          options: _.compact([
+          options: compact([
             AtemSuperSourceIdPicker(model),
             AtemSuperSourceBoxPicker(),
             ...AtemSuperSourcePropertiesPickers()

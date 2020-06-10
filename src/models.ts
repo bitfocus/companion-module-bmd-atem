@@ -1,5 +1,4 @@
 import { AtemState, Enums } from 'atem-connection'
-import * as _ from 'underscore'
 import { DropdownChoice } from '../../../instance_skel_types'
 
 export const MODEL_AUTO_DETECT = 0
@@ -335,9 +334,9 @@ export function GetParsedModelSpec({ info, macro, media, inputs, settings, video
     inputs: inputs.filter(i => i.isExternal).length,
     auxes: info.capabilities.auxilliaries,
     MEs: info.capabilities.MEs,
-    USKs: video.ME[0] ? _.values(video.ME[0].upstreamKeyers).length : 0,
-    DSKs: _.values(video.downstreamKeyers).length,
-    MVs: _.values(settings.multiViewers).length,
+    USKs: video.ME[0] ? Object.values(video.ME[0].upstreamKeyers).length : 0,
+    DSKs: Object.values(video.downstreamKeyers).length,
+    MVs: Object.values(settings.multiViewers).length,
     multiviewerFullGrid: false, // TODO
     SSrc: info.capabilities.superSources,
     macros: macro.macroProperties.length,

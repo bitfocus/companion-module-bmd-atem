@@ -10,6 +10,10 @@ export function literal<T>(val: T): T {
   return val
 }
 
+export function compact<T>(arr: Array<T | undefined>): T[] {
+  return arr.filter(v => v !== undefined) as T[]
+}
+
 export function iterateTimes<T>(count: number, cb: (i: number) => T): T[] {
   const res: T[] = []
   for (let i = 0; i < count; i++) {

@@ -1,5 +1,4 @@
 import { AtemState, Enums } from 'atem-connection'
-import * as _ from 'underscore'
 import InstanceSkel = require('../../../instance_skel')
 import {
   CompanionFeedback,
@@ -35,7 +34,13 @@ import {
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getME, getMultiviewerWindow, getSuperSourceBox, getUSK, TallyBySource } from './state'
-import { assertUnreachable, calculateTransitionSelection, literal, MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util'
+import {
+  assertUnreachable,
+  calculateTransitionSelection,
+  literal,
+  MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
+  compact
+} from './util'
 
 type CompanionFeedbackWithCallback = CompanionFeedback & Required<Pick<CompanionFeedback, 'callback'>>
 
@@ -600,7 +605,7 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
       ? literal<CompanionFeedbackWithCallback>({
           label: 'Change colors from SuperSorce box source',
           description: 'If the specified SuperSource box is set to the specified source, change color of the bank',
-          options: _.compact([
+          options: compact([
             ForegroundPicker(instance.rgb(0, 0, 0)),
             BackgroundPicker(instance.rgb(255, 255, 0)),
             AtemSuperSourceIdPicker(model),
@@ -620,7 +625,7 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
       ? literal<CompanionFeedbackWithCallback>({
           label: 'Change colors from SuperSorce box state',
           description: 'If the specified SuperSource box is enabled, change color of the bank',
-          options: _.compact([
+          options: compact([
             ForegroundPicker(instance.rgb(0, 0, 0)),
             BackgroundPicker(instance.rgb(255, 255, 0)),
             AtemSuperSourceIdPicker(model),
@@ -639,7 +644,7 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
       ? literal<CompanionFeedbackWithCallback>({
           label: 'Change colors from SuperSorce box properties',
           description: 'If the specified SuperSource box properties match, change color of the bank',
-          options: _.compact([
+          options: compact([
             ForegroundPicker(instance.rgb(0, 0, 0)),
             BackgroundPicker(instance.rgb(255, 255, 0)),
             AtemSuperSourceIdPicker(model),
