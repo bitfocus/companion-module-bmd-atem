@@ -1,7 +1,7 @@
 import { Atem, AtemState, Commands } from 'atem-connection'
 import InstanceSkel = require('../../../instance_skel')
-import { CompanionActionEvent, CompanionConfigField, CompanionSystem } from '../../../instance_skel_types'
-import { GetActionsList, HandleAction } from './actions'
+import { CompanionConfigField, CompanionSystem } from '../../../instance_skel_types'
+import { GetActionsList } from './actions'
 import { AtemConfig, GetConfigFields } from './config'
 import { FeedbackId, GetFeedbacksList } from './feedback'
 import { upgradeV2x2x0 } from './migrations'
@@ -102,13 +102,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   }
 
   /**
-   * Executes the provided action.
-   */
-  public action(action: CompanionActionEvent): void {
-    HandleAction(this, this.atem, this.model, this.atemState, action)
-  }
-
-  /**
    * Creates the configuration fields for web config.
    */
   // eslint-disable-next-line @typescript-eslint/camelcase
@@ -148,7 +141,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     InitVariables(this, this.model, this.atemState)
     this.setPresetDefinitions(GetPresetsList(this, this.model, this.atemState))
     this.setFeedbackDefinitions(GetFeedbacksList(this, this.model, this.atemState, this.atemTally))
-    this.setActions(GetActionsList(this.model, this.atemState))
+    this.setActions(GetActionsList(this, this.atem, this.model, this.atemState))
     this.checkFeedbacks()
   }
 

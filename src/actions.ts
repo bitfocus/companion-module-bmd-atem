@@ -61,27 +61,65 @@ export enum ActionId {
   FadeToBlackRate = 'fadeToBlackRate'
 }
 
-type CompanionActionExt = CompanionAction // & Required<Pick<CompanionAction, 'callback'>>
+type CompanionActionExt = CompanionAction & Required<Pick<CompanionAction, 'callback'>>
 type CompanionActionsExt = { [id in ActionId]: CompanionActionExt | undefined }
 
+function executePromise(instance: InstanceSkel<AtemConfig>, prom: Promise<unknown>): void {
+  try {
+    prom.catch(e => {
+      instance.debug('Action execution error: ' + e)
+    })
+  } catch (e) {
+    instance.debug('Action failed: ' + e)
+  }
+}
+function getOptNumber(action: CompanionActionEvent, key: string): number {
+  const val = Number(action.options[key])
+  if (isNaN(val)) {
+    throw new Error(`Invalid option '${key}'`)
+  }
+  return val
+}
+function getOptBool(action: CompanionActionEvent, key: string): boolean {
+  return Boolean(action.options[key])
+}
+
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function meActions(model: ModelSpec, state: AtemState) {
+function meActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: ModelSpec, state: AtemState) {
   return {
     [ActionId.Program]: literal<CompanionActionExt>({
       label: 'Set input on Program',
-      options: [AtemMEPicker(model, 0), AtemMESourcePicker(model, state, 0)]
+      options: [AtemMEPicker(model, 0), AtemMESourcePicker(model, state, 0)],
+      callback: (action): void => {
+        executePromise(
+          instance,
+          atem.changeProgramInput(getOptNumber(action, 'input'), getOptNumber(action, 'mixeffect'))
+        )
+      }
     }),
     [ActionId.Preview]: literal<CompanionActionExt>({
       label: 'Set input on Preview',
-      options: [AtemMEPicker(model, 0), AtemMESourcePicker(model, state, 0)]
+      options: [AtemMEPicker(model, 0), AtemMESourcePicker(model, state, 0)],
+      callback: (action): void => {
+        executePromise(
+          instance,
+          atem.changePreviewInput(getOptNumber(action, 'input'), getOptNumber(action, 'mixeffect'))
+        )
+      }
     }),
     [ActionId.Cut]: literal<CompanionActionExt>({
       label: 'CUT operation',
-      options: [AtemMEPicker(model, 0)]
+      options: [AtemMEPicker(model, 0)],
+      callback: (action): void => {
+        executePromise(instance, atem.cut(getOptNumber(action, 'mixeffect')))
+      }
     }),
     [ActionId.Auto]: literal<CompanionActionExt>({
       label: 'AUTO transition operation',
-      options: [AtemMEPicker(model, 0)]
+      options: [AtemMEPicker(model, 0)],
+      callback: (action): void => {
+        executePromise(instance, atem.autoTransition(getOptNumber(action, 'mixeffect')))
+      }
     }),
 
     [ActionId.USKSource]: model.USKs
@@ -92,7 +130,24 @@ function meActions(model: ModelSpec, state: AtemState) {
             AtemUSKPicker(model),
             AtemKeyFillSourcePicker(model, state),
             AtemKeyCutSourcePicker(model, state)
-          ]
+          ],
+          callback: (action): void => {
+            executePromise(
+              instance,
+              Promise.all([
+                atem.setUpstreamKeyerFillSource(
+                  getOptNumber(action, 'fill'),
+                  getOptNumber(action, 'mixeffect'),
+                  getOptNumber(action, 'key')
+                ),
+                atem.setUpstreamKeyerCutSource(
+                  getOptNumber(action, 'cut'),
+                  getOptNumber(action, 'mixeffect'),
+                  getOptNumber(action, 'key')
+                )
+              ])
+            )
+          }
         })
       : undefined,
     [ActionId.USKOnAir]: model.USKs
@@ -108,39 +163,144 @@ function meActions(model: ModelSpec, state: AtemState) {
             },
             AtemMEPicker(model, 0),
             AtemUSKPicker(model)
-          ]
+          ],
+          callback: (action): void => {
+            const meIndex = getOptNumber(action, 'mixeffect')
+            const keyIndex = getOptNumber(action, 'key')
+            if (action.options.onair === 'toggle') {
+              const usk = getUSK(state, meIndex, keyIndex)
+              executePromise(instance, atem.setUpstreamKeyerOnAir(!usk || !usk.onAir, meIndex, keyIndex))
+            } else {
+              executePromise(instance, atem.setUpstreamKeyerOnAir(action.options.onair === 'true', meIndex, keyIndex))
+            }
+          }
         })
       : undefined,
     [ActionId.TransitionStyle]: literal<CompanionActionExt>({
       label: 'Change transition style',
-      options: [AtemMEPicker(model, 0), AtemTransitionStylePicker(model.media.clips === 0)]
+      options: [AtemMEPicker(model, 0), AtemTransitionStylePicker(model.media.clips === 0)],
+      callback: (action): void => {
+        executePromise(
+          instance,
+          atem.setTransitionStyle(
+            {
+              style: getOptNumber(action, 'style')
+            },
+            getOptNumber(action, 'mixeffect')
+          )
+        )
+      }
     }),
     [ActionId.TransitionRate]: literal<CompanionActionExt>({
       label: 'Change transition rate',
-      options: [AtemMEPicker(model, 0), AtemTransitionStylePicker(true), AtemRatePicker('Transition Rate')]
+      options: [AtemMEPicker(model, 0), AtemTransitionStylePicker(true), AtemRatePicker('Transition Rate')],
+      callback: (action): void => {
+        const style = getOptNumber(action, 'style') as Enums.TransitionStyle
+        switch (style) {
+          case Enums.TransitionStyle.MIX:
+            executePromise(
+              instance,
+              atem.setMixTransitionSettings(
+                {
+                  rate: getOptNumber(action, 'rate')
+                },
+                getOptNumber(action, 'mixeffect')
+              )
+            )
+            break
+          case Enums.TransitionStyle.DIP:
+            executePromise(
+              instance,
+              atem.setDipTransitionSettings(
+                {
+                  rate: getOptNumber(action, 'rate')
+                },
+                getOptNumber(action, 'mixeffect')
+              )
+            )
+            break
+          case Enums.TransitionStyle.WIPE:
+            executePromise(
+              instance,
+              atem.setWipeTransitionSettings(
+                {
+                  rate: getOptNumber(action, 'rate')
+                },
+                getOptNumber(action, 'mixeffect')
+              )
+            )
+            break
+          case Enums.TransitionStyle.DVE:
+            executePromise(
+              instance,
+              atem.setDVETransitionSettings(
+                {
+                  rate: getOptNumber(action, 'rate')
+                },
+                getOptNumber(action, 'mixeffect')
+              )
+            )
+            break
+          case Enums.TransitionStyle.STING:
+            // Not supported
+            break
+          default:
+            assertUnreachable(style)
+            instance.debug('Unknown transition style: ' + style)
+        }
+      }
     }),
     [ActionId.TransitionSelection]: literal<CompanionActionExt>({
       label: 'Change transition selection',
-      options: [AtemMEPicker(model, 0), ...AtemTransitionSelectionPickers(model)]
+      options: [AtemMEPicker(model, 0), ...AtemTransitionSelectionPickers(model)],
+      callback: (action): void => {
+        executePromise(
+          instance,
+          atem.setTransitionStyle(
+            {
+              selection: calculateTransitionSelection(model.USKs, action.options)
+            },
+            getOptNumber(action, 'mixeffect')
+          )
+        )
+      }
     }),
     [ActionId.FadeToBlackAuto]: literal<CompanionActionExt>({
       label: 'AUTO fade to black',
-      options: [AtemMEPicker(model, 0)]
+      options: [AtemMEPicker(model, 0)],
+      callback: (action): void => {
+        executePromise(instance, atem.fadeToBlack(getOptNumber(action, 'mixeffect')))
+      }
     }),
     [ActionId.FadeToBlackRate]: literal<CompanionActionExt>({
       label: 'Change fade to black rate',
-      options: [AtemMEPicker(model, 0), AtemRatePicker('Rate')]
+      options: [AtemMEPicker(model, 0), AtemRatePicker('Rate')],
+      callback: (action): void => {
+        executePromise(
+          instance,
+          atem.setFadeToBlackRate(getOptNumber(action, 'rate'), getOptNumber(action, 'mixeffect'))
+        )
+      }
     })
   }
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function dskActions(model: ModelSpec, state: AtemState) {
+function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: ModelSpec, state: AtemState) {
   return {
     [ActionId.DSKSource]: model.DSKs
       ? literal<CompanionActionExt>({
           label: 'Set inputs on Downstream KEY',
-          options: [AtemDSKPicker(model), AtemKeyFillSourcePicker(model, state), AtemKeyCutSourcePicker(model, state)]
+          options: [AtemDSKPicker(model), AtemKeyFillSourcePicker(model, state), AtemKeyCutSourcePicker(model, state)],
+          callback: (action): void => {
+            executePromise(
+              instance,
+              Promise.all([
+                atem.setUpstreamKeyerFillSource(getOptNumber(action, 'fill'), getOptNumber(action, 'key')),
+                atem.setUpstreamKeyerCutSource(getOptNumber(action, 'cut'), getOptNumber(action, 'key'))
+              ])
+            )
+          }
         })
       : undefined,
     [ActionId.DSKAuto]: model.DSKs
@@ -154,7 +314,10 @@ function dskActions(model: ModelSpec, state: AtemState) {
               default: 0,
               choices: GetDSKIdChoices(model)
             }
-          ]
+          ],
+          callback: (action): void => {
+            executePromise(instance, atem.autoDownstreamKey(getOptNumber(action, 'downstreamKeyerId')))
+          }
         })
       : undefined,
     [ActionId.DSKOnAir]: model.DSKs
@@ -169,14 +332,23 @@ function dskActions(model: ModelSpec, state: AtemState) {
               choices: CHOICES_KEYTRANS
             },
             AtemDSKPicker(model)
-          ]
+          ],
+          callback: (action): void => {
+            const keyIndex = getOptNumber(action, 'key')
+            if (action.options.onair === 'toggle') {
+              const dsk = getDSK(state, keyIndex)
+              executePromise(instance, atem.setDownstreamKeyOnAir(!dsk || !dsk.onAir, keyIndex))
+            } else {
+              executePromise(instance, atem.setDownstreamKeyOnAir(action.options.onair === 'true', keyIndex))
+            }
+          }
         })
       : undefined
   }
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function macroActions(model: ModelSpec, state: AtemState) {
+function macroActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: ModelSpec, state: AtemState) {
   return {
     [ActionId.MacroRun]: model.macros
       ? literal<CompanionActionExt>({
@@ -199,18 +371,47 @@ function macroActions(model: ModelSpec, state: AtemState) {
                 { id: 'runContinue', label: 'Run/Continue' }
               ]
             }
-          ]
+          ],
+          callback: (action): void => {
+            const macroIndex = getOptNumber(action, 'macro') - 1
+            const { macroPlayer, macroRecorder } = state.macro
+            if (
+              action.options.action === 'runContinue' &&
+              macroPlayer.isWaiting &&
+              macroPlayer.macroIndex === macroIndex
+            ) {
+              executePromise(instance, atem.macroContinue())
+            } else if (macroRecorder.isRecording && macroRecorder.macroIndex === macroIndex) {
+              executePromise(instance, atem.macroStopRecord())
+            } else {
+              executePromise(instance, atem.macroRun(macroIndex))
+            }
+          }
         })
       : undefined,
     [ActionId.MacroContinue]: model.macros
-      ? literal<CompanionActionExt>({ label: 'Continue MACRO', options: [] })
+      ? literal<CompanionActionExt>({
+          label: 'Continue MACRO',
+          options: [],
+          callback: (): void => {
+            executePromise(instance, atem.macroContinue())
+          }
+        })
       : undefined,
-    [ActionId.MacroStop]: model.macros ? literal<CompanionActionExt>({ label: 'Stop MACROS', options: [] }) : undefined
+    [ActionId.MacroStop]: model.macros
+      ? literal<CompanionActionExt>({
+          label: 'Stop MACROS',
+          options: [],
+          callback: (): void => {
+            executePromise(instance, atem.macroStop())
+          }
+        })
+      : undefined
   }
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function ssrcActions(model: ModelSpec, state: AtemState) {
+function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: ModelSpec, state: AtemState) {
   return {
     [ActionId.SuperSourceBoxSource]: model.SSrc
       ? literal<CompanionActionExt>({
@@ -219,7 +420,19 @@ function ssrcActions(model: ModelSpec, state: AtemState) {
             AtemSuperSourceIdPicker(model),
             AtemSuperSourceBoxPicker(),
             AtemSuperSourceBoxSourcePicker(model, state)
-          ])
+          ]),
+          callback: (action): void => {
+            executePromise(
+              instance,
+              atem.setSuperSourceBoxSettings(
+                {
+                  source: getOptNumber(action, 'source')
+                },
+                getOptNumber(action, 'boxIndex'),
+                action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
+              )
+            )
+          }
         })
       : undefined,
     [ActionId.SuperSourceBoxOnAir]: model.SSrc
@@ -235,7 +448,36 @@ function ssrcActions(model: ModelSpec, state: AtemState) {
               default: 'true',
               choices: CHOICES_KEYTRANS
             }
-          ])
+          ]),
+          callback: (action): void => {
+            const ssrcId = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
+            const boxIndex = getOptNumber(action, 'boxIndex')
+
+            if (action.options.onair === 'toggle') {
+              const box = getSuperSourceBox(state, boxIndex, ssrcId)
+              executePromise(
+                instance,
+                atem.setSuperSourceBoxSettings(
+                  {
+                    enabled: !box || !box.enabled
+                  },
+                  boxIndex,
+                  ssrcId
+                )
+              )
+            } else {
+              executePromise(
+                instance,
+                atem.setSuperSourceBoxSettings(
+                  {
+                    enabled: action.options.onair === 'true'
+                  },
+                  boxIndex,
+                  ssrcId
+                )
+              )
+            }
+          }
         })
       : undefined,
     [ActionId.SuperSourceBoxProperties]: model.SSrc
@@ -245,22 +487,49 @@ function ssrcActions(model: ModelSpec, state: AtemState) {
             AtemSuperSourceIdPicker(model),
             AtemSuperSourceBoxPicker(),
             ...AtemSuperSourcePropertiesPickers()
-          ])
+          ]),
+          callback: (action): void => {
+            executePromise(
+              instance,
+              atem.setSuperSourceBoxSettings(
+                {
+                  size: getOptNumber(action, 'size') * 1000,
+                  x: getOptNumber(action, 'x') * 100,
+                  y: getOptNumber(action, 'y') * 100,
+                  cropped: getOptBool(action, 'cropEnable'),
+                  cropTop: getOptNumber(action, 'cropTop') * 1000,
+                  cropBottom: getOptNumber(action, 'cropBottom') * 1000,
+                  cropLeft: getOptNumber(action, 'cropLeft') * 1000,
+                  cropRight: getOptNumber(action, 'cropRight') * 1000
+                },
+                getOptNumber(action, 'boxIndex'),
+                action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
+              )
+            )
+          }
         })
       : undefined
   }
 }
 
-export function GetActionsList(model: ModelSpec, state: AtemState): CompanionActions {
+export function GetActionsList(
+  instance: InstanceSkel<AtemConfig>,
+  atem: Atem,
+  model: ModelSpec,
+  state: AtemState
+): CompanionActions {
   const actions: CompanionActionsExt = {
-    ...meActions(model, state),
-    ...dskActions(model, state),
-    ...macroActions(model, state),
-    ...ssrcActions(model, state),
+    ...meActions(instance, atem, model, state),
+    ...dskActions(instance, atem, model, state),
+    ...macroActions(instance, atem, model, state),
+    ...ssrcActions(instance, atem, model, state),
     [ActionId.Aux]: model.auxes
       ? literal<CompanionActionExt>({
           label: 'Set AUX bus',
-          options: [AtemAuxPicker(model), AtemAuxSourcePicker(model, state)]
+          options: [AtemAuxPicker(model), AtemAuxSourcePicker(model, state)],
+          callback: (action): void => {
+            executePromise(instance, atem.setAuxSource(getOptNumber(action, 'input'), getOptNumber(action, 'aux')))
+          }
         })
       : undefined,
     [ActionId.MultiviewerWindowSource]: model.MVs
@@ -270,250 +539,54 @@ export function GetActionsList(model: ModelSpec, state: AtemState): CompanionAct
             AtemMultiviewerPicker(model),
             AtemMultiviewWindowPicker(model),
             AtemMultiviewSourcePicker(model, state)
-          ]
+          ],
+          callback: (action): void => {
+            executePromise(
+              instance,
+              atem.setMultiViewerSource(
+                {
+                  windowIndex: getOptNumber(action, 'windowIndex'),
+                  source: getOptNumber(action, 'source')
+                },
+                getOptNumber(action, 'multiViewerId')
+              )
+            )
+          }
         })
       : undefined,
     [ActionId.MediaPlayerSource]: model.media.players
       ? literal<CompanionActionExt>({
           label: 'Change media player source',
-          options: [AtemMediaPlayerPicker(model), AtemMediaPlayerSourcePicker(model, state)]
+          options: [AtemMediaPlayerPicker(model), AtemMediaPlayerSourcePicker(model, state)],
+          callback: (action): void => {
+            const source = getOptNumber(action, 'source')
+            if (source >= MEDIA_PLAYER_SOURCE_CLIP_OFFSET) {
+              executePromise(
+                instance,
+                atem.setMediaPlayerSource(
+                  {
+                    sourceType: Enums.MediaSourceType.Clip,
+                    clipIndex: source - MEDIA_PLAYER_SOURCE_CLIP_OFFSET
+                  },
+                  getOptNumber(action, 'mediaplayer')
+                )
+              )
+            } else {
+              executePromise(
+                instance,
+                atem.setMediaPlayerSource(
+                  {
+                    sourceType: Enums.MediaSourceType.Still,
+                    stillIndex: source
+                  },
+                  getOptNumber(action, 'mediaplayer')
+                )
+              )
+            }
+          }
         })
       : undefined
   }
 
   return actions
-}
-
-export function HandleAction(
-  instance: InstanceSkel<AtemConfig>,
-  atem: Atem,
-  model: ModelSpec,
-  state: AtemState,
-  action: CompanionActionEvent
-): void {
-  try {
-    const res = executeAction(instance, atem, model, state, action)
-    res.catch(e => {
-      instance.debug('Action execution error: ' + e)
-    })
-  } catch (e) {
-    instance.debug('Action failed: ' + e)
-  }
-}
-
-function executeAction(
-  instance: InstanceSkel<AtemConfig>,
-  atem: Atem,
-  model: ModelSpec,
-  state: AtemState,
-  action: CompanionActionEvent
-): Promise<unknown> {
-  const opt = action.options
-  const getOptNumber = (key: string): number => {
-    const val = Number(opt[key])
-    if (isNaN(val)) {
-      throw new Error(`Invalid option '${key}'`)
-    }
-    return val
-  }
-  const getOptBool = (key: string): boolean => {
-    return !!opt[key]
-  }
-
-  /* tslint:enable:no-switch-case-fall-through */
-  const actionId = action.action as ActionId
-  switch (actionId) {
-    case ActionId.Program:
-      return atem.changeProgramInput(getOptNumber('input'), getOptNumber('mixeffect'))
-    case ActionId.Preview:
-      return atem.changePreviewInput(getOptNumber('input'), getOptNumber('mixeffect'))
-    case ActionId.USKSource:
-      return Promise.all([
-        atem.setUpstreamKeyerFillSource(getOptNumber('fill'), getOptNumber('mixeffect'), getOptNumber('key')),
-        atem.setUpstreamKeyerCutSource(getOptNumber('cut'), getOptNumber('mixeffect'), getOptNumber('key'))
-      ])
-    case ActionId.DSKSource:
-      return Promise.all([
-        atem.setDownstreamKeyFillSource(getOptNumber('fill'), getOptNumber('key')),
-        atem.setDownstreamKeyCutSource(getOptNumber('cut'), getOptNumber('key'))
-      ])
-    case ActionId.Aux:
-      return atem.setAuxSource(getOptNumber('input'), getOptNumber('aux'))
-    case ActionId.Cut:
-      return atem.cut(getOptNumber('mixeffect'))
-    case ActionId.USKOnAir: {
-      const meIndex = getOptNumber('mixeffect')
-      const keyIndex = getOptNumber('key')
-      if (opt.onair === 'toggle') {
-        const usk = getUSK(state, meIndex, keyIndex)
-        return atem.setUpstreamKeyerOnAir(!usk || !usk.onAir, meIndex, keyIndex)
-      } else {
-        return atem.setUpstreamKeyerOnAir(opt.onair === 'true', meIndex, keyIndex)
-      }
-    }
-    case ActionId.DSKAuto:
-      return atem.autoDownstreamKey(getOptNumber('downstreamKeyerId'))
-    case ActionId.DSKOnAir: {
-      const keyIndex = getOptNumber('key')
-      if (opt.onair === 'toggle') {
-        const dsk = getDSK(state, keyIndex)
-        return atem.setDownstreamKeyOnAir(!dsk || !dsk.onAir, keyIndex)
-      } else {
-        return atem.setDownstreamKeyOnAir(opt.onair === 'true', keyIndex)
-      }
-    }
-    case ActionId.Auto:
-      return atem.autoTransition(getOptNumber('mixeffect'))
-    case ActionId.MacroRun: {
-      const macroIndex = getOptNumber('macro') - 1
-      const { macroPlayer, macroRecorder } = state.macro
-      if (opt.action === 'runContinue' && macroPlayer.isWaiting && macroPlayer.macroIndex === macroIndex) {
-        return atem.macroContinue()
-      } else if (macroRecorder.isRecording && macroRecorder.macroIndex === macroIndex) {
-        return atem.macroStopRecord()
-      } else {
-        return atem.macroRun(macroIndex)
-      }
-    }
-    case ActionId.MacroContinue:
-      return atem.macroContinue()
-    case ActionId.MacroStop:
-      return atem.macroStop()
-    case ActionId.MultiviewerWindowSource:
-      return atem.setMultiViewerSource(
-        {
-          windowIndex: getOptNumber('windowIndex'),
-          source: getOptNumber('source')
-        },
-        getOptNumber('multiViewerId')
-      )
-    case ActionId.SuperSourceBoxOnAir: {
-      const ssrcId = opt.ssrcId && model.SSrc > 1 ? Number(opt.ssrcId) : 0
-      const boxIndex = getOptNumber('boxIndex')
-
-      if (opt.onair === 'toggle') {
-        const box = getSuperSourceBox(state, boxIndex, ssrcId)
-        return atem.setSuperSourceBoxSettings(
-          {
-            enabled: !box || !box.enabled
-          },
-          boxIndex,
-          ssrcId
-        )
-      } else {
-        return atem.setSuperSourceBoxSettings(
-          {
-            enabled: opt.onair === 'true'
-          },
-          boxIndex,
-          ssrcId
-        )
-      }
-    }
-    case ActionId.SuperSourceBoxSource:
-      return atem.setSuperSourceBoxSettings(
-        {
-          source: getOptNumber('source')
-        },
-        getOptNumber('boxIndex'),
-        opt.ssrcId && model.SSrc > 1 ? Number(opt.ssrcId) : 0
-      )
-    case ActionId.SuperSourceBoxProperties:
-      return atem.setSuperSourceBoxSettings(
-        {
-          size: getOptNumber('size') * 1000,
-          x: getOptNumber('x') * 100,
-          y: getOptNumber('y') * 100,
-          cropped: getOptBool('cropEnable'),
-          cropTop: getOptNumber('cropTop') * 1000,
-          cropBottom: getOptNumber('cropBottom') * 1000,
-          cropLeft: getOptNumber('cropLeft') * 1000,
-          cropRight: getOptNumber('cropRight') * 1000
-        },
-        getOptNumber('boxIndex'),
-        opt.ssrcId && model.SSrc > 1 ? Number(opt.ssrcId) : 0
-      )
-    case ActionId.TransitionStyle:
-      return atem.setTransitionStyle(
-        {
-          style: getOptNumber('style')
-        },
-        getOptNumber('mixeffect')
-      )
-    case ActionId.TransitionRate: {
-      const style = getOptNumber('style') as Enums.TransitionStyle
-      switch (style) {
-        case Enums.TransitionStyle.MIX:
-          return atem.setMixTransitionSettings(
-            {
-              rate: getOptNumber('rate')
-            },
-            getOptNumber('mixeffect')
-          )
-        case Enums.TransitionStyle.DIP:
-          return atem.setDipTransitionSettings(
-            {
-              rate: getOptNumber('rate')
-            },
-            getOptNumber('mixeffect')
-          )
-        case Enums.TransitionStyle.WIPE:
-          return atem.setWipeTransitionSettings(
-            {
-              rate: getOptNumber('rate')
-            },
-            getOptNumber('mixeffect')
-          )
-        case Enums.TransitionStyle.DVE:
-          return atem.setDVETransitionSettings(
-            {
-              rate: getOptNumber('rate')
-            },
-            getOptNumber('mixeffect')
-          )
-        case Enums.TransitionStyle.STING:
-          return Promise.resolve()
-        default:
-          assertUnreachable(style)
-          instance.debug('Unknown transition style: ' + style)
-          return Promise.resolve()
-      }
-    }
-    case ActionId.TransitionSelection: {
-      return atem.setTransitionStyle(
-        {
-          selection: calculateTransitionSelection(model.USKs, action.options)
-        },
-        getOptNumber('mixeffect')
-      )
-    }
-    case ActionId.MediaPlayerSource: {
-      const source = getOptNumber('source')
-      if (source >= MEDIA_PLAYER_SOURCE_CLIP_OFFSET) {
-        return atem.setMediaPlayerSource(
-          {
-            sourceType: Enums.MediaSourceType.Clip,
-            clipIndex: source - MEDIA_PLAYER_SOURCE_CLIP_OFFSET
-          },
-          getOptNumber('mediaplayer')
-        )
-      } else {
-        return atem.setMediaPlayerSource(
-          {
-            sourceType: Enums.MediaSourceType.Still,
-            stillIndex: source
-          },
-          getOptNumber('mediaplayer')
-        )
-      }
-    }
-    case ActionId.FadeToBlackAuto:
-      return atem.fadeToBlack(getOptNumber('mixeffect'))
-    case ActionId.FadeToBlackRate:
-      return atem.setFadeToBlackRate(getOptNumber('rate'), getOptNumber('mixeffect'))
-    default:
-      assertUnreachable(actionId)
-      instance.debug('Unknown action: ' + action.action)
-      return Promise.resolve()
-  }
 }
