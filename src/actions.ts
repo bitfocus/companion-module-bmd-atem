@@ -27,7 +27,13 @@ import {
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getSuperSourceBox, getUSK } from './state'
-import { assertUnreachable, calculateTransitionSelection, literal, MEDIA_PLAYER_SOURCE_CLIP_OFFSET, compact } from './util'
+import {
+  assertUnreachable,
+  calculateTransitionSelection,
+  literal,
+  MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
+  compact
+} from './util'
 
 export enum ActionId {
   Program = 'program',
@@ -199,9 +205,7 @@ function macroActions(model: ModelSpec, state: AtemState) {
     [ActionId.MacroContinue]: model.macros
       ? literal<CompanionActionExt>({ label: 'Continue MACRO', options: [] })
       : undefined,
-    [ActionId.MacroStop]: model.macros
-      ? literal<CompanionActionExt>({ label: 'Stop MACROS', options: [] })
-      : undefined
+    [ActionId.MacroStop]: model.macros ? literal<CompanionActionExt>({ label: 'Stop MACROS', options: [] }) : undefined
   }
 }
 
