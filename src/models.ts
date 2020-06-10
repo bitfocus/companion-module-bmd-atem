@@ -16,6 +16,7 @@ export interface ModelSpec {
   MVs: number
   multiviewerFullGrid: boolean
   auxInput1Direct?: boolean
+  auxMultiview?: boolean
   SSrc: number
   macros: number
   media: {
@@ -290,6 +291,7 @@ export const ALL_MODELS: ModelSpec[] = [
     MVs: 0,
     multiviewerFullGrid: false,
     auxInput1Direct: true,
+    auxMultiview: true,
     SSrc: 0,
     macros: 100,
     media: {

@@ -163,6 +163,10 @@ export function GetSourcesListForType(model: ModelSpec, state: AtemState, subset
     sources.push(getSource(10000 + i * 10 + 1, `M${i}PV`, `ME ${i} Preview`))
   }
 
+  if (subset === 'aux' && model.auxMultiview) {
+    sources.push(getSource(9001, `Multiview`, `Multiview`))
+  }
+
   sources.sort((a, b) => a.id - b.id)
   return sources
 }
