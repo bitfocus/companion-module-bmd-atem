@@ -2,7 +2,8 @@ import { AtemState, Enums } from 'atem-connection'
 import {
   CompanionInputFieldCheckbox,
   CompanionInputFieldDropdown,
-  CompanionInputFieldNumber
+  CompanionInputFieldNumber,
+  DropdownChoice
 } from '../../../instance_skel_types'
 import {
   CHOICES_SSRCBOXES,
@@ -69,6 +70,29 @@ export function AtemTransitionSelectionPickers(model: ModelSpec): CompanionInput
   }
 
   return pickers
+}
+export function AtemTransitionSelectionComponentPicker(model: ModelSpec): CompanionInputFieldDropdown {
+  const options: DropdownChoice[] = [
+    {
+      id: 0,
+      label: 'Background'
+    }
+  ]
+
+  for (let i = 0; i < model.USKs; i++) {
+    options.push({
+      id: i + 1,
+      label: `Key ${i + 1}`
+    })
+  }
+
+  return {
+    label: 'Component',
+    type: 'dropdown',
+    id: 'component',
+    choices: options,
+    default: 0
+  }
 }
 export function AtemMEPicker(model: ModelSpec, id: number): CompanionInputFieldDropdown {
   return {

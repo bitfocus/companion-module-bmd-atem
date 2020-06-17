@@ -23,10 +23,11 @@ import {
   AtemSuperSourcePropertiesPickers,
   AtemTransitionSelectionPickers,
   AtemTransitionStylePicker,
-  AtemUSKPicker
+  AtemUSKPicker,
+  AtemTransitionSelectionComponentPicker
 } from './input'
 import { ModelSpec } from './models'
-import { getDSK, getSuperSourceBox, getUSK } from './state'
+import { getDSK, getSuperSourceBox, getUSK, getTransitionProperties } from './state'
 import {
   assertUnreachable,
   calculateTransitionSelection,
@@ -34,6 +35,7 @@ import {
   MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
   compact
 } from './util'
+import { AtemCommandBatching, CommandBatching } from './batching'
 
 export enum ActionId {
   Program = 'program',
@@ -55,6 +57,7 @@ export enum ActionId {
   SuperSourceBoxProperties = 'setSsrcBoxProperties',
   TransitionStyle = 'transitionStyle',
   TransitionSelection = 'transitionSelection',
+  TransitionSelectionComponent = 'transitionSelectionComponent',
   TransitionRate = 'transitionRate',
   MediaPlayerSource = 'mediaPlayerSource',
   FadeToBlackAuto = 'fadeToBlackAuto',
@@ -85,7 +88,13 @@ function getOptBool(action: CompanionActionEvent, key: string): boolean {
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function meActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: ModelSpec, state: AtemState) {
+function meActions(
+  instance: InstanceSkel<AtemConfig>,
+  atem: Atem,
+  model: ModelSpec,
+  commandBatching: AtemCommandBatching,
+  state: AtemState
+) {
   return {
     [ActionId.Program]: literal<CompanionActionExt>({
       label: 'Set input on Program',
@@ -263,6 +272,62 @@ function meActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: ModelS
             getOptNumber(action, 'mixeffect')
           )
         )
+      }
+    }),
+    [ActionId.TransitionSelectionComponent]: literal<CompanionActionExt>({
+      label: 'Change transition selection component',
+      options: [
+        AtemMEPicker(model, 0),
+        AtemTransitionSelectionComponentPicker(model),
+        {
+          type: 'dropdown',
+          id: 'mode',
+          label: 'State',
+          choices: CHOICES_KEYTRANS,
+          default: CHOICES_KEYTRANS[0].id
+        }
+      ],
+      callback: (action): void => {
+        const me = getOptNumber(action, 'mixeffect')
+        const tp = getTransitionProperties(state, me)
+        if (tp) {
+          let batch = commandBatching.meTransitionSelection.get(me)
+          if (!batch) {
+            batch = new CommandBatching(
+              newVal =>
+                atem.setTransitionStyle(
+                  {
+                    selection: newVal
+                  },
+                  me
+                ),
+              {
+                delayStep: 100,
+                maxBatch: 5
+              }
+            )
+            commandBatching.meTransitionSelection.set(me, batch)
+          }
+
+          const mode = action.options.mode
+          const component = 1 << Number(action.options.component)
+          batch.queueChange(tp.nextSelection, oldVal => {
+            let mode2 = mode
+            if (mode === 'toggle') {
+              if ((oldVal & component) > 0) {
+                mode2 = 'false'
+              } else {
+                mode2 = 'true'
+              }
+            }
+
+            if (mode2 === 'true') {
+              return oldVal | component
+            } else {
+              return oldVal & ~component
+            }
+          })
+        }
       }
     }),
     [ActionId.FadeToBlackAuto]: literal<CompanionActionExt>({
@@ -516,10 +581,11 @@ export function GetActionsList(
   instance: InstanceSkel<AtemConfig>,
   atem: Atem,
   model: ModelSpec,
+  commandBatching: AtemCommandBatching,
   state: AtemState
 ): CompanionActions {
   const actions: CompanionActionsExt = {
-    ...meActions(instance, atem, model, state),
+    ...meActions(instance, atem, model, commandBatching, state),
     ...dskActions(instance, atem, model, state),
     ...macroActions(instance, atem, model, state),
     ...ssrcActions(instance, atem, model, state),

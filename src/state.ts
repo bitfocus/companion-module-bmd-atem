@@ -1,6 +1,6 @@
 import { AtemState, Commands } from 'atem-connection'
 import { InputValue } from '../../../instance_skel_types'
-import { SuperSourceBox } from 'atem-connection/dist/state/video'
+import { SuperSourceBox, TransitionProperties } from 'atem-connection/dist/state/video'
 import { MultiViewerWindowState } from 'atem-connection/dist/state/settings'
 
 // TODO - these should be exported more cleanly from atem-connection
@@ -12,6 +12,13 @@ export type TallyBySource = Commands.TallyBySourceCommand['properties']
 
 export function getME(state: AtemState, meIndex: InputValue | undefined): MixEffect | undefined {
   return state.video.ME[Number(meIndex)]
+}
+export function getTransitionProperties(
+  state: AtemState,
+  meIndex: InputValue | undefined
+): TransitionProperties | undefined {
+  const me = getME(state, meIndex)
+  return me ? me.transitionProperties : undefined
 }
 export function getUSK(
   state: AtemState,

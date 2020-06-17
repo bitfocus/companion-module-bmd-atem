@@ -17,6 +17,7 @@ import {
   updateMEProgramVariable,
   updateUSKVariable
 } from './variables'
+import { AtemCommandBatching } from './batching'
 
 /**
  * Companion instance class for the Blackmagic ATEM Switchers.
@@ -25,6 +26,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   private model: ModelSpec
   private atem: Atem
   private atemState: AtemState
+  private commandBatching: AtemCommandBatching
   private atemTally: TallyBySource
   private initDone: boolean
   private isActive: boolean
@@ -36,6 +38,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     super(system, id, config)
 
     this.atemState = new AtemState()
+    this.commandBatching = new AtemCommandBatching()
     this.atemTally = {}
 
     this.model = GetModelSpec(this.getBestModelId() || MODEL_AUTO_DETECT) || GetAutoDetectModel()
@@ -141,7 +144,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     InitVariables(this, this.model, this.atemState)
     this.setPresetDefinitions(GetPresetsList(this, this.model, this.atemState))
     this.setFeedbackDefinitions(GetFeedbacksList(this, this.model, this.atemState, this.atemTally))
-    this.setActions(GetActionsList(this, this.atem, this.model, this.atemState))
+    this.setActions(GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemState))
     this.checkFeedbacks()
   }
 
