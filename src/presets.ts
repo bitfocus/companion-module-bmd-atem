@@ -285,8 +285,8 @@ export function GetPresetsList(
   for (let me = 0; me < model.MEs; ++me) {
     for (let key = 0; key < model.USKs; ++key) {
       presets.push({
-        category: 'KEYs',
-        label: `Toggle upstream M/E ${me + 1} KEY ${key + 1}`,
+        category: 'KEYs OnAir',
+        label: `Toggle upstream M/E ${me + 1} KEY ${key + 1} OnAir`,
         bank: {
           style: 'text',
           text: 'KEY ' + (key + 1),
@@ -312,6 +312,41 @@ export function GetPresetsList(
               onair: 'toggle',
               key,
               mixeffect: me
+            }
+          }
+        ]
+      })
+
+      presets.push({
+        category: 'KEYs Next',
+        label: `Toggle upstream M/E ${me + 1} KEY ${key + 1} Next`,
+        bank: {
+          style: 'text',
+          text: 'KEY ' + (key + 1),
+          size: '24',
+          color: instance.rgb(255, 255, 255),
+          bgcolor: instance.rgb(0, 0, 0)
+        },
+        feedbacks: [
+          {
+            type: FeedbackId.TransitionSelection,
+            options: {
+              bg: instance.rgb(255, 255, 0),
+              fg: instance.rgb(0, 0, 0),
+              background: false,
+              ['key' + key]: true,
+              mixeffect: me,
+              matchmethod: 'contains'
+            }
+          }
+        ],
+        actions: [
+          {
+            action: ActionId.TransitionSelectionComponent,
+            options: {
+              mixeffect: me,
+              component: key + 1,
+              mode: 'toggle'
             }
           }
         ]
