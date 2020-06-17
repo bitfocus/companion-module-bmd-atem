@@ -20,6 +20,7 @@ Devices must be controlled over a network, USB control is NOT supported.
 - AUTO transition operation
 - Change transition type
 - Change transition selection
+- Change transition selection component
 - Change transition rate
 - Set fade to black rate
 - Execute fade to/from black
