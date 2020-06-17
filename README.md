@@ -14,6 +14,8 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 - Add presets for transition selection component
 
+- Add dsk tie
+
 ### v2.5.0
 
 - Send multiview to aux on mini-pro

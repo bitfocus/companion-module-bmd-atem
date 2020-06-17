@@ -10,6 +10,12 @@ export const CHOICES_SSRCBOXES: DropdownChoice[] = [
   { id: 3, label: 'Box 4' }
 ]
 
+export const CHOICES_ON_OFF_TOGGLE: DropdownChoice[] = [
+  { id: 'true', label: 'On' },
+  { id: 'false', label: 'Off' },
+  { id: 'toggle', label: 'Toggle' }
+]
+
 export const CHOICES_KEYTRANS: DropdownChoice[] = [
   { id: 'true', label: 'On Air' },
   { id: 'false', label: 'Off' },

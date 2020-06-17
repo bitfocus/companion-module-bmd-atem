@@ -1,7 +1,7 @@
 import { Atem, AtemState, Enums } from 'atem-connection'
 import InstanceSkel = require('../../../instance_skel')
 import { CompanionAction, CompanionActionEvent, CompanionActions } from '../../../instance_skel_types'
-import { CHOICES_KEYTRANS, GetDSKIdChoices, GetMacroChoices } from './choices'
+import { CHOICES_KEYTRANS, GetDSKIdChoices, GetMacroChoices, CHOICES_ON_OFF_TOGGLE } from './choices'
 import { AtemConfig } from './config'
 import {
   AtemAuxPicker,
@@ -47,6 +47,7 @@ export enum ActionId {
   USKOnAir = 'usk',
   DSKSource = 'dskSource',
   DSKOnAir = 'dsk',
+  DSKTie = 'dskTie',
   DSKAuto = 'dskAuto',
   MacroRun = 'macrorun',
   MacroContinue = 'macrocontinue',
@@ -405,6 +406,30 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Model
               executePromise(instance, atem.setDownstreamKeyOnAir(!dsk || !dsk.onAir, keyIndex))
             } else {
               executePromise(instance, atem.setDownstreamKeyOnAir(action.options.onair === 'true', keyIndex))
+            }
+          }
+        })
+      : undefined,
+    [ActionId.DSKTie]: model.DSKs
+      ? literal<CompanionActionExt>({
+          label: 'Set Downstream KEY Tie',
+          options: [
+            {
+              id: 'state',
+              type: 'dropdown',
+              label: 'State',
+              default: 'true',
+              choices: CHOICES_ON_OFF_TOGGLE
+            },
+            AtemDSKPicker(model)
+          ],
+          callback: (action): void => {
+            const keyIndex = getOptNumber(action, 'key')
+            if (action.options.state === 'toggle') {
+              const dsk = getDSK(state, keyIndex)
+              executePromise(instance, atem.setDownstreamKeyTie(!dsk || !dsk.properties.tie, keyIndex))
+            } else {
+              executePromise(instance, atem.setDownstreamKeyTie(action.options.state === 'true', keyIndex))
             }
           }
         })

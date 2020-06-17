@@ -394,8 +394,8 @@ export function GetPresetsList(
   // Downstream keyers
   for (let dsk = 0; dsk < model.DSKs; ++dsk) {
     presets.push({
-      category: 'KEYs',
-      label: `Toggle downstream KEY ${dsk + 1}`,
+      category: 'KEYs OnAir',
+      label: `Toggle downstream KEY ${dsk + 1} OnAir`,
       bank: {
         style: 'text',
         text: `DSK ${dsk + 1}`,
@@ -418,6 +418,37 @@ export function GetPresetsList(
           action: ActionId.DSKOnAir,
           options: {
             onair: 'toggle',
+            key: dsk
+          }
+        }
+      ]
+    })
+
+    presets.push({
+      category: 'KEYs Next',
+      label: `Toggle downstream KEY ${dsk + 1} Next`,
+      bank: {
+        style: 'text',
+        text: `DSK ${dsk + 1}`,
+        size: '24',
+        color: instance.rgb(255, 255, 255),
+        bgcolor: instance.rgb(0, 0, 0)
+      },
+      feedbacks: [
+        {
+          type: FeedbackId.DSKTie,
+          options: {
+            bg: instance.rgb(255, 255, 0),
+            fg: instance.rgb(0, 0, 0),
+            key: dsk
+          }
+        }
+      ],
+      actions: [
+        {
+          action: ActionId.DSKTie,
+          options: {
+            state: 'toggle',
             key: dsk
           }
         }

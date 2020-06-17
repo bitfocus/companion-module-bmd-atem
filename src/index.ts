@@ -181,6 +181,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     if (dskMatch) {
       updateDSKVariable(this, this.atemState, parseInt(dskMatch[1], 10))
       this.checkFeedbacks(FeedbackId.DSKOnAir)
+      this.checkFeedbacks(FeedbackId.DSKTie)
       this.checkFeedbacks(FeedbackId.DSKSource)
       return
     }

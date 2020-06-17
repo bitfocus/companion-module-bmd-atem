@@ -58,6 +58,7 @@ export enum FeedbackId {
   USKOnAir = 'usk_bg',
   USKSource = 'usk_source',
   DSKOnAir = 'dsk_bg',
+  DSKTie = 'dskTie',
   DSKSource = 'dsk_source',
   Macro = 'macro',
   MVSource = 'mv_source',
@@ -700,8 +701,8 @@ function dskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
   return {
     [FeedbackId.DSKOnAir]: model.DSKs
       ? literal<CompanionFeedbackWithCallback>({
-          label: 'Change colors from downstream keyer state',
-          description: 'If the specified downstream keyer is active, change color of the bank',
+          label: 'Change colors from downstream keyer onair state',
+          description: 'If the specified downstream keyer is onair, change color of the bank',
           options: [
             ForegroundPicker(instance.rgb(255, 255, 255)),
             BackgroundPicker(instance.rgb(255, 0, 0)),
@@ -710,6 +711,24 @@ function dskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
           callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
             const dsk = getDSK(state, evt.options.key)
             if (dsk && dsk.onAir) {
+              return getOptColors(evt)
+            }
+            return {}
+          }
+        })
+      : undefined,
+    [FeedbackId.DSKTie]: model.DSKs
+      ? literal<CompanionFeedbackWithCallback>({
+          label: 'Change colors from downstream keyer tie state',
+          description: 'If the specified downstream keyer is tied, change color of the bank',
+          options: [
+            ForegroundPicker(instance.rgb(255, 255, 255)),
+            BackgroundPicker(instance.rgb(255, 0, 0)),
+            AtemDSKPicker(model)
+          ],
+          callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+            const dsk = getDSK(state, evt.options.key)
+            if (dsk && dsk.properties.tie) {
               return getOptColors(evt)
             }
             return {}

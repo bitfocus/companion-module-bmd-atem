@@ -15,6 +15,7 @@ Devices must be controlled over a network, USB control is NOT supported.
 - Set AUX bus
 - Set Upstream KEY OnAir
 - Auto DSK Transition
+- Tie DSK to transition
 - Set Downstream Key On Air
 - CUT operation
 - AUTO transition operation
