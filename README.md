@@ -10,6 +10,10 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.5.1
+
+- Add presets for transition selection component
+
 ### v2.5.0
 
 - Send multiview to aux on mini-pro
