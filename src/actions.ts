@@ -365,8 +365,8 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Model
             executePromise(
               instance,
               Promise.all([
-                atem.setUpstreamKeyerFillSource(getOptNumber(action, 'fill'), getOptNumber(action, 'key')),
-                atem.setUpstreamKeyerCutSource(getOptNumber(action, 'cut'), getOptNumber(action, 'key'))
+                atem.setDownstreamKeyFillSource(getOptNumber(action, 'fill'), getOptNumber(action, 'key')),
+                atem.setDownstreamKeyCutSource(getOptNumber(action, 'cut'), getOptNumber(action, 'key'))
               ])
             )
           }

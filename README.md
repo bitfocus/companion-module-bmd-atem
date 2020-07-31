@@ -22,6 +22,8 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 - Add action to do relative changes to supersource boxes
 
+- Fix downstream key input action
+
 ### v2.5.1
 
 - Add presets for transition selection component
