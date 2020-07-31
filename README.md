@@ -20,6 +20,8 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 - Add action to go to next/previous still in media player
 
+- Add action to do relative changes to supersource boxes
+
 ### v2.5.1
 
 - Add presets for transition selection component

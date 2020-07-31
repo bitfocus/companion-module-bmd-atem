@@ -33,7 +33,8 @@ import {
   calculateTransitionSelection,
   literal,
   MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
-  compact
+  compact,
+  clamp
 } from './util'
 import { AtemCommandBatching, CommandBatching } from './batching'
 
@@ -56,6 +57,7 @@ export enum ActionId {
   SuperSourceBoxSource = 'setSsrcBoxSource',
   SuperSourceBoxOnAir = 'setSsrcBoxEnable',
   SuperSourceBoxProperties = 'setSsrcBoxProperties',
+  SuperSourceBoxPropertiesDelta = 'setSsrcBoxPropertiesDelta',
   TransitionStyle = 'transitionStyle',
   TransitionSelection = 'transitionSelection',
   TransitionSelectionComponent = 'transitionSelectionComponent',
@@ -577,7 +579,7 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Mode
           options: compact([
             AtemSuperSourceIdPicker(model),
             AtemSuperSourceBoxPicker(),
-            ...AtemSuperSourcePropertiesPickers()
+            ...AtemSuperSourcePropertiesPickers(false)
           ]),
           callback: (action): void => {
             executePromise(
@@ -597,6 +599,39 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Mode
                 action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
               )
             )
+          }
+        })
+      : undefined,
+    [ActionId.SuperSourceBoxPropertiesDelta]: model.SSrc
+      ? literal<CompanionActionExt>({
+          label: 'Offset SuperSource box properties',
+          options: compact([
+            AtemSuperSourceIdPicker(model),
+            AtemSuperSourceBoxPicker(),
+            ...AtemSuperSourcePropertiesPickers(true)
+          ]),
+          callback: (action): void => {
+            const index = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
+            const boxIndex = getOptNumber(action, 'boxIndex')
+            const box = getSuperSourceBox(state, boxIndex, index)
+            if (box) {
+              executePromise(
+                instance,
+                atem.setSuperSourceBoxSettings(
+                  {
+                    size: clamp(0, 1000, box.size + getOptNumber(action, 'size') * 1000),
+                    x: clamp(-4800, 4800, box.x + getOptNumber(action, 'x') * 100),
+                    y: clamp(-2700, 2700, box.y + getOptNumber(action, 'y') * 100),
+                    cropTop: clamp(0, 18000, box.cropTop + getOptNumber(action, 'cropTop') * 1000),
+                    cropBottom: clamp(0, 18000, box.cropBottom + getOptNumber(action, 'cropBottom') * 1000),
+                    cropLeft: clamp(0, 32000, box.cropLeft + getOptNumber(action, 'cropLeft') * 1000),
+                    cropRight: clamp(0, 32000, box.cropRight + getOptNumber(action, 'cropRight') * 1000)
+                  },
+                  boxIndex,
+                  index
+                )
+              )
+            }
           }
         })
       : undefined

@@ -32,5 +32,6 @@ Devices must be controlled over a network, USB control is NOT supported.
 - Set SuperSource box On Air
 - Change SuperSource box source
 - Change SuperSource geometry properties
+- Offset SuperSource geometry properties
 - Change media player source
 - Cycle media player source

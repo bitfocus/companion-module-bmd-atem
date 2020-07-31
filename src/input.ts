@@ -19,7 +19,7 @@ import {
   SourcesToChoices
 } from './choices'
 import { ModelSpec } from './models'
-import { iterateTimes, MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util'
+import { iterateTimes, MEDIA_PLAYER_SOURCE_CLIP_OFFSET, compact } from './util'
 
 export function AtemMESourcePicker(model: ModelSpec, state: AtemState, id: number): CompanionInputFieldDropdown {
   return {
@@ -189,16 +189,18 @@ export function AtemSuperSourceIdPicker(model: ModelSpec): CompanionInputFieldDr
     return undefined
   }
 }
-export function AtemSuperSourcePropertiesPickers(): Array<CompanionInputFieldNumber | CompanionInputFieldCheckbox> {
-  return [
+export function AtemSuperSourcePropertiesPickers(
+  offset: boolean
+): Array<CompanionInputFieldNumber | CompanionInputFieldCheckbox> {
+  return compact([
     {
       type: 'number',
       id: 'size',
       label: 'Size',
-      min: 0,
+      min: offset ? -1 : 0,
       max: 1,
       range: true,
-      default: 0.5,
+      default: offset ? 0 : 0.5,
       step: 0.01
     },
     {
@@ -221,17 +223,19 @@ export function AtemSuperSourcePropertiesPickers(): Array<CompanionInputFieldNum
       default: 0,
       step: 0.01
     },
-    {
-      type: 'checkbox',
-      id: 'cropEnable',
-      label: 'Crop Enable',
-      default: false
-    },
+    offset
+      ? undefined
+      : {
+          type: 'checkbox',
+          id: 'cropEnable',
+          label: 'Crop Enable',
+          default: false
+        },
     {
       type: 'number',
       id: 'cropTop',
       label: 'Crop Top',
-      min: 0,
+      min: offset ? -18 : 0,
       max: 18,
       range: true,
       default: 0,
@@ -241,7 +245,7 @@ export function AtemSuperSourcePropertiesPickers(): Array<CompanionInputFieldNum
       type: 'number',
       id: 'cropBottom',
       label: 'Crop Bottom',
-      min: 0,
+      min: offset ? -18 : 0,
       max: 18,
       range: true,
       default: 0,
@@ -251,7 +255,7 @@ export function AtemSuperSourcePropertiesPickers(): Array<CompanionInputFieldNum
       type: 'number',
       id: 'cropLeft',
       label: 'Crop Left',
-      min: 0,
+      min: offset ? -32 : 0,
       max: 32,
       range: true,
       default: 0,
@@ -261,13 +265,13 @@ export function AtemSuperSourcePropertiesPickers(): Array<CompanionInputFieldNum
       type: 'number',
       id: 'cropRight',
       label: 'Crop Right',
-      min: 0,
+      min: offset ? -32 : 0,
       max: 32,
       range: true,
       default: 0,
       step: 0.01
     }
-  ]
+  ])
 }
 export function AtemSuperSourceBoxSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
   return {

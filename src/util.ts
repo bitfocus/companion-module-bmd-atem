@@ -22,6 +22,10 @@ export function iterateTimes<T>(count: number, cb: (i: number) => T): T[] {
   return res
 }
 
+export function clamp(min: number, max: number, val: number): number {
+  return Math.min(Math.max(val, min), max)
+}
+
 export function calculateTransitionSelection(
   keyCount: number,
   options: { [key: string]: InputValue | undefined }

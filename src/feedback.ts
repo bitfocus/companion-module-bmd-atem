@@ -665,7 +665,7 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
             BackgroundPicker(instance.rgb(255, 255, 0)),
             AtemSuperSourceIdPicker(model),
             AtemSuperSourceBoxPicker(),
-            ...AtemSuperSourcePropertiesPickers()
+            ...AtemSuperSourcePropertiesPickers(false)
           ]),
           callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
             const box = getSuperSourceBox(state, evt.options.boxIndex, evt.options.ssrcId || 0)
