@@ -154,7 +154,7 @@ export function AtemKeyCutSourcePicker(model: ModelSpec, state: AtemState): Comp
     label: 'Key Source',
     id: 'cut',
     default: 0,
-    choices: SourcesToChoices(GetSourcesListForType(model, state, 'me'))
+    choices: SourcesToChoices(GetSourcesListForType(model, state, 'key'))
   }
 }
 export function AtemAuxSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
@@ -279,7 +279,7 @@ export function AtemSuperSourceBoxSourcePicker(model: ModelSpec, state: AtemStat
     id: 'source',
     label: 'Source',
     default: 0,
-    choices: SourcesToChoices(GetSourcesListForType(model, state, 'me'))
+    choices: SourcesToChoices(GetSourcesListForType(model, state, 'ssrc-box'))
   }
 }
 export function AtemMultiviewSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {

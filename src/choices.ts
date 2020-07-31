@@ -1,7 +1,7 @@
 import { AtemState, Enums } from 'atem-connection'
 import { DropdownChoice } from '../../../instance_skel_types'
 import { ModelSpec } from './models'
-import { iterateTimes, literal } from './util'
+import { iterateTimes, literal, assertUnreachable } from './util'
 
 export const CHOICES_SSRCBOXES: DropdownChoice[] = [
   { id: 0, label: 'Box 1' },
@@ -100,7 +100,11 @@ export interface SourceInfo {
   shortName: string
   longName: string
 }
-export function GetSourcesListForType(model: ModelSpec, state: AtemState, subset?: 'me' | 'aux' | 'mv'): SourceInfo[] {
+export function GetSourcesListForType(
+  model: ModelSpec,
+  state: AtemState,
+  subset?: 'me' | 'aux' | 'mv' | 'key' | 'ssrc-box' | 'ssrc-art'
+): SourceInfo[] {
   const getSource = (id: number, defShort: string, defLong: string): SourceInfo => {
     const input = state.inputs[id]
     const shortName = input?.shortName || defShort
@@ -114,63 +118,101 @@ export function GetSourcesListForType(model: ModelSpec, state: AtemState, subset
   }
 
   const sources: SourceInfo[] = []
-  if (subset !== 'aux' || (subset === 'aux' && !model.auxInput1Direct)) {
-    sources.push(
-      getSource(0, 'Blck', 'Black'),
-      getSource(1000, 'Bars', 'Bars'),
-      getSource(2001, 'Col1', 'Color 1'),
-      getSource(2002, 'Col2', 'Color 2')
-    )
-  }
-
-  for (let i = 0; i < model.SSrc; i++) {
-    if (model.SSrc === 1) {
-      sources.push(getSource(6000, 'SSrc', 'Super Source'))
-    } else {
-      sources.push(getSource(6000 + i, `SSc${i + 1}`, `Super Source ${i + 1}`))
-    }
-  }
-
-  for (let i = 1; i <= model.inputs; i++) {
-    sources.push(getSource(i, `In ${i}`, `Input ${i}`))
-
-    if ((!subset || subset === 'aux') && model.auxInput1Direct && i === 1) {
-      sources.push(getSource(11000 + i, `In${i}D`, `Input ${i} - Direct`))
-    }
-  }
-
-  if (subset !== 'aux' || (subset === 'aux' && !model.auxInput1Direct)) {
-    for (let i = 1; i <= model.media.players; i++) {
-      sources.push(getSource(3000 + i * 10, `MP ${i}`, `Media Player ${i}`))
-      sources.push(getSource(3001 + i * 10, `MP${i}K`, `Media Player ${i} Key`))
-    }
-  }
-
-  if (!subset || subset === 'mv') {
-    for (let i = 1; i <= model.auxes; i++) {
-      sources.push(getSource(8000 + i, `Aux${i}`, `Auxiliary ${i}`))
-    }
-  }
-
-  if (!subset || subset === 'mv' || (subset === 'aux' && !model.auxInput1Direct)) {
-    for (let i = 1; i <= model.DSKs; i++) {
-      sources.push(getSource(7000 + i, `Cln${i}`, `Clean Feed ${i}`))
-    }
-  }
-
-  for (let i = 1; i <= model.MEs; i++) {
-    if (i === 1 && subset === 'me') {
-      // Lower ME's can't be referenced by higher
-      // We can't do anything beyond ME1 as it is a static list
-      continue
+  for (const input of model.inputs) {
+    switch (subset) {
+      case undefined:
+        break
+      case 'me':
+        if (input.meAvailability === Enums.MeAvailability.None) continue
+        break
+      case 'aux':
+        if ((input.sourceAvailability & Enums.SourceAvailability.Auxiliary) === 0) continue
+        break
+      case 'mv':
+        if ((input.sourceAvailability & Enums.SourceAvailability.Multiviewer) === 0) continue
+        break
+      case 'key':
+        if ((input.sourceAvailability & Enums.SourceAvailability.KeySource) === 0) continue
+        break
+      case 'ssrc-box':
+        if ((input.sourceAvailability & Enums.SourceAvailability.SuperSourceBox) === 0) continue
+        break
+      case 'ssrc-art':
+        if ((input.sourceAvailability & Enums.SourceAvailability.SuperSourceArt) === 0) continue
+        break
+      default:
+        assertUnreachable(subset)
+        break
     }
 
-    sources.push(getSource(10000 + i * 10, `M${i}PG`, `ME ${i} Program`))
-    sources.push(getSource(10000 + i * 10 + 1, `M${i}PV`, `ME ${i} Preview`))
-  }
-
-  if (subset === 'aux' && model.auxMultiview) {
-    sources.push(getSource(9001, `Multiview`, `Multiview`))
+    switch (input.portType) {
+      case Enums.InternalPortType.External:
+        sources.push(getSource(input.id, `In ${input.id}`, `Input ${input.id}`))
+        break
+      case Enums.InternalPortType.ColorBars:
+        sources.push(getSource(input.id, 'Bars', 'Bars'))
+        break
+      case Enums.InternalPortType.ColorGenerator: {
+        const colId = input.id - 2000
+        sources.push(getSource(input.id, `Col${colId}`, `Color ${colId}`))
+        break
+      }
+      case Enums.InternalPortType.MediaPlayerFill: {
+        const mpId = (input.id - 3000) / 10
+        sources.push(getSource(input.id, `MP ${mpId}`, `Media Player ${mpId}`))
+        break
+      }
+      case Enums.InternalPortType.MediaPlayerKey: {
+        const mpId = (input.id - 3000 - 1) / 10
+        sources.push(getSource(input.id, `MP${mpId}K`, `Media Player ${mpId} Key`))
+        break
+      }
+      case Enums.InternalPortType.SuperSource: {
+        const ssrcId = input.id - 6000 + 1
+        sources.push(getSource(6000, `SSc${ssrcId}`, `Super Source ${ssrcId}`))
+        break
+      }
+      case Enums.InternalPortType.ExternalDirect: {
+        const inputId = input.id - 11000
+        sources.push(getSource(input.id, `In${inputId}D`, `Input ${inputId} - Direct`))
+        break
+      }
+      case Enums.InternalPortType.MEOutput: {
+        if (input.id < 8000) {
+          const clnId = input.id - 7000
+          sources.push(getSource(input.id, `Cln${clnId}`, `Clean Feed ${clnId}`))
+        } else if (input.id % 2 === 1) {
+          const meId = (input.id - 10000 - 1) / 10
+          sources.push(getSource(input.id, `M${meId}PV`, `ME ${meId} Preview`))
+        } else {
+          const meId = (input.id - 10000) / 10
+          sources.push(getSource(input.id, `M${meId}PG`, `ME ${meId} Program`))
+        }
+        break
+      }
+      case Enums.InternalPortType.Auxiliary: {
+        const auxId = input.id - 8000
+        sources.push(getSource(input.id, `Aux${auxId}`, `Auxiliary ${auxId}`))
+        break
+      }
+      case Enums.InternalPortType.Mask: {
+        // TODO
+        // const maskId = input.id - 0
+        // sources.push(getSource(input.id, `MK${maskId}`, `Key Mask ${maskId}`))
+        break
+      }
+      case Enums.InternalPortType.MultiViewer: {
+        const mvId = input.id - 9000
+        sources.push(getSource(input.id, `MV ${mvId}`, `MultiView ${mvId}`))
+        break
+      }
+      case Enums.InternalPortType.Black:
+        sources.push(getSource(input.id, 'Blk', 'Black'))
+        break
+      default:
+        assertUnreachable(input.portType)
+        break
+    }
   }
 
   sources.sort((a, b) => a.id - b.id)
