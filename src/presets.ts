@@ -121,6 +121,35 @@ export function GetPresetsList(
   }
 
   for (let me = 0; me < model.MEs; ++me) {
+    presets.push({
+      category: `Transitions (M/E ${me + 1})`,
+      label: `AUTO`,
+      bank: {
+        style: 'text',
+        text: 'AUTO',
+        size: pstSize,
+        color: instance.rgb(255, 255, 255),
+        bgcolor: instance.rgb(0, 0, 0)
+      },
+      feedbacks: [
+        {
+          type: FeedbackId.InTransition,
+          options: {
+            bg: instance.rgb(255, 0, 0),
+            fg: instance.rgb(255, 255, 255),
+            mixeffect: me
+          }
+        }
+      ],
+      actions: [
+        {
+          action: ActionId.Auto,
+          options: {
+            mixeffect: me
+          }
+        }
+      ]
+    })
     for (const opt of GetTransitionStyleChoices()) {
       presets.push({
         category: `Transitions (M/E ${me + 1})`,

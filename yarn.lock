@@ -297,10 +297,10 @@ astral-regex@^1.0.0:
   resolved "https://registry.yarnpkg.com/astral-regex/-/astral-regex-1.0.0.tgz#6c8c3fb827dd43ee3918f27b82782ab7658a6fd9"
   integrity sha512-+Ryf6g3BKoRc7jfp7ad8tM4TtMiaWvbF/1/sQcZPkkS7ag3D5nMBCe2UfOTONtAkaG0tO0ij3C5Lwmf1EiyjHg==
 
-atem-connection@2.0.0-nightly-20200731-103441-d9d9a3f.0:
-  version "2.0.0-nightly-20200731-103441-d9d9a3f.0"
-  resolved "https://registry.yarnpkg.com/atem-connection/-/atem-connection-2.0.0-nightly-20200731-103441-d9d9a3f.0.tgz#4ea1d975241c4f6fa2e2b0c75231c967783be4bb"
-  integrity sha512-HqMDU2cNpIh9ItakUbhK/g9fk/KJY9z4d0DyEiojAqyBt6EE70EyEqicN2pV0rYanPnPnhguHqYI01nzyTVwiA==
+atem-connection@2.0.0-nightly-20200731-131553-2aa7d14.0:
+  version "2.0.0-nightly-20200731-131553-2aa7d14.0"
+  resolved "https://registry.yarnpkg.com/atem-connection/-/atem-connection-2.0.0-nightly-20200731-131553-2aa7d14.0.tgz#39a2bca5b079d951df5e7ca9ec7b8a38a5491bfb"
+  integrity sha512-wRMtqxCu7nOcHQiw1+PRp+x6B2pyaBLjSu2RHBEs6uEhtyF5TYPJcwf4NVlWOmsr3cRvkoP9pVeVDwTRv2X18A==
   dependencies:
     eventemitter3 "^4.0.4"
     exit-hook "^2.0.0"

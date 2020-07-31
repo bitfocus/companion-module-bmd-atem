@@ -68,6 +68,7 @@ export enum FeedbackId {
   TransitionStyle = 'transitionStyle',
   TransitionSelection = 'transitionSelection',
   TransitionRate = 'transitionRate',
+  InTransition = 'inTransition',
   MediaPlayerSource = 'mediaPlayerSource',
   FadeToBlackIsBlack = 'fadeToBlackIsBlack',
   FadeToBlackRate = 'fadeToBlackRate',
@@ -515,6 +516,22 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
             default:
               assertUnreachable(style)
           }
+        }
+        return {}
+      }
+    }),
+    [FeedbackId.InTransition]: literal<CompanionFeedbackWithCallback>({
+      label: 'Change colors when in a transition',
+      description: 'If the specified transition is active, change color of the bank',
+      options: [
+        ForegroundPicker(instance.rgb(0, 0, 0)),
+        BackgroundPicker(instance.rgb(255, 255, 0)),
+        AtemMEPicker(model, 0)
+      ],
+      callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+        const me = getMixEffect(state, evt.options.mixeffect)
+        if (me?.transitionPosition?.inTransition) {
+          return getOptColors(evt)
         }
         return {}
       }
