@@ -179,7 +179,7 @@ function meActions(
             const keyIndex = getOptNumber(action, 'key')
             if (action.options.onair === 'toggle') {
               const usk = getUSK(state, meIndex, keyIndex)
-              executePromise(instance, atem.setUpstreamKeyerOnAir(!usk || !usk.onAir, meIndex, keyIndex))
+              executePromise(instance, atem.setUpstreamKeyerOnAir(!usk?.onAir, meIndex, keyIndex))
             } else {
               executePromise(instance, atem.setUpstreamKeyerOnAir(action.options.onair === 'true', meIndex, keyIndex))
             }
@@ -403,7 +403,7 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Model
             const keyIndex = getOptNumber(action, 'key')
             if (action.options.onair === 'toggle') {
               const dsk = getDSK(state, keyIndex)
-              executePromise(instance, atem.setDownstreamKeyOnAir(!dsk || !dsk.onAir, keyIndex))
+              executePromise(instance, atem.setDownstreamKeyOnAir(!dsk?.onAir, keyIndex))
             } else {
               executePromise(instance, atem.setDownstreamKeyOnAir(action.options.onair === 'true', keyIndex))
             }
@@ -427,7 +427,7 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Model
             const keyIndex = getOptNumber(action, 'key')
             if (action.options.state === 'toggle') {
               const dsk = getDSK(state, keyIndex)
-              executePromise(instance, atem.setDownstreamKeyTie(!dsk || !dsk.properties.tie, keyIndex))
+              executePromise(instance, atem.setDownstreamKeyTie(!dsk?.properties?.tie, keyIndex))
             } else {
               executePromise(instance, atem.setDownstreamKeyTie(action.options.state === 'true', keyIndex))
             }
@@ -549,7 +549,7 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Mode
                 instance,
                 atem.setSuperSourceBoxSettings(
                   {
-                    enabled: !box || !box.enabled
+                    enabled: !box?.enabled
                   },
                   boxIndex,
                   ssrcId
