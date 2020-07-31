@@ -27,7 +27,7 @@ import {
   AtemTransitionSelectionComponentPicker
 } from './input'
 import { ModelSpec } from './models'
-import { getDSK, getSuperSourceBox, getUSK, getTransitionProperties } from './state'
+import { getDSK, getSuperSourceBox, getUSK, getTransitionProperties, getMediaPlayer } from './state'
 import {
   assertUnreachable,
   calculateTransitionSelection,
@@ -61,6 +61,7 @@ export enum ActionId {
   TransitionSelectionComponent = 'transitionSelectionComponent',
   TransitionRate = 'transitionRate',
   MediaPlayerSource = 'mediaPlayerSource',
+  MediaPlayerCycle = 'mediaPlayerCycle',
   FadeToBlackAuto = 'fadeToBlackAuto',
   FadeToBlackRate = 'fadeToBlackRate'
 }
@@ -671,6 +672,55 @@ export function GetActionsList(
                     stillIndex: source
                   },
                   getOptNumber(action, 'mediaplayer')
+                )
+              )
+            }
+          }
+        })
+      : undefined,
+    [ActionId.MediaPlayerCycle]: model.media.players
+      ? literal<CompanionActionExt>({
+          label: 'Cycle media player source',
+          options: [
+            AtemMediaPlayerPicker(model),
+            {
+              type: 'dropdown',
+              id: 'direction',
+              label: 'Direction',
+              default: 'next',
+              choices: [
+                {
+                  id: 'next',
+                  label: 'Next'
+                },
+                {
+                  id: 'previous',
+                  label: 'Previous'
+                }
+              ]
+            }
+            // AtemMediaPlayerSourcePicker(model, state)
+          ],
+          callback: (action): void => {
+            const playerId = getOptNumber(action, 'mediaplayer')
+            const direction = action.options.direction as string
+            const offset = direction === 'next' ? 1 : -1
+
+            const player = getMediaPlayer(state, playerId)
+            if (player?.sourceType == Enums.MediaSourceType.Still) {
+              const maxIndex = state.media.stillPool.length
+              let nextIndex = player.stillIndex + offset
+              if (nextIndex >= maxIndex) nextIndex = 0
+              if (nextIndex < 0) nextIndex = maxIndex - 1
+
+              executePromise(
+                instance,
+                atem.setMediaPlayerSource(
+                  {
+                    sourceType: Enums.MediaSourceType.Still,
+                    stillIndex: nextIndex
+                  },
+                  playerId
                 )
               )
             }

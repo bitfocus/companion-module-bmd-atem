@@ -2,6 +2,7 @@ import { AtemState, Commands, SettingsState, VideoState } from 'atem-connection'
 import { InputValue } from '../../../instance_skel_types'
 import { SuperSource, TransitionProperties } from 'atem-connection/dist/state/video'
 import { MultiViewerWindowState } from 'atem-connection/dist/state/settings'
+import { MediaPlayerState } from 'atem-connection/dist/state/media'
 
 export type TallyBySource = Commands.TallyBySourceCommand['properties']
 
@@ -44,4 +45,7 @@ export function getMultiviewerWindow(
 ): MultiViewerWindowState | undefined {
   const mv = getMultiviewer(state, mvIndex)
   return mv ? mv.windows[Number(windowIndex)] : undefined
+}
+export function getMediaPlayer(state: AtemState, index: number): MediaPlayerState | undefined {
+  return state.media.players[index]
 }
