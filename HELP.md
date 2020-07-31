@@ -2,7 +2,7 @@
 
 Should work with all models of Blackmagic Design ATEM mixers.
 
-Supports firmware 7.2 & 7.5.2 - 8.1
+Supports firmware 7.2 & 7.5.2 - 8.4.0
 
 Devices must be controlled over a network, USB control is NOT supported.
 
@@ -33,3 +33,4 @@ Devices must be controlled over a network, USB control is NOT supported.
 - Change SuperSource box source
 - Change SuperSource geometry properties
 - Change media player source
+- Cycle media player source

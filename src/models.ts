@@ -281,8 +281,28 @@ export const ALL_MODELS: ModelSpec[] = [
     }
   },
   {
-    id: 0x0e, // Enums.Model.MiniPro,
+    id: Enums.Model.MiniPro,
     label: 'Mini Pro',
+    inputs: 4,
+    auxes: 1,
+    MEs: 1,
+    USKs: 1,
+    DSKs: 1,
+    MVs: 0,
+    multiviewerFullGrid: false,
+    auxInput1Direct: true,
+    auxMultiview: true,
+    SSrc: 0,
+    macros: 100,
+    media: {
+      players: 1,
+      stills: 20,
+      clips: 0
+    }
+  },
+  {
+    id: Enums.Model.MiniProISO,
+    label: 'Mini Pro ISO',
     inputs: 4,
     auxes: 1,
     MEs: 1,
@@ -334,14 +354,15 @@ export function GetParsedModelSpec({ info, inputs, settings }: AtemState): Model
   return {
     id: info.model,
     label: info.productIdentifier ?? 'Blackmagic ATEM',
-    inputs: Object.values(inputs).filter(i => i?.isExternal).length,
+    inputs: Object.values(inputs).filter(i => i?.internalPortType === Enums.InternalPortType.External).length,
     auxes: info.capabilities?.auxilliaries ?? defaults.auxes,
     MEs: info.capabilities?.mixEffects ?? defaults.MEs,
     USKs: info.mixEffects[0]?.keyCount ?? defaults.USKs,
     DSKs: info.capabilities?.downstreamKeyers ?? defaults.DSKs,
     MVs: settings.multiViewers.length,
     multiviewerFullGrid: false, // TODO
-    auxInput1Direct: false, // TODO
+    auxInput1Direct:
+      Object.values(inputs).find(inp => inp?.internalPortType === Enums.InternalPortType.ExternalDirect) !== null,
     SSrc: info.capabilities?.superSources ?? defaults.SSrc,
     macros: info.macroPool?.macroCount ?? defaults.macros,
     media: {

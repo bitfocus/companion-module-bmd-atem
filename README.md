@@ -10,6 +10,16 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.6.0
+
+- Imrpoved connection library
+
+- Add mini-pro-iso
+
+- Feedback for running transition
+
+- Add action to go to next/previous still in media player
+
 ### v2.5.1
 
 - Add presets for transition selection component
