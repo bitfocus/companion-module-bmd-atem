@@ -7,6 +7,8 @@ export const ModelSpecMiniPro: ModelSpec = {
   id: Enums.Model.MiniPro,
   label: 'Mini Pro',
   MVs: 1,
+  streaming: true,
+  recording: true,
   inputs: [
     ...ModelSpecMini.inputs,
     {

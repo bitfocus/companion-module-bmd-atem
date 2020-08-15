@@ -17,6 +17,9 @@ export const ModelSpecPS4K: ModelSpec = {
     stills: 20,
     clips: 0
   },
+  streaming: false,
+  recording: false,
+  recordISO: false,
   inputs: [
     {
       id: 0,

@@ -17,6 +17,9 @@ export const ModelSpecTwoME4K: ModelSpec = {
     stills: 32,
     clips: 2
   },
+  streaming: false,
+  recording: false,
+  recordISO: false,
   inputs: [
     {
       id: 0,

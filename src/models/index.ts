@@ -38,6 +38,9 @@ export interface ModelSpec {
     stills: number
     clips: number
   }
+  streaming: boolean
+  recording: boolean
+  recordISO: boolean
   inputs: Array<{
     id: number
     portType: Enums.InternalPortType
@@ -92,7 +95,7 @@ export function GetAutoDetectModel(): ModelSpec {
   return ALL_MODELS[0]
 }
 
-export function GetParsedModelSpec({ info, inputs, settings }: AtemState): ModelSpec {
+export function GetParsedModelSpec({ info, inputs, settings, streaming, recording }: AtemState): ModelSpec {
   const defaults = GetAutoDetectModel()
   const simpleInputs = compact(Object.values(inputs)).map(inp => ({
     id: inp.inputId,
@@ -116,6 +119,9 @@ export function GetParsedModelSpec({ info, inputs, settings }: AtemState): Model
       players: info.capabilities?.mediaPlayers ?? defaults.media.players,
       stills: info.mediaPool?.stillCount ?? defaults.media.stills,
       clips: info.mediaPool?.clipCount ?? defaults.media.clips
-    }
+    },
+    streaming: streaming != undefined,
+    recording: recording != undefined,
+    recordISO: false
   }
 }

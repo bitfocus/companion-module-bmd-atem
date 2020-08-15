@@ -17,6 +17,9 @@ export const ModelSpecConstellation8K: ModelSpec = {
     stills: 24,
     clips: 2
   },
+  streaming: false,
+  recording: false,
+  recordISO: false,
   inputs: [
     {
       id: 0,
