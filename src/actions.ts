@@ -197,7 +197,7 @@ function meActions(
           instance,
           atem.setTransitionStyle(
             {
-              style: getOptNumber(action, 'style')
+              nextStyle: getOptNumber(action, 'style')
             },
             getOptNumber(action, 'mixeffect')
           )
@@ -271,7 +271,7 @@ function meActions(
           instance,
           atem.setTransitionStyle(
             {
-              selection: calculateTransitionSelection(model.USKs, action.options)
+              nextSelection: calculateTransitionSelection(model.USKs, action.options)
             },
             getOptNumber(action, 'mixeffect')
           )
@@ -301,7 +301,7 @@ function meActions(
               newVal =>
                 atem.setTransitionStyle(
                   {
-                    selection: newVal
+                    nextSelection: newVal
                   },
                   me
                 ),

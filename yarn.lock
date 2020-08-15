@@ -297,10 +297,10 @@ astral-regex@^1.0.0:
   resolved "https://registry.yarnpkg.com/astral-regex/-/astral-regex-1.0.0.tgz#6c8c3fb827dd43ee3918f27b82782ab7658a6fd9"
   integrity sha512-+Ryf6g3BKoRc7jfp7ad8tM4TtMiaWvbF/1/sQcZPkkS7ag3D5nMBCe2UfOTONtAkaG0tO0ij3C5Lwmf1EiyjHg==
 
-atem-connection@2.0.0-nightly-20200801-114449-5575e9b.0:
-  version "2.0.0-nightly-20200801-114449-5575e9b.0"
-  resolved "https://registry.yarnpkg.com/atem-connection/-/atem-connection-2.0.0-nightly-20200801-114449-5575e9b.0.tgz#f42f371634f63d6fda341c92952beeba2b14bde3"
-  integrity sha512-/CaB2uUHS4yImrdHl0UCTqWG7FJaj0BgUoSuYm5M4AIHzvCjYOCWudqGblRMG1Q5SPAd0j5SvHvlw3QjF2lzMw==
+atem-connection@2.0.0-nightly-feat-atem-mini-record-stream-20200815-213938-2597698.0:
+  version "2.0.0-nightly-feat-atem-mini-record-stream-20200815-213938-2597698.0"
+  resolved "https://registry.yarnpkg.com/atem-connection/-/atem-connection-2.0.0-nightly-feat-atem-mini-record-stream-20200815-213938-2597698.0.tgz#46130fb763a67df8f938cebd13eb53872e954b6b"
+  integrity sha512-+MBQQ85edLakDp4Lrh0zjAxHwyJRvTYex4GrtRIZYbs0vMZfLTf86SRnzwDicmhgwhZdQIPmx9bu0nsfw+lh+g==
   dependencies:
     eventemitter3 "^4.0.4"
     exit-hook "^2.0.0"

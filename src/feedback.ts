@@ -436,7 +436,7 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
       ],
       callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
         const me = getMixEffect(state, evt.options.mixeffect)
-        if (me?.transitionProperties.style === Number(evt.options.style)) {
+        if (me?.transitionProperties.nextStyle === Number(evt.options.style)) {
           return getOptColors(evt)
         }
         return {}
@@ -457,17 +457,17 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
         const expectedSelection = calculateTransitionSelection(model.USKs, evt.options)
         switch (evt.options.matchmethod) {
           case 'exact':
-            if (me && me.transitionProperties.selection === expectedSelection) {
+            if (me && me.transitionProperties.nextSelection === expectedSelection) {
               return getOptColors(evt)
             }
             break
           case 'contains':
-            if (me && (me.transitionProperties.selection & expectedSelection) === expectedSelection) {
+            if (me && (me.transitionProperties.nextSelection & expectedSelection) === expectedSelection) {
               return getOptColors(evt)
             }
             break
           case 'not-contain':
-            if (me && (me.transitionProperties.selection & expectedSelection) === 0) {
+            if (me && (me.transitionProperties.nextSelection & expectedSelection) === 0) {
               return getOptColors(evt)
             }
             break

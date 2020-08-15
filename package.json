@@ -47,7 +47,7 @@
 		]
 	},
 	"dependencies": {
-		"atem-connection": "2.0.0-nightly-20200801-114449-5575e9b.0"
+		"atem-connection": "2.0.0-nightly-feat-atem-mini-record-stream-20200815-213938-2597698.0"
 	},
 	"devDependencies": {
 		"@types/node": "^12.0.4",
