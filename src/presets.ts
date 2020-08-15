@@ -7,6 +7,7 @@ import { AtemConfig, PresetStyleName } from './config'
 import { FeedbackId, MacroFeedbackType } from './feedback'
 import { ModelSpec } from './models'
 import { calculateTransitionSelection, MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util'
+import { Enums } from 'atem-connection'
 
 const rateOptions = [12, 15, 25, 30, 37, 45, 50, 60]
 
@@ -849,6 +850,94 @@ export function GetPresetsList(
         ]
       })
     }
+  }
+
+  if (model.streaming) {
+    presets.push({
+      category: 'Streaming & Recording',
+      label: 'Stream',
+      bank: {
+        style: 'text',
+        text: 'Stream\\n$(atem:stream_duration_hm)',
+        size: '18',
+        color: instance.rgb(255, 255, 255),
+        bgcolor: instance.rgb(0, 0, 0)
+      },
+      feedbacks: [
+        {
+          type: FeedbackId.StreamStatus,
+          options: {
+            bg: instance.rgb(0, 255, 0),
+            fg: instance.rgb(0, 0, 0),
+            state: Enums.StreamingStatus.Streaming
+          }
+        },
+        {
+          type: FeedbackId.StreamStatus,
+          options: {
+            bg: instance.rgb(238, 238, 0),
+            fg: instance.rgb(0, 0, 0),
+            state: Enums.StreamingStatus.Stopping
+          }
+        },
+        {
+          type: FeedbackId.StreamStatus,
+          options: {
+            bg: instance.rgb(238, 238, 0),
+            fg: instance.rgb(0, 0, 0),
+            state: Enums.StreamingStatus.Connecting
+          }
+        }
+      ],
+      actions: [
+        {
+          action: ActionId.StreamStartStop,
+          options: {
+            stream: 'toggle'
+          }
+        }
+      ]
+    })
+  }
+
+  if (model.recording) {
+    presets.push({
+      category: 'Streaming & Recording',
+      label: 'Record',
+      bank: {
+        style: 'text',
+        text: 'Record\\n$(atem:record_duration_hm)',
+        size: '18',
+        color: instance.rgb(255, 255, 255),
+        bgcolor: instance.rgb(0, 0, 0)
+      },
+      feedbacks: [
+        {
+          type: FeedbackId.RecordStatus,
+          options: {
+            bg: instance.rgb(0, 255, 0),
+            fg: instance.rgb(0, 0, 0),
+            state: Enums.RecordingStatus.Recording
+          }
+        },
+        {
+          type: FeedbackId.StreamStatus,
+          options: {
+            bg: instance.rgb(238, 238, 0),
+            fg: instance.rgb(0, 0, 0),
+            state: Enums.RecordingStatus.Stopping
+          }
+        }
+      ],
+      actions: [
+        {
+          action: ActionId.RecordStartStop,
+          options: {
+            stream: 'toggle'
+          }
+        }
+      ]
+    })
   }
 
   return presets

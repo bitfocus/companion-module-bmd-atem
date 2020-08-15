@@ -6,7 +6,8 @@ import {
   CompanionInputFieldColor,
   InputValue,
   CompanionFeedbackResult,
-  CompanionFeedbacks
+  CompanionFeedbacks,
+  SomeCompanionInputField
 } from '../../../instance_skel_types'
 import { GetMacroChoices } from './choices'
 import { AtemConfig } from './config'
@@ -73,7 +74,9 @@ export enum FeedbackId {
   FadeToBlackIsBlack = 'fadeToBlackIsBlack',
   FadeToBlackRate = 'fadeToBlackRate',
   ProgramTally = 'program_tally',
-  PreviewTally = 'preview_tally'
+  PreviewTally = 'preview_tally',
+  StreamStatus = 'streamStatus',
+  RecordStatus = 'recordStatus'
 }
 
 export enum MacroFeedbackType {
@@ -894,6 +897,66 @@ export function GetFeedbacksList(
             ) {
               return getOptColors(evt)
             }
+            return {}
+          }
+        }
+      : undefined,
+    [FeedbackId.StreamStatus]: model.streaming
+      ? {
+          label: 'Change colors from streaming status',
+          description: 'If the stream has the specified status, change color of the bank',
+          options: [
+            ForegroundPicker(instance.rgb(0, 0, 0)),
+            BackgroundPicker(instance.rgb(0, 255, 0)),
+            literal<SomeCompanionInputField>({
+              id: 'state',
+              label: 'State',
+              type: 'dropdown',
+              choices: Object.entries(Enums.StreamingStatus)
+                .filter(([_k, v]) => typeof v === 'number')
+                .map(([k, v]) => ({
+                  id: v,
+                  label: k
+                })),
+              default: Enums.StreamingStatus.Streaming
+            })
+          ],
+          callback: (evt): CompanionFeedbackResult => {
+            const streaming = state.streaming?.status?.state
+            if (streaming === Number(evt.options.state)) {
+              return getOptColors(evt)
+            }
+
+            return {}
+          }
+        }
+      : undefined,
+    [FeedbackId.RecordStatus]: model.recording
+      ? {
+          label: 'Change colors from recording status',
+          description: 'If the record has the specified status, change color of the bank',
+          options: [
+            ForegroundPicker(instance.rgb(0, 0, 0)),
+            BackgroundPicker(instance.rgb(0, 255, 0)),
+            literal<SomeCompanionInputField>({
+              id: 'state',
+              label: 'State',
+              type: 'dropdown',
+              choices: Object.entries(Enums.RecordingStatus)
+                .filter(([_k, v]) => typeof v === 'number')
+                .map(([k, v]) => ({
+                  id: v,
+                  label: k
+                })),
+              default: Enums.RecordingStatus.Recording
+            })
+          ],
+          callback: (evt): CompanionFeedbackResult => {
+            const recording = state.recording?.status?.state
+            if (recording === Number(evt.options.state)) {
+              return getOptColors(evt)
+            }
+
             return {}
           }
         }

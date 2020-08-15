@@ -5,6 +5,8 @@ import { GetSourcesListForType, SourceInfo } from './choices'
 import { AtemConfig, PresetStyleName } from './config'
 import { ModelSpec } from './models'
 import { getDSK, getMixEffect, getUSK } from './state'
+import { pad } from './util'
+import { Timecode } from 'atem-connection/dist/state/common'
 
 function getSourcePresetName(instance: InstanceSkel<AtemConfig>, state: AtemState, id: number): string {
   const input = state.inputs[id]
@@ -84,6 +86,58 @@ export function updateMediaPlayerVariables(instance: InstanceSkel<AtemConfig>, s
 function updateInputVariables(instance: InstanceSkel<AtemConfig>, src: SourceInfo): void {
   instance.setVariable(`long_${src.id}`, src.longName)
   instance.setVariable(`short_${src.id}`, src.shortName)
+}
+
+function formatDuration(durationObj: Timecode | undefined): [string, string] {
+  let durationLong = '00:00:00'
+  let durationShort = '00:00'
+
+  if (durationObj) {
+    durationShort = `${pad(`${durationObj.hours}`, '0', 2)}:${pad(`${durationObj.minutes}`, '0', 2)}`
+    durationLong = `${durationShort}:${pad(`${durationObj.seconds}`, '0', 2)}`
+  }
+
+  return [durationShort, durationLong]
+}
+function formatDurationSeconds(totalSeconds: number | undefined): [string, string] {
+  let timecode: Timecode | undefined
+
+  if (totalSeconds) {
+    timecode = {
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+      frames: 0,
+      isDropFrame: false
+    }
+
+    timecode.seconds = totalSeconds % 60
+    totalSeconds = Math.floor(totalSeconds / 60)
+    timecode.minutes = totalSeconds % 60
+    totalSeconds = Math.floor(totalSeconds / 60)
+    timecode.hours = totalSeconds
+  }
+
+  return formatDuration(timecode)
+}
+
+export function updateStreamingVariables(instance: InstanceSkel<AtemConfig>, state: AtemState): void {
+  const bitrate = (state.streaming?.stats?.encodingBitrate ?? 0) / (1024 * 1024)
+  const durations = formatDuration(state.streaming?.duration)
+
+  instance.setVariable(`stream_bitrate`, bitrate.toFixed(2))
+  instance.setVariable(`stream_duration_hm`, durations[0])
+  instance.setVariable(`stream_duration_hms`, durations[1])
+}
+
+export function updateRecordingVariables(instance: InstanceSkel<AtemConfig>, state: AtemState): void {
+  const durations = formatDuration(state.recording?.duration)
+  const remaining = formatDurationSeconds(state.recording?.status?.recordingTimeAvailable)
+
+  instance.setVariable(`record_duration_hm`, durations[0])
+  instance.setVariable(`record_duration_hms`, durations[1])
+  instance.setVariable(`record_remaining_hm`, remaining[0])
+  instance.setVariable(`record_remaining_hms`, remaining[1])
 }
 
 export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState): void {
@@ -185,6 +239,44 @@ export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSp
     })
 
     updateMediaPlayerVariables(instance, state, i)
+  }
+
+  if (model.streaming) {
+    variables.push({
+      label: 'Streaming bitrate in MB/s',
+      name: 'stream_bitrate'
+    })
+    variables.push({
+      label: 'Streaming duration (hh:mm)',
+      name: 'stream_duration_hm'
+    })
+    variables.push({
+      label: 'Streaming duration (hh:mm:ss)',
+      name: 'stream_duration_hms'
+    })
+
+    updateStreamingVariables(instance, state)
+  }
+
+  if (model.recording) {
+    variables.push({
+      label: 'Recording duration (hh:mm)',
+      name: 'record_duration_hm'
+    })
+    variables.push({
+      label: 'Recording duration (hh:mm:ss)',
+      name: 'record_duration_hms'
+    })
+    variables.push({
+      label: 'Recording time remaining (hh:mm)',
+      name: 'record_remaining_hm'
+    })
+    variables.push({
+      label: 'Recording time remaining (hh:mm:ss)',
+      name: 'record_remaining_hms'
+    })
+
+    updateRecordingVariables(instance, state)
   }
 
   instance.setVariableDefinitions(variables)

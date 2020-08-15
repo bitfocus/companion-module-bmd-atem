@@ -15,9 +15,12 @@ import {
   updateMediaPlayerVariables,
   updateMEPreviewVariable,
   updateMEProgramVariable,
-  updateUSKVariable
+  updateUSKVariable,
+  updateStreamingVariables,
+  updateRecordingVariables
 } from './variables'
 import { AtemCommandBatching } from './batching'
+import { executePromise } from './util'
 
 /**
  * Companion instance class for the Blackmagic ATEM Switchers.
@@ -29,6 +32,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   private commandBatching: AtemCommandBatching
   private atemTally: TallyBySource
   private isActive: boolean
+  private durationInterval: NodeJS.Timer | undefined
 
   /**
    * Create an instance of an ATEM module.
@@ -249,16 +253,20 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
       if (path.match(/video.ME.(\d+).transitionProperties/)) {
         this.checkFeedbacks(FeedbackId.TransitionStyle)
         this.checkFeedbacks(FeedbackId.TransitionSelection)
+        return
       }
       if (path.match(/video.ME.(\d+).transitionSettings/)) {
         this.checkFeedbacks(FeedbackId.TransitionRate)
+        return
       }
       if (path.match(/video.ME.(\d+).transitionPosition/)) {
         this.checkFeedbacks(FeedbackId.InTransition)
+        return
       }
       if (path.match(/video.ME.(\d+).fadeToBlack/)) {
         this.checkFeedbacks(FeedbackId.FadeToBlackRate)
         this.checkFeedbacks(FeedbackId.FadeToBlackIsBlack)
+        return
       }
 
       const mediaPlayerMatch = path.match(/media.players.(\d+)/)
@@ -266,11 +274,29 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
         const mediaPlayer = parseInt(mediaPlayerMatch[1], 10)
         updateMediaPlayerVariables(this, this.atemState, mediaPlayer)
         this.checkFeedbacks(FeedbackId.MediaPlayerSource)
+        return
       }
 
       if (path.match(/media.clipPool/) || path.match(/media.stillPool/)) {
         // reset everything, since names of media might have changed
         this.updateCompanionBits()
+        return
+      }
+
+      if (path.match(/streaming.status/)) {
+        this.checkFeedbacks(FeedbackId.StreamStatus)
+        return
+      }
+      if (path.match(/recording.status/)) {
+        this.checkFeedbacks(FeedbackId.RecordStatus)
+        return
+      }
+      if (path.match(/streaming.duration/) || path.match(/streaming.stats/)) {
+        updateStreamingVariables(this, this.atemState)
+        return
+      }
+      if (path.match(/recording.duration/) || path.match(/streaming.status/)) {
+        updateRecordingVariables(this, this.atemState)
         return
       }
     })
@@ -310,6 +336,17 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
         }
 
         this.updateCompanionBits()
+
+        if (!this.durationInterval && (this.atemState.streaming || this.atemState.recording)) {
+          this.durationInterval = setInterval(() => {
+            if (this.atemState.streaming) {
+              executePromise(this, this.atem.requestStreamingDuration())
+            }
+            if (this.atemState.recording) {
+              executePromise(this, this.atem.requestRecordingDuration())
+            }
+          }, 1000)
+        }
       }
     })
     this.atem.on('info', this.debug.bind(this))
@@ -323,6 +360,11 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
         this.status(this.STATUS_WARNING, 'Reconnecting')
       }
       this.log('info', 'Lost connection')
+
+      if (this.durationInterval) {
+        clearInterval(this.durationInterval)
+        delete this.durationInterval
+      }
       // TODO - clear cached state after some timeout
     })
     this.atem.on('stateChanged', this.processStateChange.bind(this))
