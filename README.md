@@ -14,6 +14,8 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 - mini-pro streaming and recording
 
+- Classic audio input actions and feedback
+
 ### v2.6.0
 
 - Improved connection library

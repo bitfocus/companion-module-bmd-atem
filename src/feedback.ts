@@ -9,7 +9,7 @@ import {
   CompanionFeedbacks,
   SomeCompanionInputField
 } from '../../../instance_skel_types'
-import { GetMacroChoices } from './choices'
+import { CHOICES_AUDIO_MIX_OPTION, GetMacroChoices } from './choices'
 import { AtemConfig } from './config'
 import {
   AtemAuxPicker,
@@ -32,7 +32,9 @@ import {
   AtemTransitionSelectionPickers,
   AtemTransitionStylePicker,
   AtemUSKPicker,
-  AtemMatchMethod
+  AtemMatchMethod,
+  AtemClassicAudioInputPicker,
+  NumberComparitorPicker
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getMixEffect, getMultiviewerWindow, getSuperSourceBox, getUSK, TallyBySource } from './state'
@@ -41,7 +43,8 @@ import {
   calculateTransitionSelection,
   literal,
   MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
-  compact
+  compact,
+  compareNumber
 } from './util'
 
 type CompanionFeedbackWithCallback = CompanionFeedback & Required<Pick<CompanionFeedback, 'callback'>>
@@ -76,7 +79,9 @@ export enum FeedbackId {
   ProgramTally = 'program_tally',
   PreviewTally = 'preview_tally',
   StreamStatus = 'streamStatus',
-  RecordStatus = 'recordStatus'
+  RecordStatus = 'recordStatus',
+  ClassicAudioGain = 'classicAudioGain',
+  ClassicAudioMixOption = 'classicAudioMixOption'
 }
 
 export enum MacroFeedbackType {
@@ -824,6 +829,80 @@ function streamRecordFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelS
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
+  if (model.classicAudio) {
+    const audioInputOption = AtemClassicAudioInputPicker(model, state)
+    return {
+      [FeedbackId.ClassicAudioGain]: {
+        label: 'Change colors from classic audio gain',
+        description: 'If the audio input has the specified gain, change color of the bank',
+        options: [
+          ForegroundPicker(instance.rgb(0, 0, 0)),
+          BackgroundPicker(instance.rgb(0, 255, 0)),
+          audioInputOption,
+          NumberComparitorPicker(),
+          literal<SomeCompanionInputField>({
+            type: 'number',
+            label: 'Fader Level (-60 = -inf)',
+            id: 'gain',
+            range: true,
+            required: true,
+            default: 0,
+            step: 0.1,
+            min: -60,
+            max: 6
+          })
+        ],
+        callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+          const audioChannels = state.audio?.channels ?? {}
+          const channel = audioChannels[Number(evt.options.input)]
+          if (channel && compareNumber(evt.options.gain, evt.options.comparitor, channel.gain)) {
+            return getOptColors(evt)
+          }
+
+          return {}
+        }
+      },
+      [FeedbackId.ClassicAudioMixOption]: {
+        label: 'Change colors from classic audio mix option',
+        description: 'If the audio input has the specified mix option, change color of the bank',
+        options: [
+          ForegroundPicker(instance.rgb(0, 0, 0)),
+          BackgroundPicker(instance.rgb(0, 255, 0)),
+          audioInputOption,
+          literal<SomeCompanionInputField>({
+            id: 'option',
+            label: 'Mix option',
+            type: 'dropdown',
+            default: CHOICES_AUDIO_MIX_OPTION[0].id,
+            choices: CHOICES_AUDIO_MIX_OPTION
+          })
+        ],
+        callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+          const audioChannels = state.audio?.channels ?? {}
+          const channel = audioChannels[Number(evt.options.input)]
+          if (channel?.mixOption === Number(evt.options.option)) {
+            return getOptColors(evt)
+          }
+
+          return {}
+        }
+      }
+    }
+  } else if (model.fairlightAudio) {
+    return {
+      [FeedbackId.ClassicAudioGain]: undefined,
+      [FeedbackId.ClassicAudioMixOption]: undefined
+    }
+  } else {
+    return {
+      [FeedbackId.ClassicAudioGain]: undefined,
+      [FeedbackId.ClassicAudioMixOption]: undefined
+    }
+  }
+}
+
 export function GetFeedbacksList(
   instance: InstanceSkel<AtemConfig>,
   model: ModelSpec,
@@ -840,6 +919,7 @@ export function GetFeedbacksList(
     ...transitionFeedbacks(instance, model, state),
     ...fadeToBlackFeedbacks(instance, model, state),
     ...streamRecordFeedbacks(instance, model, state),
+    ...audioFeedbacks(instance, model, state),
     [FeedbackId.AuxBG]: model.auxes
       ? {
           label: 'Change colors from AUX bus',

@@ -37,3 +37,4 @@ Devices must be controlled over a network, USB control is NOT supported.
 - Cycle media player source
 - Mini-pro recording control
 - Mini-pro streaming control
+- Classic audio inputs control

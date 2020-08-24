@@ -297,6 +297,10 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
         updateRecordingVariables(this, this.atemState)
         return
       }
+      if (path.match(/audio.channels/)) {
+        this.checkFeedbacks(FeedbackId.ClassicAudioGain)
+        this.checkFeedbacks(FeedbackId.ClassicAudioMixOption)
+      }
     })
   }
 

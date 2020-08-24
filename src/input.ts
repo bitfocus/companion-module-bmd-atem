@@ -8,6 +8,7 @@ import {
 import {
   CHOICES_SSRCBOXES,
   GetAuxIdChoices,
+  GetClassicAudioInputsList,
   GetDSKIdChoices,
   GetMediaPlayerChoices,
   GetMEIdChoices,
@@ -19,7 +20,7 @@ import {
   SourcesToChoices
 } from './choices'
 import { ModelSpec } from './models'
-import { iterateTimes, MEDIA_PLAYER_SOURCE_CLIP_OFFSET, compact } from './util'
+import { iterateTimes, MEDIA_PLAYER_SOURCE_CLIP_OFFSET, compact, NumberComparitor } from './util'
 
 export function AtemMESourcePicker(model: ModelSpec, state: AtemState, id: number): CompanionInputFieldDropdown {
   return {
@@ -388,5 +389,34 @@ export function AtemMatchMethod(): CompanionInputFieldDropdown {
         label: 'Not Contain'
       }
     ]
+  }
+}
+
+export function AtemClassicAudioInputPicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
+  const inputs = SourcesToChoices(GetClassicAudioInputsList(model, state))
+  return {
+    type: 'dropdown',
+    id: 'input',
+    label: 'Input',
+    default: inputs[0].id,
+    choices: inputs
+  }
+}
+
+export function NumberComparitorPicker(): CompanionInputFieldDropdown {
+  const options = [
+    { id: NumberComparitor.Equal, label: 'Equal' },
+    { id: NumberComparitor.NotEqual, label: 'Not Equal' },
+    { id: NumberComparitor.GreaterThan, label: 'Greater than' },
+    { id: NumberComparitor.GreaterThanEqual, label: 'Greater than or equal' },
+    { id: NumberComparitor.LessThan, label: 'Less than' },
+    { id: NumberComparitor.LessThanEqual, label: 'Less than or equal' }
+  ]
+  return {
+    type: 'dropdown',
+    label: 'Comparitor',
+    id: 'comparitor',
+    default: NumberComparitor.Equal,
+    choices: options
   }
 }

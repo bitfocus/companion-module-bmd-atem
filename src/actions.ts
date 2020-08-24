@@ -1,7 +1,13 @@
 import { Atem, AtemState, Enums } from 'atem-connection'
 import InstanceSkel = require('../../../instance_skel')
 import { CompanionAction, CompanionActionEvent, CompanionActions } from '../../../instance_skel_types'
-import { CHOICES_KEYTRANS, GetDSKIdChoices, GetMacroChoices, CHOICES_ON_OFF_TOGGLE } from './choices'
+import {
+  CHOICES_KEYTRANS,
+  GetDSKIdChoices,
+  GetMacroChoices,
+  CHOICES_ON_OFF_TOGGLE,
+  CHOICES_AUDIO_MIX_OPTION
+} from './choices'
 import { AtemConfig } from './config'
 import {
   AtemAuxPicker,
@@ -24,7 +30,8 @@ import {
   AtemTransitionSelectionPickers,
   AtemTransitionStylePicker,
   AtemUSKPicker,
-  AtemTransitionSelectionComponentPicker
+  AtemTransitionSelectionComponentPicker,
+  AtemClassicAudioInputPicker
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getSuperSourceBox, getUSK, getTransitionProperties, getMediaPlayer } from './state'
@@ -71,7 +78,9 @@ export enum ActionId {
   StreamService = 'streamService',
   RecordStartStop = 'recordStartStop',
   RecordSwitchDisk = 'recordSwitchDisk',
-  RecordFilename = 'recordFilename'
+  RecordFilename = 'recordFilename',
+  ClassicAudioGain = 'classicAudioGain',
+  ClassicAudioMixOption = 'classicAudioMixOption'
 }
 
 type CompanionActionExt = CompanionAction & Required<Pick<CompanionAction, 'callback'>>
@@ -758,6 +767,77 @@ function streamRecordActions(instance: InstanceSkel<AtemConfig>, atem: Atem, mod
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function audioActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: ModelSpec, state: AtemState) {
+  if (model.classicAudio) {
+    const audioInputOption = AtemClassicAudioInputPicker(model, state)
+    return {
+      [ActionId.ClassicAudioGain]: literal<CompanionActionExt>({
+        label: 'Set classic audio input gain',
+        options: [
+          audioInputOption,
+          {
+            type: 'number',
+            label: 'Fader Level (-60 = -inf)',
+            id: 'gain',
+            range: true,
+            required: true,
+            default: 0,
+            step: 0.1,
+            min: -60,
+            max: 6
+          }
+        ],
+        callback: (action): void => {
+          executePromise(
+            instance,
+            atem.setAudioMixerInputGain(getOptNumber(action, 'input'), getOptNumber(action, 'gain'))
+          )
+        }
+      }),
+      [ActionId.ClassicAudioMixOption]: literal<CompanionActionExt>({
+        label: 'Set classic audio input mix option',
+        options: [
+          audioInputOption,
+          {
+            id: 'option',
+            label: 'Mix option',
+            type: 'dropdown',
+            default: 'toggle',
+            choices: [
+              {
+                id: 'toggle',
+                label: 'Toggle (On/Off)'
+              },
+              ...CHOICES_AUDIO_MIX_OPTION
+            ]
+          }
+        ],
+        callback: (action): void => {
+          const inputId = getOptNumber(action, 'input')
+          const audioChannels = state.audio?.channels ?? {}
+          const toggleVal =
+            audioChannels[inputId]?.mixOption === Enums.AudioMixOption.On
+              ? Enums.AudioMixOption.Off
+              : Enums.AudioMixOption.On
+          const newVal = action.options.option === 'toggle' ? toggleVal : getOptNumber(action, 'option')
+          executePromise(instance, atem.setAudioMixerInputMixOption(inputId, newVal))
+        }
+      })
+    }
+  } else if (model.fairlightAudio) {
+    return {
+      [ActionId.ClassicAudioGain]: undefined,
+      [ActionId.ClassicAudioMixOption]: undefined
+    }
+  } else {
+    return {
+      [ActionId.ClassicAudioGain]: undefined,
+      [ActionId.ClassicAudioMixOption]: undefined
+    }
+  }
+}
+
 export function GetActionsList(
   instance: InstanceSkel<AtemConfig>,
   atem: Atem,
@@ -771,6 +851,7 @@ export function GetActionsList(
     ...macroActions(instance, atem, model, state),
     ...ssrcActions(instance, atem, model, state),
     ...streamRecordActions(instance, atem, model, state),
+    ...audioActions(instance, atem, model, state),
     [ActionId.Aux]: model.auxes
       ? literal<CompanionActionExt>({
           label: 'Set AUX bus',

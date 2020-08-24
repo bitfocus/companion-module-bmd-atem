@@ -22,6 +22,21 @@ export const CHOICES_KEYTRANS: DropdownChoice[] = [
   { id: 'toggle', label: 'Toggle' }
 ]
 
+export const CHOICES_AUDIO_MIX_OPTION: DropdownChoice[] = [
+  {
+    id: Enums.AudioMixOption.On,
+    label: 'On'
+  },
+  {
+    id: Enums.AudioMixOption.Off,
+    label: 'Off'
+  },
+  {
+    id: Enums.AudioMixOption.AudioFollowVideo,
+    label: 'AFV'
+  }
+]
+
 export function GetTransitionStyleChoices(skipSting?: boolean): DropdownChoice[] {
   const options = [
     { id: Enums.TransitionStyle.MIX, label: 'Mix' },
@@ -95,10 +110,12 @@ export function GetMediaPlayerChoices(model: ModelSpec): DropdownChoice[] {
   })
 }
 
-export interface SourceInfo {
+export interface MiniSourceInfo {
   id: number
-  shortName: string
   longName: string
+}
+export interface SourceInfo extends MiniSourceInfo {
+  shortName: string
 }
 export function GetSourcesListForType(
   model: ModelSpec,
@@ -219,7 +236,61 @@ export function GetSourcesListForType(
   return sources
 }
 
-export function SourcesToChoices(sources: SourceInfo[]): DropdownChoice[] {
+export function GetClassicAudioInputsList(model: ModelSpec, state: AtemState): MiniSourceInfo[] {
+  const getSource = (id: number, videoId: number | undefined, defLong: string): MiniSourceInfo => {
+    const input = videoId !== undefined ? state.inputs[videoId] : undefined
+    const longName = input?.longName || defLong
+
+    return literal<MiniSourceInfo>({
+      id,
+      longName
+    })
+  }
+
+  const sources: MiniSourceInfo[] = []
+  for (const input of model.classicAudio?.inputs ?? []) {
+    switch (input.portType) {
+      case Enums.ExternalPortType.Unknown:
+      case Enums.ExternalPortType.Component:
+      case Enums.ExternalPortType.Composite:
+      case Enums.ExternalPortType.SVideo:
+        // No audio on these
+        break
+      case Enums.ExternalPortType.SDI:
+      case Enums.ExternalPortType.HDMI:
+        sources.push(getSource(input.id, input.id, `Input ${input.id}`))
+        break
+      case Enums.ExternalPortType.XLR:
+        sources.push(getSource(input.id, undefined, `XLR`))
+        break
+      case Enums.ExternalPortType.AESEBU:
+        sources.push(getSource(input.id, undefined, `AES/EBU`))
+        break
+      case Enums.ExternalPortType.RCA:
+        sources.push(getSource(input.id, undefined, `RCA`))
+        break
+      case Enums.ExternalPortType.Internal: {
+        const mpId = input.id - 2000
+        sources.push(getSource(input.id, 3000 + mpId * 10, `Media Player ${mpId}`))
+        break
+      }
+      case Enums.ExternalPortType.TSJack:
+        break
+      case Enums.ExternalPortType.MADI:
+        break
+      case Enums.ExternalPortType.TRSJack:
+        break
+      default:
+        assertUnreachable(input.portType)
+        break
+    }
+  }
+
+  sources.sort((a, b) => a.id - b.id)
+  return sources
+}
+
+export function SourcesToChoices(sources: MiniSourceInfo[]): DropdownChoice[] {
   return sources.map(s => ({
     id: s.id,
     label: s.longName
