@@ -68,7 +68,8 @@ export enum ActionId {
   FadeToBlackAuto = 'fadeToBlackAuto',
   FadeToBlackRate = 'fadeToBlackRate',
   StreamStartStop = 'streamStartStop',
-  RecordStartStop = 'recordStartStop'
+  RecordStartStop = 'recordStartStop',
+  RecordSwitchDisk = 'recordSwitchDisk'
 }
 
 type CompanionActionExt = CompanionAction & Required<Pick<CompanionAction, 'callback'>>
@@ -632,6 +633,73 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Mode
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function streamRecordActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: ModelSpec, state: AtemState) {
+  return {
+    [ActionId.StreamStartStop]: model.streaming
+      ? literal<CompanionActionExt>({
+          label: 'Start or Stop Streaming',
+          options: [
+            {
+              id: 'stream',
+              type: 'dropdown',
+              label: 'Stream',
+              default: 'toggle',
+              choices: CHOICES_ON_OFF_TOGGLE
+            }
+          ],
+          callback: (action): void => {
+            let newState = action.options.stream === 'true'
+            if (action.options.stream === 'toggle') {
+              newState = state.streaming?.status?.state === Enums.StreamingStatus.Idle
+            }
+
+            if (newState) {
+              executePromise(instance, atem.startStreaming())
+            } else {
+              executePromise(instance, atem.stopStreaming())
+            }
+          }
+        })
+      : undefined,
+    [ActionId.RecordStartStop]: model.recording
+      ? literal<CompanionActionExt>({
+          label: 'Start or Stop Recording',
+          options: [
+            {
+              id: 'record',
+              type: 'dropdown',
+              label: 'Record',
+              default: 'toggle',
+              choices: CHOICES_ON_OFF_TOGGLE
+            }
+          ],
+          callback: (action): void => {
+            let newState = action.options.record === 'true'
+            if (action.options.record === 'toggle') {
+              newState = state.recording?.status?.state === Enums.RecordingStatus.Idle
+            }
+
+            if (newState) {
+              executePromise(instance, atem.startRecording())
+            } else {
+              executePromise(instance, atem.stopRecording())
+            }
+          }
+        })
+      : undefined,
+    [ActionId.RecordSwitchDisk]: model.recording
+      ? literal<CompanionActionExt>({
+          label: 'Switch recording disk',
+          options: [],
+          callback: (): void => {
+            executePromise(instance, atem.switchRecordingDisk())
+          }
+        })
+      : undefined
+  }
+}
+
 export function GetActionsList(
   instance: InstanceSkel<AtemConfig>,
   atem: Atem,
@@ -644,6 +712,7 @@ export function GetActionsList(
     ...dskActions(instance, atem, model, state),
     ...macroActions(instance, atem, model, state),
     ...ssrcActions(instance, atem, model, state),
+    ...streamRecordActions(instance, atem, model, state),
     [ActionId.Aux]: model.auxes
       ? literal<CompanionActionExt>({
           label: 'Set AUX bus',
@@ -752,58 +821,6 @@ export function GetActionsList(
                   playerId
                 )
               )
-            }
-          }
-        })
-      : undefined,
-    [ActionId.StreamStartStop]: model.streaming
-      ? literal<CompanionActionExt>({
-          label: 'Start or Stop Streaming',
-          options: [
-            {
-              id: 'stream',
-              type: 'dropdown',
-              label: 'Stream',
-              default: 'toggle',
-              choices: CHOICES_ON_OFF_TOGGLE
-            }
-          ],
-          callback: (action): void => {
-            let newState = action.options.stream === 'true'
-            if (action.options.stream === 'toggle') {
-              newState = state.streaming?.status?.state === Enums.StreamingStatus.Idle
-            }
-
-            if (newState) {
-              executePromise(instance, atem.startStreaming())
-            } else {
-              executePromise(instance, atem.stopStreaming())
-            }
-          }
-        })
-      : undefined,
-    [ActionId.RecordStartStop]: model.recording
-      ? literal<CompanionActionExt>({
-          label: 'Start or Stop Recording',
-          options: [
-            {
-              id: 'record',
-              type: 'dropdown',
-              label: 'Record',
-              default: 'toggle',
-              choices: CHOICES_ON_OFF_TOGGLE
-            }
-          ],
-          callback: (action): void => {
-            let newState = action.options.record === 'true'
-            if (action.options.record === 'toggle') {
-              newState = state.recording?.status?.state === Enums.RecordingStatus.Idle
-            }
-
-            if (newState) {
-              executePromise(instance, atem.startRecording())
-            } else {
-              executePromise(instance, atem.stopRecording())
             }
           }
         })
