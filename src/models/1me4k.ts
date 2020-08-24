@@ -295,5 +295,65 @@ export const ModelSpecOneME4K: ModelSpec = {
       sourceAvailability: Enums.SourceAvailability.Multiviewer | Enums.SourceAvailability.Auxiliary,
       meAvailability: Enums.MeAvailability.None
     }
-  ]
+  ],
+  classicAudio: {
+    inputs: [
+      {
+        id: 1,
+        portType: 2
+      },
+      {
+        id: 2,
+        portType: 1
+      },
+      {
+        id: 3,
+        portType: 1
+      },
+      {
+        id: 4,
+        portType: 1
+      },
+      {
+        id: 5,
+        portType: 1
+      },
+      {
+        id: 6,
+        portType: 1
+      },
+      {
+        id: 7,
+        portType: 1
+      },
+      {
+        id: 8,
+        portType: 1
+      },
+      {
+        id: 9,
+        portType: 1
+      },
+      {
+        id: 10,
+        portType: 1
+      },
+      {
+        id: 1001,
+        portType: 32
+      },
+      {
+        id: 1201,
+        portType: 128
+      },
+      {
+        id: 2001,
+        portType: 256
+      },
+      {
+        id: 2002,
+        portType: 256
+      }
+    ]
+  }
 }
