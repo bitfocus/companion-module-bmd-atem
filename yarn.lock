@@ -278,15 +278,15 @@ astral-regex@^1.0.0:
   resolved "https://registry.yarnpkg.com/astral-regex/-/astral-regex-1.0.0.tgz#6c8c3fb827dd43ee3918f27b82782ab7658a6fd9"
   integrity sha512-+Ryf6g3BKoRc7jfp7ad8tM4TtMiaWvbF/1/sQcZPkkS7ag3D5nMBCe2UfOTONtAkaG0tO0ij3C5Lwmf1EiyjHg==
 
-atem-connection@2.0.0-nightly-feat-atem-mini-record-stream-20200815-213938-2597698.0:
-  version "2.0.0-nightly-feat-atem-mini-record-stream-20200815-213938-2597698.0"
-  resolved "https://registry.yarnpkg.com/atem-connection/-/atem-connection-2.0.0-nightly-feat-atem-mini-record-stream-20200815-213938-2597698.0.tgz#46130fb763a67df8f938cebd13eb53872e954b6b"
-  integrity sha512-+MBQQ85edLakDp4Lrh0zjAxHwyJRvTYex4GrtRIZYbs0vMZfLTf86SRnzwDicmhgwhZdQIPmx9bu0nsfw+lh+g==
+atem-connection@2.1.0-nightly-20200824-202933-7fd86b9.0:
+  version "2.1.0-nightly-20200824-202933-7fd86b9.0"
+  resolved "https://registry.yarnpkg.com/atem-connection/-/atem-connection-2.1.0-nightly-20200824-202933-7fd86b9.0.tgz#ee5ff62c1ce43f841f4417db239ae82f02ea153c"
+  integrity sha512-+nbJkgZ3Cch7CkssjYyWBjmgY1gc1vL/ZVOpsQmkf0WavNUrM80mX+a8PljaNDTAIqWG4Db3r8Fg33d6UAX6iQ==
   dependencies:
     eventemitter3 "^4.0.4"
     exit-hook "^2.0.0"
     nanotimer "^0.3.15"
-    threadedclass "0.8.0-nightly-20200626-190313-597bdf9.0"
+    threadedclass "^0.8.0"
     tslib "^1.13.0"
     wavefile "^8.4.4"
 
@@ -2266,10 +2266,10 @@ text-table@^0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
 
-threadedclass@0.8.0-nightly-20200626-190313-597bdf9.0:
-  version "0.8.0-nightly-20200626-190313-597bdf9.0"
-  resolved "https://registry.yarnpkg.com/threadedclass/-/threadedclass-0.8.0-nightly-20200626-190313-597bdf9.0.tgz#e23d411155479836a1c4de4fff3f6fb30367f5d1"
-  integrity sha512-KZU6T1f6fLeITp3M5IrTT4m50v20igfUpvr3SSSrBjHfSoMiNvxpI0vvc6S9xkx/1nhBqniWHdNnLAFLLVCnZw==
+threadedclass@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/threadedclass/-/threadedclass-0.8.0.tgz#2b3a3f450ccd29579140dcac34a8d8ed159c6313"
+  integrity sha512-bUdYig96HmZKcrG5p5b9cv3xmNPfm5uz1b+wOiKDZPmAOgHMaJmcxiKVZLREB2gNZ6dalRc/rWvYnl6OB4HQqg==
   dependencies:
     callsites "^3.1.0"
     eventemitter3 "^4.0.4"
