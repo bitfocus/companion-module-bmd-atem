@@ -35,3 +35,5 @@ Devices must be controlled over a network, USB control is NOT supported.
 - Offset SuperSource geometry properties
 - Change media player source
 - Cycle media player source
+- Mini-pro recording control
+- Mini-pro streaming control

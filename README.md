@@ -10,9 +10,13 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.7.0
+
+- mini-pro streaming and recording
+
 ### v2.6.0
 
-- Imrpoved connection library
+- Improved connection library
 
 - Add mini-pro-iso
 
