@@ -68,8 +68,10 @@ export enum ActionId {
   FadeToBlackAuto = 'fadeToBlackAuto',
   FadeToBlackRate = 'fadeToBlackRate',
   StreamStartStop = 'streamStartStop',
+  StreamService = 'streamService',
   RecordStartStop = 'recordStartStop',
-  RecordSwitchDisk = 'recordSwitchDisk'
+  RecordSwitchDisk = 'recordSwitchDisk',
+  RecordFilename = 'recordFilename'
 }
 
 type CompanionActionExt = CompanionAction & Required<Pick<CompanionAction, 'callback'>>
@@ -662,6 +664,41 @@ function streamRecordActions(instance: InstanceSkel<AtemConfig>, atem: Atem, mod
           }
         })
       : undefined,
+    [ActionId.StreamService]: model.recording
+      ? literal<CompanionActionExt>({
+          label: 'Set streaming service',
+          options: [
+            {
+              id: 'service',
+              label: 'Service',
+              type: 'textinput',
+              default: ''
+            },
+            {
+              id: 'url',
+              label: 'URL',
+              type: 'textinput',
+              default: ''
+            },
+            {
+              id: 'key',
+              label: 'Key',
+              type: 'textinput',
+              default: ''
+            }
+          ],
+          callback: (action): void => {
+            executePromise(
+              instance,
+              atem.setStreamingService({
+                serviceName: `${action.options.service || ''}`,
+                url: `${action.options.url || ''}`,
+                key: `${action.options.key || ''}`
+              })
+            )
+          }
+        })
+      : undefined,
     [ActionId.RecordStartStop]: model.recording
       ? literal<CompanionActionExt>({
           label: 'Start or Stop Recording',
@@ -694,6 +731,27 @@ function streamRecordActions(instance: InstanceSkel<AtemConfig>, atem: Atem, mod
           options: [],
           callback: (): void => {
             executePromise(instance, atem.switchRecordingDisk())
+          }
+        })
+      : undefined,
+    [ActionId.RecordFilename]: model.recording
+      ? literal<CompanionActionExt>({
+          label: 'Set recording filename',
+          options: [
+            {
+              id: 'filename',
+              label: 'Filename',
+              type: 'textinput',
+              default: ''
+            }
+          ],
+          callback: (action): void => {
+            executePromise(
+              instance,
+              atem.setRecordingSettings({
+                filename: `${action.options.filename || ''}`
+              })
+            )
           }
         })
       : undefined
