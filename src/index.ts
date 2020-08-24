@@ -1,4 +1,4 @@
-import { Atem, AtemState, AtemStateUtil, Commands } from 'atem-connection'
+import { Atem, AtemConnectionStatus, AtemState, AtemStateUtil, Commands } from 'atem-connection'
 import InstanceSkel = require('../../../instance_skel')
 import { CompanionConfigField, CompanionSystem } from '../../../instance_skel_types'
 import { GetActionsList } from './actions'
@@ -27,7 +27,7 @@ import { executePromise } from './util'
  */
 class AtemInstance extends InstanceSkel<AtemConfig> {
   private model: ModelSpec
-  private atem: Atem
+  private atem: Atem | undefined
   private atemState: AtemState
   private commandBatching: AtemCommandBatching
   private atemTally: TallyBySource
@@ -46,8 +46,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
     this.model = GetModelSpec(this.getBestModelId() || MODEL_AUTO_DETECT) || GetAutoDetectModel()
     this.config.modelID = this.model.id + ''
-
-    this.atem = new Atem({}) // To ensure that there arent undefined bugs
 
     this.isActive = false
 
@@ -82,10 +80,8 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     this.atemState = AtemStateUtil.Create()
     this.updateCompanionBits()
 
-    if (this.config.host !== undefined) {
-      // TODO - needs a better way to check if connected?
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (this.atem && (this.atem as any).socket && (this.atem as any).socket._socket) {
+    if (this.config.host !== undefined && this.atem) {
+      if (this.atem.status !== AtemConnectionStatus.CLOSED) {
         try {
           this.atem.disconnect()
         } catch (e) {
@@ -135,11 +131,13 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
   }
 
   private updateCompanionBits(): void {
-    InitVariables(this, this.model, this.atemState)
-    this.setPresetDefinitions(GetPresetsList(this, this.model, this.atemState))
-    this.setFeedbackDefinitions(GetFeedbacksList(this, this.model, this.atemState, this.atemTally))
-    this.setActions(GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemState))
-    this.checkFeedbacks()
+    if (this.atem) {
+      InitVariables(this, this.model, this.atemState)
+      this.setPresetDefinitions(GetPresetsList(this, this.model, this.atemState))
+      this.setFeedbackDefinitions(GetFeedbacksList(this, this.model, this.atemState, this.atemTally))
+      this.setActions(GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemState))
+      this.checkFeedbacks()
+    }
   }
 
   /**
@@ -306,7 +304,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
     this.atem = new Atem()
 
     this.atem.on('connected', () => {
-      if (this.atem.state) {
+      if (this.atem?.state) {
         this.atemState = this.atem.state
 
         const atemInfo = this.atemState.info
@@ -339,10 +337,10 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
         if (!this.durationInterval && (this.atemState.streaming || this.atemState.recording)) {
           this.durationInterval = setInterval(() => {
-            if (this.atemState.streaming) {
+            if (this.atem && this.atemState.streaming) {
               executePromise(this, this.atem.requestStreamingDuration())
             }
-            if (this.atemState.recording) {
+            if (this.atem && this.atemState.recording) {
               executePromise(this, this.atem.requestRecordingDuration())
             }
           }, 1000)
