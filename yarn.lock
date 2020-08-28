@@ -283,11 +283,12 @@ astral-regex@^1.0.0:
   resolved "https://registry.yarnpkg.com/astral-regex/-/astral-regex-1.0.0.tgz#6c8c3fb827dd43ee3918f27b82782ab7658a6fd9"
   integrity sha512-+Ryf6g3BKoRc7jfp7ad8tM4TtMiaWvbF/1/sQcZPkkS7ag3D5nMBCe2UfOTONtAkaG0tO0ij3C5Lwmf1EiyjHg==
 
-atem-connection@2.1.0-nightly-20200824-202933-7fd86b9.0:
-  version "2.1.0-nightly-20200824-202933-7fd86b9.0"
-  resolved "https://registry.yarnpkg.com/atem-connection/-/atem-connection-2.1.0-nightly-20200824-202933-7fd86b9.0.tgz#ee5ff62c1ce43f841f4417db239ae82f02ea153c"
-  integrity sha512-+nbJkgZ3Cch7CkssjYyWBjmgY1gc1vL/ZVOpsQmkf0WavNUrM80mX+a8PljaNDTAIqWG4Db3r8Fg33d6UAX6iQ==
+atem-connection@2.1.0-nightly-20200828-192415-a1cc735.0:
+  version "2.1.0-nightly-20200828-192415-a1cc735.0"
+  resolved "https://registry.yarnpkg.com/atem-connection/-/atem-connection-2.1.0-nightly-20200828-192415-a1cc735.0.tgz#4d98ca00cdd135408f19e83d70260302768d10d6"
+  integrity sha512-6bbopjmCM7H+aB6cKxPN4WsFthDdkgbr5SVKnYhFOJ9U/BAii87lD8Q6hFJ+Nhu7Xhh3D4kLxjtoQQViNEC4uA==
   dependencies:
+    big-integer "^1.6.48"
     eventemitter3 "^4.0.4"
     exit-hook "^2.0.0"
     nanotimer "^0.3.15"
@@ -304,6 +305,11 @@ base64-arraybuffer-es6@^0.3.1:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/base64-arraybuffer-es6/-/base64-arraybuffer-es6-0.3.1.tgz#fdf0e382f4e2f56caf881f48ee0ce01ae79afe48"
   integrity sha512-TrhBheudYaff9adiTAqjSScjvtmClQ4vF9l4cqkPNkVsA11m4/NRdH4LkZ/tAMmpzzwfI20BXnJ/PTtafECCNA==
+
+big-integer@^1.6.48:
+  version "1.6.48"
+  resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.48.tgz#8fd88bd1632cba4a1c8c3e3d7159f08bb95b4b9e"
+  integrity sha512-j51egjPa7/i+RdiRuJbPdJ2FIUYYPhvYLjzoYbcMMm62ooO6F94fETG4MTs46zPAF9Brs04OajboA/qTGuz78w==
 
 bitdepth@^7.0.2:
   version "7.0.2"

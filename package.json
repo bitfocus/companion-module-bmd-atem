@@ -47,7 +47,7 @@
 		]
 	},
 	"dependencies": {
-		"atem-connection": "2.1.0-nightly-20200824-202933-7fd86b9.0"
+		"atem-connection": "2.1.0-nightly-20200828-192415-a1cc735.0"
 	},
 	"devDependencies": {
 		"@types/node": "^12.0.4",
