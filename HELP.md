@@ -38,3 +38,4 @@ Devices must be controlled over a network, USB control is NOT supported.
 - Mini-pro recording control
 - Mini-pro streaming control
 - Classic audio inputs control
+- Fairlight audio inputs control

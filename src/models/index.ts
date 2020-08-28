@@ -57,7 +57,9 @@ export interface ModelSpec {
   fairlightAudio?: {
     inputs: Array<{
       id: number
-      portType: 'video' | 'audio' | 'internal'
+      portType: Enums.ExternalPortType
+      // supportedConfigurations: Enums.FairlightInputConfiguration[]
+      // portType: 'video' | 'audio' | 'internal'
     }>
   }
 }
@@ -108,7 +110,15 @@ export function GetAutoDetectModel(): ModelSpec {
   return ALL_MODELS[0]
 }
 
-export function GetParsedModelSpec({ info, inputs, settings, streaming, recording, audio }: AtemState): ModelSpec {
+export function GetParsedModelSpec({
+  info,
+  inputs,
+  settings,
+  streaming,
+  recording,
+  audio,
+  fairlight
+}: AtemState): ModelSpec {
   const defaults = GetAutoDetectModel()
   const simpleInputs = compact(Object.values(inputs)).map(inp => ({
     id: inp.inputId,
@@ -149,32 +159,21 @@ export function GetParsedModelSpec({ info, inputs, settings, streaming, recordin
           )
         }
       : undefined,
-    fairlightAudio: undefined
+    fairlightAudio: fairlight
+      ? {
+          inputs: compact(
+            Object.entries(fairlight.inputs).map(([id, ch]) => {
+              if (!ch?.properties) return undefined
+              return {
+                id: Number(id),
+                portType: ch.properties.externalPortType
+                // supportedConfigurations: ch.properties.supportedConfigurations,
+              }
+            })
+          )
+        }
+      : undefined
   }
 }
 
-// function externalPortTypeToAudio(type: Enums.ExternalPortType | undefined): 'video' | 'audio' | 'internal' | null {
-//   switch (type) {
-//     case Enums.ExternalPortType.SDI:
-//     case Enums.ExternalPortType.HDMI:
-//       return 'video'
-//     case Enums.ExternalPortType.Unknown:
-//     case Enums.ExternalPortType.Component:
-//     case Enums.ExternalPortType.Composite:
-//     case Enums.ExternalPortType.SVideo:
-//     case undefined:
-//       return null
-//     case Enums.ExternalPortType.Internal:
-//       return 'internal'
-//     case Enums.ExternalPortType.XLR:
-//     case Enums.ExternalPortType.AESEBU:
-//     case Enums.ExternalPortType.RCA:
-//     case Enums.ExternalPortType.TSJack:
-//     case Enums.ExternalPortType.MADI:
-//     case Enums.ExternalPortType.TRSJack:
-//       return 'audio'
-//     default:
-//       assertUnreachable(type)
-//       return null
-//   }
 // }

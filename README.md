@@ -16,6 +16,8 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 - Classic audio input actions and feedback
 
+- Fairlight audio input actions and feedback
+
 ### v2.6.0
 
 - Improved connection library

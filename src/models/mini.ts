@@ -105,5 +105,39 @@ export const ModelSpecMini: ModelSpec = {
       sourceAvailability: Enums.SourceAvailability.Auxiliary,
       meAvailability: Enums.MeAvailability.None
     }
-  ]
+  ],
+  fairlightAudio: {
+    inputs: [
+      {
+        id: 1,
+        portType: 2
+        // supportedConfigurations: [2, 4],
+      },
+      {
+        id: 2,
+        portType: 2
+        // supportedConfigurations: [2, 4],
+      },
+      {
+        id: 3,
+        portType: 2
+        // supportedConfigurations: [2, 4],
+      },
+      {
+        id: 4,
+        portType: 2
+        // supportedConfigurations: [2, 4],
+      },
+      {
+        id: 1301,
+        portType: 512
+        // supportedConfigurations: [2, 4],
+      },
+      {
+        id: 1302,
+        portType: 512
+        // supportedConfigurations: [2, 4],
+      }
+    ]
+  }
 }

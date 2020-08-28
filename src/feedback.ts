@@ -9,7 +9,7 @@ import {
   CompanionFeedbacks,
   SomeCompanionInputField
 } from '../../../instance_skel_types'
-import { CHOICES_AUDIO_MIX_OPTION, GetMacroChoices } from './choices'
+import { CHOICES_CLASSIC_AUDIO_MIX_OPTION, CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION, GetMacroChoices } from './choices'
 import { AtemConfig } from './config'
 import {
   AtemAuxPicker,
@@ -33,8 +33,9 @@ import {
   AtemTransitionStylePicker,
   AtemUSKPicker,
   AtemMatchMethod,
-  AtemClassicAudioInputPicker,
-  NumberComparitorPicker
+  AtemAudioInputPicker,
+  NumberComparitorPicker,
+  AtemFairlightAudioSourcePicker
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getMixEffect, getMultiviewerWindow, getSuperSourceBox, getUSK, TallyBySource } from './state'
@@ -81,7 +82,10 @@ export enum FeedbackId {
   StreamStatus = 'streamStatus',
   RecordStatus = 'recordStatus',
   ClassicAudioGain = 'classicAudioGain',
-  ClassicAudioMixOption = 'classicAudioMixOption'
+  ClassicAudioMixOption = 'classicAudioMixOption',
+  FairlightAudioFaderGain = 'fairlightAudioFaderGain',
+  FairlightAudioInputGain = 'fairlightAudioInputGain',
+  FairlightAudioMixOption = 'fairlightAudioMixOption'
 }
 
 export enum MacroFeedbackType {
@@ -832,7 +836,7 @@ function streamRecordFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelS
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
   if (model.classicAudio) {
-    const audioInputOption = AtemClassicAudioInputPicker(model, state)
+    const audioInputOption = AtemAudioInputPicker(model, state)
     return {
       [FeedbackId.ClassicAudioGain]: {
         label: 'Change colors from classic audio gain',
@@ -875,8 +879,8 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
             id: 'option',
             label: 'Mix option',
             type: 'dropdown',
-            default: CHOICES_AUDIO_MIX_OPTION[0].id,
-            choices: CHOICES_AUDIO_MIX_OPTION
+            default: CHOICES_CLASSIC_AUDIO_MIX_OPTION[0].id,
+            choices: CHOICES_CLASSIC_AUDIO_MIX_OPTION
           })
         ],
         callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
@@ -888,17 +892,122 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 
           return {}
         }
-      }
+      },
+      [FeedbackId.FairlightAudioInputGain]: undefined,
+      [FeedbackId.FairlightAudioFaderGain]: undefined,
+      [FeedbackId.FairlightAudioMixOption]: undefined
     }
   } else if (model.fairlightAudio) {
+    const audioInputOption = AtemAudioInputPicker(model, state)
+    const audioSourceOption = AtemFairlightAudioSourcePicker()
     return {
       [FeedbackId.ClassicAudioGain]: undefined,
-      [FeedbackId.ClassicAudioMixOption]: undefined
+      [FeedbackId.ClassicAudioMixOption]: undefined,
+      [FeedbackId.FairlightAudioInputGain]: {
+        label: 'Change colors from fairlight audio input gain',
+        description: 'If the audio input has the specified input gain, change color of the bank',
+        options: [
+          ForegroundPicker(instance.rgb(0, 0, 0)),
+          BackgroundPicker(instance.rgb(0, 255, 0)),
+          audioInputOption,
+          audioSourceOption,
+          NumberComparitorPicker(),
+          literal<SomeCompanionInputField>({
+            type: 'number',
+            label: 'Input Level (-100 = -inf)',
+            id: 'gain',
+            range: true,
+            required: true,
+            default: 0,
+            step: 0.1,
+            min: -100,
+            max: 6
+          })
+        ],
+        callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+          const audioChannels = state.fairlight?.inputs ?? {}
+          const audioSources = audioChannels[Number(evt.options.input)]?.sources ?? {}
+          const source = audioSources[evt.options.source + '']
+          if (
+            source?.properties &&
+            compareNumber(evt.options.gain, evt.options.comparitor, source.properties.gain / 100)
+          ) {
+            return getOptColors(evt)
+          }
+
+          return {}
+        }
+      },
+      [FeedbackId.FairlightAudioFaderGain]: {
+        label: 'Change colors from fairlight audio fader gain',
+        description: 'If the audio input has the specified fader gain, change color of the bank',
+        options: [
+          ForegroundPicker(instance.rgb(0, 0, 0)),
+          BackgroundPicker(instance.rgb(0, 255, 0)),
+          audioInputOption,
+          audioSourceOption,
+          NumberComparitorPicker(),
+          literal<SomeCompanionInputField>({
+            type: 'number',
+            label: 'Fader Level (-100 = -inf)',
+            id: 'gain',
+            range: true,
+            required: true,
+            default: 0,
+            step: 0.1,
+            min: -100,
+            max: 10
+          })
+        ],
+        callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+          const audioChannels = state.fairlight?.inputs ?? {}
+          const audioSources = audioChannels[Number(evt.options.input)]?.sources ?? {}
+          const source = audioSources[evt.options.source + '']
+          if (
+            source?.properties &&
+            compareNumber(evt.options.gain, evt.options.comparitor, source.properties.faderGain / 100)
+          ) {
+            return getOptColors(evt)
+          }
+
+          return {}
+        }
+      },
+      [FeedbackId.FairlightAudioMixOption]: {
+        label: 'Change colors from fairlight audio mix option',
+        description: 'If the audio input has the specified mix option, change color of the bank',
+        options: [
+          ForegroundPicker(instance.rgb(0, 0, 0)),
+          BackgroundPicker(instance.rgb(0, 255, 0)),
+          audioInputOption,
+          audioSourceOption,
+          literal<SomeCompanionInputField>({
+            id: 'option',
+            label: 'Mix option',
+            type: 'dropdown',
+            default: CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION[0].id,
+            choices: CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION
+          })
+        ],
+        callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+          const audioChannels = state.fairlight?.inputs ?? {}
+          const audioSources = audioChannels[Number(evt.options.input)]?.sources ?? {}
+          const source = audioSources[evt.options.source + '']
+          if (source?.properties?.mixOption === Number(evt.options.option)) {
+            return getOptColors(evt)
+          }
+
+          return {}
+        }
+      }
     }
   } else {
     return {
       [FeedbackId.ClassicAudioGain]: undefined,
-      [FeedbackId.ClassicAudioMixOption]: undefined
+      [FeedbackId.ClassicAudioMixOption]: undefined,
+      [FeedbackId.FairlightAudioInputGain]: undefined,
+      [FeedbackId.FairlightAudioFaderGain]: undefined,
+      [FeedbackId.FairlightAudioMixOption]: undefined
     }
   }
 }

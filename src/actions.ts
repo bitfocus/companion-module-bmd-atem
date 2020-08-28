@@ -6,7 +6,8 @@ import {
   GetDSKIdChoices,
   GetMacroChoices,
   CHOICES_ON_OFF_TOGGLE,
-  CHOICES_AUDIO_MIX_OPTION
+  CHOICES_CLASSIC_AUDIO_MIX_OPTION,
+  CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION
 } from './choices'
 import { AtemConfig } from './config'
 import {
@@ -31,7 +32,8 @@ import {
   AtemTransitionStylePicker,
   AtemUSKPicker,
   AtemTransitionSelectionComponentPicker,
-  AtemClassicAudioInputPicker
+  AtemAudioInputPicker,
+  AtemFairlightAudioSourcePicker
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getSuperSourceBox, getUSK, getTransitionProperties, getMediaPlayer } from './state'
@@ -80,7 +82,10 @@ export enum ActionId {
   RecordSwitchDisk = 'recordSwitchDisk',
   RecordFilename = 'recordFilename',
   ClassicAudioGain = 'classicAudioGain',
-  ClassicAudioMixOption = 'classicAudioMixOption'
+  ClassicAudioMixOption = 'classicAudioMixOption',
+  FairlightAudioFaderGain = 'fairlightAudioFaderGain',
+  FairlightAudioInputGain = 'fairlightAudioInputGain',
+  FairlightAudioMixOption = 'fairlightAudioMixOption'
 }
 
 type CompanionActionExt = CompanionAction & Required<Pick<CompanionAction, 'callback'>>
@@ -770,7 +775,7 @@ function streamRecordActions(instance: InstanceSkel<AtemConfig>, atem: Atem, mod
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function audioActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: ModelSpec, state: AtemState) {
   if (model.classicAudio) {
-    const audioInputOption = AtemClassicAudioInputPicker(model, state)
+    const audioInputOption = AtemAudioInputPicker(model, state)
     return {
       [ActionId.ClassicAudioGain]: literal<CompanionActionExt>({
         label: 'Set classic audio input gain',
@@ -809,7 +814,7 @@ function audioActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Mod
                 id: 'toggle',
                 label: 'Toggle (On/Off)'
               },
-              ...CHOICES_AUDIO_MIX_OPTION
+              ...CHOICES_CLASSIC_AUDIO_MIX_OPTION
             ]
           }
         ],
@@ -823,17 +828,109 @@ function audioActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Mod
           const newVal = action.options.option === 'toggle' ? toggleVal : getOptNumber(action, 'option')
           executePromise(instance, atem.setAudioMixerInputMixOption(inputId, newVal))
         }
-      })
+      }),
+      [ActionId.FairlightAudioInputGain]: undefined,
+      [ActionId.FairlightAudioFaderGain]: undefined,
+      [ActionId.FairlightAudioMixOption]: undefined
     }
   } else if (model.fairlightAudio) {
+    const audioInputOption = AtemAudioInputPicker(model, state)
+    const audioSourceOption = AtemFairlightAudioSourcePicker()
     return {
       [ActionId.ClassicAudioGain]: undefined,
-      [ActionId.ClassicAudioMixOption]: undefined
+      [ActionId.ClassicAudioMixOption]: undefined,
+      [ActionId.FairlightAudioInputGain]: literal<CompanionActionExt>({
+        label: 'Set fairlight audio input gain',
+        options: [
+          audioInputOption,
+          audioSourceOption,
+          {
+            type: 'number',
+            label: 'Input Level (-100 = -inf)',
+            id: 'gain',
+            range: true,
+            required: true,
+            default: 0,
+            step: 0.1,
+            min: -100,
+            max: 6
+          }
+        ],
+        callback: (action): void => {
+          executePromise(
+            instance,
+            atem.setFairlightAudioMixerSourceProps(getOptNumber(action, 'input'), action.options.source + '', {
+              gain: getOptNumber(action, 'gain') * 100
+            })
+          )
+        }
+      }),
+      [ActionId.FairlightAudioFaderGain]: literal<CompanionActionExt>({
+        label: 'Set fairlight audio fader gain',
+        options: [
+          audioInputOption,
+          audioSourceOption,
+          {
+            type: 'number',
+            label: 'Fader Level (-100 = -inf)',
+            id: 'gain',
+            range: true,
+            required: true,
+            default: 0,
+            step: 0.1,
+            min: -100,
+            max: 10
+          }
+        ],
+        callback: (action): void => {
+          executePromise(
+            instance,
+            atem.setFairlightAudioMixerSourceProps(getOptNumber(action, 'input'), action.options.source + '', {
+              faderGain: getOptNumber(action, 'gain') * 100
+            })
+          )
+        }
+      }),
+      [ActionId.FairlightAudioMixOption]: literal<CompanionActionExt>({
+        label: 'Set fairlight audio input mix option',
+        options: [
+          audioInputOption,
+          audioSourceOption,
+          {
+            id: 'option',
+            label: 'Mix option',
+            type: 'dropdown',
+            default: 'toggle',
+            choices: [
+              {
+                id: 'toggle',
+                label: 'Toggle (On/Off)'
+              },
+              ...CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION // TODO - fairlightify
+            ]
+          }
+        ],
+        callback: (action): void => {
+          const inputId = getOptNumber(action, 'input')
+          const sourceId = action.options.source + ''
+          const audioChannels = state.fairlight?.inputs ?? {}
+          const audioSources = audioChannels[inputId]?.sources ?? {}
+          const toggleVal =
+            audioSources[sourceId]?.properties?.mixOption === Enums.FairlightAudioMixOption.On
+              ? Enums.FairlightAudioMixOption.Off
+              : Enums.FairlightAudioMixOption.On
+          const newVal = action.options.option === 'toggle' ? toggleVal : getOptNumber(action, 'option')
+          executePromise(instance, atem.setFairlightAudioMixerSourceProps(inputId, sourceId, { mixOption: newVal }))
+        }
+      })
     }
   } else {
     return {
       [ActionId.ClassicAudioGain]: undefined,
-      [ActionId.ClassicAudioMixOption]: undefined
+      [ActionId.ClassicAudioMixOption]: undefined,
+      [ActionId.FairlightAudioInputGain]: undefined,
+      [ActionId.FairlightAudioFaderGain]: undefined,
+      [ActionId.FairlightAudioMixOption]: undefined
     }
   }
 }

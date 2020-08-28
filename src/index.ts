@@ -300,6 +300,13 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
       if (path.match(/audio.channels/)) {
         this.checkFeedbacks(FeedbackId.ClassicAudioGain)
         this.checkFeedbacks(FeedbackId.ClassicAudioMixOption)
+        return
+      }
+      if (path.match(/fairlight.inputs/)) {
+        this.checkFeedbacks(FeedbackId.FairlightAudioInputGain)
+        this.checkFeedbacks(FeedbackId.FairlightAudioFaderGain)
+        this.checkFeedbacks(FeedbackId.FairlightAudioMixOption)
+        return
       }
     })
   }

@@ -22,7 +22,7 @@ export const CHOICES_KEYTRANS: DropdownChoice[] = [
   { id: 'toggle', label: 'Toggle' }
 ]
 
-export const CHOICES_AUDIO_MIX_OPTION: DropdownChoice[] = [
+export const CHOICES_CLASSIC_AUDIO_MIX_OPTION: DropdownChoice[] = [
   {
     id: Enums.AudioMixOption.On,
     label: 'On'
@@ -33,6 +33,21 @@ export const CHOICES_AUDIO_MIX_OPTION: DropdownChoice[] = [
   },
   {
     id: Enums.AudioMixOption.AudioFollowVideo,
+    label: 'AFV'
+  }
+]
+
+export const CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION: DropdownChoice[] = [
+  {
+    id: Enums.FairlightAudioMixOption.On,
+    label: 'On'
+  },
+  {
+    id: Enums.FairlightAudioMixOption.Off,
+    label: 'Off'
+  },
+  {
+    id: Enums.FairlightAudioMixOption.AudioFollowVideo,
     label: 'AFV'
   }
 ]
@@ -236,7 +251,7 @@ export function GetSourcesListForType(
   return sources
 }
 
-export function GetClassicAudioInputsList(model: ModelSpec, state: AtemState): MiniSourceInfo[] {
+export function GetAudioInputsList(model: ModelSpec, state: AtemState): MiniSourceInfo[] {
   const getSource = (id: number, videoId: number | undefined, defLong: string): MiniSourceInfo => {
     const input = videoId !== undefined ? state.inputs[videoId] : undefined
     const longName = input?.longName || defLong
@@ -248,7 +263,7 @@ export function GetClassicAudioInputsList(model: ModelSpec, state: AtemState): M
   }
 
   const sources: MiniSourceInfo[] = []
-  for (const input of model.classicAudio?.inputs ?? []) {
+  for (const input of model.classicAudio?.inputs ?? model.fairlightAudio?.inputs ?? []) {
     switch (input.portType) {
       case Enums.ExternalPortType.Unknown:
       case Enums.ExternalPortType.Component:
@@ -274,8 +289,11 @@ export function GetClassicAudioInputsList(model: ModelSpec, state: AtemState): M
         sources.push(getSource(input.id, 3000 + mpId * 10, `Media Player ${mpId}`))
         break
       }
-      case Enums.ExternalPortType.TSJack:
+      case Enums.ExternalPortType.TSJack: {
+        const micId = input.id - 1300
+        sources.push(getSource(input.id, undefined, `Mic ${micId}`))
         break
+      }
       case Enums.ExternalPortType.MADI:
         break
       case Enums.ExternalPortType.TRSJack:

@@ -179,5 +179,10 @@ export const ModelSpecTVSPro4K: ModelSpec = {
       sourceAvailability: Enums.SourceAvailability.Multiviewer | Enums.SourceAvailability.Auxiliary,
       meAvailability: Enums.MeAvailability.None
     }
-  ]
+  ],
+  fairlightAudio: {
+    inputs: [
+      // TODO populate
+    ]
+  }
 }

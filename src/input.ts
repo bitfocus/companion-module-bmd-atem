@@ -7,8 +7,8 @@ import {
 } from '../../../instance_skel_types'
 import {
   CHOICES_SSRCBOXES,
+  GetAudioInputsList,
   GetAuxIdChoices,
-  GetClassicAudioInputsList,
   GetDSKIdChoices,
   GetMediaPlayerChoices,
   GetMEIdChoices,
@@ -392,14 +392,39 @@ export function AtemMatchMethod(): CompanionInputFieldDropdown {
   }
 }
 
-export function AtemClassicAudioInputPicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
-  const inputs = SourcesToChoices(GetClassicAudioInputsList(model, state))
+export function AtemAudioInputPicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
+  const inputs = SourcesToChoices(GetAudioInputsList(model, state))
   return {
     type: 'dropdown',
     id: 'input',
     label: 'Input',
     default: inputs[0].id,
     choices: inputs
+  }
+}
+
+export function AtemFairlightAudioSourcePicker(): CompanionInputFieldDropdown {
+  const sources: DropdownChoice[] = [
+    {
+      id: '-65280',
+      label: 'Stereo'
+    },
+    {
+      id: '-256',
+      label: 'Mono (Ch1)'
+    },
+    {
+      id: '-255',
+      label: 'Mono (Ch2)'
+    }
+  ]
+
+  return {
+    type: 'dropdown',
+    id: 'source',
+    label: 'Source',
+    default: sources[0].id,
+    choices: sources
   }
 }
 
