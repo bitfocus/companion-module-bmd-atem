@@ -3,7 +3,7 @@ import { Enums } from 'atem-connection'
 
 export const ModelSpecConstellation: ModelSpec = {
   id: Enums.Model.Constellation,
-  label: 'Constellation',
+  label: 'Constellation (HD/4K Mode)',
   auxes: 24,
   MEs: 4,
   USKs: 4,
