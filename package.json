@@ -62,5 +62,8 @@
 		"rimraf": "^3.0.2",
 		"ts-node": "^8.0.0",
 		"typescript": "^4.0.5"
+	},
+	"resolutions": {
+		"eslint/inquirer": "~7.2.0"
 	}
 }
