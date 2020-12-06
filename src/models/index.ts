@@ -1,4 +1,4 @@
-import { AtemState, Enums } from 'atem-connection'
+import { AtemState } from 'atem-connection'
 import { DropdownChoice } from '../../../../instance_skel_types'
 import { compact } from '../util'
 
@@ -18,51 +18,9 @@ import { ModelSpecConstellation8K } from './constellation8k'
 import { ModelSpecMini } from './mini'
 import { ModelSpecMiniPro } from './minipro'
 import { ModelSpecMiniProISO } from './miniproiso'
+import { ModelId, ModelSpec, MODEL_AUTO_DETECT } from './types'
 
-export const MODEL_AUTO_DETECT = 0
-export type ModelId = 0 | Enums.Model
-
-export interface ModelSpec {
-  id: ModelId
-  label: string
-  auxes: number
-  MEs: number
-  USKs: number
-  DSKs: number
-  MVs: number
-  multiviewerFullGrid: boolean
-  SSrc: number
-  macros: number
-  media: {
-    players: number
-    stills: number
-    clips: number
-  }
-  streaming: boolean
-  recording: boolean
-  recordISO: boolean
-  inputs: Array<{
-    id: number
-    portType: Enums.InternalPortType
-    sourceAvailability: Enums.SourceAvailability
-    meAvailability: Enums.MeAvailability
-  }>
-  classicAudio?: {
-    inputs: Array<{
-      id: number
-      portType: Enums.ExternalPortType
-      // type: 'video' | 'audio' | 'internal'
-    }>
-  }
-  fairlightAudio?: {
-    inputs: Array<{
-      id: number
-      portType: Enums.ExternalPortType
-      // supportedConfigurations: Enums.FairlightInputConfiguration[]
-      // portType: 'video' | 'audio' | 'internal'
-    }>
-  }
-}
+export * from './types'
 
 export const ALL_MODELS: ModelSpec[] = [
   ModelSpecAuto,
@@ -107,7 +65,7 @@ export function GetModelSpec(id: ModelId): ModelSpec | undefined {
 }
 
 export function GetAutoDetectModel(): ModelSpec {
-  return ALL_MODELS[0]
+  return ModelSpecAuto
 }
 
 export function GetParsedModelSpec({

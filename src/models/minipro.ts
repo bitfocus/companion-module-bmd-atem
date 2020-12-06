@@ -1,4 +1,4 @@
-import { ModelSpec } from '.'
+import { ModelSpec } from './types'
 import { Enums } from 'atem-connection'
 import { ModelSpecMini } from './mini'
 
