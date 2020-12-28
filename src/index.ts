@@ -17,7 +17,8 @@ import {
   updateMEProgramVariable,
   updateUSKVariable,
   updateStreamingVariables,
-  updateRecordingVariables
+  updateRecordingVariables,
+  updateAuxVariable
 } from './variables'
 import { AtemCommandBatching } from './batching'
 import { executePromise } from './util'
@@ -163,8 +164,10 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
     // TODO - should this batch changes?
     paths.forEach(path => {
-      if (path.match(/video.auxilliaries/)) {
+      const auxMatch = path.match(/video.auxilliaries.(\d+)/)
+      if (auxMatch) {
         this.checkFeedbacks(FeedbackId.AuxBG)
+        updateAuxVariable(this, this.atemState, parseInt(auxMatch[1], 10))
         return
       }
 
