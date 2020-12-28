@@ -5,9 +5,10 @@ import { GetActionsList } from './actions'
 import { AtemConfig, GetConfigFields } from './config'
 import { FeedbackId, GetFeedbacksList } from './feedback'
 import { upgradeV2x2x0 } from './migrations'
-import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, MODEL_AUTO_DETECT, ModelSpec } from './models'
+import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, ModelSpec } from './models'
 import { GetPresetsList } from './presets'
 import { TallyBySource } from './state'
+import { MODEL_AUTO_DETECT } from './models/types'
 import {
 	InitVariables,
 	updateDSKVariable,
@@ -44,6 +45,12 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 		this.commandBatching = new AtemCommandBatching()
 		this.atemState = AtemStateUtil.Create()
 		this.atemTally = {}
+
+		// Fix bugged config
+		if (this.config.modelID === 'undefined') {
+			this.config.modelID = MODEL_AUTO_DETECT + ''
+			setImmediate(() => this.saveConfig())
+		}
 
 		this.model = GetModelSpec(this.getBestModelId() || MODEL_AUTO_DETECT) || GetAutoDetectModel()
 		this.config.modelID = this.model.id + ''
