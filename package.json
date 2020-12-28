@@ -19,7 +19,9 @@
 		"build": "rimraf dist && yarn build:main",
 		"build:main": "tsc -p tsconfig.build.json",
 		"build:watch": "tsc -p tsconfig.build.json --watch",
-		"lint": "eslint . --ext .ts",
+        "lint": "eslint . --ext .ts --ext .js --ignore-pattern dist",
+        "lint-fix": "yarn lint --fix",
+        "license-validate": "yarn sofie-licensecheck",
 		"postinstall": "yarn build"
 	},
 	"repository": {
@@ -31,39 +33,31 @@
 	"bugs": {
 		"url": "https://github.com/bitfocus/companion-module-atem/issues"
 	},
+    "prettier": "@sofie-automation/code-standard-preset/.prettierrc.json",
 	"husky": {
 		"hooks": {
 			"pre-commit": "lint-staged"
 		}
 	},
 	"lint-staged": {
-		"*.{js,json,md}": [
-			"prettier --write",
-			"git add"
-		],
-		"*.{ts}": [
-			"yarn lint --fix --",
-			"git add"
-		]
+        "*.{css,json,md,scss}": [
+            "prettier --write"
+        ],
+        "*.{ts,tsx,js,jsx}": [
+            "yarn lint-fix"
+        ]
+	},
+	"engines": {
+		"node": "^12.14 || 14"
 	},
 	"dependencies": {
 		"atem-connection": "^2.1.0"
 	},
 	"devDependencies": {
-		"@types/node": "^12.0.4",
-		"@typescript-eslint/eslint-plugin": "~2.31.0",
-		"@typescript-eslint/parser": "~2.31.0",
-		"eslint": "^6.8.0",
-		"eslint-config-prettier": "^6.15.0",
-		"eslint-plugin-prettier": "^3.1.3",
-		"husky": "^3.0.5",
-		"lint-staged": "^9.2.5",
-		"prettier": "^1.17.1",
+		"@sofie-automation/code-standard-preset": "^0.2.1",
+		"@types/node": "^12.19.11",
 		"rimraf": "^3.0.2",
-		"ts-node": "^8.0.0",
+		"ts-node": "^9.1.1",
 		"typescript": "^4.0.5"
-	},
-	"resolutions": {
-		"eslint/inquirer": "~7.2.0"
 	}
 }
