@@ -10,6 +10,18 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.8.0
+
+- Relative fader levels adjustments
+
+- Fader level fades
+
+- fix aux variables not updating
+
+- fix autodetect model being a bit broken
+
+- fix supersource2 not being a valid source
+
 ### v2.7.0
 
 - mini-pro streaming and recording
