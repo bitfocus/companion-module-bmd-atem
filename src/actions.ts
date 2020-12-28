@@ -88,7 +88,9 @@ export enum ActionId {
 	ClassicAudioGainDelta = 'classicAudioGainDelta',
 	ClassicAudioMixOption = 'classicAudioMixOption',
 	FairlightAudioFaderGain = 'fairlightAudioFaderGain',
+	FairlightAudioFaderGainDelta = 'fairlightAudioFaderGainDelta',
 	FairlightAudioInputGain = 'fairlightAudioInputGain',
+	FairlightAudioInputGainDelta = 'fairlightAudioInputGainDelta',
 	FairlightAudioMixOption = 'fairlightAudioMixOption',
 }
 
@@ -812,7 +814,7 @@ function audioActions(
 					const channel = audioChannels[inputId]
 
 					transitions.run(
-						`audio.${inputId}`,
+						`audio.${inputId}.gain`,
 						(value) => {
 							executePromise(instance, atem.setAudioMixerInputGain(getOptNumber(action, 'input'), value))
 						},
@@ -832,7 +834,7 @@ function audioActions(
 
 					if (typeof channel?.gain === 'number') {
 						transitions.run(
-							`audio.${inputId}`,
+							`audio.${inputId}.gain`,
 							(value) => {
 								executePromise(instance, atem.setAudioMixerInputGain(getOptNumber(action, 'input'), value))
 							},
@@ -873,7 +875,9 @@ function audioActions(
 				},
 			}),
 			[ActionId.FairlightAudioInputGain]: undefined,
+			[ActionId.FairlightAudioInputGainDelta]: undefined,
 			[ActionId.FairlightAudioFaderGain]: undefined,
+			[ActionId.FairlightAudioFaderGainDelta]: undefined,
 			[ActionId.FairlightAudioMixOption]: undefined,
 		}
 	} else if (model.fairlightAudio) {
@@ -899,14 +903,59 @@ function audioActions(
 						min: -100,
 						max: 6,
 					},
+					FadeDurationChoice,
 				],
 				callback: (action): void => {
-					executePromise(
-						instance,
-						atem.setFairlightAudioMixerSourceProps(getOptNumber(action, 'input'), action.options.source + '', {
-							gain: getOptNumber(action, 'gain') * 100,
-						})
+					const inputId = getOptNumber(action, 'input')
+					const sourceId = action.options.source + ''
+
+					const audioChannels = state.fairlight?.inputs ?? {}
+					const audioSources = audioChannels[inputId]?.sources ?? {}
+					const source = audioSources[sourceId]
+
+					transitions.run(
+						`audio.${inputId}.${sourceId}.gain`,
+						(value) => {
+							executePromise(
+								instance,
+								atem.setFairlightAudioMixerSourceProps(inputId, sourceId, {
+									gain: value,
+								})
+							)
+						},
+						source?.properties?.gain,
+						getOptNumber(action, 'gain') * 100,
+						getOptNumber(action, 'fadeDuration', 0)
 					)
+				},
+			}),
+			[ActionId.FairlightAudioInputGainDelta]: literal<CompanionActionExt>({
+				label: 'Adjust fairlight audio input gain',
+				options: [audioInputOption, audioSourceOption, FaderLevelDeltaChoice, FadeDurationChoice],
+				callback: (action): void => {
+					const inputId = getOptNumber(action, 'input')
+					const sourceId = action.options.source + ''
+
+					const audioChannels = state.fairlight?.inputs ?? {}
+					const audioSources = audioChannels[inputId]?.sources ?? {}
+					const source = audioSources[sourceId]
+
+					if (typeof source?.properties?.gain === 'number') {
+						transitions.run(
+							`audio.${inputId}.${sourceId}.gain`,
+							(value) => {
+								executePromise(
+									instance,
+									atem.setFairlightAudioMixerSourceProps(inputId, sourceId, {
+										gain: value,
+									})
+								)
+							},
+							source.properties.gain,
+							source.properties.gain + getOptNumber(action, 'delta') * 100,
+							getOptNumber(action, 'fadeDuration', 0)
+						)
+					}
 				},
 			}),
 			[ActionId.FairlightAudioFaderGain]: literal<CompanionActionExt>({
@@ -925,14 +974,59 @@ function audioActions(
 						min: -100,
 						max: 10,
 					},
+					FadeDurationChoice,
 				],
 				callback: (action): void => {
-					executePromise(
-						instance,
-						atem.setFairlightAudioMixerSourceProps(getOptNumber(action, 'input'), action.options.source + '', {
-							faderGain: getOptNumber(action, 'gain') * 100,
-						})
+					const inputId = getOptNumber(action, 'input')
+					const sourceId = action.options.source + ''
+
+					const audioChannels = state.fairlight?.inputs ?? {}
+					const audioSources = audioChannels[inputId]?.sources ?? {}
+					const source = audioSources[sourceId]
+
+					transitions.run(
+						`audio.${inputId}.${sourceId}.faderGain`,
+						(value) => {
+							executePromise(
+								instance,
+								atem.setFairlightAudioMixerSourceProps(inputId, sourceId, {
+									faderGain: value,
+								})
+							)
+						},
+						source?.properties?.faderGain,
+						getOptNumber(action, 'gain') * 100,
+						getOptNumber(action, 'fadeDuration', 0)
 					)
+				},
+			}),
+			[ActionId.FairlightAudioFaderGainDelta]: literal<CompanionActionExt>({
+				label: 'Adjust fairlight audio fader gain',
+				options: [audioInputOption, audioSourceOption, FaderLevelDeltaChoice, FadeDurationChoice],
+				callback: (action): void => {
+					const inputId = getOptNumber(action, 'input')
+					const sourceId = action.options.source + ''
+
+					const audioChannels = state.fairlight?.inputs ?? {}
+					const audioSources = audioChannels[inputId]?.sources ?? {}
+					const source = audioSources[sourceId]
+
+					if (typeof source?.properties?.faderGain === 'number') {
+						transitions.run(
+							`audio.${inputId}.${sourceId}.faderGain`,
+							(value) => {
+								executePromise(
+									instance,
+									atem.setFairlightAudioMixerSourceProps(inputId, sourceId, {
+										faderGain: value,
+									})
+								)
+							},
+							source.properties.faderGain,
+							source.properties.faderGain + getOptNumber(action, 'delta') * 100,
+							getOptNumber(action, 'fadeDuration', 0)
+						)
+					}
 				},
 			}),
 			[ActionId.FairlightAudioMixOption]: literal<CompanionActionExt>({
@@ -950,7 +1044,7 @@ function audioActions(
 								id: 'toggle',
 								label: 'Toggle (On/Off)',
 							},
-							...CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION, // TODO - fairlightify
+							...CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION,
 						],
 					},
 				],
@@ -974,7 +1068,9 @@ function audioActions(
 			[ActionId.ClassicAudioGainDelta]: undefined,
 			[ActionId.ClassicAudioMixOption]: undefined,
 			[ActionId.FairlightAudioInputGain]: undefined,
+			[ActionId.FairlightAudioInputGainDelta]: undefined,
 			[ActionId.FairlightAudioFaderGain]: undefined,
+			[ActionId.FairlightAudioFaderGainDelta]: undefined,
 			[ActionId.FairlightAudioMixOption]: undefined,
 		}
 	}
