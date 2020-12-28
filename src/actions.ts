@@ -34,6 +34,8 @@ import {
 	AtemTransitionSelectionComponentPicker,
 	AtemAudioInputPicker,
 	AtemFairlightAudioSourcePicker,
+	FadeDurationChoice,
+	FaderLevelDeltaChoice,
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getSuperSourceBox, getUSK, getTransitionProperties, getMediaPlayer } from './state'
@@ -47,6 +49,7 @@ import {
 	executePromise,
 } from './util'
 import { AtemCommandBatching, CommandBatching } from './batching'
+import { AtemTransitions } from './transitions'
 
 export enum ActionId {
 	Program = 'program',
@@ -82,6 +85,7 @@ export enum ActionId {
 	RecordSwitchDisk = 'recordSwitchDisk',
 	RecordFilename = 'recordFilename',
 	ClassicAudioGain = 'classicAudioGain',
+	ClassicAudioGainDelta = 'classicAudioGainDelta',
 	ClassicAudioMixOption = 'classicAudioMixOption',
 	FairlightAudioFaderGain = 'fairlightAudioFaderGain',
 	FairlightAudioInputGain = 'fairlightAudioInputGain',
@@ -91,8 +95,10 @@ export enum ActionId {
 type CompanionActionExt = CompanionAction & Required<Pick<CompanionAction, 'callback'>>
 type CompanionActionsExt = { [id in ActionId]: CompanionActionExt | undefined }
 
-function getOptNumber(action: CompanionActionEvent, key: string): number {
-	const val = Number(action.options[key])
+function getOptNumber(action: CompanionActionEvent, key: string, defVal?: number): number {
+	const rawVal = action.options[key]
+	if (defVal !== undefined && rawVal === undefined) return defVal
+	const val = Number(rawVal)
 	if (isNaN(val)) {
 		throw new Error(`Invalid option '${key}'`)
 	}
@@ -773,7 +779,13 @@ function streamRecordActions(instance: InstanceSkel<AtemConfig>, atem: Atem, mod
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function audioActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: ModelSpec, state: AtemState) {
+function audioActions(
+	instance: InstanceSkel<AtemConfig>,
+	atem: Atem,
+	model: ModelSpec,
+	transitions: AtemTransitions,
+	state: AtemState
+) {
 	if (model.classicAudio) {
 		const audioInputOption = AtemAudioInputPicker(model, state)
 		return {
@@ -792,12 +804,43 @@ function audioActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Mod
 						min: -60,
 						max: 6,
 					},
+					FadeDurationChoice,
 				],
 				callback: (action): void => {
-					executePromise(
-						instance,
-						atem.setAudioMixerInputGain(getOptNumber(action, 'input'), getOptNumber(action, 'gain'))
+					const inputId = getOptNumber(action, 'input')
+					const audioChannels = state.audio?.channels ?? {}
+					const channel = audioChannels[inputId]
+
+					transitions.run(
+						`audio.${inputId}`,
+						(value) => {
+							executePromise(instance, atem.setAudioMixerInputGain(getOptNumber(action, 'input'), value))
+						},
+						channel?.gain,
+						getOptNumber(action, 'gain'),
+						getOptNumber(action, 'fadeDuration', 0)
 					)
+				},
+			}),
+			[ActionId.ClassicAudioGainDelta]: literal<CompanionActionExt>({
+				label: 'Adjust classic audio input gain',
+				options: [audioInputOption, FaderLevelDeltaChoice, FadeDurationChoice],
+				callback: (action): void => {
+					const inputId = getOptNumber(action, 'input')
+					const audioChannels = state.audio?.channels ?? {}
+					const channel = audioChannels[inputId]
+
+					if (typeof channel?.gain === 'number') {
+						transitions.run(
+							`audio.${inputId}`,
+							(value) => {
+								executePromise(instance, atem.setAudioMixerInputGain(getOptNumber(action, 'input'), value))
+							},
+							channel.gain,
+							channel.gain + getOptNumber(action, 'delta'),
+							getOptNumber(action, 'fadeDuration', 0)
+						)
+					}
 				},
 			}),
 			[ActionId.ClassicAudioMixOption]: literal<CompanionActionExt>({
@@ -838,6 +881,7 @@ function audioActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Mod
 		const audioSourceOption = AtemFairlightAudioSourcePicker()
 		return {
 			[ActionId.ClassicAudioGain]: undefined,
+			[ActionId.ClassicAudioGainDelta]: undefined,
 			[ActionId.ClassicAudioMixOption]: undefined,
 			[ActionId.FairlightAudioInputGain]: literal<CompanionActionExt>({
 				label: 'Set fairlight audio input gain',
@@ -927,6 +971,7 @@ function audioActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Mod
 	} else {
 		return {
 			[ActionId.ClassicAudioGain]: undefined,
+			[ActionId.ClassicAudioGainDelta]: undefined,
 			[ActionId.ClassicAudioMixOption]: undefined,
 			[ActionId.FairlightAudioInputGain]: undefined,
 			[ActionId.FairlightAudioFaderGain]: undefined,
@@ -940,6 +985,7 @@ export function GetActionsList(
 	atem: Atem,
 	model: ModelSpec,
 	commandBatching: AtemCommandBatching,
+	transitions: AtemTransitions,
 	state: AtemState
 ): CompanionActions {
 	const actions: CompanionActionsExt = {
@@ -948,7 +994,7 @@ export function GetActionsList(
 		...macroActions(instance, atem, model, state),
 		...ssrcActions(instance, atem, model, state),
 		...streamRecordActions(instance, atem, model, state),
-		...audioActions(instance, atem, model, state),
+		...audioActions(instance, atem, model, transitions, state),
 		[ActionId.Aux]: model.auxes
 			? literal<CompanionActionExt>({
 					label: 'Set AUX bus',

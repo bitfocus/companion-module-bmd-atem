@@ -23,6 +23,7 @@ import {
 } from './variables'
 import { AtemCommandBatching } from './batching'
 import { executePromise } from './util'
+import { AtemTransitions } from './transitions'
 
 /**
  * Companion instance class for the Blackmagic ATEM Switchers.
@@ -35,6 +36,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 	private atemTally: TallyBySource
 	private isActive: boolean
 	private durationInterval: NodeJS.Timer | undefined
+	private atemTransitions: AtemTransitions
 
 	/**
 	 * Create an instance of an ATEM module.
@@ -45,6 +47,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 		this.commandBatching = new AtemCommandBatching()
 		this.atemState = AtemStateUtil.Create()
 		this.atemTally = {}
+		this.atemTransitions = new AtemTransitions(this.config)
 
 		// Fix bugged config
 		if (this.config.modelID === 'undefined') {
@@ -86,6 +89,8 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
 		// Force clear the cached state
 		this.atemState = AtemStateUtil.Create()
+		this.atemTransitions.stopAll()
+		this.atemTransitions = new AtemTransitions(this.config)
 		this.updateCompanionBits()
 
 		if (this.config.host !== undefined && this.atem) {
@@ -115,6 +120,8 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 	public destroy(): void {
 		this.isActive = false
 
+		this.atemTransitions.stopAll()
+
 		if (this.atem) {
 			this.atem.disconnect()
 			delete this.atem
@@ -142,7 +149,9 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 			InitVariables(this, this.model, this.atemState)
 			this.setPresetDefinitions(GetPresetsList(this, this.model, this.atemState))
 			this.setFeedbackDefinitions(GetFeedbacksList(this, this.model, this.atemState, this.atemTally))
-			this.setActions(GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemState))
+			this.setActions(
+				GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.atemState)
+			)
 			this.checkFeedbacks()
 		}
 	}

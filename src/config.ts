@@ -2,6 +2,8 @@ import InstanceSkel = require('../../../instance_skel')
 import { SomeCompanionConfigField } from '../../../instance_skel_types'
 import { ALL_MODEL_CHOICES } from './models'
 
+export const fadeFpsDefault = 10
+
 export enum PresetStyleName {
 	Short = 0,
 	Long = 1,
@@ -11,6 +13,7 @@ export interface AtemConfig {
 	host?: string
 	modelID?: string
 	presets?: string
+	fadeFps?: number
 }
 
 export function GetConfigFields(self: InstanceSkel<AtemConfig>): SomeCompanionConfigField[] {
@@ -51,6 +54,17 @@ export function GetConfigFields(self: InstanceSkel<AtemConfig>): SomeCompanionCo
 				{ id: PresetStyleName.Long, label: 'Long Names' },
 			],
 			default: PresetStyleName.Short,
+		},
+		{
+			type: 'number',
+			id: 'fadeFps',
+			label: 'Framerate for fades',
+			tooltip: 'Higher is smoother, but has higher impact on system performance',
+			width: 6,
+			min: 5,
+			max: 60,
+			step: 1,
+			default: fadeFpsDefault,
 		},
 	]
 }

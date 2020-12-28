@@ -445,3 +445,21 @@ export function NumberComparitorPicker(): CompanionInputFieldDropdown {
 		choices: options,
 	}
 }
+
+export const FadeDurationChoice: CompanionInputFieldNumber = {
+	type: 'number',
+	label: 'Fade Duration (ms)',
+	id: 'fadeDuration',
+	default: 0,
+	min: 0,
+	step: 10,
+	max: 60000,
+}
+export const FaderLevelDeltaChoice: CompanionInputFieldNumber = {
+	type: 'number',
+	label: 'Delta',
+	id: 'delta',
+	default: 1,
+	max: 100,
+	min: -100,
+}
