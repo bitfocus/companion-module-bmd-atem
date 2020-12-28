@@ -201,7 +201,7 @@ export function GetSourcesListForType(
 			}
 			case Enums.InternalPortType.SuperSource: {
 				const ssrcId = input.id - 6000 + 1
-				sources.push(getSource(6000, `SSc${ssrcId}`, `Super Source ${ssrcId}`))
+				sources.push(getSource(input.id, `SSc${ssrcId}`, `Super Source ${ssrcId}`))
 				break
 			}
 			case Enums.InternalPortType.ExternalDirect: {
