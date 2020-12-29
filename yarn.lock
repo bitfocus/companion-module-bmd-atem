@@ -1894,10 +1894,10 @@ text-table@^0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
 
-threadedclass@^0.8.0:
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/threadedclass/-/threadedclass-0.8.1.tgz#19274b72eb7c13ad3b920565dfebe1535665f2c5"
-  integrity sha512-M3XcklB48YBe6epNtW/mkfHkpo0qd8unBejna3Zx5KBnaiUmxGUH6fuc3kkmIFfKrSA/7wwcO9zSQcV2izbzOA==
+threadedclass@0.8.4-nightly-feat-asar-shim-20201229-024635-b822a65.0, threadedclass@^0.8.0:
+  version "0.8.4-nightly-feat-asar-shim-20201229-024635-b822a65.0"
+  resolved "https://registry.yarnpkg.com/threadedclass/-/threadedclass-0.8.4-nightly-feat-asar-shim-20201229-024635-b822a65.0.tgz#91ccbb6f14052c5f5af9cfde1c17ee270e74dc85"
+  integrity sha512-SiVkXm3oA3MK1BqRV3doEvcjlYFsTRlVKMdHxFWQ5FHLfriXGe9ff5WVFbfflDxkkQHCKoZZc/5hKW7PDlETUg==
   dependencies:
     callsites "^3.1.0"
     eventemitter3 "^4.0.4"
