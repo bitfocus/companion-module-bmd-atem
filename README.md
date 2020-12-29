@@ -16,6 +16,8 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 - Fader level fades
 
+- Expose missing audio faders (madi & trs)
+
 - fix aux variables not updating
 
 - fix autodetect model being a bit broken

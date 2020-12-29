@@ -294,9 +294,13 @@ export function GetAudioInputsList(model: ModelSpec, state: AtemState): MiniSour
 				sources.push(getSource(input.id, undefined, `Mic ${micId}`))
 				break
 			}
-			case Enums.ExternalPortType.MADI:
+			case Enums.ExternalPortType.MADI: {
+				const channelId = input.id - 1500
+				sources.push(getSource(input.id, undefined, `MADI ${channelId}`))
 				break
+			}
 			case Enums.ExternalPortType.TRSJack:
+				sources.push(getSource(input.id, undefined, `TRS`))
 				break
 			default:
 				assertUnreachable(input.portType)
