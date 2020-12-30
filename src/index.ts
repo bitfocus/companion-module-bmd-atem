@@ -353,7 +353,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 				const configModelId = this.config.modelID ? parseInt(this.config.modelID, 10) : undefined
 				if (configModelId !== MODEL_AUTO_DETECT && configModelId !== undefined && configModelId !== this.model.id) {
 					this.log(
-						'error',
+						'warn',
 						'Connected to a ' +
 							atemInfo.productIdentifier +
 							', but instance is configured for ' +

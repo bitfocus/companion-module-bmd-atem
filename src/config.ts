@@ -25,7 +25,7 @@ export function GetConfigFields(self: InstanceSkel<AtemConfig>): SomeCompanionCo
 			label: 'Information',
 			value:
 				'This works with all models of Blackmagic Design ATEM mixers. <br />' +
-				'Firmware versions 7.2 and 7.5.2 - 8.4.0 are known to work, other versions may experience problems. <br />' +
+				'Firmware versions 7.2 and 7.5.2 - 8.5.3 are known to work, other versions may experience problems. <br />' +
 				"In general the model can be left in 'Auto Detect', however a specific model can be selected below for offline programming. <br />" +
 				'Devices must be controlled over a network, USB control is NOT supported.',
 		},
