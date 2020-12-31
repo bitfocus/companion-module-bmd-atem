@@ -38,26 +38,19 @@ export const ALL_MODELS: ModelSpec[] = [
 	ModelSpecConstellation8K,
 	ModelSpecMini,
 	ModelSpecMiniPro,
-	ModelSpecMiniProISO,
+	ModelSpecMiniProISO
 ]
 
 export const ALL_MODEL_CHOICES: DropdownChoice[] = ALL_MODELS.map(({ id, label }) => ({ id, label }))
 ALL_MODEL_CHOICES.sort((a, b) => {
-	const aStr = a.label.toLowerCase()
-	const bStr = b.label.toLowerCase()
 	if (a.id === MODEL_AUTO_DETECT) {
 		return -1
 	}
 	if (b.id === MODEL_AUTO_DETECT) {
 		return 1
 	}
-	if (aStr < bStr) {
-		return -1
-	}
-	if (aStr > bStr) {
-		return 1
-	}
-	return 0
+
+	return (b.id as number) - (a.id as number)
 })
 
 export function GetModelSpec(id: ModelId): ModelSpec | undefined {
@@ -75,14 +68,14 @@ export function GetParsedModelSpec({
 	streaming,
 	recording,
 	audio,
-	fairlight,
+	fairlight
 }: AtemState): ModelSpec {
 	const defaults = GetAutoDetectModel()
 	const simpleInputs = compact(Object.values(inputs)).map((inp) => ({
 		id: inp.inputId,
 		portType: inp.internalPortType,
 		sourceAvailability: inp.sourceAvailability,
-		meAvailability: inp.meAvailability,
+		meAvailability: inp.meAvailability
 	}))
 	return {
 		id: info.model,
@@ -99,7 +92,7 @@ export function GetParsedModelSpec({
 		media: {
 			players: info.capabilities?.mediaPlayers ?? defaults.media.players,
 			stills: info.mediaPool?.stillCount ?? defaults.media.stills,
-			clips: info.mediaPool?.clipCount ?? defaults.media.clips,
+			clips: info.mediaPool?.clipCount ?? defaults.media.clips
 		},
 		streaming: streaming != undefined,
 		recording: recording != undefined,
@@ -111,10 +104,10 @@ export function GetParsedModelSpec({
 							if (!ch?.portType) return undefined
 							return {
 								id: Number(id),
-								portType: ch.portType,
+								portType: ch.portType
 							}
 						})
-					),
+					)
 			  }
 			: undefined,
 		fairlightAudio: fairlight
@@ -124,13 +117,13 @@ export function GetParsedModelSpec({
 							if (!ch?.properties) return undefined
 							return {
 								id: Number(id),
-								portType: ch.properties.externalPortType,
+								portType: ch.properties.externalPortType
 								// supportedConfigurations: ch.properties.supportedConfigurations,
 							}
 						})
-					),
+					)
 			  }
-			: undefined,
+			: undefined
 	}
 }
 
