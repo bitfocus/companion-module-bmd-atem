@@ -10,6 +10,12 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.8.1
+
+- fix 1me models having supersource commands
+
+- fix tvs4kpro erroring when generating actions list
+
 ### v2.8.0
 
 - Relative fader levels adjustments

@@ -3,7 +3,7 @@
 	"legacy": [
 		"atem"
 	],
-	"version": "2.8.0",
+	"version": "2.8.1",
 	"api_version": "1.0.0",
 	"description": "Blackmagic Design",
 	"keywords": [

@@ -10,7 +10,7 @@ export const ModelSpecOneME: ModelSpec = {
 	DSKs: 2,
 	MVs: 1,
 	multiviewerFullGrid: false,
-	SSrc: 1,
+	SSrc: 0,
 	macros: 100,
 	media: {
 		players: 2,
