@@ -376,79 +376,79 @@ export const ModelSpecTwoME: ModelSpec = {
 		inputs: [
 			{
 				id: 1,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 2,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 3,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 4,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 5,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 6,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 7,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 8,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 9,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 10,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 11,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 12,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 13,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 14,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 15,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 16,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 1001,
-				portType: 32,
+				portType: Enums.ExternalPortType.XLR,
 			},
 			{
 				id: 2001,
-				portType: 256,
+				portType: Enums.ExternalPortType.Internal,
 			},
 			{
 				id: 2002,
-				portType: 256,
+				portType: Enums.ExternalPortType.Internal,
 			},
 		],
 	},

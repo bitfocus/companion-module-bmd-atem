@@ -178,47 +178,47 @@ export const ModelSpecOneME: ModelSpec = {
 		inputs: [
 			{
 				id: 1,
-				portType: 2,
+				portType: Enums.ExternalPortType.HDMI,
 			},
 			{
 				id: 2,
-				portType: 2,
+				portType: Enums.ExternalPortType.HDMI,
 			},
 			{
 				id: 3,
-				portType: 2,
+				portType: Enums.ExternalPortType.HDMI,
 			},
 			{
 				id: 4,
-				portType: 2,
+				portType: Enums.ExternalPortType.HDMI,
 			},
 			{
 				id: 5,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 6,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 7,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 8,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 1001,
-				portType: 32,
+				portType: Enums.ExternalPortType.XLR,
 			},
 			{
 				id: 2001,
-				portType: 256,
+				portType: Enums.ExternalPortType.Internal,
 			},
 			{
 				id: 2002,
-				portType: 256,
+				portType: Enums.ExternalPortType.Internal,
 			},
 		],
 	},

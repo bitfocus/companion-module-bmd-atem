@@ -134,31 +134,31 @@ export const ModelSpecTVS: ModelSpec = {
 		inputs: [
 			{
 				id: 1,
-				portType: 2,
+				portType: Enums.ExternalPortType.HDMI,
 			},
 			{
 				id: 2,
-				portType: 2,
+				portType: Enums.ExternalPortType.HDMI,
 			},
 			{
 				id: 3,
-				portType: 2,
+				portType: Enums.ExternalPortType.HDMI,
 			},
 			{
 				id: 4,
-				portType: 2,
+				portType: Enums.ExternalPortType.HDMI,
 			},
 			{
 				id: 5,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 6,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 1101,
-				portType: 64,
+				portType: Enums.ExternalPortType.AESEBU,
 			},
 		],
 	},

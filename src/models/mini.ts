@@ -110,32 +110,32 @@ export const ModelSpecMini: ModelSpec = {
 		inputs: [
 			{
 				id: 1,
-				portType: 2,
+				portType: Enums.ExternalPortType.HDMI,
 				// supportedConfigurations: [2, 4],
 			},
 			{
 				id: 2,
-				portType: 2,
+				portType: Enums.ExternalPortType.HDMI,
 				// supportedConfigurations: [2, 4],
 			},
 			{
 				id: 3,
-				portType: 2,
+				portType: Enums.ExternalPortType.HDMI,
 				// supportedConfigurations: [2, 4],
 			},
 			{
 				id: 4,
-				portType: 2,
+				portType: Enums.ExternalPortType.HDMI,
 				// supportedConfigurations: [2, 4],
 			},
 			{
 				id: 1301,
-				portType: 512,
+				portType: Enums.ExternalPortType.TSJack,
 				// supportedConfigurations: [2, 4],
 			},
 			{
 				id: 1302,
-				portType: 512,
+				portType: Enums.ExternalPortType.TSJack,
 				// supportedConfigurations: [2, 4],
 			},
 		],

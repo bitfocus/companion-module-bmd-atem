@@ -184,43 +184,43 @@ export const ModelSpecTVSHD: ModelSpec = {
 		inputs: [
 			{
 				id: 1,
-				portType: 2,
+				portType: Enums.ExternalPortType.HDMI,
 			},
 			{
 				id: 2,
-				portType: 2,
+				portType: Enums.ExternalPortType.HDMI,
 			},
 			{
 				id: 3,
-				portType: 2,
+				portType: Enums.ExternalPortType.HDMI,
 			},
 			{
 				id: 4,
-				portType: 2,
+				portType: Enums.ExternalPortType.HDMI,
 			},
 			{
 				id: 5,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 6,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 7,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 8,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 1001,
-				portType: 32,
+				portType: Enums.ExternalPortType.XLR,
 			},
 			{
 				id: 1301,
-				portType: 512,
+				portType: Enums.ExternalPortType.TSJack,
 			},
 		],
 	},

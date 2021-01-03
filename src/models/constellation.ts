@@ -1024,315 +1024,315 @@ export const ModelSpecConstellation: ModelSpec = {
 		inputs: [
 			{
 				id: 1,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 2,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 3,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 4,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 5,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 6,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 7,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 8,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 9,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 10,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 11,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 12,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 13,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 14,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 15,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 16,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 17,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 18,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 19,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 20,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 21,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 22,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 23,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 24,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 25,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 26,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 27,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 28,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 29,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 30,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 31,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 32,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 33,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 34,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 35,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 36,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 37,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 38,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 39,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 40,
-				portType: 1,
+				portType: Enums.ExternalPortType.SDI,
 			},
 			{
 				id: 1301,
-				portType: 512,
+				portType: Enums.ExternalPortType.TSJack,
 			},
 			{
 				id: 1401,
-				portType: 2048,
+				portType: Enums.ExternalPortType.TRSJack,
 			},
 			{
 				id: 1501,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1502,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1503,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1504,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1505,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1506,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1507,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1508,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1509,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1510,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1511,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1512,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1513,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1514,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1515,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1516,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1517,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1518,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1519,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1520,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1521,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1522,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1523,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1524,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1525,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1526,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1527,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1528,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1529,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1530,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1531,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 1532,
-				portType: 1024,
+				portType: Enums.ExternalPortType.MADI,
 			},
 			{
 				id: 2001,
-				portType: 256,
+				portType: Enums.ExternalPortType.Internal,
 			},
 			{
 				id: 2002,
-				portType: 256,
+				portType: Enums.ExternalPortType.Internal,
 			},
 			{
 				id: 2003,
-				portType: 256,
+				portType: Enums.ExternalPortType.Internal,
 			},
 			{
 				id: 2004,
-				portType: 256,
+				portType: Enums.ExternalPortType.Internal,
 			},
 		],
 	},
