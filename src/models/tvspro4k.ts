@@ -182,7 +182,54 @@ export const ModelSpecTVSPro4K: ModelSpec = {
 	],
 	fairlightAudio: {
 		inputs: [
-			// TODO populate
+			{
+				id: 1,
+				portType: Enums.ExternalPortType.SDI,
+			},
+			{
+				id: 2,
+				portType: Enums.ExternalPortType.SDI,
+			},
+			{
+				id: 3,
+				portType: Enums.ExternalPortType.SDI,
+			},
+			{
+				id: 4,
+				portType: Enums.ExternalPortType.SDI,
+			},
+			{
+				id: 5,
+				portType: Enums.ExternalPortType.SDI,
+			},
+			{
+				id: 6,
+				portType: Enums.ExternalPortType.SDI,
+			},
+			{
+				id: 7,
+				portType: Enums.ExternalPortType.SDI,
+			},
+			{
+				id: 8,
+				portType: Enums.ExternalPortType.SDI,
+			},
+			{
+				id: 1001,
+				portType: Enums.ExternalPortType.XLR,
+			},
+			{
+				id: 1301,
+				portType: Enums.ExternalPortType.TSJack,
+			},
+			{
+				id: 2001,
+				portType: Enums.ExternalPortType.Internal,
+			},
+			{
+				id: 2002,
+				portType: Enums.ExternalPortType.Internal,
+			},
 		],
 	},
 }
