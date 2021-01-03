@@ -19,9 +19,9 @@
 		"build": "rimraf dist && yarn build:main",
 		"build:main": "tsc -p tsconfig.build.json",
 		"build:watch": "tsc -p tsconfig.build.json --watch",
-        "lint": "eslint . --ext .ts --ext .js --ignore-pattern dist",
-        "lint-fix": "yarn lint --fix",
-        "license-validate": "yarn sofie-licensecheck",
+		"lint": "eslint . --ext .ts --ext .js --ignore-pattern dist",
+		"lint-fix": "yarn lint --fix",
+		"license-validate": "yarn sofie-licensecheck",
 		"postinstall": "yarn build"
 	},
 	"repository": {
@@ -33,25 +33,25 @@
 	"bugs": {
 		"url": "https://github.com/bitfocus/companion-module-atem/issues"
 	},
-    "prettier": "@sofie-automation/code-standard-preset/.prettierrc.json",
+	"prettier": "@sofie-automation/code-standard-preset/.prettierrc.json",
 	"husky": {
 		"hooks": {
 			"pre-commit": "lint-staged"
 		}
 	},
 	"lint-staged": {
-        "*.{css,json,md,scss}": [
-            "prettier --write"
-        ],
-        "*.{ts,tsx,js,jsx}": [
-            "yarn lint-fix"
-        ]
+		"*.{css,json,md,scss}": [
+			"prettier --write"
+		],
+		"*.{ts,tsx,js,jsx}": [
+			"yarn lint-fix"
+		]
 	},
 	"engines": {
 		"node": "^12.14 || 14"
 	},
 	"dependencies": {
-		"atem-connection": "^2.1.0"
+		"atem-connection": "2.1.1-nightly-20200917-210751-66bb5be.0"
 	},
 	"devDependencies": {
 		"@sofie-automation/code-standard-preset": "^0.2.1",

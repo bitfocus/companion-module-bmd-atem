@@ -201,12 +201,12 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 				return
 			}
 
-			if (path.match(/video.ME.(\d+).upstreamKeyers.(\d+).onAir/)) {
+			if (path.match(/video.mixEffects.(\d+).upstreamKeyers.(\d+).onAir/)) {
 				this.checkFeedbacks(FeedbackId.USKOnAir)
 				return
 			}
 
-			const uskSourceMatch = path.match(/video.ME.(\d+).upstreamKeyers.(\d+)/)
+			const uskSourceMatch = path.match(/video.mixEffects.(\d+).upstreamKeyers.(\d+)/)
 			if (uskSourceMatch) {
 				const meIndex = parseInt(uskSourceMatch[1], 10)
 				const keyIndex = parseInt(uskSourceMatch[2], 10)
@@ -235,7 +235,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 				return
 			}
 
-			const meProgramMatch = path.match(/video.ME.(\d+).programInput/)
+			const meProgramMatch = path.match(/video.mixEffects.(\d+).programInput/)
 			if (meProgramMatch) {
 				const meIndex = parseInt(meProgramMatch[1], 10)
 				updateMEProgramVariable(this, this.atemState, meIndex)
@@ -247,7 +247,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 				return
 			}
 
-			const mePreviewMatch = path.match(/video.ME.(\d+).previewInput/)
+			const mePreviewMatch = path.match(/video.mixEffects.(\d+).previewInput/)
 			if (mePreviewMatch) {
 				const meIndex = parseInt(mePreviewMatch[1], 10)
 				updateMEPreviewVariable(this, this.atemState, meIndex)
@@ -266,20 +266,20 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 				return
 			}
 
-			if (path.match(/video.ME.(\d+).transitionProperties/)) {
+			if (path.match(/video.mixEffects.(\d+).transitionProperties/)) {
 				this.checkFeedbacks(FeedbackId.TransitionStyle)
 				this.checkFeedbacks(FeedbackId.TransitionSelection)
 				return
 			}
-			if (path.match(/video.ME.(\d+).transitionSettings/)) {
+			if (path.match(/video.mixEffects.(\d+).transitionSettings/)) {
 				this.checkFeedbacks(FeedbackId.TransitionRate)
 				return
 			}
-			if (path.match(/video.ME.(\d+).transitionPosition/)) {
+			if (path.match(/video.mixEffects.(\d+).transitionPosition/)) {
 				this.checkFeedbacks(FeedbackId.InTransition)
 				return
 			}
-			if (path.match(/video.ME.(\d+).fadeToBlack/)) {
+			if (path.match(/video.mixEffects.(\d+).fadeToBlack/)) {
 				this.checkFeedbacks(FeedbackId.FadeToBlackRate)
 				this.checkFeedbacks(FeedbackId.FadeToBlackIsBlack)
 				return
