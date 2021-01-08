@@ -25,6 +25,11 @@ import { AtemCommandBatching } from './batching'
 import { executePromise } from './util'
 import { AtemTransitions } from './transitions'
 
+// eslint-disable-next-line node/no-extraneous-import
+import { ThreadedClassManager } from 'threadedclass'
+// HACK: This stops it from registering an unhandledException handler, as that causes companion to exit on error
+ThreadedClassManager.dontHandleExit = true
+
 /**
  * Companion instance class for the Blackmagic ATEM Switchers.
  */
