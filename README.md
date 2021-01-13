@@ -12,6 +12,8 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ### v2.8.1
 
+- fix companion exiting on uncaughtException
+
 - fix 1me models having supersource commands
 
 - fix tvs4kpro erroring when generating actions list
