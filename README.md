@@ -10,6 +10,10 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.8.2
+
+- fix on windows
+
 ### v2.8.1
 
 - fix companion exiting on uncaughtException
