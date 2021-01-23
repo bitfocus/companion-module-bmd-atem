@@ -53,9 +53,9 @@ export function calculateTransitionSelection(
 	return selection
 }
 
-export function executePromise(instance: InstanceSkel<AtemConfig>, prom: Promise<unknown>): void {
+export function executePromise(instance: InstanceSkel<AtemConfig>, prom: Promise<unknown> | undefined): void {
 	try {
-		prom.catch((e) => {
+		prom?.catch((e) => {
 			instance.debug('Action execution error: ' + e)
 		})
 	} catch (e) {

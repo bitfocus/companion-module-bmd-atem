@@ -113,7 +113,7 @@ function getOptBool(action: CompanionActionEvent, key: string): boolean {
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function meActions(
 	instance: InstanceSkel<AtemConfig>,
-	atem: Atem,
+	atem: Atem | undefined,
 	model: ModelSpec,
 	commandBatching: AtemCommandBatching,
 	state: AtemState
@@ -125,7 +125,7 @@ function meActions(
 			callback: (action): void => {
 				executePromise(
 					instance,
-					atem.changeProgramInput(getOptNumber(action, 'input'), getOptNumber(action, 'mixeffect'))
+					atem?.changeProgramInput(getOptNumber(action, 'input'), getOptNumber(action, 'mixeffect'))
 				)
 			},
 		}),
@@ -135,7 +135,7 @@ function meActions(
 			callback: (action): void => {
 				executePromise(
 					instance,
-					atem.changePreviewInput(getOptNumber(action, 'input'), getOptNumber(action, 'mixeffect'))
+					atem?.changePreviewInput(getOptNumber(action, 'input'), getOptNumber(action, 'mixeffect'))
 				)
 			},
 		}),
@@ -143,14 +143,14 @@ function meActions(
 			label: 'CUT operation',
 			options: [AtemMEPicker(model, 0)],
 			callback: (action): void => {
-				executePromise(instance, atem.cut(getOptNumber(action, 'mixeffect')))
+				executePromise(instance, atem?.cut(getOptNumber(action, 'mixeffect')))
 			},
 		}),
 		[ActionId.Auto]: literal<CompanionActionExt>({
 			label: 'AUTO transition operation',
 			options: [AtemMEPicker(model, 0)],
 			callback: (action): void => {
-				executePromise(instance, atem.autoTransition(getOptNumber(action, 'mixeffect')))
+				executePromise(instance, atem?.autoTransition(getOptNumber(action, 'mixeffect')))
 			},
 		}),
 
@@ -167,12 +167,12 @@ function meActions(
 						executePromise(
 							instance,
 							Promise.all([
-								atem.setUpstreamKeyerFillSource(
+								atem?.setUpstreamKeyerFillSource(
 									getOptNumber(action, 'fill'),
 									getOptNumber(action, 'mixeffect'),
 									getOptNumber(action, 'key')
 								),
-								atem.setUpstreamKeyerCutSource(
+								atem?.setUpstreamKeyerCutSource(
 									getOptNumber(action, 'cut'),
 									getOptNumber(action, 'mixeffect'),
 									getOptNumber(action, 'key')
@@ -201,9 +201,9 @@ function meActions(
 						const keyIndex = getOptNumber(action, 'key')
 						if (action.options.onair === 'toggle') {
 							const usk = getUSK(state, meIndex, keyIndex)
-							executePromise(instance, atem.setUpstreamKeyerOnAir(!usk?.onAir, meIndex, keyIndex))
+							executePromise(instance, atem?.setUpstreamKeyerOnAir(!usk?.onAir, meIndex, keyIndex))
 						} else {
-							executePromise(instance, atem.setUpstreamKeyerOnAir(action.options.onair === 'true', meIndex, keyIndex))
+							executePromise(instance, atem?.setUpstreamKeyerOnAir(action.options.onair === 'true', meIndex, keyIndex))
 						}
 					},
 			  })
@@ -214,7 +214,7 @@ function meActions(
 			callback: (action): void => {
 				executePromise(
 					instance,
-					atem.setTransitionStyle(
+					atem?.setTransitionStyle(
 						{
 							nextStyle: getOptNumber(action, 'style'),
 						},
@@ -232,7 +232,7 @@ function meActions(
 					case Enums.TransitionStyle.MIX:
 						executePromise(
 							instance,
-							atem.setMixTransitionSettings(
+							atem?.setMixTransitionSettings(
 								{
 									rate: getOptNumber(action, 'rate'),
 								},
@@ -243,7 +243,7 @@ function meActions(
 					case Enums.TransitionStyle.DIP:
 						executePromise(
 							instance,
-							atem.setDipTransitionSettings(
+							atem?.setDipTransitionSettings(
 								{
 									rate: getOptNumber(action, 'rate'),
 								},
@@ -254,7 +254,7 @@ function meActions(
 					case Enums.TransitionStyle.WIPE:
 						executePromise(
 							instance,
-							atem.setWipeTransitionSettings(
+							atem?.setWipeTransitionSettings(
 								{
 									rate: getOptNumber(action, 'rate'),
 								},
@@ -265,7 +265,7 @@ function meActions(
 					case Enums.TransitionStyle.DVE:
 						executePromise(
 							instance,
-							atem.setDVETransitionSettings(
+							atem?.setDVETransitionSettings(
 								{
 									rate: getOptNumber(action, 'rate'),
 								},
@@ -288,7 +288,7 @@ function meActions(
 			callback: (action): void => {
 				executePromise(
 					instance,
-					atem.setTransitionStyle(
+					atem?.setTransitionStyle(
 						{
 							nextSelection: calculateTransitionSelection(model.USKs, action.options),
 						},
@@ -313,7 +313,7 @@ function meActions(
 			callback: (action): void => {
 				const me = getOptNumber(action, 'mixeffect')
 				const tp = getTransitionProperties(state, me)
-				if (tp) {
+				if (tp && atem) {
 					let batch = commandBatching.meTransitionSelection.get(me)
 					if (!batch) {
 						batch = new CommandBatching(
@@ -357,7 +357,7 @@ function meActions(
 			label: 'AUTO fade to black',
 			options: [AtemMEPicker(model, 0)],
 			callback: (action): void => {
-				executePromise(instance, atem.fadeToBlack(getOptNumber(action, 'mixeffect')))
+				executePromise(instance, atem?.fadeToBlack(getOptNumber(action, 'mixeffect')))
 			},
 		}),
 		[ActionId.FadeToBlackRate]: literal<CompanionActionExt>({
@@ -366,7 +366,7 @@ function meActions(
 			callback: (action): void => {
 				executePromise(
 					instance,
-					atem.setFadeToBlackRate(getOptNumber(action, 'rate'), getOptNumber(action, 'mixeffect'))
+					atem?.setFadeToBlackRate(getOptNumber(action, 'rate'), getOptNumber(action, 'mixeffect'))
 				)
 			},
 		}),
@@ -374,7 +374,7 @@ function meActions(
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: ModelSpec, state: AtemState) {
+function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, model: ModelSpec, state: AtemState) {
 	return {
 		[ActionId.DSKSource]: model.DSKs
 			? literal<CompanionActionExt>({
@@ -384,8 +384,8 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Model
 						executePromise(
 							instance,
 							Promise.all([
-								atem.setDownstreamKeyFillSource(getOptNumber(action, 'fill'), getOptNumber(action, 'key')),
-								atem.setDownstreamKeyCutSource(getOptNumber(action, 'cut'), getOptNumber(action, 'key')),
+								atem?.setDownstreamKeyFillSource(getOptNumber(action, 'fill'), getOptNumber(action, 'key')),
+								atem?.setDownstreamKeyCutSource(getOptNumber(action, 'cut'), getOptNumber(action, 'key')),
 							])
 						)
 					},
@@ -404,7 +404,7 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Model
 						},
 					],
 					callback: (action): void => {
-						executePromise(instance, atem.autoDownstreamKey(getOptNumber(action, 'downstreamKeyerId')))
+						executePromise(instance, atem?.autoDownstreamKey(getOptNumber(action, 'downstreamKeyerId')))
 					},
 			  })
 			: undefined,
@@ -425,9 +425,9 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Model
 						const keyIndex = getOptNumber(action, 'key')
 						if (action.options.onair === 'toggle') {
 							const dsk = getDSK(state, keyIndex)
-							executePromise(instance, atem.setDownstreamKeyOnAir(!dsk?.onAir, keyIndex))
+							executePromise(instance, atem?.setDownstreamKeyOnAir(!dsk?.onAir, keyIndex))
 						} else {
-							executePromise(instance, atem.setDownstreamKeyOnAir(action.options.onair === 'true', keyIndex))
+							executePromise(instance, atem?.setDownstreamKeyOnAir(action.options.onair === 'true', keyIndex))
 						}
 					},
 			  })
@@ -449,9 +449,9 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Model
 						const keyIndex = getOptNumber(action, 'key')
 						if (action.options.state === 'toggle') {
 							const dsk = getDSK(state, keyIndex)
-							executePromise(instance, atem.setDownstreamKeyTie(!dsk?.properties?.tie, keyIndex))
+							executePromise(instance, atem?.setDownstreamKeyTie(!dsk?.properties?.tie, keyIndex))
 						} else {
-							executePromise(instance, atem.setDownstreamKeyTie(action.options.state === 'true', keyIndex))
+							executePromise(instance, atem?.setDownstreamKeyTie(action.options.state === 'true', keyIndex))
 						}
 					},
 			  })
@@ -460,7 +460,7 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Model
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function macroActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: ModelSpec, state: AtemState) {
+function macroActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, model: ModelSpec, state: AtemState) {
 	return {
 		[ActionId.MacroRun]: model.macros
 			? literal<CompanionActionExt>({
@@ -492,11 +492,11 @@ function macroActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Mod
 							macroPlayer.isWaiting &&
 							macroPlayer.macroIndex === macroIndex
 						) {
-							executePromise(instance, atem.macroContinue())
+							executePromise(instance, atem?.macroContinue())
 						} else if (macroRecorder.isRecording && macroRecorder.macroIndex === macroIndex) {
-							executePromise(instance, atem.macroStopRecord())
+							executePromise(instance, atem?.macroStopRecord())
 						} else {
-							executePromise(instance, atem.macroRun(macroIndex))
+							executePromise(instance, atem?.macroRun(macroIndex))
 						}
 					},
 			  })
@@ -506,7 +506,7 @@ function macroActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Mod
 					label: 'Continue MACRO',
 					options: [],
 					callback: (): void => {
-						executePromise(instance, atem.macroContinue())
+						executePromise(instance, atem?.macroContinue())
 					},
 			  })
 			: undefined,
@@ -515,7 +515,7 @@ function macroActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Mod
 					label: 'Stop MACROS',
 					options: [],
 					callback: (): void => {
-						executePromise(instance, atem.macroStop())
+						executePromise(instance, atem?.macroStop())
 					},
 			  })
 			: undefined,
@@ -523,7 +523,7 @@ function macroActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Mod
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: ModelSpec, state: AtemState) {
+function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, model: ModelSpec, state: AtemState) {
 	return {
 		[ActionId.SuperSourceBoxSource]: model.SSrc
 			? literal<CompanionActionExt>({
@@ -536,7 +536,7 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Mode
 					callback: (action): void => {
 						executePromise(
 							instance,
-							atem.setSuperSourceBoxSettings(
+							atem?.setSuperSourceBoxSettings(
 								{
 									source: getOptNumber(action, 'source'),
 								},
@@ -569,7 +569,7 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Mode
 							const box = getSuperSourceBox(state, boxIndex, ssrcId)
 							executePromise(
 								instance,
-								atem.setSuperSourceBoxSettings(
+								atem?.setSuperSourceBoxSettings(
 									{
 										enabled: !box?.enabled,
 									},
@@ -580,7 +580,7 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Mode
 						} else {
 							executePromise(
 								instance,
-								atem.setSuperSourceBoxSettings(
+								atem?.setSuperSourceBoxSettings(
 									{
 										enabled: action.options.onair === 'true',
 									},
@@ -603,7 +603,7 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Mode
 					callback: (action): void => {
 						executePromise(
 							instance,
-							atem.setSuperSourceBoxSettings(
+							atem?.setSuperSourceBoxSettings(
 								{
 									size: getOptNumber(action, 'size') * 1000,
 									x: getOptNumber(action, 'x') * 100,
@@ -636,7 +636,7 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Mode
 						if (box) {
 							executePromise(
 								instance,
-								atem.setSuperSourceBoxSettings(
+								atem?.setSuperSourceBoxSettings(
 									{
 										size: clamp(0, 1000, box.size + getOptNumber(action, 'size') * 1000),
 										x: clamp(-4800, 4800, box.x + getOptNumber(action, 'x') * 100),
@@ -658,7 +658,12 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: Mode
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function streamRecordActions(instance: InstanceSkel<AtemConfig>, atem: Atem, model: ModelSpec, state: AtemState) {
+function streamRecordActions(
+	instance: InstanceSkel<AtemConfig>,
+	atem: Atem | undefined,
+	model: ModelSpec,
+	state: AtemState
+) {
 	return {
 		[ActionId.StreamStartStop]: model.streaming
 			? literal<CompanionActionExt>({
@@ -679,9 +684,9 @@ function streamRecordActions(instance: InstanceSkel<AtemConfig>, atem: Atem, mod
 						}
 
 						if (newState) {
-							executePromise(instance, atem.startStreaming())
+							executePromise(instance, atem?.startStreaming())
 						} else {
-							executePromise(instance, atem.stopStreaming())
+							executePromise(instance, atem?.stopStreaming())
 						}
 					},
 			  })
@@ -712,7 +717,7 @@ function streamRecordActions(instance: InstanceSkel<AtemConfig>, atem: Atem, mod
 					callback: (action): void => {
 						executePromise(
 							instance,
-							atem.setStreamingService({
+							atem?.setStreamingService({
 								serviceName: `${action.options.service || ''}`,
 								url: `${action.options.url || ''}`,
 								key: `${action.options.key || ''}`,
@@ -740,9 +745,9 @@ function streamRecordActions(instance: InstanceSkel<AtemConfig>, atem: Atem, mod
 						}
 
 						if (newState) {
-							executePromise(instance, atem.startRecording())
+							executePromise(instance, atem?.startRecording())
 						} else {
-							executePromise(instance, atem.stopRecording())
+							executePromise(instance, atem?.stopRecording())
 						}
 					},
 			  })
@@ -752,7 +757,7 @@ function streamRecordActions(instance: InstanceSkel<AtemConfig>, atem: Atem, mod
 					label: 'Switch recording disk',
 					options: [],
 					callback: (): void => {
-						executePromise(instance, atem.switchRecordingDisk())
+						executePromise(instance, atem?.switchRecordingDisk())
 					},
 			  })
 			: undefined,
@@ -770,7 +775,7 @@ function streamRecordActions(instance: InstanceSkel<AtemConfig>, atem: Atem, mod
 					callback: (action): void => {
 						executePromise(
 							instance,
-							atem.setRecordingSettings({
+							atem?.setRecordingSettings({
 								filename: `${action.options.filename || ''}`,
 							})
 						)
@@ -783,7 +788,7 @@ function streamRecordActions(instance: InstanceSkel<AtemConfig>, atem: Atem, mod
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function audioActions(
 	instance: InstanceSkel<AtemConfig>,
-	atem: Atem,
+	atem: Atem | undefined,
 	model: ModelSpec,
 	transitions: AtemTransitions,
 	state: AtemState
@@ -816,7 +821,7 @@ function audioActions(
 					transitions.run(
 						`audio.${inputId}.gain`,
 						(value) => {
-							executePromise(instance, atem.setAudioMixerInputGain(getOptNumber(action, 'input'), value))
+							executePromise(instance, atem?.setAudioMixerInputGain(getOptNumber(action, 'input'), value))
 						},
 						channel?.gain,
 						getOptNumber(action, 'gain'),
@@ -836,7 +841,7 @@ function audioActions(
 						transitions.run(
 							`audio.${inputId}.gain`,
 							(value) => {
-								executePromise(instance, atem.setAudioMixerInputGain(getOptNumber(action, 'input'), value))
+								executePromise(instance, atem?.setAudioMixerInputGain(getOptNumber(action, 'input'), value))
 							},
 							channel.gain,
 							channel.gain + getOptNumber(action, 'delta'),
@@ -871,7 +876,7 @@ function audioActions(
 							? Enums.AudioMixOption.Off
 							: Enums.AudioMixOption.On
 					const newVal = action.options.option === 'toggle' ? toggleVal : getOptNumber(action, 'option')
-					executePromise(instance, atem.setAudioMixerInputMixOption(inputId, newVal))
+					executePromise(instance, atem?.setAudioMixerInputMixOption(inputId, newVal))
 				},
 			}),
 			[ActionId.FairlightAudioInputGain]: undefined,
@@ -918,7 +923,7 @@ function audioActions(
 						(value) => {
 							executePromise(
 								instance,
-								atem.setFairlightAudioMixerSourceProps(inputId, sourceId, {
+								atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
 									gain: value,
 								})
 							)
@@ -946,7 +951,7 @@ function audioActions(
 							(value) => {
 								executePromise(
 									instance,
-									atem.setFairlightAudioMixerSourceProps(inputId, sourceId, {
+									atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
 										gain: value,
 									})
 								)
@@ -989,7 +994,7 @@ function audioActions(
 						(value) => {
 							executePromise(
 								instance,
-								atem.setFairlightAudioMixerSourceProps(inputId, sourceId, {
+								atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
 									faderGain: value,
 								})
 							)
@@ -1017,7 +1022,7 @@ function audioActions(
 							(value) => {
 								executePromise(
 									instance,
-									atem.setFairlightAudioMixerSourceProps(inputId, sourceId, {
+									atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
 										faderGain: value,
 									})
 								)
@@ -1058,7 +1063,7 @@ function audioActions(
 							? Enums.FairlightAudioMixOption.Off
 							: Enums.FairlightAudioMixOption.On
 					const newVal = action.options.option === 'toggle' ? toggleVal : getOptNumber(action, 'option')
-					executePromise(instance, atem.setFairlightAudioMixerSourceProps(inputId, sourceId, { mixOption: newVal }))
+					executePromise(instance, atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, { mixOption: newVal }))
 				},
 			}),
 		}
@@ -1078,7 +1083,7 @@ function audioActions(
 
 export function GetActionsList(
 	instance: InstanceSkel<AtemConfig>,
-	atem: Atem,
+	atem: Atem | undefined,
 	model: ModelSpec,
 	commandBatching: AtemCommandBatching,
 	transitions: AtemTransitions,
@@ -1096,7 +1101,7 @@ export function GetActionsList(
 					label: 'Set AUX bus',
 					options: [AtemAuxPicker(model), AtemAuxSourcePicker(model, state)],
 					callback: (action): void => {
-						executePromise(instance, atem.setAuxSource(getOptNumber(action, 'input'), getOptNumber(action, 'aux')))
+						executePromise(instance, atem?.setAuxSource(getOptNumber(action, 'input'), getOptNumber(action, 'aux')))
 					},
 			  })
 			: undefined,
@@ -1111,7 +1116,7 @@ export function GetActionsList(
 					callback: (action): void => {
 						executePromise(
 							instance,
-							atem.setMultiViewerSource(
+							atem?.setMultiViewerSource(
 								{
 									windowIndex: getOptNumber(action, 'windowIndex'),
 									source: getOptNumber(action, 'source'),
@@ -1131,7 +1136,7 @@ export function GetActionsList(
 						if (source >= MEDIA_PLAYER_SOURCE_CLIP_OFFSET) {
 							executePromise(
 								instance,
-								atem.setMediaPlayerSource(
+								atem?.setMediaPlayerSource(
 									{
 										sourceType: Enums.MediaSourceType.Clip,
 										clipIndex: source - MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
@@ -1142,7 +1147,7 @@ export function GetActionsList(
 						} else {
 							executePromise(
 								instance,
-								atem.setMediaPlayerSource(
+								atem?.setMediaPlayerSource(
 									{
 										sourceType: Enums.MediaSourceType.Still,
 										stillIndex: source,
@@ -1191,7 +1196,7 @@ export function GetActionsList(
 
 							executePromise(
 								instance,
-								atem.setMediaPlayerSource(
+								atem?.setMediaPlayerSource(
 									{
 										sourceType: Enums.MediaSourceType.Still,
 										stillIndex: nextIndex,

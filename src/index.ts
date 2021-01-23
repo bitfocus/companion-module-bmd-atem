@@ -150,15 +150,13 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 	}
 
 	private updateCompanionBits(): void {
-		if (this.atem) {
-			InitVariables(this, this.model, this.atemState)
-			this.setPresetDefinitions(GetPresetsList(this, this.model, this.atemState))
-			this.setFeedbackDefinitions(GetFeedbacksList(this, this.model, this.atemState, this.atemTally))
-			this.setActions(
-				GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.atemState)
-			)
-			this.checkFeedbacks()
-		}
+		InitVariables(this, this.model, this.atemState)
+		this.setPresetDefinitions(GetPresetsList(this, this.model, this.atemState))
+		this.setFeedbackDefinitions(GetFeedbacksList(this, this.model, this.atemState, this.atemTally))
+		this.setActions(
+			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.atemState)
+		)
+		this.checkFeedbacks()
 	}
 
 	/**
