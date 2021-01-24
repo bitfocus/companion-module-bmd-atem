@@ -10,6 +10,10 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Changes
 
+### v2.8.3
+
+- fix offline programming
+
 ### v2.8.2
 
 - fix on windows
