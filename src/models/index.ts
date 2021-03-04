@@ -19,6 +19,8 @@ import { ModelSpecMini } from './mini'
 import { ModelSpecMiniPro } from './minipro'
 import { ModelSpecMiniProISO } from './miniproiso'
 import { ModelId, ModelSpec, MODEL_AUTO_DETECT } from './types'
+import { ModelSpecMiniExtreme } from './miniextreme'
+import { ModelSpecMiniExtremeISO } from './miniextremeiso'
 
 export * from './types'
 
@@ -39,6 +41,8 @@ export const ALL_MODELS: ModelSpec[] = [
 	ModelSpecMini,
 	ModelSpecMiniPro,
 	ModelSpecMiniProISO,
+	ModelSpecMiniExtreme,
+	ModelSpecMiniExtremeISO,
 ]
 
 export const ALL_MODEL_CHOICES: DropdownChoice[] = ALL_MODELS.map(({ id, label }) => ({ id, label }))

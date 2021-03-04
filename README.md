@@ -8,7 +8,24 @@ The module can be built once with `yarn build`. This should be enough to get the
 
 While developing the module, by using `yarn build:watch` the compiler will be run in watch mode to recompile the files on change.
 
+## Adding a new model
+
+Each model of ATEM has a definition file in src/models describing the functionality of the device. This allows us to know this information for offline programming. If the module is left on auto-detect, we match the definition to use based on the model the atem reports, and if one is not defined we can build the definition on the fly from the ATEM. This generally gives us good results, but there are a few things we don't know how to detect from the atem.
+
+To add a new model to the list:
+
+- Create a new file in `src/models/` for the new model, based on one of the others (mini.ts is a nice and simple one)
+- Run `yarn ts-node dump-model.ts 10.42.6.125` (substitute in the atem ip)
+- Copy the contents of state.json to the file you created, replacing the existing spec
+- In the new file, replace any magic numbers with their enums (this aids readability, but is not essential)
+- Add the new spec to the `ALL_MODELS` array in `src/models/index.ts`
+- Recompile the code and test it out!
+
 ## Changes
+
+### v2.9.0
+
+- Add mini-extreme and mini-extreme-iso
 
 ### v2.8.3
 
