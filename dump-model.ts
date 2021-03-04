@@ -28,5 +28,5 @@ atem.on('connected', () => {
 	process.exit(0)
 })
 
-atem.connect(args[0])
+atem.connect(args[0]).catch(console.error)
 console.log('connecting')

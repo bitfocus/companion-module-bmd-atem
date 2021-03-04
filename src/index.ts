@@ -100,15 +100,15 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
 		if (this.config.host !== undefined && this.atem) {
 			if (this.atem.status !== AtemConnectionStatus.CLOSED) {
-				try {
-					this.atem.disconnect()
-				} catch (e) {
-					// Ignore
-				}
+				// Ignore error
+				this.atem.disconnect().catch(() => null)
 			}
 
 			this.status(this.STATUS_WARNING, 'Connecting')
-			this.atem.connect(this.config.host)
+			this.atem.connect(this.config.host).catch((e) => {
+				this.status(this.STATUS_ERROR, 'Connecting failed')
+				this.log('error', `Connecting failed: ${e}`)
+			})
 		}
 	}
 
@@ -128,7 +128,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 		this.atemTransitions.stopAll()
 
 		if (this.atem) {
-			this.atem.disconnect()
+			this.atem.disconnect().catch(() => null)
 			delete this.atem
 		}
 
@@ -401,8 +401,11 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 		this.atem.on('receivedCommands', this.processReceivedCommands.bind(this))
 
 		if (this.config.host) {
-			this.atem.connect(this.config.host)
 			this.status(this.STATUS_WARNING, 'Connecting')
+			this.atem.connect(this.config.host).catch((e) => {
+				this.status(this.STATUS_ERROR, 'Connecting failed')
+				this.log('error', `Connecting failed: ${e}`)
+			})
 		}
 	}
 }
