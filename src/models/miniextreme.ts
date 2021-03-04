@@ -12,7 +12,7 @@ const sourceAvailabilityAll =
 
 export const ModelSpecMiniExtreme: ModelSpec = {
 	id: 16,
-	label: 'ATEM Mini Extreme',
+	label: 'Mini Extreme',
 	inputs: [
 		{
 			id: 0,
