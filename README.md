@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+### v2.9.2
+
+- fix build issues
+
 ### v2.9.1
 
 - fix in electron (in new module workflow)
