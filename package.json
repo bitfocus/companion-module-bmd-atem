@@ -51,11 +51,11 @@
 		"node": "^12.14 || 14"
 	},
 	"dependencies": {
+		"@sofie-automation/code-standard-preset": "^0.2.4",
 		"@types/node": "^12.19.14",
 		"atem-connection": "2.3.0-nightly-latest-20210304-180451-8963dd5.0"
 	},
 	"devDependencies": {
-		"@sofie-automation/code-standard-preset": "^0.2.4",
 		"rimraf": "^3.0.2",
 		"ts-node": "^9.1.1",
 		"typescript": "^4.0.5"
