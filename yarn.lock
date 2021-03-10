@@ -289,16 +289,16 @@ astral-regex@^2.0.0:
   resolved "https://registry.yarnpkg.com/astral-regex/-/astral-regex-2.0.0.tgz#483143c567aeed4785759c0865786dc77d7d2e31"
   integrity sha512-Z7tMw1ytTXt5jqMcOP+OQteU1VuNK9Y02uuJtKQ1Sv69jXQKKg5cibLwGJow8yzZP+eAc18EmLGPal0bp36rvQ==
 
-atem-connection@2.3.0-nightly-latest-20210304-180451-8963dd5.0:
-  version "2.3.0-nightly-latest-20210304-180451-8963dd5.0"
-  resolved "https://registry.yarnpkg.com/atem-connection/-/atem-connection-2.3.0-nightly-latest-20210304-180451-8963dd5.0.tgz#11b7330f2ec1af62b5357ee608a261ad3338d6c7"
-  integrity sha512-rrEK37dKCoiWZbNAs4oDeALqWHRxEkH33xVfqcHZOgjXXRsTNhlOtxi1GIOLF8brzBQDuG9oGuJvDbYb2KOD0w==
+atem-connection@2.3.0-nightly-wip-update-threadedclass-20210310-222920-63a3a3a.0:
+  version "2.3.0-nightly-wip-update-threadedclass-20210310-222920-63a3a3a.0"
+  resolved "https://registry.yarnpkg.com/atem-connection/-/atem-connection-2.3.0-nightly-wip-update-threadedclass-20210310-222920-63a3a3a.0.tgz#f4fdc623fc39f9fea317b8c71b2de68aa797d2c9"
+  integrity sha512-JRNtvKx9a3sT8Smg567KTGXn/ptnd9mkZB0leEh9gdJiaCnrcpZvARkWPGF06YAGqMtfyaMaA9ABZuWNCFkevw==
   dependencies:
     big-integer "^1.6.48"
     eventemitter3 "^4.0.4"
     exit-hook "^2.0.0"
     nanotimer "^0.3.15"
-    threadedclass "^0.8.0"
+    threadedclass "0.9.0-nightly-feat-opt-in-exit-handlers-20210310-215533-20beb50.0"
     tslib "^1.13.0"
     wavefile "^8.4.4"
 
@@ -1928,10 +1928,10 @@ text-table@^0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
 
-threadedclass@0.8.4-nightly-feat-asar-shim-20210117-132506-5cf608b.0, threadedclass@^0.8.0:
-  version "0.8.4-nightly-feat-asar-shim-20210117-132506-5cf608b.0"
-  resolved "https://registry.yarnpkg.com/threadedclass/-/threadedclass-0.8.4-nightly-feat-asar-shim-20210117-132506-5cf608b.0.tgz#0aa18daa8b42246b58194281f425d906375eac4d"
-  integrity sha512-T5OyXyS5brba7leqLfTrAcgOarDEQs1GJewBfAXfUXQQxt54GOlBS2VLPZeOR7WgAQePyKeWPC82mnntYArDmg==
+threadedclass@0.9.0-nightly-feat-opt-in-exit-handlers-20210310-215533-20beb50.0:
+  version "0.9.0-nightly-feat-opt-in-exit-handlers-20210310-215533-20beb50.0"
+  resolved "https://registry.yarnpkg.com/threadedclass/-/threadedclass-0.9.0-nightly-feat-opt-in-exit-handlers-20210310-215533-20beb50.0.tgz#6d6af96843c9504b185cfd9de08d8441937c3f07"
+  integrity sha512-T3eHzl0WzNz86QMd0UGeEAbIplOu0N/fls9YzjmyrWWH+9IuT/OYhzmpLDasfu3qmtMexQCjRgaRd7/l0NxOPQ==
   dependencies:
     callsites "^3.1.0"
     eventemitter3 "^4.0.4"

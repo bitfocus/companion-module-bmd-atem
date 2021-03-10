@@ -27,8 +27,14 @@ import { AtemTransitions } from './transitions'
 
 // eslint-disable-next-line node/no-extraneous-import
 import { ThreadedClassManager } from 'threadedclass'
+// HACK: not exported by threadedClass
+enum RegisterExitHandlers {
+	Auto,
+	Yes,
+	No,
+}
 // HACK: This stops it from registering an unhandledException handler, as that causes companion to exit on error
-ThreadedClassManager.dontHandleExit = true
+ThreadedClassManager.handleExit = RegisterExitHandlers.No
 
 /**
  * Companion instance class for the Blackmagic ATEM Switchers.
