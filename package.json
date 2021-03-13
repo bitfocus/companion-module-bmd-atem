@@ -3,7 +3,7 @@
 	"legacy": [
 		"atem"
 	],
-	"version": "2.9.2",
+	"version": "2.9.3",
 	"api_version": "1.0.0",
 	"description": "Blackmagic Design",
 	"keywords": [
@@ -52,7 +52,7 @@
 	},
 	"dependencies": {
 		"@types/node": "^12.19.14",
-		"atem-connection": "2.3.0-nightly-wip-update-threadedclass-20210310-222920-63a3a3a.0"
+		"atem-connection": "2.3.0-nightly-wip-update-threadedclass-20210313-231347-ec8d035.0"
 	},
 	"devDependencies": {
 		"@sofie-automation/code-standard-preset": "^0.2.4",

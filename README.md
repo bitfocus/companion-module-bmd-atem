@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+### v2.9.3
+
+- fix utf8 characters in variables
+
 ### v2.9.2
 
 - fix build issues

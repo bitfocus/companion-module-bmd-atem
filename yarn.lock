@@ -289,10 +289,10 @@ astral-regex@^2.0.0:
   resolved "https://registry.yarnpkg.com/astral-regex/-/astral-regex-2.0.0.tgz#483143c567aeed4785759c0865786dc77d7d2e31"
   integrity sha512-Z7tMw1ytTXt5jqMcOP+OQteU1VuNK9Y02uuJtKQ1Sv69jXQKKg5cibLwGJow8yzZP+eAc18EmLGPal0bp36rvQ==
 
-atem-connection@2.3.0-nightly-wip-update-threadedclass-20210310-222920-63a3a3a.0:
-  version "2.3.0-nightly-wip-update-threadedclass-20210310-222920-63a3a3a.0"
-  resolved "https://registry.yarnpkg.com/atem-connection/-/atem-connection-2.3.0-nightly-wip-update-threadedclass-20210310-222920-63a3a3a.0.tgz#f4fdc623fc39f9fea317b8c71b2de68aa797d2c9"
-  integrity sha512-JRNtvKx9a3sT8Smg567KTGXn/ptnd9mkZB0leEh9gdJiaCnrcpZvARkWPGF06YAGqMtfyaMaA9ABZuWNCFkevw==
+atem-connection@2.3.0-nightly-wip-update-threadedclass-20210313-231347-ec8d035.0:
+  version "2.3.0-nightly-wip-update-threadedclass-20210313-231347-ec8d035.0"
+  resolved "https://registry.yarnpkg.com/atem-connection/-/atem-connection-2.3.0-nightly-wip-update-threadedclass-20210313-231347-ec8d035.0.tgz#c79f19d087cf47bc9b359a23c85d0d3f859d4d77"
+  integrity sha512-INYQbQi5WqEJjBLxdaOO3jh9TdHCuVH6fb4/YalnC3OP4STLxKaWleYk1GP8Gmc0O7ema5hzN15cZtEtmOc50A==
   dependencies:
     big-integer "^1.6.48"
     eventemitter3 "^4.0.4"
