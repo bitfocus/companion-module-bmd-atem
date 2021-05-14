@@ -1,13 +1,14 @@
 import { AtemState, Enums } from 'atem-connection'
+import { SetRequired } from 'type-fest'
 import InstanceSkel = require('../../../instance_skel')
 import {
-	CompanionFeedback,
 	CompanionFeedbackEvent,
-	CompanionInputFieldColor,
+	// CompanionInputFieldColor,
 	InputValue,
-	CompanionFeedbackResult,
 	CompanionFeedbacks,
 	SomeCompanionInputField,
+	CompanionFeedbackAdvanced,
+	CompanionFeedbackBoolean,
 } from '../../../instance_skel_types'
 import { CHOICES_CLASSIC_AUDIO_MIX_OPTION, CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION, GetMacroChoices } from './choices'
 import { AtemConfig } from './config'
@@ -48,7 +49,9 @@ import {
 	compareNumber,
 } from './util'
 
-type CompanionFeedbackWithCallback = CompanionFeedback & Required<Pick<CompanionFeedback, 'callback'>>
+type CompanionFeedbackWithCallback =
+	| SetRequired<CompanionFeedbackBoolean, 'callback' | 'type'>
+	| SetRequired<CompanionFeedbackAdvanced, 'callback' | 'type'>
 
 export enum FeedbackId {
 	PreviewBG = 'preview_bg',
@@ -95,63 +98,52 @@ export enum MacroFeedbackType {
 	IsUsed = 'isUsed',
 }
 
-export function ForegroundPicker(color: number): CompanionInputFieldColor {
-	return {
-		type: 'colorpicker',
-		label: 'Foreground color',
-		id: 'fg',
-		default: color,
-	}
-}
-export function BackgroundPicker(color: number): CompanionInputFieldColor {
-	return {
-		type: 'colorpicker',
-		label: 'Background color',
-		id: 'bg',
-		default: color,
-	}
-}
-
-function getOptColors(evt: CompanionFeedbackEvent): CompanionFeedbackResult {
-	return {
-		color: Number(evt.options.fg),
-		bgcolor: Number(evt.options.bg),
-	}
-}
+// export function ForegroundPicker(color: number): CompanionInputFieldColor {
+// 	return {
+// 		type: 'colorpicker',
+// 		label: 'Foreground color',
+// 		id: 'fg',
+// 		default: color,
+// 	}
+// }
+// export function BackgroundPicker(color: number): CompanionInputFieldColor {
+// 	return {
+// 		type: 'colorpicker',
+// 		label: 'Background color',
+// 		id: 'bg',
+// 		default: color,
+// 	}
+// }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function tallyFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState, tally: TallyBySource) {
 	return {
 		[FeedbackId.ProgramTally]: literal<CompanionFeedbackWithCallback>({
-			label: 'Change colors from mixer program tally',
-			description: 'If the input specified has an active progam tally light, change colors of the bank',
-			options: [
-				ForegroundPicker(instance.rgb(255, 255, 255)),
-				BackgroundPicker(instance.rgb(255, 0, 0)),
-				AtemMESourcePicker(model, state, 0),
-			],
-			callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+			type: 'boolean',
+			label: 'Change from mixer program tally',
+			description: 'If the input specified has an active progam tally light, change style of the bank',
+			options: [AtemMESourcePicker(model, state, 0)],
+			style: {
+				color: instance.rgb(255, 255, 255),
+				bgcolor: instance.rgb(255, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const source = tally[Number(evt.options.input)]
-				if (source?.program) {
-					return getOptColors(evt)
-				}
-				return {}
+				return !!source?.program
 			},
 		}),
 		[FeedbackId.PreviewTally]: literal<CompanionFeedbackWithCallback>({
-			label: 'Change colors from mixer preview tally',
-			description: 'If the input specified has an active preview tally light, change colors of the bank',
-			options: [
-				ForegroundPicker(instance.rgb(0, 0, 0)),
-				BackgroundPicker(instance.rgb(0, 255, 0)),
-				AtemMESourcePicker(model, state, 0),
-			],
-			callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+			type: 'boolean',
+			label: 'Change from mixer preview tally',
+			description: 'If the input specified has an active preview tally light, change style of the bank',
+			options: [AtemMESourcePicker(model, state, 0)],
+			style: {
+				color: instance.rgb(0, 0, 0),
+				bgcolor: instance.rgb(0, 255, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const source = tally[Number(evt.options.input)]
-				if (source?.preview) {
-					return getOptColors(evt)
-				}
-				return {}
+				return !!source?.preview
 			},
 		}),
 	}
@@ -161,58 +153,53 @@ function tallyFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
 	return {
 		[FeedbackId.PreviewBG]: literal<CompanionFeedbackWithCallback>({
-			label: 'Change colors from one ME preview source',
-			description: 'If the input specified is in use by preview on the M/E stage specified, change colors of the bank',
-			options: [
-				ForegroundPicker(instance.rgb(0, 0, 0)),
-				BackgroundPicker(instance.rgb(0, 255, 0)),
-				AtemMESourcePicker(model, state, 0),
-				AtemMEPicker(model, 0),
-			],
-			callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+			type: 'boolean',
+			label: 'Change from one ME preview source',
+			description: 'If the input specified is in use by preview on the M/E stage specified, change style of the bank',
+			options: [AtemMESourcePicker(model, state, 0), AtemMEPicker(model, 0)],
+			style: {
+				color: instance.rgb(0, 0, 0),
+				bgcolor: instance.rgb(0, 255, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const me = getMixEffect(state, evt.options.mixeffect)
-				if (me?.previewInput === Number(evt.options.input)) {
-					return getOptColors(evt)
-				}
-				return {}
+				return me?.previewInput === Number(evt.options.input)
 			},
 		}),
 		[FeedbackId.PreviewBG2]:
 			model.MEs >= 2
 				? literal<CompanionFeedbackWithCallback>({
-						label: 'Change colors from two ME preview sources',
+						type: 'boolean',
+						label: 'Change from two ME preview sources',
 						description:
-							'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
+							'If the inputs specified are in use by program on the M/E stage specified, change style of the bank',
 						options: [
-							ForegroundPicker(instance.rgb(0, 0, 0)),
-							BackgroundPicker(instance.rgb(0, 255, 0)),
 							AtemMESourcePicker(model, state, 1),
 							AtemMEPicker(model, 1),
 							AtemMESourcePicker(model, state, 2),
 							AtemMEPicker(model, 2),
 						],
-						callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+						style: {
+							color: instance.rgb(0, 0, 0),
+							bgcolor: instance.rgb(0, 255, 0),
+						},
+						callback: (evt: CompanionFeedbackEvent): boolean => {
 							const me1 = getMixEffect(state, evt.options.mixeffect1)
 							const me2 = getMixEffect(state, evt.options.mixeffect2)
-							if (
-								me1?.previewInput === Number(evt.options.input1) &&
-								me2?.previewInput === Number(evt.options.input2)
-							) {
-								return getOptColors(evt)
-							}
-							return {}
+							return (
+								me1?.previewInput === Number(evt.options.input1) && me2?.previewInput === Number(evt.options.input2)
+							)
 						},
 				  })
 				: undefined,
 		[FeedbackId.PreviewBG3]:
 			model.MEs >= 2
 				? literal<CompanionFeedbackWithCallback>({
-						label: 'Change colors from three ME preview sources',
+						type: 'boolean',
+						label: 'Change from three ME preview sources',
 						description:
-							'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
+							'If the inputs specified are in use by program on the M/E stage specified, change style of the bank',
 						options: [
-							ForegroundPicker(instance.rgb(0, 0, 0)),
-							BackgroundPicker(instance.rgb(0, 255, 0)),
 							AtemMESourcePicker(model, state, 1),
 							AtemMEPicker(model, 1),
 							AtemMESourcePicker(model, state, 2),
@@ -220,30 +207,30 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
 							AtemMESourcePicker(model, state, 3),
 							AtemMEPicker(model, 3),
 						],
-						callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+						style: {
+							color: instance.rgb(0, 0, 0),
+							bgcolor: instance.rgb(0, 255, 0),
+						},
+						callback: (evt: CompanionFeedbackEvent): boolean => {
 							const me1 = getMixEffect(state, evt.options.mixeffect1)
 							const me2 = getMixEffect(state, evt.options.mixeffect2)
 							const me3 = getMixEffect(state, evt.options.mixeffect3)
-							if (
+							return (
 								me1?.previewInput === Number(evt.options.input1) &&
 								me2?.previewInput === Number(evt.options.input2) &&
 								me3?.previewInput === Number(evt.options.input3)
-							) {
-								return getOptColors(evt)
-							}
-							return {}
+							)
 						},
 				  })
 				: undefined,
 		[FeedbackId.PreviewBG4]:
 			model.MEs >= 2
 				? literal<CompanionFeedbackWithCallback>({
-						label: 'Change colors from four ME preview sources',
+						type: 'boolean',
+						label: 'Change from four ME preview sources',
 						description:
-							'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
+							'If the inputs specified are in use by program on the M/E stage specified, change style of the bank',
 						options: [
-							ForegroundPicker(instance.rgb(0, 0, 0)),
-							BackgroundPicker(instance.rgb(0, 255, 0)),
 							AtemMESourcePicker(model, state, 1),
 							AtemMEPicker(model, 1),
 							AtemMESourcePicker(model, state, 2),
@@ -253,20 +240,22 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
 							AtemMESourcePicker(model, state, 4),
 							AtemMEPicker(model, 4),
 						],
-						callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+
+						style: {
+							color: instance.rgb(0, 0, 0),
+							bgcolor: instance.rgb(0, 255, 0),
+						},
+						callback: (evt: CompanionFeedbackEvent): boolean => {
 							const me1 = getMixEffect(state, evt.options.mixeffect1)
 							const me2 = getMixEffect(state, evt.options.mixeffect2)
 							const me3 = getMixEffect(state, evt.options.mixeffect3)
 							const me4 = getMixEffect(state, evt.options.mixeffect4)
-							if (
+							return (
 								me1?.previewInput === Number(evt.options.input1) &&
 								me2?.previewInput === Number(evt.options.input2) &&
 								me3?.previewInput === Number(evt.options.input3) &&
 								me4?.previewInput === Number(evt.options.input4)
-							) {
-								return getOptColors(evt)
-							}
-							return {}
+							)
 						},
 				  })
 				: undefined,
@@ -277,58 +266,53 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
 function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
 	return {
 		[FeedbackId.ProgramBG]: literal<CompanionFeedbackWithCallback>({
-			label: 'Change colors from one ME program source',
-			description: 'If the input specified is in use by program on the M/E stage specified, change colors of the bank',
-			options: [
-				ForegroundPicker(instance.rgb(255, 255, 255)),
-				BackgroundPicker(instance.rgb(255, 0, 0)),
-				AtemMESourcePicker(model, state, 0),
-				AtemMEPicker(model, 0),
-			],
-			callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+			type: 'boolean',
+			label: 'Change from one ME program source',
+			description: 'If the input specified is in use by program on the M/E stage specified, change style of the bank',
+			options: [AtemMEPicker(model, 0), AtemMESourcePicker(model, state, 0)],
+			style: {
+				color: instance.rgb(255, 255, 255),
+				bgcolor: instance.rgb(255, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const me = getMixEffect(state, evt.options.mixeffect)
-				if (me?.programInput === Number(evt.options.input)) {
-					return getOptColors(evt)
-				}
-				return {}
+				return me?.programInput === Number(evt.options.input)
 			},
 		}),
 		[FeedbackId.ProgramBG2]:
 			model.MEs >= 2
 				? literal<CompanionFeedbackWithCallback>({
-						label: 'Change colors from two ME program sources',
+						type: 'boolean',
+						label: 'Change from two ME program sources',
 						description:
-							'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
+							'If the inputs specified are in use by program on the M/E stage specified, change style of the bank',
 						options: [
-							ForegroundPicker(instance.rgb(255, 255, 255)),
-							BackgroundPicker(instance.rgb(255, 0, 0)),
 							AtemMESourcePicker(model, state, 1),
 							AtemMEPicker(model, 1),
 							AtemMESourcePicker(model, state, 2),
 							AtemMEPicker(model, 2),
 						],
-						callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+						style: {
+							color: instance.rgb(255, 255, 255),
+							bgcolor: instance.rgb(255, 0, 0),
+						},
+						callback: (evt: CompanionFeedbackEvent): boolean => {
 							const me1 = getMixEffect(state, evt.options.mixeffect1)
 							const me2 = getMixEffect(state, evt.options.mixeffect2)
-							if (
-								me1?.programInput === Number(evt.options.input1) &&
-								me2?.programInput === Number(evt.options.input2)
-							) {
-								return getOptColors(evt)
-							}
-							return {}
+							return (
+								me1?.programInput === Number(evt.options.input1) && me2?.programInput === Number(evt.options.input2)
+							)
 						},
 				  })
 				: undefined,
 		[FeedbackId.ProgramBG3]:
 			model.MEs >= 2
 				? literal<CompanionFeedbackWithCallback>({
-						label: 'Change colors from three ME program sources',
+						type: 'boolean',
+						label: 'Change from three ME program sources',
 						description:
-							'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
+							'If the inputs specified are in use by program on the M/E stage specified, change style of the bank',
 						options: [
-							ForegroundPicker(instance.rgb(255, 255, 255)),
-							BackgroundPicker(instance.rgb(255, 0, 0)),
 							AtemMESourcePicker(model, state, 1),
 							AtemMEPicker(model, 1),
 							AtemMESourcePicker(model, state, 2),
@@ -336,30 +320,30 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
 							AtemMESourcePicker(model, state, 3),
 							AtemMEPicker(model, 3),
 						],
-						callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+						style: {
+							color: instance.rgb(255, 255, 255),
+							bgcolor: instance.rgb(255, 0, 0),
+						},
+						callback: (evt: CompanionFeedbackEvent): boolean => {
 							const me1 = getMixEffect(state, evt.options.mixeffect1)
 							const me2 = getMixEffect(state, evt.options.mixeffect2)
 							const me3 = getMixEffect(state, evt.options.mixeffect3)
-							if (
+							return (
 								me1?.programInput === Number(evt.options.input1) &&
 								me2?.programInput === Number(evt.options.input2) &&
 								me3?.programInput === Number(evt.options.input3)
-							) {
-								return getOptColors(evt)
-							}
-							return {}
+							)
 						},
 				  })
 				: undefined,
 		[FeedbackId.ProgramBG4]:
 			model.MEs >= 2
 				? literal<CompanionFeedbackWithCallback>({
-						label: 'Change colors from four ME program sources',
+						type: 'boolean',
+						label: 'Change from four ME program sources',
 						description:
-							'If the inputs specified are in use by program on the M/E stage specified, change colors of the bank',
+							'If the inputs specified are in use by program on the M/E stage specified, change style of the bank',
 						options: [
-							ForegroundPicker(instance.rgb(255, 255, 255)),
-							BackgroundPicker(instance.rgb(255, 0, 0)),
 							AtemMESourcePicker(model, state, 1),
 							AtemMEPicker(model, 1),
 							AtemMESourcePicker(model, state, 2),
@@ -369,20 +353,21 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
 							AtemMESourcePicker(model, state, 4),
 							AtemMEPicker(model, 4),
 						],
-						callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+						style: {
+							color: instance.rgb(255, 255, 255),
+							bgcolor: instance.rgb(255, 0, 0),
+						},
+						callback: (evt: CompanionFeedbackEvent): boolean => {
 							const me1 = getMixEffect(state, evt.options.mixeffect1)
 							const me2 = getMixEffect(state, evt.options.mixeffect2)
 							const me3 = getMixEffect(state, evt.options.mixeffect3)
 							const me4 = getMixEffect(state, evt.options.mixeffect4)
-							if (
+							return (
 								me1?.programInput === Number(evt.options.input1) &&
 								me2?.programInput === Number(evt.options.input2) &&
 								me3?.programInput === Number(evt.options.input3) &&
 								me4?.programInput === Number(evt.options.input4)
-							) {
-								return getOptColors(evt)
-							}
-							return {}
+							)
 						},
 				  })
 				: undefined,
@@ -394,40 +379,33 @@ function uskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
 	return {
 		[FeedbackId.USKOnAir]: model.USKs
 			? literal<CompanionFeedbackWithCallback>({
-					label: 'Change colors from upstream keyer state',
+					type: 'boolean',
+					label: 'Change from upstream keyer state',
 					description: 'If the specified upstream keyer is active, change color of the bank',
-					options: [
-						ForegroundPicker(instance.rgb(255, 255, 255)),
-						BackgroundPicker(instance.rgb(255, 0, 0)),
-						AtemMEPicker(model, 0),
-						AtemUSKPicker(model),
-					],
-					callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+					options: [AtemMEPicker(model, 0), AtemUSKPicker(model)],
+					style: {
+						color: instance.rgb(255, 255, 255),
+						bgcolor: instance.rgb(255, 0, 0),
+					},
+					callback: (evt: CompanionFeedbackEvent): boolean => {
 						const usk = getUSK(state, evt.options.mixeffect, evt.options.key)
-						if (usk?.onAir) {
-							return getOptColors(evt)
-						}
-						return {}
+						return !!usk?.onAir
 					},
 			  })
 			: undefined,
 		[FeedbackId.USKSource]: model.USKs
 			? literal<CompanionFeedbackWithCallback>({
-					label: 'Change colors from upstream keyer fill source',
-					description: 'If the input specified is in use by the USK specified, change colors of the bank',
-					options: [
-						ForegroundPicker(instance.rgb(0, 0, 0)),
-						BackgroundPicker(instance.rgb(238, 238, 0)),
-						AtemMEPicker(model, 0),
-						AtemUSKPicker(model),
-						AtemKeyFillSourcePicker(model, state),
-					],
-					callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+					type: 'boolean',
+					label: 'Change from upstream keyer fill source',
+					description: 'If the input specified is in use by the USK specified, change style of the bank',
+					options: [AtemMEPicker(model, 0), AtemUSKPicker(model), AtemKeyFillSourcePicker(model, state)],
+					style: {
+						color: instance.rgb(0, 0, 0),
+						bgcolor: instance.rgb(238, 238, 0),
+					},
+					callback: (evt: CompanionFeedbackEvent): boolean => {
 						const usk = getUSK(state, evt.options.mixeffect, evt.options.key)
-						if (usk?.fillSource === Number(evt.options.fill)) {
-							return getOptColors(evt)
-						}
-						return {}
+						return usk?.fillSource === Number(evt.options.fill)
 					},
 			  })
 			: undefined,
@@ -438,114 +416,88 @@ function uskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
 function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
 	return {
 		[FeedbackId.TransitionStyle]: literal<CompanionFeedbackWithCallback>({
-			label: 'Change colors from transition style',
+			type: 'boolean',
+			label: 'Change from transition style',
 			description: 'If the specified transition style is active, change color of the bank',
-			options: [
-				ForegroundPicker(instance.rgb(0, 0, 0)),
-				BackgroundPicker(instance.rgb(255, 255, 0)),
-				AtemMEPicker(model, 0),
-				AtemTransitionStylePicker(model.media.clips === 0),
-			],
-			callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+			options: [AtemMEPicker(model, 0), AtemTransitionStylePicker(model.media.clips === 0)],
+			style: {
+				color: instance.rgb(0, 0, 0),
+				bgcolor: instance.rgb(255, 255, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const me = getMixEffect(state, evt.options.mixeffect)
-				if (me?.transitionProperties.nextStyle === Number(evt.options.style)) {
-					return getOptColors(evt)
-				}
-				return {}
+				return me?.transitionProperties.nextStyle === Number(evt.options.style)
 			},
 		}),
 		[FeedbackId.TransitionSelection]: literal<CompanionFeedbackWithCallback>({
-			label: 'Change colors from transition selection',
+			type: 'boolean',
+			label: 'Change from transition selection',
 			description: 'If the specified tansition selection is active, change color of the bank',
-			options: [
-				ForegroundPicker(instance.rgb(0, 0, 0)),
-				BackgroundPicker(instance.rgb(255, 255, 0)),
-				AtemMEPicker(model, 0),
-				AtemMatchMethod(),
-				...AtemTransitionSelectionPickers(model),
-			],
-			callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+			options: [AtemMEPicker(model, 0), AtemMatchMethod(), ...AtemTransitionSelectionPickers(model)],
+			style: {
+				color: instance.rgb(0, 0, 0),
+				bgcolor: instance.rgb(255, 255, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const me = getMixEffect(state, evt.options.mixeffect)
 				const expectedSelection = calculateTransitionSelection(model.USKs, evt.options)
-				switch (evt.options.matchmethod) {
-					case 'exact':
-						if (me && me.transitionProperties.nextSelection === expectedSelection) {
-							return getOptColors(evt)
-						}
-						break
-					case 'contains':
-						if (me && (me.transitionProperties.nextSelection & expectedSelection) === expectedSelection) {
-							return getOptColors(evt)
-						}
-						break
-					case 'not-contain':
-						if (me && (me.transitionProperties.nextSelection & expectedSelection) === 0) {
-							return getOptColors(evt)
-						}
-						break
+				if (me) {
+					switch (evt.options.matchmethod) {
+						case 'exact':
+							return me.transitionProperties.nextSelection === expectedSelection
+						case 'contains':
+							return (me.transitionProperties.nextSelection & expectedSelection) === expectedSelection
+						case 'not-contain':
+							return (me.transitionProperties.nextSelection & expectedSelection) === 0
+					}
 				}
-				return {}
+				return false
 			},
 		}),
 		[FeedbackId.TransitionRate]: literal<CompanionFeedbackWithCallback>({
-			label: 'Change colors from transition rate',
+			type: 'boolean',
+			label: 'Change from transition rate',
 			description: 'If the specified transition rate is active, change color of the bank',
-			options: [
-				ForegroundPicker(instance.rgb(0, 0, 0)),
-				BackgroundPicker(instance.rgb(255, 255, 0)),
-				AtemMEPicker(model, 0),
-				AtemTransitionStylePicker(true),
-				AtemRatePicker('Transition Rate'),
-			],
-			callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+			options: [AtemMEPicker(model, 0), AtemTransitionStylePicker(true), AtemRatePicker('Transition Rate')],
+			style: {
+				color: instance.rgb(0, 0, 0),
+				bgcolor: instance.rgb(255, 255, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const me = getMixEffect(state, evt.options.mixeffect)
 				if (me?.transitionSettings) {
 					const style = Number(evt.options.style) as Enums.TransitionStyle
 					const rate = Number(evt.options.rate)
 					switch (style) {
 						case Enums.TransitionStyle.MIX:
-							if (me.transitionSettings.mix?.rate === rate) {
-								return getOptColors(evt)
-							}
-							break
+							return me.transitionSettings.mix?.rate === rate
 						case Enums.TransitionStyle.DIP:
-							if (me.transitionSettings.dip?.rate === rate) {
-								return getOptColors(evt)
-							}
-							break
+							return me.transitionSettings.dip?.rate === rate
 						case Enums.TransitionStyle.WIPE:
-							if (me.transitionSettings.wipe?.rate === rate) {
-								return getOptColors(evt)
-							}
-							break
+							return me.transitionSettings.wipe?.rate === rate
 						case Enums.TransitionStyle.DVE:
-							if (me.transitionSettings.DVE?.rate === rate) {
-								return getOptColors(evt)
-							}
-							break
+							return me.transitionSettings.DVE?.rate === rate
 						case Enums.TransitionStyle.STING:
 							break
 						default:
 							assertUnreachable(style)
 					}
 				}
-				return {}
+				return false
 			},
 		}),
 		[FeedbackId.InTransition]: literal<CompanionFeedbackWithCallback>({
-			label: 'Change colors when in a transition',
+			type: 'boolean',
+			label: 'Change when in a transition',
 			description: 'If the specified transition is active, change color of the bank',
-			options: [
-				ForegroundPicker(instance.rgb(0, 0, 0)),
-				BackgroundPicker(instance.rgb(255, 255, 0)),
-				AtemMEPicker(model, 0),
-			],
-			callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+			options: [AtemMEPicker(model, 0)],
+			style: {
+				color: instance.rgb(0, 0, 0),
+				bgcolor: instance.rgb(255, 255, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const me = getMixEffect(state, evt.options.mixeffect)
-				if (me?.transitionPosition?.inTransition) {
-					return getOptColors(evt)
-				}
-				return {}
+				return !!me?.transitionPosition?.inTransition
 			},
 		}),
 	}
@@ -555,55 +507,43 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
 function fadeToBlackFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
 	return {
 		[FeedbackId.FadeToBlackIsBlack]: literal<CompanionFeedbackWithCallback>({
-			label: 'Change colors from fade to black status',
+			type: 'boolean',
+			label: 'Change from fade to black status',
 			description: 'If the specified fade to black is active, change color of the bank',
-			options: [
-				ForegroundPicker(instance.rgb(0, 0, 0)),
-				BackgroundPicker(instance.rgb(255, 255, 0)),
-				AtemMEPicker(model, 0),
-				AtemFadeToBlackStatePicker(),
-			],
-			callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+			options: [AtemMEPicker(model, 0), AtemFadeToBlackStatePicker()],
+			style: {
+				color: instance.rgb(0, 0, 0),
+				bgcolor: instance.rgb(255, 255, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const me = getMixEffect(state, evt.options.mixeffect)
 				if (me && me.fadeToBlack) {
 					switch (evt.options.state) {
 						case 'off':
-							if (!me.fadeToBlack.isFullyBlack && !me.fadeToBlack.inTransition) {
-								return getOptColors(evt)
-							}
-							break
+							return !me.fadeToBlack.isFullyBlack && !me.fadeToBlack.inTransition
 						case 'fading':
-							if (me.fadeToBlack.inTransition) {
-								return getOptColors(evt)
-							}
-							break
+							return me.fadeToBlack.inTransition
 						default:
 							// on
-							if (!me.fadeToBlack.inTransition && me.fadeToBlack.isFullyBlack) {
-								return getOptColors(evt)
-							}
-							break
+							return !me.fadeToBlack.inTransition && me.fadeToBlack.isFullyBlack
 					}
 				}
-				return {}
+				return false
 			},
 		}),
 		[FeedbackId.FadeToBlackRate]: literal<CompanionFeedbackWithCallback>({
-			label: 'Change colors from fade to black rate',
+			type: 'boolean',
+			label: 'Change from fade to black rate',
 			description: 'If the specified fade to black rate matches, change color of the bank',
-			options: [
-				ForegroundPicker(instance.rgb(0, 0, 0)),
-				BackgroundPicker(instance.rgb(255, 255, 0)),
-				AtemMEPicker(model, 0),
-				AtemRatePicker('Rate'),
-			],
-			callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+			options: [AtemMEPicker(model, 0), AtemRatePicker('Rate')],
+			style: {
+				color: instance.rgb(0, 0, 0),
+				bgcolor: instance.rgb(255, 255, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const me = getMixEffect(state, evt.options.mixeffect)
 				const rate = Number(evt.options.rate)
-				if (me?.fadeToBlack?.rate === rate) {
-					return getOptColors(evt)
-				}
-				return {}
+				return me?.fadeToBlack?.rate === rate
 			},
 		}),
 	}
@@ -631,55 +571,55 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
 	return {
 		[FeedbackId.SSrcBoxSource]: model.SSrc
 			? literal<CompanionFeedbackWithCallback>({
-					label: 'Change colors from SuperSorce box source',
+					type: 'boolean',
+					label: 'Change from SuperSorce box source',
 					description: 'If the specified SuperSource box is set to the specified source, change color of the bank',
 					options: compact([
-						ForegroundPicker(instance.rgb(0, 0, 0)),
-						BackgroundPicker(instance.rgb(255, 255, 0)),
 						AtemSuperSourceIdPicker(model),
 						AtemSuperSourceBoxPicker(),
 						AtemSuperSourceBoxSourcePicker(model, state),
 					]),
-					callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+					style: {
+						color: instance.rgb(0, 0, 0),
+						bgcolor: instance.rgb(255, 255, 0),
+					},
+					callback: (evt: CompanionFeedbackEvent): boolean => {
 						const box = getSuperSourceBox(state, evt.options.boxIndex, evt.options.ssrcId || 0)
-						if (box?.source === Number(evt.options.source)) {
-							return getOptColors(evt)
-						}
-						return {}
+						return box?.source === Number(evt.options.source)
 					},
 			  })
 			: undefined,
 		[FeedbackId.SSrcBoxOnAir]: model.SSrc
 			? literal<CompanionFeedbackWithCallback>({
-					label: 'Change colors from SuperSorce box state',
+					type: 'boolean',
+					label: 'Change from SuperSorce box state',
 					description: 'If the specified SuperSource box is enabled, change color of the bank',
-					options: compact([
-						ForegroundPicker(instance.rgb(0, 0, 0)),
-						BackgroundPicker(instance.rgb(255, 255, 0)),
-						AtemSuperSourceIdPicker(model),
-						AtemSuperSourceBoxPicker(),
-					]),
-					callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+					options: compact([AtemSuperSourceIdPicker(model), AtemSuperSourceBoxPicker()]),
+					style: {
+						color: instance.rgb(0, 0, 0),
+						bgcolor: instance.rgb(255, 255, 0),
+					},
+					callback: (evt: CompanionFeedbackEvent): boolean => {
 						const box = getSuperSourceBox(state, evt.options.boxIndex, evt.options.ssrcId || 0)
-						if (box && box.enabled) {
-							return getOptColors(evt)
-						}
-						return {}
+						return !!(box && box.enabled)
 					},
 			  })
 			: undefined,
 		[FeedbackId.SSrcBoxProperties]: model.SSrc
 			? literal<CompanionFeedbackWithCallback>({
-					label: 'Change colors from SuperSorce box properties',
+					type: 'boolean',
+					label: 'Change from SuperSorce box properties',
 					description: 'If the specified SuperSource box properties match, change color of the bank',
 					options: compact([
-						ForegroundPicker(instance.rgb(0, 0, 0)),
-						BackgroundPicker(instance.rgb(255, 255, 0)),
 						AtemSuperSourceIdPicker(model),
 						AtemSuperSourceBoxPicker(),
 						...AtemSuperSourcePropertiesPickers(false),
 					]),
-					callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+					style: {
+						color: instance.rgb(0, 0, 0),
+						bgcolor: instance.rgb(255, 255, 0),
+					},
+					callback: (evt: CompanionFeedbackEvent): boolean => {
 						const box = getSuperSourceBox(state, evt.options.boxIndex, evt.options.ssrcId || 0)
 						const boxCroppingMatches =
 							box &&
@@ -689,17 +629,14 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
 									compareAsInt(evt.options.cropLeft, box.cropLeft, 1000, 10) &&
 									compareAsInt(evt.options.cropRight, box.cropRight, 1000, 10)))
 
-						if (
+						return !!(
 							box &&
 							compareAsInt(evt.options.size, box.size, 1000, 10) &&
 							compareAsInt(evt.options.x, box.x, 100) &&
 							compareAsInt(evt.options.y, box.y, 100) &&
 							box.cropped === !!evt.options.cropEnable &&
 							boxCroppingMatches
-						) {
-							return getOptColors(evt)
-						}
-						return {}
+						)
 					},
 			  })
 			: undefined,
@@ -711,56 +648,49 @@ function dskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
 	return {
 		[FeedbackId.DSKOnAir]: model.DSKs
 			? literal<CompanionFeedbackWithCallback>({
-					label: 'Change colors from downstream keyer onair state',
+					type: 'boolean',
+					label: 'Change from downstream keyer onair state',
 					description: 'If the specified downstream keyer is onair, change color of the bank',
-					options: [
-						ForegroundPicker(instance.rgb(255, 255, 255)),
-						BackgroundPicker(instance.rgb(255, 0, 0)),
-						AtemDSKPicker(model),
-					],
-					callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+					options: [AtemDSKPicker(model)],
+					style: {
+						color: instance.rgb(255, 255, 255),
+						bgcolor: instance.rgb(255, 0, 0),
+					},
+					callback: (evt: CompanionFeedbackEvent): boolean => {
 						const dsk = getDSK(state, evt.options.key)
-						if (dsk?.onAir) {
-							return getOptColors(evt)
-						}
-						return {}
+						return !!dsk?.onAir
 					},
 			  })
 			: undefined,
 		[FeedbackId.DSKTie]: model.DSKs
 			? literal<CompanionFeedbackWithCallback>({
-					label: 'Change colors from downstream keyer tie state',
+					type: 'boolean',
+					label: 'Change from downstream keyer tie state',
 					description: 'If the specified downstream keyer is tied, change color of the bank',
-					options: [
-						ForegroundPicker(instance.rgb(255, 255, 255)),
-						BackgroundPicker(instance.rgb(255, 0, 0)),
-						AtemDSKPicker(model),
-					],
-					callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+					options: [AtemDSKPicker(model)],
+					style: {
+						color: instance.rgb(255, 255, 255),
+						bgcolor: instance.rgb(255, 0, 0),
+					},
+					callback: (evt: CompanionFeedbackEvent): boolean => {
 						const dsk = getDSK(state, evt.options.key)
-						if (dsk?.properties?.tie) {
-							return getOptColors(evt)
-						}
-						return {}
+						return !!dsk?.properties?.tie
 					},
 			  })
 			: undefined,
 		[FeedbackId.DSKSource]: model.DSKs
 			? literal<CompanionFeedbackWithCallback>({
-					label: 'Change colors from downstream keyer fill source',
-					description: 'If the input specified is in use by the DSK specified, change colors of the bank',
-					options: [
-						ForegroundPicker(instance.rgb(0, 0, 0)),
-						BackgroundPicker(instance.rgb(238, 238, 0)),
-						AtemDSKPicker(model),
-						AtemKeyFillSourcePicker(model, state),
-					],
-					callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+					type: 'boolean',
+					label: 'Change from downstream keyer fill source',
+					description: 'If the input specified is in use by the DSK specified, change style of the bank',
+					options: [AtemDSKPicker(model), AtemKeyFillSourcePicker(model, state)],
+					style: {
+						color: instance.rgb(0, 0, 0),
+						bgcolor: instance.rgb(238, 238, 0),
+					},
+					callback: (evt: CompanionFeedbackEvent): boolean => {
 						const dsk = getDSK(state, evt.options.key)
-						if (dsk?.sources?.fillSource === Number(evt.options.fill)) {
-							return getOptColors(evt)
-						}
-						return {}
+						return dsk?.sources?.fillSource === Number(evt.options.fill)
 					},
 			  })
 			: undefined,
@@ -771,12 +701,11 @@ function dskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
 function streamRecordFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
 	return {
 		[FeedbackId.StreamStatus]: model.streaming
-			? {
-					label: 'Change colors from streaming status',
+			? literal<CompanionFeedbackWithCallback>({
+					type: 'boolean',
+					label: 'Change from streaming status',
 					description: 'If the stream has the specified status, change color of the bank',
 					options: [
-						ForegroundPicker(instance.rgb(0, 0, 0)),
-						BackgroundPicker(instance.rgb(0, 255, 0)),
 						literal<SomeCompanionInputField>({
 							id: 'state',
 							label: 'State',
@@ -790,23 +719,22 @@ function streamRecordFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelS
 							default: Enums.StreamingStatus.Streaming,
 						}),
 					],
-					callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
-						const streaming = state.streaming?.status?.state
-						if (streaming === Number(evt.options.state)) {
-							return getOptColors(evt)
-						}
-
-						return {}
+					style: {
+						color: instance.rgb(0, 0, 0),
+						bgcolor: instance.rgb(0, 255, 0),
 					},
-			  }
+					callback: (evt: CompanionFeedbackEvent): boolean => {
+						const streaming = state.streaming?.status?.state
+						return streaming === Number(evt.options.state)
+					},
+			  })
 			: undefined,
 		[FeedbackId.RecordStatus]: model.recording
-			? {
-					label: 'Change colors from recording status',
+			? literal<CompanionFeedbackWithCallback>({
+					type: 'boolean',
+					label: 'Change from recording status',
 					description: 'If the record has the specified status, change color of the bank',
 					options: [
-						ForegroundPicker(instance.rgb(0, 0, 0)),
-						BackgroundPicker(instance.rgb(0, 255, 0)),
 						literal<SomeCompanionInputField>({
 							id: 'state',
 							label: 'State',
@@ -820,15 +748,15 @@ function streamRecordFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelS
 							default: Enums.RecordingStatus.Recording,
 						}),
 					],
-					callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
-						const recording = state.recording?.status?.state
-						if (recording === Number(evt.options.state)) {
-							return getOptColors(evt)
-						}
-
-						return {}
+					style: {
+						color: instance.rgb(0, 0, 0),
+						bgcolor: instance.rgb(0, 255, 0),
 					},
-			  }
+					callback: (evt: CompanionFeedbackEvent): boolean => {
+						const recording = state.recording?.status?.state
+						return recording === Number(evt.options.state)
+					},
+			  })
 			: undefined,
 	}
 }
@@ -838,12 +766,11 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 	if (model.classicAudio) {
 		const audioInputOption = AtemAudioInputPicker(model, state)
 		return {
-			[FeedbackId.ClassicAudioGain]: {
-				label: 'Change colors from classic audio gain',
+			[FeedbackId.ClassicAudioGain]: literal<CompanionFeedbackWithCallback>({
+				type: 'boolean',
+				label: 'Change from classic audio gain',
 				description: 'If the audio input has the specified gain, change color of the bank',
 				options: [
-					ForegroundPicker(instance.rgb(0, 0, 0)),
-					BackgroundPicker(instance.rgb(0, 255, 0)),
 					audioInputOption,
 					NumberComparitorPicker(),
 					literal<SomeCompanionInputField>({
@@ -858,22 +785,21 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 						max: 6,
 					}),
 				],
-				callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+				style: {
+					color: instance.rgb(0, 0, 0),
+					bgcolor: instance.rgb(0, 255, 0),
+				},
+				callback: (evt: CompanionFeedbackEvent): boolean => {
 					const audioChannels = state.audio?.channels ?? {}
 					const channel = audioChannels[Number(evt.options.input)]
-					if (channel && compareNumber(evt.options.gain, evt.options.comparitor, channel.gain)) {
-						return getOptColors(evt)
-					}
-
-					return {}
+					return !!(channel && compareNumber(evt.options.gain, evt.options.comparitor, channel.gain))
 				},
-			},
-			[FeedbackId.ClassicAudioMixOption]: {
-				label: 'Change colors from classic audio mix option',
+			}),
+			[FeedbackId.ClassicAudioMixOption]: literal<CompanionFeedbackWithCallback>({
+				type: 'boolean',
+				label: 'Change from classic audio mix option',
 				description: 'If the audio input has the specified mix option, change color of the bank',
 				options: [
-					ForegroundPicker(instance.rgb(0, 0, 0)),
-					BackgroundPicker(instance.rgb(0, 255, 0)),
 					audioInputOption,
 					literal<SomeCompanionInputField>({
 						id: 'option',
@@ -883,16 +809,16 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 						choices: CHOICES_CLASSIC_AUDIO_MIX_OPTION,
 					}),
 				],
-				callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+				style: {
+					color: instance.rgb(0, 0, 0),
+					bgcolor: instance.rgb(0, 255, 0),
+				},
+				callback: (evt: CompanionFeedbackEvent): boolean => {
 					const audioChannels = state.audio?.channels ?? {}
 					const channel = audioChannels[Number(evt.options.input)]
-					if (channel?.mixOption === Number(evt.options.option)) {
-						return getOptColors(evt)
-					}
-
-					return {}
+					return channel?.mixOption === Number(evt.options.option)
 				},
-			},
+			}),
 			[FeedbackId.FairlightAudioInputGain]: undefined,
 			[FeedbackId.FairlightAudioFaderGain]: undefined,
 			[FeedbackId.FairlightAudioMixOption]: undefined,
@@ -903,12 +829,11 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 		return {
 			[FeedbackId.ClassicAudioGain]: undefined,
 			[FeedbackId.ClassicAudioMixOption]: undefined,
-			[FeedbackId.FairlightAudioInputGain]: {
-				label: 'Change colors from fairlight audio input gain',
+			[FeedbackId.FairlightAudioInputGain]: literal<CompanionFeedbackWithCallback>({
+				type: 'boolean',
+				label: 'Change from fairlight audio input gain',
 				description: 'If the audio input has the specified input gain, change color of the bank',
 				options: [
-					ForegroundPicker(instance.rgb(0, 0, 0)),
-					BackgroundPicker(instance.rgb(0, 255, 0)),
 					audioInputOption,
 					audioSourceOption,
 					NumberComparitorPicker(),
@@ -924,26 +849,24 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 						max: 6,
 					}),
 				],
-				callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+				style: {
+					color: instance.rgb(0, 0, 0),
+					bgcolor: instance.rgb(0, 255, 0),
+				},
+				callback: (evt: CompanionFeedbackEvent): boolean => {
 					const audioChannels = state.fairlight?.inputs ?? {}
 					const audioSources = audioChannels[Number(evt.options.input)]?.sources ?? {}
 					const source = audioSources[evt.options.source + '']
-					if (
-						source?.properties &&
-						compareNumber(evt.options.gain, evt.options.comparitor, source.properties.gain / 100)
-					) {
-						return getOptColors(evt)
-					}
-
-					return {}
+					return !!(
+						source?.properties && compareNumber(evt.options.gain, evt.options.comparitor, source.properties.gain / 100)
+					)
 				},
-			},
-			[FeedbackId.FairlightAudioFaderGain]: {
-				label: 'Change colors from fairlight audio fader gain',
+			}),
+			[FeedbackId.FairlightAudioFaderGain]: literal<CompanionFeedbackWithCallback>({
+				type: 'boolean',
+				label: 'Change from fairlight audio fader gain',
 				description: 'If the audio input has the specified fader gain, change color of the bank',
 				options: [
-					ForegroundPicker(instance.rgb(0, 0, 0)),
-					BackgroundPicker(instance.rgb(0, 255, 0)),
 					audioInputOption,
 					audioSourceOption,
 					NumberComparitorPicker(),
@@ -959,26 +882,25 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 						max: 10,
 					}),
 				],
-				callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+				style: {
+					color: instance.rgb(0, 0, 0),
+					bgcolor: instance.rgb(0, 255, 0),
+				},
+				callback: (evt: CompanionFeedbackEvent): boolean => {
 					const audioChannels = state.fairlight?.inputs ?? {}
 					const audioSources = audioChannels[Number(evt.options.input)]?.sources ?? {}
 					const source = audioSources[evt.options.source + '']
-					if (
+					return !!(
 						source?.properties &&
 						compareNumber(evt.options.gain, evt.options.comparitor, source.properties.faderGain / 100)
-					) {
-						return getOptColors(evt)
-					}
-
-					return {}
+					)
 				},
-			},
-			[FeedbackId.FairlightAudioMixOption]: {
-				label: 'Change colors from fairlight audio mix option',
+			}),
+			[FeedbackId.FairlightAudioMixOption]: literal<CompanionFeedbackWithCallback>({
+				type: 'boolean',
+				label: 'Change from fairlight audio mix option',
 				description: 'If the audio input has the specified mix option, change color of the bank',
 				options: [
-					ForegroundPicker(instance.rgb(0, 0, 0)),
-					BackgroundPicker(instance.rgb(0, 255, 0)),
 					audioInputOption,
 					audioSourceOption,
 					literal<SomeCompanionInputField>({
@@ -989,17 +911,17 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 						choices: CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION,
 					}),
 				],
-				callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+				style: {
+					color: instance.rgb(0, 0, 0),
+					bgcolor: instance.rgb(0, 255, 0),
+				},
+				callback: (evt: CompanionFeedbackEvent): boolean => {
 					const audioChannels = state.fairlight?.inputs ?? {}
 					const audioSources = audioChannels[Number(evt.options.input)]?.sources ?? {}
 					const source = audioSources[evt.options.source + '']
-					if (source?.properties?.mixOption === Number(evt.options.option)) {
-						return getOptColors(evt)
-					}
-
-					return {}
+					return source?.properties?.mixOption === Number(evt.options.option)
 				},
-			},
+			}),
 		}
 	} else {
 		return {
@@ -1030,31 +952,27 @@ export function GetFeedbacksList(
 		...streamRecordFeedbacks(instance, model, state),
 		...audioFeedbacks(instance, model, state),
 		[FeedbackId.AuxBG]: model.auxes
-			? {
-					label: 'Change colors from AUX bus',
-					description: 'If the input specified is in use by the aux bus specified, change colors of the bank',
-					options: [
-						ForegroundPicker(instance.rgb(0, 0, 0)),
-						BackgroundPicker(instance.rgb(255, 255, 0)),
-						AtemAuxPicker(model),
-						AtemAuxSourcePicker(model, state),
-					],
-					callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
-						const auxSource = state.video.auxilliaries[Number(evt.options.aux)]
-						if (auxSource === Number(evt.options.input)) {
-							return getOptColors(evt)
-						}
-						return {}
+			? literal<CompanionFeedbackWithCallback>({
+					type: 'boolean',
+					label: 'Change from AUX bus',
+					description: 'If the input specified is in use by the aux bus specified, change style of the bank',
+					options: [AtemAuxPicker(model), AtemAuxSourcePicker(model, state)],
+					style: {
+						color: instance.rgb(0, 0, 0),
+						bgcolor: instance.rgb(255, 255, 0),
 					},
-			  }
+					callback: (evt: CompanionFeedbackEvent): boolean => {
+						const auxSource = state.video.auxilliaries[Number(evt.options.aux)]
+						return auxSource === Number(evt.options.input)
+					},
+			  })
 			: undefined,
 		[FeedbackId.Macro]: model.macros
-			? {
-					label: 'Change colors from macro state',
+			? literal<CompanionFeedbackWithCallback>({
+					type: 'boolean',
+					label: 'Change from macro state',
 					description: 'If the specified macro is running or waiting, change color of the bank',
 					options: [
-						ForegroundPicker(instance.rgb(255, 255, 255)),
-						BackgroundPicker(instance.rgb(238, 238, 0)),
 						{
 							type: 'dropdown',
 							label: 'Macro Number (1-100)',
@@ -1075,87 +993,83 @@ export function GetFeedbacksList(
 							],
 						},
 					],
-					callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+					style: {
+						color: instance.rgb(255, 255, 255),
+						bgcolor: instance.rgb(238, 238, 0),
+					},
+					callback: (evt: CompanionFeedbackEvent): boolean => {
 						let macroIndex = Number(evt.options.macroIndex)
 						if (!isNaN(macroIndex)) {
 							macroIndex -= 1
 							const { macroPlayer, macroRecorder } = state.macro
 							const type = evt.options.state as MacroFeedbackType
 
-							let isActive = false
 							switch (type) {
 								case MacroFeedbackType.IsUsed: {
 									const macro = state.macro.macroProperties[macroIndex]
-									isActive = !!macro?.isUsed
-									break
+									return !!macro?.isUsed
 								}
 								case MacroFeedbackType.IsRecording:
-									isActive = macroRecorder.isRecording && macroRecorder.macroIndex === macroIndex
-									break
+									return macroRecorder.isRecording && macroRecorder.macroIndex === macroIndex
 								case MacroFeedbackType.IsRunning:
-									isActive = macroPlayer.isRunning && macroPlayer.macroIndex === macroIndex
-									break
+									return macroPlayer.isRunning && macroPlayer.macroIndex === macroIndex
 								case MacroFeedbackType.IsWaiting:
-									isActive = macroPlayer.isWaiting && macroPlayer.macroIndex === macroIndex
-									break
+									return macroPlayer.isWaiting && macroPlayer.macroIndex === macroIndex
 								default:
 									assertUnreachable(type)
 							}
-
-							if (isActive) {
-								return getOptColors(evt)
-							}
 						}
-						return {}
+						return false
 					},
-			  }
+			  })
 			: undefined,
 		[FeedbackId.MVSource]: model.MVs
-			? {
-					label: 'Change colors from MV window',
+			? literal<CompanionFeedbackWithCallback>({
+					type: 'boolean',
+					label: 'Change from MV window',
 					description: 'If the specified MV window is set to the specified source, change color of the bank',
 					options: [
-						ForegroundPicker(instance.rgb(0, 0, 0)),
-						BackgroundPicker(instance.rgb(255, 255, 0)),
 						AtemMultiviewerPicker(model),
 						AtemMultiviewWindowPicker(model),
 						AtemMultiviewSourcePicker(model, state),
 					],
-					callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
-						const window = getMultiviewerWindow(state, evt.options.multiViewerId, evt.options.windowIndex)
-						if (window?.source === Number(evt.options.source)) {
-							return getOptColors(evt)
-						}
-						return {}
+					style: {
+						color: instance.rgb(0, 0, 0),
+						bgcolor: instance.rgb(255, 255, 0),
 					},
-			  }
+					callback: (evt: CompanionFeedbackEvent): boolean => {
+						const window = getMultiviewerWindow(state, evt.options.multiViewerId, evt.options.windowIndex)
+						return window?.source === Number(evt.options.source)
+					},
+			  })
 			: undefined,
 		[FeedbackId.MediaPlayerSource]: model.media.players
-			? {
-					label: 'Change colors from media player source',
+			? literal<CompanionFeedbackWithCallback>({
+					type: 'boolean',
+					label: 'Change from media player source',
 					description: 'If the specified media player has the specified source, change color of the bank',
-					options: [
-						ForegroundPicker(instance.rgb(0, 0, 0)),
-						BackgroundPicker(instance.rgb(255, 255, 0)),
-						AtemMediaPlayerPicker(model),
-						AtemMediaPlayerSourcePicker(model, state),
-					],
-					callback: (evt: CompanionFeedbackEvent): CompanionFeedbackResult => {
+					options: [AtemMediaPlayerPicker(model), AtemMediaPlayerSourcePicker(model, state)],
+					style: {
+						color: instance.rgb(0, 0, 0),
+						bgcolor: instance.rgb(255, 255, 0),
+					},
+					callback: (evt: CompanionFeedbackEvent): boolean => {
 						const player = state.media.players[Number(evt.options.mediaplayer)]
 						if (
 							player?.sourceType === Enums.MediaSourceType.Still &&
 							player?.stillIndex === Number(evt.options.source)
 						) {
-							return getOptColors(evt)
+							return true
 						} else if (
 							player?.sourceType === Enums.MediaSourceType.Clip &&
 							player?.clipIndex + MEDIA_PLAYER_SOURCE_CLIP_OFFSET === Number(evt.options.source)
 						) {
-							return getOptColors(evt)
+							return true
+						} else {
+							return false
 						}
-						return {}
 					},
-			  }
+			  })
 			: undefined,
 	}
 

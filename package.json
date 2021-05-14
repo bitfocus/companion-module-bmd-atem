@@ -52,12 +52,13 @@
 	},
 	"dependencies": {
 		"@types/node": "^12.19.14",
-		"atem-connection": "2.3.0-nightly-wip-update-threadedclass-20210313-231347-ec8d035.0"
+		"atem-connection": "2.3.0-nightly-wip-update-threadedclass-20210313-231347-ec8d035.0",
+		"type-fest": "^1.1.1"
 	},
 	"devDependencies": {
 		"@sofie-automation/code-standard-preset": "^0.2.4",
 		"rimraf": "^3.0.2",
 		"ts-node": "^9.1.1",
-		"typescript": "^4.0.5"
+		"typescript": "~4.0.5"
 	}
 }

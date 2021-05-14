@@ -1,4 +1,5 @@
-import { AtemState } from 'atem-connection'
+import { AtemState, Enums } from 'atem-connection'
+import { SetRequired } from 'type-fest'
 import InstanceSkel = require('../../../instance_skel')
 import { CompanionPreset } from '../../../instance_skel_types'
 import { ActionId } from './actions'
@@ -7,7 +8,6 @@ import { AtemConfig, PresetStyleName } from './config'
 import { FeedbackId, MacroFeedbackType } from './feedback'
 import { ModelSpec } from './models'
 import { calculateTransitionSelection, MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util'
-import { Enums } from 'atem-connection'
 
 const rateOptions = [12, 15, 25, 30, 37, 45, 50, 60]
 
@@ -15,7 +15,7 @@ interface CompanionPresetExt extends CompanionPreset {
 	feedbacks: Array<
 		{
 			type: FeedbackId
-		} & CompanionPreset['feedbacks'][0]
+		} & SetRequired<CompanionPreset['feedbacks'][0], 'style'>
 	>
 	actions: Array<
 		{
@@ -69,10 +69,12 @@ export function GetPresetsList(
 					{
 						type: FeedbackId.PreviewBG,
 						options: {
-							bg: instance.rgb(0, 255, 0),
-							fg: instance.rgb(255, 255, 255),
 							input: src.id,
 							mixeffect: me,
+						},
+						style: {
+							bgcolor: instance.rgb(0, 255, 0),
+							color: instance.rgb(255, 255, 255),
 						},
 					},
 				],
@@ -100,9 +102,11 @@ export function GetPresetsList(
 				feedbacks: [
 					{
 						type: FeedbackId.ProgramBG,
+						style: {
+							bgcolor: instance.rgb(255, 0, 0),
+							color: instance.rgb(255, 255, 255),
+						},
 						options: {
-							bg: instance.rgb(255, 0, 0),
-							fg: instance.rgb(255, 255, 255),
 							input: src.id,
 							mixeffect: me,
 						},
@@ -136,9 +140,11 @@ export function GetPresetsList(
 				{
 					type: FeedbackId.InTransition,
 					options: {
-						bg: instance.rgb(255, 0, 0),
-						fg: instance.rgb(255, 255, 255),
 						mixeffect: me,
+					},
+					style: {
+						bgcolor: instance.rgb(255, 0, 0),
+						color: instance.rgb(255, 255, 255),
 					},
 				},
 			],
@@ -166,10 +172,12 @@ export function GetPresetsList(
 					{
 						type: FeedbackId.TransitionStyle,
 						options: {
-							bg: instance.rgb(255, 255, 0),
-							fg: instance.rgb(0, 0, 0),
 							mixeffect: me,
 							style: opt.id,
+						},
+						style: {
+							bgcolor: instance.rgb(255, 255, 0),
+							color: instance.rgb(0, 0, 0),
 						},
 					},
 				],
@@ -200,11 +208,13 @@ export function GetPresetsList(
 						{
 							type: FeedbackId.TransitionRate,
 							options: {
-								bg: instance.rgb(255, 255, 0),
-								fg: instance.rgb(0, 0, 0),
 								mixeffect: me,
 								style: opt.id,
 								rate,
+							},
+							style: {
+								bgcolor: instance.rgb(255, 255, 0),
+								color: instance.rgb(0, 0, 0),
 							},
 						},
 					],
@@ -255,10 +265,12 @@ export function GetPresetsList(
 					{
 						type: FeedbackId.TransitionSelection,
 						options: {
-							bg: instance.rgb(255, 255, 0),
-							fg: instance.rgb(0, 0, 0),
 							mixeffect: me,
 							...selectionProps,
+						},
+						style: {
+							bgcolor: instance.rgb(255, 255, 0),
+							color: instance.rgb(0, 0, 0),
 						},
 					},
 				],
@@ -291,10 +303,12 @@ export function GetPresetsList(
 					{
 						type: FeedbackId.AuxBG,
 						options: {
-							bg: instance.rgb(255, 255, 0),
-							fg: instance.rgb(0, 0, 0),
 							input: src.id,
 							aux,
+						},
+						style: {
+							bgcolor: instance.rgb(255, 255, 0),
+							color: instance.rgb(0, 0, 0),
 						},
 					},
 				],
@@ -328,10 +342,12 @@ export function GetPresetsList(
 					{
 						type: FeedbackId.USKOnAir,
 						options: {
-							bg: instance.rgb(255, 0, 0),
-							fg: instance.rgb(255, 255, 255),
 							key,
 							mixeffect: me,
+						},
+						style: {
+							bgcolor: instance.rgb(255, 0, 0),
+							color: instance.rgb(255, 255, 255),
 						},
 					},
 				],
@@ -361,12 +377,14 @@ export function GetPresetsList(
 					{
 						type: FeedbackId.TransitionSelection,
 						options: {
-							bg: instance.rgb(255, 255, 0),
-							fg: instance.rgb(0, 0, 0),
 							background: false,
 							['key' + key]: true,
 							mixeffect: me,
 							matchmethod: 'contains',
+						},
+						style: {
+							bgcolor: instance.rgb(255, 255, 0),
+							color: instance.rgb(0, 0, 0),
 						},
 					},
 				],
@@ -397,11 +415,13 @@ export function GetPresetsList(
 						{
 							type: FeedbackId.USKSource,
 							options: {
-								bg: instance.rgb(238, 238, 0),
-								fg: instance.rgb(0, 0, 0),
 								fill: src.id,
 								key,
 								mixeffect: me,
+							},
+							style: {
+								bgcolor: instance.rgb(238, 238, 0),
+								color: instance.rgb(0, 0, 0),
 							},
 						},
 					],
@@ -437,9 +457,11 @@ export function GetPresetsList(
 				{
 					type: FeedbackId.DSKOnAir,
 					options: {
-						bg: instance.rgb(255, 0, 0),
-						fg: instance.rgb(255, 255, 255),
 						key: dsk,
+					},
+					style: {
+						bgcolor: instance.rgb(255, 0, 0),
+						color: instance.rgb(255, 255, 255),
 					},
 				},
 			],
@@ -468,9 +490,11 @@ export function GetPresetsList(
 				{
 					type: FeedbackId.DSKTie,
 					options: {
-						bg: instance.rgb(255, 255, 0),
-						fg: instance.rgb(0, 0, 0),
 						key: dsk,
+					},
+					style: {
+						bgcolor: instance.rgb(255, 255, 0),
+						color: instance.rgb(0, 0, 0),
 					},
 				},
 			],
@@ -500,10 +524,12 @@ export function GetPresetsList(
 					{
 						type: FeedbackId.DSKSource,
 						options: {
-							bg: instance.rgb(238, 238, 0),
-							fg: instance.rgb(0, 0, 0),
 							fill: src.id,
 							key: dsk,
+						},
+						style: {
+							bgcolor: instance.rgb(238, 238, 0),
+							color: instance.rgb(0, 0, 0),
 						},
 					},
 				],
@@ -537,37 +563,45 @@ export function GetPresetsList(
 				{
 					type: FeedbackId.Macro,
 					options: {
-						bg: instance.rgb(0, 0, 238),
-						fg: instance.rgb(255, 255, 255),
 						macroIndex: macro + 1,
 						state: MacroFeedbackType.IsUsed,
 					},
+					style: {
+						bgcolor: instance.rgb(0, 0, 238),
+						color: instance.rgb(255, 255, 255),
+					},
 				},
 				{
 					type: FeedbackId.Macro,
 					options: {
-						bg: instance.rgb(0, 238, 0),
-						fg: instance.rgb(255, 255, 255),
 						macroIndex: macro + 1,
 						state: MacroFeedbackType.IsRunning,
 					},
-				},
-				{
-					type: FeedbackId.Macro,
-					options: {
-						bg: instance.rgb(238, 238, 0),
-						fg: instance.rgb(255, 255, 255),
-						macroIndex: macro + 1,
-						state: MacroFeedbackType.IsWaiting,
+					style: {
+						bgcolor: instance.rgb(0, 238, 0),
+						color: instance.rgb(255, 255, 255),
 					},
 				},
 				{
 					type: FeedbackId.Macro,
 					options: {
-						bg: instance.rgb(238, 0, 0),
-						fg: instance.rgb(255, 255, 255),
+						macroIndex: macro + 1,
+						state: MacroFeedbackType.IsWaiting,
+					},
+					style: {
+						bgcolor: instance.rgb(238, 238, 0),
+						color: instance.rgb(255, 255, 255),
+					},
+				},
+				{
+					type: FeedbackId.Macro,
+					options: {
 						macroIndex: macro + 1,
 						state: MacroFeedbackType.IsRecording,
+					},
+					style: {
+						bgcolor: instance.rgb(238, 0, 0),
+						color: instance.rgb(255, 255, 255),
 					},
 				},
 			],
@@ -602,11 +636,13 @@ export function GetPresetsList(
 						{
 							type: FeedbackId.MVSource,
 							options: {
-								bg: instance.rgb(255, 255, 0),
-								fg: instance.rgb(0, 0, 0),
 								multiViewerId: mv,
 								source: src.id,
 								windowIndex: window,
+							},
+							style: {
+								bgcolor: instance.rgb(255, 255, 0),
+								color: instance.rgb(0, 0, 0),
 							},
 						},
 					],
@@ -641,10 +677,12 @@ export function GetPresetsList(
 					{
 						type: FeedbackId.SSrcBoxOnAir,
 						options: {
-							bg: instance.rgb(255, 255, 0),
-							fg: instance.rgb(0, 0, 0),
 							ssrcId: ssrc,
 							boxIndex: box,
+						},
+						style: {
+							bgcolor: instance.rgb(255, 255, 0),
+							color: instance.rgb(0, 0, 0),
 						},
 					},
 				],
@@ -675,11 +713,13 @@ export function GetPresetsList(
 						{
 							type: FeedbackId.SSrcBoxSource,
 							options: {
-								bg: instance.rgb(255, 255, 0),
-								fg: instance.rgb(0, 0, 0),
 								ssrcId: ssrc,
 								source: src.id,
 								boxIndex: box,
+							},
+							style: {
+								bgcolor: instance.rgb(255, 255, 0),
+								color: instance.rgb(0, 0, 0),
 							},
 						},
 					],
@@ -714,10 +754,12 @@ export function GetPresetsList(
 					{
 						type: FeedbackId.MediaPlayerSource,
 						options: {
-							bg: instance.rgb(255, 255, 0),
-							fg: instance.rgb(0, 0, 0),
 							mediaplayer: player,
 							source: clip + MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
+						},
+						style: {
+							bgcolor: instance.rgb(255, 255, 0),
+							color: instance.rgb(0, 0, 0),
 						},
 					},
 				],
@@ -748,10 +790,12 @@ export function GetPresetsList(
 					{
 						type: FeedbackId.MediaPlayerSource,
 						options: {
-							bg: instance.rgb(255, 255, 0),
-							fg: instance.rgb(0, 0, 0),
 							mediaplayer: player,
 							source: still,
+						},
+						style: {
+							bgcolor: instance.rgb(255, 255, 0),
+							color: instance.rgb(0, 0, 0),
 						},
 					},
 				],
@@ -783,28 +827,34 @@ export function GetPresetsList(
 				{
 					type: FeedbackId.FadeToBlackIsBlack,
 					options: {
-						bg: instance.rgb(0, 255, 0),
-						fg: instance.rgb(255, 255, 255),
 						mixeffect: me,
 						state: 'off',
 					},
-				},
-				{
-					type: FeedbackId.FadeToBlackIsBlack,
-					options: {
-						bg: instance.rgb(255, 0, 0),
-						fg: instance.rgb(255, 255, 255),
-						mixeffect: me,
-						state: 'on',
+					style: {
+						bgcolor: instance.rgb(0, 255, 0),
+						color: instance.rgb(255, 255, 255),
 					},
 				},
 				{
 					type: FeedbackId.FadeToBlackIsBlack,
 					options: {
-						bg: instance.rgb(255, 255, 0),
-						fg: instance.rgb(0, 0, 0),
+						mixeffect: me,
+						state: 'on',
+					},
+					style: {
+						bgcolor: instance.rgb(255, 0, 0),
+						color: instance.rgb(255, 255, 255),
+					},
+				},
+				{
+					type: FeedbackId.FadeToBlackIsBlack,
+					options: {
 						mixeffect: me,
 						state: 'fading',
+					},
+					style: {
+						bgcolor: instance.rgb(255, 255, 0),
+						color: instance.rgb(0, 0, 0),
 					},
 				},
 			],
@@ -832,10 +882,12 @@ export function GetPresetsList(
 					{
 						type: FeedbackId.FadeToBlackRate,
 						options: {
-							bg: instance.rgb(255, 255, 0),
-							fg: instance.rgb(0, 0, 0),
 							mixeffect: me,
 							rate,
+						},
+						style: {
+							bgcolor: instance.rgb(255, 255, 0),
+							color: instance.rgb(0, 0, 0),
 						},
 					},
 				],
@@ -867,25 +919,31 @@ export function GetPresetsList(
 				{
 					type: FeedbackId.StreamStatus,
 					options: {
-						bg: instance.rgb(0, 255, 0),
-						fg: instance.rgb(0, 0, 0),
 						state: Enums.StreamingStatus.Streaming,
 					},
-				},
-				{
-					type: FeedbackId.StreamStatus,
-					options: {
-						bg: instance.rgb(238, 238, 0),
-						fg: instance.rgb(0, 0, 0),
-						state: Enums.StreamingStatus.Stopping,
+					style: {
+						bgcolor: instance.rgb(0, 255, 0),
+						color: instance.rgb(0, 0, 0),
 					},
 				},
 				{
 					type: FeedbackId.StreamStatus,
 					options: {
-						bg: instance.rgb(238, 238, 0),
-						fg: instance.rgb(0, 0, 0),
+						state: Enums.StreamingStatus.Stopping,
+					},
+					style: {
+						bgcolor: instance.rgb(238, 238, 0),
+						color: instance.rgb(0, 0, 0),
+					},
+				},
+				{
+					type: FeedbackId.StreamStatus,
+					options: {
 						state: Enums.StreamingStatus.Connecting,
+					},
+					style: {
+						bgcolor: instance.rgb(238, 238, 0),
+						color: instance.rgb(0, 0, 0),
 					},
 				},
 			],
@@ -915,17 +973,21 @@ export function GetPresetsList(
 				{
 					type: FeedbackId.RecordStatus,
 					options: {
-						bg: instance.rgb(0, 255, 0),
-						fg: instance.rgb(0, 0, 0),
 						state: Enums.RecordingStatus.Recording,
+					},
+					style: {
+						bgcolor: instance.rgb(0, 255, 0),
+						color: instance.rgb(0, 0, 0),
 					},
 				},
 				{
 					type: FeedbackId.StreamStatus,
 					options: {
-						bg: instance.rgb(238, 238, 0),
-						fg: instance.rgb(0, 0, 0),
 						state: Enums.RecordingStatus.Stopping,
+					},
+					style: {
+						bgcolor: instance.rgb(238, 238, 0),
+						color: instance.rgb(0, 0, 0),
 					},
 				},
 			],
