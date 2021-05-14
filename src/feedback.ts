@@ -3,7 +3,6 @@ import { SetRequired } from 'type-fest'
 import InstanceSkel = require('../../../instance_skel')
 import {
 	CompanionFeedbackEvent,
-	// CompanionInputFieldColor,
 	InputValue,
 	CompanionFeedbacks,
 	SomeCompanionInputField,
@@ -97,23 +96,6 @@ export enum MacroFeedbackType {
 	IsRecording = 'isRecording',
 	IsUsed = 'isUsed',
 }
-
-// export function ForegroundPicker(color: number): CompanionInputFieldColor {
-// 	return {
-// 		type: 'colorpicker',
-// 		label: 'Foreground color',
-// 		id: 'fg',
-// 		default: color,
-// 	}
-// }
-// export function BackgroundPicker(color: number): CompanionInputFieldColor {
-// 	return {
-// 		type: 'colorpicker',
-// 		label: 'Background color',
-// 		id: 'bg',
-// 		default: color,
-// 	}
-// }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function tallyFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState, tally: TallyBySource) {
