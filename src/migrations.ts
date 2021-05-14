@@ -52,3 +52,43 @@ export function upgradeV2x2x0(
 
 	return changed
 }
+
+export const BooleanFeedbackUpgradeMap: {
+	[id in FeedbackId]?: true
+} = {
+	[FeedbackId.PreviewBG]: true,
+	[FeedbackId.PreviewBG2]: true,
+	[FeedbackId.PreviewBG3]: true,
+	[FeedbackId.PreviewBG4]: true,
+	[FeedbackId.ProgramBG]: true,
+	[FeedbackId.ProgramBG2]: true,
+	[FeedbackId.ProgramBG3]: true,
+	[FeedbackId.ProgramBG4]: true,
+	[FeedbackId.AuxBG]: true,
+	[FeedbackId.USKOnAir]: true,
+	[FeedbackId.USKSource]: true,
+	[FeedbackId.DSKOnAir]: true,
+	[FeedbackId.DSKTie]: true,
+	[FeedbackId.DSKSource]: true,
+	[FeedbackId.Macro]: true,
+	[FeedbackId.MVSource]: true,
+	[FeedbackId.SSrcBoxOnAir]: true,
+	[FeedbackId.SSrcBoxSource]: true,
+	[FeedbackId.SSrcBoxProperties]: true,
+	[FeedbackId.TransitionStyle]: true,
+	[FeedbackId.TransitionSelection]: true,
+	[FeedbackId.TransitionRate]: true,
+	[FeedbackId.InTransition]: true,
+	[FeedbackId.MediaPlayerSource]: true,
+	[FeedbackId.FadeToBlackIsBlack]: true,
+	[FeedbackId.FadeToBlackRate]: true,
+	[FeedbackId.ProgramTally]: true,
+	[FeedbackId.PreviewTally]: true,
+	[FeedbackId.StreamStatus]: true,
+	[FeedbackId.RecordStatus]: true,
+	[FeedbackId.ClassicAudioGain]: true,
+	[FeedbackId.ClassicAudioMixOption]: true,
+	[FeedbackId.FairlightAudioFaderGain]: true,
+	[FeedbackId.FairlightAudioInputGain]: true,
+	[FeedbackId.FairlightAudioMixOption]: true,
+}

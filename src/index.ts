@@ -4,7 +4,7 @@ import { CompanionConfigField, CompanionSystem } from '../../../instance_skel_ty
 import { GetActionsList } from './actions'
 import { AtemConfig, GetConfigFields } from './config'
 import { FeedbackId, GetFeedbacksList } from './feedback'
-import { upgradeV2x2x0 } from './migrations'
+import { BooleanFeedbackUpgradeMap, upgradeV2x2x0 } from './migrations'
 import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, ModelSpec } from './models'
 import { GetPresetsList } from './presets'
 import { TallyBySource } from './state'
@@ -72,6 +72,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 		this.isActive = false
 
 		this.addUpgradeScript(upgradeV2x2x0)
+		this.addUpgradeToBooleanFeedbackScript(BooleanFeedbackUpgradeMap)
 	}
 
 	/**
