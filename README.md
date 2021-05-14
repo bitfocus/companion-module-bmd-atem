@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+### v2.10.0
+
+- feedbacks updated to new format. allows more customisation of style
+
 ### v2.9.3
 
 - fix utf8 characters in variables
