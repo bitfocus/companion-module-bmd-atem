@@ -16,7 +16,7 @@
 	"main": "dist/index.js",
 	"scripts": {
 		"dev": "yarn build:watch",
-		"build": "npx rimraf dist && npx typescript@~4.0.5 -p tsconfig.build.json",
+		"build": "npx rimraf dist && npx typescript@~4.2 -p tsconfig.build.json",
 		"build:main": "tsc -p tsconfig.build.json",
 		"build:watch": "tsc -p tsconfig.build.json --watch",
 		"lint": "eslint . --ext .ts --ext .js --ignore-pattern dist",
@@ -51,14 +51,13 @@
 		"node": "^12.14 || 14"
 	},
 	"dependencies": {
-		"@types/node": "^12.19.14",
+		"@types/node": "^12.20.13",
 		"atem-connection": "2.3.0-nightly-wip-update-threadedclass-20210313-231347-ec8d035.0",
-		"type-fest": "^1.1.1"
+		"type-fest": "^1.1.3"
 	},
 	"devDependencies": {
-		"@sofie-automation/code-standard-preset": "^0.2.4",
-		"rimraf": "^3.0.2",
+		"@sofie-automation/code-standard-preset": "^0.4.1",
 		"ts-node": "^9.1.1",
-		"typescript": "~4.0.5"
+		"typescript": "~4.2"
 	}
 }
