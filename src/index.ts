@@ -166,6 +166,10 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 		this.checkFeedbacks()
 	}
 
+	public checkFeedbacks(...feedbackTypes: FeedbackId[]): void {
+		super.checkFeedbacks(...feedbackTypes)
+	}
+
 	/**
 	 * Handle tally packets
 	 */
@@ -175,8 +179,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 				// The feedback holds a reference to the old object, so we need
 				// to update it in place
 				Object.assign(this.atemTally, command.properties)
-				this.checkFeedbacks(FeedbackId.ProgramTally)
-				this.checkFeedbacks(FeedbackId.PreviewTally)
+				this.checkFeedbacks(FeedbackId.ProgramTally, FeedbackId.PreviewTally)
 			}
 		})
 	}
@@ -199,9 +202,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 			const dskMatch = path.match(/video.downstreamKeyers.(\d+)/)
 			if (dskMatch) {
 				updateDSKVariable(this, this.atemState, parseInt(dskMatch[1], 10))
-				this.checkFeedbacks(FeedbackId.DSKOnAir)
-				this.checkFeedbacks(FeedbackId.DSKTie)
-				this.checkFeedbacks(FeedbackId.DSKSource)
+				this.checkFeedbacks(FeedbackId.DSKOnAir, FeedbackId.DSKTie, FeedbackId.DSKSource)
 				return
 			}
 
@@ -250,10 +251,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 				const meIndex = parseInt(meProgramMatch[1], 10)
 				updateMEProgramVariable(this, this.atemState, meIndex)
 
-				this.checkFeedbacks(FeedbackId.ProgramBG)
-				this.checkFeedbacks(FeedbackId.ProgramBG2)
-				this.checkFeedbacks(FeedbackId.ProgramBG3)
-				this.checkFeedbacks(FeedbackId.ProgramBG4)
+				this.checkFeedbacks(FeedbackId.ProgramBG, FeedbackId.ProgramBG2, FeedbackId.ProgramBG3, FeedbackId.ProgramBG4)
 				return
 			}
 
@@ -262,23 +260,17 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 				const meIndex = parseInt(mePreviewMatch[1], 10)
 				updateMEPreviewVariable(this, this.atemState, meIndex)
 
-				this.checkFeedbacks(FeedbackId.PreviewBG)
-				this.checkFeedbacks(FeedbackId.PreviewBG2)
-				this.checkFeedbacks(FeedbackId.PreviewBG3)
-				this.checkFeedbacks(FeedbackId.PreviewBG4)
+				this.checkFeedbacks(FeedbackId.PreviewBG, FeedbackId.PreviewBG2, FeedbackId.PreviewBG3, FeedbackId.PreviewBG4)
 				return
 			}
 
 			if (path.match(/video.superSources.(\d+).boxes.(\d+)/)) {
-				this.checkFeedbacks(FeedbackId.SSrcBoxSource)
-				this.checkFeedbacks(FeedbackId.SSrcBoxOnAir)
-				this.checkFeedbacks(FeedbackId.SSrcBoxProperties)
+				this.checkFeedbacks(FeedbackId.SSrcBoxSource, FeedbackId.SSrcBoxOnAir, FeedbackId.SSrcBoxProperties)
 				return
 			}
 
 			if (path.match(/video.mixEffects.(\d+).transitionProperties/)) {
-				this.checkFeedbacks(FeedbackId.TransitionStyle)
-				this.checkFeedbacks(FeedbackId.TransitionSelection)
+				this.checkFeedbacks(FeedbackId.TransitionStyle, FeedbackId.TransitionSelection)
 				return
 			}
 			if (path.match(/video.mixEffects.(\d+).transitionSettings/)) {
@@ -290,8 +282,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 				return
 			}
 			if (path.match(/video.mixEffects.(\d+).fadeToBlack/)) {
-				this.checkFeedbacks(FeedbackId.FadeToBlackRate)
-				this.checkFeedbacks(FeedbackId.FadeToBlackIsBlack)
+				this.checkFeedbacks(FeedbackId.FadeToBlackRate, FeedbackId.FadeToBlackIsBlack)
 				return
 			}
 
@@ -326,14 +317,15 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 				return
 			}
 			if (path.match(/audio.channels/)) {
-				this.checkFeedbacks(FeedbackId.ClassicAudioGain)
-				this.checkFeedbacks(FeedbackId.ClassicAudioMixOption)
+				this.checkFeedbacks(FeedbackId.ClassicAudioGain, FeedbackId.ClassicAudioMixOption)
 				return
 			}
 			if (path.match(/fairlight.inputs/)) {
-				this.checkFeedbacks(FeedbackId.FairlightAudioInputGain)
-				this.checkFeedbacks(FeedbackId.FairlightAudioFaderGain)
-				this.checkFeedbacks(FeedbackId.FairlightAudioMixOption)
+				this.checkFeedbacks(
+					FeedbackId.FairlightAudioInputGain,
+					FeedbackId.FairlightAudioFaderGain,
+					FeedbackId.FairlightAudioMixOption
+				)
 				return
 			}
 		})
