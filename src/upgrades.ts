@@ -2,10 +2,10 @@ import {
 	CompanionCoreInstanceconfig,
 	CompanionMigrationAction,
 	CompanionMigrationFeedback,
+	CompanionUpgradeContext,
 	InputValue,
 } from '../../../instance_skel_types'
 import { ActionId } from './actions'
-import { AtemConfig } from './config'
 import { FeedbackId } from './feedback'
 
 function scaleValue(obj: { [key: string]: InputValue | undefined }, key: string, scale: number): void {
@@ -15,14 +15,14 @@ function scaleValue(obj: { [key: string]: InputValue | undefined }, key: string,
 }
 
 export function upgradeV2x2x0(
-	_config: CompanionCoreInstanceconfig & AtemConfig,
+	_context: CompanionUpgradeContext,
+	_config: (CompanionCoreInstanceconfig & Record<string, any>) | null,
 	actions: CompanionMigrationAction[],
-	releaseActions: CompanionMigrationAction[],
 	feedbacks: CompanionMigrationFeedback[]
 ): boolean {
 	let changed = false
 
-	for (const action of [...actions, ...releaseActions]) {
+	for (const action of actions) {
 		if (action.action === ActionId.SuperSourceBoxProperties) {
 			scaleValue(action.options, 'size', 0.001)
 			scaleValue(action.options, 'x', 0.01)

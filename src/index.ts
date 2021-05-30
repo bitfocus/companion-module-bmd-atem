@@ -1,10 +1,10 @@
 import { Atem, AtemConnectionStatus, AtemState, AtemStateUtil, Commands } from 'atem-connection'
 import InstanceSkel = require('../../../instance_skel')
-import { CompanionConfigField, CompanionSystem } from '../../../instance_skel_types'
+import { CompanionConfigField, CompanionStaticUpgradeScript, CompanionSystem } from '../../../instance_skel_types'
 import { GetActionsList } from './actions'
 import { AtemConfig, GetConfigFields } from './config'
 import { FeedbackId, GetFeedbacksList } from './feedback'
-import { BooleanFeedbackUpgradeMap, upgradeV2x2x0 } from './migrations'
+import { BooleanFeedbackUpgradeMap, upgradeV2x2x0 } from './upgrades'
 import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, ModelSpec } from './models'
 import { GetPresetsList } from './presets'
 import { TallyBySource } from './state'
@@ -66,9 +66,14 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 		this.config.modelID = this.model.id + ''
 
 		this.isActive = false
+	}
 
-		this.addUpgradeScript(upgradeV2x2x0)
-		this.addUpgradeToBooleanFeedbackScript(BooleanFeedbackUpgradeMap)
+	static GetUpgradeScripts(): Array<CompanionStaticUpgradeScript> {
+		return [
+			upgradeV2x2x0,
+			AtemInstance.CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap),
+			//
+		]
 	}
 
 	/**
