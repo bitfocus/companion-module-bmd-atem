@@ -337,7 +337,7 @@ function meActions(
 					batch.queueChange(tp.nextSelection, (oldVal) => {
 						let mode2 = mode
 						if (mode === 'toggle') {
-							if ((oldVal & component) > 0) {
+							if (oldVal.includes(component)) {
 								mode2 = 'false'
 							} else {
 								mode2 = 'true'
@@ -345,9 +345,9 @@ function meActions(
 						}
 
 						if (mode2 === 'true') {
-							return oldVal | component
+							return [...oldVal, component]
 						} else {
-							return oldVal & ~component
+							return oldVal.filter((v) => v !== component)
 						}
 					})
 				}
@@ -821,7 +821,7 @@ function audioActions(
 					transitions.run(
 						`audio.${inputId}.gain`,
 						(value) => {
-							executePromise(instance, atem?.setAudioMixerInputGain(getOptNumber(action, 'input'), value))
+							executePromise(instance, atem?.setClassicAudioMixerInputProps(inputId, { gain: value }))
 						},
 						channel?.gain,
 						getOptNumber(action, 'gain'),
@@ -841,7 +841,7 @@ function audioActions(
 						transitions.run(
 							`audio.${inputId}.gain`,
 							(value) => {
-								executePromise(instance, atem?.setAudioMixerInputGain(getOptNumber(action, 'input'), value))
+								executePromise(instance, atem?.setClassicAudioMixerInputProps(inputId, { gain: value }))
 							},
 							channel.gain,
 							channel.gain + getOptNumber(action, 'delta'),
@@ -876,7 +876,7 @@ function audioActions(
 							? Enums.AudioMixOption.Off
 							: Enums.AudioMixOption.On
 					const newVal = action.options.option === 'toggle' ? toggleVal : getOptNumber(action, 'option')
-					executePromise(instance, atem?.setAudioMixerInputMixOption(inputId, newVal))
+					executePromise(instance, atem?.setClassicAudioMixerInputProps(inputId, { mixOption: newVal }))
 				},
 			}),
 			[ActionId.FairlightAudioInputGain]: undefined,
@@ -1116,12 +1116,10 @@ export function GetActionsList(
 					callback: (action): void => {
 						executePromise(
 							instance,
-							atem?.setMultiViewerSource(
-								{
-									windowIndex: getOptNumber(action, 'windowIndex'),
-									source: getOptNumber(action, 'source'),
-								},
-								getOptNumber(action, 'multiViewerId')
+							atem?.setMultiViewerWindowSource(
+								getOptNumber(action, 'source'),
+								getOptNumber(action, 'multiViewerId'),
+								getOptNumber(action, 'windowIndex')
 							)
 						)
 					},

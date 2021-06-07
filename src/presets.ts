@@ -244,7 +244,7 @@ export function GetPresetsList(
 				selectionProps[`key${i}`] = opt[i + 1]
 			}
 
-			if (calculateTransitionSelection(model.USKs, selectionProps) === 0) {
+			if (calculateTransitionSelection(model.USKs, selectionProps).length === 0) {
 				// The 0 case is not supported on the atem
 				continue
 			}

@@ -1,5 +1,7 @@
+import { Enums } from 'atem-connection'
+
 export class AtemCommandBatching {
-	public readonly meTransitionSelection = new Map<number, CommandBatching<number>>()
+	public readonly meTransitionSelection = new Map<number, CommandBatching<Enums.TransitionSelection[]>>()
 }
 
 export class CommandBatching<T> {

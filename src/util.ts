@@ -1,6 +1,7 @@
 import { InputValue } from '../../../instance_skel_types'
 import InstanceSkel = require('../../../instance_skel')
 import { AtemConfig } from './config'
+import { Enums } from 'atem-connection'
 
 export const MEDIA_PLAYER_SOURCE_CLIP_OFFSET = 1000
 
@@ -38,15 +39,15 @@ export function clamp(min: number, max: number, val: number): number {
 export function calculateTransitionSelection(
 	keyCount: number,
 	options: { [key: string]: InputValue | undefined }
-): number {
-	let selection = 0
+): Enums.TransitionSelection[] {
+	const selection: Enums.TransitionSelection[] = []
 	if (options.background) {
-		selection |= 1 << 0
+		selection.push(Enums.TransitionSelection.Background)
 	}
 
 	for (let i = 0; i < keyCount; i++) {
 		if (options[`key${i}`]) {
-			selection |= 1 << (i + 1)
+			selection.push(1 << (i + 1))
 		}
 	}
 

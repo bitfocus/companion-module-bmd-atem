@@ -426,11 +426,11 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
 				if (me) {
 					switch (evt.options.matchmethod) {
 						case 'exact':
-							return me.transitionProperties.nextSelection === expectedSelection
+							return me.transitionProperties.nextSelection.join(',') === expectedSelection.join(',')
 						case 'contains':
-							return (me.transitionProperties.nextSelection & expectedSelection) === expectedSelection
+							return expectedSelection.every((s) => me.transitionProperties.nextSelection.includes(s))
 						case 'not-contain':
-							return (me.transitionProperties.nextSelection & expectedSelection) === 0
+							return !expectedSelection.find((s) => me.transitionProperties.nextSelection.includes(s))
 					}
 				}
 				return false
