@@ -776,12 +776,14 @@ function streamRecordActions(
 						},
 					],
 					callback: (action): void => {
-						executePromise(
-							instance,
-							atem?.setRecordingSettings({
-								filename: `${action.options.filename || ''}`,
-							})
-						)
+						instance.parseVariables(`${action.options.filename || ''}`, (filename) => {
+							executePromise(
+								instance,
+								atem?.setRecordingSettings({
+									filename: `${filename || ''}`,
+								})
+							)
+						})
 					},
 			  })
 			: undefined,
