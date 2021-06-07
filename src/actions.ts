@@ -36,6 +36,8 @@ import {
 	AtemFairlightAudioSourcePicker,
 	FadeDurationChoice,
 	FaderLevelDeltaChoice,
+	AtemSuperSourceArtSourcePicker,
+	AtemSuperSourceArtOption,
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getSuperSourceBox, getUSK, getTransitionProperties, getMediaPlayer } from './state'
@@ -67,6 +69,7 @@ export enum ActionId {
 	MacroContinue = 'macrocontinue',
 	MacroStop = 'macrostop',
 	MultiviewerWindowSource = 'setMvSource',
+	SuperSourceArt = 'ssrcArt',
 	SuperSourceBoxSource = 'setSsrcBoxSource',
 	SuperSourceBoxOnAir = 'setSsrcBoxEnable',
 	SuperSourceBoxProperties = 'setSsrcBoxProperties',
@@ -528,6 +531,30 @@ function macroActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, model: ModelSpec, state: AtemState) {
 	return {
+		[ActionId.SuperSourceArt]: model.SSrc
+			? literal<CompanionActionExt>({
+					label: 'SuperSource: Set art',
+					options: compact([
+						AtemSuperSourceIdPicker(model),
+						AtemSuperSourceArtSourcePicker(model, state, 'fill', 'Fill Source'),
+						AtemSuperSourceArtSourcePicker(model, state, 'key', 'Key Source'),
+						AtemSuperSourceArtOption(),
+					]),
+					callback: (action): void => {
+						executePromise(
+							instance,
+							atem?.setSuperSourceProperties(
+								{
+									artFillSource: getOptNumber(action, 'fill'),
+									artCutSource: getOptNumber(action, 'key'),
+									artOption: getOptNumber(action, 'artOption'),
+								},
+								action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
+							)
+						)
+					},
+			  })
+			: undefined,
 		[ActionId.SuperSourceBoxSource]: model.SSrc
 			? literal<CompanionActionExt>({
 					label: 'SuperSource: Set box source',

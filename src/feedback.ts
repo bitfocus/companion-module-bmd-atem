@@ -36,6 +36,8 @@ import {
 	AtemAudioInputPicker,
 	NumberComparitorPicker,
 	AtemFairlightAudioSourcePicker,
+	AtemSuperSourceArtSourcePicker,
+	AtemSuperSourceArtOption,
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getMixEffect, getMultiviewerWindow, getSuperSourceBox, getUSK, TallyBySource } from './state'
@@ -69,6 +71,8 @@ export enum FeedbackId {
 	DSKSource = 'dsk_source',
 	Macro = 'macro',
 	MVSource = 'mv_source',
+	SSrcArtSource = 'ssrc_art_source',
+	SSrcArtOption = 'ssrc_art_option',
 	SSrcBoxOnAir = 'ssrc_box_enable',
 	SSrcBoxSource = 'ssrc_box_source',
 	SSrcBoxProperties = 'ssrc_box_properties',
@@ -363,7 +367,7 @@ function uskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
 			? literal<CompanionFeedbackWithCallback>({
 					type: 'boolean',
 					label: 'Upstream key: OnAir state',
-					description: 'If the specified upstream keyer is active, change color of the bank',
+					description: 'If the specified upstream keyer is active, change style of the bank',
 					options: [AtemMEPicker(model, 0), AtemUSKPicker(model)],
 					style: {
 						color: instance.rgb(255, 255, 255),
@@ -400,7 +404,7 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
 		[FeedbackId.TransitionStyle]: literal<CompanionFeedbackWithCallback>({
 			type: 'boolean',
 			label: 'Transition: Style',
-			description: 'If the specified transition style is active, change color of the bank',
+			description: 'If the specified transition style is active, change style of the bank',
 			options: [AtemMEPicker(model, 0), AtemTransitionStylePicker(model.media.clips === 0)],
 			style: {
 				color: instance.rgb(0, 0, 0),
@@ -414,7 +418,7 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
 		[FeedbackId.TransitionSelection]: literal<CompanionFeedbackWithCallback>({
 			type: 'boolean',
 			label: 'Transition: Selection',
-			description: 'If the specified tansition selection is active, change color of the bank',
+			description: 'If the specified tansition selection is active, change style of the bank',
 			options: [AtemMEPicker(model, 0), AtemMatchMethod(), ...AtemTransitionSelectionPickers(model)],
 			style: {
 				color: instance.rgb(0, 0, 0),
@@ -439,7 +443,7 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
 		[FeedbackId.TransitionRate]: literal<CompanionFeedbackWithCallback>({
 			type: 'boolean',
 			label: 'Transition: Rate',
-			description: 'If the specified transition rate is active, change color of the bank',
+			description: 'If the specified transition rate is active, change style of the bank',
 			options: [AtemMEPicker(model, 0), AtemTransitionStylePicker(true), AtemRatePicker('Transition Rate')],
 			style: {
 				color: instance.rgb(0, 0, 0),
@@ -471,7 +475,7 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
 		[FeedbackId.InTransition]: literal<CompanionFeedbackWithCallback>({
 			type: 'boolean',
 			label: 'Transition: Active/Running',
-			description: 'If the specified transition is active, change color of the bank',
+			description: 'If the specified transition is active, change style of the bank',
 			options: [AtemMEPicker(model, 0)],
 			style: {
 				color: instance.rgb(0, 0, 0),
@@ -491,7 +495,7 @@ function fadeToBlackFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSp
 		[FeedbackId.FadeToBlackIsBlack]: literal<CompanionFeedbackWithCallback>({
 			type: 'boolean',
 			label: 'Fade to black: Active',
-			description: 'If the specified fade to black is active, change color of the bank',
+			description: 'If the specified fade to black is active, change style of the bank',
 			options: [AtemMEPicker(model, 0), AtemFadeToBlackStatePicker()],
 			style: {
 				color: instance.rgb(0, 0, 0),
@@ -516,7 +520,7 @@ function fadeToBlackFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSp
 		[FeedbackId.FadeToBlackRate]: literal<CompanionFeedbackWithCallback>({
 			type: 'boolean',
 			label: 'Fade to black: Rate',
-			description: 'If the specified fade to black rate matches, change color of the bank',
+			description: 'If the specified fade to black rate matches, change style of the bank',
 			options: [AtemMEPicker(model, 0), AtemRatePicker('Rate')],
 			style: {
 				color: instance.rgb(0, 0, 0),
@@ -551,11 +555,47 @@ function compareAsInt(
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
 	return {
+		[FeedbackId.SSrcArtSource]: model.SSrc
+			? literal<CompanionFeedbackWithCallback>({
+					type: 'boolean',
+					label: 'SuperSorce: Art fill source',
+					description: 'If the specified SuperSource art fill is set to the specified source, change style of the bank',
+					options: compact([
+						AtemSuperSourceIdPicker(model),
+						AtemSuperSourceArtSourcePicker(model, state, 'source', 'Fill Source'),
+					]),
+					style: {
+						color: instance.rgb(0, 0, 0),
+						bgcolor: instance.rgb(255, 255, 0),
+					},
+					callback: (evt: CompanionFeedbackEvent): boolean => {
+						const ssrc = state.video.superSources[Number(evt.options.ssrcId || 0)]
+						return ssrc?.properties?.artFillSource === Number(evt.options.source)
+					},
+			  })
+			: undefined,
+		[FeedbackId.SSrcArtOption]: model.SSrc
+			? literal<CompanionFeedbackWithCallback>({
+					type: 'boolean',
+					label: 'SuperSorce: Art placement',
+					description:
+						'If the specified SuperSource art is placed in the foreground/background, change style of the bank',
+					options: compact([AtemSuperSourceIdPicker(model), AtemSuperSourceArtOption()]),
+					style: {
+						color: instance.rgb(0, 0, 0),
+						bgcolor: instance.rgb(255, 255, 0),
+					},
+					callback: (evt: CompanionFeedbackEvent): boolean => {
+						const ssrc = state.video.superSources[Number(evt.options.ssrcId || 0)]
+						return ssrc?.properties?.artOption === Number(evt.options.artOption)
+					},
+			  })
+			: undefined,
 		[FeedbackId.SSrcBoxSource]: model.SSrc
 			? literal<CompanionFeedbackWithCallback>({
 					type: 'boolean',
 					label: 'SuperSorce: Box source',
-					description: 'If the specified SuperSource box is set to the specified source, change color of the bank',
+					description: 'If the specified SuperSource box is set to the specified source, change style of the bank',
 					options: compact([
 						AtemSuperSourceIdPicker(model),
 						AtemSuperSourceBoxPicker(),
@@ -575,7 +615,7 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
 			? literal<CompanionFeedbackWithCallback>({
 					type: 'boolean',
 					label: 'SuperSorce: Box state',
-					description: 'If the specified SuperSource box is enabled, change color of the bank',
+					description: 'If the specified SuperSource box is enabled, change style of the bank',
 					options: compact([AtemSuperSourceIdPicker(model), AtemSuperSourceBoxPicker()]),
 					style: {
 						color: instance.rgb(0, 0, 0),
@@ -591,7 +631,7 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
 			? literal<CompanionFeedbackWithCallback>({
 					type: 'boolean',
 					label: 'SuperSorce: Box properties',
-					description: 'If the specified SuperSource box properties match, change color of the bank',
+					description: 'If the specified SuperSource box properties match, change style of the bank',
 					options: compact([
 						AtemSuperSourceIdPicker(model),
 						AtemSuperSourceBoxPicker(),
@@ -632,7 +672,7 @@ function dskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
 			? literal<CompanionFeedbackWithCallback>({
 					type: 'boolean',
 					label: 'Downstream key: OnAir',
-					description: 'If the specified downstream keyer is onair, change color of the bank',
+					description: 'If the specified downstream keyer is onair, change style of the bank',
 					options: [AtemDSKPicker(model)],
 					style: {
 						color: instance.rgb(255, 255, 255),
@@ -648,7 +688,7 @@ function dskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
 			? literal<CompanionFeedbackWithCallback>({
 					type: 'boolean',
 					label: 'Downstream key: Tied',
-					description: 'If the specified downstream keyer is tied, change color of the bank',
+					description: 'If the specified downstream keyer is tied, change style of the bank',
 					options: [AtemDSKPicker(model)],
 					style: {
 						color: instance.rgb(255, 255, 255),
@@ -686,7 +726,7 @@ function streamRecordFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelS
 			? literal<CompanionFeedbackWithCallback>({
 					type: 'boolean',
 					label: 'Streaming: Active/Running',
-					description: 'If the stream has the specified status, change color of the bank',
+					description: 'If the stream has the specified status, change style of the bank',
 					options: [
 						literal<SomeCompanionInputField>({
 							id: 'state',
@@ -715,7 +755,7 @@ function streamRecordFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelS
 			? literal<CompanionFeedbackWithCallback>({
 					type: 'boolean',
 					label: 'Recording: Active/Running',
-					description: 'If the record has the specified status, change color of the bank',
+					description: 'If the record has the specified status, change style of the bank',
 					options: [
 						literal<SomeCompanionInputField>({
 							id: 'state',
@@ -751,7 +791,7 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 			[FeedbackId.ClassicAudioGain]: literal<CompanionFeedbackWithCallback>({
 				type: 'boolean',
 				label: 'Classic Audio: Audio gain',
-				description: 'If the audio input has the specified gain, change color of the bank',
+				description: 'If the audio input has the specified gain, change style of the bank',
 				options: [
 					audioInputOption,
 					NumberComparitorPicker(),
@@ -780,7 +820,7 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 			[FeedbackId.ClassicAudioMixOption]: literal<CompanionFeedbackWithCallback>({
 				type: 'boolean',
 				label: 'Classic Audio: Mix option',
-				description: 'If the audio input has the specified mix option, change color of the bank',
+				description: 'If the audio input has the specified mix option, change style of the bank',
 				options: [
 					audioInputOption,
 					literal<SomeCompanionInputField>({
@@ -814,7 +854,7 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 			[FeedbackId.FairlightAudioInputGain]: literal<CompanionFeedbackWithCallback>({
 				type: 'boolean',
 				label: 'Fairlight Audio: Audio input gain',
-				description: 'If the audio input has the specified input gain, change color of the bank',
+				description: 'If the audio input has the specified input gain, change style of the bank',
 				options: [
 					audioInputOption,
 					audioSourceOption,
@@ -847,7 +887,7 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 			[FeedbackId.FairlightAudioFaderGain]: literal<CompanionFeedbackWithCallback>({
 				type: 'boolean',
 				label: 'Fairlight Audio: Audio fader gain',
-				description: 'If the audio input has the specified fader gain, change color of the bank',
+				description: 'If the audio input has the specified fader gain, change style of the bank',
 				options: [
 					audioInputOption,
 					audioSourceOption,
@@ -881,7 +921,7 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 			[FeedbackId.FairlightAudioMixOption]: literal<CompanionFeedbackWithCallback>({
 				type: 'boolean',
 				label: 'Fairlight Audio: Audio mix option',
-				description: 'If the audio input has the specified mix option, change color of the bank',
+				description: 'If the audio input has the specified mix option, change style of the bank',
 				options: [
 					audioInputOption,
 					audioSourceOption,
@@ -953,7 +993,7 @@ export function GetFeedbacksList(
 			? literal<CompanionFeedbackWithCallback>({
 					type: 'boolean',
 					label: 'Macro: State',
-					description: 'If the specified macro is running or waiting, change color of the bank',
+					description: 'If the specified macro is running or waiting, change style of the bank',
 					options: [
 						{
 							type: 'dropdown',
@@ -1009,7 +1049,7 @@ export function GetFeedbacksList(
 			? literal<CompanionFeedbackWithCallback>({
 					type: 'boolean',
 					label: 'Multiviewer: Window source',
-					description: 'If the specified MV window is set to the specified source, change color of the bank',
+					description: 'If the specified MV window is set to the specified source, change style of the bank',
 					options: [
 						AtemMultiviewerPicker(model),
 						AtemMultiviewWindowPicker(model),
@@ -1029,7 +1069,7 @@ export function GetFeedbacksList(
 			? literal<CompanionFeedbackWithCallback>({
 					type: 'boolean',
 					label: 'Media player: Source',
-					description: 'If the specified media player has the specified source, change color of the bank',
+					description: 'If the specified media player has the specified source, change style of the bank',
 					options: [AtemMediaPlayerPicker(model), AtemMediaPlayerSourcePicker(model, state)],
 					style: {
 						color: instance.rgb(0, 0, 0),

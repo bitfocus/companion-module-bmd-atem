@@ -190,6 +190,24 @@ export function AtemSuperSourceIdPicker(model: ModelSpec): CompanionInputFieldDr
 		return undefined
 	}
 }
+export function AtemSuperSourceArtOption(): CompanionInputFieldDropdown {
+	return {
+		type: 'dropdown',
+		id: 'artOption',
+		label: 'Place in',
+		default: 0,
+		choices: [
+			{
+				id: Enums.SuperSourceArtOption.Foreground,
+				label: 'Foreground',
+			},
+			{
+				id: Enums.SuperSourceArtOption.Background,
+				label: 'Background',
+			},
+		],
+	}
+}
 export function AtemSuperSourcePropertiesPickers(
 	offset: boolean
 ): Array<CompanionInputFieldNumber | CompanionInputFieldCheckbox> {
@@ -273,6 +291,20 @@ export function AtemSuperSourcePropertiesPickers(
 			step: 0.01,
 		},
 	])
+}
+export function AtemSuperSourceArtSourcePicker(
+	model: ModelSpec,
+	state: AtemState,
+	id: string,
+	label: string
+): CompanionInputFieldDropdown {
+	return {
+		type: 'dropdown',
+		id: id,
+		label: label,
+		default: 0,
+		choices: SourcesToChoices(GetSourcesListForType(model, state, 'ssrc-art')),
+	}
 }
 export function AtemSuperSourceBoxSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
 	return {
