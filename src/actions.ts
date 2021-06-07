@@ -87,11 +87,14 @@ export enum ActionId {
 	ClassicAudioGain = 'classicAudioGain',
 	ClassicAudioGainDelta = 'classicAudioGainDelta',
 	ClassicAudioMixOption = 'classicAudioMixOption',
+	ClassicAudioResetPeaks = 'classicAudioResetPeaks',
 	FairlightAudioFaderGain = 'fairlightAudioFaderGain',
 	FairlightAudioFaderGainDelta = 'fairlightAudioFaderGainDelta',
 	FairlightAudioInputGain = 'fairlightAudioInputGain',
 	FairlightAudioInputGainDelta = 'fairlightAudioInputGainDelta',
 	FairlightAudioMixOption = 'fairlightAudioMixOption',
+	FairlightAudioResetPeaks = 'fairlightAudioResetPeaks',
+	FairlightAudioResetSourcePeaks = 'fairlightAudioResetSourcePeaks',
 }
 
 type CompanionActionExt = CompanionAction & Required<Pick<CompanionAction, 'callback'>>
@@ -879,11 +882,52 @@ function audioActions(
 					executePromise(instance, atem?.setClassicAudioMixerInputProps(inputId, { mixOption: newVal }))
 				},
 			}),
+			[ActionId.ClassicAudioResetPeaks]: literal<CompanionActionExt>({
+				label: 'Classic Audio: Reset peaks',
+				options: [
+					{
+						type: 'dropdown',
+						id: 'reset',
+						label: 'Reset',
+						default: 'all',
+						choices: [
+							{
+								id: 'all',
+								label: 'All',
+							},
+							{
+								id: 'master',
+								label: 'Master',
+							},
+							{
+								id: 'monitor',
+								label: 'Monitor',
+							},
+							...audioInputOption.choices,
+						],
+					},
+				],
+				callback: (action): void => {
+					const rawVal = action.options['target']
+					if (rawVal === 'all') {
+						executePromise(instance, atem?.setClassicAudioResetPeaks({ all: true }))
+					} else if (rawVal === 'master') {
+						executePromise(instance, atem?.setClassicAudioResetPeaks({ master: true }))
+					} else if (rawVal === 'monitor') {
+						executePromise(instance, atem?.setClassicAudioResetPeaks({ monitor: true }))
+					} else {
+						const inputId = getOptNumber(action, 'target')
+						executePromise(instance, atem?.setClassicAudioResetPeaks({ input: inputId }))
+					}
+				},
+			}),
 			[ActionId.FairlightAudioInputGain]: undefined,
 			[ActionId.FairlightAudioInputGainDelta]: undefined,
 			[ActionId.FairlightAudioFaderGain]: undefined,
 			[ActionId.FairlightAudioFaderGainDelta]: undefined,
 			[ActionId.FairlightAudioMixOption]: undefined,
+			[ActionId.FairlightAudioResetPeaks]: undefined,
+			[ActionId.FairlightAudioResetSourcePeaks]: undefined,
 		}
 	} else if (model.fairlightAudio) {
 		const audioInputOption = AtemAudioInputPicker(model, state)
@@ -892,6 +936,7 @@ function audioActions(
 			[ActionId.ClassicAudioGain]: undefined,
 			[ActionId.ClassicAudioGainDelta]: undefined,
 			[ActionId.ClassicAudioMixOption]: undefined,
+			[ActionId.ClassicAudioResetPeaks]: undefined,
 			[ActionId.FairlightAudioInputGain]: literal<CompanionActionExt>({
 				label: 'Fairlight Audio: Set input gain',
 				options: [
@@ -1066,17 +1111,65 @@ function audioActions(
 					executePromise(instance, atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, { mixOption: newVal }))
 				},
 			}),
+			[ActionId.FairlightAudioResetPeaks]: literal<CompanionActionExt>({
+				label: 'Fairlight Audio: Reset peaks',
+				options: [
+					{
+						type: 'dropdown',
+						id: 'reset',
+						label: 'Reset',
+						default: 'all',
+						choices: [
+							{
+								id: 'all',
+								label: 'All',
+							},
+							{
+								id: 'master',
+								label: 'Master',
+							},
+						],
+					},
+				],
+				callback: (action): void => {
+					const rawVal = action.options['target']
+					if (rawVal === 'all') {
+						executePromise(instance, atem?.setFairlightAudioMixerResetPeaks({ all: true, master: false }))
+					} else if (rawVal === 'master') {
+						executePromise(instance, atem?.setFairlightAudioMixerResetPeaks({ master: true, all: false }))
+					}
+				},
+			}),
+			[ActionId.FairlightAudioResetSourcePeaks]: literal<CompanionActionExt>({
+				label: 'Fairlight Audio: Reset peaks',
+				options: [audioInputOption, audioSourceOption],
+				callback: (action): void => {
+					const inputId = getOptNumber(action, 'input')
+					const sourceId = action.options.source + ''
+					executePromise(
+						instance,
+						atem?.setFairlightAudioMixerSourceResetPeaks(inputId, sourceId, {
+							output: true,
+							dynamicsInput: false,
+							dynamicsOutput: false,
+						})
+					)
+				},
+			}),
 		}
 	} else {
 		return {
 			[ActionId.ClassicAudioGain]: undefined,
 			[ActionId.ClassicAudioGainDelta]: undefined,
 			[ActionId.ClassicAudioMixOption]: undefined,
+			[ActionId.ClassicAudioResetPeaks]: undefined,
 			[ActionId.FairlightAudioInputGain]: undefined,
 			[ActionId.FairlightAudioInputGainDelta]: undefined,
 			[ActionId.FairlightAudioFaderGain]: undefined,
 			[ActionId.FairlightAudioFaderGainDelta]: undefined,
 			[ActionId.FairlightAudioMixOption]: undefined,
+			[ActionId.FairlightAudioResetPeaks]: undefined,
+			[ActionId.FairlightAudioResetSourcePeaks]: undefined,
 		}
 	}
 }
