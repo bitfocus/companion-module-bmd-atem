@@ -263,6 +263,10 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 				this.checkFeedbacks(FeedbackId.SSrcBoxSource, FeedbackId.SSrcBoxOnAir, FeedbackId.SSrcBoxProperties)
 				return
 			}
+			if (path.match(/video.superSources.(\d+).properties/)) {
+				this.checkFeedbacks(FeedbackId.SSrcArtOption, FeedbackId.SSrcArtSource)
+				return
+			}
 
 			if (path.match(/video.mixEffects.(\d+).transitionProperties/)) {
 				this.checkFeedbacks(FeedbackId.TransitionStyle, FeedbackId.TransitionSelection)

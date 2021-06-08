@@ -1,4 +1,4 @@
-import { Atem, AtemState, Enums } from 'atem-connection'
+import { Atem, AtemState, Enums, VideoState } from 'atem-connection'
 import InstanceSkel = require('../../../instance_skel')
 import { CompanionAction, CompanionActionEvent, CompanionActions } from '../../../instance_skel_types'
 import {
@@ -52,6 +52,7 @@ import {
 } from './util'
 import { AtemCommandBatching, CommandBatching } from './batching'
 import { AtemTransitions } from './transitions'
+import { SuperSourceArtOption } from 'atem-connection/dist/enums'
 
 export enum ActionId {
 	Program = 'program',
@@ -538,20 +539,28 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined,
 						AtemSuperSourceIdPicker(model),
 						AtemSuperSourceArtSourcePicker(model, state, 'fill', 'Fill Source'),
 						AtemSuperSourceArtSourcePicker(model, state, 'key', 'Key Source'),
-						AtemSuperSourceArtOption(),
+						AtemSuperSourceArtOption(true),
 					]),
 					callback: (action): void => {
-						executePromise(
-							instance,
-							atem?.setSuperSourceProperties(
-								{
-									artFillSource: getOptNumber(action, 'fill'),
-									artCutSource: getOptNumber(action, 'key'),
-									artOption: getOptNumber(action, 'artOption'),
-								},
-								action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
-							)
-						)
+						const ssrcId = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
+						const props: Partial<VideoState.SuperSource.SuperSourceProperties> = {
+							artFillSource: getOptNumber(action, 'fill'),
+							artCutSource: getOptNumber(action, 'key'),
+						}
+
+						const rawArtOption = action.options.artOption
+						if (rawArtOption === 'toggle') {
+							const ssrc = state.video.superSources[ssrcId]
+
+							props.artOption =
+								ssrc?.properties?.artOption === SuperSourceArtOption.Background
+									? SuperSourceArtOption.Foreground
+									: SuperSourceArtOption.Background
+						} else if (rawArtOption !== 'unchanged') {
+							props.artOption = getOptNumber(action, 'artOption')
+						}
+
+						executePromise(instance, atem?.setSuperSourceProperties(props, ssrcId))
 					},
 			  })
 			: undefined,

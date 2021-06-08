@@ -190,22 +190,35 @@ export function AtemSuperSourceIdPicker(model: ModelSpec): CompanionInputFieldDr
 		return undefined
 	}
 }
-export function AtemSuperSourceArtOption(): CompanionInputFieldDropdown {
+export function AtemSuperSourceArtOption(action: boolean): CompanionInputFieldDropdown {
+	const options = compact([
+		action
+			? {
+					id: 'unchanged',
+					label: 'Unchanged',
+			  }
+			: undefined,
+		{
+			id: Enums.SuperSourceArtOption.Foreground,
+			label: 'Foreground',
+		},
+		{
+			id: Enums.SuperSourceArtOption.Background,
+			label: 'Background',
+		},
+		action
+			? {
+					id: 'toggle',
+					label: 'Toggle',
+			  }
+			: undefined,
+	])
 	return {
 		type: 'dropdown',
 		id: 'artOption',
 		label: 'Place in',
-		default: 0,
-		choices: [
-			{
-				id: Enums.SuperSourceArtOption.Foreground,
-				label: 'Foreground',
-			},
-			{
-				id: Enums.SuperSourceArtOption.Background,
-				label: 'Background',
-			},
-		],
+		default: options[0].id,
+		choices: options,
 	}
 }
 export function AtemSuperSourcePropertiesPickers(

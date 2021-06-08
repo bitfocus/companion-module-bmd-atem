@@ -558,7 +558,7 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
 		[FeedbackId.SSrcArtSource]: model.SSrc
 			? literal<CompanionFeedbackWithCallback>({
 					type: 'boolean',
-					label: 'SuperSorce: Art fill source',
+					label: 'Supersource: Art fill source',
 					description: 'If the specified SuperSource art fill is set to the specified source, change style of the bank',
 					options: compact([
 						AtemSuperSourceIdPicker(model),
@@ -577,10 +577,10 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
 		[FeedbackId.SSrcArtOption]: model.SSrc
 			? literal<CompanionFeedbackWithCallback>({
 					type: 'boolean',
-					label: 'SuperSorce: Art placement',
+					label: 'Supersource: Art placement',
 					description:
 						'If the specified SuperSource art is placed in the foreground/background, change style of the bank',
-					options: compact([AtemSuperSourceIdPicker(model), AtemSuperSourceArtOption()]),
+					options: compact([AtemSuperSourceIdPicker(model), AtemSuperSourceArtOption(false)]),
 					style: {
 						color: instance.rgb(0, 0, 0),
 						bgcolor: instance.rgb(255, 255, 0),
@@ -594,7 +594,7 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
 		[FeedbackId.SSrcBoxSource]: model.SSrc
 			? literal<CompanionFeedbackWithCallback>({
 					type: 'boolean',
-					label: 'SuperSorce: Box source',
+					label: 'Supersource: Box source',
 					description: 'If the specified SuperSource box is set to the specified source, change style of the bank',
 					options: compact([
 						AtemSuperSourceIdPicker(model),
@@ -614,7 +614,7 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
 		[FeedbackId.SSrcBoxOnAir]: model.SSrc
 			? literal<CompanionFeedbackWithCallback>({
 					type: 'boolean',
-					label: 'SuperSorce: Box state',
+					label: 'Supersource: Box state',
 					description: 'If the specified SuperSource box is enabled, change style of the bank',
 					options: compact([AtemSuperSourceIdPicker(model), AtemSuperSourceBoxPicker()]),
 					style: {
@@ -630,7 +630,7 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
 		[FeedbackId.SSrcBoxProperties]: model.SSrc
 			? literal<CompanionFeedbackWithCallback>({
 					type: 'boolean',
-					label: 'SuperSorce: Box properties',
+					label: 'Supersource: Box properties',
 					description: 'If the specified SuperSource box properties match, change style of the bank',
 					options: compact([
 						AtemSuperSourceIdPicker(model),
