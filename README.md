@@ -23,6 +23,14 @@ To add a new model to the list:
 
 ## Changes
 
+### v2.12.0
+
+- fix supersource art feedbacks
+
+- supersource art action has more flexible placement control
+
+- discover and suggest atems in the instance config panel
+
 ### v2.11.0
 
 - reset audio peaks
