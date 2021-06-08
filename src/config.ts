@@ -1,5 +1,6 @@
 import InstanceSkel = require('../../../instance_skel')
 import { SomeCompanionConfigField } from '../../../instance_skel_types'
+import { AtemMdnsDetector } from './mdns-detector'
 import { ALL_MODEL_CHOICES } from './models'
 
 export const fadeFpsDefault = 10
@@ -30,12 +31,25 @@ export function GetConfigFields(self: InstanceSkel<AtemConfig>): SomeCompanionCo
 				'Devices must be controlled over a network, USB control is NOT supported.',
 		},
 		{
-			type: 'textinput',
+			type: 'dropdown',
 			id: 'host',
 			label: 'Target IP',
 			width: 6,
+			choices: AtemMdnsDetector.listKnown().map((d) => ({
+				id: d.address,
+				label: `${d.address} (${d.modelName})`,
+			})),
+			default: '',
+			allowCustom: true,
 			regex: self.REGEX_IP,
 		},
+		// {
+		// 	type: 'textinput',
+		// 	id: 'host',
+		// 	label: 'Target IP',
+		// 	width: 6,
+		// 	regex: self.REGEX_IP,
+		// },
 		{
 			type: 'dropdown',
 			id: 'modelID',
