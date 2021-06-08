@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+### v2.12.2
+
+- rewrite upgrade scripts to new api
+
 ### v2.12.0
 
 - fix supersource art feedbacks
