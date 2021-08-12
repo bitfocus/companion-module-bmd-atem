@@ -1,6 +1,6 @@
 import InstanceSkel = require('../../../instance_skel')
 import { SomeCompanionConfigField } from '../../../instance_skel_types'
-import { AtemMdnsDetector } from './mdns-detector'
+import { AtemMdnsDetectorInstance } from './mdns-detector'
 import { ALL_MODEL_CHOICES } from './models'
 
 export const fadeFpsDefault = 10
@@ -35,7 +35,7 @@ export function GetConfigFields(self: InstanceSkel<AtemConfig>): SomeCompanionCo
 			id: 'host',
 			label: 'Target IP',
 			width: 6,
-			choices: AtemMdnsDetector.listKnown().map((d) => ({
+			choices: AtemMdnsDetectorInstance.listKnown().map((d) => ({
 				id: d.address,
 				label: `${d.address} (${d.modelName})`,
 			})),

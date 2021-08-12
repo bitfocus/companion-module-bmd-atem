@@ -27,7 +27,7 @@ import { AtemTransitions } from './transitions'
 
 // eslint-disable-next-line node/no-extraneous-import
 import { ThreadedClassManager, RegisterExitHandlers } from 'threadedclass'
-import { AtemMdnsDetector } from './mdns-detector'
+import { AtemMdnsDetectorInstance } from './mdns-detector'
 
 // HACK: This stops it from registering an unhandledException handler, as that causes companion to exit on error
 ThreadedClassManager.handleExit = RegisterExitHandlers.NO
@@ -84,7 +84,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 		this.isActive = true
 		this.status(this.STATUS_UNKNOWN)
 
-		AtemMdnsDetector.subscribe(this.id)
+		AtemMdnsDetectorInstance.subscribe(this.id)
 
 		// Unfortunately this is redundant if the switcher goes
 		// online right away, but necessary for offline programming
@@ -135,7 +135,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 	public destroy(): void {
 		this.isActive = false
 
-		AtemMdnsDetector.unsubscribe(this.id)
+		AtemMdnsDetectorInstance.unsubscribe(this.id)
 
 		this.atemTransitions.stopAll()
 

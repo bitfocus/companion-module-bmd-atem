@@ -11,49 +11,36 @@ export interface AtemInfo {
 
 const SERVICE_NAME = '_blackmagic._tcp.local'
 
-export class AtemMdnsDetector {
-	private static instance: AtemMdnsDetector | undefined
+export interface AtemMdnsDetector {
+	subscribe(instanceId: string): void
+	unsubscribe(instanceId: string): void
+	listKnown(): AtemInfo[]
+}
 
+class AtemMdnsDetectorImpl implements AtemMdnsDetector {
 	private readonly subscribers = new Set<string>()
 	private mdns: mDNS.MulticastDNS | undefined
 	private knownAtems = new Map<string, AtemInfo>()
 	private queryTimer: NodeJS.Timer | undefined
 
-	private constructor() {
-		// Just needs to be private
-	}
+	public subscribe(instanceId: string): void {
+		const startListening = this.subscribers.size === 0
 
-	public static subscribe(instanceId: string): void {
-		if (!AtemMdnsDetector.instance) {
-			AtemMdnsDetector.instance = new AtemMdnsDetector()
-		}
-
-		const instance = AtemMdnsDetector.instance
-		const startListening = instance.subscribers.size === 0
-
-		instance.subscribers.add(instanceId)
+		this.subscribers.add(instanceId)
 
 		if (startListening) {
-			instance.startListening()
+			this.startListening()
 		}
 	}
 
-	public static unsubscribe(instanceId: string): void {
-		const instance = AtemMdnsDetector.instance
-		if (instance) {
-			if (instance.subscribers.delete(instanceId) && instance.subscribers.size === 0) {
-				instance.stopListening()
-			}
+	public unsubscribe(instanceId: string): void {
+		if (this.subscribers.delete(instanceId) && this.subscribers.size === 0) {
+			this.stopListening()
 		}
 	}
 
-	public static listKnown(): AtemInfo[] {
-		const data = AtemMdnsDetector.instance?.knownAtems
-		if (data) {
-			return Array.from(data.values()).sort((a, b) => a.modelName.localeCompare(b.modelName))
-		} else {
-			return []
-		}
+	public listKnown(): AtemInfo[] {
+		return Array.from(this.knownAtems.values()).sort((a, b) => a.modelName.localeCompare(b.modelName))
 	}
 
 	private startListening(): void {
@@ -122,3 +109,5 @@ export class AtemMdnsDetector {
 		}
 	}
 }
+
+export const AtemMdnsDetectorInstance: AtemMdnsDetector = new AtemMdnsDetectorImpl()
