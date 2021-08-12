@@ -23,6 +23,14 @@ To add a new model to the list:
 
 ## Changes
 
+### v2.13.0
+
+- duration variables have a ms variant
+
+- save and clear startup state actions
+
+- variables for supersource box inputs
+
 ### v2.12.2
 
 - rewrite upgrade scripts to new api
