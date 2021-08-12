@@ -4,7 +4,7 @@ import { CompanionVariable } from '../../../instance_skel_types'
 import { GetSourcesListForType, SourceInfo } from './choices'
 import { AtemConfig, PresetStyleName } from './config'
 import { ModelSpec } from './models'
-import { getDSK, getMixEffect, getUSK } from './state'
+import { getDSK, getMixEffect, getSuperSourceBox, getUSK } from './state'
 import { pad } from './util'
 import { Timecode } from 'atem-connection/dist/state/common'
 
@@ -137,12 +137,21 @@ export function updateRecordingVariables(instance: InstanceSkel<AtemConfig>, sta
 	const durations = formatDuration(state.recording?.duration)
 	const remaining = formatDurationSeconds(state.recording?.status?.recordingTimeAvailable)
 
-	instance.setVariable(`record_duration_hm`, durations.hm)
-	instance.setVariable(`record_duration_hms`, durations.hms)
-	instance.setVariable(`record_duration_ms`, durations.ms)
-	instance.setVariable(`record_remaining_hm`, remaining.hm)
-	instance.setVariable(`record_remaining_hms`, remaining.hms)
-	instance.setVariable(`record_remaining_ms`, remaining.ms)
+	instance.setVariables({
+		record_duration_hm: durations.hm,
+		record_duration_hms: durations.hms,
+		record_duration_ms: durations.ms,
+		record_remaining_hm: remaining.hm,
+		record_remaining_hms: remaining.hms,
+		record_remaining_ms: remaining.ms,
+	})
+}
+
+export function updateSuperSourceVariables(instance: InstanceSkel<AtemConfig>, state: AtemState, i: number): void {
+	for (let b = 1; b <= 4; b++) {
+		const input = getSuperSourceBox(state, b, i)?.source ?? 0
+		instance.setVariable(`ssrc${i}_box${b}_source`, getSourcePresetName(instance, state, input))
+	}
 }
 
 export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState): void {
@@ -295,6 +304,18 @@ export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSp
 		})
 
 		updateRecordingVariables(instance, state)
+	}
+
+	// Supersource
+	for (let i = 1; i <= model.SSrc; i++) {
+		for (let b = 1; b <= 4; b++) {
+			variables.push({
+				label: `Supersource ${i} Box ${b} source`,
+				name: `ssrc${i}_box${b}_source`,
+			})
+		}
+
+		updateSuperSourceVariables(instance, state, i)
 	}
 
 	instance.setVariableDefinitions(variables)

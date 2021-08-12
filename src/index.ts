@@ -20,6 +20,7 @@ import {
 	updateStreamingVariables,
 	updateRecordingVariables,
 	updateAuxVariable,
+	updateSuperSourceVariables,
 } from './variables'
 import { AtemCommandBatching } from './batching'
 import { executePromise } from './util'
@@ -269,8 +270,10 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 				return
 			}
 
-			if (path.match(/video.superSources.(\d+).boxes.(\d+)/)) {
+			const ssrcBoxMatch = path.match(/video.superSources.(\d+).boxes.(\d+)/)
+			if (ssrcBoxMatch) {
 				this.checkFeedbacks(FeedbackId.SSrcBoxSource, FeedbackId.SSrcBoxOnAir, FeedbackId.SSrcBoxProperties)
+				updateSuperSourceVariables(this, this.atemState, parseInt(ssrcBoxMatch[1], 10))
 				return
 			}
 			if (path.match(/video.superSources.(\d+).properties/)) {
