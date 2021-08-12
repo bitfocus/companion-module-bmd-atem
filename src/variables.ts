@@ -148,9 +148,9 @@ export function updateRecordingVariables(instance: InstanceSkel<AtemConfig>, sta
 }
 
 export function updateSuperSourceVariables(instance: InstanceSkel<AtemConfig>, state: AtemState, i: number): void {
-	for (let b = 1; b <= 4; b++) {
+	for (let b = 0; b < 4; b++) {
 		const input = getSuperSourceBox(state, b, i)?.source ?? 0
-		instance.setVariable(`ssrc${i}_box${b}_source`, getSourcePresetName(instance, state, input))
+		instance.setVariable(`ssrc${i + 1}_box${b + 1}_source`, getSourcePresetName(instance, state, input))
 	}
 }
 
@@ -307,11 +307,11 @@ export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSp
 	}
 
 	// Supersource
-	for (let i = 1; i <= model.SSrc; i++) {
-		for (let b = 1; b <= 4; b++) {
+	for (let i = 0; i < model.SSrc; i++) {
+		for (let b = 0; b < 4; b++) {
 			variables.push({
-				label: `Supersource ${i} Box ${b} source`,
-				name: `ssrc${i}_box${b}_source`,
+				label: `Supersource ${i + 1} Box ${b + 1} source`,
+				name: `ssrc${i + 1}_box${b + 1}_source`,
 			})
 		}
 

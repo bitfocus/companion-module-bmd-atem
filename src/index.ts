@@ -272,6 +272,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
 			const ssrcBoxMatch = path.match(/video.superSources.(\d+).boxes.(\d+)/)
 			if (ssrcBoxMatch) {
+				console.log('update ssrc', ssrcBoxMatch[1])
 				this.checkFeedbacks(FeedbackId.SSrcBoxSource, FeedbackId.SSrcBoxOnAir, FeedbackId.SSrcBoxProperties)
 				updateSuperSourceVariables(this, this.atemState, parseInt(ssrcBoxMatch[1], 10))
 				return
