@@ -54,18 +54,28 @@ class AtemMdnsDetectorImpl implements AtemMdnsDetector {
 			const answer = allRecords.find((p) => p.type === 'PTR' && p.name === SERVICE_NAME)
 			if (answer) {
 				const aRec = allRecords.find((p) => p.type === 'A')
-				if (aRec && typeof aRec.data === 'string') {
-					let name = answer.data.toString()
-					if (name.endsWith(SERVICE_NAME)) {
-						name = name.substr(0, name.length - 1 - SERVICE_NAME.length)
-					}
+				const txtRec = allRecords.find((p) => p.type === 'TXT')
+				if (aRec && txtRec && typeof aRec.data === 'string' && Array.isArray(txtRec.data)) {
+					const lines = txtRec.data.map((r) => r.toString())
+					if (lines.find((l) => l === 'class=AtemSwitcher')) {
+						const nameLine = lines.find((l) => l.startsWith('name='))
+						let name: string
+						if (nameLine) {
+							name = nameLine.substr(5)
+						} else {
+							name = answer.data.toString()
+							if (name.endsWith(SERVICE_NAME)) {
+								name = name.substr(0, name.length - 1 - SERVICE_NAME.length)
+							}
+						}
 
-					debug(`Heard from ${name} (${aRec.data})`)
-					this.knownAtems.set(aRec.data, {
-						address: aRec.data,
-						modelName: name,
-						lastSeen: Date.now(),
-					})
+						debug(`Heard from ${name} (${aRec.data})`)
+						this.knownAtems.set(aRec.data, {
+							address: aRec.data,
+							modelName: name,
+							lastSeen: Date.now(),
+						})
+					}
 				}
 			}
 
