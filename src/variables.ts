@@ -88,18 +88,20 @@ function updateInputVariables(instance: InstanceSkel<AtemConfig>, src: SourceInf
 	instance.setVariable(`short_${src.id}`, src.shortName)
 }
 
-function formatDuration(durationObj: Timecode | undefined): [string, string] {
-	let durationLong = '00:00:00'
-	let durationShort = '00:00'
+function formatDuration(durationObj: Timecode | undefined): { hms: string; hm: string; ms: string } {
+	let durationHMS = '00:00:00'
+	let durationHM = '00:00'
+	let durationMS = '00:00'
 
 	if (durationObj) {
-		durationShort = `${pad(`${durationObj.hours}`, '0', 2)}:${pad(`${durationObj.minutes}`, '0', 2)}`
-		durationLong = `${durationShort}:${pad(`${durationObj.seconds}`, '0', 2)}`
+		durationHM = `${pad(`${durationObj.hours}`, '0', 2)}:${pad(`${durationObj.minutes}`, '0', 2)}`
+		durationHMS = `${durationHM}:${pad(`${durationObj.seconds}`, '0', 2)}`
+		durationMS = `${durationObj.hours * 60 + durationObj.minutes}:${pad(`${durationObj.seconds}`, '0', 2)}`
 	}
 
-	return [durationShort, durationLong]
+	return { hm: durationHM, hms: durationHMS, ms: durationMS }
 }
-function formatDurationSeconds(totalSeconds: number | undefined): [string, string] {
+function formatDurationSeconds(totalSeconds: number | undefined): { hms: string; hm: string; ms: string } {
 	let timecode: Timecode | undefined
 
 	if (totalSeconds) {
@@ -126,18 +128,21 @@ export function updateStreamingVariables(instance: InstanceSkel<AtemConfig>, sta
 	const durations = formatDuration(state.streaming?.duration)
 
 	instance.setVariable(`stream_bitrate`, bitrate.toFixed(2))
-	instance.setVariable(`stream_duration_hm`, durations[0])
-	instance.setVariable(`stream_duration_hms`, durations[1])
+	instance.setVariable(`stream_duration_hm`, durations.hm)
+	instance.setVariable(`stream_duration_hms`, durations.hms)
+	instance.setVariable(`stream_duration_ms`, durations.ms)
 }
 
 export function updateRecordingVariables(instance: InstanceSkel<AtemConfig>, state: AtemState): void {
 	const durations = formatDuration(state.recording?.duration)
 	const remaining = formatDurationSeconds(state.recording?.status?.recordingTimeAvailable)
 
-	instance.setVariable(`record_duration_hm`, durations[0])
-	instance.setVariable(`record_duration_hms`, durations[1])
-	instance.setVariable(`record_remaining_hm`, remaining[0])
-	instance.setVariable(`record_remaining_hms`, remaining[1])
+	instance.setVariable(`record_duration_hm`, durations.hm)
+	instance.setVariable(`record_duration_hms`, durations.hms)
+	instance.setVariable(`record_duration_ms`, durations.ms)
+	instance.setVariable(`record_remaining_hm`, remaining.hm)
+	instance.setVariable(`record_remaining_hms`, remaining.hms)
+	instance.setVariable(`record_remaining_ms`, remaining.ms)
 }
 
 export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState): void {
@@ -254,6 +259,10 @@ export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSp
 			label: 'Streaming duration (hh:mm:ss)',
 			name: 'stream_duration_hms',
 		})
+		variables.push({
+			label: 'Streaming duration (mm:ss)',
+			name: 'stream_duration_ms',
+		})
 
 		updateStreamingVariables(instance, state)
 	}
@@ -268,12 +277,21 @@ export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSp
 			name: 'record_duration_hms',
 		})
 		variables.push({
+			label: 'Recording duration (mm:ss)',
+			name: 'record_duration_ms',
+		})
+
+		variables.push({
 			label: 'Recording time remaining (hh:mm)',
 			name: 'record_remaining_hm',
 		})
 		variables.push({
 			label: 'Recording time remaining (hh:mm:ss)',
 			name: 'record_remaining_hms',
+		})
+		variables.push({
+			label: 'Recording time remaining (mm:ss)',
+			name: 'record_remaining_ms',
 		})
 
 		updateRecordingVariables(instance, state)
