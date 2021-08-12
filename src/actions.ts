@@ -99,6 +99,8 @@ export enum ActionId {
 	FairlightAudioMixOption = 'fairlightAudioMixOption',
 	FairlightAudioResetPeaks = 'fairlightAudioResetPeaks',
 	FairlightAudioResetSourcePeaks = 'fairlightAudioResetSourcePeaks',
+	SaveStartupState = 'saveStartupState',
+	ClearStartupState = 'clearStartupState',
 }
 
 type CompanionActionExt = CompanionAction & Required<Pick<CompanionAction, 'callback'>>
@@ -1337,6 +1339,20 @@ export function GetActionsList(
 					},
 			  })
 			: undefined,
+		[ActionId.SaveStartupState]: literal<CompanionActionExt>({
+			label: 'Startup State: Save',
+			options: [],
+			callback: (): void => {
+				executePromise(instance, atem?.saveStartupState())
+			},
+		}),
+		[ActionId.ClearStartupState]: literal<CompanionActionExt>({
+			label: 'Startup State: Clear',
+			options: [],
+			callback: (): void => {
+				executePromise(instance, atem?.clearStartupState())
+			},
+		}),
 	}
 
 	return actions
