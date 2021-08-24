@@ -1231,7 +1231,7 @@ export function GetActionsList(
 		...audioActions(instance, atem, model, transitions, state),
 		[ActionId.Aux]: model.auxes
 			? literal<CompanionActionExt>({
-					label: 'Aux/Outut: Set source',
+					label: 'Aux/Output: Set source',
 					options: [AtemAuxPicker(model), AtemAuxSourcePicker(model, state)],
 					callback: (action): void => {
 						executePromise(instance, atem?.setAuxSource(getOptNumber(action, 'input'), getOptNumber(action, 'aux')))
