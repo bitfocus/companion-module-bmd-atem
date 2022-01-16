@@ -15,11 +15,13 @@
 	"homepage": "https://github.com/bitfocus/companion-module-atem#readme",
 	"main": "dist/index.js",
 	"scripts": {
+		"prepare": "husky install",
 		"dev": "yarn build:watch",
-		"build": "npx rimraf dist && npx typescript@~4.3 -p tsconfig.build.json",
+		"build": "npx rimraf dist && npx typescript@~4.5 -p tsconfig.build.json",
 		"build:main": "tsc -p tsconfig.build.json",
 		"build:watch": "tsc -p tsconfig.build.json --watch",
-		"lint": "eslint . --ext .ts --ext .js --ignore-pattern dist",
+		"lint:raw": "eslint --ext .ts --ext .js --ignore-pattern dist",
+		"lint": "yarn lint:raw .",
 		"lint-fix": "yarn lint --fix",
 		"license-validate": "yarn sofie-licensecheck",
 		"postinstall": "yarn build"
@@ -44,22 +46,22 @@
 			"prettier --write"
 		],
 		"*.{ts,tsx,js,jsx}": [
-			"yarn lint-fix"
+			"yarn lint:raw --fix"
 		]
 	},
 	"engines": {
-		"node": "^12.14 || 14"
+		"node": "^14"
 	},
 	"dependencies": {
 		"@types/multicast-dns": "^7.2.1",
-		"@types/node": "^12.20.19",
+		"@types/node": "^14.18.4",
 		"atem-connection": "3.0.0-nightly-latest-20210530-132658-16c3cdd.0",
 		"multicast-dns": "^7.2.3",
-		"type-fest": "^1.4.0"
+		"type-fest": "^2.9.0"
 	},
 	"devDependencies": {
-		"@sofie-automation/code-standard-preset": "^0.4.2",
+		"@sofie-automation/code-standard-preset": "^0.5.1",
 		"ts-node": "^9.1.1",
-		"typescript": "~4.3"
+		"typescript": "~4.5"
 	}
 }
