@@ -1,5 +1,7 @@
 import debug0 = require('debug')
 import mDNS = require('multicast-dns')
+// eslint-disable-next-line node/no-extraneous-import
+import { TxtAnswer, StringAnswer } from 'dns-packet'
 
 const debug = debug0('bmd-atem/mdns')
 
@@ -51,10 +53,10 @@ class AtemMdnsDetectorImpl implements AtemMdnsDetector {
 
 		this.mdns.on('response', (pkt) => {
 			const allRecords = [...pkt.answers, ...pkt.additionals]
-			const answer = allRecords.find((p) => p.type === 'PTR' && p.name === SERVICE_NAME)
+			const answer = allRecords.find((p): p is StringAnswer => p.type === 'PTR' && p.name === SERVICE_NAME)
 			if (answer) {
-				const aRec = allRecords.find((p) => p.type === 'A')
-				const txtRec = allRecords.find((p) => p.type === 'TXT')
+				const aRec = allRecords.find((p): p is StringAnswer => p.type === 'A')
+				const txtRec = allRecords.find((p): p is TxtAnswer => p.type === 'TXT')
 				if (aRec && txtRec && typeof aRec.data === 'string' && Array.isArray(txtRec.data)) {
 					const lines = txtRec.data.map((r) => r.toString())
 					if (lines.find((l) => l === 'class=AtemSwitcher')) {
