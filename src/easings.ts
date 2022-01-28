@@ -19,7 +19,7 @@ export namespace Easing {
 		 * @param {number} k - The value to be tweened.
 		 * @returns {number} k^2.
 		 */
-		static None(k: number): number {
+		static None(this: void, k: number): number {
 			return k
 		}
 	}

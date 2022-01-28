@@ -326,7 +326,7 @@ function meActions(
 					let batch = commandBatching.meTransitionSelection.get(me)
 					if (!batch) {
 						batch = new CommandBatching(
-							(newVal) =>
+							async (newVal) =>
 								atem.setTransitionStyle(
 									{
 										nextSelection: newVal,
