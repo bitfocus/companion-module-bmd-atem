@@ -1,5 +1,5 @@
 {
-	"name": "bmd-atem",
+	"name": "@companion-module/bmd-atem",
 	"legacy": [
 		"atem"
 	],
