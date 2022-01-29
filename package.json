@@ -3,7 +3,7 @@
 	"legacy": [
 		"atem"
 	],
-	"version": "2.13.1",
+	"version": "2.13.2-1",
 	"api_version": "1.0.0",
 	"description": "Blackmagic Design",
 	"keywords": [
@@ -46,6 +46,10 @@
 	"engines": {
 		"node": "^14 || ^16"
 	},
+	"files": [
+		"dist",
+		"*.md"
+	],
 	"dependencies": {
 		"@types/multicast-dns": "^7.2.1",
 		"@types/node": "^14.18.9",
