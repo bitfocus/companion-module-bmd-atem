@@ -1,5 +1,5 @@
 {
-	"name": "@bitfocus/companion-module-bmd-atem",
+	"name": "bmd-atem",
 	"legacy": [
 		"atem"
 	],

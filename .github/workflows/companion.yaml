@@ -1,9 +1,15 @@
 name: Build binaries
-on: [push]
+on:
+  push:
+    # run for all pushed semver tags
+    tags:
+      - v*
 
 jobs:
   build:
     name: Build
-    uses: bitfocus/companion-module-bmd-atem/.github/workflows/template.yaml@feat/package-publish
+    uses: bitfocus/companion-module-publisher/.github/workflows/module-template.yaml@main
+    with:
+      tagName: ${GITHUB_REF_NAME}
     secrets:
-      PUBLISH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      ACCESS_TOKEN: ${{ secrets.MODULE_PUBLISH_SECRET }}
