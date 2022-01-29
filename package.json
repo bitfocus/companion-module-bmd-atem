@@ -1,5 +1,5 @@
 {
-	"name": "bmd-atem",
+	"name": "@bitfocus/companion-module-bmd-atem",
 	"legacy": [
 		"atem"
 	],
@@ -12,28 +12,27 @@
 	"manufacturer": "Blackmagic Design",
 	"product": "ATEM",
 	"shortname": "atem",
-	"homepage": "https://github.com/bitfocus/companion-module-atem#readme",
+	"homepage": "https://github.com/bitfocus/companion-module-bmd-atem#readme",
 	"main": "dist/index.js",
 	"scripts": {
 		"prepare": "husky install",
 		"dev": "yarn build:watch",
-		"build": "npx rimraf dist && npx typescript@~4.5 -p tsconfig.build.json",
+		"build": "rimraf dist && tsc -p tsconfig.build.json",
 		"build:main": "tsc -p tsconfig.build.json",
 		"build:watch": "tsc -p tsconfig.build.json --watch",
 		"lint:raw": "eslint --ext .ts --ext .js --ignore-pattern dist",
 		"lint": "yarn lint:raw .",
 		"lint-fix": "yarn lint --fix",
-		"license-validate": "yarn sofie-licensecheck",
-		"postinstall": "yarn build"
+		"license-validate": "yarn sofie-licensecheck"
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/bitfocus/companion-module-atem.git"
+		"url": "git+https://github.com/bitfocus/companion-module-bmd-atem.git"
 	},
 	"author": "Julian Waller <julian@superfly.tv>",
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/bitfocus/companion-module-atem/issues"
+		"url": "https://github.com/bitfocus/companion-module-bmd-atem/issues"
 	},
 	"prettier": "@sofie-automation/code-standard-preset/.prettierrc.json",
 	"lint-staged": {
@@ -51,11 +50,14 @@
 		"@types/multicast-dns": "^7.2.1",
 		"@types/node": "^14.18.9",
 		"atem-connection": "3.0.0-nightly-latest-20210530-132658-16c3cdd.0",
+		"debug": "^4.3.3",
 		"multicast-dns": "^7.2.3",
 		"type-fest": "^2.11.0"
 	},
 	"devDependencies": {
 		"@sofie-automation/code-standard-preset": "^1.1.0",
+		"@types/debug": "^4.1.7",
+		"rimraf": "^3.0.2",
 		"ts-node": "^10.4.0",
 		"typescript": "~4.5"
 	}

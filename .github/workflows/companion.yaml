@@ -1,0 +1,9 @@
+name: Build binaries
+on: [push]
+
+jobs:
+  build:
+    name: Build
+    uses: bitfocus/companion-module-bmd-atem/.github/workflows/template.yaml@feat/package-publish
+    secrets:
+      PUBLISH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

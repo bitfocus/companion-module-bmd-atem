@@ -1,0 +1,43 @@
+name: Companion Module Template
+on:
+  workflow_call:
+    # inputs:
+    #   run_lint:
+    #     required: true
+    #     type: boolean
+    secrets:
+      PUBLISH_TOKEN:
+        required: true
+
+env:
+  NODE_VERSION: 14
+
+jobs:
+  build:
+    name: Module Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: 'https://npm.pkg.github.com'
+          always-auth: true
+          scope: bitfocus
+      - name: Install dependencies
+        run: |
+          yarn
+
+          # fetch the latest type definitions for imports it may rely on
+          wget https://raw.githubusercontent.com/bitfocus/companion/master/instance_skel.d.ts -O ../../instance_skel.d.ts
+          wget https://raw.githubusercontent.com/bitfocus/companion/master/instance_skel_types.d.ts -O ../../instance_skel_types.d.ts
+      # - name: Validate the release
+      #   run: |
+      #     npm install -g semver
+      #     npx zx https://raw.githubusercontent.com/bitfocus/companion-module-bmd-atem/feat/package-publish/validate.mjs
+      - name: Build module
+        run: yarn build
+      - run: yarn publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
