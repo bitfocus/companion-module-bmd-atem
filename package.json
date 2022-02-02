@@ -28,12 +28,12 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/bitfocus/companion-module-atem.git"
+		"url": "git+https://github.com/bitfocus/companion-module-bmd-atem.git"
 	},
 	"author": "Julian Waller <julian@superfly.tv>",
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/bitfocus/companion-module-atem/issues"
+		"url": "https://github.com/bitfocus/companion-module-bmd-atem/issues"
 	},
 	"prettier": "@sofie-automation/code-standard-preset/.prettierrc.json",
 	"lint-staged": {
