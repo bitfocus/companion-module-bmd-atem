@@ -1,4 +1,4 @@
-import { Atem, AtemState, Enums, VideoState } from 'atem-connection'
+import { Atem, AtemState, Enums, InputState, VideoState } from 'atem-connection'
 import InstanceSkel = require('../../../instance_skel')
 import { CompanionAction, CompanionActionEvent, CompanionActions } from '../../../instance_skel_types'
 import {
@@ -38,6 +38,7 @@ import {
 	FaderLevelDeltaChoice,
 	AtemSuperSourceArtSourcePicker,
 	AtemSuperSourceArtOption,
+	AtemAllSourcePicker,
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getSuperSourceBox, getUSK, getTransitionProperties, getMediaPlayer } from './state'
@@ -101,6 +102,7 @@ export enum ActionId {
 	FairlightAudioResetSourcePeaks = 'fairlightAudioResetSourcePeaks',
 	SaveStartupState = 'saveStartupState',
 	ClearStartupState = 'clearStartupState',
+	InputName = 'inputName',
 }
 
 type CompanionActionExt = CompanionAction & Required<Pick<CompanionAction, 'callback'>>
@@ -1351,6 +1353,61 @@ export function GetActionsList(
 			options: [],
 			callback: (): void => {
 				executePromise(instance, atem?.clearStartupState())
+			},
+		}),
+		[ActionId.InputName]: literal<CompanionActionExt>({
+			label: 'Input: Set name',
+			options: [
+				AtemAllSourcePicker(model, state),
+				{
+					id: 'short_enable',
+					label: 'Set short name',
+					type: 'checkbox',
+					default: true,
+				},
+				{
+					id: 'short_value',
+					label: 'Short name',
+					type: 'textwithvariables',
+					default: '',
+					tooltip: 'Max 4 characters. Supports variables',
+				},
+				{
+					id: 'long_enable',
+					label: 'Set long name',
+					type: 'checkbox',
+					default: true,
+				},
+				{
+					id: 'long_value',
+					label: 'Long name',
+					type: 'textwithvariables',
+					default: '',
+					tooltip: 'Max 24 characters. Supports variables',
+				},
+			],
+			callback: (action): void => {
+				const source = getOptNumber(action, 'source')
+				const setShort = getOptBool(action, 'short_enable')
+				const setLong = getOptBool(action, 'long_enable')
+
+				const newProps: Partial<Pick<InputState.InputChannel, 'longName' | 'shortName'>> = {}
+				if (setShort && typeof action.options.short_value === 'string') {
+					const rawVal = action.options.short_value
+					instance.parseVariables(rawVal, (val) => (newProps.shortName = val ?? rawVal))
+				}
+				if (setLong && typeof action.options.long_value === 'string') {
+					const rawVal = action.options.long_value
+					instance.parseVariables(rawVal, (val) => (newProps.longName = val ?? rawVal))
+				}
+
+				executePromise(
+					instance,
+					Promise.all([
+						newProps.longName ? atem?.drawMultiviewerLabel(source, newProps.longName) : undefined,
+						Object.keys(newProps).length ? atem?.setInputSettings(newProps, source) : undefined,
+					])
+				)
 			},
 		}),
 	}

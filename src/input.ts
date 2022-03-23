@@ -508,3 +508,13 @@ export const FaderLevelDeltaChoice: CompanionInputFieldNumber = {
 	max: 100,
 	min: -100,
 }
+
+export function AtemAllSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
+	return {
+		type: 'dropdown',
+		id: 'source',
+		label: 'Source',
+		default: 0,
+		choices: SourcesToChoices(GetSourcesListForType(model, state)),
+	}
+}
