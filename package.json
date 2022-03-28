@@ -50,7 +50,7 @@
 	"dependencies": {
 		"@types/multicast-dns": "^7.2.1",
 		"@types/node": "^14.18.12",
-		"atem-connection": "3.0.0-nightly-feat-multiview-labels-20220323-224359-f8b44bf.0",
+		"atem-connection": "3.0.0-nightly-feat-multiview-labels-20220328-222818-46e175f.0",
 		"multicast-dns": "^7.2.3",
 		"type-fest": "^2.12.1"
 	},
