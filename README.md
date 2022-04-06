@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+### v2.14.0
+
+- set input names (both text and multiviewer)
+
 ### v2.13.0
 
 - duration variables have a ms variant
