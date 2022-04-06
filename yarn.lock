@@ -364,10 +364,10 @@ astral-regex@^2.0.0:
   resolved "https://registry.yarnpkg.com/astral-regex/-/astral-regex-2.0.0.tgz#483143c567aeed4785759c0865786dc77d7d2e31"
   integrity sha512-Z7tMw1ytTXt5jqMcOP+OQteU1VuNK9Y02uuJtKQ1Sv69jXQKKg5cibLwGJow8yzZP+eAc18EmLGPal0bp36rvQ==
 
-atem-connection@3.0.0-nightly-feat-multiview-labels-20220328-222818-46e175f.0:
-  version "3.0.0-nightly-feat-multiview-labels-20220328-222818-46e175f.0"
-  resolved "https://registry.yarnpkg.com/atem-connection/-/atem-connection-3.0.0-nightly-feat-multiview-labels-20220328-222818-46e175f.0.tgz#2d6214912aec94fe6ef89af6bfd1e4a3200ca904"
-  integrity sha512-TzXyK5v5xYFy7shsfyf4Zfxy3YSIVIsFvHALV9z+cz6gDUJ7UECZGP50V8+U+pW/xyN0GcFkPtr01/L5q85/9Q==
+atem-connection@3.0.0-nightly-latest-20220406-175751-daa0a0e.0:
+  version "3.0.0-nightly-latest-20220406-175751-daa0a0e.0"
+  resolved "https://registry.yarnpkg.com/atem-connection/-/atem-connection-3.0.0-nightly-latest-20220406-175751-daa0a0e.0.tgz#32c6214fe30a7affd25734972f19aefac4595cbd"
+  integrity sha512-sgLeSPXhw1abRNzCCp59ZMl3Z+W85Chx59U7tEtSm/6bI50TnBc2Z+kUvNu3+2eMlydQjvxRP6mlIVvYy2C1Uw==
   dependencies:
     debug "^4.3.4"
     eventemitter3 "^4.0.7"
