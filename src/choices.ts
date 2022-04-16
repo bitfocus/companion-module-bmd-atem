@@ -22,6 +22,31 @@ export const CHOICES_KEYTRANS: DropdownChoice[] = [
 	{ id: 'toggle', label: 'Toggle' },
 ]
 
+export const CHOICES_KEYFRAMES: DropdownChoice[] = [
+	{ id: Enums.FlyKeyKeyFrame.A, label: 'A' },
+	{ id: Enums.FlyKeyKeyFrame.B, label: 'B' },
+	{ id: Enums.FlyKeyKeyFrame.Full, label: 'Full' },
+]
+
+export const CHOICES_CURRENTKEYFRAMES: DropdownChoice[] = [
+	{ id: Enums.IsAtKeyFrame.A, label: 'A' },
+	{ id: Enums.IsAtKeyFrame.B, label: 'B' },
+	{ id: Enums.IsAtKeyFrame.RunToInfinite, label: 'Full / Infinite' },
+]
+
+export const CHOICES_FLYDIRECTIONS: DropdownChoice[] = [
+	{ id: Enums.FlyKeyDirection.CentreOfKey, label: 'Centre of key' },
+	{ id: Enums.FlyKeyDirection.TopLeft, label: 'Top left' },
+	{ id: Enums.FlyKeyDirection.TopCentre, label: 'Top centre' },
+	{ id: Enums.FlyKeyDirection.TopRight, label: 'Top right' },
+	{ id: Enums.FlyKeyDirection.MiddleLeft, label: 'Middle left' },
+	{ id: Enums.FlyKeyDirection.MiddleCentre, label: 'Middle centre' },
+	{ id: Enums.FlyKeyDirection.MiddleRight, label: 'Middle right' },
+	{ id: Enums.FlyKeyDirection.BottomLeft, label: 'Bottom left' },
+	{ id: Enums.FlyKeyDirection.BottomCentre, label: 'Bottom centre' },
+	{ id: Enums.FlyKeyDirection.BottomRight, label: 'Bottom right' },
+]
+
 export const CHOICES_CLASSIC_AUDIO_MIX_OPTION: DropdownChoice[] = [
 	{
 		id: Enums.AudioMixOption.On,

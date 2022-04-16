@@ -9,7 +9,12 @@ import {
 	CompanionFeedbackAdvanced,
 	CompanionFeedbackBoolean,
 } from '../../../instance_skel_types'
-import { CHOICES_CLASSIC_AUDIO_MIX_OPTION, CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION, GetMacroChoices } from './choices'
+import {
+	CHOICES_CLASSIC_AUDIO_MIX_OPTION,
+	CHOICES_CURRENTKEYFRAMES,
+	CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION,
+	GetMacroChoices,
+} from './choices'
 import { AtemConfig } from './config'
 import {
 	AtemAuxPicker,
@@ -66,6 +71,7 @@ export enum FeedbackId {
 	AuxBG = 'aux_bg',
 	USKOnAir = 'usk_bg',
 	USKSource = 'usk_source',
+	USKKeyFrame = 'usk_keyframe',
 	DSKOnAir = 'dsk_bg',
 	DSKTie = 'dskTie',
 	DSKSource = 'dsk_source',
@@ -392,6 +398,32 @@ function uskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
 					callback: (evt: CompanionFeedbackEvent): boolean => {
 						const usk = getUSK(state, evt.options.mixeffect, evt.options.key)
 						return usk?.fillSource === Number(evt.options.fill)
+					},
+			  })
+			: undefined,
+		[FeedbackId.USKKeyFrame]: model.USKs
+			? literal<CompanionFeedbackWithCallback>({
+					type: 'boolean',
+					label: 'Upstream key: Key frame',
+					description: 'If the USK specified is at the Key Frame specified, change style of the bank',
+					options: [
+						AtemMEPicker(model, 0),
+						AtemUSKPicker(model),
+						{
+							type: 'dropdown',
+							id: 'keyframe',
+							label: 'Key Frame',
+							choices: CHOICES_CURRENTKEYFRAMES,
+							default: CHOICES_CURRENTKEYFRAMES[0].id,
+						},
+					],
+					style: {
+						color: instance.rgb(0, 0, 0),
+						bgcolor: instance.rgb(238, 238, 0),
+					},
+					callback: (evt: CompanionFeedbackEvent): boolean => {
+						const usk = getUSK(state, evt.options.mixeffect, evt.options.key)
+						return usk?.flyProperties?.isAtKeyFrame === Number(evt.options.keyframe)
 					},
 			  })
 			: undefined,
