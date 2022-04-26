@@ -21,6 +21,9 @@ import { ModelSpecMiniProISO } from './miniproiso'
 import { ModelId, ModelSpec, MODEL_AUTO_DETECT } from './types'
 import { ModelSpecMiniExtreme } from './miniextreme'
 import { ModelSpecMiniExtremeISO } from './miniextremeiso'
+import { ModelSpecConstellationHD1ME } from './constellationHd1Me'
+import { ModelSpecConstellationHD2ME } from './constellationHd2Me'
+import { ModelSpecConstellationHD4ME } from './constellationHd4Me'
 
 export * from './types'
 
@@ -43,6 +46,9 @@ export const ALL_MODELS: ModelSpec[] = [
 	ModelSpecMiniProISO,
 	ModelSpecMiniExtreme,
 	ModelSpecMiniExtremeISO,
+	ModelSpecConstellationHD1ME,
+	ModelSpecConstellationHD2ME,
+	ModelSpecConstellationHD4ME,
 ]
 
 export const ALL_MODEL_CHOICES: DropdownChoice[] = ALL_MODELS.map(({ id, label }) => ({ id, label }))
@@ -90,7 +96,7 @@ export function GetParsedModelSpec({
 		USKs: info.mixEffects[0]?.keyCount ?? defaults.USKs,
 		DSKs: info.capabilities?.downstreamKeyers ?? defaults.DSKs,
 		MVs: settings.multiViewers.length,
-		multiviewerFullGrid: false, // TODO
+		multiviewerFullGrid: (settings.multiViewers?.[0]?.windows.length || 0) > 10, // TODO verify this
 		SSrc: info.capabilities?.superSources ?? defaults.SSrc,
 		macros: info.macroPool?.macroCount ?? defaults.macros,
 		media: {
