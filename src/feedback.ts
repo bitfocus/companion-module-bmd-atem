@@ -98,6 +98,7 @@ export enum FeedbackId {
 	FairlightAudioFaderGain = 'fairlightAudioFaderGain',
 	FairlightAudioInputGain = 'fairlightAudioInputGain',
 	FairlightAudioMixOption = 'fairlightAudioMixOption',
+	FairlightAudioMonitorMasterMuted = 'fairlightAudioMonitorMasterMuted',
 }
 
 export enum MacroFeedbackType {
@@ -877,6 +878,7 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 			[FeedbackId.FairlightAudioInputGain]: undefined,
 			[FeedbackId.FairlightAudioFaderGain]: undefined,
 			[FeedbackId.FairlightAudioMixOption]: undefined,
+			[FeedbackId.FairlightAudioMonitorMasterMuted]: undefined,
 		}
 	} else if (model.fairlightAudio) {
 		const audioInputOption = AtemAudioInputPicker(model, state)
@@ -977,6 +979,52 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 					return source?.properties?.mixOption === Number(evt.options.option)
 				},
 			}),
+			[FeedbackId.FairlightAudioMonitorMasterMuted]: model.fairlightAudio.monitor
+				? literal<CompanionFeedbackWithCallback>({
+						type: 'boolean',
+						label: 'Fairlight Audio: Monitor/Headphone Master muted',
+						description: 'If the headphone master is muted, change style of the bank',
+						options: [
+							// audioInputOption,
+						],
+						style: {
+							color: instance.rgb(0, 0, 0),
+							bgcolor: instance.rgb(0, 255, 0),
+						},
+						callback: (_evt: CompanionFeedbackEvent): boolean => {
+							return !!state.fairlight?.monitor?.inputMasterMuted
+						},
+				  })
+				: undefined,
+			[FeedbackId.FairlightAudioFaderGain]: model.fairlightAudio.monitor
+				? literal<CompanionFeedbackWithCallback>({
+						type: 'boolean',
+						label: 'Fairlight Audio: Monitor/Headphone Gain',
+						description: 'If the headphone/montir has the specified fader gain, change style of the bank',
+						options: [
+							NumberComparitorPicker(),
+							literal<SomeCompanionInputField>({
+								type: 'number',
+								label: 'Fader Level (-60 = Min)',
+								id: 'gain',
+								range: true,
+								required: true,
+								default: 0,
+								step: 0.1,
+								min: -60,
+								max: 10,
+							}),
+						],
+						style: {
+							color: instance.rgb(0, 0, 0),
+							bgcolor: instance.rgb(0, 255, 0),
+						},
+						callback: (evt: CompanionFeedbackEvent): boolean => {
+							const gain = state.fairlight?.monitor?.gain
+							return !!(typeof gain === 'number' && compareNumber(evt.options.gain, evt.options.comparitor, gain / 100))
+						},
+				  })
+				: undefined,
 		}
 	} else {
 		return {
@@ -985,6 +1033,7 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 			[FeedbackId.FairlightAudioInputGain]: undefined,
 			[FeedbackId.FairlightAudioFaderGain]: undefined,
 			[FeedbackId.FairlightAudioMixOption]: undefined,
+			[FeedbackId.FairlightAudioMonitorMasterMuted]: undefined,
 		}
 	}
 }

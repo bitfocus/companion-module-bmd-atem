@@ -514,6 +514,7 @@ export const ModelSpecConstellationHD2ME: ModelSpec = {
 		},
 	],
 	fairlightAudio: {
+		monitor: false,
 		inputs: [
 			{
 				id: 1,

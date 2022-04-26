@@ -1022,6 +1022,7 @@ export const ModelSpecConstellationAsHDOr4K: ModelSpec = {
 		},
 	],
 	fairlightAudio: {
+		monitor: true,
 		inputs: [
 			{
 				id: 1,

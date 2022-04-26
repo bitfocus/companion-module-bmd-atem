@@ -304,6 +304,7 @@ export const ModelSpecConstellation8KAs8K: ModelSpec = {
 		},
 	],
 	fairlightAudio: {
+		monitor: true,
 		inputs: [
 			{
 				id: 1,

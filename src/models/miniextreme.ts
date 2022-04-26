@@ -232,6 +232,7 @@ export const ModelSpecMiniExtreme: ModelSpec = {
 	recording: true,
 	recordISO: false,
 	fairlightAudio: {
+		monitor: true,
 		inputs: [
 			{
 				id: 1,

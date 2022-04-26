@@ -104,6 +104,10 @@ export enum ActionId {
 	FairlightAudioMixOption = 'fairlightAudioMixOption',
 	FairlightAudioResetPeaks = 'fairlightAudioResetPeaks',
 	FairlightAudioResetSourcePeaks = 'fairlightAudioResetSourcePeaks',
+	FairlightAudioMonitorMasterMuted = 'fairlightAudioMonitorMasterMuted',
+	FairlightAudioMonitorGain = 'fairlightAudioMonitorGain',
+	FairlightAudioMonitorGainDelta = 'fairlightAudioMonitorGainDelta',
+	// FairlightAudioMonitorMasterGain = 'fairlightAudioMonitorMasterGain',
 	SaveStartupState = 'saveStartupState',
 	ClearStartupState = 'clearStartupState',
 	InputName = 'inputName',
@@ -622,8 +626,6 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined,
 							props.artOption = getOptNumber(action, 'artOption')
 						}
 
-						console.log('sending', props)
-
 						executePromise(instance, atem?.setSuperSourceProperties(props, ssrcId))
 					},
 			  })
@@ -1030,6 +1032,10 @@ function audioActions(
 			[ActionId.FairlightAudioMixOption]: undefined,
 			[ActionId.FairlightAudioResetPeaks]: undefined,
 			[ActionId.FairlightAudioResetSourcePeaks]: undefined,
+			[ActionId.FairlightAudioMonitorMasterMuted]: undefined,
+			[ActionId.FairlightAudioMonitorGain]: undefined,
+			[ActionId.FairlightAudioMonitorGainDelta]: undefined,
+			// [ActionId.FairlightAudioMonitorMasterGain]: undefined,
 		}
 	} else if (model.fairlightAudio) {
 		const audioInputOption = AtemAudioInputPicker(model, state)
@@ -1243,7 +1249,7 @@ function audioActions(
 				},
 			}),
 			[ActionId.FairlightAudioResetSourcePeaks]: literal<CompanionActionExt>({
-				label: 'Fairlight Audio: Reset peaks',
+				label: 'Fairlight Audio: Reset Source peaks',
 				options: [audioInputOption, audioSourceOption],
 				callback: (action): void => {
 					const inputId = getOptNumber(action, 'input')
@@ -1258,6 +1264,128 @@ function audioActions(
 					)
 				},
 			}),
+			[ActionId.FairlightAudioMonitorMasterMuted]: model.fairlightAudio.monitor
+				? literal<CompanionActionExt>({
+						label: 'Fairlight Audio: Monitor/Headphone master muted',
+						options: [
+							{
+								id: 'state',
+								type: 'dropdown',
+								label: 'State',
+								default: 'true',
+								choices: CHOICES_ON_OFF_TOGGLE,
+							},
+						],
+						callback: (action): void => {
+							let target: boolean
+							if (action.options.state === 'toggle') {
+								target = !atem?.state?.fairlight?.monitor?.inputMasterMuted
+							} else {
+								target = action.options.state === 'true'
+							}
+
+							executePromise(
+								instance,
+								atem?.setFairlightAudioMixerMonitorProps({
+									inputMasterMuted: target,
+								})
+							)
+						},
+				  })
+				: undefined,
+			[ActionId.FairlightAudioMonitorGain]: model.fairlightAudio.monitor
+				? literal<CompanionActionExt>({
+						label: 'Fairlight Audio: Monitor/Headphone fader gain',
+						options: [
+							{
+								type: 'number',
+								label: 'Fader Level (-60 = Min)',
+								id: 'gain',
+								range: true,
+								required: true,
+								default: 0,
+								step: 0.1,
+								min: -60,
+								max: 10,
+							},
+							FadeDurationChoice,
+						],
+						callback: (action): void => {
+							transitions.run(
+								`audio.monitor.faderGain`,
+								(value) => {
+									executePromise(
+										instance,
+										atem?.setFairlightAudioMixerMonitorProps({
+											gain: value,
+										})
+									)
+								},
+								atem?.state?.fairlight?.monitor?.gain,
+								getOptNumber(action, 'gain') * 100,
+								getOptNumber(action, 'fadeDuration', 0)
+							)
+						},
+				  })
+				: undefined,
+			[ActionId.FairlightAudioMonitorGainDelta]: model.fairlightAudio.monitor
+				? literal<CompanionActionExt>({
+						label: 'Fairlight Audio: Adjust Monitor/Headphone fader gain',
+						options: [audioInputOption, audioSourceOption, FaderLevelDeltaChoice, FadeDurationChoice],
+						callback: (action): void => {
+							const currentGain = atem?.state?.fairlight?.monitor?.gain
+							if (typeof currentGain === 'number') {
+								transitions.run(
+									`audio.monitor.faderGain`,
+									(value) => {
+										executePromise(
+											instance,
+											atem?.setFairlightAudioMixerMonitorProps({
+												gain: value,
+											})
+										)
+									},
+									currentGain,
+									currentGain + getOptNumber(action, 'delta') * 100,
+									getOptNumber(action, 'fadeDuration', 0)
+								)
+							}
+						},
+				  })
+				: undefined,
+			// [ActionId.FairlightAudioMonitorMasterGain]: literal<CompanionActionExt>({
+			// 	label: 'Fairlight Audio: Monitor/Headphone master gain',
+			// 	options: [
+			// 		{
+			// 			type: 'number',
+			// 			label: 'Fader Level (-100 = -inf)',
+			// 			id: 'gain',
+			// 			range: true,
+			// 			required: true,
+			// 			default: 0,
+			// 			step: 0.1,
+			// 			min: -100,
+			// 			max: 10,
+			// 		},
+			// 		FadeDurationChoice,
+			// 	],
+			// 	callback: (action): void => {
+			// 		transitions.run(
+			// 			`audio.monitor.inputMasterGain`,
+			// 			(value) => {
+			// 				executePromise(
+			// 					instance,
+			// 					atem?.setFairlightAudioMixerMonitorProps({
+			// 						inputMasterGain: value,
+			// 					})
+			// 				)
+			// 			},
+			// 			atem?.state?.fairlight?.monitor?.inputMasterGain,
+			// 			getOptNumber(action, 'gain') * 100,
+			// 			getOptNumber(action, 'fadeDuration', 0)
+			// 		)
+			// 	},
+			// }),
 		}
 	} else {
 		return {
@@ -1272,6 +1400,10 @@ function audioActions(
 			[ActionId.FairlightAudioMixOption]: undefined,
 			[ActionId.FairlightAudioResetPeaks]: undefined,
 			[ActionId.FairlightAudioResetSourcePeaks]: undefined,
+			[ActionId.FairlightAudioMonitorMasterMuted]: undefined,
+			[ActionId.FairlightAudioMonitorGain]: undefined,
+			[ActionId.FairlightAudioMonitorGainDelta]: undefined,
+			// [ActionId.FairlightAudioMonitorMasterGain]: undefined,
 		}
 	}
 }

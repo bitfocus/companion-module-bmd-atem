@@ -346,6 +346,10 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 				)
 				return
 			}
+			if (path.match(/fairlight.monitor/)) {
+				this.checkFeedbacks(FeedbackId.FairlightAudioMonitorMasterMuted)
+				return
+			}
 		})
 	}
 
