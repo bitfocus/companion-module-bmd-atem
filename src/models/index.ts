@@ -13,8 +13,8 @@ import { ModelSpecFourME4K } from './4me4k'
 import { ModelSpecTVSHD } from './tvshd'
 import { ModelSpecTVSProHD } from './tvsprohd'
 import { ModelSpecTVSPro4K } from './tvspro4k'
-import { ModelSpecConstellation } from './constellation'
-import { ModelSpecConstellation8K } from './constellation8k'
+import { ModelSpecConstellationAsHDOr4K } from './constellation8kAsHdOr4k'
+import { ModelSpecConstellation8KAs8K } from './constellation8kas8k'
 import { ModelSpecMini } from './mini'
 import { ModelSpecMiniPro } from './minipro'
 import { ModelSpecMiniProISO } from './miniproiso'
@@ -36,8 +36,8 @@ export const ALL_MODELS: ModelSpec[] = [
 	ModelSpecTVSHD,
 	ModelSpecTVSProHD,
 	ModelSpecTVSPro4K,
-	ModelSpecConstellation,
-	ModelSpecConstellation8K,
+	ModelSpecConstellationAsHDOr4K,
+	ModelSpecConstellation8KAs8K,
 	ModelSpecMini,
 	ModelSpecMiniPro,
 	ModelSpecMiniProISO,

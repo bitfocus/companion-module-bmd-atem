@@ -1,9 +1,9 @@
 import { ModelSpec } from './types'
 import { Enums } from 'atem-connection'
 
-export const ModelSpecConstellation8K: ModelSpec = {
+export const ModelSpecConstellation8KAs8K: ModelSpec = {
 	id: Enums.Model.Constellation8K,
-	label: 'Constellation (8K Mode)',
+	label: 'Constellation 8K (8K Mode)',
 	auxes: 6,
 	MEs: 1,
 	USKs: 4,
