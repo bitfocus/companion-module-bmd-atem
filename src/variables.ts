@@ -51,7 +51,7 @@ export function updateAuxVariable(instance: InstanceSkel<AtemConfig>, state: Ate
 
 export function updateMacroVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, id: number): void {
 	const macro = state.macro.macroProperties[id]
-	instance.setVariable(`macro_${id + 1}`, macro?.description || macro?.name || `Macro ${id + 1}`)
+	instance.setVariable(`macro_${id + 1}`, macro?.name || `Macro ${id + 1}`)
 }
 
 export function updateMediaStillVariable(instance: InstanceSkel<AtemConfig>, state: AtemState, id: number): void {
