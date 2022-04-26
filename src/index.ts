@@ -218,6 +218,11 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 				return
 			}
 
+			if (path.match(/video.mixEffects.(\d+).upstreamKeyers.(\d+).flyProperties/)) {
+				this.checkFeedbacks(FeedbackId.USKKeyFrame)
+				return
+			}
+
 			if (path.match(/video.mixEffects.(\d+).upstreamKeyers.(\d+).onAir/)) {
 				this.checkFeedbacks(FeedbackId.USKOnAir)
 				return

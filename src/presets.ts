@@ -3,7 +3,7 @@ import { SetRequired } from 'type-fest'
 import InstanceSkel = require('../../../instance_skel')
 import { CompanionPreset } from '../../../instance_skel_types'
 import { ActionId } from './actions'
-import { GetSourcesListForType, GetTransitionStyleChoices } from './choices'
+import { CHOICES_KEYFRAMES, GetSourcesListForType, GetTransitionStyleChoices } from './choices'
 import { AtemConfig, PresetStyleName } from './config'
 import { FeedbackId, MacroFeedbackType } from './feedback'
 import { ModelSpec } from './models'
@@ -431,6 +431,44 @@ export function GetPresetsList(
 							options: {
 								fill: src.id,
 								cut: src.id + 1,
+								key,
+								mixeffect: me,
+							},
+						},
+					],
+				})
+			}
+
+			for (const flydirection of CHOICES_KEYFRAMES) {
+				presets.push({
+					category: `KEYs Fly`,
+					label: `Fly M/E ${me + 1} KEY ${key + 1} to ${flydirection.label}`,
+					bank: {
+						style: 'text',
+						text: `Fly to ${flydirection.label}`,
+						size: pstSize,
+						color: instance.rgb(255, 255, 255),
+						bgcolor: instance.rgb(0, 0, 0),
+					},
+					feedbacks: [
+						{
+							type: FeedbackId.USKKeyFrame,
+							options: {
+								keyframe: flydirection.id,
+								key,
+								mixeffect: me,
+							},
+							style: {
+								bgcolor: instance.rgb(238, 238, 0),
+								color: instance.rgb(0, 0, 0),
+							},
+						},
+					],
+					actions: [
+						{
+							action: ActionId.USKFly,
+							options: {
+								keyframe: flydirection.id,
 								key,
 								mixeffect: me,
 							},

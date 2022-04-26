@@ -8,6 +8,8 @@ import {
 	CHOICES_ON_OFF_TOGGLE,
 	CHOICES_CLASSIC_AUDIO_MIX_OPTION,
 	CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION,
+	CHOICES_KEYFRAMES,
+	CHOICES_FLYDIRECTIONS,
 } from './choices'
 import { AtemConfig } from './config'
 import {
@@ -63,6 +65,8 @@ export enum ActionId {
 	Aux = 'aux',
 	USKSource = 'uskSource',
 	USKOnAir = 'usk',
+	USKFly = 'uskFly',
+	USKFlyInfinite = 'uskFlyInfinite',
 	DSKSource = 'dskSource',
 	DSKOnAir = 'dsk',
 	DSKTie = 'dskTie',
@@ -381,6 +385,54 @@ function meActions(
 				)
 			},
 		}),
+		[ActionId.USKFly]: literal<CompanionActionExt>({
+			label: 'Upstream key: fly to keyframe',
+			options: [
+				AtemMEPicker(model, 0),
+				AtemUSKPicker(model),
+				{
+					type: 'dropdown',
+					id: 'keyframe',
+					label: 'Key Frame',
+					choices: CHOICES_KEYFRAMES,
+					default: CHOICES_KEYFRAMES[0].id,
+				},
+			],
+			callback: (action): void => {
+				executePromise(
+					instance,
+					atem?.runUpstreamKeyerFlyKeyTo(
+						getOptNumber(action, 'mixeffect'),
+						getOptNumber(action, 'key'),
+						getOptNumber(action, 'keyframe')
+					)
+				)
+			},
+		}),
+		[ActionId.USKFlyInfinite]: literal<CompanionActionExt>({
+			label: 'Upstream key: fly to infinite',
+			options: [
+				AtemMEPicker(model, 0),
+				AtemUSKPicker(model),
+				{
+					type: 'dropdown',
+					id: 'flydirection',
+					label: 'Fly direction',
+					choices: CHOICES_FLYDIRECTIONS,
+					default: CHOICES_FLYDIRECTIONS[0].id,
+				},
+			],
+			callback: (action): void => {
+				executePromise(
+					instance,
+					atem?.runUpstreamKeyerFlyKeyToInfinite(
+						getOptNumber(action, 'mixeffect'),
+						getOptNumber(action, 'key'),
+						getOptNumber(action, 'flydirection')
+					)
+				)
+			},
+		}),
 	}
 }
 
@@ -563,6 +615,8 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined,
 						} else if (rawArtOption !== 'unchanged') {
 							props.artOption = getOptNumber(action, 'artOption')
 						}
+
+						console.log('sending', props)
 
 						executePromise(instance, atem?.setSuperSourceProperties(props, ssrcId))
 					},
