@@ -418,7 +418,7 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
 		[FeedbackId.TransitionSelection]: literal<CompanionFeedbackWithCallback>({
 			type: 'boolean',
 			label: 'Transition: Selection',
-			description: 'If the specified tansition selection is active, change style of the bank',
+			description: 'If the specified transition selection is active, change style of the bank',
 			options: [AtemMEPicker(model, 0), AtemMatchMethod(), ...AtemTransitionSelectionPickers(model)],
 			style: {
 				color: instance.rgb(0, 0, 0),
