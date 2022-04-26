@@ -10,6 +10,7 @@ export const ModelSpecTwoME: ModelSpec = {
 	DSKs: 2,
 	MVs: 2,
 	multiviewerFullGrid: false,
+	DVEs: 1,
 	SSrc: 1,
 	macros: 100,
 	media: {

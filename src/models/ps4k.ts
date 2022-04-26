@@ -10,6 +10,7 @@ export const ModelSpecPS4K: ModelSpec = {
 	DSKs: 2,
 	MVs: 1,
 	multiviewerFullGrid: false,
+	DVEs: 0,
 	SSrc: 0,
 	macros: 100,
 	media: {

@@ -401,32 +401,33 @@ function uskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
 					},
 			  })
 			: undefined,
-		[FeedbackId.USKKeyFrame]: model.USKs
-			? literal<CompanionFeedbackWithCallback>({
-					type: 'boolean',
-					label: 'Upstream key: Key frame',
-					description: 'If the USK specified is at the Key Frame specified, change style of the bank',
-					options: [
-						AtemMEPicker(model, 0),
-						AtemUSKPicker(model),
-						{
-							type: 'dropdown',
-							id: 'keyframe',
-							label: 'Key Frame',
-							choices: CHOICES_CURRENTKEYFRAMES,
-							default: CHOICES_CURRENTKEYFRAMES[0].id,
+		[FeedbackId.USKKeyFrame]:
+			model.USKs && model.DVEs
+				? literal<CompanionFeedbackWithCallback>({
+						type: 'boolean',
+						label: 'Upstream key: Key frame',
+						description: 'If the USK specified is at the Key Frame specified, change style of the bank',
+						options: [
+							AtemMEPicker(model, 0),
+							AtemUSKPicker(model),
+							{
+								type: 'dropdown',
+								id: 'keyframe',
+								label: 'Key Frame',
+								choices: CHOICES_CURRENTKEYFRAMES,
+								default: CHOICES_CURRENTKEYFRAMES[0].id,
+							},
+						],
+						style: {
+							color: instance.rgb(0, 0, 0),
+							bgcolor: instance.rgb(238, 238, 0),
 						},
-					],
-					style: {
-						color: instance.rgb(0, 0, 0),
-						bgcolor: instance.rgb(238, 238, 0),
-					},
-					callback: (evt: CompanionFeedbackEvent): boolean => {
-						const usk = getUSK(state, evt.options.mixeffect, evt.options.key)
-						return usk?.flyProperties?.isAtKeyFrame === Number(evt.options.keyframe)
-					},
-			  })
-			: undefined,
+						callback: (evt: CompanionFeedbackEvent): boolean => {
+							const usk = getUSK(state, evt.options.mixeffect, evt.options.key)
+							return usk?.flyProperties?.isAtKeyFrame === Number(evt.options.keyframe)
+						},
+				  })
+				: undefined,
 	}
 }
 

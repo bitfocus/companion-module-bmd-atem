@@ -10,6 +10,7 @@ export const ModelSpecConstellationHD2ME: ModelSpec = {
 	DSKs: 2,
 	MVs: 2,
 	multiviewerFullGrid: true,
+	DVEs: 2,
 	SSrc: 1,
 	macros: 100,
 	media: {

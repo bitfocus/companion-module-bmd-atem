@@ -220,6 +220,7 @@ export const ModelSpecMiniExtreme: ModelSpec = {
 	DSKs: 2,
 	MVs: 1,
 	multiviewerFullGrid: true,
+	DVEs: 2,
 	SSrc: 1,
 	macros: 100,
 	media: {

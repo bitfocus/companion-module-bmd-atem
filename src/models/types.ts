@@ -11,6 +11,7 @@ export interface ModelSpec {
 	USKs: number
 	DSKs: number
 	MVs: number
+	DVEs: number
 	multiviewerFullGrid: boolean
 	SSrc: number
 	macros: number
