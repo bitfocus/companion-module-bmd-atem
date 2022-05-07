@@ -95,9 +95,11 @@ export enum FeedbackId {
 	RecordStatus = 'recordStatus',
 	ClassicAudioGain = 'classicAudioGain',
 	ClassicAudioMixOption = 'classicAudioMixOption',
+	ClassicAudioMasterGain = 'classicAudioMasterGain',
 	FairlightAudioFaderGain = 'fairlightAudioFaderGain',
 	FairlightAudioInputGain = 'fairlightAudioInputGain',
 	FairlightAudioMixOption = 'fairlightAudioMixOption',
+	FairlightAudioMasterGain = 'fairlightAudioMasterGain',
 	FairlightAudioMonitorMasterMuted = 'fairlightAudioMonitorMasterMuted',
 }
 
@@ -875,9 +877,37 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 					return channel?.mixOption === Number(evt.options.option)
 				},
 			}),
+			[FeedbackId.ClassicAudioMasterGain]: literal<CompanionFeedbackWithCallback>({
+				type: 'boolean',
+				label: 'Classic Audio: Master gain',
+				description: 'If the audio master has the specified gain, change style of the bank',
+				options: [
+					NumberComparitorPicker(),
+					literal<SomeCompanionInputField>({
+						type: 'number',
+						label: 'Fader Level (-60 = -inf)',
+						id: 'gain',
+						range: true,
+						required: true,
+						default: 0,
+						step: 0.1,
+						min: -60,
+						max: 6,
+					}),
+				],
+				style: {
+					color: instance.rgb(0, 0, 0),
+					bgcolor: instance.rgb(0, 255, 0),
+				},
+				callback: (evt: CompanionFeedbackEvent): boolean => {
+					const props = state.audio?.master
+					return !!(props && compareNumber(evt.options.gain, evt.options.comparitor, props.gain))
+				},
+			}),
 			[FeedbackId.FairlightAudioInputGain]: undefined,
 			[FeedbackId.FairlightAudioFaderGain]: undefined,
 			[FeedbackId.FairlightAudioMixOption]: undefined,
+			[FeedbackId.FairlightAudioMasterGain]: undefined,
 			[FeedbackId.FairlightAudioMonitorMasterMuted]: undefined,
 		}
 	} else if (model.fairlightAudio) {
@@ -886,6 +916,7 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 		return {
 			[FeedbackId.ClassicAudioGain]: undefined,
 			[FeedbackId.ClassicAudioMixOption]: undefined,
+			[FeedbackId.ClassicAudioMasterGain]: undefined,
 			[FeedbackId.FairlightAudioInputGain]: literal<CompanionFeedbackWithCallback>({
 				type: 'boolean',
 				label: 'Fairlight Audio: Audio input gain',
@@ -979,6 +1010,33 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 					return source?.properties?.mixOption === Number(evt.options.option)
 				},
 			}),
+			[FeedbackId.FairlightAudioMasterGain]: literal<CompanionFeedbackWithCallback>({
+				type: 'boolean',
+				label: 'Fairlight Audio: Master fader gain',
+				description: 'If the master has the specified fader gain, change style of the bank',
+				options: [
+					NumberComparitorPicker(),
+					literal<SomeCompanionInputField>({
+						type: 'number',
+						label: 'Fader Level (-100 = -inf)',
+						id: 'gain',
+						range: true,
+						required: true,
+						default: 0,
+						step: 0.1,
+						min: -100,
+						max: 10,
+					}),
+				],
+				style: {
+					color: instance.rgb(0, 0, 0),
+					bgcolor: instance.rgb(0, 255, 0),
+				},
+				callback: (evt: CompanionFeedbackEvent): boolean => {
+					const props = state.fairlight?.master?.properties
+					return !!(props && compareNumber(evt.options.gain, evt.options.comparitor, props.faderGain / 100))
+				},
+			}),
 			[FeedbackId.FairlightAudioMonitorMasterMuted]: model.fairlightAudio.monitor
 				? literal<CompanionFeedbackWithCallback>({
 						type: 'boolean',
@@ -1030,9 +1088,11 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 		return {
 			[FeedbackId.ClassicAudioGain]: undefined,
 			[FeedbackId.ClassicAudioMixOption]: undefined,
+			[FeedbackId.ClassicAudioMasterGain]: undefined,
 			[FeedbackId.FairlightAudioInputGain]: undefined,
 			[FeedbackId.FairlightAudioFaderGain]: undefined,
 			[FeedbackId.FairlightAudioMixOption]: undefined,
+			[FeedbackId.FairlightAudioMasterGain]: undefined,
 			[FeedbackId.FairlightAudioMonitorMasterMuted]: undefined,
 		}
 	}
