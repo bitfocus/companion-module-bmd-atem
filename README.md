@@ -23,6 +23,20 @@ To add a new model to the list:
 
 ## Changes
 
+### v2.15.0
+
+- add constellation hd models (untested)
+
+- correct order of input fields for some actions and feedbacks
+
+- fix macros to use name not description
+
+- flying key control
+
+- atem mini extreme headphone basic controls
+
+- audo mixer master gain control
+
 ### v2.14.0
 
 - set input names (both text and multiviewer)
