@@ -1712,7 +1712,9 @@ export function GetActionsList(
 				executePromise(
 					instance,
 					Promise.all([
-						newProps.longName ? atem?.drawMultiviewerLabel(source, newProps.longName) : undefined,
+						newProps.longName && !atem?.hasInternalMultiviewerLabelGeneration()
+							? atem?.drawMultiviewerLabel(source, newProps.longName)
+							: undefined,
 						Object.keys(newProps).length ? atem?.setInputSettings(newProps, source) : undefined,
 					])
 				)
