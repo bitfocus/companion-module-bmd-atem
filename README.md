@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+### v2.15.1
+
+- fix constellation hd high cpu usage
+
 ### v2.15.0
 
 - add constellation hd models (untested)
