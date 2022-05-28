@@ -3,7 +3,7 @@
 	"legacy": [
 		"atem"
 	],
-	"version": "2.15.1",
+	"version": "2.15.2",
 	"api_version": "1.0.0",
 	"description": "Blackmagic Design",
 	"keywords": [
@@ -50,7 +50,7 @@
 	"dependencies": {
 		"@types/multicast-dns": "^7.2.1",
 		"@types/node": "^14.18.12",
-		"atem-connection": "3.0.0-nightly-latest-20220507-145153-f8145aa.0",
+		"atem-connection": "3.0.0-nightly-latest-20220528-143522-2337013.0",
 		"debounce-fn": "github:julusian/debounce-fn#4.0.0-maxWaithack.0",
 		"multicast-dns": "^7.2.3",
 		"type-fest": "^2.12.1"
