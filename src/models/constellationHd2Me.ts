@@ -2,15 +2,15 @@ import { ModelSpec } from './types'
 import { Enums } from 'atem-connection'
 
 export const ModelSpecConstellationHD2ME: ModelSpec = {
-	id: 19, // TODO
-	label: 'Constellation HD 2 ME',
+	id: Enums.Model.ConstellationHD2ME,
+	label: 'ATEM 2 M/E Constellation HD',
 	auxes: 12,
 	MEs: 2,
 	USKs: 4,
 	DSKs: 2,
 	MVs: 2,
 	multiviewerFullGrid: true,
-	DVEs: 2,
+	DVEs: 1,
 	SSrc: 1,
 	macros: 100,
 	media: {
@@ -514,7 +514,7 @@ export const ModelSpecConstellationHD2ME: ModelSpec = {
 		},
 	],
 	fairlightAudio: {
-		monitor: false,
+		monitor: true,
 		inputs: [
 			{
 				id: 1,
