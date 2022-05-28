@@ -9,19 +9,7 @@ import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, ModelSpec } from 
 import { GetPresetsList } from './presets'
 import { TallyBySource } from './state'
 import { MODEL_AUTO_DETECT } from './models/types'
-import {
-	InitVariables,
-	updateDSKVariable,
-	updateMacroVariable,
-	updateMediaPlayerVariables,
-	updateMEPreviewVariable,
-	updateMEProgramVariable,
-	updateUSKVariable,
-	updateStreamingVariables,
-	updateRecordingVariables,
-	updateAuxVariable,
-	updateSuperSourceVariables,
-} from './variables'
+import { InitVariables, UpdateVariablesProps, updateChangedVariables } from './variables'
 import { AtemCommandBatching } from './batching'
 import { executePromise } from './util'
 import { AtemTransitions } from './transitions'
@@ -196,36 +184,54 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 		// TODO - do we need to clone this object?
 		this.atemState = newState
 
-		// TODO - should this batch changes?
-		paths.forEach((path) => {
+		let reInit = false
+		const changedFeedbacks = new Set<FeedbackId>()
+		const changedVariables: UpdateVariablesProps = {
+			meProgram: new Set(),
+			mePreview: new Set(),
+			auxes: new Set(),
+			dsk: new Set(),
+			usk: new Set(),
+			macros: new Set(),
+			ssrc: new Set(),
+			mediaPlayer: new Set(),
+			streaming: false,
+			recording: false,
+		}
+
+		for (const path of paths) {
+			if (reInit) break
+
 			const auxMatch = path.match(/video.auxilliaries.(\d+)/)
 			if (auxMatch) {
-				this.checkFeedbacks(FeedbackId.AuxBG)
-				updateAuxVariable(this, this.atemState, parseInt(auxMatch[1], 10))
-				return
+				changedFeedbacks.add(FeedbackId.AuxBG)
+				changedVariables.auxes.add(parseInt(auxMatch[1], 10))
+				continue
 			}
 
 			const dskMatch = path.match(/video.downstreamKeyers.(\d+)/)
 			if (dskMatch) {
-				updateDSKVariable(this, this.atemState, parseInt(dskMatch[1], 10))
-				this.checkFeedbacks(FeedbackId.DSKOnAir, FeedbackId.DSKTie, FeedbackId.DSKSource)
-				return
+				changedVariables.dsk.add(parseInt(dskMatch[1], 10))
+				changedFeedbacks.add(FeedbackId.DSKOnAir)
+				changedFeedbacks.add(FeedbackId.DSKTie)
+				changedFeedbacks.add(FeedbackId.DSKSource)
+				continue
 			}
 
 			if (path.match(/inputs/)) {
 				// reset everything, since names of inputs might have changed
-				this.updateCompanionBits()
-				return
+				reInit = true
+				break
 			}
 
 			if (path.match(/video.mixEffects.(\d+).upstreamKeyers.(\d+).flyProperties/)) {
-				this.checkFeedbacks(FeedbackId.USKKeyFrame)
-				return
+				changedFeedbacks.add(FeedbackId.USKKeyFrame)
+				continue
 			}
 
 			if (path.match(/video.mixEffects.(\d+).upstreamKeyers.(\d+).onAir/)) {
-				this.checkFeedbacks(FeedbackId.USKOnAir)
-				return
+				changedFeedbacks.add(FeedbackId.USKOnAir)
+				continue
 			}
 
 			const uskSourceMatch = path.match(/video.mixEffects.(\d+).upstreamKeyers.(\d+)/)
@@ -233,124 +239,142 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 				const meIndex = parseInt(uskSourceMatch[1], 10)
 				const keyIndex = parseInt(uskSourceMatch[2], 10)
 
-				updateUSKVariable(this, this.atemState, meIndex, keyIndex)
-				this.checkFeedbacks(FeedbackId.USKSource)
-				return
+				changedVariables.usk.add([meIndex, keyIndex])
+				changedFeedbacks.add(FeedbackId.USKSource)
+				continue
 			}
 
 			const macroPropertiesMatch = path.match(/macro.macroProperties.(\d+)/)
 			if (macroPropertiesMatch) {
 				const macroIndex = parseInt(macroPropertiesMatch[1], 10)
-				updateMacroVariable(this, this.atemState, macroIndex)
+				changedVariables.macros.add(macroIndex)
 
-				this.checkFeedbacks(FeedbackId.Macro)
-				return
+				changedFeedbacks.add(FeedbackId.Macro)
+				continue
 			}
 
 			if (path.match(/macro.macroRecorder/) || path.match(/macro.macroPlayer/)) {
-				this.checkFeedbacks(FeedbackId.Macro)
-				return
+				changedFeedbacks.add(FeedbackId.Macro)
+				continue
 			}
 
 			if (path.match(/settings.multiViewers.(\d+).windows.(\d+)/)) {
-				this.checkFeedbacks(FeedbackId.MVSource)
-				return
+				changedFeedbacks.add(FeedbackId.MVSource)
+				continue
 			}
 
 			const meProgramMatch = path.match(/video.mixEffects.(\d+).programInput/)
 			if (meProgramMatch) {
 				const meIndex = parseInt(meProgramMatch[1], 10)
-				updateMEProgramVariable(this, this.atemState, meIndex)
+				changedVariables.meProgram.add(meIndex)
 
-				this.checkFeedbacks(FeedbackId.ProgramBG, FeedbackId.ProgramBG2, FeedbackId.ProgramBG3, FeedbackId.ProgramBG4)
-				return
+				changedFeedbacks.add(FeedbackId.ProgramBG)
+				changedFeedbacks.add(FeedbackId.ProgramBG2)
+				changedFeedbacks.add(FeedbackId.ProgramBG3)
+				changedFeedbacks.add(FeedbackId.ProgramBG4)
+				continue
 			}
 
 			const mePreviewMatch = path.match(/video.mixEffects.(\d+).previewInput/)
 			if (mePreviewMatch) {
 				const meIndex = parseInt(mePreviewMatch[1], 10)
-				updateMEPreviewVariable(this, this.atemState, meIndex)
+				changedVariables.mePreview.add(meIndex)
 
-				this.checkFeedbacks(FeedbackId.PreviewBG, FeedbackId.PreviewBG2, FeedbackId.PreviewBG3, FeedbackId.PreviewBG4)
-				return
+				changedFeedbacks.add(FeedbackId.PreviewBG)
+				changedFeedbacks.add(FeedbackId.PreviewBG2)
+				changedFeedbacks.add(FeedbackId.PreviewBG3)
+				changedFeedbacks.add(FeedbackId.PreviewBG4)
+				continue
 			}
 
 			const ssrcBoxMatch = path.match(/video.superSources.(\d+).boxes.(\d+)/)
 			if (ssrcBoxMatch) {
 				console.log('update ssrc', ssrcBoxMatch[1])
-				this.checkFeedbacks(FeedbackId.SSrcBoxSource, FeedbackId.SSrcBoxOnAir, FeedbackId.SSrcBoxProperties)
-				updateSuperSourceVariables(this, this.atemState, parseInt(ssrcBoxMatch[1], 10))
-				return
+				changedFeedbacks.add(FeedbackId.SSrcBoxSource)
+				changedFeedbacks.add(FeedbackId.SSrcBoxOnAir)
+				changedFeedbacks.add(FeedbackId.SSrcBoxProperties)
+				changedVariables.ssrc.add(parseInt(ssrcBoxMatch[1], 10))
+				continue
 			}
 			if (path.match(/video.superSources.(\d+).properties/)) {
-				this.checkFeedbacks(FeedbackId.SSrcArtOption, FeedbackId.SSrcArtSource)
-				return
+				changedFeedbacks.add(FeedbackId.SSrcArtOption)
+				changedFeedbacks.add(FeedbackId.SSrcArtSource)
+				continue
 			}
 
 			if (path.match(/video.mixEffects.(\d+).transitionProperties/)) {
-				this.checkFeedbacks(FeedbackId.TransitionStyle, FeedbackId.TransitionSelection)
-				return
+				changedFeedbacks.add(FeedbackId.TransitionStyle)
+				changedFeedbacks.add(FeedbackId.TransitionSelection)
+				continue
 			}
 			if (path.match(/video.mixEffects.(\d+).transitionSettings/)) {
-				this.checkFeedbacks(FeedbackId.TransitionRate)
-				return
+				changedFeedbacks.add(FeedbackId.TransitionRate)
+				continue
 			}
 			if (path.match(/video.mixEffects.(\d+).transitionPosition/)) {
-				this.checkFeedbacks(FeedbackId.InTransition)
-				return
+				changedFeedbacks.add(FeedbackId.InTransition)
+				continue
 			}
 			if (path.match(/video.mixEffects.(\d+).fadeToBlack/)) {
-				this.checkFeedbacks(FeedbackId.FadeToBlackRate, FeedbackId.FadeToBlackIsBlack)
-				return
+				changedFeedbacks.add(FeedbackId.FadeToBlackRate)
+				changedFeedbacks.add(FeedbackId.FadeToBlackIsBlack)
+				continue
 			}
 
 			const mediaPlayerMatch = path.match(/media.players.(\d+)/)
 			if (mediaPlayerMatch) {
 				const mediaPlayer = parseInt(mediaPlayerMatch[1], 10)
-				updateMediaPlayerVariables(this, this.atemState, mediaPlayer)
-				this.checkFeedbacks(FeedbackId.MediaPlayerSource)
-				return
+				changedVariables.mediaPlayer.add(mediaPlayer)
+				changedFeedbacks.add(FeedbackId.MediaPlayerSource)
+				continue
 			}
 
 			if (path.match(/media.clipPool/) || path.match(/media.stillPool/)) {
 				// reset everything, since names of media might have changed
-				this.updateCompanionBits()
-				return
+				reInit = true
+				break
 			}
 
 			if (path.match(/streaming.status/)) {
-				this.checkFeedbacks(FeedbackId.StreamStatus)
-				return
+				changedFeedbacks.add(FeedbackId.StreamStatus)
+				continue
 			}
 			if (path.match(/recording.status/)) {
-				this.checkFeedbacks(FeedbackId.RecordStatus)
-				return
+				changedFeedbacks.add(FeedbackId.RecordStatus)
+				continue
 			}
 			if (path.match(/streaming.duration/) || path.match(/streaming.stats/)) {
-				updateStreamingVariables(this, this.atemState)
-				return
+				changedVariables.streaming = true
+				continue
 			}
-			if (path.match(/recording.duration/) || path.match(/streaming.status/)) {
-				updateRecordingVariables(this, this.atemState)
-				return
+			if (path.match(/recording.duration/)) {
+				changedVariables.recording = true
+				continue
 			}
 			if (path.match(/audio.channels/)) {
-				this.checkFeedbacks(FeedbackId.ClassicAudioGain, FeedbackId.ClassicAudioMixOption)
-				return
+				changedFeedbacks.add(FeedbackId.ClassicAudioGain)
+				changedFeedbacks.add(FeedbackId.ClassicAudioMixOption)
+				continue
 			}
 			if (path.match(/fairlight.inputs/)) {
-				this.checkFeedbacks(
-					FeedbackId.FairlightAudioInputGain,
-					FeedbackId.FairlightAudioFaderGain,
-					FeedbackId.FairlightAudioMixOption
-				)
-				return
+				changedFeedbacks.add(FeedbackId.FairlightAudioInputGain)
+				changedFeedbacks.add(FeedbackId.FairlightAudioFaderGain)
+				changedFeedbacks.add(FeedbackId.FairlightAudioMixOption)
+				continue
 			}
 			if (path.match(/fairlight.monitor/)) {
-				this.checkFeedbacks(FeedbackId.FairlightAudioMonitorMasterMuted)
-				return
+				changedFeedbacks.add(FeedbackId.FairlightAudioMonitorMasterMuted)
+				continue
 			}
-		})
+		}
+
+		// Apply the change
+		if (reInit) {
+			this.updateCompanionBits()
+		} else {
+			updateChangedVariables(this, this.atemState, changedVariables)
+			if (changedFeedbacks.size > 0) this.checkFeedbacks(...Array.from(changedFeedbacks))
+		}
 	}
 
 	private setupAtemConnection(): void {
