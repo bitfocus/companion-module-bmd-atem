@@ -386,7 +386,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 	 */
 	private debounceUpdateMVSource = debounceFn(
 		() => {
-			console.log('do check')
 			this.checkFeedbacks(FeedbackId.MVSource)
 		},
 		{
