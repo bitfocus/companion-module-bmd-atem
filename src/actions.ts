@@ -38,9 +38,8 @@ import {
 	AtemFairlightAudioSourcePicker,
 	FadeDurationChoice,
 	FaderLevelDeltaChoice,
-	AtemSuperSourceArtSourcePicker,
-	AtemSuperSourceArtOption,
 	AtemAllSourcePicker,
+	AtemSuperSourceArtPropertiesPickers,
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getSuperSourceBox, getUSK, getTransitionProperties, getMediaPlayer } from './state'
@@ -55,7 +54,6 @@ import {
 } from './util'
 import { AtemCommandBatching, CommandBatching } from './batching'
 import { AtemTransitions } from './transitions'
-import { SuperSourceArtOption } from 'atem-connection/dist/enums'
 import { SuperSource } from 'atem-connection/dist/state/video'
 
 export enum ActionId {
@@ -605,33 +603,63 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined,
 	return {
 		[ActionId.SuperSourceArt]: model.SSrc
 			? literal<CompanionActionExt>({
-					label: 'SuperSource: Set art',
+					label: 'SuperSource: Set art properties',
 					options: compact([
 						AtemSuperSourceIdPicker(model),
-						AtemSuperSourceArtSourcePicker(model, state, 'fill', 'Fill Source'),
-						AtemSuperSourceArtSourcePicker(model, state, 'key', 'Key Source'),
-						AtemSuperSourceArtOption(true),
+						...AtemSuperSourceArtPropertiesPickers(model, state, true),
 					]),
 					callback: (action): void => {
 						const ssrcId = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
-						const props: Partial<VideoState.SuperSource.SuperSourceProperties> = {
-							artFillSource: getOptNumber(action, 'fill'),
-							artCutSource: getOptNumber(action, 'key'),
+						const newProps: Partial<VideoState.SuperSource.SuperSourceProperties> = {}
+
+						const props = action.options.properties
+						if (props && Array.isArray(props)) {
+							if (props.includes('fill')) newProps.artFillSource = getOptNumber(action, 'fill')
+							if (props.includes('key')) newProps.artCutSource = getOptNumber(action, 'key')
+
+							if (props.includes('artOption')) {
+								const rawArtOption = action.options.artOption
+								if (rawArtOption === 'toggle') {
+									const ssrc = state.video.superSources[ssrcId]
+
+									newProps.artOption =
+										ssrc?.properties?.artOption === Enums.SuperSourceArtOption.Background
+											? Enums.SuperSourceArtOption.Foreground
+											: Enums.SuperSourceArtOption.Background
+								} else if (rawArtOption !== 'unchanged') {
+									newProps.artOption = getOptNumber(action, 'artOption')
+								}
+							}
+
+							if (props.includes('artPreMultiplied')) newProps.artPreMultiplied = getOptBool(action, 'artPreMultiplied')
+							if (props.includes('artClip')) newProps.artClip = getOptNumber(action, 'artClip') * 10
+							if (props.includes('artGain')) newProps.artGain = getOptNumber(action, 'artGain') * 10
+							if (props.includes('artInvertKey')) newProps.artInvertKey = getOptBool(action, 'artInvertKey')
 						}
 
-						const rawArtOption = action.options.artOption
-						if (rawArtOption === 'toggle') {
-							const ssrc = state.video.superSources[ssrcId]
+						if (Object.keys(newProps).length === 0) return
 
-							props.artOption =
-								ssrc?.properties?.artOption === SuperSourceArtOption.Background
-									? SuperSourceArtOption.Foreground
-									: SuperSourceArtOption.Background
-						} else if (rawArtOption !== 'unchanged') {
-							props.artOption = getOptNumber(action, 'artOption')
+						executePromise(instance, atem?.setSuperSourceProperties(newProps, ssrcId))
+					},
+					learn: (action) => {
+						const ssrcId = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
+
+						const ssrcConfig = atem?.state?.video.superSources?.[ssrcId]?.properties
+						if (ssrcConfig) {
+							return {
+								...action.options,
+								fill: ssrcConfig.artFillSource,
+								key: ssrcConfig.artCutSource,
+
+								artOption: ssrcConfig.artOption,
+								artPreMultiplied: ssrcConfig.artPreMultiplied,
+								artClip: ssrcConfig.artClip / 10,
+								artGain: ssrcConfig.artGain / 10,
+								artInvertKey: ssrcConfig.artInvertKey,
+							}
+						} else {
+							return undefined
 						}
-
-						executePromise(instance, atem?.setSuperSourceProperties(props, ssrcId))
 					},
 			  })
 			: undefined,
@@ -749,7 +777,8 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined,
 					learn: (action) => {
 						const ssrcId = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
 						const boxId = getOptNumber(action, 'boxIndex')
-						const ssrcConfig = atem?.state?.video.superSources?.[ssrcId]?.boxes[boxId]
+
+						const ssrcConfig = state?.video.superSources?.[ssrcId]?.boxes[boxId]
 						if (ssrcConfig) {
 							return {
 								...action.options,

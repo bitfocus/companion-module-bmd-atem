@@ -1,4 +1,5 @@
 import { AtemState, Enums } from 'atem-connection'
+import { getSuperSource } from 'atem-connection/dist/state/util'
 import { SetRequired } from 'type-fest'
 import InstanceSkel = require('../../../instance_skel')
 import {
@@ -43,6 +44,7 @@ import {
 	AtemFairlightAudioSourcePicker,
 	AtemSuperSourceArtSourcePicker,
 	AtemSuperSourceArtOption,
+	AtemSuperSourceArtPropertiesPickers,
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getMixEffect, getMultiviewerWindow, getSuperSourceBox, getUSK, TallyBySource } from './state'
@@ -77,6 +79,7 @@ export enum FeedbackId {
 	DSKSource = 'dsk_source',
 	Macro = 'macro',
 	MVSource = 'mv_source',
+	SSrcArtProperties = 'ssrc_art_properties',
 	SSrcArtSource = 'ssrc_art_source',
 	SSrcArtOption = 'ssrc_art_option',
 	SSrcBoxOnAir = 'ssrc_box_enable',
@@ -591,8 +594,63 @@ function compareAsInt(
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState) {
 	return {
+		[FeedbackId.SSrcArtProperties]: model.SSrc
+			? literal<CompanionFeedbackWithCallback>({
+					type: 'boolean',
+					label: 'Supersource: Art properties',
+					description: 'If the specified SuperSource art properties match, change style of the bank',
+					options: compact([
+						AtemSuperSourceIdPicker(model),
+						...AtemSuperSourceArtPropertiesPickers(model, state, false),
+					]),
+					style: {
+						color: instance.rgb(0, 0, 0),
+						bgcolor: instance.rgb(255, 255, 0),
+					},
+					callback: (evt: CompanionFeedbackEvent): boolean => {
+						const ssrcId = evt.options.ssrcId && model.SSrc > 1 ? Number(evt.options.ssrcId) : 0
+						const ssrc = getSuperSource(state, ssrcId).properties
+
+						const props = evt.options.properties
+						if (!ssrc || !props || !Array.isArray(props)) return false
+
+						if (props.includes('fill') && ssrc.artFillSource !== evt.options.fill) return false
+						if (props.includes('key') && ssrc.artCutSource !== evt.options.key) return false
+
+						if (props.includes('artOption') && ssrc.artOption !== evt.options.artOption) return false
+						if (props.includes('artPreMultiplied') && ssrc.artPreMultiplied !== !!evt.options.artPreMultiplied)
+							return false
+						if (props.includes('artClip') && !compareAsInt(evt.options.artClip, ssrc.artClip, 10)) return false
+						if (props.includes('artGain') && !compareAsInt(evt.options.artGain, ssrc.artGain, 10)) return false
+						if (props.includes('artInvertKey') && ssrc.artInvertKey !== !!evt.options.artInvertKey) return false
+
+						return true
+					},
+					learn: (feedback) => {
+						const ssrcId = feedback.options.ssrcId && model.SSrc > 1 ? Number(feedback.options.ssrcId) : 0
+
+						const ssrcConfig = state?.video.superSources?.[ssrcId]?.properties
+						if (ssrcConfig) {
+							return {
+								...feedback.options,
+								fill: ssrcConfig.artFillSource,
+								key: ssrcConfig.artCutSource,
+
+								artOption: ssrcConfig.artOption,
+								artPreMultiplied: ssrcConfig.artPreMultiplied,
+								artClip: ssrcConfig.artClip / 10,
+								artGain: ssrcConfig.artGain / 10,
+								artInvertKey: ssrcConfig.artInvertKey,
+							}
+						} else {
+							return undefined
+						}
+					},
+			  })
+			: undefined,
 		[FeedbackId.SSrcArtSource]: model.SSrc
 			? literal<CompanionFeedbackWithCallback>({
+					// TODO - replace with FeedbackId.SSrcArtProperties
 					type: 'boolean',
 					label: 'Supersource: Art fill source',
 					description: 'If the specified SuperSource art fill is set to the specified source, change style of the bank',
@@ -605,13 +663,15 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
 						bgcolor: instance.rgb(255, 255, 0),
 					},
 					callback: (evt: CompanionFeedbackEvent): boolean => {
-						const ssrc = state.video.superSources[Number(evt.options.ssrcId || 0)]
-						return ssrc?.properties?.artFillSource === Number(evt.options.source)
+						const ssrcId = evt.options.ssrcId && model.SSrc > 1 ? Number(evt.options.ssrcId) : 0
+						const ssrc = getSuperSource(state, ssrcId)
+						return ssrc.properties?.artFillSource === Number(evt.options.source)
 					},
 			  })
 			: undefined,
 		[FeedbackId.SSrcArtOption]: model.SSrc
 			? literal<CompanionFeedbackWithCallback>({
+					// TODO - replace with FeedbackId.SSrcArtProperties
 					type: 'boolean',
 					label: 'Supersource: Art placement',
 					description:
@@ -622,13 +682,15 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
 						bgcolor: instance.rgb(255, 255, 0),
 					},
 					callback: (evt: CompanionFeedbackEvent): boolean => {
-						const ssrc = state.video.superSources[Number(evt.options.ssrcId || 0)]
-						return ssrc?.properties?.artOption === Number(evt.options.artOption)
+						const ssrcId = evt.options.ssrcId && model.SSrc > 1 ? Number(evt.options.ssrcId) : 0
+						const ssrc = getSuperSource(state, ssrcId)
+						return ssrc.properties?.artOption === Number(evt.options.artOption)
 					},
 			  })
 			: undefined,
 		[FeedbackId.SSrcBoxSource]: model.SSrc
 			? literal<CompanionFeedbackWithCallback>({
+					// TODO - replace with FeedbackId.SSrcBoxProperties
 					type: 'boolean',
 					label: 'Supersource: Box source',
 					description: 'If the specified SuperSource box is set to the specified source, change style of the bank',
@@ -642,13 +704,15 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
 						bgcolor: instance.rgb(255, 255, 0),
 					},
 					callback: (evt: CompanionFeedbackEvent): boolean => {
-						const box = getSuperSourceBox(state, evt.options.boxIndex, evt.options.ssrcId || 0)
+						const ssrcId = evt.options.ssrcId && model.SSrc > 1 ? Number(evt.options.ssrcId) : 0
+						const box = getSuperSourceBox(state, evt.options.boxIndex, ssrcId)
 						return box?.source === Number(evt.options.source)
 					},
 			  })
 			: undefined,
 		[FeedbackId.SSrcBoxOnAir]: model.SSrc
 			? literal<CompanionFeedbackWithCallback>({
+					// TODO - replace with FeedbackId.SSrcBoxProperties
 					type: 'boolean',
 					label: 'Supersource: Box state',
 					description: 'If the specified SuperSource box is enabled, change style of the bank',
@@ -658,7 +722,8 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
 						bgcolor: instance.rgb(255, 255, 0),
 					},
 					callback: (evt: CompanionFeedbackEvent): boolean => {
-						const box = getSuperSourceBox(state, evt.options.boxIndex, evt.options.ssrcId || 0)
+						const ssrcId = evt.options.ssrcId && model.SSrc > 1 ? Number(evt.options.ssrcId) : 0
+						const box = getSuperSourceBox(state, evt.options.boxIndex, ssrcId)
 						return !!(box && box.enabled)
 					},
 			  })
@@ -678,7 +743,8 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
 						bgcolor: instance.rgb(255, 255, 0),
 					},
 					callback: (evt: CompanionFeedbackEvent): boolean => {
-						const box = getSuperSourceBox(state, evt.options.boxIndex, evt.options.ssrcId || 0)
+						const ssrcId = evt.options.ssrcId && model.SSrc > 1 ? Number(evt.options.ssrcId) : 0
+						const box = getSuperSourceBox(state, evt.options.boxIndex, ssrcId)
 
 						const props = evt.options.properties
 						if (!box || !props || !Array.isArray(props)) return false

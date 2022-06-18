@@ -358,6 +358,92 @@ export function AtemSuperSourcePropertiesPickers(
 		...allProps,
 	])
 }
+export function AtemSuperSourceArtPropertiesPickers(
+	model: ModelSpec,
+	state: AtemState,
+	action: boolean
+): Array<
+	| CompanionInputFieldNumber
+	| CompanionInputFieldCheckbox
+	| CompanionInputFieldDropdown
+	| CompanionInputFieldMultiDropdown
+> {
+	const artSources = SourcesToChoices(GetSourcesListForType(model, state, 'ssrc-art'))
+
+	const allProps: ReturnType<typeof AtemSuperSourcePropertiesPickers> = compact([
+		{
+			type: 'dropdown',
+			id: 'fill',
+			label: 'Fill Source',
+			default: 0,
+			choices: artSources,
+			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('fill'),
+		},
+		{
+			type: 'dropdown',
+			id: 'key',
+			label: 'Key Source',
+			default: 0,
+			choices: artSources,
+			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('key'),
+		},
+		{
+			...AtemSuperSourceArtOption(action),
+			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('artOption'),
+		},
+
+		{
+			type: 'checkbox',
+			id: 'artPreMultiplied',
+			label: 'Pre-multiplied',
+			default: true,
+			isVisible: (opts) =>
+				Array.isArray(opts.options.properties) && opts.options.properties.includes('artPreMultiplied'),
+		},
+		{
+			type: 'number',
+			id: 'artClip',
+			label: 'Clip',
+			min: 0,
+			max: 100,
+			range: true,
+			default: 50,
+			step: 1,
+			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('artClip'),
+		},
+		{
+			type: 'number',
+			id: 'artGain',
+			label: 'Gain',
+			min: 0,
+			max: 100,
+			range: true,
+			default: 50,
+			step: 1,
+			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('artGain'),
+		},
+		{
+			type: 'checkbox',
+			id: 'artInvertKey',
+			label: 'Invert Key',
+			default: false,
+			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('artInvertKey'),
+		},
+	])
+
+	return compact([
+		{
+			type: 'dropdown',
+			id: 'properties',
+			label: 'Properties',
+			multiple: true,
+			minSelection: 1,
+			default: allProps.map((p) => p.id),
+			choices: allProps.map((p) => ({ id: p.id, label: p.label })),
+		},
+		...allProps,
+	])
+}
 export function AtemSuperSourceArtSourcePicker(
 	model: ModelSpec,
 	state: AtemState,

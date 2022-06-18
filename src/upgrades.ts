@@ -105,6 +105,9 @@ export function upgradeAddSSrcPropertiesPicker(
 		if (action.action === ActionId.SuperSourceBoxProperties && !action.options.properties) {
 			action.options.properties = ['size', 'x', 'y', 'cropEnable', 'cropTop', 'cropLeft', 'cropRight', 'cropBottom']
 			changed = true
+		} else if (action.action === ActionId.SuperSourceArt && !action.options.properties) {
+			action.options.properties = ['fill', 'key', 'artOption']
+			changed = true
 		}
 	}
 
