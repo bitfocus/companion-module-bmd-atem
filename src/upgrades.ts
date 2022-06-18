@@ -92,3 +92,28 @@ export const BooleanFeedbackUpgradeMap: {
 	[FeedbackId.FairlightAudioInputGain]: true,
 	[FeedbackId.FairlightAudioMixOption]: true,
 }
+
+export function upgradeAddSSrcPropertiesPicker(
+	_context: CompanionUpgradeContext,
+	_config: (CompanionCoreInstanceconfig & Record<string, any>) | null,
+	actions: CompanionMigrationAction[],
+	feedbacks: CompanionMigrationFeedback[]
+): boolean {
+	let changed = false
+
+	for (const action of actions) {
+		if (action.action === ActionId.SuperSourceBoxProperties && !action.options.properties) {
+			action.options.properties = ['size', 'x', 'y', 'cropEnable', 'cropTop', 'cropLeft', 'cropRight', 'cropBottom']
+			changed = true
+		}
+	}
+
+	for (const feedback of feedbacks) {
+		if (feedback.type === FeedbackId.SSrcBoxProperties && !feedback.options.properties) {
+			feedback.options.properties = ['size', 'x', 'y', 'cropEnable', 'cropTop', 'cropLeft', 'cropRight', 'cropBottom']
+			changed = true
+		}
+	}
+
+	return changed
+}

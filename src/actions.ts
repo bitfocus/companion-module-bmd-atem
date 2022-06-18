@@ -56,6 +56,7 @@ import {
 import { AtemCommandBatching, CommandBatching } from './batching'
 import { AtemTransitions } from './transitions'
 import { SuperSourceArtOption } from 'atem-connection/dist/enums'
+import { SuperSource } from 'atem-connection/dist/state/video'
 
 export enum ActionId {
 	Program = 'program',
@@ -636,6 +637,7 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined,
 			: undefined,
 		[ActionId.SuperSourceBoxSource]: model.SSrc
 			? literal<CompanionActionExt>({
+					// TODO - combine into ActionId.SuperSourceBoxProperties
 					label: 'SuperSource: Set box source',
 					options: compact([
 						AtemSuperSourceIdPicker(model),
@@ -658,6 +660,7 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined,
 			: undefined,
 		[ActionId.SuperSourceBoxOnAir]: model.SSrc
 			? literal<CompanionActionExt>({
+					// TODO - combine into ActionId.SuperSourceBoxProperties
 					label: 'SuperSource: Set box enabled',
 					options: compact([
 						AtemSuperSourceIdPicker(model),
@@ -707,26 +710,63 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined,
 					options: compact([
 						AtemSuperSourceIdPicker(model),
 						AtemSuperSourceBoxPicker(),
-						...AtemSuperSourcePropertiesPickers(false),
+						...AtemSuperSourcePropertiesPickers(model, state, false),
 					]),
 					callback: (action): void => {
-						executePromise(
-							instance,
-							atem?.setSuperSourceBoxSettings(
-								{
-									size: getOptNumber(action, 'size') * 1000,
-									x: getOptNumber(action, 'x') * 100,
-									y: getOptNumber(action, 'y') * 100,
-									cropped: getOptBool(action, 'cropEnable'),
-									cropTop: getOptNumber(action, 'cropTop') * 1000,
-									cropBottom: getOptNumber(action, 'cropBottom') * 1000,
-									cropLeft: getOptNumber(action, 'cropLeft') * 1000,
-									cropRight: getOptNumber(action, 'cropRight') * 1000,
-								},
-								getOptNumber(action, 'boxIndex'),
-								action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
-							)
-						)
+						const ssrcId = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
+						const boxIndex = getOptNumber(action, 'boxIndex')
+
+						const newProps: Partial<SuperSource.SuperSourceBox> = {}
+
+						const props = action.options.properties
+						if (props && Array.isArray(props)) {
+							if (props.includes('onair')) {
+								if (action.options.onair === 'toggle') {
+									const box = getSuperSourceBox(state, boxIndex, ssrcId)
+									newProps.enabled = !box?.enabled
+								} else {
+									newProps.enabled = action.options.onair === 'true'
+								}
+							}
+
+							if (props.includes('source')) newProps.source = getOptNumber(action, 'source')
+
+							if (props.includes('size')) newProps.size = getOptNumber(action, 'size') * 1000
+							if (props.includes('x')) newProps.x = getOptNumber(action, 'x') * 100
+							if (props.includes('y')) newProps.y = getOptNumber(action, 'y') * 100
+
+							if (props.includes('cropEnable')) newProps.cropped = getOptBool(action, 'cropEnable')
+							if (props.includes('cropTop')) newProps.cropTop = getOptNumber(action, 'cropTop') * 1000
+							if (props.includes('cropBottom')) newProps.cropBottom = getOptNumber(action, 'cropBottom') * 1000
+							if (props.includes('cropLeft')) newProps.cropLeft = getOptNumber(action, 'cropLeft') * 1000
+							if (props.includes('cropRight')) newProps.cropRight = getOptNumber(action, 'cropRight') * 1000
+						}
+
+						if (Object.keys(newProps).length === 0) return
+
+						executePromise(instance, atem?.setSuperSourceBoxSettings(newProps, boxIndex, ssrcId))
+					},
+					learn: (action) => {
+						const ssrcId = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
+						const boxId = getOptNumber(action, 'boxIndex')
+						const ssrcConfig = atem?.state?.video.superSources?.[ssrcId]?.boxes[boxId]
+						if (ssrcConfig) {
+							return {
+								...action.options,
+								onair: ssrcConfig.enabled + '',
+								source: ssrcConfig.source,
+								size: ssrcConfig.size / 1000,
+								x: ssrcConfig.x / 100,
+								y: ssrcConfig.y / 100,
+								cropEnable: ssrcConfig.cropped,
+								cropTop: ssrcConfig.cropTop / 1000,
+								cropBottom: ssrcConfig.cropBottom / 1000,
+								cropLeft: ssrcConfig.cropLeft / 1000,
+								cropRight: ssrcConfig.cropRight / 1000,
+							}
+						} else {
+							return undefined
+						}
 					},
 			  })
 			: undefined,
@@ -736,30 +776,35 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined,
 					options: compact([
 						AtemSuperSourceIdPicker(model),
 						AtemSuperSourceBoxPicker(),
-						...AtemSuperSourcePropertiesPickers(true),
+						...AtemSuperSourcePropertiesPickers(model, state, true),
 					]),
 					callback: (action): void => {
-						const index = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
+						const ssrcId = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
 						const boxIndex = getOptNumber(action, 'boxIndex')
-						const box = getSuperSourceBox(state, boxIndex, index)
-						if (box) {
-							executePromise(
-								instance,
-								atem?.setSuperSourceBoxSettings(
-									{
-										size: clamp(0, 1000, box.size + getOptNumber(action, 'size') * 1000),
-										x: clamp(-4800, 4800, box.x + getOptNumber(action, 'x') * 100),
-										y: clamp(-2700, 2700, box.y + getOptNumber(action, 'y') * 100),
-										cropTop: clamp(0, 18000, box.cropTop + getOptNumber(action, 'cropTop') * 1000),
-										cropBottom: clamp(0, 18000, box.cropBottom + getOptNumber(action, 'cropBottom') * 1000),
-										cropLeft: clamp(0, 32000, box.cropLeft + getOptNumber(action, 'cropLeft') * 1000),
-										cropRight: clamp(0, 32000, box.cropRight + getOptNumber(action, 'cropRight') * 1000),
-									},
-									boxIndex,
-									index
-								)
-							)
+
+						const newProps: Partial<SuperSource.SuperSourceBox> = {}
+
+						const box = getSuperSourceBox(state, boxIndex, ssrcId)
+
+						const props = action.options.properties
+						if (box && props && Array.isArray(props)) {
+							if (props.includes('size')) newProps.size = clamp(0, 1000, box.size + getOptNumber(action, 'size') * 1000)
+							if (props.includes('x')) newProps.x = clamp(-4800, 4800, box.x + getOptNumber(action, 'x') * 100)
+							if (props.includes('y')) newProps.y = clamp(-2700, 2700, box.y + getOptNumber(action, 'y') * 100)
+
+							if (props.includes('cropTop'))
+								newProps.cropTop = clamp(0, 18000, box.cropTop + getOptNumber(action, 'cropTop') * 1000)
+							if (props.includes('cropBottom'))
+								newProps.cropBottom = clamp(0, 18000, box.cropBottom + getOptNumber(action, 'cropBottom') * 1000)
+							if (props.includes('cropLeft'))
+								newProps.cropLeft = clamp(0, 32000, box.cropLeft + getOptNumber(action, 'cropLeft') * 1000)
+							if (props.includes('cropRight'))
+								newProps.cropRight = clamp(0, 32000, box.cropRight + getOptNumber(action, 'cropRight') * 1000)
 						}
+
+						if (Object.keys(newProps).length === 0) return
+
+						executePromise(instance, atem?.setSuperSourceBoxSettings(newProps, boxIndex, ssrcId))
 					},
 			  })
 			: undefined,

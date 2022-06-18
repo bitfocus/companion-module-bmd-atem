@@ -671,7 +671,7 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
 					options: compact([
 						AtemSuperSourceIdPicker(model),
 						AtemSuperSourceBoxPicker(),
-						...AtemSuperSourcePropertiesPickers(false),
+						...AtemSuperSourcePropertiesPickers(model, state, false),
 					]),
 					style: {
 						color: instance.rgb(0, 0, 0),
@@ -679,22 +679,50 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
 					},
 					callback: (evt: CompanionFeedbackEvent): boolean => {
 						const box = getSuperSourceBox(state, evt.options.boxIndex, evt.options.ssrcId || 0)
-						const boxCroppingMatches =
-							box &&
-							(!box.cropped ||
-								(compareAsInt(evt.options.cropTop, box.cropTop, 1000, 10) &&
-									compareAsInt(evt.options.cropBottom, box.cropBottom, 1000, 10) &&
-									compareAsInt(evt.options.cropLeft, box.cropLeft, 1000, 10) &&
-									compareAsInt(evt.options.cropRight, box.cropRight, 1000, 10)))
 
-						return !!(
-							box &&
-							compareAsInt(evt.options.size, box.size, 1000, 10) &&
-							compareAsInt(evt.options.x, box.x, 100) &&
-							compareAsInt(evt.options.y, box.y, 100) &&
-							box.cropped === !!evt.options.cropEnable &&
-							boxCroppingMatches
-						)
+						const props = evt.options.properties
+						if (!box || !props || !Array.isArray(props)) return false
+
+						if (props.includes('source') && box.source !== evt.options.source) return false
+
+						if (props.includes('size') && !compareAsInt(evt.options.size, box.size, 1000, 10)) return false
+						if (props.includes('x') && !compareAsInt(evt.options.x, box.x, 100)) return false
+						if (props.includes('y') && !compareAsInt(evt.options.y, box.y, 100)) return false
+
+						if (props.includes('cropEnable') && box.cropped !== !!evt.options.cropEnable) return false
+
+						if (box.cropped) {
+							if (props.includes('cropTop') && !compareAsInt(evt.options.cropTop, box.cropTop, 1000, 10)) return false
+							if (props.includes('cropBottom') && !compareAsInt(evt.options.cropBottom, box.cropBottom, 1000, 10))
+								return false
+							if (props.includes('cropLeft') && !compareAsInt(evt.options.cropLeft, box.cropLeft, 1000, 10))
+								return false
+							if (props.includes('cropRight') && !compareAsInt(evt.options.cropRight, box.cropRight, 1000, 10))
+								return false
+						}
+
+						return true
+					},
+					learn: (feedback) => {
+						const ssrcId = feedback.options.ssrcId && model.SSrc > 1 ? Number(feedback.options.ssrcId) : 0
+						const boxId = Number(feedback.options.boxIndex)
+						const ssrcConfig = state.video.superSources?.[ssrcId]?.boxes[boxId]
+						if (ssrcConfig) {
+							return {
+								...feedback.options,
+								source: ssrcConfig.source,
+								size: ssrcConfig.size / 1000,
+								x: ssrcConfig.x / 100,
+								y: ssrcConfig.y / 100,
+								cropEnable: ssrcConfig.cropped,
+								cropTop: ssrcConfig.cropTop / 1000,
+								cropBottom: ssrcConfig.cropBottom / 1000,
+								cropLeft: ssrcConfig.cropLeft / 1000,
+								cropRight: ssrcConfig.cropRight / 1000,
+							}
+						} else {
+							return undefined
+						}
 					},
 			  })
 			: undefined,

@@ -2,10 +2,12 @@ import { AtemState, Enums } from 'atem-connection'
 import {
 	CompanionInputFieldCheckbox,
 	CompanionInputFieldDropdown,
+	CompanionInputFieldMultiDropdown,
 	CompanionInputFieldNumber,
 	DropdownChoice,
 } from '../../../instance_skel_types'
 import {
+	CHOICES_KEYTRANS,
 	CHOICES_SSRCBOXES,
 	GetAudioInputsList,
 	GetAuxIdChoices,
@@ -222,9 +224,16 @@ export function AtemSuperSourceArtOption(action: boolean): CompanionInputFieldDr
 	}
 }
 export function AtemSuperSourcePropertiesPickers(
+	model: ModelSpec,
+	state: AtemState,
 	offset: boolean
-): Array<CompanionInputFieldNumber | CompanionInputFieldCheckbox> {
-	return compact([
+): Array<
+	| CompanionInputFieldNumber
+	| CompanionInputFieldCheckbox
+	| CompanionInputFieldDropdown
+	| CompanionInputFieldMultiDropdown
+> {
+	const allProps: ReturnType<typeof AtemSuperSourcePropertiesPickers> = compact([
 		{
 			type: 'number',
 			id: 'size',
@@ -234,7 +243,31 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: offset ? 0 : 0.5,
 			step: 0.01,
+			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('size'),
 		},
+
+		!offset
+			? {
+					id: 'onair',
+					type: 'dropdown',
+					label: 'On Air',
+					default: 'true',
+					choices: CHOICES_KEYTRANS,
+					isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('onair'),
+			  }
+			: undefined,
+
+		!offset
+			? {
+					type: 'dropdown',
+					id: 'source',
+					label: 'Source',
+					default: 0,
+					choices: SourcesToChoices(GetSourcesListForType(model, state, 'ssrc-box')),
+					isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('source'),
+			  }
+			: undefined,
+
 		{
 			type: 'number',
 			id: 'x',
@@ -244,6 +277,7 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0,
 			step: 0.01,
+			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('x'),
 		},
 		{
 			type: 'number',
@@ -254,6 +288,7 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0,
 			step: 0.01,
+			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('y'),
 		},
 		offset
 			? undefined
@@ -262,6 +297,7 @@ export function AtemSuperSourcePropertiesPickers(
 					id: 'cropEnable',
 					label: 'Crop Enable',
 					default: false,
+					isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('cropEnable'),
 			  },
 		{
 			type: 'number',
@@ -272,6 +308,7 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0,
 			step: 0.01,
+			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('cropTop'),
 		},
 		{
 			type: 'number',
@@ -282,6 +319,7 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0,
 			step: 0.01,
+			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('cropBottom'),
 		},
 		{
 			type: 'number',
@@ -292,6 +330,7 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0,
 			step: 0.01,
+			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('cropLeft'),
 		},
 		{
 			type: 'number',
@@ -302,7 +341,21 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0,
 			step: 0.01,
+			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('cropRight'),
 		},
+	])
+
+	return compact([
+		{
+			type: 'dropdown',
+			id: 'properties',
+			label: 'Properties',
+			multiple: true,
+			minSelection: 1,
+			default: allProps.map((p) => p.id),
+			choices: allProps.map((p) => ({ id: p.id, label: p.label })),
+		},
+		...allProps,
 	])
 }
 export function AtemSuperSourceArtSourcePicker(
