@@ -42,7 +42,15 @@ import {
 	AtemSuperSourceArtPropertiesPickers,
 } from './input'
 import { ModelSpec } from './models'
-import { getDSK, getSuperSourceBox, getUSK, getTransitionProperties, getMediaPlayer } from './state'
+import {
+	getDSK,
+	getSuperSourceBox,
+	getUSK,
+	getTransitionProperties,
+	getMediaPlayer,
+	getMixEffect,
+	getMultiviewerWindow,
+} from './state'
 import {
 	assertUnreachable,
 	calculateTransitionSelection,
@@ -150,6 +158,18 @@ function meActions(
 					atem?.changeProgramInput(getOptNumber(action, 'input'), getOptNumber(action, 'mixeffect'))
 				)
 			},
+			learn: (action) => {
+				const me = getMixEffect(state, getOptNumber(action, 'mixeffect'))
+
+				if (me) {
+					return {
+						...action.options,
+						input: me.programInput,
+					}
+				} else {
+					return undefined
+				}
+			},
 		}),
 		[ActionId.Preview]: literal<CompanionActionExt>({
 			label: 'ME: Set Preview input',
@@ -159,6 +179,18 @@ function meActions(
 					instance,
 					atem?.changePreviewInput(getOptNumber(action, 'input'), getOptNumber(action, 'mixeffect'))
 				)
+			},
+			learn: (action) => {
+				const me = getMixEffect(state, getOptNumber(action, 'mixeffect'))
+
+				if (me) {
+					return {
+						...action.options,
+						input: me.previewInput,
+					}
+				} else {
+					return undefined
+				}
 			},
 		}),
 		[ActionId.Cut]: literal<CompanionActionExt>({
@@ -202,6 +234,19 @@ function meActions(
 							])
 						)
 					},
+					learn: (action) => {
+						const usk = getUSK(state, getOptNumber(action, 'mixeffect'), getOptNumber(action, 'key'))
+
+						if (usk) {
+							return {
+								...action.options,
+								cut: usk.cutSource,
+								fill: usk.fillSource,
+							}
+						} else {
+							return undefined
+						}
+					},
 			  })
 			: undefined,
 		[ActionId.USKOnAir]: model.USKs
@@ -228,6 +273,18 @@ function meActions(
 							executePromise(instance, atem?.setUpstreamKeyerOnAir(action.options.onair === 'true', meIndex, keyIndex))
 						}
 					},
+					learn: (action) => {
+						const usk = getUSK(state, getOptNumber(action, 'mixeffect'), getOptNumber(action, 'key'))
+
+						if (usk) {
+							return {
+								...action.options,
+								onair: usk.onAir,
+							}
+						} else {
+							return undefined
+						}
+					},
 			  })
 			: undefined,
 		[ActionId.TransitionStyle]: literal<CompanionActionExt>({
@@ -243,6 +300,18 @@ function meActions(
 						getOptNumber(action, 'mixeffect')
 					)
 				)
+			},
+			learn: (action) => {
+				const me = getMixEffect(state, getOptNumber(action, 'mixeffect'))
+
+				if (me) {
+					return {
+						...action.options,
+						style: me.transitionProperties.nextStyle,
+					}
+				} else {
+					return undefined
+				}
 			},
 		}),
 		[ActionId.TransitionRate]: literal<CompanionActionExt>({
@@ -301,6 +370,42 @@ function meActions(
 					default:
 						assertUnreachable(style)
 						instance.debug('Unknown transition style: ' + style)
+				}
+			},
+			learn: (action) => {
+				const me = getMixEffect(state, action.options.mixeffect)
+
+				if (me?.transitionSettings) {
+					const style = Number(action.options.style) as Enums.TransitionStyle
+					switch (style) {
+						case Enums.TransitionStyle.MIX:
+							return {
+								...action.options,
+								rate: me.transitionSettings.mix?.rate,
+							}
+						case Enums.TransitionStyle.DIP:
+							return {
+								...action.options,
+								rate: me.transitionSettings.dip?.rate,
+							}
+						case Enums.TransitionStyle.WIPE:
+							return {
+								...action.options,
+								rate: me.transitionSettings.wipe?.rate,
+							}
+						case Enums.TransitionStyle.DVE:
+							return {
+								...action.options,
+								rate: me.transitionSettings.DVE?.rate,
+							}
+						case Enums.TransitionStyle.STING:
+							return undefined
+						default:
+							assertUnreachable(style)
+							return undefined
+					}
+				} else {
+					return undefined
 				}
 			},
 		}),
@@ -391,6 +496,18 @@ function meActions(
 					atem?.setFadeToBlackRate(getOptNumber(action, 'rate'), getOptNumber(action, 'mixeffect'))
 				)
 			},
+			learn: (action) => {
+				const me = getMixEffect(state, action.options.mixeffect)
+
+				if (me?.fadeToBlack) {
+					return {
+						...action.options,
+						rate: me.fadeToBlack.rate,
+					}
+				} else {
+					return undefined
+				}
+			},
 		}),
 		[ActionId.USKFly]:
 			model.USKs && model.DVEs
@@ -416,6 +533,18 @@ function meActions(
 									getOptNumber(action, 'keyframe')
 								)
 							)
+						},
+						learn: (action) => {
+							const usk = getUSK(state, getOptNumber(action, 'mixeffect'), getOptNumber(action, 'key'))
+
+							if (usk?.flyProperties) {
+								return {
+									...action.options,
+									keyframe: usk.flyProperties.isAtKeyFrame,
+								}
+							} else {
+								return undefined
+							}
 						},
 				  })
 				: undefined,
@@ -444,6 +573,18 @@ function meActions(
 								)
 							)
 						},
+						learn: (action) => {
+							const usk = getUSK(state, getOptNumber(action, 'mixeffect'), getOptNumber(action, 'key'))
+
+							if (usk?.flyProperties) {
+								return {
+									...action.options,
+									flydirection: usk.flyProperties.runToInfiniteIndex,
+								}
+							} else {
+								return undefined
+							}
+						},
 				  })
 				: undefined,
 	}
@@ -464,6 +605,19 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, 
 								atem?.setDownstreamKeyCutSource(getOptNumber(action, 'cut'), getOptNumber(action, 'key')),
 							])
 						)
+					},
+					learn: (feedback) => {
+						const dsk = getDSK(state, feedback.options.key)
+
+						if (dsk?.sources) {
+							return {
+								...feedback.options,
+								fill: dsk.sources.fillSource,
+								cut: dsk.sources.cutSource,
+							}
+						} else {
+							return undefined
+						}
 					},
 			  })
 			: undefined,
@@ -506,6 +660,18 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, 
 							executePromise(instance, atem?.setDownstreamKeyOnAir(action.options.onair === 'true', keyIndex))
 						}
 					},
+					learn: (feedback) => {
+						const dsk = getDSK(state, feedback.options.key)
+
+						if (dsk) {
+							return {
+								...feedback.options,
+								onair: dsk.onAir,
+							}
+						} else {
+							return undefined
+						}
+					},
 			  })
 			: undefined,
 		[ActionId.DSKTie]: model.DSKs
@@ -528,6 +694,18 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, 
 							executePromise(instance, atem?.setDownstreamKeyTie(!dsk?.properties?.tie, keyIndex))
 						} else {
 							executePromise(instance, atem?.setDownstreamKeyTie(action.options.state === 'true', keyIndex))
+						}
+					},
+					learn: (feedback) => {
+						const dsk = getDSK(state, feedback.options.key)
+
+						if (dsk?.properties) {
+							return {
+								...feedback.options,
+								state: dsk.properties.tie,
+							}
+						} else {
+							return undefined
 						}
 					},
 			  })
@@ -684,6 +862,20 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined,
 							)
 						)
 					},
+					learn: (action) => {
+						const ssrcId = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
+						const boxId = getOptNumber(action, 'boxIndex')
+
+						const ssrcConfig = state?.video.superSources?.[ssrcId]?.boxes[boxId]
+						if (ssrcConfig) {
+							return {
+								...action.options,
+								source: ssrcConfig.source,
+							}
+						} else {
+							return undefined
+						}
+					},
 			  })
 			: undefined,
 		[ActionId.SuperSourceBoxOnAir]: model.SSrc
@@ -728,6 +920,20 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined,
 									ssrcId
 								)
 							)
+						}
+					},
+					learn: (action) => {
+						const ssrcId = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
+						const boxId = getOptNumber(action, 'boxIndex')
+
+						const ssrcConfig = state?.video.superSources?.[ssrcId]?.boxes[boxId]
+						if (ssrcConfig) {
+							return {
+								...action.options,
+								onair: ssrcConfig.enabled + '',
+							}
+						} else {
+							return undefined
 						}
 					},
 			  })
@@ -872,6 +1078,16 @@ function streamRecordActions(
 							executePromise(instance, atem?.stopStreaming())
 						}
 					},
+					learn: (feedback) => {
+						if (state.streaming?.status) {
+							return {
+								...feedback.options,
+								state: state.streaming.status.state,
+							}
+						} else {
+							return undefined
+						}
+					},
 			  })
 			: undefined,
 		[ActionId.StreamService]: model.recording
@@ -907,6 +1123,18 @@ function streamRecordActions(
 							})
 						)
 					},
+					learn: (feedback) => {
+						if (state.streaming?.service) {
+							return {
+								...feedback.options,
+								service: state.streaming.service.serviceName,
+								url: state.streaming.service.url,
+								key: state.streaming.service.key,
+							}
+						} else {
+							return undefined
+						}
+					},
 			  })
 			: undefined,
 		[ActionId.RecordStartStop]: model.recording
@@ -931,6 +1159,16 @@ function streamRecordActions(
 							executePromise(instance, atem?.startRecording())
 						} else {
 							executePromise(instance, atem?.stopRecording())
+						}
+					},
+					learn: (feedback) => {
+						if (state.recording?.status) {
+							return {
+								...feedback.options,
+								state: state.recording.status.state,
+							}
+						} else {
+							return undefined
 						}
 					},
 			  })
@@ -964,6 +1202,16 @@ function streamRecordActions(
 								})
 							)
 						})
+					},
+					learn: (feedback) => {
+						if (state.recording?.properties) {
+							return {
+								...feedback.options,
+								filename: state.recording?.properties.filename,
+							}
+						} else {
+							return undefined
+						}
 					},
 			  })
 			: undefined,
@@ -1012,6 +1260,19 @@ function audioActions(
 						getOptNumber(action, 'gain'),
 						getOptNumber(action, 'fadeDuration', 0)
 					)
+				},
+				learn: (action) => {
+					const audioChannels = state.audio?.channels ?? {}
+					const channel = audioChannels[Number(action.options.input)]
+
+					if (channel) {
+						return {
+							...action.options,
+							gain: channel.gain,
+						}
+					} else {
+						return undefined
+					}
 				},
 			}),
 			[ActionId.ClassicAudioGainDelta]: literal<CompanionActionExt>({
@@ -1062,6 +1323,19 @@ function audioActions(
 							: Enums.AudioMixOption.On
 					const newVal = action.options.option === 'toggle' ? toggleVal : getOptNumber(action, 'option')
 					executePromise(instance, atem?.setClassicAudioMixerInputProps(inputId, { mixOption: newVal }))
+				},
+				learn: (action) => {
+					const audioChannels = state.audio?.channels ?? {}
+					const channel = audioChannels[Number(action.options.input)]
+
+					if (channel) {
+						return {
+							...action.options,
+							option: channel.mixOption,
+						}
+					} else {
+						return undefined
+					}
 				},
 			}),
 			[ActionId.ClassicAudioResetPeaks]: literal<CompanionActionExt>({
@@ -1129,6 +1403,18 @@ function audioActions(
 						getOptNumber(action, 'gain'),
 						getOptNumber(action, 'fadeDuration', 0)
 					)
+				},
+				learn: (action) => {
+					const props = state.audio?.master
+
+					if (props) {
+						return {
+							...action.options,
+							gain: props.gain,
+						}
+					} else {
+						return undefined
+					}
 				},
 			}),
 			[ActionId.ClassicAudioMasterGainDelta]: literal<CompanionActionExt>({
@@ -1215,6 +1501,20 @@ function audioActions(
 						getOptNumber(action, 'fadeDuration', 0)
 					)
 				},
+				learn: (action) => {
+					const audioChannels = state.fairlight?.inputs ?? {}
+					const audioSources = audioChannels[Number(action.options.input)]?.sources ?? {}
+					const source = audioSources[action.options.source + '']
+
+					if (source?.properties) {
+						return {
+							...action.options,
+							gain: source.properties.gain / 100,
+						}
+					} else {
+						return undefined
+					}
+				},
 			}),
 			[ActionId.FairlightAudioInputGainDelta]: literal<CompanionActionExt>({
 				label: 'Fairlight Audio: Adjust input gain',
@@ -1286,6 +1586,20 @@ function audioActions(
 						getOptNumber(action, 'fadeDuration', 0)
 					)
 				},
+				learn: (action) => {
+					const audioChannels = state.fairlight?.inputs ?? {}
+					const audioSources = audioChannels[Number(action.options.input)]?.sources ?? {}
+					const source = audioSources[action.options.source + '']
+
+					if (source?.properties) {
+						return {
+							...action.options,
+							gain: source.properties.faderGain / 100,
+						}
+					} else {
+						return undefined
+					}
+				},
 			}),
 			[ActionId.FairlightAudioFaderGainDelta]: literal<CompanionActionExt>({
 				label: 'Fairlight Audio: Adjust fader gain',
@@ -1346,6 +1660,20 @@ function audioActions(
 							: Enums.FairlightAudioMixOption.On
 					const newVal = action.options.option === 'toggle' ? toggleVal : getOptNumber(action, 'option')
 					executePromise(instance, atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, { mixOption: newVal }))
+				},
+				learn: (action) => {
+					const audioChannels = state.fairlight?.inputs ?? {}
+					const audioSources = audioChannels[Number(action.options.input)]?.sources ?? {}
+					const source = audioSources[action.options.source + '']
+
+					if (source?.properties) {
+						return {
+							...action.options,
+							option: source.properties.mixOption,
+						}
+					} else {
+						return undefined
+					}
 				},
 			}),
 			[ActionId.FairlightAudioResetPeaks]: literal<CompanionActionExt>({
@@ -1425,6 +1753,18 @@ function audioActions(
 						getOptNumber(action, 'fadeDuration', 0)
 					)
 				},
+				learn: (action) => {
+					const props = state.fairlight?.master?.properties
+
+					if (props) {
+						return {
+							...action.options,
+							gain: props.faderGain / 100,
+						}
+					} else {
+						return undefined
+					}
+				},
 			}),
 			[ActionId.FairlightAudioMasterGainDelta]: literal<CompanionActionExt>({
 				label: 'Fairlight Audio: Adjust master gain',
@@ -1477,6 +1817,18 @@ function audioActions(
 								})
 							)
 						},
+						learn: (action) => {
+							const props = state.fairlight?.monitor
+
+							if (props) {
+								return {
+									...action.options,
+									state: props.inputMasterMuted,
+								}
+							} else {
+								return undefined
+							}
+						},
 				  })
 				: undefined,
 			[ActionId.FairlightAudioMonitorGain]: model.fairlightAudio.monitor
@@ -1511,6 +1863,18 @@ function audioActions(
 								getOptNumber(action, 'gain') * 100,
 								getOptNumber(action, 'fadeDuration', 0)
 							)
+						},
+						learn: (action) => {
+							const props = state.fairlight?.monitor
+
+							if (props) {
+								return {
+									...action.options,
+									gain: props.gain / 100,
+								}
+							} else {
+								return undefined
+							}
 						},
 				  })
 				: undefined,
@@ -1620,6 +1984,18 @@ export function GetActionsList(
 					callback: (action): void => {
 						executePromise(instance, atem?.setAuxSource(getOptNumber(action, 'input'), getOptNumber(action, 'aux')))
 					},
+					learn: (action) => {
+						const auxSource = state.video.auxilliaries[Number(action.options.aux)]
+
+						if (auxSource !== undefined) {
+							return {
+								...action.options,
+								input: auxSource,
+							}
+						} else {
+							return undefined
+						}
+					},
 			  })
 			: undefined,
 		[ActionId.MultiviewerWindowSource]: model.MVs
@@ -1639,6 +2015,18 @@ export function GetActionsList(
 								getOptNumber(action, 'windowIndex')
 							)
 						)
+					},
+					learn: (action) => {
+						const window = getMultiviewerWindow(state, action.options.multiViewerId, action.options.windowIndex)
+
+						if (window) {
+							return {
+								...action.options,
+								source: window.source,
+							}
+						} else {
+							return undefined
+						}
 					},
 			  })
 			: undefined,
@@ -1670,6 +2058,18 @@ export function GetActionsList(
 									getOptNumber(action, 'mediaplayer')
 								)
 							)
+						}
+					},
+					learn: (action) => {
+						const player = state.media.players[Number(action.options.mediaplayer)]
+
+						if (player) {
+							return {
+								...action.options,
+								source: player.sourceType ? player.stillIndex : player.clipIndex + MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
+							}
+						} else {
+							return undefined
 						}
 					},
 			  })
@@ -1792,6 +2192,22 @@ export function GetActionsList(
 						Object.keys(newProps).length ? atem?.setInputSettings(newProps, source) : undefined,
 					])
 				)
+			},
+			learn: (action) => {
+				const source = getOptNumber(action, 'source')
+				const props = state.inputs[source]
+
+				console.log(source, props, state.inputs)
+
+				if (props) {
+					return {
+						...action.options,
+						long_value: props.longName,
+						short_value: props.shortName,
+					}
+				} else {
+					return undefined
+				}
 			},
 		}),
 	}
