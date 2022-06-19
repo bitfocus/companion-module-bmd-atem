@@ -163,6 +163,18 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
 				const me = getMixEffect(state, evt.options.mixeffect)
 				return me?.previewInput === Number(evt.options.input)
 			},
+			learn: (feedback) => {
+				const me = getMixEffect(state, feedback.options.mixeffect)
+
+				if (me) {
+					return {
+						...feedback.options,
+						input: me.previewInput,
+					}
+				} else {
+					return undefined
+				}
+			},
 		}),
 		[FeedbackId.PreviewBG2]:
 			model.MEs >= 2
@@ -187,6 +199,20 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
 							return (
 								me1?.previewInput === Number(evt.options.input1) && me2?.previewInput === Number(evt.options.input2)
 							)
+						},
+						learn: (feedback) => {
+							const me1 = getMixEffect(state, feedback.options.mixeffect1)
+							const me2 = getMixEffect(state, feedback.options.mixeffect2)
+
+							if (me1 && me2) {
+								return {
+									...feedback.options,
+									input1: me1.previewInput,
+									input2: me2.previewInput,
+								}
+							} else {
+								return undefined
+							}
 						},
 				  })
 				: undefined,
@@ -218,6 +244,22 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
 								me2?.previewInput === Number(evt.options.input2) &&
 								me3?.previewInput === Number(evt.options.input3)
 							)
+						},
+						learn: (feedback) => {
+							const me1 = getMixEffect(state, feedback.options.mixeffect1)
+							const me2 = getMixEffect(state, feedback.options.mixeffect2)
+							const me3 = getMixEffect(state, feedback.options.mixeffect3)
+
+							if (me1 && me2 && me3) {
+								return {
+									...feedback.options,
+									input1: me1.previewInput,
+									input2: me2.previewInput,
+									input3: me3.previewInput,
+								}
+							} else {
+								return undefined
+							}
 						},
 				  })
 				: undefined,
@@ -255,6 +297,24 @@ function previewFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
 								me4?.previewInput === Number(evt.options.input4)
 							)
 						},
+						learn: (feedback) => {
+							const me1 = getMixEffect(state, feedback.options.mixeffect1)
+							const me2 = getMixEffect(state, feedback.options.mixeffect2)
+							const me3 = getMixEffect(state, feedback.options.mixeffect3)
+							const me4 = getMixEffect(state, feedback.options.mixeffect4)
+
+							if (me1 && me2 && me3 && me4) {
+								return {
+									...feedback.options,
+									input1: me1.previewInput,
+									input2: me2.previewInput,
+									input3: me3.previewInput,
+									input4: me4.previewInput,
+								}
+							} else {
+								return undefined
+							}
+						},
 				  })
 				: undefined,
 	}
@@ -275,6 +335,18 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const me = getMixEffect(state, evt.options.mixeffect)
 				return me?.programInput === Number(evt.options.input)
+			},
+			learn: (feedback) => {
+				const me = getMixEffect(state, feedback.options.mixeffect)
+
+				if (me) {
+					return {
+						...feedback.options,
+						input: me.programInput,
+					}
+				} else {
+					return undefined
+				}
 			},
 		}),
 		[FeedbackId.ProgramBG2]:
@@ -300,6 +372,20 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
 							return (
 								me1?.programInput === Number(evt.options.input1) && me2?.programInput === Number(evt.options.input2)
 							)
+						},
+						learn: (feedback) => {
+							const me1 = getMixEffect(state, feedback.options.mixeffect1)
+							const me2 = getMixEffect(state, feedback.options.mixeffect2)
+
+							if (me1 && me2) {
+								return {
+									...feedback.options,
+									input1: me1.programInput,
+									input2: me2.programInput,
+								}
+							} else {
+								return undefined
+							}
 						},
 				  })
 				: undefined,
@@ -331,6 +417,22 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
 								me2?.programInput === Number(evt.options.input2) &&
 								me3?.programInput === Number(evt.options.input3)
 							)
+						},
+						learn: (feedback) => {
+							const me1 = getMixEffect(state, feedback.options.mixeffect1)
+							const me2 = getMixEffect(state, feedback.options.mixeffect2)
+							const me3 = getMixEffect(state, feedback.options.mixeffect3)
+
+							if (me1 && me2 && me3) {
+								return {
+									...feedback.options,
+									input1: me1.programInput,
+									input2: me2.programInput,
+									input3: me3.programInput,
+								}
+							} else {
+								return undefined
+							}
 						},
 				  })
 				: undefined,
@@ -366,6 +468,24 @@ function programFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, 
 								me3?.programInput === Number(evt.options.input3) &&
 								me4?.programInput === Number(evt.options.input4)
 							)
+						},
+						learn: (feedback) => {
+							const me1 = getMixEffect(state, feedback.options.mixeffect1)
+							const me2 = getMixEffect(state, feedback.options.mixeffect2)
+							const me3 = getMixEffect(state, feedback.options.mixeffect3)
+							const me4 = getMixEffect(state, feedback.options.mixeffect4)
+
+							if (me1 && me2 && me3 && me4) {
+								return {
+									...feedback.options,
+									input1: me1.programInput,
+									input2: me2.programInput,
+									input3: me3.programInput,
+									input4: me4.programInput,
+								}
+							} else {
+								return undefined
+							}
 						},
 				  })
 				: undefined,
@@ -405,6 +525,18 @@ function uskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
 						const usk = getUSK(state, evt.options.mixeffect, evt.options.key)
 						return usk?.fillSource === Number(evt.options.fill)
 					},
+					learn: (feedback) => {
+						const usk = getUSK(state, feedback.options.mixeffect, feedback.options.key)
+
+						if (usk) {
+							return {
+								...feedback.options,
+								fill: usk.fillSource,
+							}
+						} else {
+							return undefined
+						}
+					},
 			  })
 			: undefined,
 		[FeedbackId.USKKeyFrame]:
@@ -432,6 +564,18 @@ function uskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
 							const usk = getUSK(state, evt.options.mixeffect, evt.options.key)
 							return usk?.flyProperties?.isAtKeyFrame === Number(evt.options.keyframe)
 						},
+						learn: (feedback) => {
+							const usk = getUSK(state, feedback.options.mixeffect, feedback.options.key)
+
+							if (usk?.flyProperties) {
+								return {
+									...feedback.options,
+									keyframe: usk.flyProperties.isAtKeyFrame,
+								}
+							} else {
+								return undefined
+							}
+						},
 				  })
 				: undefined,
 	}
@@ -452,6 +596,18 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const me = getMixEffect(state, evt.options.mixeffect)
 				return me?.transitionProperties.nextStyle === Number(evt.options.style)
+			},
+			learn: (feedback) => {
+				const me = getMixEffect(state, feedback.options.mixeffect)
+
+				if (me) {
+					return {
+						...feedback.options,
+						style: me.transitionProperties.nextStyle,
+					}
+				} else {
+					return undefined
+				}
 			},
 		}),
 		[FeedbackId.TransitionSelection]: literal<CompanionFeedbackWithCallback>({
@@ -509,6 +665,42 @@ function transitionFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpe
 					}
 				}
 				return false
+			},
+			learn: (feedback) => {
+				const me = getMixEffect(state, feedback.options.mixeffect)
+
+				if (me?.transitionSettings) {
+					const style = Number(feedback.options.style) as Enums.TransitionStyle
+					switch (style) {
+						case Enums.TransitionStyle.MIX:
+							return {
+								...feedback.options,
+								rate: me.transitionSettings.mix?.rate,
+							}
+						case Enums.TransitionStyle.DIP:
+							return {
+								...feedback.options,
+								rate: me.transitionSettings.dip?.rate,
+							}
+						case Enums.TransitionStyle.WIPE:
+							return {
+								...feedback.options,
+								rate: me.transitionSettings.wipe?.rate,
+							}
+						case Enums.TransitionStyle.DVE:
+							return {
+								...feedback.options,
+								rate: me.transitionSettings.DVE?.rate,
+							}
+						case Enums.TransitionStyle.STING:
+							return undefined
+						default:
+							assertUnreachable(style)
+							return undefined
+					}
+				} else {
+					return undefined
+				}
 			},
 		}),
 		[FeedbackId.InTransition]: literal<CompanionFeedbackWithCallback>({
@@ -569,6 +761,18 @@ function fadeToBlackFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSp
 				const me = getMixEffect(state, evt.options.mixeffect)
 				const rate = Number(evt.options.rate)
 				return me?.fadeToBlack?.rate === rate
+			},
+			learn: (feedback) => {
+				const me = getMixEffect(state, feedback.options.mixeffect)
+
+				if (me?.fadeToBlack) {
+					return {
+						...feedback.options,
+						rate: me.fadeToBlack.rate,
+					}
+				} else {
+					return undefined
+				}
 			},
 		}),
 	}
@@ -667,6 +871,19 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
 						const ssrc = getSuperSource(state, ssrcId)
 						return ssrc.properties?.artFillSource === Number(evt.options.source)
 					},
+					learn: (feedback) => {
+						const ssrcId = feedback.options.ssrcId && model.SSrc > 1 ? Number(feedback.options.ssrcId) : 0
+						const ssrc = getSuperSource(state, ssrcId)
+
+						if (ssrc.properties) {
+							return {
+								...feedback.options,
+								source: ssrc.properties.artFillSource,
+							}
+						} else {
+							return undefined
+						}
+					},
 			  })
 			: undefined,
 		[FeedbackId.SSrcArtOption]: model.SSrc
@@ -685,6 +902,19 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
 						const ssrcId = evt.options.ssrcId && model.SSrc > 1 ? Number(evt.options.ssrcId) : 0
 						const ssrc = getSuperSource(state, ssrcId)
 						return ssrc.properties?.artOption === Number(evt.options.artOption)
+					},
+					learn: (feedback) => {
+						const ssrcId = feedback.options.ssrcId && model.SSrc > 1 ? Number(feedback.options.ssrcId) : 0
+						const ssrc = getSuperSource(state, ssrcId)
+
+						if (ssrc.properties) {
+							return {
+								...feedback.options,
+								artOption: ssrc.properties.artOption,
+							}
+						} else {
+							return undefined
+						}
 					},
 			  })
 			: undefined,
@@ -707,6 +937,19 @@ function ssrcFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, sta
 						const ssrcId = evt.options.ssrcId && model.SSrc > 1 ? Number(evt.options.ssrcId) : 0
 						const box = getSuperSourceBox(state, evt.options.boxIndex, ssrcId)
 						return box?.source === Number(evt.options.source)
+					},
+					learn: (feedback) => {
+						const ssrcId = feedback.options.ssrcId && model.SSrc > 1 ? Number(feedback.options.ssrcId) : 0
+						const box = getSuperSourceBox(state, feedback.options.boxIndex, ssrcId)
+
+						if (box) {
+							return {
+								...feedback.options,
+								source: box.source,
+							}
+						} else {
+							return undefined
+						}
 					},
 			  })
 			: undefined,
@@ -844,6 +1087,18 @@ function dskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
 						const dsk = getDSK(state, evt.options.key)
 						return dsk?.sources?.fillSource === Number(evt.options.fill)
 					},
+					learn: (feedback) => {
+						const dsk = getDSK(state, feedback.options.key)
+
+						if (dsk?.sources) {
+							return {
+								...feedback.options,
+								fill: dsk.sources.fillSource,
+							}
+						} else {
+							return undefined
+						}
+					},
 			  })
 			: undefined,
 	}
@@ -879,6 +1134,16 @@ function streamRecordFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelS
 						const streaming = state.streaming?.status?.state
 						return streaming === Number(evt.options.state)
 					},
+					learn: (feedback) => {
+						if (state.streaming?.status) {
+							return {
+								...feedback.options,
+								state: state.streaming.status.state,
+							}
+						} else {
+							return undefined
+						}
+					},
 			  })
 			: undefined,
 		[FeedbackId.RecordStatus]: model.recording
@@ -907,6 +1172,16 @@ function streamRecordFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelS
 					callback: (evt: CompanionFeedbackEvent): boolean => {
 						const recording = state.recording?.status?.state
 						return recording === Number(evt.options.state)
+					},
+					learn: (feedback) => {
+						if (state.recording?.status) {
+							return {
+								...feedback.options,
+								state: state.recording.status.state,
+							}
+						} else {
+							return undefined
+						}
 					},
 			  })
 			: undefined,
@@ -946,6 +1221,19 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 					const channel = audioChannels[Number(evt.options.input)]
 					return !!(channel && compareNumber(evt.options.gain, evt.options.comparitor, channel.gain))
 				},
+				learn: (feedback) => {
+					const audioChannels = state.audio?.channels ?? {}
+					const channel = audioChannels[Number(feedback.options.input)]
+
+					if (channel) {
+						return {
+							...feedback.options,
+							gain: channel.gain,
+						}
+					} else {
+						return undefined
+					}
+				},
 			}),
 			[FeedbackId.ClassicAudioMixOption]: literal<CompanionFeedbackWithCallback>({
 				type: 'boolean',
@@ -969,6 +1257,19 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 					const audioChannels = state.audio?.channels ?? {}
 					const channel = audioChannels[Number(evt.options.input)]
 					return channel?.mixOption === Number(evt.options.option)
+				},
+				learn: (feedback) => {
+					const audioChannels = state.audio?.channels ?? {}
+					const channel = audioChannels[Number(feedback.options.input)]
+
+					if (channel) {
+						return {
+							...feedback.options,
+							option: channel.mixOption,
+						}
+					} else {
+						return undefined
+					}
 				},
 			}),
 			[FeedbackId.ClassicAudioMasterGain]: literal<CompanionFeedbackWithCallback>({
@@ -996,6 +1297,18 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 				callback: (evt: CompanionFeedbackEvent): boolean => {
 					const props = state.audio?.master
 					return !!(props && compareNumber(evt.options.gain, evt.options.comparitor, props.gain))
+				},
+				learn: (feedback) => {
+					const props = state.audio?.master
+
+					if (props) {
+						return {
+							...feedback.options,
+							gain: props.gain,
+						}
+					} else {
+						return undefined
+					}
 				},
 			}),
 			[FeedbackId.FairlightAudioInputGain]: undefined,
@@ -1043,6 +1356,20 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 						source?.properties && compareNumber(evt.options.gain, evt.options.comparitor, source.properties.gain / 100)
 					)
 				},
+				learn: (feedback) => {
+					const audioChannels = state.fairlight?.inputs ?? {}
+					const audioSources = audioChannels[Number(feedback.options.input)]?.sources ?? {}
+					const source = audioSources[feedback.options.source + '']
+
+					if (source?.properties) {
+						return {
+							...feedback.options,
+							gain: source.properties.gain / 100,
+						}
+					} else {
+						return undefined
+					}
+				},
 			}),
 			[FeedbackId.FairlightAudioFaderGain]: literal<CompanionFeedbackWithCallback>({
 				type: 'boolean',
@@ -1077,6 +1404,20 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 						compareNumber(evt.options.gain, evt.options.comparitor, source.properties.faderGain / 100)
 					)
 				},
+				learn: (feedback) => {
+					const audioChannels = state.fairlight?.inputs ?? {}
+					const audioSources = audioChannels[Number(feedback.options.input)]?.sources ?? {}
+					const source = audioSources[feedback.options.source + '']
+
+					if (source?.properties) {
+						return {
+							...feedback.options,
+							gain: source.properties.faderGain / 100,
+						}
+					} else {
+						return undefined
+					}
+				},
 			}),
 			[FeedbackId.FairlightAudioMixOption]: literal<CompanionFeedbackWithCallback>({
 				type: 'boolean',
@@ -1102,6 +1443,20 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 					const audioSources = audioChannels[Number(evt.options.input)]?.sources ?? {}
 					const source = audioSources[evt.options.source + '']
 					return source?.properties?.mixOption === Number(evt.options.option)
+				},
+				learn: (feedback) => {
+					const audioChannels = state.fairlight?.inputs ?? {}
+					const audioSources = audioChannels[Number(feedback.options.input)]?.sources ?? {}
+					const source = audioSources[feedback.options.source + '']
+
+					if (source?.properties) {
+						return {
+							...feedback.options,
+							option: source.properties.mixOption,
+						}
+					} else {
+						return undefined
+					}
 				},
 			}),
 			[FeedbackId.FairlightAudioMasterGain]: literal<CompanionFeedbackWithCallback>({
@@ -1129,6 +1484,18 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 				callback: (evt: CompanionFeedbackEvent): boolean => {
 					const props = state.fairlight?.master?.properties
 					return !!(props && compareNumber(evt.options.gain, evt.options.comparitor, props.faderGain / 100))
+				},
+				learn: (feedback) => {
+					const props = state.fairlight?.master?.properties
+
+					if (props) {
+						return {
+							...feedback.options,
+							gain: props.faderGain / 100,
+						}
+					} else {
+						return undefined
+					}
 				},
 			}),
 			[FeedbackId.FairlightAudioMonitorMasterMuted]: model.fairlightAudio.monitor
@@ -1174,6 +1541,18 @@ function audioFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 						callback: (evt: CompanionFeedbackEvent): boolean => {
 							const gain = state.fairlight?.monitor?.gain
 							return !!(typeof gain === 'number' && compareNumber(evt.options.gain, evt.options.comparitor, gain / 100))
+						},
+						learn: (feedback) => {
+							const props = state.fairlight?.monitor
+
+							if (props) {
+								return {
+									...feedback.options,
+									gain: props.gain / 100,
+								}
+							} else {
+								return undefined
+							}
 						},
 				  })
 				: undefined,
@@ -1222,6 +1601,18 @@ export function GetFeedbacksList(
 					callback: (evt: CompanionFeedbackEvent): boolean => {
 						const auxSource = state.video.auxilliaries[Number(evt.options.aux)]
 						return auxSource === Number(evt.options.input)
+					},
+					learn: (feedback) => {
+						const auxSource = state.video.auxilliaries[Number(feedback.options.aux)]
+
+						if (auxSource !== undefined) {
+							return {
+								...feedback.options,
+								input: auxSource,
+							}
+						} else {
+							return undefined
+						}
 					},
 			  })
 			: undefined,
@@ -1299,6 +1690,18 @@ export function GetFeedbacksList(
 						const window = getMultiviewerWindow(state, evt.options.multiViewerId, evt.options.windowIndex)
 						return window?.source === Number(evt.options.source)
 					},
+					learn: (feedback) => {
+						const window = getMultiviewerWindow(state, feedback.options.multiViewerId, feedback.options.windowIndex)
+
+						if (window) {
+							return {
+								...feedback.options,
+								source: window.source,
+							}
+						} else {
+							return undefined
+						}
+					},
 			  })
 			: undefined,
 		[FeedbackId.MediaPlayerSource]: model.media.players
@@ -1325,6 +1728,18 @@ export function GetFeedbacksList(
 							return true
 						} else {
 							return false
+						}
+					},
+					learn: (feedback) => {
+						const player = state.media.players[Number(feedback.options.mediaplayer)]
+
+						if (player) {
+							return {
+								...feedback.options,
+								source: player.sourceType ? player.stillIndex : player.clipIndex + MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
+							}
+						} else {
+							return undefined
 						}
 					},
 			  })
