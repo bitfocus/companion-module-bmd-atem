@@ -2197,8 +2197,6 @@ export function GetActionsList(
 				const source = getOptNumber(action, 'source')
 				const props = state.inputs[source]
 
-				console.log(source, props, state.inputs)
-
 				if (props) {
 					return {
 						...action.options,

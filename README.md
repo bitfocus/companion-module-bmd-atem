@@ -23,6 +23,12 @@ To add a new model to the list:
 
 ## Changes
 
+### v2.16.0
+
+- more granular supersource actions and feedbacks
+
+- support learning values for actions and feedbacks
+
 ### v2.15.1
 
 - fix constellation hd high cpu usage
