@@ -676,7 +676,7 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, 
 					},
 			  })
 			: undefined,
-			[ActionId.DSKTie]: model.DSKs
+		[ActionId.DSKTie]: model.DSKs
 			? literal<CompanionActionExt>({
 					label: 'Downstream key: Set Tied',
 					options: [
