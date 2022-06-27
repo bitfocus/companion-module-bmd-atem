@@ -597,14 +597,13 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, 
 		[ActionId.DSKSource]: model.DSKs
 			? literal<CompanionActionExt>({
 					label: 'Downstream key: Set inputs',
-					options: [AtemDSKPicker(model), AtemRatePicker('Rate'), AtemKeyFillSourcePicker(model, state), AtemKeyCutSourcePicker(model, state)],
+					options: [AtemDSKPicker(model), AtemKeyFillSourcePicker(model, state), AtemKeyCutSourcePicker(model, state)],
 					callback: (action): void => {
 						executePromise(
 							instance,
 							Promise.all([
 								atem?.setDownstreamKeyFillSource(getOptNumber(action, 'fill'), getOptNumber(action, 'key')),
 								atem?.setDownstreamKeyCutSource(getOptNumber(action, 'cut'), getOptNumber(action, 'key')),
-								atem?.setDownstreamKeyRate(getOptNumber(action, 'rate'), getOptNumber(action, 'key')),
 							])
 						)
 					},
@@ -616,7 +615,6 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, 
 								...feedback.options,
 								fill: dsk.sources.fillSource,
 								cut: dsk.sources.cutSource,
-								rate: dsk.sources.rate,
 							}
 						} else {
 							return undefined
