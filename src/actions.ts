@@ -75,6 +75,7 @@ export enum ActionId {
 	USKFly = 'uskFly',
 	USKFlyInfinite = 'uskFlyInfinite',
 	DSKSource = 'dskSource',
+	DSKRate = 'dskRate',
 	DSKOnAir = 'dsk',
 	DSKTie = 'dskTie',
 	DSKAuto = 'dskAuto',
@@ -614,6 +615,32 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, 
 								...feedback.options,
 								fill: dsk.sources.fillSource,
 								cut: dsk.sources.cutSource,
+							}
+						} else {
+							return undefined
+						}
+					},
+			  })
+			: undefined,
+			[ActionId.DSKRate]: model.DSKs
+			? literal<CompanionActionExt>({
+					label: 'Downstream key: Set Rate',
+					options: [AtemDSKPicker(model), AtemRatePicker('Rate')],
+					callback: (action): void => {
+						executePromise(
+							instance,
+							Promise.all([
+								atem?.setDownstreamKeyRate(getOptNumber(action, 'rate'), getOptNumber(action, 'key')),
+							])
+						)
+					},
+					learn: (feedback) => {
+						const dsk = getDSK(state, feedback.options.key)
+
+						if (dsk?.sources) {
+							return {
+								...feedback.options,
+								rate: dsk.sources.rate,
 							}
 						} else {
 							return undefined
