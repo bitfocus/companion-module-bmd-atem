@@ -630,6 +630,49 @@ export function NumberComparitorPicker(): CompanionInputFieldDropdown {
 	}
 }
 
+export const MaskTopChoice: CompanionInputFieldNumber = {
+	type: 'number',
+	label: 'Top',
+	id: 'maskTop',
+	default: 9,
+	min: -9,
+	step: 0.01,
+	max: 9,
+}
+export const MaskBottomChoice: CompanionInputFieldNumber = {
+	type: 'number',
+	label: 'Bottom',
+	id: 'maskBottom',
+	default: -9,
+	min: -9,
+	step: 0.01,
+	max: 9,
+}
+export const MaskLeftChoice: CompanionInputFieldNumber = {
+	type: 'number',
+	label: 'Left',
+	id: 'maskLeft',
+	default: -16,
+	min: -16,
+	step: 0.01,
+	max: 16,
+}
+export const MaskRightChoice: CompanionInputFieldNumber = {
+	type: 'number',
+	label: 'Right',
+	id: 'maskRight',
+	default: 16,
+	min: -16,
+	step: 0.01,
+	max: 16,
+}
+export const MaskEnableChoice: CompanionInputFieldCheckbox = {
+	type: 'checkbox',
+	label: 'Enabled',
+	id: 'maskEnabled',
+	default: true,
+}
+
 export const FadeDurationChoice: CompanionInputFieldNumber = {
 	type: 'number',
 	label: 'Fade Duration (ms)',

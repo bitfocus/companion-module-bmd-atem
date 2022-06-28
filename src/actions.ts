@@ -40,6 +40,11 @@ import {
 	FaderLevelDeltaChoice,
 	AtemAllSourcePicker,
 	AtemSuperSourceArtPropertiesPickers,
+	MaskEnableChoice,
+	MaskTopChoice,
+	MaskBottomChoice,
+	MaskLeftChoice,
+	MaskRightChoice,
 } from './input'
 import { ModelSpec } from './models'
 import {
@@ -76,6 +81,7 @@ export enum ActionId {
 	USKFlyInfinite = 'uskFlyInfinite',
 	DSKSource = 'dskSource',
 	DSKRate = 'dskRate',
+	DSKMask = 'dskMask',
 	DSKOnAir = 'dsk',
 	DSKTie = 'dskTie',
 	DSKAuto = 'dskAuto',
@@ -641,6 +647,42 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, 
 							return {
 								...feedback.options,
 								rate: dsk.sources.rate,
+							}
+						} else {
+							return undefined
+						}
+					},
+			  })
+			: undefined,
+			[ActionId.DSKMask]: model.DSKs
+			? literal<CompanionActionExt>({
+					label: 'Downstream key: Set Mask',
+					options: [AtemDSKPicker(model), MaskEnableChoice, MaskTopChoice, MaskBottomChoice, MaskLeftChoice, MaskRightChoice],
+					callback: (action): void => {
+						executePromise(
+							instance,
+							Promise.all([
+								atem?.setDownstreamKeyMaskSettings({
+									enabled: getOptBool(action,'maskEnabled'),
+									top: getOptNumber(action,'maskTop') * 1000,
+									bottom: getOptNumber(action, 'maskBottom') * 1000,
+									left: getOptNumber(action,'maskLeft') * 1000,
+									right: getOptNumber(action, 'maskRight') * 1000
+								}, getOptNumber(action, 'key')),
+							])
+						)
+					},
+					learn: (feedback) => {
+						const dsk = getDSK(state, feedback.options.key)
+
+						if (dsk?.properties?.mask) {
+							return {
+								...feedback.options,
+								maskEnabled: dsk.properties.mask.enabled,
+								maskTop: dsk.properties.mask.top,
+								maskBottom: dsk.properties.mask.bottom,
+								maskLeft: dsk.properties.mask.left,
+								maskRight: dsk.properties.mask.right,
 							}
 						} else {
 							return undefined
