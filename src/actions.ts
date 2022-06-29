@@ -643,10 +643,10 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, 
 					learn: (feedback) => {
 						const dsk = getDSK(state, feedback.options.key)
 
-						if (dsk?.sources) {
+						if (dsk?.properties) {
 							return {
 								...feedback.options,
-								rate: dsk.sources.rate,
+								rate: dsk.properties.rate,
 							}
 						} else {
 							return undefined
