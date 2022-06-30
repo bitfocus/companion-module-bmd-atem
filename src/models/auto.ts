@@ -1,4 +1,4 @@
-import { ModelSpec, MODEL_AUTO_DETECT } from './types'
+import { ModelSpec, MODEL_AUTO_DETECT } from './types.js'
 import { Enums } from 'atem-connection'
 
 export const ModelSpecAuto: ModelSpec = {

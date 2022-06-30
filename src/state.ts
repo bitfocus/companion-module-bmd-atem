@@ -1,8 +1,8 @@
 import { AtemState, Commands, SettingsState, VideoState } from 'atem-connection'
-import { InputValue } from '../../../instance_skel_types'
-import { SuperSource, TransitionProperties } from 'atem-connection/dist/state/video'
-import { MultiViewerWindowState } from 'atem-connection/dist/state/settings'
-import { MediaPlayerState } from 'atem-connection/dist/state/media'
+import { SuperSource, TransitionProperties } from 'atem-connection/dist/state/video/index.js'
+import { MultiViewerWindowState } from 'atem-connection/dist/state/settings.js'
+import { MediaPlayerState } from 'atem-connection/dist/state/media.js'
+import { InputValue } from '@companion-module/base'
 
 export type TallyBySource = Commands.TallyBySourceCommand['properties']
 

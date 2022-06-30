@@ -1,23 +1,28 @@
-import { Atem, AtemConnectionStatus, AtemState, AtemStateUtil, Commands } from 'atem-connection'
-import InstanceSkel = require('../../../instance_skel')
-import { CompanionConfigField, CompanionStaticUpgradeScript, CompanionSystem } from '../../../instance_skel_types'
-import { GetActionsList } from './actions'
-import { AtemConfig, GetConfigFields } from './config'
-import { FeedbackId, GetFeedbacksList } from './feedback'
-import { BooleanFeedbackUpgradeMap, upgradeAddSSrcPropertiesPicker, upgradeV2x2x0 } from './upgrades'
-import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, ModelSpec } from './models'
-import { GetPresetsList } from './presets'
-import { TallyBySource } from './state'
-import { MODEL_AUTO_DETECT } from './models/types'
-import { InitVariables, UpdateVariablesProps, updateChangedVariables } from './variables'
-import { AtemCommandBatching } from './batching'
-import { executePromise } from './util'
-import { AtemTransitions } from './transitions'
-import * as debounceFn from 'debounce-fn'
+import AtemPkg, { Atem as IAtem, AtemState, Commands } from 'atem-connection'
+import { GetActionsList } from './actions.js'
+import { AtemConfig, GetConfigFields } from './config.js'
+import { FeedbackId, GetFeedbacksList } from './feedback.js'
+import { BooleanFeedbackUpgradeMap, upgradeAddSSrcPropertiesPicker, upgradeV2x2x0 } from './upgrades.js'
+import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, ModelSpec } from './models/index.js'
+import { GetPresetsList } from './presets.js'
+import { TallyBySource } from './state.js'
+import { MODEL_AUTO_DETECT } from './models/types.js'
+import { InitVariables, UpdateVariablesProps, updateChangedVariables } from './variables.js'
+import { AtemCommandBatching } from './batching.js'
+import { AtemTransitions } from './transitions.js'
+import debounceFn from 'debounce-fn'
+import {
+	InstanceBase,
+	SomeCompanionConfigField,
+	runEntrypoint,
+	CreateConvertToBooleanFeedbackUpgradeScript,
+} from '@companion-module/base'
+import { AtemMdnsDetectorInstance } from './mdns-detector.js'
+
+const { Atem, AtemConnectionStatus, AtemStateUtil } = AtemPkg
 
 // eslint-disable-next-line node/no-extraneous-import
 import { ThreadedClassManager, RegisterExitHandlers } from 'threadedclass'
-import { AtemMdnsDetectorInstance } from './mdns-detector'
 
 // HACK: This stops it from registering an unhandledException handler, as that causes companion to exit on error
 ThreadedClassManager.handleExit = RegisterExitHandlers.NO
@@ -25,9 +30,9 @@ ThreadedClassManager.handleExit = RegisterExitHandlers.NO
 /**
  * Companion instance class for the Blackmagic ATEM Switchers.
  */
-class AtemInstance extends InstanceSkel<AtemConfig> {
+class AtemInstance extends InstanceBase<AtemConfig> {
 	private model: ModelSpec
-	private atem: Atem | undefined
+	private atem: IAtem | undefined
 	private atemState: AtemState
 	private commandBatching: AtemCommandBatching
 	private atemTally: TallyBySource
@@ -35,11 +40,13 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 	private durationInterval: NodeJS.Timer | undefined
 	private atemTransitions: AtemTransitions
 
+	public config: AtemConfig = {}
+
 	/**
 	 * Create an instance of an ATEM module.
 	 */
-	constructor(system: CompanionSystem, id: string, config: AtemConfig) {
-		super(system, id, config)
+	constructor(internal: unknown) {
+		super(internal)
 
 		this.commandBatching = new AtemCommandBatching()
 		this.atemState = AtemStateUtil.Create()
@@ -49,7 +56,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 		// Fix bugged config
 		if (this.config.modelID === 'undefined') {
 			this.config.modelID = MODEL_AUTO_DETECT + ''
-			setImmediate(() => this.saveConfig())
+			setImmediate(() => this.saveConfig(this.config))
 		}
 
 		this.model = GetModelSpec(this.getBestModelId() || MODEL_AUTO_DETECT) || GetAutoDetectModel()
@@ -58,41 +65,29 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 		this.isActive = false
 	}
 
-	static GetUpgradeScripts(): Array<CompanionStaticUpgradeScript> {
-		return [
-			upgradeV2x2x0,
-			AtemInstance.CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap),
-			upgradeAddSSrcPropertiesPicker,
-		]
-	}
-
-	static DEVELOPER_forceStartupUpgradeScript = 2
-
 	/**
 	 * Main initialization function called once the module
 	 * is OK to start doing things.
 	 */
-	public init(): void {
+	public init(config: AtemConfig): void {
 		this.isActive = true
-		this.status(this.STATUS_UNKNOWN)
+		this.updateStatus('disconnected')
 
 		AtemMdnsDetectorInstance.subscribe(this.id)
 
-		// Unfortunately this is redundant if the switcher goes
-		// online right away, but necessary for offline programming
-		this.updateCompanionBits()
-
 		this.setupAtemConnection()
+
+		this.configUpdated(config)
 	}
 
 	/**
 	 * Process an updated configuration array.
 	 */
-	public updateConfig(config: AtemConfig): void {
+	public configUpdated(config: AtemConfig): void {
 		this.config = config
 
 		this.model = GetModelSpec(this.getBestModelId() || MODEL_AUTO_DETECT) || GetAutoDetectModel()
-		this.debug('ATEM changed model: ' + this.model.id)
+		this.log('debug', 'ATEM changed model: ' + this.model.id)
 
 		// Force clear the cached state
 		this.atemState = AtemStateUtil.Create()
@@ -106,9 +101,9 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 				this.atem.disconnect().catch(() => null)
 			}
 
-			this.status(this.STATUS_WARNING, 'Connecting')
+			this.updateStatus('connecting')
 			this.atem.connect(this.config.host).catch((e) => {
-				this.status(this.STATUS_ERROR, 'Connecting failed')
+				this.updateStatus('connection_failure')
 				this.log('error', `Connecting failed: ${e}`)
 			})
 		}
@@ -117,7 +112,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 	/**
 	 * Creates the configuration fields for web config.
 	 */
-	public config_fields(): CompanionConfigField[] {
+	public getConfigFields(): SomeCompanionConfigField[] {
 		return GetConfigFields(this)
 	}
 
@@ -136,7 +131,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 			delete this.atem
 		}
 
-		this.debug('destroy', this.id)
+		this.log('debug', 'destroy: ' + this.id)
 	}
 
 	private getBestModelId(): number | undefined {
@@ -156,15 +151,15 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 	private updateCompanionBits(): void {
 		InitVariables(this, this.model, this.atemState)
 		this.setPresetDefinitions(GetPresetsList(this, this.model, this.atemState))
-		this.setFeedbackDefinitions(GetFeedbacksList(this, this.model, this.atemState, this.atemTally))
-		this.setActions(
+		this.setFeedbackDefinitions(GetFeedbacksList(this.model, this.atemState, this.atemTally))
+		this.setActionDefinitions(
 			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.atemState)
 		)
 		this.checkFeedbacks()
 	}
 
-	public checkFeedbacks(...feedbackTypes: FeedbackId[]): void {
-		super.checkFeedbacks(...feedbackTypes)
+	public async checkFeedbacks(...feedbackTypes: FeedbackId[]): Promise<void> {
+		await super.checkFeedbacks(...feedbackTypes)
 	}
 
 	/**
@@ -407,7 +402,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
 				const atemInfo = this.atemState.info
 				this.log('info', 'Connected to a ' + atemInfo.productIdentifier)
-				this.status(this.STATUS_OK)
+				this.updateStatus('ok')
 
 				const newBestModelId = this.getBestModelId()
 				const newModelSpec = newBestModelId ? GetModelSpec(newBestModelId) : undefined
@@ -415,7 +410,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 					this.model = newModelSpec
 				} else {
 					this.model = GetParsedModelSpec(this.atemState)
-					this.status(this.STATUS_WARNING, `Unknown model: ${atemInfo.productIdentifier}. Some bits may be missing`)
+					this.updateStatus('unknown_warning', `Unknown model: ${atemInfo.productIdentifier}. Some bits may be missing`)
 				}
 
 				// Log if the config mismatches the device
@@ -436,24 +431,28 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 				if (!this.durationInterval && (this.atemState.streaming || this.atemState.recording)) {
 					this.durationInterval = setInterval(() => {
 						if (this.atem && this.atemState.streaming) {
-							executePromise(this, this.atem.requestStreamingDuration())
+							this.atem.requestStreamingDuration().catch((e) => {
+								this.log('debug', 'Action execution error: ' + e)
+							})
 						}
 						if (this.atem && this.atemState.recording) {
-							executePromise(this, this.atem.requestRecordingDuration())
+							this.atem.requestRecordingDuration().catch((e) => {
+								this.log('debug', 'Action execution error: ' + e)
+							})
 						}
 					}, 1000)
 				}
 			}
 		})
-		this.atem.on('info', this.debug.bind(this))
+		this.atem.on('info', (msg) => this.log('debug', msg))
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		this.atem.on('error', (e: any) => {
 			this.log('error', e.message)
-			this.status(this.STATUS_ERROR, e.message)
+			this.updateStatus('unknown_error', e.message)
 		})
 		this.atem.on('disconnected', () => {
 			if (this.isActive) {
-				this.status(this.STATUS_WARNING, 'Reconnecting')
+				this.updateStatus('connecting')
 			}
 			this.log('info', 'Lost connection')
 
@@ -467,13 +466,17 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 		this.atem.on('receivedCommands', this.processReceivedCommands.bind(this))
 
 		if (this.config.host) {
-			this.status(this.STATUS_WARNING, 'Connecting')
+			this.updateStatus('connecting')
 			this.atem.connect(this.config.host).catch((e) => {
-				this.status(this.STATUS_ERROR, 'Connecting failed')
+				this.updateStatus('connection_failure')
 				this.log('error', `Connecting failed: ${e}`)
 			})
 		}
 	}
 }
 
-export = AtemInstance
+runEntrypoint(AtemInstance, [
+	upgradeV2x2x0,
+	CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap),
+	upgradeAddSSrcPropertiesPicker,
+])

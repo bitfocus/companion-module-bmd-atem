@@ -1,11 +1,11 @@
-import { AtemState, Enums } from 'atem-connection'
 import {
 	CompanionInputFieldCheckbox,
 	CompanionInputFieldDropdown,
 	CompanionInputFieldMultiDropdown,
 	CompanionInputFieldNumber,
 	DropdownChoice,
-} from '../../../instance_skel_types'
+} from '@companion-module/base'
+import { AtemState, Enums } from 'atem-connection'
 import {
 	CHOICES_KEYTRANS,
 	CHOICES_SSRCBOXES,
@@ -20,9 +20,9 @@ import {
 	GetTransitionStyleChoices,
 	GetUSKIdChoices,
 	SourcesToChoices,
-} from './choices'
-import { ModelSpec } from './models'
-import { iterateTimes, MEDIA_PLAYER_SOURCE_CLIP_OFFSET, compact, NumberComparitor } from './util'
+} from './choices.js'
+import { ModelSpec } from './models/index.js'
+import { iterateTimes, MEDIA_PLAYER_SOURCE_CLIP_OFFSET, compact, NumberComparitor } from './util.js'
 
 export function AtemMESourcePicker(model: ModelSpec, state: AtemState, id: number): CompanionInputFieldDropdown {
 	return {
@@ -347,10 +347,9 @@ export function AtemSuperSourcePropertiesPickers(
 
 	return compact([
 		{
-			type: 'dropdown',
+			type: 'multidropdown',
 			id: 'properties',
 			label: 'Properties',
-			multiple: true,
 			minSelection: 1,
 			default: allProps.map((p) => p.id),
 			choices: allProps.map((p) => ({ id: p.id, label: p.label })),
@@ -433,10 +432,9 @@ export function AtemSuperSourceArtPropertiesPickers(
 
 	return compact([
 		{
-			type: 'dropdown',
+			type: 'multidropdown',
 			id: 'properties',
 			label: 'Properties',
-			multiple: true,
 			minSelection: 1,
 			default: allProps.map((p) => p.id),
 			choices: allProps.map((p) => ({ id: p.id, label: p.label })),

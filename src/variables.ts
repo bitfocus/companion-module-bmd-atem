@@ -1,14 +1,13 @@
 import { AtemState, Enums } from 'atem-connection'
-import InstanceSkel = require('../../../instance_skel')
-import { CompanionVariable } from '../../../instance_skel_types'
-import { GetSourcesListForType, SourceInfo } from './choices'
-import { AtemConfig, PresetStyleName } from './config'
-import { ModelSpec } from './models'
-import { getDSK, getMixEffect, getSuperSourceBox, getUSK } from './state'
-import { pad } from './util'
-import { Timecode } from 'atem-connection/dist/state/common'
+import { GetSourcesListForType, SourceInfo } from './choices.js'
+import { AtemConfig, PresetStyleName } from './config.js'
+import { ModelSpec } from './models/index.js'
+import { getDSK, getMixEffect, getSuperSourceBox, getUSK } from './state.js'
+import { InstanceBaseExt, pad } from './util.js'
+import { Timecode } from 'atem-connection/dist/state/common.js'
+import { CompanionVariableDefinition } from '@companion-module/base'
 
-function getSourcePresetName(instance: InstanceSkel<AtemConfig>, state: AtemState, id: number): string {
+function getSourcePresetName(instance: InstanceBaseExt<AtemConfig>, state: AtemState, id: number): string {
 	const input = state.inputs[id]
 	if (input) {
 		return instance.config.presets === PresetStyleName.Long + '' ? input.longName : input.shortName
@@ -37,7 +36,7 @@ export interface UpdateVariablesProps {
 type CompanionVariableValues = { [variableId: string]: string | undefined }
 
 export function updateChangedVariables(
-	instance: InstanceSkel<AtemConfig>,
+	instance: InstanceBaseExt<AtemConfig>,
 	state: AtemState,
 	changes: UpdateVariablesProps
 ): void {
@@ -58,12 +57,12 @@ export function updateChangedVariables(
 	if (changes.streaming) updateStreamingVariables(state, newValues)
 
 	if (Object.keys(newValues).length > 0) {
-		instance.setVariables(newValues)
+		instance.setVariableValues(newValues)
 	}
 }
 
 function updateMEProgramVariable(
-	instance: InstanceSkel<AtemConfig>,
+	instance: InstanceBaseExt<AtemConfig>,
 	state: AtemState,
 	meIndex: number,
 	values: CompanionVariableValues
@@ -72,7 +71,7 @@ function updateMEProgramVariable(
 	values[`pgm${meIndex + 1}_input`] = getSourcePresetName(instance, state, input)
 }
 function updateMEPreviewVariable(
-	instance: InstanceSkel<AtemConfig>,
+	instance: InstanceBaseExt<AtemConfig>,
 	state: AtemState,
 	meIndex: number,
 	values: CompanionVariableValues
@@ -82,7 +81,7 @@ function updateMEPreviewVariable(
 }
 
 function updateUSKVariable(
-	instance: InstanceSkel<AtemConfig>,
+	instance: InstanceBaseExt<AtemConfig>,
 	state: AtemState,
 	meIndex: number,
 	keyIndex: number,
@@ -92,7 +91,7 @@ function updateUSKVariable(
 	values[`usk_${meIndex + 1}_${keyIndex + 1}_input`] = getSourcePresetName(instance, state, input)
 }
 function updateDSKVariable(
-	instance: InstanceSkel<AtemConfig>,
+	instance: InstanceBaseExt<AtemConfig>,
 	state: AtemState,
 	keyIndex: number,
 	values: CompanionVariableValues
@@ -102,7 +101,7 @@ function updateDSKVariable(
 }
 
 function updateAuxVariable(
-	instance: InstanceSkel<AtemConfig>,
+	instance: InstanceBaseExt<AtemConfig>,
 	state: AtemState,
 	auxIndex: number,
 	values: CompanionVariableValues
@@ -208,7 +207,7 @@ function updateRecordingVariables(state: AtemState, values: CompanionVariableVal
 }
 
 function updateSuperSourceVariables(
-	instance: InstanceSkel<AtemConfig>,
+	instance: InstanceBaseExt<AtemConfig>,
 	state: AtemState,
 	i: number,
 	values: CompanionVariableValues
@@ -219,29 +218,29 @@ function updateSuperSourceVariables(
 	}
 }
 
-export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState): void {
-	const variables: CompanionVariable[] = []
+export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: ModelSpec, state: AtemState): void {
+	const variables: CompanionVariableDefinition[] = []
 
 	const values: CompanionVariableValues = {}
 
 	// PGM/PV busses
 	for (let i = 0; i < model.MEs; ++i) {
 		variables.push({
-			label: `Label of input active on program bus (M/E ${i + 1})`,
-			name: `pgm${i + 1}_input`,
+			name: `Label of input active on program bus (M/E ${i + 1})`,
+			variableId: `pgm${i + 1}_input`,
 		})
 		updateMEProgramVariable(instance, state, i, values)
 
 		variables.push({
-			label: `Label of input active on preview bus (M/E ${i + 1})`,
-			name: `pvw${i + 1}_input`,
+			name: `Label of input active on preview bus (M/E ${i + 1})`,
+			variableId: `pvw${i + 1}_input`,
 		})
 		updateMEPreviewVariable(instance, state, i, values)
 
 		for (let k = 0; k < model.USKs; ++k) {
 			variables.push({
-				label: `Label of input active on M/E ${i + 1} Key ${k + 1}`,
-				name: `usk_${i + 1}_${k + 1}_input`,
+				name: `Label of input active on M/E ${i + 1} Key ${k + 1}`,
+				variableId: `usk_${i + 1}_${k + 1}_input`,
 			})
 
 			updateUSKVariable(instance, state, i, k, values)
@@ -251,8 +250,8 @@ export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSp
 	// Auxs
 	for (let a = 0; a < model.auxes; ++a) {
 		variables.push({
-			label: `Label of input active on Aux ${a + 1}`,
-			name: `aux${a + 1}_input`,
+			name: `Label of input active on Aux ${a + 1}`,
+			variableId: `aux${a + 1}_input`,
 		})
 
 		updateAuxVariable(instance, state, a, values)
@@ -261,8 +260,8 @@ export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSp
 	// DSKs
 	for (let k = 0; k < model.DSKs; ++k) {
 		variables.push({
-			label: `Label of input active on DSK ${k + 1}`,
-			name: `dsk_${k + 1}_input`,
+			name: `Label of input active on DSK ${k + 1}`,
+			variableId: `dsk_${k + 1}_input`,
 		})
 
 		updateDSKVariable(instance, state, k, values)
@@ -271,12 +270,12 @@ export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSp
 	// Source names
 	for (const src of GetSourcesListForType(model, state)) {
 		variables.push({
-			label: `Long name of source id ${src.id}`,
-			name: `long_${src.id}`,
+			name: `Long name of source id ${src.id}`,
+			variableId: `long_${src.id}`,
 		})
 		variables.push({
-			label: `Short name of source id ${src.id}`,
-			name: `short_${src.id}`,
+			name: `Short name of source id ${src.id}`,
+			variableId: `short_${src.id}`,
 		})
 
 		updateInputVariables(src, values)
@@ -285,8 +284,8 @@ export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSp
 	// Macros
 	for (let i = 0; i < model.macros; i++) {
 		variables.push({
-			label: `Name of macro #${i + 1}`,
-			name: `macro_${i + 1}`,
+			name: `Name of macro #${i + 1}`,
+			variableId: `macro_${i + 1}`,
 		})
 
 		updateMacroVariable(state, i, values)
@@ -295,28 +294,28 @@ export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSp
 	// Media
 	for (let i = 0; i < model.media.stills; i++) {
 		variables.push({
-			label: `Name of still #${i + 1}`,
-			name: `still_${i + 1}`,
+			name: `Name of still #${i + 1}`,
+			variableId: `still_${i + 1}`,
 		})
 
 		updateMediaStillVariable(state, i, values)
 	}
 	for (let i = 0; i < model.media.clips; i++) {
 		variables.push({
-			label: `Name of clip #${i + 1}`,
-			name: `clip_${i + 1}`,
+			name: `Name of clip #${i + 1}`,
+			variableId: `clip_${i + 1}`,
 		})
 
 		updateMediaClipVariable(state, i, values)
 	}
 	for (let i = 0; i < model.media.players; i++) {
 		variables.push({
-			label: `Name of media player source #${i + 1}`,
-			name: `mp_source_${i + 1}`,
+			name: `Name of media player source #${i + 1}`,
+			variableId: `mp_source_${i + 1}`,
 		})
 		variables.push({
-			label: `Name of media player index #${i + 1}`,
-			name: `mp_index_${i + 1}`,
+			name: `Name of media player index #${i + 1}`,
+			variableId: `mp_index_${i + 1}`,
 		})
 
 		updateMediaPlayerVariables(state, i, values)
@@ -324,20 +323,20 @@ export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSp
 
 	if (model.streaming) {
 		variables.push({
-			label: 'Streaming bitrate in MB/s',
-			name: 'stream_bitrate',
+			name: 'Streaming bitrate in MB/s',
+			variableId: 'stream_bitrate',
 		})
 		variables.push({
-			label: 'Streaming duration (hh:mm)',
-			name: 'stream_duration_hm',
+			name: 'Streaming duration (hh:mm)',
+			variableId: 'stream_duration_hm',
 		})
 		variables.push({
-			label: 'Streaming duration (hh:mm:ss)',
-			name: 'stream_duration_hms',
+			name: 'Streaming duration (hh:mm:ss)',
+			variableId: 'stream_duration_hms',
 		})
 		variables.push({
-			label: 'Streaming duration (mm:ss)',
-			name: 'stream_duration_ms',
+			name: 'Streaming duration (mm:ss)',
+			variableId: 'stream_duration_ms',
 		})
 
 		updateStreamingVariables(state, values)
@@ -345,29 +344,29 @@ export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSp
 
 	if (model.recording) {
 		variables.push({
-			label: 'Recording duration (hh:mm)',
-			name: 'record_duration_hm',
+			name: 'Recording duration (hh:mm)',
+			variableId: 'record_duration_hm',
 		})
 		variables.push({
-			label: 'Recording duration (hh:mm:ss)',
-			name: 'record_duration_hms',
+			name: 'Recording duration (hh:mm:ss)',
+			variableId: 'record_duration_hms',
 		})
 		variables.push({
-			label: 'Recording duration (mm:ss)',
-			name: 'record_duration_ms',
+			name: 'Recording duration (mm:ss)',
+			variableId: 'record_duration_ms',
 		})
 
 		variables.push({
-			label: 'Recording time remaining (hh:mm)',
-			name: 'record_remaining_hm',
+			name: 'Recording time remaining (hh:mm)',
+			variableId: 'record_remaining_hm',
 		})
 		variables.push({
-			label: 'Recording time remaining (hh:mm:ss)',
-			name: 'record_remaining_hms',
+			name: 'Recording time remaining (hh:mm:ss)',
+			variableId: 'record_remaining_hms',
 		})
 		variables.push({
-			label: 'Recording time remaining (mm:ss)',
-			name: 'record_remaining_ms',
+			name: 'Recording time remaining (mm:ss)',
+			variableId: 'record_remaining_ms',
 		})
 
 		updateRecordingVariables(state, values)
@@ -377,8 +376,8 @@ export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSp
 	for (let i = 0; i < model.SSrc; i++) {
 		for (let b = 0; b < 4; b++) {
 			variables.push({
-				label: `Supersource ${i + 1} Box ${b + 1} source`,
-				name: `ssrc${i + 1}_box${b + 1}_source`,
+				name: `Supersource ${i + 1} Box ${b + 1} source`,
+				variableId: `ssrc${i + 1}_box${b + 1}_source`,
 			})
 		}
 
@@ -386,5 +385,5 @@ export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSp
 	}
 
 	instance.setVariableDefinitions(variables)
-	instance.setVariables(values)
+	instance.setVariableValues(values)
 }

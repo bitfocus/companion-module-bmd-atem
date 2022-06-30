@@ -1,4 +1,4 @@
-import { ModelSpec } from './types'
+import { ModelSpec } from './types.js'
 import { Enums } from 'atem-connection'
 
 export const ModelSpecTVSHD: ModelSpec = {

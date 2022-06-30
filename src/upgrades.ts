@@ -1,12 +1,12 @@
 import {
-	CompanionCoreInstanceconfig,
-	CompanionMigrationAction,
-	CompanionMigrationFeedback,
+	CompanionStaticUpgradeProps,
+	CompanionStaticUpgradeResult,
 	CompanionUpgradeContext,
 	InputValue,
-} from '../../../instance_skel_types'
-import { ActionId } from './actions'
-import { FeedbackId } from './feedback'
+} from '@companion-module/base'
+import { ActionId } from './actions.js'
+import { AtemConfig } from './config.js'
+import { FeedbackId } from './feedback.js'
 
 function scaleValue(obj: { [key: string]: InputValue | undefined }, key: string, scale: number): void {
 	if (obj[key] !== undefined) {
@@ -16,14 +16,16 @@ function scaleValue(obj: { [key: string]: InputValue | undefined }, key: string,
 
 export function upgradeV2x2x0(
 	_context: CompanionUpgradeContext,
-	_config: (CompanionCoreInstanceconfig & Record<string, any>) | null,
-	actions: CompanionMigrationAction[],
-	feedbacks: CompanionMigrationFeedback[]
-): boolean {
-	let changed = false
+	props: CompanionStaticUpgradeProps<AtemConfig>
+): CompanionStaticUpgradeResult<AtemConfig> {
+	const result: CompanionStaticUpgradeResult<AtemConfig> = {
+		updatedActions: [],
+		updatedConfig: null,
+		updatedFeedbacks: [],
+	}
 
-	for (const action of actions) {
-		if (action.action === ActionId.SuperSourceBoxProperties) {
+	for (const action of props.actions) {
+		if (action.actionId === ActionId.SuperSourceBoxProperties) {
 			scaleValue(action.options, 'size', 0.001)
 			scaleValue(action.options, 'x', 0.01)
 			scaleValue(action.options, 'y', 0.01)
@@ -32,12 +34,12 @@ export function upgradeV2x2x0(
 			scaleValue(action.options, 'cropLeft', 0.001)
 			scaleValue(action.options, 'cropRight', 0.001)
 
-			changed = true
+			result.updatedActions.push(action)
 		}
 	}
 
-	for (const feedback of feedbacks) {
-		if (feedback.type === FeedbackId.SSrcBoxProperties) {
+	for (const feedback of props.feedbacks) {
+		if (feedback.feedbackId === FeedbackId.SSrcBoxProperties) {
 			scaleValue(feedback.options, 'size', 0.001)
 			scaleValue(feedback.options, 'x', 0.01)
 			scaleValue(feedback.options, 'y', 0.01)
@@ -46,11 +48,11 @@ export function upgradeV2x2x0(
 			scaleValue(feedback.options, 'cropLeft', 0.001)
 			scaleValue(feedback.options, 'cropRight', 0.001)
 
-			changed = true
+			result.updatedFeedbacks.push(feedback)
 		}
 	}
 
-	return changed
+	return result
 }
 
 export const BooleanFeedbackUpgradeMap: {
@@ -95,28 +97,30 @@ export const BooleanFeedbackUpgradeMap: {
 
 export function upgradeAddSSrcPropertiesPicker(
 	_context: CompanionUpgradeContext,
-	_config: (CompanionCoreInstanceconfig & Record<string, any>) | null,
-	actions: CompanionMigrationAction[],
-	feedbacks: CompanionMigrationFeedback[]
-): boolean {
-	let changed = false
+	props: CompanionStaticUpgradeProps<AtemConfig>
+): CompanionStaticUpgradeResult<AtemConfig> {
+	const result: CompanionStaticUpgradeResult<AtemConfig> = {
+		updatedActions: [],
+		updatedConfig: null,
+		updatedFeedbacks: [],
+	}
 
-	for (const action of actions) {
-		if (action.action === ActionId.SuperSourceBoxProperties && !action.options.properties) {
+	for (const action of props.actions) {
+		if (action.actionId === ActionId.SuperSourceBoxProperties && !action.options.properties) {
 			action.options.properties = ['size', 'x', 'y', 'cropEnable', 'cropTop', 'cropLeft', 'cropRight', 'cropBottom']
-			changed = true
-		} else if (action.action === ActionId.SuperSourceArt && !action.options.properties) {
+			result.updatedActions.push(action)
+		} else if (action.actionId === ActionId.SuperSourceArt && !action.options.properties) {
 			action.options.properties = ['fill', 'key', 'artOption']
-			changed = true
+			result.updatedActions.push(action)
 		}
 	}
 
-	for (const feedback of feedbacks) {
-		if (feedback.type === FeedbackId.SSrcBoxProperties && !feedback.options.properties) {
+	for (const feedback of props.feedbacks) {
+		if (feedback.feedbackId === FeedbackId.SSrcBoxProperties && !feedback.options.properties) {
 			feedback.options.properties = ['size', 'x', 'y', 'cropEnable', 'cropTop', 'cropLeft', 'cropRight', 'cropBottom']
-			changed = true
+			result.updatedFeedbacks.push(feedback)
 		}
 	}
 
-	return changed
+	return result
 }

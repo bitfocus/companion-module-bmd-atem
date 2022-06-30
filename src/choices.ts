@@ -1,7 +1,7 @@
+import { DropdownChoice } from '@companion-module/base'
 import { AtemState, Enums } from 'atem-connection'
-import { DropdownChoice } from '../../../instance_skel_types'
-import { ModelSpec } from './models'
-import { iterateTimes, literal, assertUnreachable } from './util'
+import { ModelSpec } from './models/index.js'
+import { iterateTimes, literal, assertUnreachable } from './util.js'
 
 export const CHOICES_SSRCBOXES: DropdownChoice[] = [
 	{ id: 0, label: 'Box 1' },

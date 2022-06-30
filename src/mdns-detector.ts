@@ -1,5 +1,5 @@
-import debug0 = require('debug')
-import mDNS = require('multicast-dns')
+import debug0 from 'debug'
+import mDNS from 'multicast-dns'
 // eslint-disable-next-line node/no-extraneous-import
 import { TxtAnswer, StringAnswer } from 'dns-packet'
 
@@ -19,6 +19,10 @@ export interface AtemMdnsDetector {
 	listKnown(): AtemInfo[]
 }
 
+/*
+ * TODO - this needs some rethinking as it will no longer be a singleton.
+ * Is there another way we can make a singleton without making a mess?
+ */
 class AtemMdnsDetectorImpl implements AtemMdnsDetector {
 	private readonly subscribers = new Set<string>()
 	private mdns: mDNS.MulticastDNS | undefined
