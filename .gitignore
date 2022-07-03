@@ -3,3 +3,4 @@ dist/
 *.log
 state.json
 pkg
+pkg.tgz
