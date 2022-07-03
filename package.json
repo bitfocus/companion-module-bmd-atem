@@ -13,7 +13,8 @@
 		"lint:raw": "eslint --ext .ts --ext .js --ignore-pattern dist",
 		"lint": "yarn lint:raw .",
 		"lint-fix": "yarn lint --fix",
-		"license-validate": "yarn sofie-licensecheck"
+		"license-validate": "yarn sofie-licensecheck",
+		"dist": "yarn companion-module-build"
 	},
 	"repository": {
 		"type": "git",

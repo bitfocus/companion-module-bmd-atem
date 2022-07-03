@@ -56,7 +56,11 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		// Fix bugged config
 		if (this.config.modelID === 'undefined') {
 			this.config.modelID = MODEL_AUTO_DETECT + ''
-			setImmediate(() => this.saveConfig(this.config))
+			setImmediate(() => {
+				this.saveConfig(this.config).catch(() => {
+					// Ignore
+				})
+			})
 		}
 
 		this.model = GetModelSpec(this.getBestModelId() || MODEL_AUTO_DETECT) || GetAutoDetectModel()
@@ -69,21 +73,21 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	 * Main initialization function called once the module
 	 * is OK to start doing things.
 	 */
-	public init(config: AtemConfig): void {
+	public async init(config: AtemConfig): Promise<void> {
 		this.isActive = true
-		this.updateStatus('disconnected')
+		await this.updateStatus('disconnected')
 
 		AtemMdnsDetectorInstance.subscribe(this.id)
 
 		this.setupAtemConnection()
 
-		this.configUpdated(config)
+		await this.configUpdated(config)
 	}
 
 	/**
 	 * Process an updated configuration array.
 	 */
-	public configUpdated(config: AtemConfig): void {
+	public async configUpdated(config: AtemConfig): Promise<void> {
 		this.config = config
 
 		this.model = GetModelSpec(this.getBestModelId() || MODEL_AUTO_DETECT) || GetAutoDetectModel()
@@ -93,7 +97,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		this.atemState = AtemStateUtil.Create()
 		this.atemTransitions.stopAll()
 		this.atemTransitions = new AtemTransitions(this.config)
-		this.updateCompanionBits()
+		await this.updateCompanionBits()
 
 		if (this.config.host !== undefined && this.atem) {
 			if (this.atem.status !== AtemConnectionStatus.CLOSED) {
@@ -101,11 +105,14 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				this.atem.disconnect().catch(() => null)
 			}
 
-			this.updateStatus('connecting')
-			this.atem.connect(this.config.host).catch((e) => {
-				this.updateStatus('connection_failure')
+			await this.updateStatus('connecting')
+			try {
+				await this.atem.connect(this.config.host)
+			} catch (e) {
+				await this.updateStatus('connection_failure')
+
 				this.log('error', `Connecting failed: ${e}`)
-			})
+			}
 		}
 	}
 
@@ -148,14 +155,16 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		}
 	}
 
-	private updateCompanionBits(): void {
-		InitVariables(this, this.model, this.atemState)
-		this.setPresetDefinitions(GetPresetsList(this, this.model, this.atemState))
-		this.setFeedbackDefinitions(GetFeedbacksList(this.model, this.atemState, this.atemTally))
-		this.setActionDefinitions(
-			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.atemState)
-		)
-		this.checkFeedbacks()
+	private async updateCompanionBits(): Promise<void> {
+		await Promise.all([
+			InitVariables(this, this.model, this.atemState),
+			this.setPresetDefinitions(GetPresetsList(this, this.model, this.atemState)),
+			this.setFeedbackDefinitions(GetFeedbacksList(this.model, this.atemState, this.atemTally)),
+			this.setActionDefinitions(
+				GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.atemState)
+			),
+		])
+		await this.checkFeedbacks()
 	}
 
 	public async checkFeedbacks(...feedbackTypes: FeedbackId[]): Promise<void> {
@@ -171,14 +180,16 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				// The feedback holds a reference to the old object, so we need
 				// to update it in place
 				Object.assign(this.atemTally, command.properties)
-				this.checkFeedbacks(FeedbackId.ProgramTally, FeedbackId.PreviewTally)
+				this.checkFeedbacks(FeedbackId.ProgramTally, FeedbackId.PreviewTally).catch(() => {
+					// Ignore
+				})
 			}
 		})
 	}
 	/**
 	 * Handle ATEM state changes
 	 */
-	private processStateChange(newState: AtemState, paths: string[]): void {
+	private async processStateChange(newState: AtemState, paths: string[]): Promise<void> {
 		// TODO - do we need to clone this object?
 		this.atemState = newState
 
@@ -370,10 +381,10 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 
 		// Apply the change
 		if (reInit) {
-			this.updateCompanionBits()
+			await this.updateCompanionBits()
 		} else {
-			updateChangedVariables(this, this.atemState, changedVariables)
-			if (changedFeedbacks.size > 0) this.checkFeedbacks(...Array.from(changedFeedbacks))
+			await updateChangedVariables(this, this.atemState, changedVariables)
+			if (changedFeedbacks.size > 0) await this.checkFeedbacks(...Array.from(changedFeedbacks))
 		}
 	}
 
