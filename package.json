@@ -36,7 +36,7 @@
 	},
 	"dependencies": {
 		"@companion-module/base": "link:../../module-base",
-		"atem-connection": "3.0.0-nightly-latest-20220528-143522-2337013.0",
+		"atem-connection": "3.0.0-nightly-latest-20220622-133017-ab0e528.0",
 		"debounce-fn": "github:julusian/debounce-fn#4.0.0-maxWaithack.0",
 		"debug": "^4.3.4",
 		"multicast-dns": "^7.2.3",
