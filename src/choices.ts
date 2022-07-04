@@ -10,6 +10,13 @@ export const CHOICES_SSRCBOXES: DropdownChoice[] = [
 	{ id: 3, label: 'Box 4' },
 ]
 
+export const CHOICES_BORDER_BEVEL: DropdownChoice[] = [
+	{ id: 0, label: 'None' },
+	{ id: 1, label: 'InOut' },
+	{ id: 2, label: 'In' },
+	{ id: 3, label: 'Out' },
+]
+
 export const CHOICES_ON_OFF_TOGGLE: DropdownChoice[] = [
 	{ id: 'true', label: 'On' },
 	{ id: 'false', label: 'Off' },

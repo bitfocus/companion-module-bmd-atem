@@ -33,6 +33,8 @@ import {
 	AtemTransitionSelectionPickers,
 	AtemTransitionStylePicker,
 	AtemUSKPicker,
+	AtemUSKMaskPropertiesPickers,
+	AtemUSKDVEPropertiesPickers,
 	AtemTransitionSelectionComponentPicker,
 	AtemAudioInputPicker,
 	AtemFairlightAudioSourcePicker,
@@ -64,6 +66,8 @@ import { AtemCommandBatching, CommandBatching } from './batching'
 import { AtemTransitions } from './transitions'
 import { SuperSource } from 'atem-connection/dist/state/video'
 
+import { UpstreamKeyerMaskSettings, UpstreamKeyerDVESettings } from 'atem-connection/dist/state/video/upstreamKeyers'
+
 export enum ActionId {
 	Program = 'program',
 	Preview = 'preview',
@@ -73,6 +77,8 @@ export enum ActionId {
 	USKSource = 'uskSource',
 	USKOnAir = 'usk',
 	USKFly = 'uskFly',
+	USKMaskLumaChromaPattern = 'uskMaskLumaChromaPattern',
+	USKDVEProperties = 'uskDveProperties',
 	USKFlyInfinite = 'uskFlyInfinite',
 	DSKSource = 'dskSource',
 	DSKRate = 'dskRate',
@@ -510,6 +516,198 @@ function meActions(
 				}
 			},
 		}),
+		[ActionId.USKMaskLumaChromaPattern]: model.USKs
+		? literal<CompanionActionExt>({
+				label: 'Upstream key: Set Mask (Luma, Chroma, Pattern)',
+				options: compact([
+					AtemMEPicker(model, 0),
+					AtemUSKPicker(model),
+					...AtemUSKMaskPropertiesPickers(),
+				]),
+				callback: (action): void => {
+					const keyId = getOptNumber(action, 'key')
+					const mixEffectId = getOptNumber(action, 'mixeffect')
+					const newProps: Partial<UpstreamKeyerMaskSettings> = {}
+
+					const props = action.options.properties
+					if(props && Array.isArray(props)) {
+						if(props.includes('maskEnabled')) {
+							newProps.maskEnabled = getOptBool(action,'maskEnabled')
+						}
+						if(props.includes('maskTop')) {
+							newProps.maskTop = getOptNumber(action,'maskTop') * 1000
+						}
+						if(props.includes('maskBottom')) {
+							newProps.maskBottom = getOptNumber(action,'maskBottom') * 1000
+						}
+						if(props.includes('maskLeft')) {
+							newProps.maskLeft = getOptNumber(action,'maskLeft') * 1000
+						}
+						if(props.includes('maskRight')) {
+							newProps.maskRight = getOptNumber(action,'maskRight') * 1000
+						}
+					}
+
+					if (Object.keys(newProps).length === 0) return
+
+					executePromise(instance,atem?.setUpstreamKeyerMaskSettings(newProps, mixEffectId, keyId))
+				},
+				learn: (action) => {
+					const usk = getUSK(state, getOptNumber(action, 'mixeffect'), getOptNumber(action, 'key'))
+
+					if (usk?.maskSettings) {
+						return {
+							...action.options,
+							maskEnabled: usk.maskSettings.maskEnabled,
+							maskTop: usk.maskSettings.maskTop / 1000,
+							maskBottom: usk.maskSettings.maskBottom / 1000,
+							maskLeft: usk.maskSettings.maskLeft / 1000,
+							maskRight: usk.maskSettings.maskRight / 1000,
+						}
+					} else {
+						return undefined
+					}
+				},
+			})
+		: undefined,
+		[ActionId.USKDVEProperties]: model.DVEs
+		? literal<CompanionActionExt>({
+				label: 'Upstream key: Change DVE properties',
+				options: compact([
+					AtemMEPicker(model, 0),
+					AtemUSKPicker(model),
+					...AtemUSKDVEPropertiesPickers(),
+				]),
+				callback: (action): void => {
+					const keyId = getOptNumber(action, 'key')
+					const mixEffectId = getOptNumber(action, 'mixeffect')
+					const newProps: Partial<UpstreamKeyerDVESettings> = {}
+
+					const props = action.options.properties
+					if(props && Array.isArray(props)) {
+						if(props.includes('maskEnabled')) {
+							newProps.maskEnabled = getOptBool(action,'maskEnabled')
+						}
+						if(props.includes('maskTop')) {
+							newProps.maskTop = getOptNumber(action,'maskTop') * 1000
+						}
+						if(props.includes('maskBottom')) {
+							newProps.maskBottom = getOptNumber(action,'maskBottom') * 1000
+						}
+						if(props.includes('maskLeft')) {
+							newProps.maskLeft = getOptNumber(action,'maskLeft') * 1000
+						}
+						if(props.includes('maskRight')) {
+							newProps.maskRight = getOptNumber(action,'maskRight') * 1000
+						}
+						if(props.includes('sizeX')) {
+							newProps.sizeX = getOptNumber(action,'sizeX') * 1000
+						}
+						if(props.includes('sizeY')) {
+							newProps.sizeY = getOptNumber(action,'sizeY') * 1000
+						}
+						if(props.includes('positionX')) {
+							newProps.positionX = getOptNumber(action,'positionX') * 1000
+						}
+						if(props.includes('positionY')) {
+							newProps.positionY = getOptNumber(action,'positionY') * 1000
+						}
+						if(props.includes('rotation')) {
+							newProps.rotation = getOptNumber(action,'rotation')
+						}
+						if(props.includes('borderOuterWidth')) {
+							newProps.borderOuterWidth = getOptNumber(action,'borderOuterWidth') * 100
+						}
+						if(props.includes('borderInnerWidth')) {
+							newProps.borderInnerWidth = getOptNumber(action,'borderInnerWidth') * 100
+						}
+						if(props.includes('borderOuterSoftness')) {
+							newProps.borderOuterSoftness = getOptNumber(action,'borderOuterSoftness')
+						}
+						if(props.includes('borderInnerSoftness')) {
+							newProps.borderInnerSoftness = getOptNumber(action,'borderInnerSoftness')
+						}
+						if(props.includes('borderBevelSoftness')) {
+							newProps.borderBevelSoftness = getOptNumber(action,'borderBevelSoftness')
+						}
+						if(props.includes('borderBevelPosition')) {
+							newProps.borderBevelPosition = getOptNumber(action,'borderBevelPosition')
+						}
+						if(props.includes('borderOpacity')) {
+							newProps.borderOpacity = getOptNumber(action,'borderOpacity')
+						}
+						if(props.includes('borderHue')) {
+							newProps.borderHue = getOptNumber(action,'borderHue') * 10
+						}
+						if(props.includes('borderSaturation')) {
+							newProps.borderSaturation = getOptNumber(action,'borderSaturation')
+						}
+						if(props.includes('borderLuma')) {
+							newProps.borderLuma = getOptNumber(action,'borderLuma')
+						}
+						if(props.includes('lightSourceDirection')) {
+							newProps.lightSourceDirection = getOptNumber(action,'lightSourceDirection')
+						}
+						if(props.includes('lightSourceAltitude')) {
+							newProps.lightSourceAltitude = getOptNumber(action,'lightSourceAltitude')
+						}
+						if(props.includes('borderEnabled')) {
+							newProps.borderEnabled = getOptBool(action,'borderEnabled')
+						}
+						if(props.includes('shadowEnabled')) {
+							newProps.shadowEnabled = getOptBool(action,'shadowEnabled')
+						}
+						if(props.includes('borderBevel')) {
+							newProps.borderBevel = getOptNumber(action,'borderBevel')
+						}
+						if(props.includes('rate')) {
+							newProps.rate = getOptNumber(action,'rate')
+						}
+					}
+
+					if (Object.keys(newProps).length === 0) return
+
+					executePromise(instance,atem?.setUpstreamKeyerDVESettings(newProps, mixEffectId, keyId))
+				},
+				learn: (action) => {
+					const usk = getUSK(state, getOptNumber(action, 'mixeffect'), getOptNumber(action, 'key'))
+
+					if (usk?.dveSettings) {
+						return {
+							...action.options,
+							maskEnabled: usk.dveSettings.maskEnabled,
+							maskTop: usk.dveSettings.maskTop / 1000,
+							maskBottom: usk.dveSettings.maskBottom / 1000,
+							maskLeft: usk.dveSettings.maskLeft / 1000,
+							maskRight: usk.dveSettings.maskRight / 1000,
+							sizeX: usk.dveSettings.sizeX / 1000,
+							sizeY: usk.dveSettings.sizeY / 1000,
+							positionX: usk.dveSettings.positionX / 1000,
+							positionY: usk.dveSettings.positionY / 1000,
+							rotation: usk.dveSettings.rotation,
+							borderOuterWidth: usk.dveSettings.borderOuterWidth / 100,
+							borderInnerWidth: usk.dveSettings.borderInnerWidth / 100,
+							borderOuterSoftness: usk.dveSettings.borderOuterSoftness,
+							borderInnerSoftness: usk.dveSettings.borderInnerSoftness,
+							borderBevelSoftness: usk.dveSettings.borderBevelSoftness,
+							borderBevelPosition: usk.dveSettings.borderBevelPosition,
+							borderOpacity: usk.dveSettings.borderOpacity,
+							borderHue: usk.dveSettings.borderHue / 10,
+							borderSaturation: usk.dveSettings.borderSaturation,
+							borderLuma: usk.dveSettings.borderLuma,
+							lightSourceDirection: usk.dveSettings.lightSourceDirection,
+							lightSourceAltitude: usk.dveSettings.lightSourceAltitude,
+							borderEnabled: usk.dveSettings.borderEnabled,
+							shadowEnabled: usk.dveSettings.shadowEnabled,
+							borderBevel: usk.dveSettings.borderBevel,
+							rate: usk.dveSettings.rate,
+						}
+					} else {
+						return undefined
+					}
+				},
+			})
+		: undefined,
 		[ActionId.USKFly]:
 			model.USKs && model.DVEs
 				? literal<CompanionActionExt>({
