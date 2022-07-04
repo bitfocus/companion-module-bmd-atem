@@ -115,6 +115,76 @@ export function AtemDSKPicker(model: ModelSpec): CompanionInputFieldDropdown {
 		choices: GetDSKIdChoices(model),
 	}
 }
+export function AtemDSKMaskPropertiesPickers(): Array<
+	| CompanionInputFieldNumber
+	| CompanionInputFieldCheckbox
+	| CompanionInputFieldDropdown
+	| CompanionInputFieldMultiDropdown
+> {
+	const allProps: ReturnType<typeof AtemDSKMaskPropertiesPickers> = compact([
+		{
+			type: 'checkbox',
+			label: 'Enabled',
+			id: 'maskEnabled',
+			default: true,
+			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('maskEnabled'),
+		},
+		{
+			type: 'number',
+			label: 'Top',
+			id: 'maskTop',
+			default: 9,
+			min: -9,
+			step: 0.01,
+			max: 9,
+			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('maskTop'),
+		},
+		{
+			type: 'number',
+			label: 'Bottom',
+			id: 'maskBottom',
+			default: -9,
+			min: -9,
+			step: 0.01,
+			max: 9,
+			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('maskBottom'),
+		},
+		{
+			type: 'number',
+			label: 'Left',
+			id: 'maskLeft',
+			default: -16,
+			min: -16,
+			step: 0.01,
+			max: 16,
+			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('maskLeft'),
+		},
+		{
+			type: 'number',
+			label: 'Right',
+			id: 'maskRight',
+			default: 16,
+			min: -16,
+			step: 0.01,
+			max: 16,
+			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('maskRight'),
+		},
+	])
+
+	return compact([
+		{
+			type: 'dropdown',
+			id: 'properties',
+			label: 'Properties',
+			multiple: true,
+			minSelection: 1,
+			default: allProps.map((p) => p.id),
+			choices: allProps.map((p) => ({ id: p.id, label: p.label })),
+		},
+		...allProps,
+	])
+}
+
 export function AtemUSKPicker(model: ModelSpec): CompanionInputFieldDropdown {
 	return {
 		type: 'dropdown',
@@ -628,49 +698,6 @@ export function NumberComparitorPicker(): CompanionInputFieldDropdown {
 		default: NumberComparitor.Equal,
 		choices: options,
 	}
-}
-
-export const MaskTopChoice: CompanionInputFieldNumber = {
-	type: 'number',
-	label: 'Top',
-	id: 'maskTop',
-	default: 9,
-	min: -9,
-	step: 0.01,
-	max: 9,
-}
-export const MaskBottomChoice: CompanionInputFieldNumber = {
-	type: 'number',
-	label: 'Bottom',
-	id: 'maskBottom',
-	default: -9,
-	min: -9,
-	step: 0.01,
-	max: 9,
-}
-export const MaskLeftChoice: CompanionInputFieldNumber = {
-	type: 'number',
-	label: 'Left',
-	id: 'maskLeft',
-	default: -16,
-	min: -16,
-	step: 0.01,
-	max: 16,
-}
-export const MaskRightChoice: CompanionInputFieldNumber = {
-	type: 'number',
-	label: 'Right',
-	id: 'maskRight',
-	default: 16,
-	min: -16,
-	step: 0.01,
-	max: 16,
-}
-export const MaskEnableChoice: CompanionInputFieldCheckbox = {
-	type: 'checkbox',
-	label: 'Enabled',
-	id: 'maskEnabled',
-	default: true,
 }
 
 export const FadeDurationChoice: CompanionInputFieldNumber = {
