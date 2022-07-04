@@ -640,10 +640,10 @@ function meActions(
 							newProps.borderHue = getOptNumber(action,'borderHue') * 10
 						}
 						if(props.includes('borderSaturation')) {
-							newProps.borderSaturation = getOptNumber(action,'borderSaturation')
+							newProps.borderSaturation = getOptNumber(action,'borderSaturation') * 10
 						}
 						if(props.includes('borderLuma')) {
-							newProps.borderLuma = getOptNumber(action,'borderLuma')
+							newProps.borderLuma = getOptNumber(action,'borderLuma') * 10
 						}
 						if(props.includes('lightSourceDirection')) {
 							newProps.lightSourceDirection = getOptNumber(action,'lightSourceDirection')
@@ -693,8 +693,8 @@ function meActions(
 							borderBevelPosition: usk.dveSettings.borderBevelPosition,
 							borderOpacity: usk.dveSettings.borderOpacity,
 							borderHue: usk.dveSettings.borderHue / 10,
-							borderSaturation: usk.dveSettings.borderSaturation,
-							borderLuma: usk.dveSettings.borderLuma,
+							borderSaturation: usk.dveSettings.borderSaturation / 10,
+							borderLuma: usk.dveSettings.borderLuma / 10,
 							lightSourceDirection: usk.dveSettings.lightSourceDirection,
 							lightSourceAltitude: usk.dveSettings.lightSourceAltitude,
 							borderEnabled: usk.dveSettings.borderEnabled,
