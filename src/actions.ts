@@ -646,7 +646,7 @@ function meActions(
 							newProps.borderLuma = getOptNumber(action,'borderLuma') * 10
 						}
 						if(props.includes('lightSourceDirection')) {
-							newProps.lightSourceDirection = getOptNumber(action,'lightSourceDirection')
+							newProps.lightSourceDirection = getOptNumber(action,'lightSourceDirection') * 10
 						}
 						if(props.includes('lightSourceAltitude')) {
 							newProps.lightSourceAltitude = getOptNumber(action,'lightSourceAltitude')
@@ -695,7 +695,7 @@ function meActions(
 							borderHue: usk.dveSettings.borderHue / 10,
 							borderSaturation: usk.dveSettings.borderSaturation / 10,
 							borderLuma: usk.dveSettings.borderLuma / 10,
-							lightSourceDirection: usk.dveSettings.lightSourceDirection,
+							lightSourceDirection: usk.dveSettings.lightSourceDirection / 10,
 							lightSourceAltitude: usk.dveSettings.lightSourceAltitude,
 							borderEnabled: usk.dveSettings.borderEnabled,
 							shadowEnabled: usk.dveSettings.shadowEnabled,
