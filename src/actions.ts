@@ -41,6 +41,7 @@ import {
 	AtemAllSourcePicker,
 	AtemSuperSourceArtPropertiesPickers,
 	AtemDSKMaskPropertiesPickers,
+	AtemDSKPreMultipliedKeyPropertiesPickers,
 } from './input'
 import { ModelSpec } from './models'
 import {
@@ -64,7 +65,7 @@ import {
 import { AtemCommandBatching, CommandBatching } from './batching'
 import { AtemTransitions } from './transitions'
 import { SuperSource } from 'atem-connection/dist/state/video'
-import { DownstreamKeyerMask } from 'atem-connection/dist/state/video/downstreamKeyers'
+import { DownstreamKeyerMask, DownstreamKeyerGeneral } from 'atem-connection/dist/state/video/downstreamKeyers'
 
 export enum ActionId {
 	Program = 'program',
@@ -79,6 +80,7 @@ export enum ActionId {
 	DSKSource = 'dskSource',
 	DSKRate = 'dskRate',
 	DSKMask = 'dskMask',
+	DSKPreMultipliedKey = 'dskPreMultipliedKey',
 	DSKOnAir = 'dsk',
 	DSKTie = 'dskTie',
 	DSKAuto = 'dskAuto',
@@ -696,6 +698,54 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, 
 								maskBottom: dsk.properties.mask.bottom / 1000,
 								maskLeft: dsk.properties.mask.left / 1000,
 								maskRight: dsk.properties.mask.right / 1000,
+							}
+						} else {
+							return undefined
+						}
+					},
+			  })
+			: undefined,
+			[ActionId.DSKPreMultipliedKey]: model.DSKs
+			? literal<CompanionActionExt>({
+					label: 'Downstream key: Set Pre Multiplied Key',
+					options: compact([
+						AtemDSKPicker(model), 
+						...AtemDSKPreMultipliedKeyPropertiesPickers(),
+					]),
+					callback: (action): void => {
+						const keyId = getOptNumber(action, 'key')
+						const newProps: Partial<DownstreamKeyerGeneral> = {}
+
+						const props = action.options.properties
+						if(props && Array.isArray(props)) {
+							if(props.includes('preMultiply')) {
+								newProps.preMultiply = getOptBool(action,'preMultiply')
+							}
+							if(props.includes('clip')) {
+								newProps.clip = getOptNumber(action,'clip') * 10
+							}
+							if(props.includes('gain')) {
+								newProps.gain = getOptNumber(action,'gain') * 10
+							}
+							if(props.includes('invert')) {
+								newProps.invert = getOptBool(action,'invert')
+							}
+						}
+						
+						if (Object.keys(newProps).length === 0) return
+
+						executePromise(instance,atem?.setDownstreamKeyGeneralProperties(newProps, keyId))
+					},
+					learn: (feedback) => {
+						const dsk = getDSK(state, feedback.options.key)
+
+						if (dsk?.properties) {
+							return {
+								...feedback.options,
+								preMultiply: dsk.properties.preMultiply,
+								clip: dsk.properties.clip / 10,
+								gain: dsk.properties.gain / 10,
+								invert: dsk.properties.invert,
 							}
 						} else {
 							return undefined
