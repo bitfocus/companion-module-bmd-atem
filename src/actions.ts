@@ -2070,9 +2070,10 @@ export function GetActionsList(
 				{
 					id: 'short_value',
 					label: 'Short name',
-					type: 'textwithvariables',
+					type: 'textinput',
 					default: '',
 					tooltip: 'Max 4 characters. Supports variables',
+					useVariables: true,
 				},
 				{
 					id: 'long_enable',
@@ -2083,9 +2084,10 @@ export function GetActionsList(
 				{
 					id: 'long_value',
 					label: 'Long name',
-					type: 'textwithvariables',
+					type: 'textinput',
 					default: '',
 					tooltip: 'Max 24 characters. Supports variables',
+					useVariables: true,
 				},
 			],
 			callback: async (action) => {

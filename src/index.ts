@@ -57,9 +57,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		if (this.config.modelID === 'undefined') {
 			this.config.modelID = MODEL_AUTO_DETECT + ''
 			setImmediate(() => {
-				this.saveConfig(this.config).catch(() => {
-					// Ignore
-				})
+				this.saveConfig(this.config)
 			})
 		}
 
@@ -75,7 +73,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	 */
 	public async init(config: AtemConfig): Promise<void> {
 		this.isActive = true
-		await this.updateStatus('disconnected')
+		this.updateStatus('disconnected')
 
 		AtemMdnsDetectorInstance.subscribe(this.id)
 
@@ -97,7 +95,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		this.atemState = AtemStateUtil.Create()
 		this.atemTransitions.stopAll()
 		this.atemTransitions = new AtemTransitions(this.config)
-		await this.updateCompanionBits()
+		this.updateCompanionBits()
 
 		if (this.config.host !== undefined && this.atem) {
 			if (this.atem.status !== AtemConnectionStatus.CLOSED) {
@@ -105,11 +103,11 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				this.atem.disconnect().catch(() => null)
 			}
 
-			await this.updateStatus('connecting')
+			this.updateStatus('connecting')
 			try {
 				await this.atem.connect(this.config.host)
 			} catch (e) {
-				await this.updateStatus('connection_failure')
+				this.updateStatus('connection_failure')
 
 				this.log('error', `Connecting failed: ${e}`)
 			}
@@ -126,7 +124,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	/**
 	 * Clean up the instance before it is destroyed.
 	 */
-	public destroy(): void {
+	public async destroy(): Promise<void> {
 		this.isActive = false
 
 		AtemMdnsDetectorInstance.unsubscribe(this.id)
@@ -155,20 +153,19 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		}
 	}
 
-	private async updateCompanionBits(): Promise<void> {
-		await Promise.all([
-			InitVariables(this, this.model, this.atemState),
-			this.setPresetDefinitions(GetPresetsList(this, this.model, this.atemState)),
-			this.setFeedbackDefinitions(GetFeedbacksList(this.model, this.atemState, this.atemTally)),
-			this.setActionDefinitions(
-				GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.atemState)
-			),
-		])
-		await this.checkFeedbacks()
+	private updateCompanionBits(): void {
+		InitVariables(this, this.model, this.atemState)
+		this.setPresetDefinitions(GetPresetsList(this, this.model, this.atemState))
+		this.setFeedbackDefinitions(GetFeedbacksList(this.model, this.atemState, this.atemTally))
+		this.setActionDefinitions(
+			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.atemState)
+		)
+
+		this.checkFeedbacks()
 	}
 
-	public async checkFeedbacks(...feedbackTypes: FeedbackId[]): Promise<void> {
-		await super.checkFeedbacks(...feedbackTypes)
+	public checkFeedbacks(...feedbackTypes: FeedbackId[]): void {
+		super.checkFeedbacks(...feedbackTypes)
 	}
 
 	/**
@@ -180,16 +177,14 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				// The feedback holds a reference to the old object, so we need
 				// to update it in place
 				Object.assign(this.atemTally, command.properties)
-				this.checkFeedbacks(FeedbackId.ProgramTally, FeedbackId.PreviewTally).catch(() => {
-					// Ignore
-				})
+				this.checkFeedbacks(FeedbackId.ProgramTally, FeedbackId.PreviewTally)
 			}
 		})
 	}
 	/**
 	 * Handle ATEM state changes
 	 */
-	private async processStateChange(newState: AtemState, paths: string[]): Promise<void> {
+	private processStateChange(newState: AtemState, paths: string[]): void {
 		// TODO - do we need to clone this object?
 		this.atemState = newState
 
@@ -381,10 +376,10 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 
 		// Apply the change
 		if (reInit) {
-			await this.updateCompanionBits()
+			this.updateCompanionBits()
 		} else {
-			await updateChangedVariables(this, this.atemState, changedVariables)
-			if (changedFeedbacks.size > 0) await this.checkFeedbacks(...Array.from(changedFeedbacks))
+			updateChangedVariables(this, this.atemState, changedVariables)
+			if (changedFeedbacks.size > 0) this.checkFeedbacks(...Array.from(changedFeedbacks))
 		}
 	}
 

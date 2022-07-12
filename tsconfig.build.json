@@ -6,10 +6,7 @@
 		"outDir": "./dist",
 		"baseUrl": "./",
 		"paths": {
-			"*": ["./node_modules/*"],
-			"{{PACKAGE-NAME}}": ["./src/index.ts"]
-		},
-		"types": ["node"],
-		"declaration": false
+			"*": ["./node_modules/*"]
+		}
 	}
 }

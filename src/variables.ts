@@ -35,11 +35,11 @@ export interface UpdateVariablesProps {
 
 type CompanionVariableValues = { [variableId: string]: string | undefined }
 
-export async function updateChangedVariables(
+export function updateChangedVariables(
 	instance: InstanceBaseExt<AtemConfig>,
 	state: AtemState,
 	changes: UpdateVariablesProps
-): Promise<void> {
+): void {
 	const newValues: CompanionVariableValues = {}
 
 	for (const meIndex of changes.meProgram) updateMEProgramVariable(instance, state, meIndex, newValues)
@@ -57,7 +57,7 @@ export async function updateChangedVariables(
 	if (changes.streaming) updateStreamingVariables(state, newValues)
 
 	if (Object.keys(newValues).length > 0) {
-		await instance.setVariableValues(newValues)
+		instance.setVariableValues(newValues)
 	}
 }
 
@@ -218,11 +218,7 @@ function updateSuperSourceVariables(
 	}
 }
 
-export async function InitVariables(
-	instance: InstanceBaseExt<AtemConfig>,
-	model: ModelSpec,
-	state: AtemState
-): Promise<void> {
+export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: ModelSpec, state: AtemState): void {
 	const variables: CompanionVariableDefinition[] = []
 
 	const values: CompanionVariableValues = {}
@@ -388,6 +384,6 @@ export async function InitVariables(
 		updateSuperSourceVariables(instance, state, i, values)
 	}
 
-	await instance.setVariableDefinitions(variables)
-	await instance.setVariableValues(values)
+	instance.setVariableDefinitions(variables)
+	instance.setVariableValues(values)
 }
