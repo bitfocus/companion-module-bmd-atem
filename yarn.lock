@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@companion-module/base@~0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@companion-module/base/-/base-0.1.0.tgz#7e5dfd0748992ac36882332b015c09ac33618cb0"
-  integrity sha512-v3z79PojQuFVkiKf8BDDiV1AtjdbEROck54s94t3ShzIUfsY3nZJjFO93+wi9zSK8+cu/zne58YGyUiQHpqNcA==
+"@companion-module/base@~0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@companion-module/base/-/base-0.1.1.tgz#04a536da283ad13ef79d70bdbb2650b56afbaf6e"
+  integrity sha512-PPo2ay/+ESHQP7ElPCCNgmIP+zYjmxqdb++KLrAVpfVJutpwOOWwzmyA8BT02TPz6uzU9gmYePkpXSDQbQ9sIQ==
   dependencies:
     "@sentry/node" "^7.5.1"
     "@sentry/tracing" "^7.5.1"
@@ -14,10 +14,10 @@
     socket.io-client "^4.5.1"
     tslib "^2.4.0"
 
-"@companion-module/tools@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@companion-module/tools/-/tools-0.1.0.tgz#179107e23c6146ba93a6b7789465b2798f76138b"
-  integrity sha512-1TAfdjFs4Qi1dUbuL7fko2042h54c9uwT3jOHoeTES6CA2cJ57WO2KgT0JWegxHfaQRlk+jdc1ViM5OvqBGt5A==
+"@companion-module/tools@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@companion-module/tools/-/tools-0.1.1.tgz#f34abafb379a323aa2d5db736532231fc2501129"
+  integrity sha512-8KdqPYM1RnBNKr4qUM5wSPHr9VTCvsnU9ZzpJ/2t3nAr12LV7uWBItomCxhOAVOBv7Ot2Oyy7Gr995OJQg7YAA==
   dependencies:
     "@typescript-eslint/eslint-plugin" "^5.30.5"
     "@typescript-eslint/parser" "^5.30.5"
