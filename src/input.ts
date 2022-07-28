@@ -185,6 +185,65 @@ export function AtemDSKMaskPropertiesPickers(): Array<
 	])
 }
 
+export function AtemDSKPreMultipliedKeyPropertiesPickers(): Array<
+	| CompanionInputFieldNumber
+	| CompanionInputFieldCheckbox
+	| CompanionInputFieldDropdown
+	| CompanionInputFieldMultiDropdown
+> {
+	const allProps: ReturnType<typeof AtemDSKMaskPropertiesPickers> = compact([
+		{
+			type: 'checkbox',
+			label: 'Enabled',
+			id: 'preMultiply',
+			default: true,
+			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('preMultiply'),
+		},
+		{
+			type: 'number',
+			label: 'Clip',
+			id: 'clip',
+			range: true,
+			default: 100,
+			min: 0,
+			step: 0.1,
+			max: 100,
+			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('clip'),
+		},
+		{
+			type: 'number',
+			label: 'Gain',
+			id: 'gain',
+			range: true,
+			default: 0,
+			min: 0,
+			step: 0.1,
+			max: 100,
+			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('gain'),
+		},
+		{
+			type: 'checkbox',
+			label: 'Invert key',
+			id: 'invert',
+			default: false,
+			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('invert'),
+		},
+	])
+
+	return compact([
+		{
+			type: 'dropdown',
+			id: 'properties',
+			label: 'Properties',
+			multiple: true,
+			minSelection: 1,
+			default: allProps.map((p) => p.id),
+			choices: allProps.map((p) => ({ id: p.id, label: p.label })),
+		},
+		...allProps,
+	])
+}
+
 export function AtemUSKPicker(model: ModelSpec): CompanionInputFieldDropdown {
 	return {
 		type: 'dropdown',
