@@ -70,6 +70,7 @@ import { SuperSource } from 'atem-connection/dist/state/video'
 import { DownstreamKeyerMask, DownstreamKeyerGeneral } from 'atem-connection/dist/state/video/downstreamKeyers'
 
 import { UpstreamKeyerMaskSettings, UpstreamKeyerDVESettings } from 'atem-connection/dist/state/video/upstreamKeyers'
+import { readFileSync } from 'fs'
 
 export enum ActionId {
 	Program = 'program',
@@ -134,6 +135,7 @@ export enum ActionId {
 	SaveStartupState = 'saveStartupState',
 	ClearStartupState = 'clearStartupState',
 	InputName = 'inputName',
+	UploadStill = 'uploadStill',
 }
 
 type CompanionActionExt = CompanionAction & Required<Pick<CompanionAction, 'callback'>>
@@ -824,7 +826,7 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, 
 					callback: (action): void => {
 						executePromise(
 							instance,
-							atem?.setDownstreamKeyRate(getOptNumber(action, 'rate'), getOptNumber(action, 'key'))
+							Promise.all([atem?.setDownstreamKeyRate(getOptNumber(action, 'rate'), getOptNumber(action, 'key'))])
 						)
 					},
 					learn: (feedback) => {
@@ -2276,6 +2278,68 @@ function audioActions(
 	}
 }
 
+function uploadActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, model: ModelSpec, state: AtemState) {
+	return {
+		[ActionId.UploadStill]: model.media.stills
+			? literal<CompanionActionExt>({
+					label: 'Upload Still',
+					options: [
+						{
+							id: 'index',
+							label: 'Index',
+							type: 'number',
+							default: 1,
+							range: true,
+							step: 1,
+							min: 1,
+							max: state.media.stillPool.length,
+						},
+						{
+							id: 'filePath',
+							label: 'Absolute File Path',
+							type: 'textinput',
+							default: '',
+						},
+						{
+							id: 'name',
+							label: 'Name',
+							type: 'textinput',
+							default: '',
+						},
+						{
+							id: 'description',
+							label: 'Description',
+							type: 'textinput',
+							default: '',
+						},
+					],
+					callback: (action): void => {
+						const filePath = `${action.options.filePath}`
+						try {
+							if (!filePath.endsWith('.rgba')) {
+								throw new Error(
+									`The file you want to upload must be a RGBA file with the file extension rgba. The Absolute File Path you entered is '${filePath}'`
+								)
+							}
+							const data = readFileSync(filePath)
+							executePromise(
+								instance,
+								atem?.uploadStill(
+									getOptNumber(action, 'index') - 1,
+									data,
+									`${action.options.name || ''}`,
+									`${action.options.description || ''}`
+								)
+							)
+						} catch (e) {
+							instance.log('warn', `ATEM: Upload Still failed: ${e}`)
+						}
+					},
+			  })
+			: undefined,
+	}
+}
+
 export function GetActionsList(
 	instance: InstanceSkel<AtemConfig>,
 	atem: Atem | undefined,
@@ -2291,6 +2355,7 @@ export function GetActionsList(
 		...ssrcActions(instance, atem, model, state),
 		...streamRecordActions(instance, atem, model, state),
 		...audioActions(instance, atem, model, transitions, state),
+		...uploadActions(instance, atem, model, state),
 		[ActionId.Aux]: model.auxes
 			? literal<CompanionActionExt>({
 					label: 'Aux/Output: Set source',
