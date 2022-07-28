@@ -356,7 +356,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			type: 'number',
 			label: 'Size: X',
 			id: 'sizeX',
-			default: 0.50,
+			default: 0.5,
 			range: true,
 			min: 0,
 			step: 0.01,
@@ -367,7 +367,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			type: 'number',
 			label: 'Size: Y',
 			id: 'sizeY',
-			default: 0.50,
+			default: 0.5,
 			range: true,
 			min: 0,
 			step: 0.01,
@@ -451,7 +451,8 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			range: true,
 			step: 1,
 			max: 359,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('lightSourceDirection'),
+			isVisible: (opts) =>
+				Array.isArray(opts.options.properties) && opts.options.properties.includes('lightSourceDirection'),
 		},
 		{
 			type: 'number',
@@ -462,7 +463,8 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			range: true,
 			step: 1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('lightSourceAltitude'),
+			isVisible: (opts) =>
+				Array.isArray(opts.options.properties) && opts.options.properties.includes('lightSourceAltitude'),
 		},
 		{
 			type: 'checkbox',
@@ -491,7 +493,8 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			range: true,
 			step: 0.1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('borderSaturation'),
+			isVisible: (opts) =>
+				Array.isArray(opts.options.properties) && opts.options.properties.includes('borderSaturation'),
 		},
 		{
 			type: 'number',
@@ -520,18 +523,20 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			range: true,
 			step: 0.01,
 			max: 16,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('borderOuterWidth'),
+			isVisible: (opts) =>
+				Array.isArray(opts.options.properties) && opts.options.properties.includes('borderOuterWidth'),
 		},
 		{
 			type: 'number',
 			label: 'Border: Inner Width',
 			id: 'borderInnerWidth',
-			default: 0.20,
+			default: 0.2,
 			min: 0,
 			range: true,
 			step: 0.01,
 			max: 16,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('borderInnerWidth'),
+			isVisible: (opts) =>
+				Array.isArray(opts.options.properties) && opts.options.properties.includes('borderInnerWidth'),
 		},
 		{
 			type: 'number',
@@ -542,7 +547,8 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			range: true,
 			step: 1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('borderOuterSoftness'),
+			isVisible: (opts) =>
+				Array.isArray(opts.options.properties) && opts.options.properties.includes('borderOuterSoftness'),
 		},
 		{
 			type: 'number',
@@ -553,7 +559,8 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			range: true,
 			step: 1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('borderInnerSoftness'),
+			isVisible: (opts) =>
+				Array.isArray(opts.options.properties) && opts.options.properties.includes('borderInnerSoftness'),
 		},
 		{
 			type: 'number',
@@ -575,7 +582,8 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			range: true,
 			step: 1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('borderBevelPosition'),
+			isVisible: (opts) =>
+				Array.isArray(opts.options.properties) && opts.options.properties.includes('borderBevelPosition'),
 		},
 		{
 			type: 'number',
@@ -586,10 +594,11 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			range: true,
 			step: 1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('borderBevelSoftness'),
+			isVisible: (opts) =>
+				Array.isArray(opts.options.properties) && opts.options.properties.includes('borderBevelSoftness'),
 		},
 		AtemRatePicker('Rate'),
-		])
+	])
 
 	return compact([
 		{
