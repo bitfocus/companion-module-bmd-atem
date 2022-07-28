@@ -23,6 +23,18 @@ To add a new model to the list:
 
 ## Changes
 
+### v2.17.0
+
+- add sdi model range (untested)
+
+- add dsk rate
+
+- add dsk premultiplied key
+
+- add usk mask
+
+- add usk dve properties
+
 ### v2.16.0
 
 - more granular supersource actions and feedbacks
