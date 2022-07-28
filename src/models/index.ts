@@ -24,6 +24,9 @@ import { ModelSpecMiniExtremeISO } from './miniextremeiso'
 import { ModelSpecConstellationHD1ME } from './constellationHd1Me'
 import { ModelSpecConstellationHD2ME } from './constellationHd2Me'
 import { ModelSpecConstellationHD4ME } from './constellationHd4Me'
+import { ModelSpecSDI } from './sdi'
+import { ModelSpecSDIProISO } from './sdiproiso'
+import { ModelSpecSDIExtremeISO } from './sdiextremeiso'
 
 export * from './types'
 
@@ -49,6 +52,9 @@ export const ALL_MODELS: ModelSpec[] = [
 	ModelSpecConstellationHD1ME,
 	ModelSpecConstellationHD2ME,
 	ModelSpecConstellationHD4ME,
+	ModelSpecSDI,
+	ModelSpecSDIProISO,
+	ModelSpecSDIExtremeISO,
 ]
 
 export const ALL_MODEL_CHOICES: DropdownChoice[] = ALL_MODELS.map(({ id, label }) => ({ id, label }))
