@@ -200,6 +200,8 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 			mediaPlayer: new Set(),
 			streaming: false,
 			recording: false,
+			fairlightAudio: new Set(),
+			classicAudio: new Set(),
 		}
 
 		for (const path of paths) {
@@ -218,6 +220,18 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 				changedFeedbacks.add(FeedbackId.DSKOnAir)
 				changedFeedbacks.add(FeedbackId.DSKTie)
 				changedFeedbacks.add(FeedbackId.DSKSource)
+				continue
+			}
+
+			const fairlightInputMatch = path.match(/fairlight.inputs.(\d+)/)
+			if (fairlightInputMatch) {
+				changedVariables.fairlightAudio.add(parseInt(fairlightInputMatch[1], 10))
+				continue
+			}
+
+			const classicAudioInputMatch = path.match(/audio.channels.(\d+)/)
+			if (classicAudioInputMatch) {
+				changedVariables.classicAudio.add(parseInt(classicAudioInputMatch[1], 10))
 				continue
 			}
 
