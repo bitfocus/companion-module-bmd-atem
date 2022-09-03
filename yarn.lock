@@ -385,10 +385,10 @@ astral-regex@^2.0.0:
   resolved "https://registry.yarnpkg.com/astral-regex/-/astral-regex-2.0.0.tgz#483143c567aeed4785759c0865786dc77d7d2e31"
   integrity sha512-Z7tMw1ytTXt5jqMcOP+OQteU1VuNK9Y02uuJtKQ1Sv69jXQKKg5cibLwGJow8yzZP+eAc18EmLGPal0bp36rvQ==
 
-atem-connection@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/atem-connection/-/atem-connection-3.0.0.tgz#0eb99e1abc0e149fca5af06e7792e4259748a8ad"
-  integrity sha512-jzblesqzIX/NQl+LLsmsCXlwIw7CbvNErPQgGAApt/jtYV+53d+Wl2F4nB6DJTIIX2vhhUvqlDqQbo2k9E6atA==
+atem-connection@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/atem-connection/-/atem-connection-3.0.1.tgz#2fba408ab7d4ebd9c9ee7b87a64285e1c5a8d2e7"
+  integrity sha512-WZYXBa4P3AF+LsEDyOto77gLdYrk8ibB+/zm09pN00adQy1GwTHIma+8b5ee9qOuIujz5X/gAhvd/iMfQsSXJw==
   dependencies:
     "@julusian/freetype2" "^1.0.0"
     debug "^4.3.4"
