@@ -23,6 +23,12 @@ To add a new model to the list:
 
 ## Changes
 
+### v2.17.1
+
+- fix performance issues with fairlight input updates
+
+- hide multiview label when name set to nothing
+
 ### v2.17.0
 
 - add sdi model range (untested)
