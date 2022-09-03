@@ -235,7 +235,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 				continue
 			}
 
-			if (path.match(/inputs/)) {
+			if (path.match(/^inputs/)) {
 				// reset everything, since names of inputs might have changed
 				reInit = true
 				break
@@ -308,7 +308,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
 			const ssrcBoxMatch = path.match(/video.superSources.(\d+).boxes.(\d+)/)
 			if (ssrcBoxMatch) {
-				console.log('update ssrc', ssrcBoxMatch[1])
 				changedFeedbacks.add(FeedbackId.SSrcBoxSource)
 				changedFeedbacks.add(FeedbackId.SSrcBoxOnAir)
 				changedFeedbacks.add(FeedbackId.SSrcBoxProperties)

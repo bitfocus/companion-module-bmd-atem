@@ -226,7 +226,7 @@ export const ModelSpecSDIExtremeISO: ModelSpec = {
 			meAvailability: Enums.MeAvailability.None,
 		},
 	],
-	auxes: 2,
+	auxes: 4,
 	MEs: 1,
 	USKs: 4,
 	DSKs: 2,
