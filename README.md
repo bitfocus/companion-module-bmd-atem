@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+### v2.17.2
+
+- fix unable to set multiviewer label to blank
+
 ### v2.17.1
 
 - fix performance issues with fairlight input updates
