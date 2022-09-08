@@ -4,7 +4,12 @@ import { CompanionConfigField, CompanionStaticUpgradeScript, CompanionSystem } f
 import { GetActionsList } from './actions'
 import { AtemConfig, GetConfigFields } from './config'
 import { FeedbackId, GetFeedbacksList } from './feedback'
-import { BooleanFeedbackUpgradeMap, upgradeAddSSrcPropertiesPicker, upgradeV2x2x0 } from './upgrades'
+import {
+	BooleanFeedbackUpgradeMap,
+	fixUsingFairlightAudioFaderGainInsteadOfFairlightAudioMonitorFaderGain,
+	upgradeAddSSrcPropertiesPicker,
+	upgradeV2x2x0,
+} from './upgrades'
 import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, ModelSpec } from './models'
 import { GetPresetsList } from './presets'
 import { TallyBySource } from './state'
@@ -63,10 +68,11 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 			upgradeV2x2x0,
 			AtemInstance.CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap),
 			upgradeAddSSrcPropertiesPicker,
+			fixUsingFairlightAudioFaderGainInsteadOfFairlightAudioMonitorFaderGain,
 		]
 	}
 
-	static DEVELOPER_forceStartupUpgradeScript = 2
+	// static DEVELOPER_forceStartupUpgradeScript = 2
 
 	/**
 	 * Main initialization function called once the module
