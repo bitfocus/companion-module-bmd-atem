@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+### v2.17.3
+
+- fix 'Fairlight Audio: Audio fader gain' feedback missing
+
 ### v2.17.2
 
 - fix unable to set multiviewer label to blank
