@@ -1,5 +1,5 @@
 import AtemPkg, { Atem as IAtem, AtemState, Commands } from 'atem-connection'
-import { GetActionsList } from './actions.js'
+import { ActionId, GetActionsList } from './actions.js'
 import { AtemConfig, GetConfigFields } from './config.js'
 import { FeedbackId, GetFeedbacksList } from './feedback.js'
 import { BooleanFeedbackUpgradeMap, upgradeAddSSrcPropertiesPicker, upgradeV2x2x0 } from './upgrades.js'
@@ -40,6 +40,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	private isActive: boolean
 	private durationInterval: NodeJS.Timer | undefined
 	private atemTransitions: AtemTransitions
+	private isRecordingActions: boolean
 
 	public config: AtemConfig = {}
 
@@ -66,6 +67,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		this.config.modelID = this.model.id + ''
 
 		this.isActive = false
+		this.isRecordingActions = false
 	}
 
 	/**
@@ -140,6 +142,12 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		this.log('debug', 'destroy: ' + this.id)
 	}
 
+	public handleStartStopRecordActions(isRecording: boolean): void {
+		// Track whether actions are being recorded
+		// Other modules may need to start/stop some real work here to be fed appropriate data from a device/library
+		this.isRecordingActions = isRecording
+	}
+
 	private getBestModelId(): number | undefined {
 		const configModel = this.config.modelID ? parseInt(this.config.modelID, 10) : undefined
 		if (configModel) {
@@ -173,14 +181,39 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	 * Handle tally packets
 	 */
 	private processReceivedCommands(commands: Commands.IDeserializedCommand[]): void {
-		commands.forEach((command) => {
+		for (const command of commands) {
 			if (command instanceof Commands.TallyBySourceCommand) {
 				// The feedback holds a reference to the old object, so we need
 				// to update it in place
 				Object.assign(this.atemTally, command.properties)
 				this.checkFeedbacks(FeedbackId.ProgramTally, FeedbackId.PreviewTally)
 			}
-		})
+		}
+
+		// Defer to avoid blocking important module operation
+		if (this.isRecordingActions) {
+			setImmediate(() => {
+				if (this.isRecordingActions) {
+					for (const command of commands) {
+						// Find actions of interest
+						if (command instanceof Commands.ProgramInputUpdateCommand) {
+							// Note: this call to `recordAction` is being run by the module, at a point it feels appropriate
+							// As long as it has been told to record actions, it is allowed to call this whenever it likes until it is told to stop
+							this.recordAction(
+								{
+									actionId: ActionId.Program,
+									options: {
+										mixeffect: command.mixEffect,
+										input: command.properties.source,
+									},
+								},
+								`program_me${command.mixEffect}`
+							)
+						}
+					}
+				}
+			})
+		}
 	}
 	/**
 	 * Handle ATEM state changes

@@ -2,13 +2,14 @@
 # yarn lockfile v1
 
 
-"@companion-module/base@~0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@companion-module/base/-/base-0.2.0.tgz#acbd8c16b2a50d8ecc70dfd3103c5d74fe9cc1cc"
-  integrity sha512-XDAu7tCfPWd4JN4Ln7Hk+eRshJ5h76zrItUyBAx3WmziJ26hRQObi1YQqej2Al7HKddSYOevyKFz/7cG73/ZTw==
+"@companion-module/base@0.3.0-record-actions.0":
+  version "0.3.0-record-actions.0"
+  resolved "https://registry.yarnpkg.com/@companion-module/base/-/base-0.3.0-record-actions.0.tgz#b9c76af56838760066397f1f34eb37494ece8132"
+  integrity sha512-9EW37bG06cMf6JkKaNio8ZieLnIU5fW34OuWJ/ILSM/9hO1KgENkCAvT+FitAM1XehIWm2EEq3fewfADPdezwA==
   dependencies:
-    "@sentry/node" "^7.12.1"
-    "@sentry/tracing" "^7.12.1"
+    "@sentry/node" "^7.13.0"
+    "@sentry/tracing" "^7.13.0"
+    ajv "^8.11.0"
     eventemitter3 "^4.0.7"
     p-queue "^6.6.2"
     p-timeout "^4.1.0"
@@ -185,7 +186,7 @@
     "@sentry/utils" "7.13.0"
     tslib "^1.9.3"
 
-"@sentry/node@^7.12.1":
+"@sentry/node@^7.13.0":
   version "7.13.0"
   resolved "https://registry.yarnpkg.com/@sentry/node/-/node-7.13.0.tgz#0e073b75d4cce684db006d93ef18f2de2cf2f60e"
   integrity sha512-uP3bPAIRHPilnOEiYGQQDLaQphc/c7d87wm91bZrTJ+WPnMW4D/NmT7fna5zGGDQIr/KTdQ/LEpDeZOILbkCqQ==
@@ -199,7 +200,7 @@
     lru_map "^0.3.3"
     tslib "^1.9.3"
 
-"@sentry/tracing@^7.12.1":
+"@sentry/tracing@^7.13.0":
   version "7.13.0"
   resolved "https://registry.yarnpkg.com/@sentry/tracing/-/tracing-7.13.0.tgz#521dc021dab78e37e29b0f90b01cb444337adfc4"
   integrity sha512-/MKSd25rGv6Pc0FPBLXJifkfvSaYVPA8XUOLzVeDN0gl07h8AXli4qG9amTh/4Wb5h4dFpbcscOvW2VC+pxkIA==
@@ -621,6 +622,16 @@ ajv@^6.10.0, ajv@^6.12.4, ajv@^6.12.5:
     fast-deep-equal "^3.1.1"
     fast-json-stable-stringify "^2.0.0"
     json-schema-traverse "^0.4.1"
+    uri-js "^4.2.2"
+
+ajv@^8.11.0:
+  version "8.11.0"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.11.0.tgz#977e91dd96ca669f54a11e23e378e33b884a565f"
+  integrity sha512-wGgprdCvMalC0BztXvitD2hC04YffAvtsUn93JbGXYLAtCUO4xd17mCCZQxUOItiBwZvJScWo8NIvQMQ71rdpg==
+  dependencies:
+    fast-deep-equal "^3.1.1"
+    json-schema-traverse "^1.0.0"
+    require-from-string "^2.0.2"
     uri-js "^4.2.2"
 
 alawmulaw@^5.0.2:
@@ -1598,6 +1609,11 @@ json-schema-traverse@^0.4.1:
   resolved "https://registry.yarnpkg.com/json-schema-traverse/-/json-schema-traverse-0.4.1.tgz#69f6a87d9513ab8bb8fe63bdb0979c448e684660"
   integrity sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg==
 
+json-schema-traverse@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/json-schema-traverse/-/json-schema-traverse-1.0.0.tgz#ae7bcb3656ab77a73ba5c49bf654f38e6b6860e2"
+  integrity sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==
+
 json-stable-stringify-without-jsonify@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/json-stable-stringify-without-jsonify/-/json-stable-stringify-without-jsonify-1.0.1.tgz#9db7b59496ad3f3cfef30a75142d2d930ad72651"
@@ -2097,6 +2113,11 @@ regexpp@^3.0.0, regexpp@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/regexpp/-/regexpp-3.2.0.tgz#0425a2768d8f23bad70ca4b90461fa2f1213e1b2"
   integrity sha512-pq2bWo9mVD43nbts2wGv17XLiNLya+GklZ8kaDLV2Z08gDCsGpnKn9BFMepvWuHCbyVvY7J5o5+BVvoQbmlJLg==
+
+require-from-string@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/require-from-string/-/require-from-string-2.0.2.tgz#89a7fdd938261267318eafe14f9c32e598c36909"
+  integrity sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==
 
 resolve-cwd@^3.0.0:
   version "3.0.0"

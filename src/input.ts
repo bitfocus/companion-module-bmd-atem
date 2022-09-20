@@ -243,7 +243,7 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: offset ? 0 : 0.5,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('size'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('size'),
 		},
 
 		!offset
@@ -253,7 +253,7 @@ export function AtemSuperSourcePropertiesPickers(
 					label: 'On Air',
 					default: 'true',
 					choices: CHOICES_KEYTRANS,
-					isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('onair'),
+					isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('onair'),
 			  }
 			: undefined,
 
@@ -264,7 +264,7 @@ export function AtemSuperSourcePropertiesPickers(
 					label: 'Source',
 					default: 0,
 					choices: SourcesToChoices(GetSourcesListForType(model, state, 'ssrc-box')),
-					isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('source'),
+					isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('source'),
 			  }
 			: undefined,
 
@@ -277,7 +277,7 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('x'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('x'),
 		},
 		{
 			type: 'number',
@@ -288,7 +288,7 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('y'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('y'),
 		},
 		offset
 			? undefined
@@ -297,7 +297,7 @@ export function AtemSuperSourcePropertiesPickers(
 					id: 'cropEnable',
 					label: 'Crop Enable',
 					default: false,
-					isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('cropEnable'),
+					isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropEnable'),
 			  },
 		{
 			type: 'number',
@@ -308,7 +308,7 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('cropTop'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropTop'),
 		},
 		{
 			type: 'number',
@@ -319,7 +319,7 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('cropBottom'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropBottom'),
 		},
 		{
 			type: 'number',
@@ -330,7 +330,7 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('cropLeft'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropLeft'),
 		},
 		{
 			type: 'number',
@@ -341,7 +341,7 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('cropRight'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropRight'),
 		},
 	])
 
@@ -376,7 +376,7 @@ export function AtemSuperSourceArtPropertiesPickers(
 			label: 'Fill Source',
 			default: 0,
 			choices: artSources,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('fill'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('fill'),
 		},
 		{
 			type: 'dropdown',
@@ -384,11 +384,11 @@ export function AtemSuperSourceArtPropertiesPickers(
 			label: 'Key Source',
 			default: 0,
 			choices: artSources,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('key'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('key'),
 		},
 		{
 			...AtemSuperSourceArtOption(action),
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('artOption'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('artOption'),
 		},
 
 		{
@@ -396,8 +396,7 @@ export function AtemSuperSourceArtPropertiesPickers(
 			id: 'artPreMultiplied',
 			label: 'Pre-multiplied',
 			default: true,
-			isVisible: (opts) =>
-				Array.isArray(opts.options.properties) && opts.options.properties.includes('artPreMultiplied'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('artPreMultiplied'),
 		},
 		{
 			type: 'number',
@@ -408,7 +407,7 @@ export function AtemSuperSourceArtPropertiesPickers(
 			range: true,
 			default: 50,
 			step: 1,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('artClip'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('artClip'),
 		},
 		{
 			type: 'number',
@@ -419,14 +418,14 @@ export function AtemSuperSourceArtPropertiesPickers(
 			range: true,
 			default: 50,
 			step: 1,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('artGain'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('artGain'),
 		},
 		{
 			type: 'checkbox',
 			id: 'artInvertKey',
 			label: 'Invert Key',
 			default: false,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('artInvertKey'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('artInvertKey'),
 		},
 	])
 
