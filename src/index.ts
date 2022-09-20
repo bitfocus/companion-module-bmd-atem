@@ -16,6 +16,7 @@ import {
 	SomeCompanionConfigField,
 	runEntrypoint,
 	CreateConvertToBooleanFeedbackUpgradeScript,
+	InstanceStatus,
 } from '@companion-module/base'
 import { AtemMdnsDetectorInstance } from './mdns-detector.js'
 
@@ -73,7 +74,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	 */
 	public async init(config: AtemConfig): Promise<void> {
 		this.isActive = true
-		this.updateStatus('disconnected')
+		this.updateStatus(InstanceStatus.Disconnected)
 
 		AtemMdnsDetectorInstance.subscribe(this.id)
 
@@ -103,11 +104,11 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				this.atem.disconnect().catch(() => null)
 			}
 
-			this.updateStatus('connecting')
+			this.updateStatus(InstanceStatus.Connecting)
 			try {
 				await this.atem.connect(this.config.host)
 			} catch (e) {
-				this.updateStatus('connection_failure')
+				this.updateStatus(InstanceStatus.ConnectionFailure)
 
 				this.log('error', `Connecting failed: ${e}`)
 			}
@@ -408,7 +409,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 
 				const atemInfo = this.atemState.info
 				this.log('info', 'Connected to a ' + atemInfo.productIdentifier)
-				this.updateStatus('ok')
+				this.updateStatus(InstanceStatus.Ok)
 
 				const newBestModelId = this.getBestModelId()
 				const newModelSpec = newBestModelId ? GetModelSpec(newBestModelId) : undefined
@@ -416,7 +417,10 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 					this.model = newModelSpec
 				} else {
 					this.model = GetParsedModelSpec(this.atemState)
-					this.updateStatus('unknown_warning', `Unknown model: ${atemInfo.productIdentifier}. Some bits may be missing`)
+					this.updateStatus(
+						InstanceStatus.UnknwownWarning,
+						`Unknown model: ${atemInfo.productIdentifier}. Some bits may be missing`
+					)
 				}
 
 				// Log if the config mismatches the device
@@ -454,11 +458,11 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		this.atem.on('error', (e: any) => {
 			this.log('error', e.message)
-			this.updateStatus('unknown_error', e.message)
+			this.updateStatus(InstanceStatus.UnknownError, e.message)
 		})
 		this.atem.on('disconnected', () => {
 			if (this.isActive) {
-				this.updateStatus('connecting')
+				this.updateStatus(InstanceStatus.Connecting)
 			}
 			this.log('info', 'Lost connection')
 
@@ -472,9 +476,9 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		this.atem.on('receivedCommands', this.processReceivedCommands.bind(this))
 
 		if (this.config.host) {
-			this.updateStatus('connecting')
+			this.updateStatus(InstanceStatus.Connecting)
 			this.atem.connect(this.config.host).catch((e) => {
-				this.updateStatus('connection_failure')
+				this.updateStatus(InstanceStatus.ConnectionFailure)
 				this.log('error', `Connecting failed: ${e}`)
 			})
 		}

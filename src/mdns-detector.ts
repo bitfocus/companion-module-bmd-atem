@@ -1,7 +1,7 @@
 import debug0 from 'debug'
 import mDNS from 'multicast-dns'
 // eslint-disable-next-line node/no-extraneous-import
-import { TxtAnswer, StringAnswer } from 'dns-packet'
+import type { TxtAnswer, StringAnswer } from 'dns-packet'
 
 const debug = debug0('bmd-atem/mdns')
 

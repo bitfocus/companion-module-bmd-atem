@@ -31,7 +31,7 @@ export class AtemTransitions {
 		for (const [path, info] of this.transitions.entries()) {
 			const newValue = info.steps.shift()
 			if (newValue !== undefined) {
-				info.sendFcn(newValue).catch((e) => {
+				info.sendFcn(newValue).catch((_e) => {
 					// TODO
 					// this.instance.log('debug', 'Action execution error: ' + e)
 				})

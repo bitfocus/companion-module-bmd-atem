@@ -31,7 +31,7 @@
 		"node": "^14 || ^16"
 	},
 	"dependencies": {
-		"@companion-module/base": "~0.1.1",
+		"@companion-module/base": "~0.2.0",
 		"atem-connection": "3.0.0-nightly-latest-20220622-133017-ab0e528.0",
 		"debounce-fn": "github:julusian/debounce-fn#4.0.0-maxWaithack.0",
 		"debug": "^4.3.4",
@@ -39,7 +39,7 @@
 		"type-fest": "^2.16.0"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "^0.1.1",
+		"@companion-module/tools": "^0.2.0",
 		"@types/debug": "^4.1.7",
 		"@types/multicast-dns": "^7.2.1",
 		"@types/node": "^14.18.12",
