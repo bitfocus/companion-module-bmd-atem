@@ -94,6 +94,8 @@ export enum FeedbackId {
 	FadeToBlackRate = 'fadeToBlackRate',
 	ProgramTally = 'program_tally',
 	PreviewTally = 'preview_tally',
+	ProgramNotTally = 'program_not_tally',
+	PreviewNotTally = 'preview_not_tally',
 	StreamStatus = 'streamStatus',
 	RecordStatus = 'recordStatus',
 	ClassicAudioGain = 'classicAudioGain',
@@ -143,6 +145,34 @@ function tallyFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const source = tally[Number(evt.options.input)]
 				return !!source?.preview
+			},
+		}),
+		[FeedbackId.ProgramNotTally]: literal<CompanionFeedbackWithCallback>({
+			type: 'boolean',
+			label: 'Tally: Not Program',
+			description: 'If the input specified does not have an active progam tally light, change style of the bank',
+			options: [AtemMESourcePicker(model, state, 0)],
+			style: {
+				color: instance.rgb(255, 255, 255),
+				bgcolor: instance.rgb(255, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const source = tally[Number(evt.options.input)]
+				return !source?.program
+			},
+		}),
+		[FeedbackId.PreviewNotTally]: literal<CompanionFeedbackWithCallback>({
+			type: 'boolean',
+			label: 'Tally: Not Preview',
+			description: 'If the input specified does not have an active preview tally light, change style of the bank',
+			options: [AtemMESourcePicker(model, state, 0)],
+			style: {
+				color: instance.rgb(0, 0, 0),
+				bgcolor: instance.rgb(0, 255, 0),
+			},
+			callback: (evt: CompanionFeedbackEvent): boolean => {
+				const source = tally[Number(evt.options.input)]
+				return !source?.preview
 			},
 		}),
 	}
