@@ -84,6 +84,8 @@ export const BooleanFeedbackUpgradeMap: {
 	[FeedbackId.FadeToBlackRate]: true,
 	[FeedbackId.ProgramTally]: true,
 	[FeedbackId.PreviewTally]: true,
+	[FeedbackId.ProgramNotTally]: true,
+	[FeedbackId.PreviewNotTally]: true,
 	[FeedbackId.StreamStatus]: true,
 	[FeedbackId.RecordStatus]: true,
 	[FeedbackId.ClassicAudioGain]: true,
