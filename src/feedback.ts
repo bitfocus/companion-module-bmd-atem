@@ -3,8 +3,9 @@ import {
 	CompanionFeedbackBooleanEvent,
 	CompanionFeedbackDefinition,
 	CompanionFeedbackDefinitions,
+	CompanionInputFieldDropdown,
+	CompanionInputFieldNumber,
 	InputValue,
-	SomeCompanionInputField,
 } from '@companion-module/base'
 import { AtemState, Enums } from 'atem-connection'
 import { getSuperSource } from 'atem-connection/dist/state/util.js'
@@ -1106,7 +1107,7 @@ function streamRecordFeedbacks(model: ModelSpec, state: AtemState) {
 					name: 'Streaming: Active/Running',
 					description: 'If the stream has the specified status, change style of the bank',
 					options: [
-						literal<SomeCompanionInputField>({
+						literal<CompanionInputFieldDropdown>({
 							id: 'state',
 							label: 'State',
 							type: 'dropdown',
@@ -1145,7 +1146,7 @@ function streamRecordFeedbacks(model: ModelSpec, state: AtemState) {
 					name: 'Recording: Active/Running',
 					description: 'If the record has the specified status, change style of the bank',
 					options: [
-						literal<SomeCompanionInputField>({
+						literal<CompanionInputFieldDropdown>({
 							id: 'state',
 							label: 'State',
 							type: 'dropdown',
@@ -1193,7 +1194,7 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 				options: [
 					audioInputOption,
 					NumberComparitorPicker(),
-					literal<SomeCompanionInputField>({
+					literal<CompanionInputFieldNumber>({
 						type: 'number',
 						label: 'Fader Level (-60 = -inf)',
 						id: 'gain',
@@ -1234,7 +1235,7 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 				description: 'If the audio input has the specified mix option, change style of the bank',
 				options: [
 					audioInputOption,
-					literal<SomeCompanionInputField>({
+					literal<CompanionInputFieldDropdown>({
 						id: 'option',
 						label: 'Mix option',
 						type: 'dropdown',
@@ -1271,7 +1272,7 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 				description: 'If the audio master has the specified gain, change style of the bank',
 				options: [
 					NumberComparitorPicker(),
-					literal<SomeCompanionInputField>({
+					literal<CompanionInputFieldNumber>({
 						type: 'number',
 						label: 'Fader Level (-60 = -inf)',
 						id: 'gain',
@@ -1325,7 +1326,7 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 					audioInputOption,
 					audioSourceOption,
 					NumberComparitorPicker(),
-					literal<SomeCompanionInputField>({
+					literal<CompanionInputFieldNumber>({
 						type: 'number',
 						label: 'Input Level (-100 = -inf)',
 						id: 'gain',
@@ -1372,7 +1373,7 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 					audioInputOption,
 					audioSourceOption,
 					NumberComparitorPicker(),
-					literal<SomeCompanionInputField>({
+					literal<CompanionInputFieldNumber>({
 						type: 'number',
 						label: 'Fader Level (-100 = -inf)',
 						id: 'gain',
@@ -1419,7 +1420,7 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 				options: [
 					audioInputOption,
 					audioSourceOption,
-					literal<SomeCompanionInputField>({
+					literal<CompanionInputFieldDropdown>({
 						id: 'option',
 						label: 'Mix option',
 						type: 'dropdown',
@@ -1458,7 +1459,7 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 				description: 'If the master has the specified fader gain, change style of the bank',
 				options: [
 					NumberComparitorPicker(),
-					literal<SomeCompanionInputField>({
+					literal<CompanionInputFieldNumber>({
 						type: 'number',
 						label: 'Fader Level (-100 = -inf)',
 						id: 'gain',
@@ -1515,7 +1516,7 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 						description: 'If the headphone/montir has the specified fader gain, change style of the bank',
 						options: [
 							NumberComparitorPicker(),
-							literal<SomeCompanionInputField>({
+							literal<CompanionInputFieldNumber>({
 								type: 'number',
 								label: 'Fader Level (-60 = Min)',
 								id: 'gain',
