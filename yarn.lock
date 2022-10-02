@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@companion-module/base@~0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@companion-module/base/-/base-0.4.0.tgz#2286e3f55e85bf1b003889d539dff4ee5afb3692"
-  integrity sha512-2iadA+359rjypMxIUdFUZvWcID+Tu7n+f3i0B3CorWaob2IPeJ2DMuaj4J8cvNDWvJ9uJLeedIjmfHfdMIoRVA==
+"@companion-module/base@~0.4.3":
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/@companion-module/base/-/base-0.4.3.tgz#6c8804b01622b26deb92d35ef487c9fbb349ab90"
+  integrity sha512-xA87gS92leDZ69FphCFPlQrshWfdYL09i0sf0uiGm57ThkLIY0X9YwsqF9qjChJfZATq2ufLCoDOjLp1sZvdag==
   dependencies:
     "@sentry/node" "^7.14.0"
     "@sentry/tracing" "^7.14.0"
@@ -17,10 +17,10 @@
     p-timeout "^4.1.0"
     tslib "^2.4.0"
 
-"@companion-module/tools@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@companion-module/tools/-/tools-0.3.0.tgz#7645a65dbaaa50bba40bb349864e376c183f79c7"
-  integrity sha512-t12fvPMldA0MnO3tbFniJQpHi3y1cvfs6gSUGEIDXremU+IGz0qoKMgFISCnlwrh7niDG8XkWKeE5dszpk94KQ==
+"@companion-module/tools@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@companion-module/tools/-/tools-0.3.1.tgz#a486734704599de83fcc5e213f08ea10035a47ac"
+  integrity sha512-BAoj0kORUAY3ht8KX4Qh1rsLYyHsYbJN5Wp2WrO0oQzIE1hkpAuJbvIre0Ft8xH8lErH6SumMEbQUZ+JVC2ekA==
   dependencies:
     "@typescript-eslint/eslint-plugin" "^5.38.1"
     "@typescript-eslint/parser" "^5.38.1"
