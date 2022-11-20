@@ -3,6 +3,8 @@ import { InputValue } from '../../../instance_skel_types'
 import { SuperSource, TransitionProperties } from 'atem-connection/dist/state/video'
 import { MultiViewerWindowState } from 'atem-connection/dist/state/settings'
 import { MediaPlayerState } from 'atem-connection/dist/state/media'
+import { FairlightAudioInput } from 'atem-connection/dist/state/fairlight'
+import { ClassicAudioChannel } from 'atem-connection/dist/state/audio'
 
 export type TallyBySource = Commands.TallyBySourceCommand['properties']
 
@@ -48,4 +50,12 @@ export function getMultiviewerWindow(
 }
 export function getMediaPlayer(state: AtemState, index: number): MediaPlayerState | undefined {
 	return state.media.players[index]
+}
+
+export function getFairlightAudioInput(state: AtemState, index: number): FairlightAudioInput | undefined {
+	return state.fairlight?.inputs[index]
+}
+
+export function getClassicAudioInput(state: AtemState, index: number): ClassicAudioChannel | undefined {
+	return state.audio?.channels[index]
 }

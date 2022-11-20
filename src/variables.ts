@@ -4,8 +4,8 @@ import { CompanionVariable } from '../../../instance_skel_types'
 import { GetSourcesListForType, SourceInfo } from './choices'
 import { AtemConfig, PresetStyleName } from './config'
 import { ModelSpec } from './models'
-import { getDSK, getMixEffect, getSuperSourceBox, getUSK } from './state'
-import { pad } from './util'
+import { getFairlightAudioInput, getClassicAudioInput, getDSK, getMixEffect, getSuperSourceBox, getUSK } from './state'
+import { assertUnreachable, pad } from './util'
 import { Timecode } from 'atem-connection/dist/state/common'
 
 function getSourcePresetName(instance: InstanceSkel<AtemConfig>, state: AtemState, id: number): string {
@@ -32,6 +32,8 @@ export interface UpdateVariablesProps {
 	mediaPlayer: Set<number>
 	streaming: boolean
 	recording: boolean
+	classicAudio: Set<number>
+	fairlightAudio: Set<number>
 }
 
 type CompanionVariableValues = { [variableId: string]: string | undefined }
@@ -56,6 +58,10 @@ export function updateChangedVariables(
 
 	if (changes.recording) updateRecordingVariables(state, newValues)
 	if (changes.streaming) updateStreamingVariables(state, newValues)
+
+	for (const fairlightAudioIndex of changes.fairlightAudio)
+		updateFairlightAudioVariables(state, fairlightAudioIndex, newValues)
+	for (const classicAudioIndex of changes.classicAudio) updateClassicAudioVariables(state, classicAudioIndex, newValues)
 
 	if (Object.keys(newValues).length > 0) {
 		instance.setVariables(newValues)
@@ -205,6 +211,104 @@ function updateRecordingVariables(state: AtemState, values: CompanionVariableVal
 	values['record_remaining_hm'] = remaining.hm
 	values['record_remaining_hms'] = remaining.hms
 	values['record_remaining_ms'] = remaining.ms
+}
+
+function formatAudioProperty(value: number | undefined, scale = 100) {
+	if (value === undefined) {
+		return
+	}
+	return (value / scale).toString()
+}
+function formatFairlightAudioMixOption(value: Enums.FairlightAudioMixOption | undefined) {
+	let mixOption = undefined
+	switch (value) {
+		case Enums.FairlightAudioMixOption.Off:
+			mixOption = 'OFF'
+			break
+		case Enums.FairlightAudioMixOption.On:
+			mixOption = 'ON'
+			break
+		case Enums.FairlightAudioMixOption.AudioFollowVideo:
+			mixOption = 'AFV'
+			break
+		case undefined:
+			break
+		default:
+			assertUnreachable(value)
+			break
+	}
+	return mixOption
+}
+
+function formatAudioMixOption(value: Enums.AudioMixOption | undefined): string | undefined {
+	let mixOption = undefined
+	switch (value) {
+		case Enums.AudioMixOption.Off:
+			mixOption = 'OFF'
+			break
+		case Enums.AudioMixOption.On:
+			mixOption = 'ON'
+			break
+		case Enums.AudioMixOption.AudioFollowVideo:
+			mixOption = 'AFV'
+			break
+		case undefined:
+			break
+		default:
+			assertUnreachable(value)
+			break
+	}
+	return mixOption
+}
+
+function updateFairlightAudioVariables(
+	state: AtemState,
+	fairlightAudioIndex: number,
+	values: CompanionVariableValues
+): void {
+	const sources = getFairlightAudioInput(state, fairlightAudioIndex)?.sources
+	// combined channel (default)
+	if (sources !== undefined && sources[-65280]) {
+		const properties = sources[-65280]?.properties
+		values[`audio_input_${fairlightAudioIndex}_balance`] = formatAudioProperty(properties?.balance)
+		values[`audio_input_${fairlightAudioIndex}_faderGain`] = formatAudioProperty(properties?.faderGain)
+		values[`audio_input_${fairlightAudioIndex}_framesDelay`] = properties?.framesDelay.toString()
+		values[`audio_input_${fairlightAudioIndex}_gain`] = formatAudioProperty(properties?.gain)
+		values[`audio_input_${fairlightAudioIndex}_mixOption`] = formatFairlightAudioMixOption(properties?.mixOption)
+	}
+	// split channel
+	if (sources !== undefined && sources[-256]) {
+		const leftProperties = sources[-256]?.properties
+		values[`audio_input_${fairlightAudioIndex}_left_balance`] = formatAudioProperty(leftProperties?.balance)
+		values[`audio_input_${fairlightAudioIndex}_left_faderGain`] = formatAudioProperty(leftProperties?.faderGain)
+		values[`audio_input_${fairlightAudioIndex}_left_framesDelay`] = leftProperties?.framesDelay.toString()
+		values[`audio_input_${fairlightAudioIndex}_left_gain`] = formatAudioProperty(leftProperties?.gain)
+		values[`audio_input_${fairlightAudioIndex}_left_mixOption`] = formatFairlightAudioMixOption(
+			leftProperties?.mixOption
+		)
+	}
+
+	if (sources !== undefined && sources[-255]) {
+		const rightProperties = sources[-255]?.properties
+		values[`audio_input_${fairlightAudioIndex}_right_balance`] = formatAudioProperty(rightProperties?.balance)
+		values[`audio_input_${fairlightAudioIndex}_right_faderGain`] = formatAudioProperty(rightProperties?.faderGain)
+		values[`audio_input_${fairlightAudioIndex}_right_framesDelay`] = rightProperties?.framesDelay.toString()
+		values[`audio_input_${fairlightAudioIndex}_right_gain`] = formatAudioProperty(rightProperties?.gain)
+		values[`audio_input_${fairlightAudioIndex}_right_mixOption`] = formatFairlightAudioMixOption(
+			rightProperties?.mixOption
+		)
+	}
+}
+
+function updateClassicAudioVariables(
+	state: AtemState,
+	classicAudioIndex: number,
+	values: CompanionVariableValues
+): void {
+	const channel = getClassicAudioInput(state, classicAudioIndex)
+	values[`audio_input_${classicAudioIndex}_balance`] = formatAudioProperty(channel?.balance, 1)
+	values[`audio_input_${classicAudioIndex}_gain`] = formatAudioProperty(channel?.gain, 1)
+	values[`audio_input_${classicAudioIndex}_mixOption`] = formatAudioMixOption(channel?.mixOption)
 }
 
 function updateSuperSourceVariables(
@@ -383,6 +487,101 @@ export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSp
 		}
 
 		updateSuperSourceVariables(instance, state, i, values)
+	}
+
+	// Fairlight audio
+	if (state.fairlight) {
+		for (const [inputId, input] of Object.entries(state.fairlight.inputs)) {
+			if (input?.sources !== undefined && input.sources[-65280]) {
+				variables.push({
+					label: `Pan for input ${inputId}`,
+					name: `audio_input_${inputId}_balance`,
+				})
+				variables.push({
+					label: `Fader gain for input ${inputId}`,
+					name: `audio_input_${inputId}_faderGain`,
+				})
+				variables.push({
+					label: `Frames delay for input ${inputId}`,
+					name: `audio_input_${inputId}_framesDelay`,
+				})
+				variables.push({
+					label: `Gain for input ${inputId}`,
+					name: `audio_input_${inputId}_gain`,
+				})
+				variables.push({
+					label: `Mix option for input ${inputId}`,
+					name: `audio_input_${inputId}_mixOption`,
+				})
+			}
+
+			if (input?.sources !== undefined && input.sources[-256]) {
+				variables.push({
+					label: `Pan for input ${inputId} - left`,
+					name: `audio_input_${inputId}_left_balance`,
+				})
+				variables.push({
+					label: `Fader gain for input ${inputId} - left`,
+					name: `audio_input_${inputId}_left_faderGain`,
+				})
+				variables.push({
+					label: `Frames delay for input ${inputId} - left`,
+					name: `audio_input_${inputId}_left_framesDelay`,
+				})
+				variables.push({
+					label: `Gain for input ${inputId} - left`,
+					name: `audio_input_${inputId}_left_gain`,
+				})
+				variables.push({
+					label: `Mix option for input ${inputId} - left`,
+					name: `audio_input_${inputId}_left_mixOption`,
+				})
+			}
+
+			if (input?.sources !== undefined && input.sources[-255]) {
+				variables.push({
+					label: `Pan for input ${inputId} - right`,
+					name: `audio_input_${inputId}_right_balance`,
+				})
+				variables.push({
+					label: `Fader gain for input ${inputId} - right`,
+					name: `audio_input_${inputId}_right_faderGain`,
+				})
+				variables.push({
+					label: `Frames delay for input ${inputId} - right`,
+					name: `audio_input_${inputId}_right_framesDelay`,
+				})
+				variables.push({
+					label: `Gain for input ${inputId} - right`,
+					name: `audio_input_${inputId}_right_gain`,
+				})
+				variables.push({
+					label: `Mix option for input ${inputId} - right`,
+					name: `audio_input_${inputId}_right_mixOption`,
+				})
+			}
+
+			updateFairlightAudioVariables(state, Number(inputId), values)
+		}
+	}
+
+	// Classic audio
+	if (model.classicAudio) {
+		for (const entry of model.classicAudio.inputs) {
+			variables.push({
+				label: `Pan for input ${entry.id}`,
+				name: `audio_input_${entry.id}_balance`,
+			})
+			variables.push({
+				label: `Gain for input ${entry.id}`,
+				name: `audio_input_${entry.id}_gain`,
+			})
+			variables.push({
+				label: `Mix option for input ${entry.id}`,
+				name: `audio_input_${entry.id}_mixOption`,
+			})
+			updateClassicAudioVariables(state, entry.id, values)
+		}
 	}
 
 	instance.setVariableDefinitions(variables)
