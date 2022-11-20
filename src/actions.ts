@@ -1701,7 +1701,7 @@ function audioActions(
 					},
 				],
 				callback: (action): void => {
-					const rawVal = action.options['target']
+					const rawVal = action.options['reset']
 					if (rawVal === 'all') {
 						executePromise(instance, atem?.setClassicAudioResetPeaks({ all: true }))
 					} else if (rawVal === 'master') {
@@ -1709,7 +1709,7 @@ function audioActions(
 					} else if (rawVal === 'monitor') {
 						executePromise(instance, atem?.setClassicAudioResetPeaks({ monitor: true }))
 					} else {
-						const inputId = getOptNumber(action, 'target')
+						const inputId = getOptNumber(action, 'reset')
 						executePromise(instance, atem?.setClassicAudioResetPeaks({ input: inputId }))
 					}
 				},
@@ -2034,7 +2034,7 @@ function audioActions(
 					},
 				],
 				callback: (action): void => {
-					const rawVal = action.options['target']
+					const rawVal = action.options['reset']
 					if (rawVal === 'all') {
 						executePromise(instance, atem?.setFairlightAudioMixerResetPeaks({ all: true, master: false }))
 					} else if (rawVal === 'master') {
