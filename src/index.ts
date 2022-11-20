@@ -14,7 +14,13 @@ import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, ModelSpec } from 
 import { GetPresetsList } from './presets'
 import { TallyBySource } from './state'
 import { MODEL_AUTO_DETECT } from './models/types'
-import { InitVariables, UpdateVariablesProps, updateChangedVariables } from './variables'
+import {
+	InitVariables,
+	UpdateVariablesProps,
+	updateChangedVariables,
+	updateDeviceIpVariable,
+	CompanionVariableValues,
+} from './variables'
 import { AtemCommandBatching } from './batching'
 import { executePromise } from './util'
 import { AtemTransitions } from './transitions'
@@ -96,6 +102,10 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 	 */
 	public updateConfig(config: AtemConfig): void {
 		this.config = config
+
+		const variables: CompanionVariableValues = {}
+		updateDeviceIpVariable(this, variables)
+		this.setVariables(variables)
 
 		this.model = GetModelSpec(this.getBestModelId() || MODEL_AUTO_DETECT) || GetAutoDetectModel()
 		this.debug('ATEM changed model: ' + this.model.id)

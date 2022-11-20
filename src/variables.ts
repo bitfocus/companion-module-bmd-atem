@@ -36,7 +36,7 @@ export interface UpdateVariablesProps {
 	fairlightAudio: Set<number>
 }
 
-type CompanionVariableValues = { [variableId: string]: string | undefined }
+export type CompanionVariableValues = { [variableId: string]: string | undefined }
 
 export function updateChangedVariables(
 	instance: InstanceSkel<AtemConfig>,
@@ -323,10 +323,20 @@ function updateSuperSourceVariables(
 	}
 }
 
+export function updateDeviceIpVariable(instance: InstanceSkel<AtemConfig>, values: CompanionVariableValues): void {
+	values['device_ip'] = instance.config?.host || ''
+}
+
 export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSpec, state: AtemState): void {
 	const variables: CompanionVariable[] = []
 
 	const values: CompanionVariableValues = {}
+
+	variables.push({
+		label: 'IP address of ATEM',
+		name: `device_ip`,
+	})
+	updateDeviceIpVariable(instance, values)
 
 	// PGM/PV busses
 	for (let i = 0; i < model.MEs; ++i) {
