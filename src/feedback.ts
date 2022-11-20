@@ -78,6 +78,7 @@ export enum FeedbackId {
 	DSKTie = 'dskTie',
 	DSKSource = 'dsk_source',
 	Macro = 'macro',
+	MacroLoop = 'macroloop',
 	MVSource = 'mv_source',
 	SSrcArtProperties = 'ssrc_art_properties',
 	SSrcArtSource = 'ssrc_art_source',
@@ -1672,6 +1673,28 @@ export function GetFeedbacksList(
 							}
 						}
 						return false
+					},
+			  })
+			: undefined,
+		[FeedbackId.MacroLoop]: model.macros
+			? literal<CompanionFeedbackWithCallback>({
+					type: 'boolean',
+					label: 'Macro: Looping',
+					description: 'If the specified macro is looping, change style of the bank',
+					options: [
+						{
+							type: 'checkbox',
+							label: 'Looping',
+							id: 'loop',
+							default: true,
+						},
+					],
+					style: {
+						color: instance.rgb(255, 255, 255),
+						bgcolor: instance.rgb(238, 238, 0),
+					},
+					callback: (evt: CompanionFeedbackEvent): boolean => {
+						return !!evt.options.loop === !!state.macro.macroPlayer.loop
 					},
 			  })
 			: undefined,

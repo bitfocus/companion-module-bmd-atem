@@ -264,6 +264,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
 			if (path.match(/macro.macroRecorder/) || path.match(/macro.macroPlayer/)) {
 				changedFeedbacks.add(FeedbackId.Macro)
+				changedFeedbacks.add(FeedbackId.MacroLoop)
 				continue
 			}
 

@@ -93,6 +93,7 @@ export enum ActionId {
 	MacroRun = 'macrorun',
 	MacroContinue = 'macrocontinue',
 	MacroStop = 'macrostop',
+	MacroLoop = 'macroloop',
 	MultiviewerWindowSource = 'setMvSource',
 	SuperSourceArt = 'ssrcArt',
 	SuperSourceBoxSource = 'setSsrcBoxSource',
@@ -1084,6 +1085,28 @@ function macroActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined
 					options: [],
 					callback: (): void => {
 						executePromise(instance, atem?.macroStop())
+					},
+			  })
+			: undefined,
+		[ActionId.MacroLoop]: model.macros
+			? literal<CompanionActionExt>({
+					label: 'Macro: Loop',
+					options: [
+						{
+							id: 'loop',
+							type: 'dropdown',
+							label: 'Loop',
+							default: 'toggle',
+							choices: CHOICES_ON_OFF_TOGGLE,
+						},
+					],
+					callback: (action): void => {
+						let newState = action.options.loop === 'true'
+						if (action.options.loop === 'toggle') {
+							newState = !state.macro.macroPlayer.loop
+						}
+
+						executePromise(instance, atem?.macroSetLoop(newState))
 					},
 			  })
 			: undefined,
