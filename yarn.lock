@@ -380,6 +380,11 @@ array-find-index@^1.0.2:
   resolved "https://registry.yarnpkg.com/array-find-index/-/array-find-index-1.0.2.tgz#df010aa1287e164bbda6f9723b0a96a1ec4187a1"
   integrity sha512-M1HQyIXcBGtVywBt8WVdim+lrNaK7VHp99Qt5pSNziXznKHViIBbXWtfRTpEFpF/c4FdfxNAsCCwPp5phBYJtw==
 
+array-flatten@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/array-flatten/-/array-flatten-2.1.2.tgz#24ef80a28c1a893617e2149b0c6d0d788293b099"
+  integrity sha512-hNfzcOV8W4NdualtqBFPyVO+54DSJuZGY9qT4pRroB6S9e3iiido2ISIC5h9R2sPJ8H3FHCIiEnsv1lPXO3KtQ==
+
 array-union@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/array-union/-/array-union-2.1.0.tgz#b798420adbeb1de828d84acd8a2e23d3efe85e8d"
@@ -430,6 +435,16 @@ bitdepth@^7.0.2:
   version "7.0.2"
   resolved "https://registry.yarnpkg.com/bitdepth/-/bitdepth-7.0.2.tgz#d9290de0e4b44ce5fc0c29f813c8f49fbdfa2eeb"
   integrity sha512-Ed11TL4IIWyUEoQTfkbRBDCgDNurxYzFgmk30ZU6SgNCsysoEx7UMm+g7SDFHxA2lhLbWyjV8T1ab3z0BtYOAw==
+
+bonjour-service@^1.0.14:
+  version "1.0.14"
+  resolved "https://registry.yarnpkg.com/bonjour-service/-/bonjour-service-1.0.14.tgz#c346f5bc84e87802d08f8d5a60b93f758e514ee7"
+  integrity sha512-HIMbgLnk1Vqvs6B4Wq5ep7mxvj9sGz5d1JJyDNSGNIdA/w2MCz6GTjWTdjqOJV1bEPj+6IkxDvWNFKEBxNt4kQ==
+  dependencies:
+    array-flatten "^2.1.2"
+    dns-equal "^1.0.0"
+    fast-deep-equal "^3.1.3"
+    multicast-dns "^7.2.5"
 
 brace-expansion@^1.1.7:
   version "1.1.11"
@@ -656,6 +671,11 @@ dir-glob@^3.0.1:
   integrity sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==
   dependencies:
     path-type "^4.0.0"
+
+dns-equal@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/dns-equal/-/dns-equal-1.0.0.tgz#b39e7f1da6eb0a75ba9c17324b34753c47e0654d"
+  integrity sha512-z+paD6YUQsk+AbGCEM4PrOXSss5gd66QfcVBFTKR/HpFL9jCqikS94HYwKww6fQyO7IxrIIyUu+g0Ka9tUS2Cg==
 
 dns-packet@^5.2.2:
   version "5.4.0"
