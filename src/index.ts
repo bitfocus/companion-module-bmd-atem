@@ -105,7 +105,7 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 
 		const variables: CompanionVariableValues = {}
 		updateDeviceIpVariable(this, variables)
-		this.setVariables(variables)
+		this.setVariables(variables as { [variableId: string]: string | undefined })
 
 		this.model = GetModelSpec(this.getBestModelId() || MODEL_AUTO_DETECT) || GetAutoDetectModel()
 		this.debug('ATEM changed model: ' + this.model.id)

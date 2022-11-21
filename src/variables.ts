@@ -36,7 +36,7 @@ export interface UpdateVariablesProps {
 	fairlightAudio: Set<number>
 }
 
-export type CompanionVariableValues = { [variableId: string]: string | undefined }
+export type CompanionVariableValues = { [variableId: string]: string | number | undefined }
 
 export function updateChangedVariables(
 	instance: InstanceSkel<AtemConfig>,
@@ -64,7 +64,7 @@ export function updateChangedVariables(
 	for (const classicAudioIndex of changes.classicAudio) updateClassicAudioVariables(state, classicAudioIndex, newValues)
 
 	if (Object.keys(newValues).length > 0) {
-		instance.setVariables(newValues)
+		instance.setVariables(newValues as { [variableId: string]: string | undefined })
 	}
 }
 
@@ -76,6 +76,7 @@ function updateMEProgramVariable(
 ): void {
 	const input = getMixEffect(state, meIndex)?.programInput ?? 0
 	values[`pgm${meIndex + 1}_input`] = getSourcePresetName(instance, state, input)
+	values[`pgm${meIndex + 1}_input_id`] = input
 }
 function updateMEPreviewVariable(
 	instance: InstanceSkel<AtemConfig>,
@@ -85,6 +86,7 @@ function updateMEPreviewVariable(
 ): void {
 	const input = getMixEffect(state, meIndex)?.previewInput ?? 0
 	values[`pvw${meIndex + 1}_input`] = getSourcePresetName(instance, state, input)
+	values[`pvw${meIndex + 1}_input_id`] = input
 }
 
 function updateUSKVariable(
@@ -96,6 +98,7 @@ function updateUSKVariable(
 ): void {
 	const input = getUSK(state, meIndex, keyIndex)?.fillSource ?? 0
 	values[`usk_${meIndex + 1}_${keyIndex + 1}_input`] = getSourcePresetName(instance, state, input)
+	values[`usk_${meIndex + 1}_${keyIndex + 1}_input_id`] = input
 }
 function updateDSKVariable(
 	instance: InstanceSkel<AtemConfig>,
@@ -105,6 +108,7 @@ function updateDSKVariable(
 ): void {
 	const input = getDSK(state, keyIndex)?.sources?.fillSource ?? 0
 	values[`dsk_${keyIndex + 1}_input`] = getSourcePresetName(instance, state, input)
+	values[`dsk_${keyIndex + 1}_input_id`] = input
 }
 
 function updateAuxVariable(
@@ -115,6 +119,7 @@ function updateAuxVariable(
 ): void {
 	const input = state.video.auxilliaries[auxIndex] ?? 0
 	values[`aux${auxIndex + 1}_input`] = getSourcePresetName(instance, state, input)
+	values[`aux${auxIndex + 1}_input_id`] = input
 }
 
 function updateMacroVariable(state: AtemState, id: number, values: CompanionVariableValues): void {
@@ -320,6 +325,7 @@ function updateSuperSourceVariables(
 	for (let b = 0; b < 4; b++) {
 		const input = getSuperSourceBox(state, b, i)?.source ?? 0
 		values[`ssrc${i + 1}_box${b + 1}_source`] = getSourcePresetName(instance, state, input)
+		values[`ssrc${i + 1}_box${b + 1}_source_id`] = input
 	}
 }
 
@@ -344,11 +350,19 @@ export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSp
 			label: `Label of input active on program bus (M/E ${i + 1})`,
 			name: `pgm${i + 1}_input`,
 		})
+		variables.push({
+			label: `Id of input active on program bus (M/E ${i + 1})`,
+			name: `pgm${i + 1}_input_id`,
+		})
 		updateMEProgramVariable(instance, state, i, values)
 
 		variables.push({
 			label: `Label of input active on preview bus (M/E ${i + 1})`,
 			name: `pvw${i + 1}_input`,
+		})
+		variables.push({
+			label: `Id of input active on preview bus (M/E ${i + 1})`,
+			name: `pvw${i + 1}_input_id`,
 		})
 		updateMEPreviewVariable(instance, state, i, values)
 
@@ -356,6 +370,10 @@ export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSp
 			variables.push({
 				label: `Label of input active on M/E ${i + 1} Key ${k + 1}`,
 				name: `usk_${i + 1}_${k + 1}_input`,
+			})
+			variables.push({
+				label: `Id of input active on M/E ${i + 1} Key ${k + 1}`,
+				name: `usk_${i + 1}_${k + 1}_input_id`,
 			})
 
 			updateUSKVariable(instance, state, i, k, values)
@@ -368,6 +386,10 @@ export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSp
 			label: `Label of input active on Aux ${a + 1}`,
 			name: `aux${a + 1}_input`,
 		})
+		variables.push({
+			label: `Id of input active on Aux ${a + 1}`,
+			name: `aux${a + 1}_input_id`,
+		})
 
 		updateAuxVariable(instance, state, a, values)
 	}
@@ -377,6 +399,10 @@ export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSp
 		variables.push({
 			label: `Label of input active on DSK ${k + 1}`,
 			name: `dsk_${k + 1}_input`,
+		})
+		variables.push({
+			label: `Id of input active on DSK ${k + 1}`,
+			name: `dsk_${k + 1}_input_id`,
 		})
 
 		updateDSKVariable(instance, state, k, values)
@@ -494,6 +520,10 @@ export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSp
 				label: `Supersource ${i + 1} Box ${b + 1} source`,
 				name: `ssrc${i + 1}_box${b + 1}_source`,
 			})
+			variables.push({
+				label: `Supersource ${i + 1} Box ${b + 1} source id`,
+				name: `ssrc${i + 1}_box${b + 1}_source_id`,
+			})
 		}
 
 		updateSuperSourceVariables(instance, state, i, values)
@@ -595,5 +625,5 @@ export function InitVariables(instance: InstanceSkel<AtemConfig>, model: ModelSp
 	}
 
 	instance.setVariableDefinitions(variables)
-	instance.setVariables(values)
+	instance.setVariables(values as { [variableId: string]: string | undefined })
 }
