@@ -45,6 +45,7 @@ import {
 	AtemSuperSourceArtSourcePicker,
 	AtemSuperSourceArtOption,
 	AtemSuperSourceArtPropertiesPickers,
+	InvertInput,
 } from './input'
 import { ModelSpec } from './models'
 import { getDSK, getMixEffect, getMultiviewerWindow, getSuperSourceBox, getUSK, TallyBySource } from './state'
@@ -122,28 +123,28 @@ function tallyFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, st
 			type: 'boolean',
 			label: 'Tally: Program',
 			description: 'If the input specified has an active progam tally light, change style of the bank',
-			options: [AtemMESourcePicker(model, state, 0)],
+			options: [AtemMESourcePicker(model, state, 0), InvertInput],
 			style: {
 				color: instance.rgb(255, 255, 255),
 				bgcolor: instance.rgb(255, 0, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const source = tally[Number(evt.options.input)]
-				return !!source?.program
+				return !!source?.program === !evt.options.invert
 			},
 		}),
 		[FeedbackId.PreviewTally]: literal<CompanionFeedbackWithCallback>({
 			type: 'boolean',
 			label: 'Tally: Preview',
 			description: 'If the input specified has an active preview tally light, change style of the bank',
-			options: [AtemMESourcePicker(model, state, 0)],
+			options: [AtemMESourcePicker(model, state, 0), InvertInput],
 			style: {
 				color: instance.rgb(0, 0, 0),
 				bgcolor: instance.rgb(0, 255, 0),
 			},
 			callback: (evt: CompanionFeedbackEvent): boolean => {
 				const source = tally[Number(evt.options.input)]
-				return !!source?.preview
+				return !!source?.preview === !evt.options.invert
 			},
 		}),
 	}
@@ -502,14 +503,14 @@ function uskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
 					type: 'boolean',
 					label: 'Upstream key: OnAir state',
 					description: 'If the specified upstream keyer is active, change style of the bank',
-					options: [AtemMEPicker(model, 0), AtemUSKPicker(model)],
+					options: [AtemMEPicker(model, 0), AtemUSKPicker(model), InvertInput],
 					style: {
 						color: instance.rgb(255, 255, 255),
 						bgcolor: instance.rgb(255, 0, 0),
 					},
 					callback: (evt: CompanionFeedbackEvent): boolean => {
 						const usk = getUSK(state, evt.options.mixeffect, evt.options.key)
-						return !!usk?.onAir
+						return !!usk?.onAir === !evt.options.invert
 					},
 			  })
 			: undefined,
@@ -1048,14 +1049,14 @@ function dskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
 					type: 'boolean',
 					label: 'Downstream key: OnAir',
 					description: 'If the specified downstream keyer is onair, change style of the bank',
-					options: [AtemDSKPicker(model)],
+					options: [AtemDSKPicker(model), InvertInput],
 					style: {
 						color: instance.rgb(255, 255, 255),
 						bgcolor: instance.rgb(255, 0, 0),
 					},
 					callback: (evt: CompanionFeedbackEvent): boolean => {
 						const dsk = getDSK(state, evt.options.key)
-						return !!dsk?.onAir
+						return !!dsk?.onAir === !evt.options.invert
 					},
 			  })
 			: undefined,
@@ -1064,14 +1065,14 @@ function dskFeedbacks(instance: InstanceSkel<AtemConfig>, model: ModelSpec, stat
 					type: 'boolean',
 					label: 'Downstream key: Tied',
 					description: 'If the specified downstream keyer is tied, change style of the bank',
-					options: [AtemDSKPicker(model)],
+					options: [AtemDSKPicker(model), InvertInput],
 					style: {
 						color: instance.rgb(255, 255, 255),
 						bgcolor: instance.rgb(255, 0, 0),
 					},
 					callback: (evt: CompanionFeedbackEvent): boolean => {
 						const dsk = getDSK(state, evt.options.key)
-						return !!dsk?.properties?.tie
+						return !!dsk?.properties?.tie === !evt.options.invert
 					},
 			  })
 			: undefined,

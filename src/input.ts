@@ -1147,3 +1147,10 @@ export function AtemAllSourcePicker(model: ModelSpec, state: AtemState): Compani
 		choices: SourcesToChoices(GetSourcesListForType(model, state)),
 	}
 }
+
+export const InvertInput: CompanionInputFieldCheckbox = {
+	type: 'checkbox',
+	label: 'Invert',
+	id: 'invert',
+	default: false,
+}
