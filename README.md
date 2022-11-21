@@ -23,6 +23,20 @@ To add a new model to the list:
 
 ## Changes
 
+## v2.18.0
+
+- add macro looping action/feedback
+
+- fix reset peaks actions
+
+- expose device ip as variable
+
+- add variables with input ids
+
+- add invert checkbox to some feedbacks
+
+- add actions to set inputs from variables
+
 ### v2.17.3
 
 - fix 'Fairlight Audio: Audio fader gain' feedback missing
