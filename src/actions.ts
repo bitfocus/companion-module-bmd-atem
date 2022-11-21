@@ -73,10 +73,13 @@ import { UpstreamKeyerMaskSettings, UpstreamKeyerDVESettings } from 'atem-connec
 
 export enum ActionId {
 	Program = 'program',
+	ProgramVariables = 'programVariables',
 	Preview = 'preview',
+	PreviewVariables = 'previewVariables',
 	Cut = 'cut',
 	Auto = 'auto',
 	Aux = 'aux',
+	AuxVariables = 'auxVariables',
 	USKSource = 'uskSource',
 	USKOnAir = 'usk',
 	USKFly = 'uskFly',
@@ -184,6 +187,35 @@ function meActions(
 				}
 			},
 		}),
+		[ActionId.ProgramVariables]: literal<CompanionActionExt>({
+			label: 'ME: Set Program input from variables',
+			options: [
+				{
+					type: 'textwithvariables',
+					id: 'mixeffect',
+					label: 'M/E',
+					default: '1',
+				},
+				{
+					type: 'textwithvariables',
+					id: 'input',
+					label: 'Input ID',
+					default: '0',
+				},
+			],
+			callback: (action): void => {
+				instance.parseVariables(action.options.mixeffect as string, (meStr) => {
+					instance.parseVariables(action.options.input as string, (inputStr) => {
+						const mixeffect = Number(meStr)
+						const input = Number(inputStr)
+
+						if (!isNaN(mixeffect) && !isNaN(input)) {
+							executePromise(instance, atem?.changeProgramInput(input, mixeffect - 1))
+						}
+					})
+				})
+			},
+		}),
 		[ActionId.Preview]: literal<CompanionActionExt>({
 			label: 'ME: Set Preview input',
 			options: [AtemMEPicker(model, 0), AtemMESourcePicker(model, state, 0)],
@@ -204,6 +236,35 @@ function meActions(
 				} else {
 					return undefined
 				}
+			},
+		}),
+		[ActionId.PreviewVariables]: literal<CompanionActionExt>({
+			label: 'ME: Set Preview input from variables',
+			options: [
+				{
+					type: 'textwithvariables',
+					id: 'mixeffect',
+					label: 'M/E',
+					default: '1',
+				},
+				{
+					type: 'textwithvariables',
+					id: 'input',
+					label: 'Input ID',
+					default: '0',
+				},
+			],
+			callback: (action): void => {
+				instance.parseVariables(action.options.mixeffect as string, (meStr) => {
+					instance.parseVariables(action.options.input as string, (inputStr) => {
+						const mixeffect = Number(meStr)
+						const input = Number(inputStr)
+
+						if (!isNaN(mixeffect) && !isNaN(input)) {
+							executePromise(instance, atem?.changePreviewInput(input, mixeffect - 1))
+						}
+					})
+				})
 			},
 		}),
 		[ActionId.Cut]: literal<CompanionActionExt>({
@@ -2332,6 +2393,37 @@ export function GetActionsList(
 						} else {
 							return undefined
 						}
+					},
+			  })
+			: undefined,
+		[ActionId.AuxVariables]: model.auxes
+			? literal<CompanionActionExt>({
+					label: 'Aux/Output: Set source from variables',
+					options: [
+						{
+							type: 'textwithvariables',
+							id: 'aux',
+							label: 'AUX',
+							default: '1',
+						},
+						{
+							type: 'textwithvariables',
+							id: 'input',
+							label: 'Input ID',
+							default: '0',
+						},
+					],
+					callback: (action): void => {
+						instance.parseVariables(action.options.aux as string, (outputStr) => {
+							instance.parseVariables(action.options.input as string, (inputStr) => {
+								const output = Number(outputStr)
+								const input = Number(inputStr)
+
+								if (!isNaN(output) && !isNaN(input)) {
+									executePromise(instance, atem?.setAuxSource(input, output - 1))
+								}
+							})
+						})
 					},
 			  })
 			: undefined,
