@@ -418,7 +418,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				} else {
 					this.model = GetParsedModelSpec(this.atemState)
 					this.updateStatus(
-						InstanceStatus.UnknwownWarning,
+						InstanceStatus.UnknownWarning,
 						`Unknown model: ${atemInfo.productIdentifier}. Some bits may be missing`
 					)
 				}

@@ -15,7 +15,7 @@ const rateOptions = [12, 15, 25, 30, 37, 45, 50, 60]
 // 			feedbackId: FeedbackId
 // 		} & SetRequired<CompanionPresetFeedback, 'style'>
 // 	>
-// 	actions: {
+// 	steps:[{
 // 		down: Array<
 // 			{
 // 				actionId: ActionId
@@ -63,7 +63,7 @@ export function GetPresetsList(
 			presets[`preview_me_${me}_${src.id}`] = {
 				category: `Preview (M/E ${me + 1})`,
 				name: `Preview button for ${src.shortName}`,
-				type: 'press',
+				type: 'button',
 				style: {
 					text: `$(atem:${pstText}${src.id})`,
 					size: pstSize,
@@ -83,24 +83,26 @@ export function GetPresetsList(
 						},
 					},
 				],
-				actions: {
-					down: [
-						{
-							actionId: ActionId.Preview,
-							options: {
-								mixeffect: me,
-								input: src.id,
+				steps: [
+					{
+						down: [
+							{
+								actionId: ActionId.Preview,
+								options: {
+									mixeffect: me,
+									input: src.id,
+								},
 							},
-						},
-					],
-					up: [],
-				},
+						],
+						up: [],
+					},
+				],
 			}
 
 			presets[`program_me_${me}_${src.id}`] = {
 				category: `Program (M/E ${me + 1})`,
 				name: `Program button for ${src.shortName}`,
-				type: 'press',
+				type: 'button',
 				style: {
 					text: `$(atem:${pstText}${src.id})`,
 					size: pstSize,
@@ -120,18 +122,20 @@ export function GetPresetsList(
 						},
 					},
 				],
-				actions: {
-					down: [
-						{
-							actionId: ActionId.Program,
-							options: {
-								mixeffect: me,
-								input: src.id,
+				steps: [
+					{
+						down: [
+							{
+								actionId: ActionId.Program,
+								options: {
+									mixeffect: me,
+									input: src.id,
+								},
 							},
-						},
-					],
-					up: [],
-				},
+						],
+						up: [],
+					},
+				],
 			}
 		}
 	}
@@ -140,7 +144,7 @@ export function GetPresetsList(
 		presets[`transition_auto_me_${me}`] = {
 			category: `Transitions (M/E ${me + 1})`,
 			name: `AUTO`,
-			type: 'press',
+			type: 'button',
 			style: {
 				text: 'AUTO',
 				size: pstSize,
@@ -159,23 +163,25 @@ export function GetPresetsList(
 					},
 				},
 			],
-			actions: {
-				down: [
-					{
-						actionId: ActionId.Auto,
-						options: {
-							mixeffect: me,
+			steps: [
+				{
+					down: [
+						{
+							actionId: ActionId.Auto,
+							options: {
+								mixeffect: me,
+							},
 						},
-					},
-				],
-				up: [],
-			},
+					],
+					up: [],
+				},
+			],
 		}
 		for (const opt of GetTransitionStyleChoices()) {
 			presets[`transition_style_me_${me}_${opt.id}`] = {
 				category: `Transitions (M/E ${me + 1})`,
 				name: `Transition style ${opt.label}`,
-				type: 'press',
+				type: 'button',
 				style: {
 					text: opt.label,
 					size: pstSize,
@@ -195,18 +201,20 @@ export function GetPresetsList(
 						},
 					},
 				],
-				actions: {
-					down: [
-						{
-							actionId: ActionId.TransitionStyle,
-							options: {
-								mixeffect: me,
-								style: opt.id,
+				steps: [
+					{
+						down: [
+							{
+								actionId: ActionId.TransitionStyle,
+								options: {
+									mixeffect: me,
+									style: opt.id,
+								},
 							},
-						},
-					],
-					up: [],
-				},
+						],
+						up: [],
+					},
+				],
 			}
 		}
 		for (const opt of GetTransitionStyleChoices(true)) {
@@ -214,7 +222,7 @@ export function GetPresetsList(
 				presets[`transition_rate_${me}_${opt.id}_${rate}`] = {
 					category: `Transitions (M/E ${me + 1})`,
 					name: `Transition ${opt.label} rate ${rate}`,
-					type: 'press',
+					type: 'button',
 					style: {
 						text: `${opt.label} ${rate}`,
 						size: pstSize,
@@ -235,19 +243,21 @@ export function GetPresetsList(
 							},
 						},
 					],
-					actions: {
-						down: [
-							{
-								actionId: ActionId.TransitionRate,
-								options: {
-									mixeffect: me,
-									style: opt.id,
-									rate,
+					steps: [
+						{
+							down: [
+								{
+									actionId: ActionId.TransitionRate,
+									options: {
+										mixeffect: me,
+										style: opt.id,
+										rate,
+									},
 								},
-							},
-						],
-						up: [],
-					},
+							],
+							up: [],
+						},
+					],
 				}
 			}
 		}
@@ -274,7 +284,7 @@ export function GetPresetsList(
 			presets[`transition_selection_${me}_${transitionString.trim()}`] = {
 				category: `Transitions (M/E ${me + 1})`,
 				name: `Transition Selection ${transitionString.trim()}`,
-				type: 'press',
+				type: 'button',
 				style: {
 					text: transitionString.trim(),
 					size: pstSize,
@@ -294,18 +304,20 @@ export function GetPresetsList(
 						},
 					},
 				],
-				actions: {
-					down: [
-						{
-							actionId: ActionId.TransitionSelection,
-							options: {
-								mixeffect: me,
-								...selectionProps,
+				steps: [
+					{
+						down: [
+							{
+								actionId: ActionId.TransitionSelection,
+								options: {
+									mixeffect: me,
+									...selectionProps,
+								},
 							},
-						},
-					],
-					up: [],
-				},
+						],
+						up: [],
+					},
+				],
 			}
 		}
 	}
@@ -315,7 +327,7 @@ export function GetPresetsList(
 			presets[`aux_${aux}_${src.id}`] = {
 				category: `AUX ${aux + 1}`,
 				name: `AUX ${aux + 1} button for ${src.shortName}`,
-				type: 'press',
+				type: 'button',
 				style: {
 					text: `$(atem:${pstText}${src.id})`,
 					size: pstSize,
@@ -335,18 +347,20 @@ export function GetPresetsList(
 						},
 					},
 				],
-				actions: {
-					down: [
-						{
-							actionId: ActionId.Aux,
-							options: {
-								aux,
-								input: src.id,
+				steps: [
+					{
+						down: [
+							{
+								actionId: ActionId.Aux,
+								options: {
+									aux,
+									input: src.id,
+								},
 							},
-						},
-					],
-					up: [],
-				},
+						],
+						up: [],
+					},
+				],
 			}
 		}
 	}
@@ -357,7 +371,7 @@ export function GetPresetsList(
 			presets[`keys_onair_me_${me}_${key}`] = {
 				category: 'KEYs OnAir',
 				name: `Toggle upstream M/E ${me + 1} KEY ${key + 1} OnAir`,
-				type: 'press',
+				type: 'button',
 				style: {
 					text: 'KEY ' + (key + 1),
 					size: '24',
@@ -377,25 +391,27 @@ export function GetPresetsList(
 						},
 					},
 				],
-				actions: {
-					down: [
-						{
-							actionId: ActionId.USKOnAir,
-							options: {
-								onair: 'toggle',
-								key,
-								mixeffect: me,
+				steps: [
+					{
+						down: [
+							{
+								actionId: ActionId.USKOnAir,
+								options: {
+									onair: 'toggle',
+									key,
+									mixeffect: me,
+								},
 							},
-						},
-					],
-					up: [],
-				},
+						],
+						up: [],
+					},
+				],
 			}
 
 			presets[`keys_next_me_${me}_${key}`] = {
 				category: 'KEYs Next',
 				name: `Toggle upstream M/E ${me + 1} KEY ${key + 1} Next`,
-				type: 'press',
+				type: 'button',
 				style: {
 					text: 'KEY ' + (key + 1),
 					size: '24',
@@ -417,26 +433,28 @@ export function GetPresetsList(
 						},
 					},
 				],
-				actions: {
-					down: [
-						{
-							actionId: ActionId.TransitionSelectionComponent,
-							options: {
-								mixeffect: me,
-								component: key + 1,
-								mode: 'toggle',
+				steps: [
+					{
+						down: [
+							{
+								actionId: ActionId.TransitionSelectionComponent,
+								options: {
+									mixeffect: me,
+									component: key + 1,
+									mode: 'toggle',
+								},
 							},
-						},
-					],
-					up: [],
-				},
+						],
+						up: [],
+					},
+				],
 			}
 
 			for (const src of meSources) {
 				presets[`key_src_${me}_${key}_${src.id}`] = {
 					category: `M/E ${me + 1} Key ${key + 1}`,
 					name: `M/E ${me + 1} KEY ${key + 1} source ${src.shortName}`,
-					type: 'press',
+					type: 'button',
 					style: {
 						text: `$(atem:${pstText}${src.id})`,
 						size: pstSize,
@@ -457,20 +475,22 @@ export function GetPresetsList(
 							},
 						},
 					],
-					actions: {
-						down: [
-							{
-								actionId: ActionId.USKSource,
-								options: {
-									fill: src.id,
-									cut: src.id + 1,
-									key,
-									mixeffect: me,
+					steps: [
+						{
+							down: [
+								{
+									actionId: ActionId.USKSource,
+									options: {
+										fill: src.id,
+										cut: src.id + 1,
+										key,
+										mixeffect: me,
+									},
 								},
-							},
-						],
-						up: [],
-					},
+							],
+							up: [],
+						},
+					],
 				}
 			}
 
@@ -478,7 +498,7 @@ export function GetPresetsList(
 				presets[`key_fly_me_${me}_${key}_${flydirection.id}`] = {
 					category: `KEYs Fly`,
 					name: `Fly M/E ${me + 1} KEY ${key + 1} to ${flydirection.label}`,
-					type: 'press',
+					type: 'button',
 					style: {
 						text: `Fly to ${flydirection.label}`,
 						size: pstSize,
@@ -499,19 +519,21 @@ export function GetPresetsList(
 							},
 						},
 					],
-					actions: {
-						down: [
-							{
-								actionId: ActionId.USKFly,
-								options: {
-									keyframe: flydirection.id,
-									key,
-									mixeffect: me,
+					steps: [
+						{
+							down: [
+								{
+									actionId: ActionId.USKFly,
+									options: {
+										keyframe: flydirection.id,
+										key,
+										mixeffect: me,
+									},
 								},
-							},
-						],
-						up: [],
-					},
+							],
+							up: [],
+						},
+					],
 				}
 			}
 		}
@@ -522,7 +544,7 @@ export function GetPresetsList(
 		presets[`dsk_onair_${dsk}`] = {
 			category: 'KEYs OnAir',
 			name: `Toggle downstream KEY ${dsk + 1} OnAir`,
-			type: 'press',
+			type: 'button',
 			style: {
 				text: `DSK ${dsk + 1}`,
 				size: '24',
@@ -541,24 +563,26 @@ export function GetPresetsList(
 					},
 				},
 			],
-			actions: {
-				down: [
-					{
-						actionId: ActionId.DSKOnAir,
-						options: {
-							onair: 'toggle',
-							key: dsk,
+			steps: [
+				{
+					down: [
+						{
+							actionId: ActionId.DSKOnAir,
+							options: {
+								onair: 'toggle',
+								key: dsk,
+							},
 						},
-					},
-				],
-				up: [],
-			},
+					],
+					up: [],
+				},
+			],
 		}
 
 		presets[`dsk_next_${dsk}`] = {
 			category: 'KEYs Next',
 			name: `Toggle downstream KEY ${dsk + 1} Next`,
-			type: 'press',
+			type: 'button',
 			style: {
 				text: `DSK ${dsk + 1}`,
 				size: '24',
@@ -577,25 +601,27 @@ export function GetPresetsList(
 					},
 				},
 			],
-			actions: {
-				down: [
-					{
-						actionId: ActionId.DSKTie,
-						options: {
-							state: 'toggle',
-							key: dsk,
+			steps: [
+				{
+					down: [
+						{
+							actionId: ActionId.DSKTie,
+							options: {
+								state: 'toggle',
+								key: dsk,
+							},
 						},
-					},
-				],
-				up: [],
-			},
+					],
+					up: [],
+				},
+			],
 		}
 
 		for (const src of meSources) {
 			presets[`dsk_src_${dsk}_${src.id}`] = {
 				category: `DSK ${dsk + 1}`,
 				name: `DSK ${dsk + 1} source ${src.shortName}`,
-				type: 'press',
+				type: 'button',
 				style: {
 					text: `$(atem:${pstText}${src.id})`,
 					size: pstSize,
@@ -615,19 +641,21 @@ export function GetPresetsList(
 						},
 					},
 				],
-				actions: {
-					down: [
-						{
-							actionId: ActionId.DSKSource,
-							options: {
-								fill: src.id,
-								cut: src.id + 1,
-								key: dsk,
+				steps: [
+					{
+						down: [
+							{
+								actionId: ActionId.DSKSource,
+								options: {
+									fill: src.id,
+									cut: src.id + 1,
+									key: dsk,
+								},
 							},
-						},
-					],
-					up: [],
-				},
+						],
+						up: [],
+					},
+				],
 			}
 		}
 	}
@@ -637,7 +665,7 @@ export function GetPresetsList(
 		presets[`macro_run_${macro}`] = {
 			category: 'MACROS',
 			name: `Run button for macro ${macro + 1}`,
-			type: 'press',
+			type: 'button',
 			style: {
 				text: `$(atem:macro_${macro + 1})`,
 				size: 'auto',
@@ -690,18 +718,20 @@ export function GetPresetsList(
 					},
 				},
 			],
-			actions: {
-				down: [
-					{
-						actionId: ActionId.MacroRun,
-						options: {
-							macro: macro + 1,
-							action: 'runContinue',
+			steps: [
+				{
+					down: [
+						{
+							actionId: ActionId.MacroRun,
+							options: {
+								macro: macro + 1,
+								action: 'runContinue',
+							},
 						},
-					},
-				],
-				up: [],
-			},
+					],
+					up: [],
+				},
+			],
 		}
 	}
 
@@ -713,7 +743,7 @@ export function GetPresetsList(
 				presets[`mv_win_src_${mv}_${window}_${src.id}`] = {
 					category: `MV ${mv + 1} Window ${window + 1}`,
 					name: `Set MV ${mv + 1} Window ${window + 1} to source ${src.shortName}`,
-					type: 'press',
+					type: 'button',
 					style: {
 						text: `$(atem:${pstText}${src.id})`,
 						size: pstSize,
@@ -734,19 +764,21 @@ export function GetPresetsList(
 							},
 						},
 					],
-					actions: {
-						down: [
-							{
-								actionId: ActionId.MultiviewerWindowSource,
-								options: {
-									multiViewerId: mv,
-									source: src.id,
-									windowIndex: window,
+					steps: [
+						{
+							down: [
+								{
+									actionId: ActionId.MultiviewerWindowSource,
+									options: {
+										multiViewerId: mv,
+										source: src.id,
+										windowIndex: window,
+									},
 								},
-							},
-						],
-						up: [],
-					},
+							],
+							up: [],
+						},
+					],
 				}
 			}
 		}
@@ -757,7 +789,7 @@ export function GetPresetsList(
 			presets[`ssrc_box_onair_${ssrc}_${box}`] = {
 				category: `SSrc ${ssrc + 1} Boxes`,
 				name: `Toggle SuperSource ${ssrc + 1} Box ${box + 1} visibility`,
-				type: 'press',
+				type: 'button',
 				style: {
 					text: `Box ${box + 1}`,
 					size: pstSize,
@@ -777,26 +809,28 @@ export function GetPresetsList(
 						},
 					},
 				],
-				actions: {
-					down: [
-						{
-							actionId: ActionId.SuperSourceBoxOnAir,
-							options: {
-								ssrcId: ssrc,
-								onair: 'toggle',
-								boxIndex: box,
+				steps: [
+					{
+						down: [
+							{
+								actionId: ActionId.SuperSourceBoxOnAir,
+								options: {
+									ssrcId: ssrc,
+									onair: 'toggle',
+									boxIndex: box,
+								},
 							},
-						},
-					],
-					up: [],
-				},
+						],
+						up: [],
+					},
+				],
 			}
 
 			for (const src of meSources) {
 				presets[`ssrc_box_src_${ssrc}_${box}_${src.id}`] = {
 					category: `SSrc ${ssrc + 1} Box ${box + 1}`,
 					name: `Set SuperSource ${ssrc + 1} Box ${box + 1} to source ${src.shortName}`,
-					type: 'press',
+					type: 'button',
 					style: {
 						text: `$(atem:${pstText}${src.id})`,
 						size: pstSize,
@@ -817,19 +851,21 @@ export function GetPresetsList(
 							},
 						},
 					],
-					actions: {
-						down: [
-							{
-								actionId: ActionId.SuperSourceBoxSource,
-								options: {
-									ssrcId: ssrc,
-									source: src.id,
-									boxIndex: box,
+					steps: [
+						{
+							down: [
+								{
+									actionId: ActionId.SuperSourceBoxSource,
+									options: {
+										ssrcId: ssrc,
+										source: src.id,
+										boxIndex: box,
+									},
 								},
-							},
-						],
-						up: [],
-					},
+							],
+							up: [],
+						},
+					],
 				}
 			}
 		}
@@ -840,7 +876,7 @@ export function GetPresetsList(
 			presets[`mediaplayer_clip_${player}_${clip}`] = {
 				category: `Mediaplayer ${player + 1}`,
 				name: `Set Mediaplayer ${player + 1} source to clip ${clip + 1}`,
-				type: 'press',
+				type: 'button',
 				style: {
 					text: `MP ${player + 1} Clip ${clip + 1}`,
 					size: pstSize,
@@ -860,18 +896,20 @@ export function GetPresetsList(
 						},
 					},
 				],
-				actions: {
-					down: [
-						{
-							actionId: ActionId.MediaPlayerSource,
-							options: {
-								mediaplayer: player,
-								source: clip + MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
+				steps: [
+					{
+						down: [
+							{
+								actionId: ActionId.MediaPlayerSource,
+								options: {
+									mediaplayer: player,
+									source: clip + MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
+								},
 							},
-						},
-					],
-					up: [],
-				},
+						],
+						up: [],
+					},
+				],
 			}
 		}
 
@@ -879,7 +917,7 @@ export function GetPresetsList(
 			presets[`mediaplayer_still_${player}_${still}`] = {
 				category: `Mediaplayer ${player + 1}`,
 				name: `Set Mediaplayer ${player + 1} source to still ${still + 1}`,
-				type: 'press',
+				type: 'button',
 				style: {
 					text: `MP ${player + 1} Still ${still + 1}`,
 					size: pstSize,
@@ -899,18 +937,20 @@ export function GetPresetsList(
 						},
 					},
 				],
-				actions: {
-					down: [
-						{
-							actionId: ActionId.MediaPlayerSource,
-							options: {
-								mediaplayer: player,
-								source: still,
+				steps: [
+					{
+						down: [
+							{
+								actionId: ActionId.MediaPlayerSource,
+								options: {
+									mediaplayer: player,
+									source: still,
+								},
 							},
-						},
-					],
-					up: [],
-				},
+						],
+						up: [],
+					},
+				],
 			}
 		}
 	}
@@ -919,7 +959,7 @@ export function GetPresetsList(
 		presets[`ftb_auto_${me}`] = {
 			category: `Fade to black (M/E ${me + 1})`,
 			name: `Auto fade`,
-			type: 'press',
+			type: 'button',
 			style: {
 				text: `FTB Auto`,
 				size: pstSize,
@@ -961,23 +1001,25 @@ export function GetPresetsList(
 					},
 				},
 			],
-			actions: {
-				down: [
-					{
-						actionId: ActionId.FadeToBlackAuto,
-						options: {
-							mixeffect: me,
+			steps: [
+				{
+					down: [
+						{
+							actionId: ActionId.FadeToBlackAuto,
+							options: {
+								mixeffect: me,
+							},
 						},
-					},
-				],
-				up: [],
-			},
+					],
+					up: [],
+				},
+			],
 		}
 		for (const rate of rateOptions) {
 			presets[`ftb_rate_${me}_${rate}`] = {
 				category: `Fade to black (M/E ${me + 1})`,
 				name: `Rate ${rate}`,
-				type: 'press',
+				type: 'button',
 				style: {
 					text: `Rate ${rate}`,
 					size: pstSize,
@@ -997,18 +1039,20 @@ export function GetPresetsList(
 						},
 					},
 				],
-				actions: {
-					down: [
-						{
-							actionId: ActionId.FadeToBlackRate,
-							options: {
-								mixeffect: me,
-								rate,
+				steps: [
+					{
+						down: [
+							{
+								actionId: ActionId.FadeToBlackRate,
+								options: {
+									mixeffect: me,
+									rate,
+								},
 							},
-						},
-					],
-					up: [],
-				},
+						],
+						up: [],
+					},
+				],
 			}
 		}
 	}
@@ -1017,7 +1061,7 @@ export function GetPresetsList(
 		presets[`streaming_toggle`] = {
 			category: 'Streaming & Recording',
 			name: 'Stream',
-			type: 'press',
+			type: 'button',
 			style: {
 				text: 'Stream\\n$(atem:stream_duration_hm)',
 				size: '18',
@@ -1056,17 +1100,19 @@ export function GetPresetsList(
 					},
 				},
 			],
-			actions: {
-				down: [
-					{
-						actionId: ActionId.StreamStartStop,
-						options: {
-							stream: 'toggle',
+			steps: [
+				{
+					down: [
+						{
+							actionId: ActionId.StreamStartStop,
+							options: {
+								stream: 'toggle',
+							},
 						},
-					},
-				],
-				up: [],
-			},
+					],
+					up: [],
+				},
+			],
 		}
 	}
 
@@ -1074,7 +1120,7 @@ export function GetPresetsList(
 		presets[`recording_toggle`] = {
 			category: 'Streaming & Recording',
 			name: 'Record',
-			type: 'press',
+			type: 'button',
 			style: {
 				text: 'Record\\n$(atem:record_duration_hm)',
 				size: '18',
@@ -1103,17 +1149,19 @@ export function GetPresetsList(
 					},
 				},
 			],
-			actions: {
-				down: [
-					{
-						actionId: ActionId.RecordStartStop,
-						options: {
-							stream: 'toggle',
+			steps: [
+				{
+					down: [
+						{
+							actionId: ActionId.RecordStartStop,
+							options: {
+								stream: 'toggle',
+							},
 						},
-					},
-				],
-				up: [],
-			},
+					],
+					up: [],
+				},
+			],
 		}
 	}
 

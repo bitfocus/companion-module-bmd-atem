@@ -1,4 +1,4 @@
-import { SomeCompanionConfigField } from '@companion-module/base'
+import { Regex, SomeCompanionConfigField } from '@companion-module/base'
 import { AtemMdnsDetectorInstance } from './mdns-detector.js'
 import { ALL_MODEL_CHOICES } from './models/index.js'
 import { InstanceBaseExt } from './util.js'
@@ -41,7 +41,7 @@ export function GetConfigFields(_self: InstanceBaseExt<AtemConfig>): SomeCompani
 			})),
 			default: '',
 			allowCustom: true,
-			// regex: self.REGEX_IP, // TODO ASAP
+			regex: Regex.IP,
 		},
 		// {
 		// 	type: 'textinput',
