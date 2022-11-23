@@ -1719,7 +1719,7 @@ export function GetFeedbacksList(
 							return true
 						} else if (
 							player?.sourceType === Enums.MediaSourceType.Clip &&
-							player?.clipIndex + MEDIA_PLAYER_SOURCE_CLIP_OFFSET === Number(evt.options.source)
+							player?.clipIndex === Number(evt.options.source) - MEDIA_PLAYER_SOURCE_CLIP_OFFSET
 						) {
 							return true
 						} else {
