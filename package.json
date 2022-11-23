@@ -3,7 +3,6 @@
 	"version": "3.0.0-0",
 	"homepage": "https://github.com/bitfocus/companion-module-atem#readme",
 	"main": "dist/index.js",
-	"type": "module",
 	"scripts": {
 		"prepare": "husky install",
 		"dev": "yarn build:main --watch",
@@ -39,7 +38,7 @@
 		"type-fest": "^2.16.0"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "^0.3.1",
+		"@companion-module/tools": "^0.3.3",
 		"@types/debug": "^4.1.7",
 		"@types/multicast-dns": "^7.2.1",
 		"@types/node": "^14.18.12",
