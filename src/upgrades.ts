@@ -124,3 +124,23 @@ export function upgradeAddSSrcPropertiesPicker(
 
 	return result
 }
+
+export function fixUsingFairlightAudioFaderGainInsteadOfFairlightAudioMonitorFaderGain(
+	_context: CompanionUpgradeContext,
+	props: CompanionStaticUpgradeProps<AtemConfig>
+): CompanionStaticUpgradeResult<AtemConfig> {
+	const result: CompanionStaticUpgradeResult<AtemConfig> = {
+		updatedActions: [],
+		updatedConfig: null,
+		updatedFeedbacks: [],
+	}
+
+	for (const feedback of props.feedbacks) {
+		if (feedback.feedbackId === FeedbackId.FairlightAudioFaderGain && feedback.options['input'] === undefined) {
+			feedback.feedbackId = FeedbackId.FairlightAudioMonitorFaderGain
+			result.updatedFeedbacks.push(feedback)
+		}
+	}
+
+	return result
+}

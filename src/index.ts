@@ -2,7 +2,12 @@ import AtemPkg, { Atem as IAtem, AtemState, Commands } from 'atem-connection'
 import { GetActionsList } from './actions.js'
 import { AtemConfig, GetConfigFields } from './config.js'
 import { FeedbackId, GetFeedbacksList } from './feedback.js'
-import { BooleanFeedbackUpgradeMap, upgradeAddSSrcPropertiesPicker, upgradeV2x2x0 } from './upgrades.js'
+import {
+	BooleanFeedbackUpgradeMap,
+	fixUsingFairlightAudioFaderGainInsteadOfFairlightAudioMonitorFaderGain,
+	upgradeAddSSrcPropertiesPicker,
+	upgradeV2x2x0,
+} from './upgrades.js'
 import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, ModelSpec } from './models/index.js'
 import { GetPresetsList } from './presets.js'
 import { TallyBySource } from './state.js'
@@ -223,7 +228,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				continue
 			}
 
-			if (path.match(/inputs/)) {
+			if (path.match(/^inputs/)) {
 				// reset everything, since names of inputs might have changed
 				reInit = true
 				break
@@ -296,7 +301,6 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 
 			const ssrcBoxMatch = path.match(/video.superSources.(\d+).boxes.(\d+)/)
 			if (ssrcBoxMatch) {
-				console.log('update ssrc', ssrcBoxMatch[1])
 				changedFeedbacks.add(FeedbackId.SSrcBoxSource)
 				changedFeedbacks.add(FeedbackId.SSrcBoxOnAir)
 				changedFeedbacks.add(FeedbackId.SSrcBoxProperties)
@@ -489,4 +493,5 @@ runEntrypoint(AtemInstance, [
 	upgradeV2x2x0,
 	CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap),
 	upgradeAddSSrcPropertiesPicker,
+	fixUsingFairlightAudioFaderGainInsteadOfFairlightAudioMonitorFaderGain,
 ])

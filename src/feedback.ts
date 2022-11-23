@@ -98,6 +98,7 @@ export enum FeedbackId {
 	FairlightAudioMixOption = 'fairlightAudioMixOption',
 	FairlightAudioMasterGain = 'fairlightAudioMasterGain',
 	FairlightAudioMonitorMasterMuted = 'fairlightAudioMonitorMasterMuted',
+	FairlightAudioMonitorFaderGain = 'fairlightAudioMonitorFaderGain',
 }
 
 export enum MacroFeedbackType {
@@ -1310,6 +1311,7 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 			[FeedbackId.FairlightAudioMixOption]: undefined,
 			[FeedbackId.FairlightAudioMasterGain]: undefined,
 			[FeedbackId.FairlightAudioMonitorMasterMuted]: undefined,
+			[FeedbackId.FairlightAudioMonitorFaderGain]: undefined,
 		}
 	} else if (model.fairlightAudio) {
 		const audioInputOption = AtemAudioInputPicker(model, state)
@@ -1509,11 +1511,11 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 						},
 				  })
 				: undefined,
-			[FeedbackId.FairlightAudioFaderGain]: model.fairlightAudio.monitor
+			[FeedbackId.FairlightAudioMonitorFaderGain]: model.fairlightAudio.monitor
 				? literal<CompanionFeedbackDefinition>({
 						type: 'boolean',
 						name: 'Fairlight Audio: Monitor/Headphone Gain',
-						description: 'If the headphone/montir has the specified fader gain, change style of the bank',
+						description: 'If the headphone/monitor has the specified fader gain, change style of the bank',
 						options: [
 							NumberComparitorPicker(),
 							literal<CompanionInputFieldNumber>({
@@ -1561,6 +1563,7 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 			[FeedbackId.FairlightAudioMixOption]: undefined,
 			[FeedbackId.FairlightAudioMasterGain]: undefined,
 			[FeedbackId.FairlightAudioMonitorMasterMuted]: undefined,
+			[FeedbackId.FairlightAudioMonitorFaderGain]: undefined,
 		}
 	}
 }

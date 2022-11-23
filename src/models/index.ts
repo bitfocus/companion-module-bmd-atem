@@ -24,6 +24,9 @@ import { ModelSpecConstellationHD1ME } from './constellationHd1Me.js'
 import { ModelSpecConstellationHD2ME } from './constellationHd2Me.js'
 import { ModelSpecConstellationHD4ME } from './constellationHd4Me.js'
 import { DropdownChoice } from '@companion-module/base'
+import { ModelSpecSDI } from './sdi.js'
+import { ModelSpecSDIProISO } from './sdiproiso.js'
+import { ModelSpecSDIExtremeISO } from './sdiextremeiso.js'
 
 export * from './types.js'
 
@@ -49,6 +52,9 @@ export const ALL_MODELS: ModelSpec[] = [
 	ModelSpecConstellationHD1ME,
 	ModelSpecConstellationHD2ME,
 	ModelSpecConstellationHD4ME,
+	ModelSpecSDI,
+	ModelSpecSDIProISO,
+	ModelSpecSDIExtremeISO,
 ]
 
 export const ALL_MODEL_CHOICES: DropdownChoice[] = ALL_MODELS.map(({ id, label }) => ({ id, label }))

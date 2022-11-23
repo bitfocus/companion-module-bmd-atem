@@ -31,6 +31,8 @@ import {
 	AtemTransitionSelectionPickers,
 	AtemTransitionStylePicker,
 	AtemUSKPicker,
+	AtemUSKMaskPropertiesPickers,
+	AtemUSKDVEPropertiesPickers,
 	AtemTransitionSelectionComponentPicker,
 	AtemAudioInputPicker,
 	AtemFairlightAudioSourcePicker,
@@ -38,6 +40,8 @@ import {
 	FaderLevelDeltaChoice,
 	AtemAllSourcePicker,
 	AtemSuperSourceArtPropertiesPickers,
+	AtemDSKMaskPropertiesPickers,
+	AtemDSKPreMultipliedKeyPropertiesPickers,
 } from './input.js'
 import { ModelSpec } from './models/index.js'
 import {
@@ -62,6 +66,8 @@ import { AtemCommandBatching, CommandBatching } from './batching.js'
 import { AtemTransitions } from './transitions.js'
 import { SuperSource } from 'atem-connection/dist/state/video/index.js'
 import { CompanionActionDefinition, CompanionActionEvent } from '@companion-module/base'
+import { DownstreamKeyerMask, DownstreamKeyerGeneral } from 'atem-connection/dist/state/video/downstreamKeyers.js'
+import { UpstreamKeyerMaskSettings, UpstreamKeyerDVESettings } from 'atem-connection/dist/state/video/upstreamKeyers.js'
 
 export enum ActionId {
 	Program = 'program',
@@ -72,9 +78,13 @@ export enum ActionId {
 	USKSource = 'uskSource',
 	USKOnAir = 'usk',
 	USKFly = 'uskFly',
+	USKMaskLumaChromaPattern = 'uskMaskLumaChromaPattern',
+	USKDVEProperties = 'uskDveProperties',
 	USKFlyInfinite = 'uskFlyInfinite',
 	DSKSource = 'dskSource',
 	DSKRate = 'dskRate',
+	DSKMask = 'dskMask',
+	DSKPreMultipliedKey = 'dskPreMultipliedKey',
 	DSKOnAir = 'dsk',
 	DSKTie = 'dskTie',
 	DSKAuto = 'dskAuto',
@@ -481,6 +491,190 @@ function meActions(
 				}
 			},
 		}),
+		[ActionId.USKMaskLumaChromaPattern]: model.USKs
+			? literal<CompanionActionExt>({
+					name: 'Upstream key: Set Mask (Luma, Chroma, Pattern)',
+					options: compact([AtemMEPicker(model, 0), AtemUSKPicker(model), ...AtemUSKMaskPropertiesPickers()]),
+					callback: async (action) => {
+						const keyId = getOptNumber(action, 'key')
+						const mixEffectId = getOptNumber(action, 'mixeffect')
+						const newProps: Partial<UpstreamKeyerMaskSettings> = {}
+
+						const props = action.options.properties
+						if (props && Array.isArray(props)) {
+							if (props.includes('maskEnabled')) {
+								newProps.maskEnabled = getOptBool(action, 'maskEnabled')
+							}
+							if (props.includes('maskTop')) {
+								newProps.maskTop = getOptNumber(action, 'maskTop') * 1000
+							}
+							if (props.includes('maskBottom')) {
+								newProps.maskBottom = getOptNumber(action, 'maskBottom') * 1000
+							}
+							if (props.includes('maskLeft')) {
+								newProps.maskLeft = getOptNumber(action, 'maskLeft') * 1000
+							}
+							if (props.includes('maskRight')) {
+								newProps.maskRight = getOptNumber(action, 'maskRight') * 1000
+							}
+						}
+
+						if (Object.keys(newProps).length === 0) return
+
+						await atem?.setUpstreamKeyerMaskSettings(newProps, mixEffectId, keyId)
+					},
+					learn: (action) => {
+						const usk = getUSK(state, getOptNumber(action, 'mixeffect'), getOptNumber(action, 'key'))
+
+						if (usk?.maskSettings) {
+							return {
+								...action.options,
+								maskEnabled: usk.maskSettings.maskEnabled,
+								maskTop: usk.maskSettings.maskTop / 1000,
+								maskBottom: usk.maskSettings.maskBottom / 1000,
+								maskLeft: usk.maskSettings.maskLeft / 1000,
+								maskRight: usk.maskSettings.maskRight / 1000,
+							}
+						} else {
+							return undefined
+						}
+					},
+			  })
+			: undefined,
+		[ActionId.USKDVEProperties]: model.DVEs
+			? literal<CompanionActionExt>({
+					name: 'Upstream key: Change DVE properties',
+					options: compact([AtemMEPicker(model, 0), AtemUSKPicker(model), ...AtemUSKDVEPropertiesPickers()]),
+					callback: async (action) => {
+						const keyId = getOptNumber(action, 'key')
+						const mixEffectId = getOptNumber(action, 'mixeffect')
+						const newProps: Partial<UpstreamKeyerDVESettings> = {}
+
+						const props = action.options.properties
+						if (props && Array.isArray(props)) {
+							if (props.includes('maskEnabled')) {
+								newProps.maskEnabled = getOptBool(action, 'maskEnabled')
+							}
+							if (props.includes('maskTop')) {
+								newProps.maskTop = getOptNumber(action, 'maskTop') * 1000
+							}
+							if (props.includes('maskBottom')) {
+								newProps.maskBottom = getOptNumber(action, 'maskBottom') * 1000
+							}
+							if (props.includes('maskLeft')) {
+								newProps.maskLeft = getOptNumber(action, 'maskLeft') * 1000
+							}
+							if (props.includes('maskRight')) {
+								newProps.maskRight = getOptNumber(action, 'maskRight') * 1000
+							}
+							if (props.includes('sizeX')) {
+								newProps.sizeX = getOptNumber(action, 'sizeX') * 1000
+							}
+							if (props.includes('sizeY')) {
+								newProps.sizeY = getOptNumber(action, 'sizeY') * 1000
+							}
+							if (props.includes('positionX')) {
+								newProps.positionX = getOptNumber(action, 'positionX') * 1000
+							}
+							if (props.includes('positionY')) {
+								newProps.positionY = getOptNumber(action, 'positionY') * 1000
+							}
+							if (props.includes('rotation')) {
+								newProps.rotation = getOptNumber(action, 'rotation')
+							}
+							if (props.includes('borderOuterWidth')) {
+								newProps.borderOuterWidth = getOptNumber(action, 'borderOuterWidth') * 100
+							}
+							if (props.includes('borderInnerWidth')) {
+								newProps.borderInnerWidth = getOptNumber(action, 'borderInnerWidth') * 100
+							}
+							if (props.includes('borderOuterSoftness')) {
+								newProps.borderOuterSoftness = getOptNumber(action, 'borderOuterSoftness')
+							}
+							if (props.includes('borderInnerSoftness')) {
+								newProps.borderInnerSoftness = getOptNumber(action, 'borderInnerSoftness')
+							}
+							if (props.includes('borderBevelSoftness')) {
+								newProps.borderBevelSoftness = getOptNumber(action, 'borderBevelSoftness')
+							}
+							if (props.includes('borderBevelPosition')) {
+								newProps.borderBevelPosition = getOptNumber(action, 'borderBevelPosition')
+							}
+							if (props.includes('borderOpacity')) {
+								newProps.borderOpacity = getOptNumber(action, 'borderOpacity')
+							}
+							if (props.includes('borderHue')) {
+								newProps.borderHue = getOptNumber(action, 'borderHue') * 10
+							}
+							if (props.includes('borderSaturation')) {
+								newProps.borderSaturation = getOptNumber(action, 'borderSaturation') * 10
+							}
+							if (props.includes('borderLuma')) {
+								newProps.borderLuma = getOptNumber(action, 'borderLuma') * 10
+							}
+							if (props.includes('lightSourceDirection')) {
+								newProps.lightSourceDirection = getOptNumber(action, 'lightSourceDirection') * 10
+							}
+							if (props.includes('lightSourceAltitude')) {
+								newProps.lightSourceAltitude = getOptNumber(action, 'lightSourceAltitude')
+							}
+							if (props.includes('borderEnabled')) {
+								newProps.borderEnabled = getOptBool(action, 'borderEnabled')
+							}
+							if (props.includes('shadowEnabled')) {
+								newProps.shadowEnabled = getOptBool(action, 'shadowEnabled')
+							}
+							if (props.includes('borderBevel')) {
+								newProps.borderBevel = getOptNumber(action, 'borderBevel')
+							}
+							if (props.includes('rate')) {
+								newProps.rate = getOptNumber(action, 'rate')
+							}
+						}
+
+						if (Object.keys(newProps).length === 0) return
+
+						await atem?.setUpstreamKeyerDVESettings(newProps, mixEffectId, keyId)
+					},
+					learn: (action) => {
+						const usk = getUSK(state, getOptNumber(action, 'mixeffect'), getOptNumber(action, 'key'))
+
+						if (usk?.dveSettings) {
+							return {
+								...action.options,
+								maskEnabled: usk.dveSettings.maskEnabled,
+								maskTop: usk.dveSettings.maskTop / 1000,
+								maskBottom: usk.dveSettings.maskBottom / 1000,
+								maskLeft: usk.dveSettings.maskLeft / 1000,
+								maskRight: usk.dveSettings.maskRight / 1000,
+								sizeX: usk.dveSettings.sizeX / 1000,
+								sizeY: usk.dveSettings.sizeY / 1000,
+								positionX: usk.dveSettings.positionX / 1000,
+								positionY: usk.dveSettings.positionY / 1000,
+								rotation: usk.dveSettings.rotation,
+								borderOuterWidth: usk.dveSettings.borderOuterWidth / 100,
+								borderInnerWidth: usk.dveSettings.borderInnerWidth / 100,
+								borderOuterSoftness: usk.dveSettings.borderOuterSoftness,
+								borderInnerSoftness: usk.dveSettings.borderInnerSoftness,
+								borderBevelSoftness: usk.dveSettings.borderBevelSoftness,
+								borderBevelPosition: usk.dveSettings.borderBevelPosition,
+								borderOpacity: usk.dveSettings.borderOpacity,
+								borderHue: usk.dveSettings.borderHue / 10,
+								borderSaturation: usk.dveSettings.borderSaturation / 10,
+								borderLuma: usk.dveSettings.borderLuma / 10,
+								lightSourceDirection: usk.dveSettings.lightSourceDirection / 10,
+								lightSourceAltitude: usk.dveSettings.lightSourceAltitude,
+								borderEnabled: usk.dveSettings.borderEnabled,
+								shadowEnabled: usk.dveSettings.shadowEnabled,
+								borderBevel: usk.dveSettings.borderBevel,
+								rate: usk.dveSettings.rate,
+							}
+						} else {
+							return undefined
+						}
+					},
+			  })
+			: undefined,
 		[ActionId.USKFly]:
 			model.USKs && model.DVEs
 				? literal<CompanionActionExt>({
@@ -598,6 +792,100 @@ function dskActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) 
 							return {
 								...feedback.options,
 								rate: dsk.properties.rate,
+							}
+						} else {
+							return undefined
+						}
+					},
+			  })
+			: undefined,
+		[ActionId.DSKMask]: model.DSKs
+			? literal<CompanionActionExt>({
+					name: 'Downstream key: Set Mask',
+					options: compact([AtemDSKPicker(model), ...AtemDSKMaskPropertiesPickers()]),
+					callback: async (action) => {
+						const keyId = getOptNumber(action, 'key')
+						const newProps: Partial<DownstreamKeyerMask> = {}
+
+						const props = action.options.properties
+						if (props && Array.isArray(props)) {
+							if (props.includes('maskEnabled')) {
+								newProps.enabled = getOptBool(action, 'maskEnabled')
+							}
+							if (props.includes('maskTop')) {
+								newProps.top = getOptNumber(action, 'maskTop') * 1000
+							}
+							if (props.includes('maskBottom')) {
+								newProps.bottom = getOptNumber(action, 'maskBottom') * 1000
+							}
+							if (props.includes('maskLeft')) {
+								newProps.left = getOptNumber(action, 'maskLeft') * 1000
+							}
+							if (props.includes('maskRight')) {
+								newProps.right = getOptNumber(action, 'maskRight') * 1000
+							}
+						}
+
+						if (Object.keys(newProps).length === 0) return
+
+						await atem?.setDownstreamKeyMaskSettings(newProps, keyId)
+					},
+					learn: (feedback) => {
+						const dsk = getDSK(state, feedback.options.key)
+
+						if (dsk?.properties?.mask) {
+							return {
+								...feedback.options,
+								maskEnabled: dsk.properties.mask.enabled,
+								maskTop: dsk.properties.mask.top / 1000,
+								maskBottom: dsk.properties.mask.bottom / 1000,
+								maskLeft: dsk.properties.mask.left / 1000,
+								maskRight: dsk.properties.mask.right / 1000,
+							}
+						} else {
+							return undefined
+						}
+					},
+			  })
+			: undefined,
+		[ActionId.DSKPreMultipliedKey]: model.DSKs
+			? literal<CompanionActionExt>({
+					name: 'Downstream key: Set Pre Multiplied Key',
+					options: compact([AtemDSKPicker(model), ...AtemDSKPreMultipliedKeyPropertiesPickers()]),
+					callback: async (action) => {
+						const keyId = getOptNumber(action, 'key')
+						const newProps: Partial<DownstreamKeyerGeneral> = {}
+
+						const props = action.options.properties
+						if (props && Array.isArray(props)) {
+							if (props.includes('preMultiply')) {
+								newProps.preMultiply = getOptBool(action, 'preMultiply')
+							}
+							if (props.includes('clip')) {
+								newProps.clip = getOptNumber(action, 'clip') * 10
+							}
+							if (props.includes('gain')) {
+								newProps.gain = getOptNumber(action, 'gain') * 10
+							}
+							if (props.includes('invert')) {
+								newProps.invert = getOptBool(action, 'invert')
+							}
+						}
+
+						if (Object.keys(newProps).length === 0) return
+
+						await atem?.setDownstreamKeyGeneralProperties(newProps, keyId)
+					},
+					learn: (feedback) => {
+						const dsk = getDSK(state, feedback.options.key)
+
+						if (dsk?.properties) {
+							return {
+								...feedback.options,
+								preMultiply: dsk.properties.preMultiply,
+								clip: dsk.properties.clip / 10,
+								gain: dsk.properties.gain / 10,
+								invert: dsk.properties.invert,
 							}
 						} else {
 							return undefined
@@ -2106,7 +2394,7 @@ export function GetActionsList(
 				}
 
 				await Promise.all([
-					newProps.longName && !atem?.hasInternalMultiviewerLabelGeneration()
+					typeof newProps.longName === 'string' && !atem?.hasInternalMultiviewerLabelGeneration()
 						? atem?.drawMultiviewerLabel(source, newProps.longName)
 						: undefined,
 					Object.keys(newProps).length ? atem?.setInputSettings(newProps, source) : undefined,

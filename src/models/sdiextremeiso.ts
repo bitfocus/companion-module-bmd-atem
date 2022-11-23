@@ -10,9 +10,9 @@ const sourceAvailabilityAll =
 	Enums.SourceAvailability.Auxiliary1 |
 	Enums.SourceAvailability.Auxiliary2
 
-export const ModelSpecMiniExtreme: ModelSpec = {
-	id: Enums.Model.MiniExtreme,
-	label: 'Mini Extreme',
+export const ModelSpecSDIExtremeISO: ModelSpec = {
+	id: Enums.Model.SDIExtremeISO,
+	label: 'SDI Extreme ISO',
 	inputs: [
 		{
 			id: 0,
@@ -157,6 +157,18 @@ export const ModelSpecMiniExtreme: ModelSpec = {
 			meAvailability: Enums.MeAvailability.None,
 		},
 		{
+			id: 8003,
+			portType: Enums.InternalPortType.Auxiliary,
+			sourceAvailability: Enums.SourceAvailability.Multiviewer,
+			meAvailability: Enums.MeAvailability.None,
+		},
+		{
+			id: 8004,
+			portType: Enums.InternalPortType.Auxiliary,
+			sourceAvailability: Enums.SourceAvailability.Multiviewer,
+			meAvailability: Enums.MeAvailability.None,
+		},
+		{
 			id: 9001,
 			portType: Enums.InternalPortType.MultiViewer,
 			sourceAvailability:
@@ -214,7 +226,7 @@ export const ModelSpecMiniExtreme: ModelSpec = {
 			meAvailability: Enums.MeAvailability.None,
 		},
 	],
-	auxes: 2,
+	auxes: 4,
 	MEs: 1,
 	USKs: 4,
 	DSKs: 2,
@@ -230,7 +242,7 @@ export const ModelSpecMiniExtreme: ModelSpec = {
 	},
 	streaming: true,
 	recording: true,
-	recordISO: false,
+	recordISO: true,
 	fairlightAudio: {
 		monitor: true,
 		inputs: [
