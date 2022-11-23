@@ -3,6 +3,7 @@
 	"version": "3.0.0-0",
 	"homepage": "https://github.com/bitfocus/companion-module-atem#readme",
 	"main": "dist/index.js",
+	"type": "module",
 	"scripts": {
 		"prepare": "husky install",
 		"dev": "yarn build:main --watch",
@@ -27,11 +28,11 @@
 		]
 	},
 	"engines": {
-		"node": "^14 || ^16"
+		"node": "^14 || ^16 || ^18"
 	},
 	"dependencies": {
 		"@companion-module/base": "~0.5.1",
-		"atem-connection": "3.0.0-nightly-latest-20220622-133017-ab0e528.0",
+		"atem-connection": "^3.1.0",
 		"debounce-fn": "github:julusian/debounce-fn#4.0.0-maxWaithack.0",
 		"debug": "^4.3.4",
 		"multicast-dns": "^7.2.3",
