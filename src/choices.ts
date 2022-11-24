@@ -1,7 +1,7 @@
 import { DropdownChoice } from '@companion-module/base'
 import { AtemState, Enums } from 'atem-connection'
 import { ModelSpec } from './models/index.js'
-import { iterateTimes, literal, assertUnreachable } from './util.js'
+import { iterateTimes, assertUnreachable } from './util.js'
 
 export const CHOICES_SSRCBOXES: DropdownChoice[] = [
 	{ id: 0, label: 'Box 1' },
@@ -174,11 +174,11 @@ export function GetSourcesListForType(
 		const shortName = input?.shortName || defShort
 		const longName = input?.longName || defLong
 
-		return literal<SourceInfo>({
+		return {
 			id,
 			shortName,
 			longName,
-		})
+		}
 	}
 
 	const sources: SourceInfo[] = []
@@ -288,10 +288,10 @@ export function GetAudioInputsList(model: ModelSpec, state: AtemState): MiniSour
 		const input = videoId !== undefined ? state.inputs[videoId] : undefined
 		const longName = input?.longName || defLong
 
-		return literal<MiniSourceInfo>({
+		return {
 			id,
 			longName,
-		})
+		}
 	}
 
 	const sources: MiniSourceInfo[] = []

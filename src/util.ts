@@ -7,10 +7,6 @@ export function assertUnreachable(_never: never): void {
 	// throw new Error('Unreachable')
 }
 
-export function literal<T>(val: T): T {
-	return val
-}
-
 export function pad(str: string, prefix: string, len: number): string {
 	while (str.length < len) {
 		str = prefix + str

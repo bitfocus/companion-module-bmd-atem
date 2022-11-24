@@ -49,7 +49,6 @@ import { getDSK, getMixEffect, getMultiviewerWindow, getSuperSourceBox, getUSK, 
 import {
 	assertUnreachable,
 	calculateTransitionSelection,
-	literal,
 	MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
 	compact,
 	compareNumber,
@@ -111,7 +110,7 @@ export enum MacroFeedbackType {
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function tallyFeedbacks(model: ModelSpec, state: AtemState, tally: TallyBySource) {
 	return {
-		[FeedbackId.ProgramTally]: literal<CompanionFeedbackDefinition>({
+		[FeedbackId.ProgramTally]: {
 			type: 'boolean',
 			name: 'Tally: Program',
 			description: 'If the input specified has an active progam tally light, change style of the bank',
@@ -124,8 +123,8 @@ function tallyFeedbacks(model: ModelSpec, state: AtemState, tally: TallyBySource
 				const source = tally[Number(evt.options.input)]
 				return !!source?.program
 			},
-		}),
-		[FeedbackId.PreviewTally]: literal<CompanionFeedbackDefinition>({
+		} satisfies CompanionFeedbackDefinition,
+		[FeedbackId.PreviewTally]: {
 			type: 'boolean',
 			name: 'Tally: Preview',
 			description: 'If the input specified has an active preview tally light, change style of the bank',
@@ -138,14 +137,14 @@ function tallyFeedbacks(model: ModelSpec, state: AtemState, tally: TallyBySource
 				const source = tally[Number(evt.options.input)]
 				return !!source?.preview
 			},
-		}),
+		} satisfies CompanionFeedbackDefinition,
 	}
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function previewFeedbacks(model: ModelSpec, state: AtemState) {
 	return {
-		[FeedbackId.PreviewBG]: literal<CompanionFeedbackDefinition>({
+		[FeedbackId.PreviewBG]: {
 			type: 'boolean',
 			name: 'ME: One ME preview source',
 			description: 'If the input specified is in use by preview on the M/E stage specified, change style of the bank',
@@ -170,10 +169,10 @@ function previewFeedbacks(model: ModelSpec, state: AtemState) {
 					return undefined
 				}
 			},
-		}),
+		} satisfies CompanionFeedbackDefinition,
 		[FeedbackId.PreviewBG2]:
 			model.MEs >= 2
-				? literal<CompanionFeedbackDefinition>({
+				? ({
 						type: 'boolean',
 						name: 'ME: Two ME preview sources',
 						description:
@@ -209,11 +208,11 @@ function previewFeedbacks(model: ModelSpec, state: AtemState) {
 								return undefined
 							}
 						},
-				  })
+				  } satisfies CompanionFeedbackDefinition)
 				: undefined,
 		[FeedbackId.PreviewBG3]:
 			model.MEs >= 3
-				? literal<CompanionFeedbackDefinition>({
+				? ({
 						type: 'boolean',
 						name: 'ME: Three ME preview sources',
 						description:
@@ -256,11 +255,11 @@ function previewFeedbacks(model: ModelSpec, state: AtemState) {
 								return undefined
 							}
 						},
-				  })
+				  } satisfies CompanionFeedbackDefinition)
 				: undefined,
 		[FeedbackId.PreviewBG4]:
 			model.MEs >= 4
-				? literal<CompanionFeedbackDefinition>({
+				? ({
 						type: 'boolean',
 						name: 'ME: Four ME preview sources',
 						description:
@@ -310,7 +309,7 @@ function previewFeedbacks(model: ModelSpec, state: AtemState) {
 								return undefined
 							}
 						},
-				  })
+				  } satisfies CompanionFeedbackDefinition)
 				: undefined,
 	}
 }
@@ -318,7 +317,7 @@ function previewFeedbacks(model: ModelSpec, state: AtemState) {
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function programFeedbacks(model: ModelSpec, state: AtemState) {
 	return {
-		[FeedbackId.ProgramBG]: literal<CompanionFeedbackDefinition>({
+		[FeedbackId.ProgramBG]: {
 			type: 'boolean',
 			name: 'ME: One ME program source',
 			description: 'If the input specified is in use by program on the M/E stage specified, change style of the bank',
@@ -343,10 +342,10 @@ function programFeedbacks(model: ModelSpec, state: AtemState) {
 					return undefined
 				}
 			},
-		}),
+		} satisfies CompanionFeedbackDefinition,
 		[FeedbackId.ProgramBG2]:
 			model.MEs >= 2
-				? literal<CompanionFeedbackDefinition>({
+				? ({
 						type: 'boolean',
 						name: 'ME: Two ME program sources',
 						description:
@@ -382,11 +381,11 @@ function programFeedbacks(model: ModelSpec, state: AtemState) {
 								return undefined
 							}
 						},
-				  })
+				  } satisfies CompanionFeedbackDefinition)
 				: undefined,
 		[FeedbackId.ProgramBG3]:
 			model.MEs >= 3
-				? literal<CompanionFeedbackDefinition>({
+				? ({
 						type: 'boolean',
 						name: 'ME: Three ME program sources',
 						description:
@@ -429,11 +428,11 @@ function programFeedbacks(model: ModelSpec, state: AtemState) {
 								return undefined
 							}
 						},
-				  })
+				  } satisfies CompanionFeedbackDefinition)
 				: undefined,
 		[FeedbackId.ProgramBG4]:
 			model.MEs >= 4
-				? literal<CompanionFeedbackDefinition>({
+				? ({
 						type: 'boolean',
 						name: 'ME: Four ME program sources',
 						description:
@@ -482,7 +481,7 @@ function programFeedbacks(model: ModelSpec, state: AtemState) {
 								return undefined
 							}
 						},
-				  })
+				  } satisfies CompanionFeedbackDefinition)
 				: undefined,
 	}
 }
@@ -491,7 +490,7 @@ function programFeedbacks(model: ModelSpec, state: AtemState) {
 function uskFeedbacks(model: ModelSpec, state: AtemState) {
 	return {
 		[FeedbackId.USKOnAir]: model.USKs
-			? literal<CompanionFeedbackDefinition>({
+			? ({
 					type: 'boolean',
 					name: 'Upstream key: OnAir state',
 					description: 'If the specified upstream keyer is active, change style of the bank',
@@ -504,10 +503,10 @@ function uskFeedbacks(model: ModelSpec, state: AtemState) {
 						const usk = getUSK(state, evt.options.mixeffect, evt.options.key)
 						return !!usk?.onAir
 					},
-			  })
+			  } satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.USKSource]: model.USKs
-			? literal<CompanionFeedbackDefinition>({
+			? ({
 					type: 'boolean',
 					name: 'Upstream key: Fill source',
 					description: 'If the input specified is in use by the USK specified, change style of the bank',
@@ -532,11 +531,11 @@ function uskFeedbacks(model: ModelSpec, state: AtemState) {
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.USKKeyFrame]:
 			model.USKs && model.DVEs
-				? literal<CompanionFeedbackDefinition>({
+				? ({
 						type: 'boolean',
 						name: 'Upstream key: Key frame',
 						description: 'If the USK specified is at the Key Frame specified, change style of the bank',
@@ -549,7 +548,7 @@ function uskFeedbacks(model: ModelSpec, state: AtemState) {
 								label: 'Key Frame',
 								choices: CHOICES_CURRENTKEYFRAMES,
 								default: CHOICES_CURRENTKEYFRAMES[0].id,
-							},
+							} satisfies CompanionInputFieldDropdown,
 						],
 						defaultStyle: {
 							color: combineRgb(0, 0, 0),
@@ -571,7 +570,7 @@ function uskFeedbacks(model: ModelSpec, state: AtemState) {
 								return undefined
 							}
 						},
-				  })
+				  } satisfies CompanionFeedbackDefinition)
 				: undefined,
 	}
 }
@@ -579,7 +578,7 @@ function uskFeedbacks(model: ModelSpec, state: AtemState) {
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function transitionFeedbacks(model: ModelSpec, state: AtemState) {
 	return {
-		[FeedbackId.TransitionStyle]: literal<CompanionFeedbackDefinition>({
+		[FeedbackId.TransitionStyle]: {
 			type: 'boolean',
 			name: 'Transition: Style',
 			description: 'If the specified transition style is active, change style of the bank',
@@ -604,8 +603,8 @@ function transitionFeedbacks(model: ModelSpec, state: AtemState) {
 					return undefined
 				}
 			},
-		}),
-		[FeedbackId.TransitionSelection]: literal<CompanionFeedbackDefinition>({
+		} satisfies CompanionFeedbackDefinition,
+		[FeedbackId.TransitionSelection]: {
 			type: 'boolean',
 			name: 'Transition: Selection',
 			description: 'If the specified transition selection is active, change style of the bank',
@@ -629,8 +628,8 @@ function transitionFeedbacks(model: ModelSpec, state: AtemState) {
 				}
 				return false
 			},
-		}),
-		[FeedbackId.TransitionRate]: literal<CompanionFeedbackDefinition>({
+		} satisfies CompanionFeedbackDefinition,
+		[FeedbackId.TransitionRate]: {
 			type: 'boolean',
 			name: 'Transition: Rate',
 			description: 'If the specified transition rate is active, change style of the bank',
@@ -697,8 +696,8 @@ function transitionFeedbacks(model: ModelSpec, state: AtemState) {
 					return undefined
 				}
 			},
-		}),
-		[FeedbackId.InTransition]: literal<CompanionFeedbackDefinition>({
+		} satisfies CompanionFeedbackDefinition,
+		[FeedbackId.InTransition]: {
 			type: 'boolean',
 			name: 'Transition: Active/Running',
 			description: 'If the specified transition is active, change style of the bank',
@@ -711,14 +710,14 @@ function transitionFeedbacks(model: ModelSpec, state: AtemState) {
 				const me = getMixEffect(state, evt.options.mixeffect)
 				return !!me?.transitionPosition?.inTransition
 			},
-		}),
+		} satisfies CompanionFeedbackDefinition,
 	}
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function fadeToBlackFeedbacks(model: ModelSpec, state: AtemState) {
 	return {
-		[FeedbackId.FadeToBlackIsBlack]: literal<CompanionFeedbackDefinition>({
+		[FeedbackId.FadeToBlackIsBlack]: {
 			type: 'boolean',
 			name: 'Fade to black: Active',
 			description: 'If the specified fade to black is active, change style of the bank',
@@ -742,8 +741,8 @@ function fadeToBlackFeedbacks(model: ModelSpec, state: AtemState) {
 				}
 				return false
 			},
-		}),
-		[FeedbackId.FadeToBlackRate]: literal<CompanionFeedbackDefinition>({
+		} satisfies CompanionFeedbackDefinition,
+		[FeedbackId.FadeToBlackRate]: {
 			type: 'boolean',
 			name: 'Fade to black: Rate',
 			description: 'If the specified fade to black rate matches, change style of the bank',
@@ -769,7 +768,7 @@ function fadeToBlackFeedbacks(model: ModelSpec, state: AtemState) {
 					return undefined
 				}
 			},
-		}),
+		} satisfies CompanionFeedbackDefinition,
 	}
 }
 
@@ -794,7 +793,7 @@ function compareAsInt(
 function ssrcFeedbacks(model: ModelSpec, state: AtemState) {
 	return {
 		[FeedbackId.SSrcArtProperties]: model.SSrc
-			? literal<CompanionFeedbackDefinition>({
+			? ({
 					type: 'boolean',
 					name: 'Supersource: Art properties',
 					description: 'If the specified SuperSource art properties match, change style of the bank',
@@ -845,10 +844,10 @@ function ssrcFeedbacks(model: ModelSpec, state: AtemState) {
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.SSrcArtSource]: model.SSrc
-			? literal<CompanionFeedbackDefinition>({
+			? ({
 					// TODO - replace with FeedbackId.SSrcArtProperties
 					type: 'boolean',
 					name: 'Supersource: Art fill source',
@@ -879,10 +878,10 @@ function ssrcFeedbacks(model: ModelSpec, state: AtemState) {
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.SSrcArtOption]: model.SSrc
-			? literal<CompanionFeedbackDefinition>({
+			? ({
 					// TODO - replace with FeedbackId.SSrcArtProperties
 					type: 'boolean',
 					name: 'Supersource: Art placement',
@@ -911,10 +910,10 @@ function ssrcFeedbacks(model: ModelSpec, state: AtemState) {
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.SSrcBoxSource]: model.SSrc
-			? literal<CompanionFeedbackDefinition>({
+			? ({
 					// TODO - replace with FeedbackId.SSrcBoxProperties
 					type: 'boolean',
 					name: 'Supersource: Box source',
@@ -946,10 +945,10 @@ function ssrcFeedbacks(model: ModelSpec, state: AtemState) {
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.SSrcBoxOnAir]: model.SSrc
-			? literal<CompanionFeedbackDefinition>({
+			? ({
 					// TODO - replace with FeedbackId.SSrcBoxProperties
 					type: 'boolean',
 					name: 'Supersource: Box state',
@@ -964,10 +963,10 @@ function ssrcFeedbacks(model: ModelSpec, state: AtemState) {
 						const box = getSuperSourceBox(state, evt.options.boxIndex, ssrcId)
 						return !!(box && box.enabled)
 					},
-			  })
+			  } satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.SSrcBoxProperties]: model.SSrc
-			? literal<CompanionFeedbackDefinition>({
+			? ({
 					type: 'boolean',
 					name: 'Supersource: Box properties',
 					description: 'If the specified SuperSource box properties match, change style of the bank',
@@ -1028,7 +1027,7 @@ function ssrcFeedbacks(model: ModelSpec, state: AtemState) {
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionFeedbackDefinition)
 			: undefined,
 	}
 }
@@ -1037,7 +1036,7 @@ function ssrcFeedbacks(model: ModelSpec, state: AtemState) {
 function dskFeedbacks(model: ModelSpec, state: AtemState) {
 	return {
 		[FeedbackId.DSKOnAir]: model.DSKs
-			? literal<CompanionFeedbackDefinition>({
+			? ({
 					type: 'boolean',
 					name: 'Downstream key: OnAir',
 					description: 'If the specified downstream keyer is onair, change style of the bank',
@@ -1050,10 +1049,10 @@ function dskFeedbacks(model: ModelSpec, state: AtemState) {
 						const dsk = getDSK(state, evt.options.key)
 						return !!dsk?.onAir
 					},
-			  })
+			  } satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.DSKTie]: model.DSKs
-			? literal<CompanionFeedbackDefinition>({
+			? ({
 					type: 'boolean',
 					name: 'Downstream key: Tied',
 					description: 'If the specified downstream keyer is tied, change style of the bank',
@@ -1066,10 +1065,10 @@ function dskFeedbacks(model: ModelSpec, state: AtemState) {
 						const dsk = getDSK(state, evt.options.key)
 						return !!dsk?.properties?.tie
 					},
-			  })
+			  } satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.DSKSource]: model.DSKs
-			? literal<CompanionFeedbackDefinition>({
+			? ({
 					type: 'boolean',
 					name: 'Downstream key: Fill source',
 					description: 'If the input specified is in use by the DSK specified, change style of the bank',
@@ -1094,7 +1093,7 @@ function dskFeedbacks(model: ModelSpec, state: AtemState) {
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionFeedbackDefinition)
 			: undefined,
 	}
 }
@@ -1103,12 +1102,12 @@ function dskFeedbacks(model: ModelSpec, state: AtemState) {
 function streamRecordFeedbacks(model: ModelSpec, state: AtemState) {
 	return {
 		[FeedbackId.StreamStatus]: model.streaming
-			? literal<CompanionFeedbackDefinition>({
+			? ({
 					type: 'boolean',
 					name: 'Streaming: Active/Running',
 					description: 'If the stream has the specified status, change style of the bank',
 					options: [
-						literal<CompanionInputFieldDropdown>({
+						{
 							id: 'state',
 							label: 'State',
 							type: 'dropdown',
@@ -1119,7 +1118,7 @@ function streamRecordFeedbacks(model: ModelSpec, state: AtemState) {
 									label: k,
 								})),
 							default: Enums.StreamingStatus.Streaming,
-						}),
+						} satisfies CompanionInputFieldDropdown,
 					],
 					defaultStyle: {
 						color: combineRgb(0, 0, 0),
@@ -1139,15 +1138,15 @@ function streamRecordFeedbacks(model: ModelSpec, state: AtemState) {
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.RecordStatus]: model.recording
-			? literal<CompanionFeedbackDefinition>({
+			? ({
 					type: 'boolean',
 					name: 'Recording: Active/Running',
 					description: 'If the record has the specified status, change style of the bank',
 					options: [
-						literal<CompanionInputFieldDropdown>({
+						{
 							id: 'state',
 							label: 'State',
 							type: 'dropdown',
@@ -1158,7 +1157,7 @@ function streamRecordFeedbacks(model: ModelSpec, state: AtemState) {
 									label: k,
 								})),
 							default: Enums.RecordingStatus.Recording,
-						}),
+						} satisfies CompanionInputFieldDropdown,
 					],
 					defaultStyle: {
 						color: combineRgb(0, 0, 0),
@@ -1178,7 +1177,7 @@ function streamRecordFeedbacks(model: ModelSpec, state: AtemState) {
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionFeedbackDefinition)
 			: undefined,
 	}
 }
@@ -1188,14 +1187,14 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 	if (model.classicAudio) {
 		const audioInputOption = AtemAudioInputPicker(model, state)
 		return {
-			[FeedbackId.ClassicAudioGain]: literal<CompanionFeedbackDefinition>({
+			[FeedbackId.ClassicAudioGain]: {
 				type: 'boolean',
 				name: 'Classic Audio: Audio gain',
 				description: 'If the audio input has the specified gain, change style of the bank',
 				options: [
 					audioInputOption,
 					NumberComparitorPicker(),
-					literal<CompanionInputFieldNumber>({
+					{
 						type: 'number',
 						label: 'Fader Level (-60 = -inf)',
 						id: 'gain',
@@ -1205,7 +1204,7 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 						step: 0.1,
 						min: -60,
 						max: 6,
-					}),
+					} satisfies CompanionInputFieldNumber,
 				],
 				defaultStyle: {
 					color: combineRgb(0, 0, 0),
@@ -1229,20 +1228,20 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 						return undefined
 					}
 				},
-			}),
-			[FeedbackId.ClassicAudioMixOption]: literal<CompanionFeedbackDefinition>({
+			} satisfies CompanionFeedbackDefinition,
+			[FeedbackId.ClassicAudioMixOption]: {
 				type: 'boolean',
 				name: 'Classic Audio: Mix option',
 				description: 'If the audio input has the specified mix option, change style of the bank',
 				options: [
 					audioInputOption,
-					literal<CompanionInputFieldDropdown>({
+					{
 						id: 'option',
 						label: 'Mix option',
 						type: 'dropdown',
 						default: CHOICES_CLASSIC_AUDIO_MIX_OPTION[0].id,
 						choices: CHOICES_CLASSIC_AUDIO_MIX_OPTION,
-					}),
+					} satisfies CompanionInputFieldDropdown,
 				],
 				defaultStyle: {
 					color: combineRgb(0, 0, 0),
@@ -1266,14 +1265,14 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 						return undefined
 					}
 				},
-			}),
-			[FeedbackId.ClassicAudioMasterGain]: literal<CompanionFeedbackDefinition>({
+			} satisfies CompanionFeedbackDefinition,
+			[FeedbackId.ClassicAudioMasterGain]: {
 				type: 'boolean',
 				name: 'Classic Audio: Master gain',
 				description: 'If the audio master has the specified gain, change style of the bank',
 				options: [
 					NumberComparitorPicker(),
-					literal<CompanionInputFieldNumber>({
+					{
 						type: 'number',
 						label: 'Fader Level (-60 = -inf)',
 						id: 'gain',
@@ -1283,7 +1282,7 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 						step: 0.1,
 						min: -60,
 						max: 6,
-					}),
+					} satisfies CompanionInputFieldNumber,
 				],
 				defaultStyle: {
 					color: combineRgb(0, 0, 0),
@@ -1305,7 +1304,7 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 						return undefined
 					}
 				},
-			}),
+			} satisfies CompanionFeedbackDefinition,
 			[FeedbackId.FairlightAudioInputGain]: undefined,
 			[FeedbackId.FairlightAudioFaderGain]: undefined,
 			[FeedbackId.FairlightAudioMixOption]: undefined,
@@ -1320,7 +1319,7 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 			[FeedbackId.ClassicAudioGain]: undefined,
 			[FeedbackId.ClassicAudioMixOption]: undefined,
 			[FeedbackId.ClassicAudioMasterGain]: undefined,
-			[FeedbackId.FairlightAudioInputGain]: literal<CompanionFeedbackDefinition>({
+			[FeedbackId.FairlightAudioInputGain]: {
 				type: 'boolean',
 				name: 'Fairlight Audio: Audio input gain',
 				description: 'If the audio input has the specified input gain, change style of the bank',
@@ -1328,7 +1327,7 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 					audioInputOption,
 					audioSourceOption,
 					NumberComparitorPicker(),
-					literal<CompanionInputFieldNumber>({
+					{
 						type: 'number',
 						label: 'Input Level (-100 = -inf)',
 						id: 'gain',
@@ -1338,7 +1337,7 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 						step: 0.1,
 						min: -100,
 						max: 6,
-					}),
+					} satisfies CompanionInputFieldNumber,
 				],
 				defaultStyle: {
 					color: combineRgb(0, 0, 0),
@@ -1366,8 +1365,8 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 						return undefined
 					}
 				},
-			}),
-			[FeedbackId.FairlightAudioFaderGain]: literal<CompanionFeedbackDefinition>({
+			} satisfies CompanionFeedbackDefinition,
+			[FeedbackId.FairlightAudioFaderGain]: {
 				type: 'boolean',
 				name: 'Fairlight Audio: Audio fader gain',
 				description: 'If the audio input has the specified fader gain, change style of the bank',
@@ -1375,7 +1374,7 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 					audioInputOption,
 					audioSourceOption,
 					NumberComparitorPicker(),
-					literal<CompanionInputFieldNumber>({
+					{
 						type: 'number',
 						label: 'Fader Level (-100 = -inf)',
 						id: 'gain',
@@ -1385,7 +1384,7 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 						step: 0.1,
 						min: -100,
 						max: 10,
-					}),
+					} satisfies CompanionInputFieldNumber,
 				],
 				defaultStyle: {
 					color: combineRgb(0, 0, 0),
@@ -1414,21 +1413,21 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 						return undefined
 					}
 				},
-			}),
-			[FeedbackId.FairlightAudioMixOption]: literal<CompanionFeedbackDefinition>({
+			} satisfies CompanionFeedbackDefinition,
+			[FeedbackId.FairlightAudioMixOption]: {
 				type: 'boolean',
 				name: 'Fairlight Audio: Audio mix option',
 				description: 'If the audio input has the specified mix option, change style of the bank',
 				options: [
 					audioInputOption,
 					audioSourceOption,
-					literal<CompanionInputFieldDropdown>({
+					{
 						id: 'option',
 						label: 'Mix option',
 						type: 'dropdown',
 						default: CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION[0].id,
 						choices: CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION,
-					}),
+					} satisfies CompanionInputFieldDropdown,
 				],
 				defaultStyle: {
 					color: combineRgb(0, 0, 0),
@@ -1454,14 +1453,14 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 						return undefined
 					}
 				},
-			}),
-			[FeedbackId.FairlightAudioMasterGain]: literal<CompanionFeedbackDefinition>({
+			} satisfies CompanionFeedbackDefinition,
+			[FeedbackId.FairlightAudioMasterGain]: {
 				type: 'boolean',
 				name: 'Fairlight Audio: Master fader gain',
 				description: 'If the master has the specified fader gain, change style of the bank',
 				options: [
 					NumberComparitorPicker(),
-					literal<CompanionInputFieldNumber>({
+					{
 						type: 'number',
 						label: 'Fader Level (-100 = -inf)',
 						id: 'gain',
@@ -1471,7 +1470,7 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 						step: 0.1,
 						min: -100,
 						max: 10,
-					}),
+					} satisfies CompanionInputFieldNumber,
 				],
 				defaultStyle: {
 					color: combineRgb(0, 0, 0),
@@ -1493,9 +1492,9 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 						return undefined
 					}
 				},
-			}),
+			} satisfies CompanionFeedbackDefinition,
 			[FeedbackId.FairlightAudioMonitorMasterMuted]: model.fairlightAudio.monitor
-				? literal<CompanionFeedbackDefinition>({
+				? ({
 						type: 'boolean',
 						name: 'Fairlight Audio: Monitor/Headphone Master muted',
 						description: 'If the headphone master is muted, change style of the bank',
@@ -1509,16 +1508,16 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 						callback: (_evt: CompanionFeedbackBooleanEvent): boolean => {
 							return !!state.fairlight?.monitor?.inputMasterMuted
 						},
-				  })
+				  } satisfies CompanionFeedbackDefinition)
 				: undefined,
 			[FeedbackId.FairlightAudioMonitorFaderGain]: model.fairlightAudio.monitor
-				? literal<CompanionFeedbackDefinition>({
+				? ({
 						type: 'boolean',
 						name: 'Fairlight Audio: Monitor/Headphone Gain',
 						description: 'If the headphone/monitor has the specified fader gain, change style of the bank',
 						options: [
 							NumberComparitorPicker(),
-							literal<CompanionInputFieldNumber>({
+							{
 								type: 'number',
 								label: 'Fader Level (-60 = Min)',
 								id: 'gain',
@@ -1528,7 +1527,7 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 								step: 0.1,
 								min: -60,
 								max: 10,
-							}),
+							} satisfies CompanionInputFieldNumber,
 						],
 						defaultStyle: {
 							color: combineRgb(0, 0, 0),
@@ -1550,7 +1549,7 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 								return undefined
 							}
 						},
-				  })
+				  } satisfies CompanionFeedbackDefinition)
 				: undefined,
 		}
 	} else {
@@ -1585,7 +1584,7 @@ export function GetFeedbacksList(
 		...streamRecordFeedbacks(model, state),
 		...audioFeedbacks(model, state),
 		[FeedbackId.AuxBG]: model.auxes
-			? literal<CompanionFeedbackDefinition>({
+			? ({
 					type: 'boolean',
 					name: 'Aux/Output: Source',
 					description: 'If the input specified is in use by the aux bus specified, change style of the bank',
@@ -1610,10 +1609,10 @@ export function GetFeedbacksList(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.Macro]: model.macros
-			? literal<CompanionFeedbackDefinition>({
+			? ({
 					type: 'boolean',
 					name: 'Macro: State',
 					description: 'If the specified macro is running or waiting, change style of the bank',
@@ -1624,7 +1623,7 @@ export function GetFeedbacksList(
 							id: 'macroIndex',
 							default: 1,
 							choices: GetMacroChoices(model, state),
-						},
+						} satisfies CompanionInputFieldDropdown,
 						{
 							type: 'dropdown',
 							label: 'State',
@@ -1636,7 +1635,7 @@ export function GetFeedbacksList(
 								{ id: MacroFeedbackType.IsRecording, label: 'Is Recording' },
 								{ id: MacroFeedbackType.IsUsed, label: 'Is Used' },
 							],
-						},
+						} satisfies CompanionInputFieldDropdown,
 					],
 					defaultStyle: {
 						color: combineRgb(255, 255, 255),
@@ -1666,10 +1665,10 @@ export function GetFeedbacksList(
 						}
 						return false
 					},
-			  })
+			  } satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.MVSource]: model.MVs
-			? literal<CompanionFeedbackDefinition>({
+			? ({
 					type: 'boolean',
 					name: 'Multiviewer: Window source',
 					description: 'If the specified MV window is set to the specified source, change style of the bank',
@@ -1698,10 +1697,10 @@ export function GetFeedbacksList(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.MediaPlayerSource]: model.media.players
-			? literal<CompanionFeedbackDefinition>({
+			? ({
 					type: 'boolean',
 					name: 'Media player: Source',
 					description: 'If the specified media player has the specified source, change style of the bank',
@@ -1738,7 +1737,7 @@ export function GetFeedbacksList(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionFeedbackDefinition)
 			: undefined,
 	}
 

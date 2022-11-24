@@ -56,7 +56,6 @@ import {
 import {
 	assertUnreachable,
 	calculateTransitionSelection,
-	literal,
 	MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
 	compact,
 	clamp,
@@ -134,8 +133,7 @@ export enum ActionId {
 	InputName = 'inputName',
 }
 
-type CompanionActionExt = CompanionActionDefinition // & Required<Pick<CompanionAction, 'callback'>>
-type CompanionActionsExt = { [id in ActionId]: CompanionActionExt | undefined }
+type CompanionActionsExt = { [id in ActionId]: CompanionActionDefinition | undefined }
 
 function getOptNumber(action: CompanionActionEvent, key: string, defVal?: number): number {
 	const rawVal = action.options[key]
@@ -159,7 +157,7 @@ function meActions(
 	state: AtemState
 ) {
 	return {
-		[ActionId.Program]: literal<CompanionActionExt>({
+		[ActionId.Program]: {
 			name: 'ME: Set Program input',
 			options: [AtemMEPicker(model, 0), AtemMESourcePicker(model, state, 0)],
 			callback: async (action) => {
@@ -177,8 +175,8 @@ function meActions(
 					return undefined
 				}
 			},
-		}),
-		[ActionId.Preview]: literal<CompanionActionExt>({
+		} satisfies CompanionActionDefinition,
+		[ActionId.Preview]: {
 			name: 'ME: Set Preview input',
 			options: [AtemMEPicker(model, 0), AtemMESourcePicker(model, state, 0)],
 			callback: async (action) => {
@@ -196,24 +194,24 @@ function meActions(
 					return undefined
 				}
 			},
-		}),
-		[ActionId.Cut]: literal<CompanionActionExt>({
+		} satisfies CompanionActionDefinition,
+		[ActionId.Cut]: {
 			name: 'ME: Perform CUT transition',
 			options: [AtemMEPicker(model, 0)],
 			callback: async (action) => {
 				await atem?.cut(getOptNumber(action, 'mixeffect'))
 			},
-		}),
-		[ActionId.Auto]: literal<CompanionActionExt>({
+		} satisfies CompanionActionDefinition,
+		[ActionId.Auto]: {
 			name: 'ME: Perform AUTO transition',
 			options: [AtemMEPicker(model, 0)],
 			callback: async (action) => {
 				await atem?.autoTransition(getOptNumber(action, 'mixeffect'))
 			},
-		}),
+		} satisfies CompanionActionDefinition,
 
 		[ActionId.USKSource]: model.USKs
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'Upstream key: Set inputs',
 					options: [
 						AtemMEPicker(model, 0),
@@ -248,10 +246,10 @@ function meActions(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.USKOnAir]: model.USKs
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'Upstream key: Set OnAir',
 					options: [
 						{
@@ -286,9 +284,9 @@ function meActions(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
-		[ActionId.TransitionStyle]: literal<CompanionActionExt>({
+		[ActionId.TransitionStyle]: {
 			name: 'Transition: Set style/pattern',
 			options: [AtemMEPicker(model, 0), AtemTransitionStylePicker(model.media.clips === 0)],
 			callback: async (action) => {
@@ -311,8 +309,8 @@ function meActions(
 					return undefined
 				}
 			},
-		}),
-		[ActionId.TransitionRate]: literal<CompanionActionExt>({
+		} satisfies CompanionActionDefinition,
+		[ActionId.TransitionRate]: {
 			name: 'Transition: Change rate',
 			options: [AtemMEPicker(model, 0), AtemTransitionStylePicker(true), AtemRatePicker('Transition Rate')],
 			callback: async (action) => {
@@ -396,8 +394,8 @@ function meActions(
 					return undefined
 				}
 			},
-		}),
-		[ActionId.TransitionSelection]: literal<CompanionActionExt>({
+		} satisfies CompanionActionDefinition,
+		[ActionId.TransitionSelection]: {
 			name: 'Transition: Change selection',
 			options: [AtemMEPicker(model, 0), ...AtemTransitionSelectionPickers(model)],
 			callback: async (action) => {
@@ -408,8 +406,8 @@ function meActions(
 					getOptNumber(action, 'mixeffect')
 				)
 			},
-		}),
-		[ActionId.TransitionSelectionComponent]: literal<CompanionActionExt>({
+		} satisfies CompanionActionDefinition,
+		[ActionId.TransitionSelectionComponent]: {
 			name: 'Transition: Change selection component',
 			options: [
 				AtemMEPicker(model, 0),
@@ -464,15 +462,15 @@ function meActions(
 					})
 				}
 			},
-		}),
-		[ActionId.FadeToBlackAuto]: literal<CompanionActionExt>({
+		} satisfies CompanionActionDefinition,
+		[ActionId.FadeToBlackAuto]: {
 			name: 'Fade to black: Run AUTO Transition',
 			options: [AtemMEPicker(model, 0)],
 			callback: async (action) => {
 				await atem?.fadeToBlack(getOptNumber(action, 'mixeffect'))
 			},
-		}),
-		[ActionId.FadeToBlackRate]: literal<CompanionActionExt>({
+		} satisfies CompanionActionDefinition,
+		[ActionId.FadeToBlackRate]: {
 			name: 'Fade to black: Change rate',
 			options: [AtemMEPicker(model, 0), AtemRatePicker('Rate')],
 			callback: async (action) => {
@@ -490,9 +488,9 @@ function meActions(
 					return undefined
 				}
 			},
-		}),
+		} satisfies CompanionActionDefinition,
 		[ActionId.USKMaskLumaChromaPattern]: model.USKs
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'Upstream key: Set Mask (Luma, Chroma, Pattern)',
 					options: compact([AtemMEPicker(model, 0), AtemUSKPicker(model), ...AtemUSKMaskPropertiesPickers()]),
 					callback: async (action) => {
@@ -539,10 +537,10 @@ function meActions(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.USKDVEProperties]: model.DVEs
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'Upstream key: Change DVE properties',
 					options: compact([AtemMEPicker(model, 0), AtemUSKPicker(model), ...AtemUSKDVEPropertiesPickers()]),
 					callback: async (action) => {
@@ -673,11 +671,11 @@ function meActions(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.USKFly]:
 			model.USKs && model.DVEs
-				? literal<CompanionActionExt>({
+				? ({
 						name: 'Upstream key: fly to keyframe',
 						options: [
 							AtemMEPicker(model, 0),
@@ -709,11 +707,11 @@ function meActions(
 								return undefined
 							}
 						},
-				  })
+				  } satisfies CompanionActionDefinition)
 				: undefined,
 		[ActionId.USKFlyInfinite]:
 			model.USKs && model.DVEs
-				? literal<CompanionActionExt>({
+				? ({
 						name: 'Upstream key: fly to infinite',
 						options: [
 							AtemMEPicker(model, 0),
@@ -745,7 +743,7 @@ function meActions(
 								return undefined
 							}
 						},
-				  })
+				  } satisfies CompanionActionDefinition)
 				: undefined,
 	}
 }
@@ -754,7 +752,7 @@ function meActions(
 function dskActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) {
 	return {
 		[ActionId.DSKSource]: model.DSKs
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'Downstream key: Set inputs',
 					options: [AtemDSKPicker(model), AtemKeyFillSourcePicker(model, state), AtemKeyCutSourcePicker(model, state)],
 					callback: async (action) => {
@@ -776,10 +774,10 @@ function dskActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) 
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.DSKRate]: model.DSKs
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'Downstream key: Set Rate',
 					options: [AtemDSKPicker(model), AtemRatePicker('Rate')],
 					callback: async (action) => {
@@ -797,10 +795,10 @@ function dskActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) 
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.DSKMask]: model.DSKs
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'Downstream key: Set Mask',
 					options: compact([AtemDSKPicker(model), ...AtemDSKMaskPropertiesPickers()]),
 					callback: async (action) => {
@@ -846,10 +844,10 @@ function dskActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) 
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.DSKPreMultipliedKey]: model.DSKs
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'Downstream key: Set Pre Multiplied Key',
 					options: compact([AtemDSKPicker(model), ...AtemDSKPreMultipliedKeyPropertiesPickers()]),
 					callback: async (action) => {
@@ -891,10 +889,10 @@ function dskActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) 
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.DSKAuto]: model.DSKs
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'Downstream key: Run AUTO Transition',
 					options: [
 						{
@@ -908,10 +906,10 @@ function dskActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) 
 					callback: async (action) => {
 						await atem?.autoDownstreamKey(getOptNumber(action, 'downstreamKeyerId'))
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.DSKOnAir]: model.DSKs
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'Downstream key: Set OnAir',
 					options: [
 						{
@@ -944,10 +942,10 @@ function dskActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) 
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.DSKTie]: model.DSKs
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'Downstream key: Set Tied',
 					options: [
 						{
@@ -980,7 +978,7 @@ function dskActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) 
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 	}
 }
@@ -989,7 +987,7 @@ function dskActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) 
 function macroActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) {
 	return {
 		[ActionId.MacroRun]: model.macros
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'Macro: Run',
 					options: [
 						{
@@ -1025,25 +1023,25 @@ function macroActions(atem: Atem | undefined, model: ModelSpec, state: AtemState
 							await atem?.macroRun(macroIndex)
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.MacroContinue]: model.macros
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'Macro: Continue',
 					options: [],
 					callback: async () => {
 						await atem?.macroContinue()
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.MacroStop]: model.macros
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'Macro: Stop',
 					options: [],
 					callback: async () => {
 						await atem?.macroStop()
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 	}
 }
@@ -1052,7 +1050,7 @@ function macroActions(atem: Atem | undefined, model: ModelSpec, state: AtemState
 function ssrcActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) {
 	return {
 		[ActionId.SuperSourceArt]: model.SSrc
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'SuperSource: Set art properties',
 					options: compact([
 						AtemSuperSourceIdPicker(model),
@@ -1111,10 +1109,10 @@ function ssrcActions(atem: Atem | undefined, model: ModelSpec, state: AtemState)
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.SuperSourceBoxSource]: model.SSrc
-			? literal<CompanionActionExt>({
+			? ({
 					// TODO - combine into ActionId.SuperSourceBoxProperties
 					name: 'SuperSource: Set box source',
 					options: compact([
@@ -1145,10 +1143,10 @@ function ssrcActions(atem: Atem | undefined, model: ModelSpec, state: AtemState)
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.SuperSourceBoxOnAir]: model.SSrc
-			? literal<CompanionActionExt>({
+			? ({
 					// TODO - combine into ActionId.SuperSourceBoxProperties
 					name: 'SuperSource: Set box enabled',
 					options: compact([
@@ -1199,10 +1197,10 @@ function ssrcActions(atem: Atem | undefined, model: ModelSpec, state: AtemState)
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.SuperSourceBoxProperties]: model.SSrc
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'SuperSource: Change box properties',
 					options: compact([
 						AtemSuperSourceIdPicker(model),
@@ -1266,10 +1264,10 @@ function ssrcActions(atem: Atem | undefined, model: ModelSpec, state: AtemState)
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.SuperSourceBoxPropertiesDelta]: model.SSrc
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'SuperSource: Offset box properties',
 					options: compact([
 						AtemSuperSourceIdPicker(model),
@@ -1304,7 +1302,7 @@ function ssrcActions(atem: Atem | undefined, model: ModelSpec, state: AtemState)
 
 						await atem?.setSuperSourceBoxSettings(newProps, boxIndex, ssrcId)
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 	}
 }
@@ -1318,7 +1316,7 @@ function streamRecordActions(
 ) {
 	return {
 		[ActionId.StreamStartStop]: model.streaming
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'Stream: Start or Stop',
 					options: [
 						{
@@ -1351,10 +1349,10 @@ function streamRecordActions(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.StreamService]: model.recording
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'Stream: Set service',
 					options: [
 						{
@@ -1395,10 +1393,10 @@ function streamRecordActions(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.RecordStartStop]: model.recording
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'Recording: Start or Stop',
 					options: [
 						{
@@ -1431,19 +1429,19 @@ function streamRecordActions(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.RecordSwitchDisk]: model.recording
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'Recording: Switch disk',
 					options: [],
 					callback: async () => {
 						await atem?.switchRecordingDisk()
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.RecordFilename]: model.recording
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'Recording: Set filename',
 					options: [
 						{
@@ -1469,7 +1467,7 @@ function streamRecordActions(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 	}
 }
@@ -1479,7 +1477,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 	if (model.classicAudio) {
 		const audioInputOption = AtemAudioInputPicker(model, state)
 		return {
-			[ActionId.ClassicAudioGain]: literal<CompanionActionExt>({
+			[ActionId.ClassicAudioGain]: {
 				name: 'Classic Audio: Set input gain',
 				options: [
 					audioInputOption,
@@ -1524,8 +1522,8 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 						return undefined
 					}
 				},
-			}),
-			[ActionId.ClassicAudioGainDelta]: literal<CompanionActionExt>({
+			} satisfies CompanionActionDefinition,
+			[ActionId.ClassicAudioGainDelta]: {
 				name: 'Classic Audio: Adjust input gain',
 				options: [audioInputOption, FaderLevelDeltaChoice, FadeDurationChoice],
 				callback: async (action) => {
@@ -1545,8 +1543,8 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 						)
 					}
 				},
-			}),
-			[ActionId.ClassicAudioMixOption]: literal<CompanionActionExt>({
+			} satisfies CompanionActionDefinition,
+			[ActionId.ClassicAudioMixOption]: {
 				name: 'Classic Audio: Set input mix option',
 				options: [
 					audioInputOption,
@@ -1587,8 +1585,8 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 						return undefined
 					}
 				},
-			}),
-			[ActionId.ClassicAudioResetPeaks]: literal<CompanionActionExt>({
+			} satisfies CompanionActionDefinition,
+			[ActionId.ClassicAudioResetPeaks]: {
 				name: 'Classic Audio: Reset peaks',
 				options: [
 					{
@@ -1626,8 +1624,8 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 						await atem?.setClassicAudioResetPeaks({ input: inputId })
 					}
 				},
-			}),
-			[ActionId.ClassicAudioMasterGain]: literal<CompanionActionExt>({
+			} satisfies CompanionActionDefinition,
+			[ActionId.ClassicAudioMasterGain]: {
 				name: 'Classic Audio: Set master gain',
 				options: [
 					{
@@ -1666,8 +1664,8 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 						return undefined
 					}
 				},
-			}),
-			[ActionId.ClassicAudioMasterGainDelta]: literal<CompanionActionExt>({
+			} satisfies CompanionActionDefinition,
+			[ActionId.ClassicAudioMasterGainDelta]: {
 				name: 'Classic Audio: Adjust master gain',
 				options: [FaderLevelDeltaChoice, FadeDurationChoice],
 				callback: async (action) => {
@@ -1685,7 +1683,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 						)
 					}
 				},
-			}),
+			} satisfies CompanionActionDefinition,
 			[ActionId.FairlightAudioInputGain]: undefined,
 			[ActionId.FairlightAudioInputGainDelta]: undefined,
 			[ActionId.FairlightAudioFaderGain]: undefined,
@@ -1710,7 +1708,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 			[ActionId.ClassicAudioResetPeaks]: undefined,
 			[ActionId.ClassicAudioMasterGain]: undefined,
 			[ActionId.ClassicAudioMasterGainDelta]: undefined,
-			[ActionId.FairlightAudioInputGain]: literal<CompanionActionExt>({
+			[ActionId.FairlightAudioInputGain]: {
 				name: 'Fairlight Audio: Set input gain',
 				options: [
 					audioInputOption,
@@ -1762,8 +1760,8 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 						return undefined
 					}
 				},
-			}),
-			[ActionId.FairlightAudioInputGainDelta]: literal<CompanionActionExt>({
+			} satisfies CompanionActionDefinition,
+			[ActionId.FairlightAudioInputGainDelta]: {
 				name: 'Fairlight Audio: Adjust input gain',
 				options: [audioInputOption, audioSourceOption, FaderLevelDeltaChoice, FadeDurationChoice],
 				callback: async (action) => {
@@ -1788,8 +1786,8 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 						)
 					}
 				},
-			}),
-			[ActionId.FairlightAudioFaderGain]: literal<CompanionActionExt>({
+			} satisfies CompanionActionDefinition,
+			[ActionId.FairlightAudioFaderGain]: {
 				name: 'Fairlight Audio: Set fader gain',
 				options: [
 					audioInputOption,
@@ -1841,8 +1839,8 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 						return undefined
 					}
 				},
-			}),
-			[ActionId.FairlightAudioFaderGainDelta]: literal<CompanionActionExt>({
+			} satisfies CompanionActionDefinition,
+			[ActionId.FairlightAudioFaderGainDelta]: {
 				name: 'Fairlight Audio: Adjust fader gain',
 				options: [audioInputOption, audioSourceOption, FaderLevelDeltaChoice, FadeDurationChoice],
 				callback: async (action) => {
@@ -1867,8 +1865,8 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 						)
 					}
 				},
-			}),
-			[ActionId.FairlightAudioMixOption]: literal<CompanionActionExt>({
+			} satisfies CompanionActionDefinition,
+			[ActionId.FairlightAudioMixOption]: {
 				name: 'Fairlight Audio: Set input mix option',
 				options: [
 					audioInputOption,
@@ -1913,8 +1911,8 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 						return undefined
 					}
 				},
-			}),
-			[ActionId.FairlightAudioResetPeaks]: literal<CompanionActionExt>({
+			} satisfies CompanionActionDefinition,
+			[ActionId.FairlightAudioResetPeaks]: {
 				name: 'Fairlight Audio: Reset peaks',
 				options: [
 					{
@@ -1942,8 +1940,8 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 						await atem?.setFairlightAudioMixerResetPeaks({ master: true, all: false })
 					}
 				},
-			}),
-			[ActionId.FairlightAudioResetSourcePeaks]: literal<CompanionActionExt>({
+			} satisfies CompanionActionDefinition,
+			[ActionId.FairlightAudioResetSourcePeaks]: {
 				name: 'Fairlight Audio: Reset Source peaks',
 				options: [audioInputOption, audioSourceOption],
 				callback: async (action) => {
@@ -1955,8 +1953,8 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 						dynamicsOutput: false,
 					})
 				},
-			}),
-			[ActionId.FairlightAudioMasterGain]: literal<CompanionActionExt>({
+			} satisfies CompanionActionDefinition,
+			[ActionId.FairlightAudioMasterGain]: {
 				name: 'Fairlight Audio: Set master gain',
 				options: [
 					{
@@ -1997,8 +1995,8 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 						return undefined
 					}
 				},
-			}),
-			[ActionId.FairlightAudioMasterGainDelta]: literal<CompanionActionExt>({
+			} satisfies CompanionActionDefinition,
+			[ActionId.FairlightAudioMasterGainDelta]: {
 				name: 'Fairlight Audio: Adjust master gain',
 				options: [FaderLevelDeltaChoice, FadeDurationChoice],
 				callback: async (action) => {
@@ -2018,9 +2016,9 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 						)
 					}
 				},
-			}),
+			} satisfies CompanionActionDefinition,
 			[ActionId.FairlightAudioMonitorMasterMuted]: model.fairlightAudio.monitor
-				? literal<CompanionActionExt>({
+				? ({
 						name: 'Fairlight Audio: Monitor/Headphone master muted',
 						options: [
 							{
@@ -2055,10 +2053,10 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 								return undefined
 							}
 						},
-				  })
+				  } satisfies CompanionActionDefinition)
 				: undefined,
 			[ActionId.FairlightAudioMonitorGain]: model.fairlightAudio.monitor
-				? literal<CompanionActionExt>({
+				? ({
 						name: 'Fairlight Audio: Monitor/Headphone fader gain',
 						options: [
 							{
@@ -2099,10 +2097,10 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 								return undefined
 							}
 						},
-				  })
+				  } satisfies CompanionActionDefinition)
 				: undefined,
 			[ActionId.FairlightAudioMonitorGainDelta]: model.fairlightAudio.monitor
-				? literal<CompanionActionExt>({
+				? ({
 						name: 'Fairlight Audio: Adjust Monitor/Headphone fader gain',
 						options: [audioInputOption, audioSourceOption, FaderLevelDeltaChoice, FadeDurationChoice],
 						callback: async (action) => {
@@ -2121,7 +2119,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 								)
 							}
 						},
-				  })
+				  } satisfies CompanionActionDefinition)
 				: undefined,
 			// [ActionId.FairlightAudioMonitorMasterGain]: literal<CompanionActionExt>({
 			// 	label: 'Fairlight Audio: Monitor/Headphone master gain',
@@ -2198,7 +2196,7 @@ export function GetActionsList(
 		...streamRecordActions(instance, atem, model, state),
 		...audioActions(atem, model, transitions, state),
 		[ActionId.Aux]: model.auxes
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'Aux/Output: Set source',
 					options: [AtemAuxPicker(model), AtemAuxSourcePicker(model, state)],
 					callback: async (action) => {
@@ -2216,10 +2214,10 @@ export function GetActionsList(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.MultiviewerWindowSource]: model.MVs
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'Multiviewer: Change window source',
 					options: [
 						AtemMultiviewerPicker(model),
@@ -2245,10 +2243,10 @@ export function GetActionsList(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.MediaPlayerSource]: model.media.players
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'Media player: Set source',
 					options: [AtemMediaPlayerPicker(model), AtemMediaPlayerSourcePicker(model, state)],
 					callback: async (action) => {
@@ -2283,10 +2281,10 @@ export function GetActionsList(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.MediaPlayerCycle]: model.media.players
-			? literal<CompanionActionExt>({
+			? ({
 					name: 'Media player: Cycle source',
 					options: [
 						AtemMediaPlayerPicker(model),
@@ -2329,23 +2327,23 @@ export function GetActionsList(
 							)
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
-		[ActionId.SaveStartupState]: literal<CompanionActionExt>({
+		[ActionId.SaveStartupState]: {
 			name: 'Startup State: Save',
 			options: [],
 			callback: async () => {
 				await atem?.saveStartupState()
 			},
-		}),
-		[ActionId.ClearStartupState]: literal<CompanionActionExt>({
+		} satisfies CompanionActionDefinition,
+		[ActionId.ClearStartupState]: {
 			name: 'Startup State: Clear',
 			options: [],
 			callback: async () => {
 				await atem?.clearStartupState()
 			},
-		}),
-		[ActionId.InputName]: literal<CompanionActionExt>({
+		} satisfies CompanionActionDefinition,
+		[ActionId.InputName]: {
 			name: 'Input: Set name',
 			options: [
 				AtemAllSourcePicker(model, state),
@@ -2414,7 +2412,7 @@ export function GetActionsList(
 					return undefined
 				}
 			},
-		}),
+		} satisfies CompanionActionDefinition,
 	}
 
 	return actions
