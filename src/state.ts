@@ -1,10 +1,6 @@
-import { AtemState, Commands, SettingsState, VideoState } from 'atem-connection'
-import { InputValue } from '../../../instance_skel_types'
-import { SuperSource, TransitionProperties } from 'atem-connection/dist/state/video'
-import { MultiViewerWindowState } from 'atem-connection/dist/state/settings'
-import { MediaPlayerState } from 'atem-connection/dist/state/media'
-import { FairlightAudioInput } from 'atem-connection/dist/state/fairlight'
-import { ClassicAudioChannel } from 'atem-connection/dist/state/audio'
+import { AtemState, Commands, SettingsState, VideoState, MediaState, Fairlight, ClassicAudio } from 'atem-connection'
+import { SuperSource, TransitionProperties } from 'atem-connection/dist/state/video/index.js'
+import { InputValue } from '@companion-module/base'
 
 export type TallyBySource = Commands.TallyBySourceCommand['properties']
 
@@ -44,18 +40,18 @@ export function getMultiviewerWindow(
 	state: AtemState,
 	mvIndex: InputValue | undefined,
 	windowIndex: InputValue | undefined
-): MultiViewerWindowState | undefined {
+): SettingsState.MultiViewerWindowState | undefined {
 	const mv = getMultiviewer(state, mvIndex)
 	return mv ? mv.windows[Number(windowIndex)] : undefined
 }
-export function getMediaPlayer(state: AtemState, index: number): MediaPlayerState | undefined {
+export function getMediaPlayer(state: AtemState, index: number): MediaState.MediaPlayerState | undefined {
 	return state.media.players[index]
 }
 
-export function getFairlightAudioInput(state: AtemState, index: number): FairlightAudioInput | undefined {
+export function getFairlightAudioInput(state: AtemState, index: number): Fairlight.FairlightAudioInput | undefined {
 	return state.fairlight?.inputs[index]
 }
 
-export function getClassicAudioInput(state: AtemState, index: number): ClassicAudioChannel | undefined {
+export function getClassicAudioInput(state: AtemState, index: number): ClassicAudio.ClassicAudioChannel | undefined {
 	return state.audio?.channels[index]
 }

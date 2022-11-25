@@ -3,6 +3,6 @@
 	"include": ["src/**/*.ts", "dump-model.ts"],
 	"exclude": ["node_modules/**"],
 	"compilerOptions": {
-		"types": ["jest", "node"]
+		// "types": ["jest", "node"]
 	}
 }

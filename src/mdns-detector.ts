@@ -11,6 +11,10 @@ export interface AtemMdnsDetector {
 	listKnown(): AtemInfo[]
 }
 
+/*
+ * TODO - this needs some rethinking as it will no longer be a singleton.
+ * Is there another way we can make a singleton without making a mess?
+ */
 class AtemMdnsDetectorImpl implements AtemMdnsDetector {
 	private readonly subscribers = new Set<string>()
 	private bonjour: Bonjour | undefined

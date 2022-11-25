@@ -1,7 +1,7 @@
-import { ModelSpec } from './types'
+import { ModelSpec } from './types.js'
 import { Enums } from 'atem-connection'
 
-import { ModelSpecMiniPro } from './minipro'
+import { ModelSpecMiniPro } from './minipro.js'
 
 export const ModelSpecMiniProISO: ModelSpec = {
 	...ModelSpecMiniPro,

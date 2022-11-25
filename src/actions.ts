@@ -1,6 +1,4 @@
 import { Atem, AtemState, Enums, InputState, VideoState } from 'atem-connection'
-import InstanceSkel = require('../../../instance_skel')
-import { CompanionAction, CompanionActionEvent, CompanionActions } from '../../../instance_skel_types'
 import {
 	CHOICES_KEYTRANS,
 	GetDSKIdChoices,
@@ -10,8 +8,8 @@ import {
 	CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION,
 	CHOICES_KEYFRAMES,
 	CHOICES_FLYDIRECTIONS,
-} from './choices'
-import { AtemConfig } from './config'
+} from './choices.js'
+import { AtemConfig } from './config.js'
 import {
 	AtemAuxPicker,
 	AtemAuxSourcePicker,
@@ -44,8 +42,8 @@ import {
 	AtemSuperSourceArtPropertiesPickers,
 	AtemDSKMaskPropertiesPickers,
 	AtemDSKPreMultipliedKeyPropertiesPickers,
-} from './input'
-import { ModelSpec } from './models'
+} from './input.js'
+import { ModelSpec } from './models/index.js'
 import {
 	getDSK,
 	getSuperSourceBox,
@@ -54,22 +52,21 @@ import {
 	getMediaPlayer,
 	getMixEffect,
 	getMultiviewerWindow,
-} from './state'
+} from './state.js'
 import {
 	assertUnreachable,
 	calculateTransitionSelection,
-	literal,
 	MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
 	compact,
 	clamp,
-	executePromise,
-} from './util'
-import { AtemCommandBatching, CommandBatching } from './batching'
-import { AtemTransitions } from './transitions'
-import { SuperSource } from 'atem-connection/dist/state/video'
-import { DownstreamKeyerMask, DownstreamKeyerGeneral } from 'atem-connection/dist/state/video/downstreamKeyers'
-
-import { UpstreamKeyerMaskSettings, UpstreamKeyerDVESettings } from 'atem-connection/dist/state/video/upstreamKeyers'
+	InstanceBaseExt,
+} from './util.js'
+import { AtemCommandBatching, CommandBatching } from './batching.js'
+import { AtemTransitions } from './transitions.js'
+import { SuperSource } from 'atem-connection/dist/state/video/index.js'
+import { CompanionActionDefinition, CompanionActionEvent } from '@companion-module/base'
+import { DownstreamKeyerMask, DownstreamKeyerGeneral } from 'atem-connection/dist/state/video/downstreamKeyers.js'
+import { UpstreamKeyerMaskSettings, UpstreamKeyerDVESettings } from 'atem-connection/dist/state/video/upstreamKeyers.js'
 
 export enum ActionId {
 	Program = 'program',
@@ -140,8 +137,7 @@ export enum ActionId {
 	InputName = 'inputName',
 }
 
-type CompanionActionExt = CompanionAction & Required<Pick<CompanionAction, 'callback'>>
-type CompanionActionsExt = { [id in ActionId]: CompanionActionExt | undefined }
+type CompanionActionsExt = { [id in ActionId]: CompanionActionDefinition | undefined }
 
 function getOptNumber(action: CompanionActionEvent, key: string, defVal?: number): number {
 	const rawVal = action.options[key]
@@ -158,21 +154,18 @@ function getOptBool(action: CompanionActionEvent, key: string): boolean {
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function meActions(
-	instance: InstanceSkel<AtemConfig>,
+	instance: InstanceBaseExt<AtemConfig>,
 	atem: Atem | undefined,
 	model: ModelSpec,
 	commandBatching: AtemCommandBatching,
 	state: AtemState
 ) {
 	return {
-		[ActionId.Program]: literal<CompanionActionExt>({
-			label: 'ME: Set Program input',
+		[ActionId.Program]: {
+			name: 'ME: Set Program input',
 			options: [AtemMEPicker(model, 0), AtemMESourcePicker(model, state, 0)],
-			callback: (action): void => {
-				executePromise(
-					instance,
-					atem?.changeProgramInput(getOptNumber(action, 'input'), getOptNumber(action, 'mixeffect'))
-				)
+			callback: async (action) => {
+				await atem?.changeProgramInput(getOptNumber(action, 'input'), getOptNumber(action, 'mixeffect'))
 			},
 			learn: (action) => {
 				const me = getMixEffect(state, getOptNumber(action, 'mixeffect'))
@@ -186,44 +179,39 @@ function meActions(
 					return undefined
 				}
 			},
-		}),
-		[ActionId.ProgramVariables]: literal<CompanionActionExt>({
-			label: 'ME: Set Program input from variables',
+		} satisfies CompanionActionDefinition,
+		[ActionId.ProgramVariables]: {
+			name: 'ME: Set Program input from variables',
 			options: [
 				{
-					type: 'textwithvariables',
+					type: 'textinput',
 					id: 'mixeffect',
 					label: 'M/E',
 					default: '1',
+					useVariables: true,
 				},
 				{
-					type: 'textwithvariables',
+					type: 'textinput',
 					id: 'input',
 					label: 'Input ID',
 					default: '0',
+					useVariables: true,
 				},
 			],
-			callback: (action): void => {
-				instance.parseVariables(action.options.mixeffect as string, (meStr) => {
-					instance.parseVariables(action.options.input as string, (inputStr) => {
-						const mixeffect = Number(meStr)
-						const input = Number(inputStr)
+			callback: async (action) => {
+				const mixeffect = Number(await instance.parseVariablesInString(action.options.mixeffect as string))
+				const input = Number(await instance.parseVariablesInString(action.options.input as string))
 
-						if (!isNaN(mixeffect) && !isNaN(input)) {
-							executePromise(instance, atem?.changeProgramInput(input, mixeffect - 1))
-						}
-					})
-				})
+				if (!isNaN(mixeffect) && !isNaN(input)) {
+					await atem?.changeProgramInput(input, mixeffect - 1)
+				}
 			},
-		}),
-		[ActionId.Preview]: literal<CompanionActionExt>({
-			label: 'ME: Set Preview input',
+		} satisfies CompanionActionDefinition,
+		[ActionId.Preview]: {
+			name: 'ME: Set Preview input',
 			options: [AtemMEPicker(model, 0), AtemMESourcePicker(model, state, 0)],
-			callback: (action): void => {
-				executePromise(
-					instance,
-					atem?.changePreviewInput(getOptNumber(action, 'input'), getOptNumber(action, 'mixeffect'))
-				)
+			callback: async (action) => {
+				await atem?.changePreviewInput(getOptNumber(action, 'input'), getOptNumber(action, 'mixeffect'))
 			},
 			learn: (action) => {
 				const me = getMixEffect(state, getOptNumber(action, 'mixeffect'))
@@ -237,76 +225,71 @@ function meActions(
 					return undefined
 				}
 			},
-		}),
-		[ActionId.PreviewVariables]: literal<CompanionActionExt>({
-			label: 'ME: Set Preview input from variables',
+		} satisfies CompanionActionDefinition,
+		[ActionId.PreviewVariables]: {
+			name: 'ME: Set Preview input from variables',
 			options: [
 				{
-					type: 'textwithvariables',
+					type: 'textinput',
 					id: 'mixeffect',
 					label: 'M/E',
 					default: '1',
+					useVariables: true,
 				},
 				{
-					type: 'textwithvariables',
+					type: 'textinput',
 					id: 'input',
 					label: 'Input ID',
 					default: '0',
+					useVariables: true,
 				},
 			],
-			callback: (action): void => {
-				instance.parseVariables(action.options.mixeffect as string, (meStr) => {
-					instance.parseVariables(action.options.input as string, (inputStr) => {
-						const mixeffect = Number(meStr)
-						const input = Number(inputStr)
+			callback: async (action) => {
+				const mixeffect = Number(await instance.parseVariablesInString(action.options.mixeffect as string))
+				const input = Number(await instance.parseVariablesInString(action.options.input as string))
 
-						if (!isNaN(mixeffect) && !isNaN(input)) {
-							executePromise(instance, atem?.changePreviewInput(input, mixeffect - 1))
-						}
-					})
-				})
+				if (!isNaN(mixeffect) && !isNaN(input)) {
+					await atem?.changePreviewInput(input, mixeffect - 1)
+				}
 			},
-		}),
-		[ActionId.Cut]: literal<CompanionActionExt>({
-			label: 'ME: Perform CUT transition',
+		} satisfies CompanionActionDefinition,
+		[ActionId.Cut]: {
+			name: 'ME: Perform CUT transition',
 			options: [AtemMEPicker(model, 0)],
-			callback: (action): void => {
-				executePromise(instance, atem?.cut(getOptNumber(action, 'mixeffect')))
+			callback: async (action) => {
+				await atem?.cut(getOptNumber(action, 'mixeffect'))
 			},
-		}),
-		[ActionId.Auto]: literal<CompanionActionExt>({
-			label: 'ME: Perform AUTO transition',
+		} satisfies CompanionActionDefinition,
+		[ActionId.Auto]: {
+			name: 'ME: Perform AUTO transition',
 			options: [AtemMEPicker(model, 0)],
-			callback: (action): void => {
-				executePromise(instance, atem?.autoTransition(getOptNumber(action, 'mixeffect')))
+			callback: async (action) => {
+				await atem?.autoTransition(getOptNumber(action, 'mixeffect'))
 			},
-		}),
+		} satisfies CompanionActionDefinition,
 
 		[ActionId.USKSource]: model.USKs
-			? literal<CompanionActionExt>({
-					label: 'Upstream key: Set inputs',
+			? ({
+					name: 'Upstream key: Set inputs',
 					options: [
 						AtemMEPicker(model, 0),
 						AtemUSKPicker(model),
 						AtemKeyFillSourcePicker(model, state),
 						AtemKeyCutSourcePicker(model, state),
 					],
-					callback: (action): void => {
-						executePromise(
-							instance,
-							Promise.all([
-								atem?.setUpstreamKeyerFillSource(
-									getOptNumber(action, 'fill'),
-									getOptNumber(action, 'mixeffect'),
-									getOptNumber(action, 'key')
-								),
-								atem?.setUpstreamKeyerCutSource(
-									getOptNumber(action, 'cut'),
-									getOptNumber(action, 'mixeffect'),
-									getOptNumber(action, 'key')
-								),
-							])
-						)
+					callback: async (action) => {
+						await Promise.all([
+							atem?.setUpstreamKeyerFillSource(
+								getOptNumber(action, 'fill'),
+								getOptNumber(action, 'mixeffect'),
+								getOptNumber(action, 'key')
+							),
+							atem?.setUpstreamKeyerCutSource(
+								getOptNumber(action, 'cut'),
+								getOptNumber(action, 'mixeffect'),
+								getOptNumber(action, 'key')
+							),
+						])
 					},
 					learn: (action) => {
 						const usk = getUSK(state, getOptNumber(action, 'mixeffect'), getOptNumber(action, 'key'))
@@ -321,11 +304,11 @@ function meActions(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.USKOnAir]: model.USKs
-			? literal<CompanionActionExt>({
-					label: 'Upstream key: Set OnAir',
+			? ({
+					name: 'Upstream key: Set OnAir',
 					options: [
 						{
 							id: 'onair',
@@ -337,14 +320,14 @@ function meActions(
 						AtemMEPicker(model, 0),
 						AtemUSKPicker(model),
 					],
-					callback: (action): void => {
+					callback: async (action) => {
 						const meIndex = getOptNumber(action, 'mixeffect')
 						const keyIndex = getOptNumber(action, 'key')
 						if (action.options.onair === 'toggle') {
 							const usk = getUSK(state, meIndex, keyIndex)
-							executePromise(instance, atem?.setUpstreamKeyerOnAir(!usk?.onAir, meIndex, keyIndex))
+							await atem?.setUpstreamKeyerOnAir(!usk?.onAir, meIndex, keyIndex)
 						} else {
-							executePromise(instance, atem?.setUpstreamKeyerOnAir(action.options.onair === 'true', meIndex, keyIndex))
+							await atem?.setUpstreamKeyerOnAir(action.options.onair === 'true', meIndex, keyIndex)
 						}
 					},
 					learn: (action) => {
@@ -359,20 +342,17 @@ function meActions(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
-		[ActionId.TransitionStyle]: literal<CompanionActionExt>({
-			label: 'Transition: Set style/pattern',
+		[ActionId.TransitionStyle]: {
+			name: 'Transition: Set style/pattern',
 			options: [AtemMEPicker(model, 0), AtemTransitionStylePicker(model.media.clips === 0)],
-			callback: (action): void => {
-				executePromise(
-					instance,
-					atem?.setTransitionStyle(
-						{
-							nextStyle: getOptNumber(action, 'style'),
-						},
-						getOptNumber(action, 'mixeffect')
-					)
+			callback: async (action) => {
+				await atem?.setTransitionStyle(
+					{
+						nextStyle: getOptNumber(action, 'style'),
+					},
+					getOptNumber(action, 'mixeffect')
 				)
 			},
 			learn: (action) => {
@@ -387,55 +367,45 @@ function meActions(
 					return undefined
 				}
 			},
-		}),
-		[ActionId.TransitionRate]: literal<CompanionActionExt>({
-			label: 'Transition: Change rate',
+		} satisfies CompanionActionDefinition,
+		[ActionId.TransitionRate]: {
+			name: 'Transition: Change rate',
 			options: [AtemMEPicker(model, 0), AtemTransitionStylePicker(true), AtemRatePicker('Transition Rate')],
-			callback: (action): void => {
+			callback: async (action) => {
 				const style = getOptNumber(action, 'style') as Enums.TransitionStyle
 				switch (style) {
 					case Enums.TransitionStyle.MIX:
-						executePromise(
-							instance,
-							atem?.setMixTransitionSettings(
-								{
-									rate: getOptNumber(action, 'rate'),
-								},
-								getOptNumber(action, 'mixeffect')
-							)
+						await atem?.setMixTransitionSettings(
+							{
+								rate: getOptNumber(action, 'rate'),
+							},
+							getOptNumber(action, 'mixeffect')
 						)
 						break
 					case Enums.TransitionStyle.DIP:
-						executePromise(
-							instance,
-							atem?.setDipTransitionSettings(
-								{
-									rate: getOptNumber(action, 'rate'),
-								},
-								getOptNumber(action, 'mixeffect')
-							)
+						await atem?.setDipTransitionSettings(
+							{
+								rate: getOptNumber(action, 'rate'),
+							},
+							getOptNumber(action, 'mixeffect')
 						)
+
 						break
 					case Enums.TransitionStyle.WIPE:
-						executePromise(
-							instance,
-							atem?.setWipeTransitionSettings(
-								{
-									rate: getOptNumber(action, 'rate'),
-								},
-								getOptNumber(action, 'mixeffect')
-							)
+						await atem?.setWipeTransitionSettings(
+							{
+								rate: getOptNumber(action, 'rate'),
+							},
+							getOptNumber(action, 'mixeffect')
 						)
+
 						break
 					case Enums.TransitionStyle.DVE:
-						executePromise(
-							instance,
-							atem?.setDVETransitionSettings(
-								{
-									rate: getOptNumber(action, 'rate'),
-								},
-								getOptNumber(action, 'mixeffect')
-							)
+						await atem?.setDVETransitionSettings(
+							{
+								rate: getOptNumber(action, 'rate'),
+							},
+							getOptNumber(action, 'mixeffect')
 						)
 						break
 					case Enums.TransitionStyle.STING:
@@ -443,7 +413,7 @@ function meActions(
 						break
 					default:
 						assertUnreachable(style)
-						instance.debug('Unknown transition style: ' + style)
+						instance.log('debug', 'Unknown transition style: ' + style)
 				}
 			},
 			learn: (action) => {
@@ -482,24 +452,21 @@ function meActions(
 					return undefined
 				}
 			},
-		}),
-		[ActionId.TransitionSelection]: literal<CompanionActionExt>({
-			label: 'Transition: Change selection',
+		} satisfies CompanionActionDefinition,
+		[ActionId.TransitionSelection]: {
+			name: 'Transition: Change selection',
 			options: [AtemMEPicker(model, 0), ...AtemTransitionSelectionPickers(model)],
-			callback: (action): void => {
-				executePromise(
-					instance,
-					atem?.setTransitionStyle(
-						{
-							nextSelection: calculateTransitionSelection(model.USKs, action.options),
-						},
-						getOptNumber(action, 'mixeffect')
-					)
+			callback: async (action) => {
+				await atem?.setTransitionStyle(
+					{
+						nextSelection: calculateTransitionSelection(model.USKs, action.options),
+					},
+					getOptNumber(action, 'mixeffect')
 				)
 			},
-		}),
-		[ActionId.TransitionSelectionComponent]: literal<CompanionActionExt>({
-			label: 'Transition: Change selection component',
+		} satisfies CompanionActionDefinition,
+		[ActionId.TransitionSelectionComponent]: {
+			name: 'Transition: Change selection component',
 			options: [
 				AtemMEPicker(model, 0),
 				AtemTransitionSelectionComponentPicker(model),
@@ -511,7 +478,7 @@ function meActions(
 					default: CHOICES_KEYTRANS[0].id,
 				},
 			],
-			callback: (action): void => {
+			callback: async (action) => {
 				const me = getOptNumber(action, 'mixeffect')
 				const tp = getTransitionProperties(state, me)
 				if (tp && atem) {
@@ -553,22 +520,19 @@ function meActions(
 					})
 				}
 			},
-		}),
-		[ActionId.FadeToBlackAuto]: literal<CompanionActionExt>({
-			label: 'Fade to black: Run AUTO Transition',
+		} satisfies CompanionActionDefinition,
+		[ActionId.FadeToBlackAuto]: {
+			name: 'Fade to black: Run AUTO Transition',
 			options: [AtemMEPicker(model, 0)],
-			callback: (action): void => {
-				executePromise(instance, atem?.fadeToBlack(getOptNumber(action, 'mixeffect')))
+			callback: async (action) => {
+				await atem?.fadeToBlack(getOptNumber(action, 'mixeffect'))
 			},
-		}),
-		[ActionId.FadeToBlackRate]: literal<CompanionActionExt>({
-			label: 'Fade to black: Change rate',
+		} satisfies CompanionActionDefinition,
+		[ActionId.FadeToBlackRate]: {
+			name: 'Fade to black: Change rate',
 			options: [AtemMEPicker(model, 0), AtemRatePicker('Rate')],
-			callback: (action): void => {
-				executePromise(
-					instance,
-					atem?.setFadeToBlackRate(getOptNumber(action, 'rate'), getOptNumber(action, 'mixeffect'))
-				)
+			callback: async (action) => {
+				await atem?.setFadeToBlackRate(getOptNumber(action, 'rate'), getOptNumber(action, 'mixeffect'))
 			},
 			learn: (action) => {
 				const me = getMixEffect(state, action.options.mixeffect)
@@ -582,12 +546,12 @@ function meActions(
 					return undefined
 				}
 			},
-		}),
+		} satisfies CompanionActionDefinition,
 		[ActionId.USKMaskLumaChromaPattern]: model.USKs
-			? literal<CompanionActionExt>({
-					label: 'Upstream key: Set Mask (Luma, Chroma, Pattern)',
+			? ({
+					name: 'Upstream key: Set Mask (Luma, Chroma, Pattern)',
 					options: compact([AtemMEPicker(model, 0), AtemUSKPicker(model), ...AtemUSKMaskPropertiesPickers()]),
-					callback: (action): void => {
+					callback: async (action) => {
 						const keyId = getOptNumber(action, 'key')
 						const mixEffectId = getOptNumber(action, 'mixeffect')
 						const newProps: Partial<UpstreamKeyerMaskSettings> = {}
@@ -613,7 +577,7 @@ function meActions(
 
 						if (Object.keys(newProps).length === 0) return
 
-						executePromise(instance, atem?.setUpstreamKeyerMaskSettings(newProps, mixEffectId, keyId))
+						await atem?.setUpstreamKeyerMaskSettings(newProps, mixEffectId, keyId)
 					},
 					learn: (action) => {
 						const usk = getUSK(state, getOptNumber(action, 'mixeffect'), getOptNumber(action, 'key'))
@@ -631,13 +595,13 @@ function meActions(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.USKDVEProperties]: model.DVEs
-			? literal<CompanionActionExt>({
-					label: 'Upstream key: Change DVE properties',
+			? ({
+					name: 'Upstream key: Change DVE properties',
 					options: compact([AtemMEPicker(model, 0), AtemUSKPicker(model), ...AtemUSKDVEPropertiesPickers()]),
-					callback: (action): void => {
+					callback: async (action) => {
 						const keyId = getOptNumber(action, 'key')
 						const mixEffectId = getOptNumber(action, 'mixeffect')
 						const newProps: Partial<UpstreamKeyerDVESettings> = {}
@@ -726,7 +690,7 @@ function meActions(
 
 						if (Object.keys(newProps).length === 0) return
 
-						executePromise(instance, atem?.setUpstreamKeyerDVESettings(newProps, mixEffectId, keyId))
+						await atem?.setUpstreamKeyerDVESettings(newProps, mixEffectId, keyId)
 					},
 					learn: (action) => {
 						const usk = getUSK(state, getOptNumber(action, 'mixeffect'), getOptNumber(action, 'key'))
@@ -765,12 +729,12 @@ function meActions(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.USKFly]:
 			model.USKs && model.DVEs
-				? literal<CompanionActionExt>({
-						label: 'Upstream key: fly to keyframe',
+				? ({
+						name: 'Upstream key: fly to keyframe',
 						options: [
 							AtemMEPicker(model, 0),
 							AtemUSKPicker(model),
@@ -782,14 +746,11 @@ function meActions(
 								default: CHOICES_KEYFRAMES[0].id,
 							},
 						],
-						callback: (action): void => {
-							executePromise(
-								instance,
-								atem?.runUpstreamKeyerFlyKeyTo(
-									getOptNumber(action, 'mixeffect'),
-									getOptNumber(action, 'key'),
-									getOptNumber(action, 'keyframe')
-								)
+						callback: async (action) => {
+							await atem?.runUpstreamKeyerFlyKeyTo(
+								getOptNumber(action, 'mixeffect'),
+								getOptNumber(action, 'key'),
+								getOptNumber(action, 'keyframe')
 							)
 						},
 						learn: (action) => {
@@ -804,12 +765,12 @@ function meActions(
 								return undefined
 							}
 						},
-				  })
+				  } satisfies CompanionActionDefinition)
 				: undefined,
 		[ActionId.USKFlyInfinite]:
 			model.USKs && model.DVEs
-				? literal<CompanionActionExt>({
-						label: 'Upstream key: fly to infinite',
+				? ({
+						name: 'Upstream key: fly to infinite',
 						options: [
 							AtemMEPicker(model, 0),
 							AtemUSKPicker(model),
@@ -821,14 +782,11 @@ function meActions(
 								default: CHOICES_FLYDIRECTIONS[0].id,
 							},
 						],
-						callback: (action): void => {
-							executePromise(
-								instance,
-								atem?.runUpstreamKeyerFlyKeyToInfinite(
-									getOptNumber(action, 'mixeffect'),
-									getOptNumber(action, 'key'),
-									getOptNumber(action, 'flydirection')
-								)
+						callback: async (action) => {
+							await atem?.runUpstreamKeyerFlyKeyToInfinite(
+								getOptNumber(action, 'mixeffect'),
+								getOptNumber(action, 'key'),
+								getOptNumber(action, 'flydirection')
 							)
 						},
 						learn: (action) => {
@@ -843,26 +801,23 @@ function meActions(
 								return undefined
 							}
 						},
-				  })
+				  } satisfies CompanionActionDefinition)
 				: undefined,
 	}
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, model: ModelSpec, state: AtemState) {
+function dskActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) {
 	return {
 		[ActionId.DSKSource]: model.DSKs
-			? literal<CompanionActionExt>({
-					label: 'Downstream key: Set inputs',
+			? ({
+					name: 'Downstream key: Set inputs',
 					options: [AtemDSKPicker(model), AtemKeyFillSourcePicker(model, state), AtemKeyCutSourcePicker(model, state)],
-					callback: (action): void => {
-						executePromise(
-							instance,
-							Promise.all([
-								atem?.setDownstreamKeyFillSource(getOptNumber(action, 'fill'), getOptNumber(action, 'key')),
-								atem?.setDownstreamKeyCutSource(getOptNumber(action, 'cut'), getOptNumber(action, 'key')),
-							])
-						)
+					callback: async (action) => {
+						await Promise.all([
+							atem?.setDownstreamKeyFillSource(getOptNumber(action, 'fill'), getOptNumber(action, 'key')),
+							atem?.setDownstreamKeyCutSource(getOptNumber(action, 'cut'), getOptNumber(action, 'key')),
+						])
 					},
 					learn: (feedback) => {
 						const dsk = getDSK(state, feedback.options.key)
@@ -877,17 +832,14 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, 
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.DSKRate]: model.DSKs
-			? literal<CompanionActionExt>({
-					label: 'Downstream key: Set Rate',
+			? ({
+					name: 'Downstream key: Set Rate',
 					options: [AtemDSKPicker(model), AtemRatePicker('Rate')],
-					callback: (action): void => {
-						executePromise(
-							instance,
-							atem?.setDownstreamKeyRate(getOptNumber(action, 'rate'), getOptNumber(action, 'key'))
-						)
+					callback: async (action) => {
+						await atem?.setDownstreamKeyRate(getOptNumber(action, 'rate'), getOptNumber(action, 'key'))
 					},
 					learn: (feedback) => {
 						const dsk = getDSK(state, feedback.options.key)
@@ -901,13 +853,13 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, 
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.DSKMask]: model.DSKs
-			? literal<CompanionActionExt>({
-					label: 'Downstream key: Set Mask',
+			? ({
+					name: 'Downstream key: Set Mask',
 					options: compact([AtemDSKPicker(model), ...AtemDSKMaskPropertiesPickers()]),
-					callback: (action): void => {
+					callback: async (action) => {
 						const keyId = getOptNumber(action, 'key')
 						const newProps: Partial<DownstreamKeyerMask> = {}
 
@@ -932,7 +884,7 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, 
 
 						if (Object.keys(newProps).length === 0) return
 
-						executePromise(instance, atem?.setDownstreamKeyMaskSettings(newProps, keyId))
+						await atem?.setDownstreamKeyMaskSettings(newProps, keyId)
 					},
 					learn: (feedback) => {
 						const dsk = getDSK(state, feedback.options.key)
@@ -950,13 +902,13 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, 
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.DSKPreMultipliedKey]: model.DSKs
-			? literal<CompanionActionExt>({
-					label: 'Downstream key: Set Pre Multiplied Key',
+			? ({
+					name: 'Downstream key: Set Pre Multiplied Key',
 					options: compact([AtemDSKPicker(model), ...AtemDSKPreMultipliedKeyPropertiesPickers()]),
-					callback: (action): void => {
+					callback: async (action) => {
 						const keyId = getOptNumber(action, 'key')
 						const newProps: Partial<DownstreamKeyerGeneral> = {}
 
@@ -978,7 +930,7 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, 
 
 						if (Object.keys(newProps).length === 0) return
 
-						executePromise(instance, atem?.setDownstreamKeyGeneralProperties(newProps, keyId))
+						await atem?.setDownstreamKeyGeneralProperties(newProps, keyId)
 					},
 					learn: (feedback) => {
 						const dsk = getDSK(state, feedback.options.key)
@@ -995,11 +947,11 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, 
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.DSKAuto]: model.DSKs
-			? literal<CompanionActionExt>({
-					label: 'Downstream key: Run AUTO Transition',
+			? ({
+					name: 'Downstream key: Run AUTO Transition',
 					options: [
 						{
 							type: 'dropdown',
@@ -1009,14 +961,14 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, 
 							choices: GetDSKIdChoices(model),
 						},
 					],
-					callback: (action): void => {
-						executePromise(instance, atem?.autoDownstreamKey(getOptNumber(action, 'downstreamKeyerId')))
+					callback: async (action) => {
+						await atem?.autoDownstreamKey(getOptNumber(action, 'downstreamKeyerId'))
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.DSKOnAir]: model.DSKs
-			? literal<CompanionActionExt>({
-					label: 'Downstream key: Set OnAir',
+			? ({
+					name: 'Downstream key: Set OnAir',
 					options: [
 						{
 							id: 'onair',
@@ -1027,13 +979,13 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, 
 						},
 						AtemDSKPicker(model),
 					],
-					callback: (action): void => {
+					callback: async (action) => {
 						const keyIndex = getOptNumber(action, 'key')
 						if (action.options.onair === 'toggle') {
 							const dsk = getDSK(state, keyIndex)
-							executePromise(instance, atem?.setDownstreamKeyOnAir(!dsk?.onAir, keyIndex))
+							await atem?.setDownstreamKeyOnAir(!dsk?.onAir, keyIndex)
 						} else {
-							executePromise(instance, atem?.setDownstreamKeyOnAir(action.options.onair === 'true', keyIndex))
+							await atem?.setDownstreamKeyOnAir(action.options.onair === 'true', keyIndex)
 						}
 					},
 					learn: (feedback) => {
@@ -1048,11 +1000,11 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, 
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.DSKTie]: model.DSKs
-			? literal<CompanionActionExt>({
-					label: 'Downstream key: Set Tied',
+			? ({
+					name: 'Downstream key: Set Tied',
 					options: [
 						{
 							id: 'state',
@@ -1063,13 +1015,13 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, 
 						},
 						AtemDSKPicker(model),
 					],
-					callback: (action): void => {
+					callback: async (action) => {
 						const keyIndex = getOptNumber(action, 'key')
 						if (action.options.state === 'toggle') {
 							const dsk = getDSK(state, keyIndex)
-							executePromise(instance, atem?.setDownstreamKeyTie(!dsk?.properties?.tie, keyIndex))
+							await atem?.setDownstreamKeyTie(!dsk?.properties?.tie, keyIndex)
 						} else {
-							executePromise(instance, atem?.setDownstreamKeyTie(action.options.state === 'true', keyIndex))
+							await atem?.setDownstreamKeyTie(action.options.state === 'true', keyIndex)
 						}
 					},
 					learn: (feedback) => {
@@ -1084,17 +1036,17 @@ function dskActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, 
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 	}
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function macroActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, model: ModelSpec, state: AtemState) {
+function macroActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) {
 	return {
 		[ActionId.MacroRun]: model.macros
-			? literal<CompanionActionExt>({
-					label: 'Macro: Run',
+			? ({
+					name: 'Macro: Run',
 					options: [
 						{
 							type: 'dropdown',
@@ -1114,7 +1066,7 @@ function macroActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined
 							],
 						},
 					],
-					callback: (action): void => {
+					callback: async (action) => {
 						const macroIndex = getOptNumber(action, 'macro') - 1
 						const { macroPlayer, macroRecorder } = state.macro
 						if (
@@ -1122,36 +1074,36 @@ function macroActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined
 							macroPlayer.isWaiting &&
 							macroPlayer.macroIndex === macroIndex
 						) {
-							executePromise(instance, atem?.macroContinue())
+							await atem?.macroContinue()
 						} else if (macroRecorder.isRecording && macroRecorder.macroIndex === macroIndex) {
-							executePromise(instance, atem?.macroStopRecord())
+							await atem?.macroStopRecord()
 						} else {
-							executePromise(instance, atem?.macroRun(macroIndex))
+							await atem?.macroRun(macroIndex)
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.MacroContinue]: model.macros
-			? literal<CompanionActionExt>({
-					label: 'Macro: Continue',
+			? ({
+					name: 'Macro: Continue',
 					options: [],
-					callback: (): void => {
-						executePromise(instance, atem?.macroContinue())
+					callback: async () => {
+						await atem?.macroContinue()
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.MacroStop]: model.macros
-			? literal<CompanionActionExt>({
-					label: 'Macro: Stop',
+			? ({
+					name: 'Macro: Stop',
 					options: [],
-					callback: (): void => {
-						executePromise(instance, atem?.macroStop())
+					callback: async () => {
+						await atem?.macroStop()
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.MacroLoop]: model.macros
-			? literal<CompanionActionExt>({
-					label: 'Macro: Loop',
+			? ({
+					name: 'Macro: Loop',
 					options: [
 						{
 							id: 'loop',
@@ -1161,30 +1113,30 @@ function macroActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined
 							choices: CHOICES_ON_OFF_TOGGLE,
 						},
 					],
-					callback: (action): void => {
+					callback: async (action) => {
 						let newState = action.options.loop === 'true'
 						if (action.options.loop === 'toggle') {
 							newState = !state.macro.macroPlayer.loop
 						}
 
-						executePromise(instance, atem?.macroSetLoop(newState))
+						await atem?.macroSetLoop(newState)
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 	}
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined, model: ModelSpec, state: AtemState) {
+function ssrcActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) {
 	return {
 		[ActionId.SuperSourceArt]: model.SSrc
-			? literal<CompanionActionExt>({
-					label: 'SuperSource: Set art properties',
+			? ({
+					name: 'SuperSource: Set art properties',
 					options: compact([
 						AtemSuperSourceIdPicker(model),
 						...AtemSuperSourceArtPropertiesPickers(model, state, true),
 					]),
-					callback: (action): void => {
+					callback: async (action) => {
 						const ssrcId = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
 						const newProps: Partial<VideoState.SuperSource.SuperSourceProperties> = {}
 
@@ -1215,7 +1167,7 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined,
 
 						if (Object.keys(newProps).length === 0) return
 
-						executePromise(instance, atem?.setSuperSourceProperties(newProps, ssrcId))
+						await atem?.setSuperSourceProperties(newProps, ssrcId)
 					},
 					learn: (action) => {
 						const ssrcId = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
@@ -1237,27 +1189,24 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined,
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.SuperSourceBoxSource]: model.SSrc
-			? literal<CompanionActionExt>({
+			? ({
 					// TODO - combine into ActionId.SuperSourceBoxProperties
-					label: 'SuperSource: Set box source',
+					name: 'SuperSource: Set box source',
 					options: compact([
 						AtemSuperSourceIdPicker(model),
 						AtemSuperSourceBoxPicker(),
 						AtemSuperSourceBoxSourcePicker(model, state),
 					]),
-					callback: (action): void => {
-						executePromise(
-							instance,
-							atem?.setSuperSourceBoxSettings(
-								{
-									source: getOptNumber(action, 'source'),
-								},
-								getOptNumber(action, 'boxIndex'),
-								action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
-							)
+					callback: async (action) => {
+						await atem?.setSuperSourceBoxSettings(
+							{
+								source: getOptNumber(action, 'source'),
+							},
+							getOptNumber(action, 'boxIndex'),
+							action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
 						)
 					},
 					learn: (action) => {
@@ -1274,12 +1223,12 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined,
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.SuperSourceBoxOnAir]: model.SSrc
-			? literal<CompanionActionExt>({
+			? ({
 					// TODO - combine into ActionId.SuperSourceBoxProperties
-					label: 'SuperSource: Set box enabled',
+					name: 'SuperSource: Set box enabled',
 					options: compact([
 						AtemSuperSourceIdPicker(model),
 						AtemSuperSourceBoxPicker(),
@@ -1291,32 +1240,26 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined,
 							choices: CHOICES_KEYTRANS,
 						},
 					]),
-					callback: (action): void => {
+					callback: async (action) => {
 						const ssrcId = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
 						const boxIndex = getOptNumber(action, 'boxIndex')
 
 						if (action.options.onair === 'toggle') {
 							const box = getSuperSourceBox(state, boxIndex, ssrcId)
-							executePromise(
-								instance,
-								atem?.setSuperSourceBoxSettings(
-									{
-										enabled: !box?.enabled,
-									},
-									boxIndex,
-									ssrcId
-								)
+							await atem?.setSuperSourceBoxSettings(
+								{
+									enabled: !box?.enabled,
+								},
+								boxIndex,
+								ssrcId
 							)
 						} else {
-							executePromise(
-								instance,
-								atem?.setSuperSourceBoxSettings(
-									{
-										enabled: action.options.onair === 'true',
-									},
-									boxIndex,
-									ssrcId
-								)
+							await atem?.setSuperSourceBoxSettings(
+								{
+									enabled: action.options.onair === 'true',
+								},
+								boxIndex,
+								ssrcId
 							)
 						}
 					},
@@ -1334,17 +1277,17 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined,
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.SuperSourceBoxProperties]: model.SSrc
-			? literal<CompanionActionExt>({
-					label: 'SuperSource: Change box properties',
+			? ({
+					name: 'SuperSource: Change box properties',
 					options: compact([
 						AtemSuperSourceIdPicker(model),
 						AtemSuperSourceBoxPicker(),
 						...AtemSuperSourcePropertiesPickers(model, state, false),
 					]),
-					callback: (action): void => {
+					callback: async (action) => {
 						const ssrcId = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
 						const boxIndex = getOptNumber(action, 'boxIndex')
 
@@ -1376,7 +1319,7 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined,
 
 						if (Object.keys(newProps).length === 0) return
 
-						executePromise(instance, atem?.setSuperSourceBoxSettings(newProps, boxIndex, ssrcId))
+						await atem?.setSuperSourceBoxSettings(newProps, boxIndex, ssrcId)
 					},
 					learn: (action) => {
 						const ssrcId = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
@@ -1401,17 +1344,17 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined,
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.SuperSourceBoxPropertiesDelta]: model.SSrc
-			? literal<CompanionActionExt>({
-					label: 'SuperSource: Offset box properties',
+			? ({
+					name: 'SuperSource: Offset box properties',
 					options: compact([
 						AtemSuperSourceIdPicker(model),
 						AtemSuperSourceBoxPicker(),
 						...AtemSuperSourcePropertiesPickers(model, state, true),
 					]),
-					callback: (action): void => {
+					callback: async (action) => {
 						const ssrcId = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
 						const boxIndex = getOptNumber(action, 'boxIndex')
 
@@ -1437,24 +1380,24 @@ function ssrcActions(instance: InstanceSkel<AtemConfig>, atem: Atem | undefined,
 
 						if (Object.keys(newProps).length === 0) return
 
-						executePromise(instance, atem?.setSuperSourceBoxSettings(newProps, boxIndex, ssrcId))
+						await atem?.setSuperSourceBoxSettings(newProps, boxIndex, ssrcId)
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 	}
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function streamRecordActions(
-	instance: InstanceSkel<AtemConfig>,
+	instance: InstanceBaseExt<AtemConfig>,
 	atem: Atem | undefined,
 	model: ModelSpec,
 	state: AtemState
 ) {
 	return {
 		[ActionId.StreamStartStop]: model.streaming
-			? literal<CompanionActionExt>({
-					label: 'Stream: Start or Stop',
+			? ({
+					name: 'Stream: Start or Stop',
 					options: [
 						{
 							id: 'stream',
@@ -1464,16 +1407,16 @@ function streamRecordActions(
 							choices: CHOICES_ON_OFF_TOGGLE,
 						},
 					],
-					callback: (action): void => {
+					callback: async (action) => {
 						let newState = action.options.stream === 'true'
 						if (action.options.stream === 'toggle') {
 							newState = state.streaming?.status?.state === Enums.StreamingStatus.Idle
 						}
 
 						if (newState) {
-							executePromise(instance, atem?.startStreaming())
+							await atem?.startStreaming()
 						} else {
-							executePromise(instance, atem?.stopStreaming())
+							await atem?.stopStreaming()
 						}
 					},
 					learn: (feedback) => {
@@ -1486,11 +1429,11 @@ function streamRecordActions(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.StreamService]: model.recording
-			? literal<CompanionActionExt>({
-					label: 'Stream: Set service',
+			? ({
+					name: 'Stream: Set service',
 					options: [
 						{
 							id: 'service',
@@ -1511,15 +1454,12 @@ function streamRecordActions(
 							default: '',
 						},
 					],
-					callback: (action): void => {
-						executePromise(
-							instance,
-							atem?.setStreamingService({
-								serviceName: `${action.options.service || ''}`,
-								url: `${action.options.url || ''}`,
-								key: `${action.options.key || ''}`,
-							})
-						)
+					callback: async (action) => {
+						await atem?.setStreamingService({
+							serviceName: `${action.options.service || ''}`,
+							url: `${action.options.url || ''}`,
+							key: `${action.options.key || ''}`,
+						})
 					},
 					learn: (feedback) => {
 						if (state.streaming?.service) {
@@ -1533,11 +1473,11 @@ function streamRecordActions(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.RecordStartStop]: model.recording
-			? literal<CompanionActionExt>({
-					label: 'Recording: Start or Stop',
+			? ({
+					name: 'Recording: Start or Stop',
 					options: [
 						{
 							id: 'record',
@@ -1547,16 +1487,16 @@ function streamRecordActions(
 							choices: CHOICES_ON_OFF_TOGGLE,
 						},
 					],
-					callback: (action): void => {
+					callback: async (action) => {
 						let newState = action.options.record === 'true'
 						if (action.options.record === 'toggle') {
 							newState = state.recording?.status?.state === Enums.RecordingStatus.Idle
 						}
 
 						if (newState) {
-							executePromise(instance, atem?.startRecording())
+							await atem?.startRecording()
 						} else {
-							executePromise(instance, atem?.stopRecording())
+							await atem?.stopRecording()
 						}
 					},
 					learn: (feedback) => {
@@ -1569,20 +1509,20 @@ function streamRecordActions(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.RecordSwitchDisk]: model.recording
-			? literal<CompanionActionExt>({
-					label: 'Recording: Switch disk',
+			? ({
+					name: 'Recording: Switch disk',
 					options: [],
-					callback: (): void => {
-						executePromise(instance, atem?.switchRecordingDisk())
+					callback: async () => {
+						await atem?.switchRecordingDisk()
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.RecordFilename]: model.recording
-			? literal<CompanionActionExt>({
-					label: 'Recording: Set filename',
+			? ({
+					name: 'Recording: Set filename',
 					options: [
 						{
 							id: 'filename',
@@ -1591,14 +1531,10 @@ function streamRecordActions(
 							default: '',
 						},
 					],
-					callback: (action): void => {
-						instance.parseVariables(`${action.options.filename || ''}`, (filename) => {
-							executePromise(
-								instance,
-								atem?.setRecordingSettings({
-									filename: `${filename || ''}`,
-								})
-							)
+					callback: async (action) => {
+						const filename = await instance.parseVariablesInString(`${action.options.filename || ''}`)
+						await atem?.setRecordingSettings({
+							filename: `${filename || ''}`,
 						})
 					},
 					learn: (feedback) => {
@@ -1611,24 +1547,18 @@ function streamRecordActions(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 	}
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function audioActions(
-	instance: InstanceSkel<AtemConfig>,
-	atem: Atem | undefined,
-	model: ModelSpec,
-	transitions: AtemTransitions,
-	state: AtemState
-) {
+function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: AtemTransitions, state: AtemState) {
 	if (model.classicAudio) {
 		const audioInputOption = AtemAudioInputPicker(model, state)
 		return {
-			[ActionId.ClassicAudioGain]: literal<CompanionActionExt>({
-				label: 'Classic Audio: Set input gain',
+			[ActionId.ClassicAudioGain]: {
+				name: 'Classic Audio: Set input gain',
 				options: [
 					audioInputOption,
 					{
@@ -1644,15 +1574,15 @@ function audioActions(
 					},
 					FadeDurationChoice,
 				],
-				callback: (action): void => {
+				callback: async (action) => {
 					const inputId = getOptNumber(action, 'input')
 					const audioChannels = state.audio?.channels ?? {}
 					const channel = audioChannels[inputId]
 
-					transitions.run(
+					await transitions.run(
 						`audio.${inputId}.gain`,
-						(value) => {
-							executePromise(instance, atem?.setClassicAudioMixerInputProps(inputId, { gain: value }))
+						async (value) => {
+							await atem?.setClassicAudioMixerInputProps(inputId, { gain: value })
 						},
 						channel?.gain,
 						getOptNumber(action, 'gain'),
@@ -1672,20 +1602,20 @@ function audioActions(
 						return undefined
 					}
 				},
-			}),
-			[ActionId.ClassicAudioGainDelta]: literal<CompanionActionExt>({
-				label: 'Classic Audio: Adjust input gain',
+			} satisfies CompanionActionDefinition,
+			[ActionId.ClassicAudioGainDelta]: {
+				name: 'Classic Audio: Adjust input gain',
 				options: [audioInputOption, FaderLevelDeltaChoice, FadeDurationChoice],
-				callback: (action): void => {
+				callback: async (action) => {
 					const inputId = getOptNumber(action, 'input')
 					const audioChannels = state.audio?.channels ?? {}
 					const channel = audioChannels[inputId]
 
 					if (typeof channel?.gain === 'number') {
-						transitions.run(
+						await transitions.run(
 							`audio.${inputId}.gain`,
-							(value) => {
-								executePromise(instance, atem?.setClassicAudioMixerInputProps(inputId, { gain: value }))
+							async (value) => {
+								await atem?.setClassicAudioMixerInputProps(inputId, { gain: value })
 							},
 							channel.gain,
 							channel.gain + getOptNumber(action, 'delta'),
@@ -1693,9 +1623,9 @@ function audioActions(
 						)
 					}
 				},
-			}),
-			[ActionId.ClassicAudioMixOption]: literal<CompanionActionExt>({
-				label: 'Classic Audio: Set input mix option',
+			} satisfies CompanionActionDefinition,
+			[ActionId.ClassicAudioMixOption]: {
+				name: 'Classic Audio: Set input mix option',
 				options: [
 					audioInputOption,
 					{
@@ -1712,7 +1642,7 @@ function audioActions(
 						],
 					},
 				],
-				callback: (action): void => {
+				callback: async (action) => {
 					const inputId = getOptNumber(action, 'input')
 					const audioChannels = state.audio?.channels ?? {}
 					const toggleVal =
@@ -1720,7 +1650,7 @@ function audioActions(
 							? Enums.AudioMixOption.Off
 							: Enums.AudioMixOption.On
 					const newVal = action.options.option === 'toggle' ? toggleVal : getOptNumber(action, 'option')
-					executePromise(instance, atem?.setClassicAudioMixerInputProps(inputId, { mixOption: newVal }))
+					await atem?.setClassicAudioMixerInputProps(inputId, { mixOption: newVal })
 				},
 				learn: (action) => {
 					const audioChannels = state.audio?.channels ?? {}
@@ -1735,9 +1665,9 @@ function audioActions(
 						return undefined
 					}
 				},
-			}),
-			[ActionId.ClassicAudioResetPeaks]: literal<CompanionActionExt>({
-				label: 'Classic Audio: Reset peaks',
+			} satisfies CompanionActionDefinition,
+			[ActionId.ClassicAudioResetPeaks]: {
+				name: 'Classic Audio: Reset peaks',
 				options: [
 					{
 						type: 'dropdown',
@@ -1761,22 +1691,22 @@ function audioActions(
 						],
 					},
 				],
-				callback: (action): void => {
+				callback: async (action) => {
 					const rawVal = action.options['reset']
 					if (rawVal === 'all') {
-						executePromise(instance, atem?.setClassicAudioResetPeaks({ all: true }))
+						await atem?.setClassicAudioResetPeaks({ all: true })
 					} else if (rawVal === 'master') {
-						executePromise(instance, atem?.setClassicAudioResetPeaks({ master: true }))
+						await atem?.setClassicAudioResetPeaks({ master: true })
 					} else if (rawVal === 'monitor') {
-						executePromise(instance, atem?.setClassicAudioResetPeaks({ monitor: true }))
+						await atem?.setClassicAudioResetPeaks({ monitor: true })
 					} else {
 						const inputId = getOptNumber(action, 'reset')
-						executePromise(instance, atem?.setClassicAudioResetPeaks({ input: inputId }))
+						await atem?.setClassicAudioResetPeaks({ input: inputId })
 					}
 				},
-			}),
-			[ActionId.ClassicAudioMasterGain]: literal<CompanionActionExt>({
-				label: 'Classic Audio: Set master gain',
+			} satisfies CompanionActionDefinition,
+			[ActionId.ClassicAudioMasterGain]: {
+				name: 'Classic Audio: Set master gain',
 				options: [
 					{
 						type: 'number',
@@ -1791,11 +1721,11 @@ function audioActions(
 					},
 					FadeDurationChoice,
 				],
-				callback: (action): void => {
-					transitions.run(
+				callback: async (action) => {
+					await transitions.run(
 						`audio.master.gain`,
-						(value) => {
-							executePromise(instance, atem?.setClassicAudioMixerMasterProps({ gain: value }))
+						async (value) => {
+							await atem?.setClassicAudioMixerMasterProps({ gain: value })
 						},
 						atem?.state?.audio?.master?.gain,
 						getOptNumber(action, 'gain'),
@@ -1814,18 +1744,18 @@ function audioActions(
 						return undefined
 					}
 				},
-			}),
-			[ActionId.ClassicAudioMasterGainDelta]: literal<CompanionActionExt>({
-				label: 'Classic Audio: Adjust master gain',
+			} satisfies CompanionActionDefinition,
+			[ActionId.ClassicAudioMasterGainDelta]: {
+				name: 'Classic Audio: Adjust master gain',
 				options: [FaderLevelDeltaChoice, FadeDurationChoice],
-				callback: (action): void => {
+				callback: async (action) => {
 					const currentGain = state.audio?.master?.gain
 
 					if (typeof currentGain === 'number') {
-						transitions.run(
+						await transitions.run(
 							`audio.master.gain`,
-							(value) => {
-								executePromise(instance, atem?.setClassicAudioMixerMasterProps({ gain: value }))
+							async (value) => {
+								await atem?.setClassicAudioMixerMasterProps({ gain: value })
 							},
 							currentGain,
 							currentGain + getOptNumber(action, 'gain'),
@@ -1833,7 +1763,7 @@ function audioActions(
 						)
 					}
 				},
-			}),
+			} satisfies CompanionActionDefinition,
 			[ActionId.FairlightAudioInputGain]: undefined,
 			[ActionId.FairlightAudioInputGainDelta]: undefined,
 			[ActionId.FairlightAudioFaderGain]: undefined,
@@ -1858,8 +1788,8 @@ function audioActions(
 			[ActionId.ClassicAudioResetPeaks]: undefined,
 			[ActionId.ClassicAudioMasterGain]: undefined,
 			[ActionId.ClassicAudioMasterGainDelta]: undefined,
-			[ActionId.FairlightAudioInputGain]: literal<CompanionActionExt>({
-				label: 'Fairlight Audio: Set input gain',
+			[ActionId.FairlightAudioInputGain]: {
+				name: 'Fairlight Audio: Set input gain',
 				options: [
 					audioInputOption,
 					audioSourceOption,
@@ -1876,7 +1806,7 @@ function audioActions(
 					},
 					FadeDurationChoice,
 				],
-				callback: (action): void => {
+				callback: async (action) => {
 					const inputId = getOptNumber(action, 'input')
 					const sourceId = action.options.source + ''
 
@@ -1884,15 +1814,12 @@ function audioActions(
 					const audioSources = audioChannels[inputId]?.sources ?? {}
 					const source = audioSources[sourceId]
 
-					transitions.run(
+					await transitions.run(
 						`audio.${inputId}.${sourceId}.gain`,
-						(value) => {
-							executePromise(
-								instance,
-								atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
-									gain: value,
-								})
-							)
+						async (value) => {
+							await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
+								gain: value,
+							})
 						},
 						source?.properties?.gain,
 						getOptNumber(action, 'gain') * 100,
@@ -1913,11 +1840,11 @@ function audioActions(
 						return undefined
 					}
 				},
-			}),
-			[ActionId.FairlightAudioInputGainDelta]: literal<CompanionActionExt>({
-				label: 'Fairlight Audio: Adjust input gain',
+			} satisfies CompanionActionDefinition,
+			[ActionId.FairlightAudioInputGainDelta]: {
+				name: 'Fairlight Audio: Adjust input gain',
 				options: [audioInputOption, audioSourceOption, FaderLevelDeltaChoice, FadeDurationChoice],
-				callback: (action): void => {
+				callback: async (action) => {
 					const inputId = getOptNumber(action, 'input')
 					const sourceId = action.options.source + ''
 
@@ -1926,15 +1853,12 @@ function audioActions(
 					const source = audioSources[sourceId]
 
 					if (typeof source?.properties?.gain === 'number') {
-						transitions.run(
+						await transitions.run(
 							`audio.${inputId}.${sourceId}.gain`,
-							(value) => {
-								executePromise(
-									instance,
-									atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
-										gain: value,
-									})
-								)
+							async (value) => {
+								await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
+									gain: value,
+								})
 							},
 							source.properties.gain,
 							source.properties.gain + getOptNumber(action, 'delta') * 100,
@@ -1942,9 +1866,9 @@ function audioActions(
 						)
 					}
 				},
-			}),
-			[ActionId.FairlightAudioFaderGain]: literal<CompanionActionExt>({
-				label: 'Fairlight Audio: Set fader gain',
+			} satisfies CompanionActionDefinition,
+			[ActionId.FairlightAudioFaderGain]: {
+				name: 'Fairlight Audio: Set fader gain',
 				options: [
 					audioInputOption,
 					audioSourceOption,
@@ -1961,7 +1885,7 @@ function audioActions(
 					},
 					FadeDurationChoice,
 				],
-				callback: (action): void => {
+				callback: async (action) => {
 					const inputId = getOptNumber(action, 'input')
 					const sourceId = action.options.source + ''
 
@@ -1969,15 +1893,12 @@ function audioActions(
 					const audioSources = audioChannels[inputId]?.sources ?? {}
 					const source = audioSources[sourceId]
 
-					transitions.run(
+					await transitions.run(
 						`audio.${inputId}.${sourceId}.faderGain`,
-						(value) => {
-							executePromise(
-								instance,
-								atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
-									faderGain: value,
-								})
-							)
+						async (value) => {
+							await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
+								faderGain: value,
+							})
 						},
 						source?.properties?.faderGain,
 						getOptNumber(action, 'gain') * 100,
@@ -1998,11 +1919,11 @@ function audioActions(
 						return undefined
 					}
 				},
-			}),
-			[ActionId.FairlightAudioFaderGainDelta]: literal<CompanionActionExt>({
-				label: 'Fairlight Audio: Adjust fader gain',
+			} satisfies CompanionActionDefinition,
+			[ActionId.FairlightAudioFaderGainDelta]: {
+				name: 'Fairlight Audio: Adjust fader gain',
 				options: [audioInputOption, audioSourceOption, FaderLevelDeltaChoice, FadeDurationChoice],
-				callback: (action): void => {
+				callback: async (action) => {
 					const inputId = getOptNumber(action, 'input')
 					const sourceId = action.options.source + ''
 
@@ -2011,15 +1932,12 @@ function audioActions(
 					const source = audioSources[sourceId]
 
 					if (typeof source?.properties?.faderGain === 'number') {
-						transitions.run(
+						await transitions.run(
 							`audio.${inputId}.${sourceId}.faderGain`,
-							(value) => {
-								executePromise(
-									instance,
-									atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
-										faderGain: value,
-									})
-								)
+							async (value) => {
+								await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
+									faderGain: value,
+								})
 							},
 							source.properties.faderGain,
 							source.properties.faderGain + getOptNumber(action, 'delta') * 100,
@@ -2027,9 +1945,9 @@ function audioActions(
 						)
 					}
 				},
-			}),
-			[ActionId.FairlightAudioMixOption]: literal<CompanionActionExt>({
-				label: 'Fairlight Audio: Set input mix option',
+			} satisfies CompanionActionDefinition,
+			[ActionId.FairlightAudioMixOption]: {
+				name: 'Fairlight Audio: Set input mix option',
 				options: [
 					audioInputOption,
 					audioSourceOption,
@@ -2047,7 +1965,7 @@ function audioActions(
 						],
 					},
 				],
-				callback: (action): void => {
+				callback: async (action) => {
 					const inputId = getOptNumber(action, 'input')
 					const sourceId = action.options.source + ''
 					const audioChannels = state.fairlight?.inputs ?? {}
@@ -2057,7 +1975,7 @@ function audioActions(
 							? Enums.FairlightAudioMixOption.Off
 							: Enums.FairlightAudioMixOption.On
 					const newVal = action.options.option === 'toggle' ? toggleVal : getOptNumber(action, 'option')
-					executePromise(instance, atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, { mixOption: newVal }))
+					await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, { mixOption: newVal })
 				},
 				learn: (action) => {
 					const audioChannels = state.fairlight?.inputs ?? {}
@@ -2073,9 +1991,9 @@ function audioActions(
 						return undefined
 					}
 				},
-			}),
-			[ActionId.FairlightAudioResetPeaks]: literal<CompanionActionExt>({
-				label: 'Fairlight Audio: Reset peaks',
+			} satisfies CompanionActionDefinition,
+			[ActionId.FairlightAudioResetPeaks]: {
+				name: 'Fairlight Audio: Reset peaks',
 				options: [
 					{
 						type: 'dropdown',
@@ -2094,33 +2012,30 @@ function audioActions(
 						],
 					},
 				],
-				callback: (action): void => {
+				callback: async (action) => {
 					const rawVal = action.options['reset']
 					if (rawVal === 'all') {
-						executePromise(instance, atem?.setFairlightAudioMixerResetPeaks({ all: true, master: false }))
+						await atem?.setFairlightAudioMixerResetPeaks({ all: true, master: false })
 					} else if (rawVal === 'master') {
-						executePromise(instance, atem?.setFairlightAudioMixerResetPeaks({ master: true, all: false }))
+						await atem?.setFairlightAudioMixerResetPeaks({ master: true, all: false })
 					}
 				},
-			}),
-			[ActionId.FairlightAudioResetSourcePeaks]: literal<CompanionActionExt>({
-				label: 'Fairlight Audio: Reset Source peaks',
+			} satisfies CompanionActionDefinition,
+			[ActionId.FairlightAudioResetSourcePeaks]: {
+				name: 'Fairlight Audio: Reset Source peaks',
 				options: [audioInputOption, audioSourceOption],
-				callback: (action): void => {
+				callback: async (action) => {
 					const inputId = getOptNumber(action, 'input')
 					const sourceId = action.options.source + ''
-					executePromise(
-						instance,
-						atem?.setFairlightAudioMixerSourceResetPeaks(inputId, sourceId, {
-							output: true,
-							dynamicsInput: false,
-							dynamicsOutput: false,
-						})
-					)
+					await atem?.setFairlightAudioMixerSourceResetPeaks(inputId, sourceId, {
+						output: true,
+						dynamicsInput: false,
+						dynamicsOutput: false,
+					})
 				},
-			}),
-			[ActionId.FairlightAudioMasterGain]: literal<CompanionActionExt>({
-				label: 'Fairlight Audio: Set master gain',
+			} satisfies CompanionActionDefinition,
+			[ActionId.FairlightAudioMasterGain]: {
+				name: 'Fairlight Audio: Set master gain',
 				options: [
 					{
 						type: 'number',
@@ -2135,16 +2050,13 @@ function audioActions(
 					},
 					FadeDurationChoice,
 				],
-				callback: (action): void => {
-					transitions.run(
+				callback: async (action) => {
+					await transitions.run(
 						`audio.master.gain`,
-						(value) => {
-							executePromise(
-								instance,
-								atem?.setFairlightAudioMixerMasterProps({
-									faderGain: value,
-								})
-							)
+						async (value) => {
+							await atem?.setFairlightAudioMixerMasterProps({
+								faderGain: value,
+							})
 						},
 						atem?.state?.fairlight?.master?.properties?.faderGain,
 						getOptNumber(action, 'gain') * 100,
@@ -2163,23 +2075,20 @@ function audioActions(
 						return undefined
 					}
 				},
-			}),
-			[ActionId.FairlightAudioMasterGainDelta]: literal<CompanionActionExt>({
-				label: 'Fairlight Audio: Adjust master gain',
+			} satisfies CompanionActionDefinition,
+			[ActionId.FairlightAudioMasterGainDelta]: {
+				name: 'Fairlight Audio: Adjust master gain',
 				options: [FaderLevelDeltaChoice, FadeDurationChoice],
-				callback: (action): void => {
+				callback: async (action) => {
 					const currentGain = state.fairlight?.master?.properties?.faderGain
 
 					if (typeof currentGain === 'number') {
-						transitions.run(
+						await transitions.run(
 							`audio.master.gain`,
-							(value) => {
-								executePromise(
-									instance,
-									atem?.setFairlightAudioMixerMasterProps({
-										faderGain: value,
-									})
-								)
+							async (value) => {
+								await atem?.setFairlightAudioMixerMasterProps({
+									faderGain: value,
+								})
 							},
 							currentGain,
 							currentGain + getOptNumber(action, 'delta') * 100,
@@ -2187,10 +2096,10 @@ function audioActions(
 						)
 					}
 				},
-			}),
+			} satisfies CompanionActionDefinition,
 			[ActionId.FairlightAudioMonitorMasterMuted]: model.fairlightAudio.monitor
-				? literal<CompanionActionExt>({
-						label: 'Fairlight Audio: Monitor/Headphone master muted',
+				? ({
+						name: 'Fairlight Audio: Monitor/Headphone master muted',
 						options: [
 							{
 								id: 'state',
@@ -2200,7 +2109,7 @@ function audioActions(
 								choices: CHOICES_ON_OFF_TOGGLE,
 							},
 						],
-						callback: (action): void => {
+						callback: async (action) => {
 							let target: boolean
 							if (action.options.state === 'toggle') {
 								target = !atem?.state?.fairlight?.monitor?.inputMasterMuted
@@ -2208,12 +2117,9 @@ function audioActions(
 								target = action.options.state === 'true'
 							}
 
-							executePromise(
-								instance,
-								atem?.setFairlightAudioMixerMonitorProps({
-									inputMasterMuted: target,
-								})
-							)
+							await atem?.setFairlightAudioMixerMonitorProps({
+								inputMasterMuted: target,
+							})
 						},
 						learn: (action) => {
 							const props = state.fairlight?.monitor
@@ -2227,11 +2133,11 @@ function audioActions(
 								return undefined
 							}
 						},
-				  })
+				  } satisfies CompanionActionDefinition)
 				: undefined,
 			[ActionId.FairlightAudioMonitorGain]: model.fairlightAudio.monitor
-				? literal<CompanionActionExt>({
-						label: 'Fairlight Audio: Monitor/Headphone fader gain',
+				? ({
+						name: 'Fairlight Audio: Monitor/Headphone fader gain',
 						options: [
 							{
 								type: 'number',
@@ -2246,16 +2152,13 @@ function audioActions(
 							},
 							FadeDurationChoice,
 						],
-						callback: (action): void => {
-							transitions.run(
+						callback: async (action) => {
+							await transitions.run(
 								`audio.monitor.faderGain`,
-								(value) => {
-									executePromise(
-										instance,
-										atem?.setFairlightAudioMixerMonitorProps({
-											gain: value,
-										})
-									)
+								async (value) => {
+									await atem?.setFairlightAudioMixerMonitorProps({
+										gain: value,
+									})
 								},
 								atem?.state?.fairlight?.monitor?.gain,
 								getOptNumber(action, 'gain') * 100,
@@ -2274,24 +2177,21 @@ function audioActions(
 								return undefined
 							}
 						},
-				  })
+				  } satisfies CompanionActionDefinition)
 				: undefined,
 			[ActionId.FairlightAudioMonitorGainDelta]: model.fairlightAudio.monitor
-				? literal<CompanionActionExt>({
-						label: 'Fairlight Audio: Adjust Monitor/Headphone fader gain',
+				? ({
+						name: 'Fairlight Audio: Adjust Monitor/Headphone fader gain',
 						options: [audioInputOption, audioSourceOption, FaderLevelDeltaChoice, FadeDurationChoice],
-						callback: (action): void => {
+						callback: async (action) => {
 							const currentGain = atem?.state?.fairlight?.monitor?.gain
 							if (typeof currentGain === 'number') {
-								transitions.run(
+								await transitions.run(
 									`audio.monitor.faderGain`,
-									(value) => {
-										executePromise(
-											instance,
-											atem?.setFairlightAudioMixerMonitorProps({
-												gain: value,
-											})
-										)
+									async (value) => {
+										await atem?.setFairlightAudioMixerMonitorProps({
+											gain: value,
+										})
 									},
 									currentGain,
 									currentGain + getOptNumber(action, 'delta') * 100,
@@ -2299,7 +2199,7 @@ function audioActions(
 								)
 							}
 						},
-				  })
+				  } satisfies CompanionActionDefinition)
 				: undefined,
 			// [ActionId.FairlightAudioMonitorMasterGain]: literal<CompanionActionExt>({
 			// 	label: 'Fairlight Audio: Monitor/Headphone master gain',
@@ -2317,8 +2217,8 @@ function audioActions(
 			// 		},
 			// 		FadeDurationChoice,
 			// 	],
-			// 	callback: (action): void => {
-			// 		transitions.run(
+			// 	callback: async (action) => {
+			// 		await transitions.run(
 			// 			`audio.monitor.inputMasterGain`,
 			// 			(value) => {
 			// 				executePromise(
@@ -2361,26 +2261,26 @@ function audioActions(
 }
 
 export function GetActionsList(
-	instance: InstanceSkel<AtemConfig>,
+	instance: InstanceBaseExt<AtemConfig>,
 	atem: Atem | undefined,
 	model: ModelSpec,
 	commandBatching: AtemCommandBatching,
 	transitions: AtemTransitions,
 	state: AtemState
-): CompanionActions {
+): CompanionActionsExt {
 	const actions: CompanionActionsExt = {
 		...meActions(instance, atem, model, commandBatching, state),
-		...dskActions(instance, atem, model, state),
-		...macroActions(instance, atem, model, state),
-		...ssrcActions(instance, atem, model, state),
+		...dskActions(atem, model, state),
+		...macroActions(atem, model, state),
+		...ssrcActions(atem, model, state),
 		...streamRecordActions(instance, atem, model, state),
-		...audioActions(instance, atem, model, transitions, state),
+		...audioActions(atem, model, transitions, state),
 		[ActionId.Aux]: model.auxes
-			? literal<CompanionActionExt>({
-					label: 'Aux/Output: Set source',
+			? ({
+					name: 'Aux/Output: Set source',
 					options: [AtemAuxPicker(model), AtemAuxSourcePicker(model, state)],
-					callback: (action): void => {
-						executePromise(instance, atem?.setAuxSource(getOptNumber(action, 'input'), getOptNumber(action, 'aux')))
+					callback: async (action) => {
+						await atem?.setAuxSource(getOptNumber(action, 'input'), getOptNumber(action, 'aux'))
 					},
 					learn: (action) => {
 						const auxSource = state.video.auxilliaries[Number(action.options.aux)]
@@ -2394,55 +2294,50 @@ export function GetActionsList(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.AuxVariables]: model.auxes
-			? literal<CompanionActionExt>({
-					label: 'Aux/Output: Set source from variables',
+			? ({
+					name: 'Aux/Output: Set source from variables',
 					options: [
 						{
-							type: 'textwithvariables',
+							type: 'textinput',
 							id: 'aux',
 							label: 'AUX',
 							default: '1',
+							useVariables: true,
 						},
 						{
-							type: 'textwithvariables',
+							type: 'textinput',
 							id: 'input',
 							label: 'Input ID',
 							default: '0',
+							useVariables: true,
 						},
 					],
-					callback: (action): void => {
-						instance.parseVariables(action.options.aux as string, (outputStr) => {
-							instance.parseVariables(action.options.input as string, (inputStr) => {
-								const output = Number(outputStr)
-								const input = Number(inputStr)
+					callback: async (action) => {
+						const output = Number(await instance.parseVariablesInString(action.options.aux as string))
+						const input = Number(await instance.parseVariablesInString(action.options.input as string))
 
-								if (!isNaN(output) && !isNaN(input)) {
-									executePromise(instance, atem?.setAuxSource(input, output - 1))
-								}
-							})
-						})
+						if (!isNaN(output) && !isNaN(input)) {
+							await atem?.setAuxSource(input, output - 1)
+						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.MultiviewerWindowSource]: model.MVs
-			? literal<CompanionActionExt>({
-					label: 'Multiviewer: Change window source',
+			? ({
+					name: 'Multiviewer: Change window source',
 					options: [
 						AtemMultiviewerPicker(model),
 						AtemMultiviewWindowPicker(model),
 						AtemMultiviewSourcePicker(model, state),
 					],
-					callback: (action): void => {
-						executePromise(
-							instance,
-							atem?.setMultiViewerWindowSource(
-								getOptNumber(action, 'source'),
-								getOptNumber(action, 'multiViewerId'),
-								getOptNumber(action, 'windowIndex')
-							)
+					callback: async (action) => {
+						await atem?.setMultiViewerWindowSource(
+							getOptNumber(action, 'source'),
+							getOptNumber(action, 'multiViewerId'),
+							getOptNumber(action, 'windowIndex')
 						)
 					},
 					learn: (action) => {
@@ -2457,35 +2352,29 @@ export function GetActionsList(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.MediaPlayerSource]: model.media.players
-			? literal<CompanionActionExt>({
-					label: 'Media player: Set source',
+			? ({
+					name: 'Media player: Set source',
 					options: [AtemMediaPlayerPicker(model), AtemMediaPlayerSourcePicker(model, state)],
-					callback: (action): void => {
+					callback: async (action) => {
 						const source = getOptNumber(action, 'source')
 						if (source >= MEDIA_PLAYER_SOURCE_CLIP_OFFSET) {
-							executePromise(
-								instance,
-								atem?.setMediaPlayerSource(
-									{
-										sourceType: Enums.MediaSourceType.Clip,
-										clipIndex: source - MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
-									},
-									getOptNumber(action, 'mediaplayer')
-								)
+							await atem?.setMediaPlayerSource(
+								{
+									sourceType: Enums.MediaSourceType.Clip,
+									clipIndex: source - MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
+								},
+								getOptNumber(action, 'mediaplayer')
 							)
 						} else {
-							executePromise(
-								instance,
-								atem?.setMediaPlayerSource(
-									{
-										sourceType: Enums.MediaSourceType.Still,
-										stillIndex: source,
-									},
-									getOptNumber(action, 'mediaplayer')
-								)
+							await atem?.setMediaPlayerSource(
+								{
+									sourceType: Enums.MediaSourceType.Still,
+									stillIndex: source,
+								},
+								getOptNumber(action, 'mediaplayer')
 							)
 						}
 					},
@@ -2501,11 +2390,11 @@ export function GetActionsList(
 							return undefined
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
 		[ActionId.MediaPlayerCycle]: model.media.players
-			? literal<CompanionActionExt>({
-					label: 'Media player: Cycle source',
+			? ({
+					name: 'Media player: Cycle source',
 					options: [
 						AtemMediaPlayerPicker(model),
 						{
@@ -2526,7 +2415,7 @@ export function GetActionsList(
 						},
 						// AtemMediaPlayerSourcePicker(model, state)
 					],
-					callback: (action): void => {
+					callback: async (action) => {
 						const playerId = getOptNumber(action, 'mediaplayer')
 						const direction = action.options.direction as string
 						const offset = direction === 'next' ? 1 : -1
@@ -2538,36 +2427,33 @@ export function GetActionsList(
 							if (nextIndex >= maxIndex) nextIndex = 0
 							if (nextIndex < 0) nextIndex = maxIndex - 1
 
-							executePromise(
-								instance,
-								atem?.setMediaPlayerSource(
-									{
-										sourceType: Enums.MediaSourceType.Still,
-										stillIndex: nextIndex,
-									},
-									playerId
-								)
+							await atem?.setMediaPlayerSource(
+								{
+									sourceType: Enums.MediaSourceType.Still,
+									stillIndex: nextIndex,
+								},
+								playerId
 							)
 						}
 					},
-			  })
+			  } satisfies CompanionActionDefinition)
 			: undefined,
-		[ActionId.SaveStartupState]: literal<CompanionActionExt>({
-			label: 'Startup State: Save',
+		[ActionId.SaveStartupState]: {
+			name: 'Startup State: Save',
 			options: [],
-			callback: (): void => {
-				executePromise(instance, atem?.saveStartupState())
+			callback: async () => {
+				await atem?.saveStartupState()
 			},
-		}),
-		[ActionId.ClearStartupState]: literal<CompanionActionExt>({
-			label: 'Startup State: Clear',
+		} satisfies CompanionActionDefinition,
+		[ActionId.ClearStartupState]: {
+			name: 'Startup State: Clear',
 			options: [],
-			callback: (): void => {
-				executePromise(instance, atem?.clearStartupState())
+			callback: async () => {
+				await atem?.clearStartupState()
 			},
-		}),
-		[ActionId.InputName]: literal<CompanionActionExt>({
-			label: 'Input: Set name',
+		} satisfies CompanionActionDefinition,
+		[ActionId.InputName]: {
+			name: 'Input: Set name',
 			options: [
 				AtemAllSourcePicker(model, state),
 				{
@@ -2579,9 +2465,10 @@ export function GetActionsList(
 				{
 					id: 'short_value',
 					label: 'Short name',
-					type: 'textwithvariables',
+					type: 'textinput',
 					default: '',
 					tooltip: 'Max 4 characters. Supports variables',
+					useVariables: true,
 				},
 				{
 					id: 'long_enable',
@@ -2592,12 +2479,13 @@ export function GetActionsList(
 				{
 					id: 'long_value',
 					label: 'Long name',
-					type: 'textwithvariables',
+					type: 'textinput',
 					default: '',
 					tooltip: 'Max 24 characters. Supports variables',
+					useVariables: true,
 				},
 			],
-			callback: (action): void => {
+			callback: async (action) => {
 				const source = getOptNumber(action, 'source')
 				const setShort = getOptBool(action, 'short_enable')
 				const setLong = getOptBool(action, 'long_enable')
@@ -2605,22 +2493,19 @@ export function GetActionsList(
 				const newProps: Partial<Pick<InputState.InputChannel, 'longName' | 'shortName'>> = {}
 				if (setShort && typeof action.options.short_value === 'string') {
 					const rawVal = action.options.short_value
-					instance.parseVariables(rawVal, (val) => (newProps.shortName = val ?? rawVal))
+					newProps.shortName = await instance.parseVariablesInString(rawVal)
 				}
 				if (setLong && typeof action.options.long_value === 'string') {
 					const rawVal = action.options.long_value
-					instance.parseVariables(rawVal, (val) => (newProps.longName = val ?? rawVal))
+					newProps.longName = await instance.parseVariablesInString(rawVal)
 				}
 
-				executePromise(
-					instance,
-					Promise.all([
-						typeof newProps.longName === 'string' && !atem?.hasInternalMultiviewerLabelGeneration()
-							? atem?.drawMultiviewerLabel(source, newProps.longName)
-							: undefined,
-						Object.keys(newProps).length ? atem?.setInputSettings(newProps, source) : undefined,
-					])
-				)
+				await Promise.all([
+					typeof newProps.longName === 'string' && !atem?.hasInternalMultiviewerLabelGeneration()
+						? atem?.drawMultiviewerLabel(source, newProps.longName)
+						: undefined,
+					Object.keys(newProps).length ? atem?.setInputSettings(newProps, source) : undefined,
+				])
 			},
 			learn: (action) => {
 				const source = getOptNumber(action, 'source')
@@ -2636,7 +2521,7 @@ export function GetActionsList(
 					return undefined
 				}
 			},
-		}),
+		} satisfies CompanionActionDefinition,
 	}
 
 	return actions

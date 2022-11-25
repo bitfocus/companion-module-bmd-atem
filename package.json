@@ -1,41 +1,24 @@
 {
 	"name": "bmd-atem",
-	"legacy": [
-		"atem"
-	],
-	"version": "2.18.0",
-	"api_version": "1.0.0",
-	"description": "Blackmagic Design",
-	"keywords": [
-		"Vision Mixer"
-	],
-	"manufacturer": "Blackmagic Design",
-	"product": "ATEM",
-	"shortname": "atem",
+	"version": "3.0.0-0",
 	"homepage": "https://github.com/bitfocus/companion-module-atem#readme",
 	"main": "dist/index.js",
+	"type": "module",
 	"scripts": {
 		"prepare": "husky install",
-		"dev": "yarn build:watch",
-		"build": "npx rimraf dist && npx typescript@~4.5 -p tsconfig.build.json",
+		"dev": "yarn build:main --watch",
+		"build": "rimraf dist && yarn build:main",
 		"build:main": "tsc -p tsconfig.build.json",
-		"build:watch": "tsc -p tsconfig.build.json --watch",
-		"lint:raw": "eslint --ext .ts --ext .js --ignore-pattern dist",
+		"lint:raw": "eslint --ext .ts --ext .js --ignore-pattern dist --ignore-pattern pkg",
 		"lint": "yarn lint:raw .",
-		"lint-fix": "yarn lint --fix",
-		"license-validate": "yarn sofie-licensecheck",
-		"postinstall": "yarn build"
+		"dist": "yarn companion-module-build"
 	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/bitfocus/companion-module-bmd-atem.git"
 	},
-	"author": "Julian Waller <julian@superfly.tv>",
 	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/bitfocus/companion-module-bmd-atem/issues"
-	},
-	"prettier": "@sofie-automation/code-standard-preset/.prettierrc.json",
+	"prettier": "@companion-module/tools/.prettierrc.json",
 	"lint-staged": {
 		"*.{css,json,md,scss}": [
 			"prettier --write"
@@ -45,19 +28,24 @@
 		]
 	},
 	"engines": {
-		"node": "^14 || ^16"
+		"node": "^14 || ^18"
 	},
 	"dependencies": {
-		"@types/multicast-dns": "^7.2.1",
-		"@types/node": "^14.18.33",
+		"@companion-module/base": "~0.5.1",
 		"atem-connection": "^3.1.2",
 		"bonjour-service": "^1.0.14",
-		"debounce-fn": "github:julusian/debounce-fn#4.0.0-maxWaithack.0",
-		"type-fest": "^2.19.0"
+		"debounce-fn": "^5.1.2",
+		"debug": "^4.3.4",
+		"type-fest": "^3.2.0"
 	},
 	"devDependencies": {
-		"@sofie-automation/code-standard-preset": "~2.2",
+		"@companion-module/tools": "^0.3.3",
+		"@types/debug": "^4.1.7",
+		"@types/node": "^18.11.9",
+		"husky": "^8.0.2",
+		"lint-staged": "^13.0.3",
+		"rimraf": "^3.0.2",
 		"ts-node": "^10.9.1",
-		"typescript": "~4.5"
+		"typescript": "~4.9"
 	}
 }

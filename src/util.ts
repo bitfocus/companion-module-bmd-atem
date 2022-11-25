@@ -1,16 +1,10 @@
-import { InputValue } from '../../../instance_skel_types'
-import InstanceSkel = require('../../../instance_skel')
-import { AtemConfig } from './config'
 import { Enums } from 'atem-connection'
+import { InputValue, InstanceBase } from '@companion-module/base'
 
 export const MEDIA_PLAYER_SOURCE_CLIP_OFFSET = 1000
 
 export function assertUnreachable(_never: never): void {
 	// throw new Error('Unreachable')
-}
-
-export function literal<T>(val: T): T {
-	return val
 }
 
 export function pad(str: string, prefix: string, len: number): string {
@@ -54,16 +48,6 @@ export function calculateTransitionSelection(
 	return selection
 }
 
-export function executePromise(instance: InstanceSkel<AtemConfig>, prom: Promise<unknown> | undefined): void {
-	try {
-		prom?.catch((e) => {
-			instance.debug('Action execution error: ' + e)
-		})
-	} catch (e) {
-		instance.debug('Action failed: ' + e)
-	}
-}
-
 export enum NumberComparitor {
 	Equal = 'eq',
 	NotEqual = 'ne',
@@ -97,4 +81,8 @@ export function compareNumber(
 		default:
 			return currentValue === targetValue
 	}
+}
+
+export interface InstanceBaseExt<TConfig> extends InstanceBase<TConfig> {
+	config: TConfig
 }

@@ -1,28 +1,33 @@
+import { combineRgb, CompanionPresetDefinitions } from '@companion-module/base'
 import { AtemState, Enums } from 'atem-connection'
-import { SetRequired } from 'type-fest'
-import InstanceSkel = require('../../../instance_skel')
-import { CompanionPreset } from '../../../instance_skel_types'
-import { ActionId } from './actions'
-import { CHOICES_KEYFRAMES, GetSourcesListForType, GetTransitionStyleChoices } from './choices'
-import { AtemConfig, PresetStyleName } from './config'
-import { FeedbackId, MacroFeedbackType } from './feedback'
-import { ModelSpec } from './models'
-import { calculateTransitionSelection, MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util'
+import { ActionId } from './actions.js'
+import { CHOICES_KEYFRAMES, GetSourcesListForType, GetTransitionStyleChoices } from './choices.js'
+import { AtemConfig, PresetStyleName } from './config.js'
+import { FeedbackId, MacroFeedbackType } from './feedback.js'
+import { ModelSpec } from './models/index.js'
+import { calculateTransitionSelection, InstanceBaseExt, MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util.js'
 
 const rateOptions = [12, 15, 25, 30, 37, 45, 50, 60]
 
-interface CompanionPresetExt extends CompanionPreset {
-	feedbacks: Array<
-		{
-			type: FeedbackId
-		} & SetRequired<CompanionPreset['feedbacks'][0], 'style'>
-	>
-	actions: Array<
-		{
-			action: ActionId
-		} & CompanionPreset['actions'][0]
-	>
-}
+// interface CompanionPresetExt extends CompanionPressButtonPresetDefinition {
+// 	feedbacks: Array<
+// 		{
+// 			feedbackId: FeedbackId
+// 		} & SetRequired<CompanionPresetFeedback, 'style'>
+// 	>
+// 	steps:[{
+// 		down: Array<
+// 			{
+// 				actionId: ActionId
+// 			} & CompanionPresetAction
+// 		>
+// 		up: Array<
+// 			{
+// 				actionId: ActionId
+// 			} & CompanionPresetAction
+// 		>
+// 	}
+// }
 
 function getTransitionSelectionOptions(keyCount: number): boolean[][] {
 	let res: boolean[][] = []
@@ -42,11 +47,11 @@ function getTransitionSelectionOptions(keyCount: number): boolean[][] {
 }
 
 export function GetPresetsList(
-	instance: InstanceSkel<AtemConfig>,
+	instance: InstanceBaseExt<AtemConfig>,
 	model: ModelSpec,
 	state: AtemState
-): CompanionPreset[] {
-	const presets: CompanionPresetExt[] = []
+): CompanionPresetDefinitions {
+	const presets: CompanionPresetDefinitions = {}
 
 	const pstText = instance.config.presets === PresetStyleName.Long + '' ? 'long_' : 'short_'
 	const pstSize = instance.config.presets === PresetStyleName.Long + '' ? 'auto' : '18'
@@ -55,56 +60,61 @@ export function GetPresetsList(
 
 	for (let me = 0; me < model.MEs; ++me) {
 		for (const src of meSources) {
-			presets.push({
+			presets[`preview_me_${me}_${src.id}`] = {
 				category: `Preview (M/E ${me + 1})`,
-				label: `Preview button for ${src.shortName}`,
-				bank: {
-					style: 'text',
+				name: `Preview button for ${src.shortName}`,
+				type: 'button',
+				style: {
 					text: `$(atem:${pstText}${src.id})`,
 					size: pstSize,
-					color: instance.rgb(255, 255, 255),
-					bgcolor: instance.rgb(0, 0, 0),
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(0, 0, 0),
 				},
 				feedbacks: [
 					{
-						type: FeedbackId.PreviewBG,
+						feedbackId: FeedbackId.PreviewBG,
 						options: {
 							input: src.id,
 							mixeffect: me,
 						},
 						style: {
-							bgcolor: instance.rgb(0, 255, 0),
-							color: instance.rgb(255, 255, 255),
+							bgcolor: combineRgb(0, 255, 0),
+							color: combineRgb(255, 255, 255),
 						},
 					},
 				],
-				actions: [
+				steps: [
 					{
-						action: ActionId.Preview,
-						options: {
-							mixeffect: me,
-							input: src.id,
-						},
+						down: [
+							{
+								actionId: ActionId.Preview,
+								options: {
+									mixeffect: me,
+									input: src.id,
+								},
+							},
+						],
+						up: [],
 					},
 				],
-			})
+			}
 
-			presets.push({
+			presets[`program_me_${me}_${src.id}`] = {
 				category: `Program (M/E ${me + 1})`,
-				label: `Program button for ${src.shortName}`,
-				bank: {
-					style: 'text',
+				name: `Program button for ${src.shortName}`,
+				type: 'button',
+				style: {
 					text: `$(atem:${pstText}${src.id})`,
 					size: pstSize,
-					color: instance.rgb(255, 255, 255),
-					bgcolor: instance.rgb(0, 0, 0),
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(0, 0, 0),
 				},
 				feedbacks: [
 					{
-						type: FeedbackId.ProgramBG,
+						feedbackId: FeedbackId.ProgramBG,
 						style: {
-							bgcolor: instance.rgb(255, 0, 0),
-							color: instance.rgb(255, 255, 255),
+							bgcolor: combineRgb(255, 0, 0),
+							color: combineRgb(255, 255, 255),
 						},
 						options: {
 							input: src.id,
@@ -112,123 +122,143 @@ export function GetPresetsList(
 						},
 					},
 				],
-				actions: [
+				steps: [
 					{
-						action: ActionId.Program,
-						options: {
-							mixeffect: me,
-							input: src.id,
-						},
+						down: [
+							{
+								actionId: ActionId.Program,
+								options: {
+									mixeffect: me,
+									input: src.id,
+								},
+							},
+						],
+						up: [],
 					},
 				],
-			})
+			}
 		}
 	}
 
 	for (let me = 0; me < model.MEs; ++me) {
-		presets.push({
+		presets[`transition_auto_me_${me}`] = {
 			category: `Transitions (M/E ${me + 1})`,
-			label: `AUTO`,
-			bank: {
-				style: 'text',
+			name: `AUTO`,
+			type: 'button',
+			style: {
 				text: 'AUTO',
 				size: pstSize,
-				color: instance.rgb(255, 255, 255),
-				bgcolor: instance.rgb(0, 0, 0),
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 0),
 			},
 			feedbacks: [
 				{
-					type: FeedbackId.InTransition,
+					feedbackId: FeedbackId.InTransition,
 					options: {
 						mixeffect: me,
 					},
 					style: {
-						bgcolor: instance.rgb(255, 0, 0),
-						color: instance.rgb(255, 255, 255),
+						bgcolor: combineRgb(255, 0, 0),
+						color: combineRgb(255, 255, 255),
 					},
 				},
 			],
-			actions: [
+			steps: [
 				{
-					action: ActionId.Auto,
-					options: {
-						mixeffect: me,
-					},
+					down: [
+						{
+							actionId: ActionId.Auto,
+							options: {
+								mixeffect: me,
+							},
+						},
+					],
+					up: [],
 				},
 			],
-		})
+		}
 		for (const opt of GetTransitionStyleChoices()) {
-			presets.push({
+			presets[`transition_style_me_${me}_${opt.id}`] = {
 				category: `Transitions (M/E ${me + 1})`,
-				label: `Transition style ${opt.label}`,
-				bank: {
-					style: 'text',
+				name: `Transition style ${opt.label}`,
+				type: 'button',
+				style: {
 					text: opt.label,
 					size: pstSize,
-					color: instance.rgb(255, 255, 255),
-					bgcolor: instance.rgb(0, 0, 0),
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(0, 0, 0),
 				},
 				feedbacks: [
 					{
-						type: FeedbackId.TransitionStyle,
+						feedbackId: FeedbackId.TransitionStyle,
 						options: {
 							mixeffect: me,
 							style: opt.id,
 						},
 						style: {
-							bgcolor: instance.rgb(255, 255, 0),
-							color: instance.rgb(0, 0, 0),
+							bgcolor: combineRgb(255, 255, 0),
+							color: combineRgb(0, 0, 0),
 						},
 					},
 				],
-				actions: [
+				steps: [
 					{
-						action: ActionId.TransitionStyle,
-						options: {
-							mixeffect: me,
-							style: opt.id,
-						},
+						down: [
+							{
+								actionId: ActionId.TransitionStyle,
+								options: {
+									mixeffect: me,
+									style: opt.id,
+								},
+							},
+						],
+						up: [],
 					},
 				],
-			})
+			}
 		}
 		for (const opt of GetTransitionStyleChoices(true)) {
 			for (const rate of rateOptions) {
-				presets.push({
+				presets[`transition_rate_${me}_${opt.id}_${rate}`] = {
 					category: `Transitions (M/E ${me + 1})`,
-					label: `Transition ${opt.label} rate ${rate}`,
-					bank: {
-						style: 'text',
+					name: `Transition ${opt.label} rate ${rate}`,
+					type: 'button',
+					style: {
 						text: `${opt.label} ${rate}`,
 						size: pstSize,
-						color: instance.rgb(255, 255, 255),
-						bgcolor: instance.rgb(0, 0, 0),
+						color: combineRgb(255, 255, 255),
+						bgcolor: combineRgb(0, 0, 0),
 					},
 					feedbacks: [
 						{
-							type: FeedbackId.TransitionRate,
+							feedbackId: FeedbackId.TransitionRate,
 							options: {
 								mixeffect: me,
 								style: opt.id,
 								rate,
 							},
 							style: {
-								bgcolor: instance.rgb(255, 255, 0),
-								color: instance.rgb(0, 0, 0),
+								bgcolor: combineRgb(255, 255, 0),
+								color: combineRgb(0, 0, 0),
 							},
 						},
 					],
-					actions: [
+					steps: [
 						{
-							action: ActionId.TransitionRate,
-							options: {
-								mixeffect: me,
-								style: opt.id,
-								rate,
-							},
+							down: [
+								{
+									actionId: ActionId.TransitionRate,
+									options: {
+										mixeffect: me,
+										style: opt.id,
+										rate,
+									},
+								},
+							],
+							up: [],
 						},
 					],
-				})
+				}
 			}
 		}
 
@@ -251,131 +281,146 @@ export function GetPresetsList(
 
 			const transitionString = transitionStringParts.join(' & ')
 
-			presets.push({
+			presets[`transition_selection_${me}_${transitionString.trim()}`] = {
 				category: `Transitions (M/E ${me + 1})`,
-				label: `Transition Selection ${transitionString.trim()}`,
-				bank: {
-					style: 'text',
+				name: `Transition Selection ${transitionString.trim()}`,
+				type: 'button',
+				style: {
 					text: transitionString.trim(),
 					size: pstSize,
-					color: instance.rgb(255, 255, 255),
-					bgcolor: instance.rgb(0, 0, 0),
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(0, 0, 0),
 				},
 				feedbacks: [
 					{
-						type: FeedbackId.TransitionSelection,
+						feedbackId: FeedbackId.TransitionSelection,
 						options: {
 							mixeffect: me,
 							...selectionProps,
 						},
 						style: {
-							bgcolor: instance.rgb(255, 255, 0),
-							color: instance.rgb(0, 0, 0),
+							bgcolor: combineRgb(255, 255, 0),
+							color: combineRgb(0, 0, 0),
 						},
 					},
 				],
-				actions: [
+				steps: [
 					{
-						action: ActionId.TransitionSelection,
-						options: {
-							mixeffect: me,
-							...selectionProps,
-						},
+						down: [
+							{
+								actionId: ActionId.TransitionSelection,
+								options: {
+									mixeffect: me,
+									...selectionProps,
+								},
+							},
+						],
+						up: [],
 					},
 				],
-			})
+			}
 		}
 	}
 
 	for (let aux = 0; aux < model.auxes; ++aux) {
 		for (const src of GetSourcesListForType(model, state, 'aux')) {
-			presets.push({
+			presets[`aux_${aux}_${src.id}`] = {
 				category: `AUX ${aux + 1}`,
-				label: `AUX ${aux + 1} button for ${src.shortName}`,
-				bank: {
-					style: 'text',
+				name: `AUX ${aux + 1} button for ${src.shortName}`,
+				type: 'button',
+				style: {
 					text: `$(atem:${pstText}${src.id})`,
 					size: pstSize,
-					color: instance.rgb(255, 255, 255),
-					bgcolor: instance.rgb(0, 0, 0),
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(0, 0, 0),
 				},
 				feedbacks: [
 					{
-						type: FeedbackId.AuxBG,
+						feedbackId: FeedbackId.AuxBG,
 						options: {
 							input: src.id,
 							aux,
 						},
 						style: {
-							bgcolor: instance.rgb(255, 255, 0),
-							color: instance.rgb(0, 0, 0),
+							bgcolor: combineRgb(255, 255, 0),
+							color: combineRgb(0, 0, 0),
 						},
 					},
 				],
-				actions: [
+				steps: [
 					{
-						action: ActionId.Aux,
-						options: {
-							aux,
-							input: src.id,
-						},
+						down: [
+							{
+								actionId: ActionId.Aux,
+								options: {
+									aux,
+									input: src.id,
+								},
+							},
+						],
+						up: [],
 					},
 				],
-			})
+			}
 		}
 	}
 
 	// Upstream keyers
 	for (let me = 0; me < model.MEs; ++me) {
 		for (let key = 0; key < model.USKs; ++key) {
-			presets.push({
+			presets[`keys_onair_me_${me}_${key}`] = {
 				category: 'KEYs OnAir',
-				label: `Toggle upstream M/E ${me + 1} KEY ${key + 1} OnAir`,
-				bank: {
-					style: 'text',
+				name: `Toggle upstream M/E ${me + 1} KEY ${key + 1} OnAir`,
+				type: 'button',
+				style: {
 					text: 'KEY ' + (key + 1),
 					size: '24',
-					color: instance.rgb(255, 255, 255),
-					bgcolor: instance.rgb(0, 0, 0),
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(0, 0, 0),
 				},
 				feedbacks: [
 					{
-						type: FeedbackId.USKOnAir,
+						feedbackId: FeedbackId.USKOnAir,
 						options: {
 							key,
 							mixeffect: me,
 						},
 						style: {
-							bgcolor: instance.rgb(255, 0, 0),
-							color: instance.rgb(255, 255, 255),
+							bgcolor: combineRgb(255, 0, 0),
+							color: combineRgb(255, 255, 255),
 						},
 					},
 				],
-				actions: [
+				steps: [
 					{
-						action: ActionId.USKOnAir,
-						options: {
-							onair: 'toggle',
-							key,
-							mixeffect: me,
-						},
+						down: [
+							{
+								actionId: ActionId.USKOnAir,
+								options: {
+									onair: 'toggle',
+									key,
+									mixeffect: me,
+								},
+							},
+						],
+						up: [],
 					},
 				],
-			})
+			}
 
-			presets.push({
+			presets[`keys_next_me_${me}_${key}`] = {
 				category: 'KEYs Next',
-				label: `Toggle upstream M/E ${me + 1} KEY ${key + 1} Next`,
-				bank: {
-					style: 'text',
+				name: `Toggle upstream M/E ${me + 1} KEY ${key + 1} Next`,
+				type: 'button',
+				style: {
 					text: 'KEY ' + (key + 1),
 					size: '24',
-					color: instance.rgb(255, 255, 255),
-					bgcolor: instance.rgb(0, 0, 0),
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(0, 0, 0),
 				},
 				feedbacks: [
 					{
-						type: FeedbackId.TransitionSelection,
+						feedbackId: FeedbackId.TransitionSelection,
 						options: {
 							background: false,
 							['key' + key]: true,
@@ -383,276 +428,311 @@ export function GetPresetsList(
 							matchmethod: 'contains',
 						},
 						style: {
-							bgcolor: instance.rgb(255, 255, 0),
-							color: instance.rgb(0, 0, 0),
+							bgcolor: combineRgb(255, 255, 0),
+							color: combineRgb(0, 0, 0),
 						},
 					},
 				],
-				actions: [
+				steps: [
 					{
-						action: ActionId.TransitionSelectionComponent,
-						options: {
-							mixeffect: me,
-							component: key + 1,
-							mode: 'toggle',
-						},
+						down: [
+							{
+								actionId: ActionId.TransitionSelectionComponent,
+								options: {
+									mixeffect: me,
+									component: key + 1,
+									mode: 'toggle',
+								},
+							},
+						],
+						up: [],
 					},
 				],
-			})
+			}
 
 			for (const src of meSources) {
-				presets.push({
+				presets[`key_src_${me}_${key}_${src.id}`] = {
 					category: `M/E ${me + 1} Key ${key + 1}`,
-					label: `M/E ${me + 1} KEY ${key + 1} source ${src.shortName}`,
-					bank: {
-						style: 'text',
+					name: `M/E ${me + 1} KEY ${key + 1} source ${src.shortName}`,
+					type: 'button',
+					style: {
 						text: `$(atem:${pstText}${src.id})`,
 						size: pstSize,
-						color: instance.rgb(255, 255, 255),
-						bgcolor: instance.rgb(0, 0, 0),
+						color: combineRgb(255, 255, 255),
+						bgcolor: combineRgb(0, 0, 0),
 					},
 					feedbacks: [
 						{
-							type: FeedbackId.USKSource,
+							feedbackId: FeedbackId.USKSource,
 							options: {
 								fill: src.id,
 								key,
 								mixeffect: me,
 							},
 							style: {
-								bgcolor: instance.rgb(238, 238, 0),
-								color: instance.rgb(0, 0, 0),
+								bgcolor: combineRgb(238, 238, 0),
+								color: combineRgb(0, 0, 0),
 							},
 						},
 					],
-					actions: [
+					steps: [
 						{
-							action: ActionId.USKSource,
-							options: {
-								fill: src.id,
-								cut: src.id + 1,
-								key,
-								mixeffect: me,
-							},
+							down: [
+								{
+									actionId: ActionId.USKSource,
+									options: {
+										fill: src.id,
+										cut: src.id + 1,
+										key,
+										mixeffect: me,
+									},
+								},
+							],
+							up: [],
 						},
 					],
-				})
+				}
 			}
 
 			for (const flydirection of CHOICES_KEYFRAMES) {
-				presets.push({
+				presets[`key_fly_me_${me}_${key}_${flydirection.id}`] = {
 					category: `KEYs Fly`,
-					label: `Fly M/E ${me + 1} KEY ${key + 1} to ${flydirection.label}`,
-					bank: {
-						style: 'text',
+					name: `Fly M/E ${me + 1} KEY ${key + 1} to ${flydirection.label}`,
+					type: 'button',
+					style: {
 						text: `Fly to ${flydirection.label}`,
 						size: pstSize,
-						color: instance.rgb(255, 255, 255),
-						bgcolor: instance.rgb(0, 0, 0),
+						color: combineRgb(255, 255, 255),
+						bgcolor: combineRgb(0, 0, 0),
 					},
 					feedbacks: [
 						{
-							type: FeedbackId.USKKeyFrame,
+							feedbackId: FeedbackId.USKKeyFrame,
 							options: {
 								keyframe: flydirection.id,
 								key,
 								mixeffect: me,
 							},
 							style: {
-								bgcolor: instance.rgb(238, 238, 0),
-								color: instance.rgb(0, 0, 0),
+								bgcolor: combineRgb(238, 238, 0),
+								color: combineRgb(0, 0, 0),
 							},
 						},
 					],
-					actions: [
+					steps: [
 						{
-							action: ActionId.USKFly,
-							options: {
-								keyframe: flydirection.id,
-								key,
-								mixeffect: me,
-							},
+							down: [
+								{
+									actionId: ActionId.USKFly,
+									options: {
+										keyframe: flydirection.id,
+										key,
+										mixeffect: me,
+									},
+								},
+							],
+							up: [],
 						},
 					],
-				})
+				}
 			}
 		}
 	}
 
 	// Downstream keyers
 	for (let dsk = 0; dsk < model.DSKs; ++dsk) {
-		presets.push({
+		presets[`dsk_onair_${dsk}`] = {
 			category: 'KEYs OnAir',
-			label: `Toggle downstream KEY ${dsk + 1} OnAir`,
-			bank: {
-				style: 'text',
+			name: `Toggle downstream KEY ${dsk + 1} OnAir`,
+			type: 'button',
+			style: {
 				text: `DSK ${dsk + 1}`,
 				size: '24',
-				color: instance.rgb(255, 255, 255),
-				bgcolor: instance.rgb(0, 0, 0),
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 0),
 			},
 			feedbacks: [
 				{
-					type: FeedbackId.DSKOnAir,
+					feedbackId: FeedbackId.DSKOnAir,
 					options: {
 						key: dsk,
 					},
 					style: {
-						bgcolor: instance.rgb(255, 0, 0),
-						color: instance.rgb(255, 255, 255),
+						bgcolor: combineRgb(255, 0, 0),
+						color: combineRgb(255, 255, 255),
 					},
 				},
 			],
-			actions: [
+			steps: [
 				{
-					action: ActionId.DSKOnAir,
-					options: {
-						onair: 'toggle',
-						key: dsk,
-					},
+					down: [
+						{
+							actionId: ActionId.DSKOnAir,
+							options: {
+								onair: 'toggle',
+								key: dsk,
+							},
+						},
+					],
+					up: [],
 				},
 			],
-		})
+		}
 
-		presets.push({
+		presets[`dsk_next_${dsk}`] = {
 			category: 'KEYs Next',
-			label: `Toggle downstream KEY ${dsk + 1} Next`,
-			bank: {
-				style: 'text',
+			name: `Toggle downstream KEY ${dsk + 1} Next`,
+			type: 'button',
+			style: {
 				text: `DSK ${dsk + 1}`,
 				size: '24',
-				color: instance.rgb(255, 255, 255),
-				bgcolor: instance.rgb(0, 0, 0),
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 0),
 			},
 			feedbacks: [
 				{
-					type: FeedbackId.DSKTie,
+					feedbackId: FeedbackId.DSKTie,
 					options: {
 						key: dsk,
 					},
 					style: {
-						bgcolor: instance.rgb(255, 255, 0),
-						color: instance.rgb(0, 0, 0),
+						bgcolor: combineRgb(255, 255, 0),
+						color: combineRgb(0, 0, 0),
 					},
 				},
 			],
-			actions: [
+			steps: [
 				{
-					action: ActionId.DSKTie,
-					options: {
-						state: 'toggle',
-						key: dsk,
-					},
+					down: [
+						{
+							actionId: ActionId.DSKTie,
+							options: {
+								state: 'toggle',
+								key: dsk,
+							},
+						},
+					],
+					up: [],
 				},
 			],
-		})
+		}
 
 		for (const src of meSources) {
-			presets.push({
+			presets[`dsk_src_${dsk}_${src.id}`] = {
 				category: `DSK ${dsk + 1}`,
-				label: `DSK ${dsk + 1} source ${src.shortName}`,
-				bank: {
-					style: 'text',
+				name: `DSK ${dsk + 1} source ${src.shortName}`,
+				type: 'button',
+				style: {
 					text: `$(atem:${pstText}${src.id})`,
 					size: pstSize,
-					color: instance.rgb(255, 255, 255),
-					bgcolor: instance.rgb(0, 0, 0),
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(0, 0, 0),
 				},
 				feedbacks: [
 					{
-						type: FeedbackId.DSKSource,
+						feedbackId: FeedbackId.DSKSource,
 						options: {
 							fill: src.id,
 							key: dsk,
 						},
 						style: {
-							bgcolor: instance.rgb(238, 238, 0),
-							color: instance.rgb(0, 0, 0),
+							bgcolor: combineRgb(238, 238, 0),
+							color: combineRgb(0, 0, 0),
 						},
 					},
 				],
-				actions: [
+				steps: [
 					{
-						action: ActionId.DSKSource,
-						options: {
-							fill: src.id,
-							cut: src.id + 1,
-							key: dsk,
-						},
+						down: [
+							{
+								actionId: ActionId.DSKSource,
+								options: {
+									fill: src.id,
+									cut: src.id + 1,
+									key: dsk,
+								},
+							},
+						],
+						up: [],
 					},
 				],
-			})
+			}
 		}
 	}
 
 	// Macros
 	for (let macro = 0; macro < model.macros; macro++) {
-		presets.push({
+		presets[`macro_run_${macro}`] = {
 			category: 'MACROS',
-			label: `Run button for macro ${macro + 1}`,
-			bank: {
-				style: 'text',
+			name: `Run button for macro ${macro + 1}`,
+			type: 'button',
+			style: {
 				text: `$(atem:macro_${macro + 1})`,
 				size: 'auto',
-				color: instance.rgb(255, 255, 255),
-				bgcolor: instance.rgb(0, 0, 0),
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 0),
 			},
 			feedbacks: [
 				{
-					type: FeedbackId.Macro,
+					feedbackId: FeedbackId.Macro,
 					options: {
 						macroIndex: macro + 1,
 						state: MacroFeedbackType.IsUsed,
 					},
 					style: {
-						bgcolor: instance.rgb(0, 0, 238),
-						color: instance.rgb(255, 255, 255),
+						bgcolor: combineRgb(0, 0, 238),
+						color: combineRgb(255, 255, 255),
 					},
 				},
 				{
-					type: FeedbackId.Macro,
+					feedbackId: FeedbackId.Macro,
 					options: {
 						macroIndex: macro + 1,
 						state: MacroFeedbackType.IsRunning,
 					},
 					style: {
-						bgcolor: instance.rgb(0, 238, 0),
-						color: instance.rgb(255, 255, 255),
+						bgcolor: combineRgb(0, 238, 0),
+						color: combineRgb(255, 255, 255),
 					},
 				},
 				{
-					type: FeedbackId.Macro,
+					feedbackId: FeedbackId.Macro,
 					options: {
 						macroIndex: macro + 1,
 						state: MacroFeedbackType.IsWaiting,
 					},
 					style: {
-						bgcolor: instance.rgb(238, 238, 0),
-						color: instance.rgb(255, 255, 255),
+						bgcolor: combineRgb(238, 238, 0),
+						color: combineRgb(255, 255, 255),
 					},
 				},
 				{
-					type: FeedbackId.Macro,
+					feedbackId: FeedbackId.Macro,
 					options: {
 						macroIndex: macro + 1,
 						state: MacroFeedbackType.IsRecording,
 					},
 					style: {
-						bgcolor: instance.rgb(238, 0, 0),
-						color: instance.rgb(255, 255, 255),
+						bgcolor: combineRgb(238, 0, 0),
+						color: combineRgb(255, 255, 255),
 					},
 				},
 			],
-			actions: [
+			steps: [
 				{
-					action: ActionId.MacroRun,
-					options: {
-						macro: macro + 1,
-						action: 'runContinue',
-					},
+					down: [
+						{
+							actionId: ActionId.MacroRun,
+							options: {
+								macro: macro + 1,
+								action: 'runContinue',
+							},
+						},
+					],
+					up: [],
 				},
 			],
-		})
+		}
 	}
 
 	for (let mv = 0; mv < model.MVs; mv++) {
@@ -660,384 +740,429 @@ export function GetPresetsList(
 		const windowCount = model.multiviewerFullGrid ? 16 : 10
 		for (let window = firstWindow; window < windowCount; window++) {
 			for (const src of GetSourcesListForType(model, state, 'mv')) {
-				presets.push({
+				presets[`mv_win_src_${mv}_${window}_${src.id}`] = {
 					category: `MV ${mv + 1} Window ${window + 1}`,
-					label: `Set MV ${mv + 1} Window ${window + 1} to source ${src.shortName}`,
-					bank: {
-						style: 'text',
+					name: `Set MV ${mv + 1} Window ${window + 1} to source ${src.shortName}`,
+					type: 'button',
+					style: {
 						text: `$(atem:${pstText}${src.id})`,
 						size: pstSize,
-						color: instance.rgb(255, 255, 255),
-						bgcolor: instance.rgb(0, 0, 0),
+						color: combineRgb(255, 255, 255),
+						bgcolor: combineRgb(0, 0, 0),
 					},
 					feedbacks: [
 						{
-							type: FeedbackId.MVSource,
+							feedbackId: FeedbackId.MVSource,
 							options: {
 								multiViewerId: mv,
 								source: src.id,
 								windowIndex: window,
 							},
 							style: {
-								bgcolor: instance.rgb(255, 255, 0),
-								color: instance.rgb(0, 0, 0),
+								bgcolor: combineRgb(255, 255, 0),
+								color: combineRgb(0, 0, 0),
 							},
 						},
 					],
-					actions: [
+					steps: [
 						{
-							action: ActionId.MultiviewerWindowSource,
-							options: {
-								multiViewerId: mv,
-								source: src.id,
-								windowIndex: window,
-							},
+							down: [
+								{
+									actionId: ActionId.MultiviewerWindowSource,
+									options: {
+										multiViewerId: mv,
+										source: src.id,
+										windowIndex: window,
+									},
+								},
+							],
+							up: [],
 						},
 					],
-				})
+				}
 			}
 		}
 	}
 
 	for (let ssrc = 0; ssrc < model.SSrc; ssrc++) {
 		for (let box = 0; box < 4; box++) {
-			presets.push({
+			presets[`ssrc_box_onair_${ssrc}_${box}`] = {
 				category: `SSrc ${ssrc + 1} Boxes`,
-				label: `Toggle SuperSource ${ssrc + 1} Box ${box + 1} visibility`,
-				bank: {
-					style: 'text',
+				name: `Toggle SuperSource ${ssrc + 1} Box ${box + 1} visibility`,
+				type: 'button',
+				style: {
 					text: `Box ${box + 1}`,
 					size: pstSize,
-					color: instance.rgb(255, 255, 255),
-					bgcolor: instance.rgb(0, 0, 0),
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(0, 0, 0),
 				},
 				feedbacks: [
 					{
-						type: FeedbackId.SSrcBoxOnAir,
+						feedbackId: FeedbackId.SSrcBoxOnAir,
 						options: {
 							ssrcId: ssrc,
 							boxIndex: box,
 						},
 						style: {
-							bgcolor: instance.rgb(255, 255, 0),
-							color: instance.rgb(0, 0, 0),
+							bgcolor: combineRgb(255, 255, 0),
+							color: combineRgb(0, 0, 0),
 						},
 					},
 				],
-				actions: [
+				steps: [
 					{
-						action: ActionId.SuperSourceBoxOnAir,
-						options: {
-							ssrcId: ssrc,
-							onair: 'toggle',
-							boxIndex: box,
-						},
+						down: [
+							{
+								actionId: ActionId.SuperSourceBoxOnAir,
+								options: {
+									ssrcId: ssrc,
+									onair: 'toggle',
+									boxIndex: box,
+								},
+							},
+						],
+						up: [],
 					},
 				],
-			})
+			}
 
 			for (const src of meSources) {
-				presets.push({
+				presets[`ssrc_box_src_${ssrc}_${box}_${src.id}`] = {
 					category: `SSrc ${ssrc + 1} Box ${box + 1}`,
-					label: `Set SuperSource ${ssrc + 1} Box ${box + 1} to source ${src.shortName}`,
-					bank: {
-						style: 'text',
+					name: `Set SuperSource ${ssrc + 1} Box ${box + 1} to source ${src.shortName}`,
+					type: 'button',
+					style: {
 						text: `$(atem:${pstText}${src.id})`,
 						size: pstSize,
-						color: instance.rgb(255, 255, 255),
-						bgcolor: instance.rgb(0, 0, 0),
+						color: combineRgb(255, 255, 255),
+						bgcolor: combineRgb(0, 0, 0),
 					},
 					feedbacks: [
 						{
-							type: FeedbackId.SSrcBoxSource,
+							feedbackId: FeedbackId.SSrcBoxSource,
 							options: {
 								ssrcId: ssrc,
 								source: src.id,
 								boxIndex: box,
 							},
 							style: {
-								bgcolor: instance.rgb(255, 255, 0),
-								color: instance.rgb(0, 0, 0),
+								bgcolor: combineRgb(255, 255, 0),
+								color: combineRgb(0, 0, 0),
 							},
 						},
 					],
-					actions: [
+					steps: [
 						{
-							action: ActionId.SuperSourceBoxSource,
-							options: {
-								ssrcId: ssrc,
-								source: src.id,
-								boxIndex: box,
-							},
+							down: [
+								{
+									actionId: ActionId.SuperSourceBoxSource,
+									options: {
+										ssrcId: ssrc,
+										source: src.id,
+										boxIndex: box,
+									},
+								},
+							],
+							up: [],
 						},
 					],
-				})
+				}
 			}
 		}
 	}
 
 	for (let player = 0; player < model.media.players; player++) {
 		for (let clip = 0; clip < model.media.clips; clip++) {
-			presets.push({
+			presets[`mediaplayer_clip_${player}_${clip}`] = {
 				category: `Mediaplayer ${player + 1}`,
-				label: `Set Mediaplayer ${player + 1} source to clip ${clip + 1}`,
-				bank: {
-					style: 'text',
+				name: `Set Mediaplayer ${player + 1} source to clip ${clip + 1}`,
+				type: 'button',
+				style: {
 					text: `MP ${player + 1} Clip ${clip + 1}`,
 					size: pstSize,
-					color: instance.rgb(255, 255, 255),
-					bgcolor: instance.rgb(0, 0, 0),
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(0, 0, 0),
 				},
 				feedbacks: [
 					{
-						type: FeedbackId.MediaPlayerSource,
+						feedbackId: FeedbackId.MediaPlayerSource,
 						options: {
 							mediaplayer: player,
 							source: clip + MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
 						},
 						style: {
-							bgcolor: instance.rgb(255, 255, 0),
-							color: instance.rgb(0, 0, 0),
+							bgcolor: combineRgb(255, 255, 0),
+							color: combineRgb(0, 0, 0),
 						},
 					},
 				],
-				actions: [
+				steps: [
 					{
-						action: ActionId.MediaPlayerSource,
-						options: {
-							mediaplayer: player,
-							source: clip + MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
-						},
+						down: [
+							{
+								actionId: ActionId.MediaPlayerSource,
+								options: {
+									mediaplayer: player,
+									source: clip + MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
+								},
+							},
+						],
+						up: [],
 					},
 				],
-			})
+			}
 		}
 
 		for (let still = 0; still < model.media.stills; still++) {
-			presets.push({
+			presets[`mediaplayer_still_${player}_${still}`] = {
 				category: `Mediaplayer ${player + 1}`,
-				label: `Set Mediaplayer ${player + 1} source to still ${still + 1}`,
-				bank: {
-					style: 'text',
+				name: `Set Mediaplayer ${player + 1} source to still ${still + 1}`,
+				type: 'button',
+				style: {
 					text: `MP ${player + 1} Still ${still + 1}`,
 					size: pstSize,
-					color: instance.rgb(255, 255, 255),
-					bgcolor: instance.rgb(0, 0, 0),
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(0, 0, 0),
 				},
 				feedbacks: [
 					{
-						type: FeedbackId.MediaPlayerSource,
+						feedbackId: FeedbackId.MediaPlayerSource,
 						options: {
 							mediaplayer: player,
 							source: still,
 						},
 						style: {
-							bgcolor: instance.rgb(255, 255, 0),
-							color: instance.rgb(0, 0, 0),
+							bgcolor: combineRgb(255, 255, 0),
+							color: combineRgb(0, 0, 0),
 						},
 					},
 				],
-				actions: [
+				steps: [
 					{
-						action: ActionId.MediaPlayerSource,
-						options: {
-							mediaplayer: player,
-							source: still,
-						},
+						down: [
+							{
+								actionId: ActionId.MediaPlayerSource,
+								options: {
+									mediaplayer: player,
+									source: still,
+								},
+							},
+						],
+						up: [],
 					},
 				],
-			})
+			}
 		}
 	}
 
 	for (let me = 0; me < model.MEs; ++me) {
-		presets.push({
+		presets[`ftb_auto_${me}`] = {
 			category: `Fade to black (M/E ${me + 1})`,
-			label: `Auto fade`,
-			bank: {
-				style: 'text',
+			name: `Auto fade`,
+			type: 'button',
+			style: {
 				text: `FTB Auto`,
 				size: pstSize,
-				color: instance.rgb(255, 255, 255),
-				bgcolor: instance.rgb(0, 0, 0),
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 0),
 			},
 			feedbacks: [
 				{
-					type: FeedbackId.FadeToBlackIsBlack,
+					feedbackId: FeedbackId.FadeToBlackIsBlack,
 					options: {
 						mixeffect: me,
 						state: 'off',
 					},
 					style: {
-						bgcolor: instance.rgb(0, 255, 0),
-						color: instance.rgb(255, 255, 255),
+						bgcolor: combineRgb(0, 255, 0),
+						color: combineRgb(255, 255, 255),
 					},
 				},
 				{
-					type: FeedbackId.FadeToBlackIsBlack,
+					feedbackId: FeedbackId.FadeToBlackIsBlack,
 					options: {
 						mixeffect: me,
 						state: 'on',
 					},
 					style: {
-						bgcolor: instance.rgb(255, 0, 0),
-						color: instance.rgb(255, 255, 255),
+						bgcolor: combineRgb(255, 0, 0),
+						color: combineRgb(255, 255, 255),
 					},
 				},
 				{
-					type: FeedbackId.FadeToBlackIsBlack,
+					feedbackId: FeedbackId.FadeToBlackIsBlack,
 					options: {
 						mixeffect: me,
 						state: 'fading',
 					},
 					style: {
-						bgcolor: instance.rgb(255, 255, 0),
-						color: instance.rgb(0, 0, 0),
+						bgcolor: combineRgb(255, 255, 0),
+						color: combineRgb(0, 0, 0),
 					},
 				},
 			],
-			actions: [
+			steps: [
 				{
-					action: ActionId.FadeToBlackAuto,
-					options: {
-						mixeffect: me,
-					},
+					down: [
+						{
+							actionId: ActionId.FadeToBlackAuto,
+							options: {
+								mixeffect: me,
+							},
+						},
+					],
+					up: [],
 				},
 			],
-		})
+		}
 		for (const rate of rateOptions) {
-			presets.push({
+			presets[`ftb_rate_${me}_${rate}`] = {
 				category: `Fade to black (M/E ${me + 1})`,
-				label: `Rate ${rate}`,
-				bank: {
-					style: 'text',
+				name: `Rate ${rate}`,
+				type: 'button',
+				style: {
 					text: `Rate ${rate}`,
 					size: pstSize,
-					color: instance.rgb(255, 255, 255),
-					bgcolor: instance.rgb(0, 0, 0),
+					color: combineRgb(255, 255, 255),
+					bgcolor: combineRgb(0, 0, 0),
 				},
 				feedbacks: [
 					{
-						type: FeedbackId.FadeToBlackRate,
+						feedbackId: FeedbackId.FadeToBlackRate,
 						options: {
 							mixeffect: me,
 							rate,
 						},
 						style: {
-							bgcolor: instance.rgb(255, 255, 0),
-							color: instance.rgb(0, 0, 0),
+							bgcolor: combineRgb(255, 255, 0),
+							color: combineRgb(0, 0, 0),
 						},
 					},
 				],
-				actions: [
+				steps: [
 					{
-						action: ActionId.FadeToBlackRate,
-						options: {
-							mixeffect: me,
-							rate,
-						},
+						down: [
+							{
+								actionId: ActionId.FadeToBlackRate,
+								options: {
+									mixeffect: me,
+									rate,
+								},
+							},
+						],
+						up: [],
 					},
 				],
-			})
+			}
 		}
 	}
 
 	if (model.streaming) {
-		presets.push({
+		presets[`streaming_toggle`] = {
 			category: 'Streaming & Recording',
-			label: 'Stream',
-			bank: {
-				style: 'text',
+			name: 'Stream',
+			type: 'button',
+			style: {
 				text: 'Stream\\n$(atem:stream_duration_hm)',
 				size: '18',
-				color: instance.rgb(255, 255, 255),
-				bgcolor: instance.rgb(0, 0, 0),
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 0),
 			},
 			feedbacks: [
 				{
-					type: FeedbackId.StreamStatus,
+					feedbackId: FeedbackId.StreamStatus,
 					options: {
 						state: Enums.StreamingStatus.Streaming,
 					},
 					style: {
-						bgcolor: instance.rgb(0, 255, 0),
-						color: instance.rgb(0, 0, 0),
+						bgcolor: combineRgb(0, 255, 0),
+						color: combineRgb(0, 0, 0),
 					},
 				},
 				{
-					type: FeedbackId.StreamStatus,
+					feedbackId: FeedbackId.StreamStatus,
 					options: {
 						state: Enums.StreamingStatus.Stopping,
 					},
 					style: {
-						bgcolor: instance.rgb(238, 238, 0),
-						color: instance.rgb(0, 0, 0),
+						bgcolor: combineRgb(238, 238, 0),
+						color: combineRgb(0, 0, 0),
 					},
 				},
 				{
-					type: FeedbackId.StreamStatus,
+					feedbackId: FeedbackId.StreamStatus,
 					options: {
 						state: Enums.StreamingStatus.Connecting,
 					},
 					style: {
-						bgcolor: instance.rgb(238, 238, 0),
-						color: instance.rgb(0, 0, 0),
+						bgcolor: combineRgb(238, 238, 0),
+						color: combineRgb(0, 0, 0),
 					},
 				},
 			],
-			actions: [
+			steps: [
 				{
-					action: ActionId.StreamStartStop,
-					options: {
-						stream: 'toggle',
-					},
+					down: [
+						{
+							actionId: ActionId.StreamStartStop,
+							options: {
+								stream: 'toggle',
+							},
+						},
+					],
+					up: [],
 				},
 			],
-		})
+		}
 	}
 
 	if (model.recording) {
-		presets.push({
+		presets[`recording_toggle`] = {
 			category: 'Streaming & Recording',
-			label: 'Record',
-			bank: {
-				style: 'text',
+			name: 'Record',
+			type: 'button',
+			style: {
 				text: 'Record\\n$(atem:record_duration_hm)',
 				size: '18',
-				color: instance.rgb(255, 255, 255),
-				bgcolor: instance.rgb(0, 0, 0),
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 0),
 			},
 			feedbacks: [
 				{
-					type: FeedbackId.RecordStatus,
+					feedbackId: FeedbackId.RecordStatus,
 					options: {
 						state: Enums.RecordingStatus.Recording,
 					},
 					style: {
-						bgcolor: instance.rgb(0, 255, 0),
-						color: instance.rgb(0, 0, 0),
+						bgcolor: combineRgb(0, 255, 0),
+						color: combineRgb(0, 0, 0),
 					},
 				},
 				{
-					type: FeedbackId.StreamStatus,
+					feedbackId: FeedbackId.StreamStatus,
 					options: {
 						state: Enums.RecordingStatus.Stopping,
 					},
 					style: {
-						bgcolor: instance.rgb(238, 238, 0),
-						color: instance.rgb(0, 0, 0),
+						bgcolor: combineRgb(238, 238, 0),
+						color: combineRgb(0, 0, 0),
 					},
 				},
 			],
-			actions: [
+			steps: [
 				{
-					action: ActionId.RecordStartStop,
-					options: {
-						stream: 'toggle',
-					},
+					down: [
+						{
+							actionId: ActionId.RecordStartStop,
+							options: {
+								stream: 'toggle',
+							},
+						},
+					],
+					up: [],
 				},
 			],
-		})
+		}
 	}
 
 	return presets

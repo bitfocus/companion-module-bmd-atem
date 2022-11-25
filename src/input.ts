@@ -1,11 +1,11 @@
-import { AtemState, Enums } from 'atem-connection'
 import {
 	CompanionInputFieldCheckbox,
 	CompanionInputFieldDropdown,
 	CompanionInputFieldMultiDropdown,
 	CompanionInputFieldNumber,
 	DropdownChoice,
-} from '../../../instance_skel_types'
+} from '@companion-module/base'
+import { AtemState, Enums } from 'atem-connection'
 import {
 	CHOICES_KEYTRANS,
 	CHOICES_SSRCBOXES,
@@ -21,9 +21,9 @@ import {
 	GetTransitionStyleChoices,
 	GetUSKIdChoices,
 	SourcesToChoices,
-} from './choices'
-import { ModelSpec } from './models'
-import { iterateTimes, MEDIA_PLAYER_SOURCE_CLIP_OFFSET, compact, NumberComparitor } from './util'
+} from './choices.js'
+import { ModelSpec } from './models/index.js'
+import { iterateTimes, MEDIA_PLAYER_SOURCE_CLIP_OFFSET, compact, NumberComparitor } from './util.js'
 
 export function AtemMESourcePicker(model: ModelSpec, state: AtemState, id: number): CompanionInputFieldDropdown {
 	return {
@@ -128,7 +128,7 @@ export function AtemDSKMaskPropertiesPickers(): Array<
 			label: 'Enabled',
 			id: 'maskEnabled',
 			default: true,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('maskEnabled'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskEnabled'),
 		},
 		{
 			type: 'number',
@@ -138,7 +138,7 @@ export function AtemDSKMaskPropertiesPickers(): Array<
 			min: -9,
 			step: 0.01,
 			max: 9,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('maskTop'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskTop'),
 		},
 		{
 			type: 'number',
@@ -148,7 +148,7 @@ export function AtemDSKMaskPropertiesPickers(): Array<
 			min: -9,
 			step: 0.01,
 			max: 9,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('maskBottom'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskBottom'),
 		},
 		{
 			type: 'number',
@@ -158,7 +158,7 @@ export function AtemDSKMaskPropertiesPickers(): Array<
 			min: -16,
 			step: 0.01,
 			max: 16,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('maskLeft'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskLeft'),
 		},
 		{
 			type: 'number',
@@ -168,16 +168,15 @@ export function AtemDSKMaskPropertiesPickers(): Array<
 			min: -16,
 			step: 0.01,
 			max: 16,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('maskRight'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskRight'),
 		},
 	])
 
 	return compact([
 		{
-			type: 'dropdown',
+			type: 'multidropdown',
 			id: 'properties',
 			label: 'Properties',
-			multiple: true,
 			minSelection: 1,
 			default: allProps.map((p) => p.id),
 			choices: allProps.map((p) => ({ id: p.id, label: p.label })),
@@ -198,7 +197,7 @@ export function AtemDSKPreMultipliedKeyPropertiesPickers(): Array<
 			label: 'Enabled',
 			id: 'preMultiply',
 			default: true,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('preMultiply'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('preMultiply'),
 		},
 		{
 			type: 'number',
@@ -209,7 +208,7 @@ export function AtemDSKPreMultipliedKeyPropertiesPickers(): Array<
 			min: 0,
 			step: 0.1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('clip'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('clip'),
 		},
 		{
 			type: 'number',
@@ -220,23 +219,22 @@ export function AtemDSKPreMultipliedKeyPropertiesPickers(): Array<
 			min: 0,
 			step: 0.1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('gain'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('gain'),
 		},
 		{
 			type: 'checkbox',
 			label: 'Invert key',
 			id: 'invert',
 			default: false,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('invert'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('invert'),
 		},
 	])
 
 	return compact([
 		{
-			type: 'dropdown',
+			type: 'multidropdown',
 			id: 'properties',
 			label: 'Properties',
-			multiple: true,
 			minSelection: 1,
 			default: allProps.map((p) => p.id),
 			choices: allProps.map((p) => ({ id: p.id, label: p.label })),
@@ -266,7 +264,7 @@ export function AtemUSKMaskPropertiesPickers(): Array<
 			label: 'Enabled',
 			id: 'maskEnabled',
 			default: true,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('maskEnabled'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskEnabled'),
 		},
 		{
 			type: 'number',
@@ -276,7 +274,7 @@ export function AtemUSKMaskPropertiesPickers(): Array<
 			min: -9,
 			step: 0.01,
 			max: 9,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('maskTop'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskTop'),
 		},
 		{
 			type: 'number',
@@ -286,7 +284,7 @@ export function AtemUSKMaskPropertiesPickers(): Array<
 			min: -9,
 			step: 0.01,
 			max: 9,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('maskBottom'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskBottom'),
 		},
 		{
 			type: 'number',
@@ -296,7 +294,7 @@ export function AtemUSKMaskPropertiesPickers(): Array<
 			min: -16,
 			step: 0.01,
 			max: 16,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('maskLeft'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskLeft'),
 		},
 		{
 			type: 'number',
@@ -306,16 +304,15 @@ export function AtemUSKMaskPropertiesPickers(): Array<
 			min: -16,
 			step: 0.01,
 			max: 16,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('maskRight'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskRight'),
 		},
 	])
 
 	return compact([
 		{
-			type: 'dropdown',
+			type: 'multidropdown',
 			id: 'properties',
 			label: 'Properties',
-			multiple: true,
 			minSelection: 1,
 			default: allProps.map((p) => p.id),
 			choices: allProps.map((p) => ({ id: p.id, label: p.label })),
@@ -339,7 +336,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			range: true,
 			step: 0.01,
 			max: 1000,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('positionX'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionX'),
 		},
 		{
 			type: 'number',
@@ -350,7 +347,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			min: -1000,
 			step: 0.01,
 			max: 1000,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('positionY'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionY'),
 		},
 		{
 			type: 'number',
@@ -361,7 +358,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			min: 0,
 			step: 0.01,
 			max: 99.99,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('sizeX'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('sizeX'),
 		},
 		{
 			type: 'number',
@@ -372,7 +369,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			min: 0,
 			step: 0.01,
 			max: 99.99,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('sizeY'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('sizeY'),
 		},
 		{
 			type: 'number',
@@ -382,14 +379,14 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			default: 0,
 			min: 0,
 			max: 360,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('rotation'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('rotation'),
 		},
 		{
 			type: 'checkbox',
 			label: 'Mask: Enabled',
 			id: 'maskEnabled',
 			default: true,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('maskEnabled'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskEnabled'),
 		},
 		{
 			type: 'number',
@@ -400,7 +397,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			min: 0,
 			step: 0.01,
 			max: 38,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('maskTop'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskTop'),
 		},
 		{
 			type: 'number',
@@ -411,7 +408,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			min: 0,
 			step: 0.01,
 			max: 38,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('maskBottom'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskBottom'),
 		},
 		{
 			type: 'number',
@@ -422,7 +419,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			min: 0,
 			step: 0.01,
 			max: 52,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('maskLeft'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskLeft'),
 		},
 		{
 			type: 'number',
@@ -433,14 +430,14 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			min: 0,
 			step: 0.01,
 			max: 52,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('maskRight'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskRight'),
 		},
 		{
 			type: 'checkbox',
 			label: 'Shadow: Enabled',
 			id: 'shadowEnabled',
 			default: false,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('shadowEnabled'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('shadowEnabled'),
 		},
 		{
 			type: 'number',
@@ -451,8 +448,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			range: true,
 			step: 1,
 			max: 359,
-			isVisible: (opts) =>
-				Array.isArray(opts.options.properties) && opts.options.properties.includes('lightSourceDirection'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('lightSourceDirection'),
 		},
 		{
 			type: 'number',
@@ -463,15 +459,14 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			range: true,
 			step: 1,
 			max: 100,
-			isVisible: (opts) =>
-				Array.isArray(opts.options.properties) && opts.options.properties.includes('lightSourceAltitude'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('lightSourceAltitude'),
 		},
 		{
 			type: 'checkbox',
 			label: 'Border: Enabled',
 			id: 'borderEnabled',
 			default: true,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('borderEnabled'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderEnabled'),
 		},
 		{
 			type: 'number',
@@ -482,7 +477,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			range: true,
 			step: 0.1,
 			max: 360,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('borderHue'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderHue'),
 		},
 		{
 			type: 'number',
@@ -493,8 +488,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			range: true,
 			step: 0.1,
 			max: 100,
-			isVisible: (opts) =>
-				Array.isArray(opts.options.properties) && opts.options.properties.includes('borderSaturation'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderSaturation'),
 		},
 		{
 			type: 'number',
@@ -505,7 +499,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			range: true,
 			step: 0.1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('borderLuma'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderLuma'),
 		},
 		{
 			type: 'dropdown',
@@ -523,8 +517,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			range: true,
 			step: 0.01,
 			max: 16,
-			isVisible: (opts) =>
-				Array.isArray(opts.options.properties) && opts.options.properties.includes('borderOuterWidth'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderOuterWidth'),
 		},
 		{
 			type: 'number',
@@ -535,8 +528,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			range: true,
 			step: 0.01,
 			max: 16,
-			isVisible: (opts) =>
-				Array.isArray(opts.options.properties) && opts.options.properties.includes('borderInnerWidth'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderInnerWidth'),
 		},
 		{
 			type: 'number',
@@ -547,8 +539,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			range: true,
 			step: 1,
 			max: 100,
-			isVisible: (opts) =>
-				Array.isArray(opts.options.properties) && opts.options.properties.includes('borderOuterSoftness'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderOuterSoftness'),
 		},
 		{
 			type: 'number',
@@ -559,8 +550,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			range: true,
 			step: 1,
 			max: 100,
-			isVisible: (opts) =>
-				Array.isArray(opts.options.properties) && opts.options.properties.includes('borderInnerSoftness'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderInnerSoftness'),
 		},
 		{
 			type: 'number',
@@ -571,7 +561,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			range: true,
 			step: 1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('borderOpacity'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderOpacity'),
 		},
 		{
 			type: 'number',
@@ -582,8 +572,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			range: true,
 			step: 1,
 			max: 100,
-			isVisible: (opts) =>
-				Array.isArray(opts.options.properties) && opts.options.properties.includes('borderBevelPosition'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderBevelPosition'),
 		},
 		{
 			type: 'number',
@@ -594,18 +583,16 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			range: true,
 			step: 1,
 			max: 100,
-			isVisible: (opts) =>
-				Array.isArray(opts.options.properties) && opts.options.properties.includes('borderBevelSoftness'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderBevelSoftness'),
 		},
 		AtemRatePicker('Rate'),
 	])
 
 	return compact([
 		{
-			type: 'dropdown',
+			type: 'multidropdown',
 			id: 'properties',
 			label: 'Properties',
-			multiple: true,
 			minSelection: 1,
 			default: allProps.map((p) => p.id),
 			choices: allProps.map((p) => ({ id: p.id, label: p.label })),
@@ -733,7 +720,7 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: offset ? 0 : 0.5,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('size'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('size'),
 		},
 
 		!offset
@@ -743,7 +730,7 @@ export function AtemSuperSourcePropertiesPickers(
 					label: 'On Air',
 					default: 'true',
 					choices: CHOICES_KEYTRANS,
-					isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('onair'),
+					isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('onair'),
 			  }
 			: undefined,
 
@@ -754,7 +741,7 @@ export function AtemSuperSourcePropertiesPickers(
 					label: 'Source',
 					default: 0,
 					choices: SourcesToChoices(GetSourcesListForType(model, state, 'ssrc-box')),
-					isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('source'),
+					isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('source'),
 			  }
 			: undefined,
 
@@ -767,7 +754,7 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('x'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('x'),
 		},
 		{
 			type: 'number',
@@ -778,7 +765,7 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('y'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('y'),
 		},
 		offset
 			? undefined
@@ -787,7 +774,7 @@ export function AtemSuperSourcePropertiesPickers(
 					id: 'cropEnable',
 					label: 'Crop Enable',
 					default: false,
-					isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('cropEnable'),
+					isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropEnable'),
 			  },
 		{
 			type: 'number',
@@ -798,7 +785,7 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('cropTop'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropTop'),
 		},
 		{
 			type: 'number',
@@ -809,7 +796,7 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('cropBottom'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropBottom'),
 		},
 		{
 			type: 'number',
@@ -820,7 +807,7 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('cropLeft'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropLeft'),
 		},
 		{
 			type: 'number',
@@ -831,16 +818,15 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('cropRight'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropRight'),
 		},
 	])
 
 	return compact([
 		{
-			type: 'dropdown',
+			type: 'multidropdown',
 			id: 'properties',
 			label: 'Properties',
-			multiple: true,
 			minSelection: 1,
 			default: allProps.map((p) => p.id),
 			choices: allProps.map((p) => ({ id: p.id, label: p.label })),
@@ -867,7 +853,7 @@ export function AtemSuperSourceArtPropertiesPickers(
 			label: 'Fill Source',
 			default: 0,
 			choices: artSources,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('fill'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('fill'),
 		},
 		{
 			type: 'dropdown',
@@ -875,11 +861,11 @@ export function AtemSuperSourceArtPropertiesPickers(
 			label: 'Key Source',
 			default: 0,
 			choices: artSources,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('key'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('key'),
 		},
 		{
 			...AtemSuperSourceArtOption(action),
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('artOption'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('artOption'),
 		},
 
 		{
@@ -887,8 +873,7 @@ export function AtemSuperSourceArtPropertiesPickers(
 			id: 'artPreMultiplied',
 			label: 'Pre-multiplied',
 			default: true,
-			isVisible: (opts) =>
-				Array.isArray(opts.options.properties) && opts.options.properties.includes('artPreMultiplied'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('artPreMultiplied'),
 		},
 		{
 			type: 'number',
@@ -899,7 +884,7 @@ export function AtemSuperSourceArtPropertiesPickers(
 			range: true,
 			default: 50,
 			step: 1,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('artClip'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('artClip'),
 		},
 		{
 			type: 'number',
@@ -910,23 +895,22 @@ export function AtemSuperSourceArtPropertiesPickers(
 			range: true,
 			default: 50,
 			step: 1,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('artGain'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('artGain'),
 		},
 		{
 			type: 'checkbox',
 			id: 'artInvertKey',
 			label: 'Invert Key',
 			default: false,
-			isVisible: (opts) => Array.isArray(opts.options.properties) && opts.options.properties.includes('artInvertKey'),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('artInvertKey'),
 		},
 	])
 
 	return compact([
 		{
-			type: 'dropdown',
+			type: 'multidropdown',
 			id: 'properties',
 			label: 'Properties',
-			multiple: true,
 			minSelection: 1,
 			default: allProps.map((p) => p.id),
 			choices: allProps.map((p) => ({ id: p.id, label: p.label })),

@@ -1,8 +1,8 @@
-import { fadeFpsDefault, AtemConfig } from './config'
-import { Easing } from './easings'
+import { fadeFpsDefault, AtemConfig } from './config.js'
+import { Easing } from './easings.js'
 
 export interface TransitionInfo {
-	sendFcn: (value: number) => void
+	sendFcn: (value: number) => Promise<void>
 	steps: number[]
 }
 
@@ -31,7 +31,10 @@ export class AtemTransitions {
 		for (const [path, info] of this.transitions.entries()) {
 			const newValue = info.steps.shift()
 			if (newValue !== undefined) {
-				info.sendFcn(newValue)
+				info.sendFcn(newValue).catch((_e) => {
+					// TODO
+					// this.instance.log('debug', 'Action execution error: ' + e)
+				})
 			}
 			if (info.steps.length === 0) {
 				completedPaths.push(path)
@@ -49,20 +52,20 @@ export class AtemTransitions {
 		}
 	}
 
-	public run(
+	public async run(
 		id: string,
 		sendFcn: TransitionInfo['sendFcn'],
 		from: number | undefined,
 		to: number,
 		duration: number
-	): void {
+	): Promise<void> {
 		const interval = 1000 / this.fps
 		const stepCount = Math.ceil(duration / interval)
 
 		// TODO - what if not sending db
 		if (stepCount <= 1 || typeof from !== 'number') {
 			this.transitions.delete(id)
-			sendFcn(to)
+			await sendFcn(to)
 		} else {
 			const diff = to - from
 			const steps: number[] = []

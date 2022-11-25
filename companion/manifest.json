@@ -1,0 +1,26 @@
+{
+	"id": "bmd-atem",
+	"name": "bmd-atem",
+	"shortname": "atem",
+	"description": "Module for controlling all models of Blackmagic Design ATEM",
+	"version": "3.0.0-0",
+	"license": "MIT",
+	"repository": "git+https://github.com/bitfocus/companion-module-bmd-atem.git",
+	"bugs": "https://github.com/bitfocus/companion-module-bmd-atem/issues",
+	"maintainers": [
+		{
+			"name": "Julian Waller",
+			"email": "julian@superfly.tv"
+		}
+	],
+	"legacyIds": ["atem"],
+	"runtime": {
+		"type": "node14",
+		"api": "nodejs-ipc",
+		"apiVersion": "0.0.0",
+		"entrypoint": "../dist/index.js"
+	},
+	"manufacturer": "Blackmagic Design",
+	"products": ["ATEM"],
+	"keywords": ["Vision Mixer"]
+}

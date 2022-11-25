@@ -1,7 +1,7 @@
-import { ModelSpec } from './types'
+import { ModelSpec } from './types.js'
 import { Enums } from 'atem-connection'
 
-import { ModelSpecSDI } from './sdi'
+import { ModelSpecSDI } from './sdi.js'
 
 export const ModelSpecSDIProISO: ModelSpec = {
 	...ModelSpecSDI,

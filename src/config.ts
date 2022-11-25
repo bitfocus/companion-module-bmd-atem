@@ -1,7 +1,7 @@
-import InstanceSkel = require('../../../instance_skel')
-import { SomeCompanionConfigField } from '../../../instance_skel_types'
-import { AtemMdnsDetectorInstance } from './mdns-detector'
-import { ALL_MODEL_CHOICES } from './models'
+import { Regex, SomeCompanionConfigField } from '@companion-module/base'
+import { AtemMdnsDetectorInstance } from './mdns-detector.js'
+import { ALL_MODEL_CHOICES } from './models/index.js'
+import { InstanceBaseExt } from './util.js'
 
 export const fadeFpsDefault = 10
 
@@ -17,10 +17,10 @@ export interface AtemConfig {
 	fadeFps?: number
 }
 
-export function GetConfigFields(self: InstanceSkel<AtemConfig>): SomeCompanionConfigField[] {
+export function GetConfigFields(_self: InstanceBaseExt<AtemConfig>): SomeCompanionConfigField[] {
 	return [
 		{
-			type: 'text',
+			type: 'static-text',
 			id: 'info',
 			width: 12,
 			label: 'Information',
@@ -41,7 +41,7 @@ export function GetConfigFields(self: InstanceSkel<AtemConfig>): SomeCompanionCo
 			})),
 			default: '',
 			allowCustom: true,
-			regex: self.REGEX_IP,
+			regex: Regex.IP,
 		},
 		// {
 		// 	type: 'textinput',
