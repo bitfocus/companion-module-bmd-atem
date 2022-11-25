@@ -70,10 +70,13 @@ import { UpstreamKeyerMaskSettings, UpstreamKeyerDVESettings } from 'atem-connec
 
 export enum ActionId {
 	Program = 'program',
+	ProgramVariables = 'programVariables',
 	Preview = 'preview',
+	PreviewVariables = 'previewVariables',
 	Cut = 'cut',
 	Auto = 'auto',
 	Aux = 'aux',
+	AuxVariables = 'auxVariables',
 	USKSource = 'uskSource',
 	USKOnAir = 'usk',
 	USKFly = 'uskFly',
@@ -90,6 +93,7 @@ export enum ActionId {
 	MacroRun = 'macrorun',
 	MacroContinue = 'macrocontinue',
 	MacroStop = 'macrostop',
+	MacroLoop = 'macroloop',
 	MultiviewerWindowSource = 'setMvSource',
 	SuperSourceArt = 'ssrcArt',
 	SuperSourceBoxSource = 'setSsrcBoxSource',
@@ -176,6 +180,33 @@ function meActions(
 				}
 			},
 		} satisfies CompanionActionDefinition,
+		[ActionId.ProgramVariables]: {
+			name: 'ME: Set Program input from variables',
+			options: [
+				{
+					type: 'textinput',
+					id: 'mixeffect',
+					label: 'M/E',
+					default: '1',
+					useVariables: true,
+				},
+				{
+					type: 'textinput',
+					id: 'input',
+					label: 'Input ID',
+					default: '0',
+					useVariables: true,
+				},
+			],
+			callback: async (action) => {
+				const mixeffect = Number(await instance.parseVariablesInString(action.options.mixeffect as string))
+				const input = Number(await instance.parseVariablesInString(action.options.input as string))
+
+				if (!isNaN(mixeffect) && !isNaN(input)) {
+					await atem?.changeProgramInput(input, mixeffect - 1)
+				}
+			},
+		} satisfies CompanionActionDefinition,
 		[ActionId.Preview]: {
 			name: 'ME: Set Preview input',
 			options: [AtemMEPicker(model, 0), AtemMESourcePicker(model, state, 0)],
@@ -192,6 +223,33 @@ function meActions(
 					}
 				} else {
 					return undefined
+				}
+			},
+		} satisfies CompanionActionDefinition,
+		[ActionId.PreviewVariables]: {
+			name: 'ME: Set Preview input from variables',
+			options: [
+				{
+					type: 'textinput',
+					id: 'mixeffect',
+					label: 'M/E',
+					default: '1',
+					useVariables: true,
+				},
+				{
+					type: 'textinput',
+					id: 'input',
+					label: 'Input ID',
+					default: '0',
+					useVariables: true,
+				},
+			],
+			callback: async (action) => {
+				const mixeffect = Number(await instance.parseVariablesInString(action.options.mixeffect as string))
+				const input = Number(await instance.parseVariablesInString(action.options.input as string))
+
+				if (!isNaN(mixeffect) && !isNaN(input)) {
+					await atem?.changePreviewInput(input, mixeffect - 1)
 				}
 			},
 		} satisfies CompanionActionDefinition,
@@ -1043,6 +1101,28 @@ function macroActions(atem: Atem | undefined, model: ModelSpec, state: AtemState
 					},
 			  } satisfies CompanionActionDefinition)
 			: undefined,
+		[ActionId.MacroLoop]: model.macros
+			? ({
+					name: 'Macro: Loop',
+					options: [
+						{
+							id: 'loop',
+							type: 'dropdown',
+							label: 'Loop',
+							default: 'toggle',
+							choices: CHOICES_ON_OFF_TOGGLE,
+						},
+					],
+					callback: async (action) => {
+						let newState = action.options.loop === 'true'
+						if (action.options.loop === 'toggle') {
+							newState = !state.macro.macroPlayer.loop
+						}
+
+						await atem?.macroSetLoop(newState)
+					},
+			  } satisfies CompanionActionDefinition)
+			: undefined,
 	}
 }
 
@@ -1612,7 +1692,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 					},
 				],
 				callback: async (action) => {
-					const rawVal = action.options['target']
+					const rawVal = action.options['reset']
 					if (rawVal === 'all') {
 						await atem?.setClassicAudioResetPeaks({ all: true })
 					} else if (rawVal === 'master') {
@@ -1620,7 +1700,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 					} else if (rawVal === 'monitor') {
 						await atem?.setClassicAudioResetPeaks({ monitor: true })
 					} else {
-						const inputId = getOptNumber(action, 'target')
+						const inputId = getOptNumber(action, 'reset')
 						await atem?.setClassicAudioResetPeaks({ input: inputId })
 					}
 				},
@@ -1933,7 +2013,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 					},
 				],
 				callback: async (action) => {
-					const rawVal = action.options['target']
+					const rawVal = action.options['reset']
 					if (rawVal === 'all') {
 						await atem?.setFairlightAudioMixerResetPeaks({ all: true, master: false })
 					} else if (rawVal === 'master') {
@@ -2212,6 +2292,35 @@ export function GetActionsList(
 							}
 						} else {
 							return undefined
+						}
+					},
+			  } satisfies CompanionActionDefinition)
+			: undefined,
+		[ActionId.AuxVariables]: model.auxes
+			? ({
+					name: 'Aux/Output: Set source from variables',
+					options: [
+						{
+							type: 'textinput',
+							id: 'aux',
+							label: 'AUX',
+							default: '1',
+							useVariables: true,
+						},
+						{
+							type: 'textinput',
+							id: 'input',
+							label: 'Input ID',
+							default: '0',
+							useVariables: true,
+						},
+					],
+					callback: async (action) => {
+						const output = Number(await instance.parseVariablesInString(action.options.aux as string))
+						const input = Number(await instance.parseVariablesInString(action.options.input as string))
+
+						if (!isNaN(output) && !isNaN(input)) {
+							await atem?.setAuxSource(input, output - 1)
 						}
 					},
 			  } satisfies CompanionActionDefinition)

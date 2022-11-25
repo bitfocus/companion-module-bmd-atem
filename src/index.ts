@@ -12,7 +12,7 @@ import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, ModelSpec } from 
 import { GetPresetsList } from './presets.js'
 import { TallyBySource } from './state.js'
 import { MODEL_AUTO_DETECT } from './models/types.js'
-import { InitVariables, UpdateVariablesProps, updateChangedVariables } from './variables.js'
+import { InitVariables, UpdateVariablesProps, updateChangedVariables, updateDeviceIpVariable } from './variables.js'
 import { AtemCommandBatching } from './batching.js'
 import { AtemTransitions } from './transitions.js'
 import debounceFn from 'debounce-fn'
@@ -22,6 +22,7 @@ import {
 	runEntrypoint,
 	CreateConvertToBooleanFeedbackUpgradeScript,
 	InstanceStatus,
+	CompanionVariableValues,
 } from '@companion-module/base'
 import { AtemMdnsDetectorInstance } from './mdns-detector.js'
 
@@ -93,6 +94,10 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	 */
 	public async configUpdated(config: AtemConfig): Promise<void> {
 		this.config = config
+
+		const variables: CompanionVariableValues = {}
+		updateDeviceIpVariable(this, variables)
+		this.setVariableValues(variables)
 
 		this.model = GetModelSpec(this.getBestModelId() || MODEL_AUTO_DETECT) || GetAutoDetectModel()
 		this.log('debug', 'ATEM changed model: ' + this.model.id)
@@ -207,6 +212,8 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			mediaPlayer: new Set(),
 			streaming: false,
 			recording: false,
+			fairlightAudio: new Set(),
+			classicAudio: new Set(),
 		}
 
 		for (const path of paths) {
@@ -225,6 +232,18 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				changedFeedbacks.add(FeedbackId.DSKOnAir)
 				changedFeedbacks.add(FeedbackId.DSKTie)
 				changedFeedbacks.add(FeedbackId.DSKSource)
+				continue
+			}
+
+			const fairlightInputMatch = path.match(/fairlight.inputs.(\d+)/)
+			if (fairlightInputMatch) {
+				changedVariables.fairlightAudio.add(parseInt(fairlightInputMatch[1], 10))
+				continue
+			}
+
+			const classicAudioInputMatch = path.match(/audio.channels.(\d+)/)
+			if (classicAudioInputMatch) {
+				changedVariables.classicAudio.add(parseInt(classicAudioInputMatch[1], 10))
 				continue
 			}
 
@@ -265,6 +284,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 
 			if (path.match(/macro.macroRecorder/) || path.match(/macro.macroPlayer/)) {
 				changedFeedbacks.add(FeedbackId.Macro)
+				changedFeedbacks.add(FeedbackId.MacroLoop)
 				continue
 			}
 

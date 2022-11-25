@@ -32,16 +32,15 @@
 	},
 	"dependencies": {
 		"@companion-module/base": "~0.5.1",
-		"atem-connection": "^3.1.0",
+		"atem-connection": "^3.1.2",
+		"bonjour-service": "^1.0.14",
 		"debounce-fn": "^5.1.2",
 		"debug": "^4.3.4",
-		"multicast-dns": "^7.2.5",
 		"type-fest": "^3.2.0"
 	},
 	"devDependencies": {
 		"@companion-module/tools": "^0.3.3",
 		"@types/debug": "^4.1.7",
-		"@types/multicast-dns": "^7.2.1",
 		"@types/node": "^18.11.9",
 		"husky": "^8.0.2",
 		"lint-staged": "^13.0.3",
