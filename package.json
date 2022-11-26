@@ -31,7 +31,7 @@
 		"node": "^14 || ^18"
 	},
 	"dependencies": {
-		"@companion-module/base": "~0.5.1",
+		"@companion-module/base": "~0.6.0",
 		"atem-connection": "^3.1.2",
 		"bonjour-service": "^1.0.14",
 		"debounce-fn": "^5.1.2",
@@ -39,7 +39,7 @@
 		"type-fest": "^3.2.0"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "^0.3.3",
+		"@companion-module/tools": "^0.4.0",
 		"@types/debug": "^4.1.7",
 		"@types/node": "^18.11.9",
 		"husky": "^8.0.2",
