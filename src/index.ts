@@ -223,6 +223,8 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 		for (const path of paths) {
 			if (reInit) break
 
+			console.log(path)
+
 			const auxMatch = path.match(/video.auxilliaries.(\d+)/)
 			if (auxMatch) {
 				changedFeedbacks.add(FeedbackId.AuxBG)
@@ -242,12 +244,17 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 			const fairlightInputMatch = path.match(/fairlight.inputs.(\d+)/)
 			if (fairlightInputMatch) {
 				changedVariables.fairlightAudio.add(parseInt(fairlightInputMatch[1], 10))
+				changedFeedbacks.add(FeedbackId.FairlightAudioInputGain)
+				changedFeedbacks.add(FeedbackId.FairlightAudioFaderGain)
+				changedFeedbacks.add(FeedbackId.FairlightAudioMixOption)
 				continue
 			}
 
 			const classicAudioInputMatch = path.match(/audio.channels.(\d+)/)
 			if (classicAudioInputMatch) {
 				changedVariables.classicAudio.add(parseInt(classicAudioInputMatch[1], 10))
+				changedFeedbacks.add(FeedbackId.ClassicAudioGain)
+				changedFeedbacks.add(FeedbackId.ClassicAudioMixOption)
 				continue
 			}
 
@@ -384,17 +391,6 @@ class AtemInstance extends InstanceSkel<AtemConfig> {
 			}
 			if (path.match(/recording.duration/)) {
 				changedVariables.recording = true
-				continue
-			}
-			if (path.match(/audio.channels/)) {
-				changedFeedbacks.add(FeedbackId.ClassicAudioGain)
-				changedFeedbacks.add(FeedbackId.ClassicAudioMixOption)
-				continue
-			}
-			if (path.match(/fairlight.inputs/)) {
-				changedFeedbacks.add(FeedbackId.FairlightAudioInputGain)
-				changedFeedbacks.add(FeedbackId.FairlightAudioFaderGain)
-				changedFeedbacks.add(FeedbackId.FairlightAudioMixOption)
 				continue
 			}
 			if (path.match(/fairlight.monitor/)) {
