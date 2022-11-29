@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+## v2.18.1
+
+- fix audo feedbacks
+
 ## v2.18.0
 
 - add macro looping action/feedback
