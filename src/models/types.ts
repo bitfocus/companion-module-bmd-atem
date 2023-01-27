@@ -1,4 +1,4 @@
-import { Enums } from 'atem-connection'
+import type { Enums } from 'atem-connection'
 
 export const MODEL_AUTO_DETECT = 0
 export type ModelId = 0 | Enums.Model

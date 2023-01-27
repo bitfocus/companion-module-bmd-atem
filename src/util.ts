@@ -1,5 +1,5 @@
 import { Enums } from 'atem-connection'
-import { InputValue, InstanceBase } from '@companion-module/base'
+import { type InputValue, InstanceBase } from '@companion-module/base'
 
 export const MEDIA_PLAYER_SOURCE_CLIP_OFFSET = 1000
 

@@ -1,6 +1,14 @@
-import { AtemState, Commands, SettingsState, VideoState, MediaState, Fairlight, ClassicAudio } from 'atem-connection'
-import { SuperSource, TransitionProperties } from 'atem-connection/dist/state/video/index.js'
-import { InputValue } from '@companion-module/base'
+import type {
+	AtemState,
+	Commands,
+	SettingsState,
+	VideoState,
+	MediaState,
+	Fairlight,
+	ClassicAudio,
+} from 'atem-connection'
+import type { SuperSource, TransitionProperties } from 'atem-connection/dist/state/video/index.js'
+import type { InputValue } from '@companion-module/base'
 
 export type TallyBySource = Commands.TallyBySourceCommand['properties']
 

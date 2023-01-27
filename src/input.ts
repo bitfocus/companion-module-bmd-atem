@@ -1,11 +1,11 @@
-import {
+import type {
 	CompanionInputFieldCheckbox,
 	CompanionInputFieldDropdown,
 	CompanionInputFieldMultiDropdown,
 	CompanionInputFieldNumber,
 	DropdownChoice,
 } from '@companion-module/base'
-import { AtemState, Enums } from 'atem-connection'
+import { type AtemState, Enums } from 'atem-connection'
 import {
 	CHOICES_KEYTRANS,
 	CHOICES_SSRCBOXES,
@@ -22,7 +22,7 @@ import {
 	GetUSKIdChoices,
 	SourcesToChoices,
 } from './choices.js'
-import { ModelSpec } from './models/index.js'
+import type { ModelSpec } from './models/index.js'
 import { iterateTimes, MEDIA_PLAYER_SOURCE_CLIP_OFFSET, compact, NumberComparitor } from './util.js'
 
 export function AtemMESourcePicker(model: ModelSpec, state: AtemState, id: number): CompanionInputFieldDropdown {

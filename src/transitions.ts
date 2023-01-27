@@ -1,5 +1,5 @@
-import { fadeFpsDefault, AtemConfig } from './config.js'
-import { Easing } from './easings.js'
+import { fadeFpsDefault, type AtemConfig } from './config.js'
+import * as Easing from './easings.js'
 
 export interface TransitionInfo {
 	sendFcn: (value: number) => Promise<void>

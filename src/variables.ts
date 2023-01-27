@@ -1,7 +1,7 @@
-import { AtemState, Enums } from 'atem-connection'
-import { GetSourcesListForType, SourceInfo } from './choices.js'
-import { AtemConfig, PresetStyleName } from './config.js'
-import { ModelSpec } from './models/index.js'
+import { type AtemState, Enums } from 'atem-connection'
+import { GetSourcesListForType, type SourceInfo } from './choices.js'
+import { type AtemConfig, PresetStyleName } from './config.js'
+import type { ModelSpec } from './models/index.js'
 import {
 	getClassicAudioInput,
 	getDSK,
@@ -10,9 +10,9 @@ import {
 	getSuperSourceBox,
 	getUSK,
 } from './state.js'
-import { assertUnreachable, InstanceBaseExt, pad } from './util.js'
-import { Timecode } from 'atem-connection/dist/state/common.js'
-import { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
+import { assertUnreachable, type InstanceBaseExt, pad } from './util.js'
+import type { Timecode } from 'atem-connection/dist/state/common.js'
+import type { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
 
 function getSourcePresetName(instance: InstanceBaseExt<AtemConfig>, state: AtemState, id: number): string {
 	const input = state.inputs[id]

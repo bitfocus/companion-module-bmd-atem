@@ -1,4 +1,4 @@
-import { Atem, AtemState, Enums, InputState, VideoState } from 'atem-connection'
+import { type Atem, type AtemState, Enums, type InputState, type VideoState } from 'atem-connection'
 import {
 	CHOICES_KEYTRANS,
 	GetDSKIdChoices,
@@ -9,7 +9,7 @@ import {
 	CHOICES_KEYFRAMES,
 	CHOICES_FLYDIRECTIONS,
 } from './choices.js'
-import { AtemConfig } from './config.js'
+import type { AtemConfig } from './config.js'
 import {
 	AtemAuxPicker,
 	AtemAuxSourcePicker,
@@ -43,7 +43,7 @@ import {
 	AtemDSKMaskPropertiesPickers,
 	AtemDSKPreMultipliedKeyPropertiesPickers,
 } from './input.js'
-import { ModelSpec } from './models/index.js'
+import type { ModelSpec } from './models/index.js'
 import {
 	getDSK,
 	getSuperSourceBox,
@@ -59,14 +59,17 @@ import {
 	MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
 	compact,
 	clamp,
-	InstanceBaseExt,
+	type InstanceBaseExt,
 } from './util.js'
 import { AtemCommandBatching, CommandBatching } from './batching.js'
 import { AtemTransitions } from './transitions.js'
-import { SuperSource } from 'atem-connection/dist/state/video/index.js'
-import { CompanionActionDefinition, CompanionActionEvent } from '@companion-module/base'
-import { DownstreamKeyerMask, DownstreamKeyerGeneral } from 'atem-connection/dist/state/video/downstreamKeyers.js'
-import { UpstreamKeyerMaskSettings, UpstreamKeyerDVESettings } from 'atem-connection/dist/state/video/upstreamKeyers.js'
+import type { SuperSource } from 'atem-connection/dist/state/video/index.js'
+import type { CompanionActionDefinition, CompanionActionEvent } from '@companion-module/base'
+import type { DownstreamKeyerMask, DownstreamKeyerGeneral } from 'atem-connection/dist/state/video/downstreamKeyers.js'
+import type {
+	UpstreamKeyerMaskSettings,
+	UpstreamKeyerDVESettings,
+} from 'atem-connection/dist/state/video/upstreamKeyers.js'
 
 export enum ActionId {
 	Program = 'program',

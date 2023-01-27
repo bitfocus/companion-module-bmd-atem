@@ -1,13 +1,13 @@
 import {
 	combineRgb,
-	CompanionFeedbackBooleanEvent,
-	CompanionFeedbackDefinition,
-	CompanionFeedbackDefinitions,
-	CompanionInputFieldDropdown,
-	CompanionInputFieldNumber,
-	InputValue,
+	type CompanionFeedbackBooleanEvent,
+	type CompanionFeedbackDefinition,
+	type CompanionFeedbackDefinitions,
+	type CompanionInputFieldDropdown,
+	type CompanionInputFieldNumber,
+	type InputValue,
 } from '@companion-module/base'
-import { AtemState, Enums } from 'atem-connection'
+import { type AtemState, Enums } from 'atem-connection'
 import { getSuperSource } from 'atem-connection/dist/state/util.js'
 import {
 	CHOICES_CLASSIC_AUDIO_MIX_OPTION,
@@ -45,8 +45,8 @@ import {
 	AtemSuperSourceArtPropertiesPickers,
 	InvertInput,
 } from './input.js'
-import { ModelSpec } from './models/index.js'
-import { getDSK, getMixEffect, getMultiviewerWindow, getSuperSourceBox, getUSK, TallyBySource } from './state.js'
+import type { ModelSpec } from './models/index.js'
+import { getDSK, getMixEffect, getMultiviewerWindow, getSuperSourceBox, getUSK, type TallyBySource } from './state.js'
 import {
 	assertUnreachable,
 	calculateTransitionSelection,

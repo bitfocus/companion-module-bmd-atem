@@ -1,7 +1,7 @@
-import { Regex, SomeCompanionConfigField } from '@companion-module/base'
+import { Regex, type SomeCompanionConfigField } from '@companion-module/base'
 import { AtemMdnsDetectorInstance } from './mdns-detector.js'
 import { ALL_MODEL_CHOICES } from './models/index.js'
-import { InstanceBaseExt } from './util.js'
+import type { InstanceBaseExt } from './util.js'
 
 export const fadeFpsDefault = 10
 

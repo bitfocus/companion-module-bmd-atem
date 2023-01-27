@@ -1,6 +1,6 @@
-import AtemPkg, { Atem as IAtem, AtemState, Commands } from 'atem-connection'
+import AtemPkg, { type Atem as IAtem, type AtemState, Commands } from 'atem-connection'
 import { GetActionsList } from './actions.js'
-import { AtemConfig, GetConfigFields } from './config.js'
+import { type AtemConfig, GetConfigFields } from './config.js'
 import { FeedbackId, GetFeedbacksList } from './feedback.js'
 import {
 	BooleanFeedbackUpgradeMap,
@@ -8,21 +8,26 @@ import {
 	upgradeAddSSrcPropertiesPicker,
 	upgradeV2x2x0,
 } from './upgrades.js'
-import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, ModelSpec } from './models/index.js'
+import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, type ModelSpec } from './models/index.js'
 import { GetPresetsList } from './presets.js'
-import { TallyBySource } from './state.js'
+import type { TallyBySource } from './state.js'
 import { MODEL_AUTO_DETECT } from './models/types.js'
-import { InitVariables, UpdateVariablesProps, updateChangedVariables, updateDeviceIpVariable } from './variables.js'
+import {
+	InitVariables,
+	type UpdateVariablesProps,
+	updateChangedVariables,
+	updateDeviceIpVariable,
+} from './variables.js'
 import { AtemCommandBatching } from './batching.js'
 import { AtemTransitions } from './transitions.js'
 import debounceFn from 'debounce-fn'
 import {
 	InstanceBase,
-	SomeCompanionConfigField,
+	type SomeCompanionConfigField,
 	runEntrypoint,
 	CreateConvertToBooleanFeedbackUpgradeScript,
 	InstanceStatus,
-	CompanionVariableValues,
+	type CompanionVariableValues,
 } from '@companion-module/base'
 import { AtemMdnsDetectorInstance } from './mdns-detector.js'
 

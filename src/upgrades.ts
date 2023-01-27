@@ -1,11 +1,11 @@
-import {
+import type {
 	CompanionStaticUpgradeProps,
 	CompanionStaticUpgradeResult,
 	CompanionUpgradeContext,
 	InputValue,
 } from '@companion-module/base'
 import { ActionId } from './actions.js'
-import { AtemConfig } from './config.js'
+import type { AtemConfig } from './config.js'
 import { FeedbackId } from './feedback.js'
 
 function scaleValue(obj: { [key: string]: InputValue | undefined }, key: string, scale: number): void {
