@@ -23,6 +23,16 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.1.0
+
+- Add feedbacks which support variables
+
+- Add more actions which support variables
+
+## v3.0.0
+
+- Updates for Companion 3.0
+
 ## v2.18.1
 
 - fix audo feedbacks
