@@ -57,14 +57,17 @@ import {
 
 export enum FeedbackId {
 	PreviewBG = 'preview_bg',
+	PreviewVariables = 'previewVariables',
 	PreviewBG2 = 'preview_bg_2',
 	PreviewBG3 = 'preview_bg_3',
 	PreviewBG4 = 'preview_bg_4',
 	ProgramBG = 'program_bg',
+	ProgramVariables = 'programVariables',
 	ProgramBG2 = 'program_bg_2',
 	ProgramBG3 = 'program_bg_3',
 	ProgramBG4 = 'program_bg_4',
 	AuxBG = 'aux_bg',
+	AuxVariables = 'auxVariables',
 	USKOnAir = 'usk_bg',
 	USKSource = 'usk_source',
 	USKKeyFrame = 'usk_keyframe',
@@ -161,6 +164,52 @@ function previewFeedbacks(model: ModelSpec, state: AtemState) {
 			},
 			learn: (feedback) => {
 				const me = getMixEffect(state, feedback.options.mixeffect)
+
+				if (me) {
+					return {
+						...feedback.options,
+						input: me.previewInput,
+					}
+				} else {
+					return undefined
+				}
+			},
+		} satisfies CompanionFeedbackDefinition,
+		[FeedbackId.PreviewVariables]: {
+			type: 'boolean',
+			name: 'ME: One ME preview source from variables',
+			description: 'If the input specified is in use by preview on the M/E stage specified, change style of the bank',
+			options: [
+				{
+					type: 'textinput',
+					id: 'mixeffect',
+					label: 'M/E',
+					default: '1',
+					useVariables: true,
+				},
+				{
+					type: 'textinput',
+					id: 'input',
+					label: 'Input ID',
+					default: '0',
+					useVariables: true,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(0, 255, 0),
+			},
+			callback: async (feedback, context) => {
+				const mixeffect = Number(await context.parseVariablesInString(feedback.options.mixeffect as string))
+				const input = Number(await context.parseVariablesInString(feedback.options.input as string))
+
+				const me = getMixEffect(state, mixeffect)
+				return me?.previewInput === input
+			},
+			learn: async (feedback, context) => {
+				const mixeffect = Number(await context.parseVariablesInString(feedback.options.mixeffect as string))
+
+				const me = getMixEffect(state, mixeffect)
 
 				if (me) {
 					return {
@@ -334,6 +383,52 @@ function programFeedbacks(model: ModelSpec, state: AtemState) {
 			},
 			learn: (feedback) => {
 				const me = getMixEffect(state, feedback.options.mixeffect)
+
+				if (me) {
+					return {
+						...feedback.options,
+						input: me.programInput,
+					}
+				} else {
+					return undefined
+				}
+			},
+		} satisfies CompanionFeedbackDefinition,
+		[FeedbackId.ProgramVariables]: {
+			type: 'boolean',
+			name: 'ME: One ME program source from variables',
+			description: 'If the input specified is in use by program on the M/E stage specified, change style of the bank',
+			options: [
+				{
+					type: 'textinput',
+					id: 'mixeffect',
+					label: 'M/E',
+					default: '1',
+					useVariables: true,
+				},
+				{
+					type: 'textinput',
+					id: 'input',
+					label: 'Input ID',
+					default: '0',
+					useVariables: true,
+				},
+			],
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(0, 255, 0),
+			},
+			callback: async (feedback, context) => {
+				const mixeffect = Number(await context.parseVariablesInString(feedback.options.mixeffect as string))
+				const input = Number(await context.parseVariablesInString(feedback.options.input as string))
+
+				const me = getMixEffect(state, mixeffect)
+				return me?.programInput === input
+			},
+			learn: async (feedback, context) => {
+				const mixeffect = Number(await context.parseVariablesInString(feedback.options.mixeffect as string))
+
+				const me = getMixEffect(state, mixeffect)
 
 				if (me) {
 					return {
@@ -1601,6 +1696,54 @@ export function GetFeedbacksList(
 					},
 					learn: (feedback) => {
 						const auxSource = state.video.auxilliaries[Number(feedback.options.aux)]
+
+						if (auxSource !== undefined) {
+							return {
+								...feedback.options,
+								input: auxSource,
+							}
+						} else {
+							return undefined
+						}
+					},
+			  } satisfies CompanionFeedbackDefinition)
+			: undefined,
+		[FeedbackId.AuxVariables]: model.auxes
+			? ({
+					type: 'boolean',
+					name: 'Aux/Output: Source from variables',
+					description: 'If the input specified is in use by the aux bus specified, change style of the bank',
+					options: [
+						{
+							type: 'textinput',
+							id: 'aux',
+							label: 'AUX',
+							default: '1',
+							useVariables: true,
+						},
+						{
+							type: 'textinput',
+							id: 'input',
+							label: 'Input ID',
+							default: '0',
+							useVariables: true,
+						},
+					],
+					defaultStyle: {
+						color: combineRgb(0, 0, 0),
+						bgcolor: combineRgb(255, 255, 0),
+					},
+					callback: async (feedback, context) => {
+						const output = Number(await context.parseVariablesInString(feedback.options.aux as string)) - 1
+						const input = Number(await context.parseVariablesInString(feedback.options.input as string))
+
+						const auxSource = state.video.auxilliaries[output]
+						return auxSource === input
+					},
+					learn: async (feedback, context) => {
+						const output = Number(await context.parseVariablesInString(feedback.options.aux as string)) - 1
+
+						const auxSource = state.video.auxilliaries[output]
 
 						if (auxSource !== undefined) {
 							return {

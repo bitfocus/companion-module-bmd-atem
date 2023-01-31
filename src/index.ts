@@ -227,6 +227,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			const auxMatch = path.match(/video.auxilliaries.(\d+)/)
 			if (auxMatch) {
 				changedFeedbacks.add(FeedbackId.AuxBG)
+				changedFeedbacks.add(FeedbackId.AuxVariables)
 				changedVariables.auxes.add(parseInt(auxMatch[1], 10))
 				continue
 			}
@@ -311,6 +312,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				changedVariables.meProgram.add(meIndex)
 
 				changedFeedbacks.add(FeedbackId.ProgramBG)
+				changedFeedbacks.add(FeedbackId.ProgramVariables)
 				changedFeedbacks.add(FeedbackId.ProgramBG2)
 				changedFeedbacks.add(FeedbackId.ProgramBG3)
 				changedFeedbacks.add(FeedbackId.ProgramBG4)
@@ -323,6 +325,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				changedVariables.mePreview.add(meIndex)
 
 				changedFeedbacks.add(FeedbackId.PreviewBG)
+				changedFeedbacks.add(FeedbackId.PreviewVariables)
 				changedFeedbacks.add(FeedbackId.PreviewBG2)
 				changedFeedbacks.add(FeedbackId.PreviewBG3)
 				changedFeedbacks.add(FeedbackId.PreviewBG4)
