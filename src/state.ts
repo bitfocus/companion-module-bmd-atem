@@ -38,7 +38,7 @@ export function getSuperSourceBox(
 	boxIndex: InputValue | undefined,
 	ssrcId?: InputValue | undefined
 ): SuperSource.SuperSourceBox | undefined {
-	const ssrc = state.video.superSources[Number(ssrcId || 0)]
+	const ssrc = state.video.superSources[Number(ssrcId ?? 0)]
 	return ssrc ? ssrc.boxes[Number(boxIndex)] : undefined
 }
 export function getMultiviewer(state: AtemState, index: InputValue | undefined): SettingsState.MultiViewer | undefined {

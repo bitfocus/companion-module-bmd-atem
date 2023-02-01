@@ -70,18 +70,22 @@ export enum FeedbackId {
 	AuxVariables = 'auxVariables',
 	USKOnAir = 'usk_bg',
 	USKSource = 'usk_source',
+	USKSourceVariables = 'usk_source_variables',
 	USKKeyFrame = 'usk_keyframe',
 	DSKOnAir = 'dsk_bg',
 	DSKTie = 'dskTie',
 	DSKSource = 'dsk_source',
+	DSKSourceVariables = 'dsk_source_variables',
 	Macro = 'macro',
 	MacroLoop = 'macroloop',
 	MVSource = 'mv_source',
+	MVSourceVariables = 'mv_source_variables',
 	SSrcArtProperties = 'ssrc_art_properties',
 	SSrcArtSource = 'ssrc_art_source',
 	SSrcArtOption = 'ssrc_art_option',
 	SSrcBoxOnAir = 'ssrc_box_enable',
 	SSrcBoxSource = 'ssrc_box_source',
+	SSrcBoxSourceVariables = 'ssrc_box_source_variables',
 	SSrcBoxProperties = 'ssrc_box_properties',
 	TransitionStyle = 'transitionStyle',
 	TransitionSelection = 'transitionSelection',
@@ -630,6 +634,63 @@ function uskFeedbacks(model: ModelSpec, state: AtemState) {
 					},
 			  } satisfies CompanionFeedbackDefinition)
 			: undefined,
+		[FeedbackId.USKSourceVariables]: model.USKs
+			? ({
+					type: 'boolean',
+					name: 'Upstream key: Fill source from variables',
+					description: 'If the input specified is in use by the USK specified, change style of the bank',
+					options: [
+						{
+							type: 'textinput',
+							id: 'mixeffect',
+							label: 'M/E',
+							default: '1',
+							useVariables: true,
+						},
+						{
+							type: 'textinput',
+							label: 'Key',
+							id: 'key',
+							default: '1',
+							useVariables: true,
+						},
+						{
+							type: 'textinput',
+							id: 'fill',
+							label: 'Fill Source',
+							default: '0',
+							useVariables: true,
+						},
+					],
+					defaultStyle: {
+						color: combineRgb(0, 0, 0),
+						bgcolor: combineRgb(238, 238, 0),
+					},
+					callback: async (feedback, context) => {
+						const mixeffect = Number(await context.parseVariablesInString(feedback.options.mixeffect as string)) - 1
+						const key = Number(await context.parseVariablesInString(feedback.options.key as string)) - 1
+						const fill = Number(await context.parseVariablesInString(feedback.options.fill as string))
+
+						const usk = getUSK(state, mixeffect, key)
+						return usk?.fillSource === fill
+					},
+					learn: async (feedback, context) => {
+						const mixeffect = Number(await context.parseVariablesInString(feedback.options.mixeffect as string)) - 1
+						const key = Number(await context.parseVariablesInString(feedback.options.key as string)) - 1
+
+						const usk = getUSK(state, mixeffect, key)
+
+						if (usk) {
+							return {
+								...feedback.options,
+								fill: usk.fillSource,
+							}
+						} else {
+							return undefined
+						}
+					},
+			  } satisfies CompanionFeedbackDefinition)
+			: undefined,
 		[FeedbackId.USKKeyFrame]:
 			model.USKs && model.DVEs
 				? ({
@@ -1044,6 +1105,72 @@ function ssrcFeedbacks(model: ModelSpec, state: AtemState) {
 					},
 			  } satisfies CompanionFeedbackDefinition)
 			: undefined,
+		[FeedbackId.SSrcBoxSourceVariables]: model.SSrc
+			? ({
+					// TODO - replace with FeedbackId.SSrcBoxProperties
+					type: 'boolean',
+					name: 'Supersource: Box source from variables',
+					description: 'If the specified SuperSource box is set to the specified source, change style of the bank',
+					options: compact([
+						model.SSrc > 1
+							? {
+									type: 'textinput',
+									id: 'ssrcId',
+									label: 'Super Source',
+									default: '1',
+									useVariables: true,
+							  }
+							: undefined,
+						{
+							type: 'textinput',
+							id: 'boxIndex',
+							label: 'Box #',
+							default: '1',
+							useVariables: true,
+						},
+						{
+							type: 'textinput',
+							id: 'source',
+							label: 'Source',
+							default: '1',
+							useVariables: true,
+						},
+					]),
+					defaultStyle: {
+						color: combineRgb(0, 0, 0),
+						bgcolor: combineRgb(255, 255, 0),
+					},
+					callback: async (feedback, context) => {
+						const ssrcId =
+							feedback.options.ssrcId && model.SSrc > 1
+								? Number(await context.parseVariablesInString(feedback.options.mixeffect as string)) - 1
+								: 0
+						const boxIndex = Number(await context.parseVariablesInString(feedback.options.boxIndex as string)) - 1
+						const source = Number(await context.parseVariablesInString(feedback.options.source as string))
+
+						const box = getSuperSourceBox(state, boxIndex, ssrcId)
+						return box?.source === source
+					},
+					learn: async (feedback, context) => {
+						const ssrcId =
+							feedback.options.ssrcId && model.SSrc > 1
+								? Number(await context.parseVariablesInString(feedback.options.mixeffect as string)) - 1
+								: 0
+						const boxIndex = Number(await context.parseVariablesInString(feedback.options.boxIndex as string)) - 1
+
+						const box = getSuperSourceBox(state, boxIndex, ssrcId)
+
+						if (box) {
+							return {
+								...feedback.options,
+								source: box.source,
+							}
+						} else {
+							return undefined
+						}
+					},
+			  } satisfies CompanionFeedbackDefinition)
+			: undefined,
 		[FeedbackId.SSrcBoxOnAir]: model.SSrc
 			? ({
 					// TODO - replace with FeedbackId.SSrcBoxProperties
@@ -1180,6 +1307,54 @@ function dskFeedbacks(model: ModelSpec, state: AtemState) {
 					},
 					learn: (feedback) => {
 						const dsk = getDSK(state, feedback.options.key)
+
+						if (dsk?.sources) {
+							return {
+								...feedback.options,
+								fill: dsk.sources.fillSource,
+							}
+						} else {
+							return undefined
+						}
+					},
+			  } satisfies CompanionFeedbackDefinition)
+			: undefined,
+		[FeedbackId.DSKSourceVariables]: model.DSKs
+			? ({
+					type: 'boolean',
+					name: 'Downstream key: Fill source from variables',
+					description: 'If the input specified is in use by the DSK specified, change style of the bank',
+					options: [
+						{
+							type: 'textinput',
+							label: 'Key',
+							id: 'key',
+							default: '1',
+							useVariables: true,
+						},
+						{
+							type: 'textinput',
+							id: 'fill',
+							label: 'Fill Source',
+							default: '0',
+							useVariables: true,
+						},
+					],
+					defaultStyle: {
+						color: combineRgb(0, 0, 0),
+						bgcolor: combineRgb(238, 238, 0),
+					},
+					callback: async (feedback, context) => {
+						const key = Number(await context.parseVariablesInString(feedback.options.key as string)) - 1
+						const fill = Number(await context.parseVariablesInString(feedback.options.fill as string))
+
+						const dsk = getDSK(state, key)
+						return dsk?.sources?.fillSource === fill
+					},
+					learn: async (feedback, context) => {
+						const key = Number(await context.parseVariablesInString(feedback.options.key as string)) - 1
+
+						const dsk = getDSK(state, key)
 
 						if (dsk?.sources) {
 							return {
@@ -1854,6 +2029,65 @@ export function GetFeedbacksList(
 					},
 					learn: (feedback) => {
 						const window = getMultiviewerWindow(state, feedback.options.multiViewerId, feedback.options.windowIndex)
+
+						if (window) {
+							return {
+								...feedback.options,
+								source: window.source,
+							}
+						} else {
+							return undefined
+						}
+					},
+			  } satisfies CompanionFeedbackDefinition)
+			: undefined,
+		[FeedbackId.MVSourceVariables]: model.MVs
+			? ({
+					type: 'boolean',
+					name: 'Multiviewer: Window source from variables',
+					description: 'If the specified MV window is set to the specified source, change style of the bank',
+					options: [
+						{
+							type: 'textinput',
+							id: 'multiViewerId',
+							label: 'MV',
+							default: '1',
+							useVariables: true,
+						},
+						{
+							type: 'textinput',
+							id: 'windowIndex',
+							label: 'Window #',
+							default: '1',
+							useVariables: true,
+						},
+						{
+							type: 'textinput',
+							id: 'source',
+							label: 'Source',
+							default: '1',
+							useVariables: true,
+						},
+					],
+					defaultStyle: {
+						color: combineRgb(0, 0, 0),
+						bgcolor: combineRgb(255, 255, 0),
+					},
+					callback: async (feedback, context) => {
+						const multiViewerId =
+							Number(await context.parseVariablesInString(feedback.options.multiViewerId as string)) - 1
+						const windowIndex = Number(await context.parseVariablesInString(feedback.options.windowIndex as string)) - 1
+						const source = Number(await context.parseVariablesInString(feedback.options.source as string))
+
+						const window = getMultiviewerWindow(state, multiViewerId, windowIndex)
+						return window?.source === source
+					},
+					learn: async (feedback, context) => {
+						const multiViewerId =
+							Number(await context.parseVariablesInString(feedback.options.multiViewerId as string)) - 1
+						const windowIndex = Number(await context.parseVariablesInString(feedback.options.windowIndex as string)) - 1
+
+						const window = getMultiviewerWindow(state, multiViewerId, windowIndex)
 
 						if (window) {
 							return {

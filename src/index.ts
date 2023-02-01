@@ -238,6 +238,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				changedFeedbacks.add(FeedbackId.DSKOnAir)
 				changedFeedbacks.add(FeedbackId.DSKTie)
 				changedFeedbacks.add(FeedbackId.DSKSource)
+				changedFeedbacks.add(FeedbackId.DSKSourceVariables)
 				continue
 			}
 
@@ -281,6 +282,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 
 				changedVariables.usk.add([meIndex, keyIndex])
 				changedFeedbacks.add(FeedbackId.USKSource)
+				changedFeedbacks.add(FeedbackId.USKSourceVariables)
 				continue
 			}
 
@@ -335,6 +337,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			const ssrcBoxMatch = path.match(/video.superSources.(\d+).boxes.(\d+)/)
 			if (ssrcBoxMatch) {
 				changedFeedbacks.add(FeedbackId.SSrcBoxSource)
+				changedFeedbacks.add(FeedbackId.SSrcBoxSourceVariables)
 				changedFeedbacks.add(FeedbackId.SSrcBoxOnAir)
 				changedFeedbacks.add(FeedbackId.SSrcBoxProperties)
 				changedVariables.ssrc.add(parseInt(ssrcBoxMatch[1], 10))
@@ -417,6 +420,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	private debounceUpdateMVSource = debounceFn(
 		() => {
 			this.checkFeedbacks(FeedbackId.MVSource)
+			this.checkFeedbacks(FeedbackId.MVSourceVariables)
 		},
 		{
 			before: true,

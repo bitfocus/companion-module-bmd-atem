@@ -81,12 +81,14 @@ export enum ActionId {
 	Aux = 'aux',
 	AuxVariables = 'auxVariables',
 	USKSource = 'uskSource',
+	USKSourceVariables = 'uskSourceVariables',
 	USKOnAir = 'usk',
 	USKFly = 'uskFly',
 	USKMaskLumaChromaPattern = 'uskMaskLumaChromaPattern',
 	USKDVEProperties = 'uskDveProperties',
 	USKFlyInfinite = 'uskFlyInfinite',
 	DSKSource = 'dskSource',
+	DSKSourceVariables = 'dskSourceVariables',
 	DSKRate = 'dskRate',
 	DSKMask = 'dskMask',
 	DSKPreMultipliedKey = 'dskPreMultipliedKey',
@@ -98,8 +100,10 @@ export enum ActionId {
 	MacroStop = 'macrostop',
 	MacroLoop = 'macroloop',
 	MultiviewerWindowSource = 'setMvSource',
+	MultiviewerWindowSourceVariables = 'setMvSourceVariables',
 	SuperSourceArt = 'ssrcArt',
 	SuperSourceBoxSource = 'setSsrcBoxSource',
+	SuperSourceBoxSourceVaraibles = 'setSsrcBoxSourceVariables',
 	SuperSourceBoxOnAir = 'setSsrcBoxEnable',
 	SuperSourceBoxProperties = 'setSsrcBoxProperties',
 	SuperSourceBoxPropertiesDelta = 'setSsrcBoxPropertiesDelta',
@@ -296,6 +300,70 @@ function meActions(
 					},
 					learn: (action) => {
 						const usk = getUSK(state, getOptNumber(action, 'mixeffect'), getOptNumber(action, 'key'))
+
+						if (usk) {
+							return {
+								...action.options,
+								cut: usk.cutSource,
+								fill: usk.fillSource,
+							}
+						} else {
+							return undefined
+						}
+					},
+			  } satisfies CompanionActionDefinition)
+			: undefined,
+		[ActionId.USKSourceVariables]: model.USKs
+			? ({
+					name: 'Upstream key: Set inputs from variables',
+					options: [
+						{
+							type: 'textinput',
+							id: 'mixeffect',
+							label: 'M/E',
+							default: '1',
+							useVariables: true,
+						},
+						{
+							type: 'textinput',
+							label: 'Key',
+							id: 'key',
+							default: '1',
+							useVariables: true,
+						},
+						{
+							type: 'textinput',
+							id: 'fill',
+							label: 'Fill Source',
+							default: '0',
+							useVariables: true,
+						},
+						{
+							type: 'textinput',
+							id: 'cut',
+							label: 'Key Source',
+							default: '0',
+							useVariables: true,
+						},
+					],
+					callback: async (action, context) => {
+						const mixeffect = Number(await context.parseVariablesInString(action.options.mixeffect as string)) - 1
+						const key = Number(await context.parseVariablesInString(action.options.key as string)) - 1
+						const fill = Number(await context.parseVariablesInString(action.options.fill as string))
+						const cut = Number(await context.parseVariablesInString(action.options.cut as string))
+
+						if (isNaN(mixeffect) || isNaN(key) || isNaN(fill) || isNaN(cut)) return
+
+						await Promise.all([
+							atem?.setUpstreamKeyerFillSource(fill, mixeffect, key),
+							atem?.setUpstreamKeyerCutSource(cut, mixeffect, key),
+						])
+					},
+					learn: async (action, context) => {
+						const mixeffect = Number(await context.parseVariablesInString(action.options.mixeffect as string)) - 1
+						const key = Number(await context.parseVariablesInString(action.options.key as string)) - 1
+
+						const usk = getUSK(state, mixeffect, key)
 
 						if (usk) {
 							return {
@@ -837,6 +905,58 @@ function dskActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) 
 					},
 			  } satisfies CompanionActionDefinition)
 			: undefined,
+		[ActionId.DSKSourceVariables]: model.DSKs
+			? ({
+					name: 'Downstream key: Set inputs from variables',
+					options: [
+						{
+							type: 'textinput',
+							label: 'Key',
+							id: 'key',
+							default: '1',
+							useVariables: true,
+						},
+						{
+							type: 'textinput',
+							id: 'fill',
+							label: 'Fill Source',
+							default: '0',
+							useVariables: true,
+						},
+						{
+							type: 'textinput',
+							id: 'cut',
+							label: 'Key Source',
+							default: '0',
+							useVariables: true,
+						},
+					],
+					callback: async (action, context) => {
+						const key = Number(await context.parseVariablesInString(action.options.key as string)) - 1
+						const fill = Number(await context.parseVariablesInString(action.options.fill as string))
+						const cut = Number(await context.parseVariablesInString(action.options.cut as string))
+
+						if (isNaN(key) || isNaN(fill) || isNaN(cut)) return
+
+						await Promise.all([atem?.setDownstreamKeyFillSource(fill, key), atem?.setDownstreamKeyCutSource(cut, key)])
+					},
+					learn: async (action, context) => {
+						const key = Number(await context.parseVariablesInString(action.options.key as string)) - 1
+
+						const dsk = getDSK(state, key)
+
+						if (dsk?.sources) {
+							return {
+								...action.options,
+								fill: dsk.sources.fillSource,
+								cut: dsk.sources.cutSource,
+							}
+						} else {
+							return undefined
+						}
+					},
+			  } satisfies CompanionActionDefinition)
+			: undefined,
 		[ActionId.DSKRate]: model.DSKs
 			? ({
 					name: 'Downstream key: Set Rate',
@@ -1215,6 +1335,72 @@ function ssrcActions(atem: Atem | undefined, model: ModelSpec, state: AtemState)
 					learn: (action) => {
 						const ssrcId = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
 						const boxId = getOptNumber(action, 'boxIndex')
+
+						const ssrcConfig = state?.video.superSources?.[ssrcId]?.boxes[boxId]
+						if (ssrcConfig) {
+							return {
+								...action.options,
+								source: ssrcConfig.source,
+							}
+						} else {
+							return undefined
+						}
+					},
+			  } satisfies CompanionActionDefinition)
+			: undefined,
+		[ActionId.SuperSourceBoxSourceVaraibles]: model.SSrc
+			? ({
+					// TODO - combine into ActionId.SuperSourceBoxProperties
+					name: 'SuperSource: Set box source from variables',
+					options: compact([
+						model.SSrc > 1
+							? {
+									type: 'textinput',
+									id: 'ssrcId',
+									label: 'Super Source',
+									default: '1',
+									useVariables: true,
+							  }
+							: undefined,
+						{
+							type: 'textinput',
+							id: 'boxIndex',
+							label: 'Box #',
+							default: '1',
+							useVariables: true,
+						},
+						{
+							type: 'textinput',
+							id: 'source',
+							label: 'Source',
+							default: '1',
+							useVariables: true,
+						},
+					]),
+					callback: async (action, context) => {
+						const ssrcId =
+							action.options.ssrcId && model.SSrc > 1
+								? Number(await context.parseVariablesInString(action.options.ssrcId as string)) - 1
+								: 0
+						const boxIndex = Number(await context.parseVariablesInString(action.options.boxIndex as string)) - 1
+						const source = Number(await context.parseVariablesInString(action.options.source as string))
+
+						if (isNaN(ssrcId) || isNaN(boxIndex) || isNaN(source)) return
+
+						await atem?.setSuperSourceBoxSettings(
+							{
+								source: source,
+							},
+							boxIndex,
+							ssrcId
+						)
+					},
+					learn: async (action, context) => {
+						const ssrcId =
+							action.options.ssrcId && model.SSrc > 1
+								? Number(await context.parseVariablesInString(action.options.ssrcId as string)) - 1
+								: 0
+						const boxId = Number(await context.parseVariablesInString(action.options.boxIndex as string)) - 1
 
 						const ssrcConfig = state?.video.superSources?.[ssrcId]?.boxes[boxId]
 						if (ssrcConfig) {
@@ -2345,6 +2531,60 @@ export function GetActionsList(
 					},
 					learn: (action) => {
 						const window = getMultiviewerWindow(state, action.options.multiViewerId, action.options.windowIndex)
+
+						if (window) {
+							return {
+								...action.options,
+								source: window.source,
+							}
+						} else {
+							return undefined
+						}
+					},
+			  } satisfies CompanionActionDefinition)
+			: undefined,
+		[ActionId.MultiviewerWindowSourceVariables]: model.MVs
+			? ({
+					name: 'Multiviewer: Change window source from variables',
+					options: [
+						{
+							type: 'textinput',
+							id: 'multiViewerId',
+							label: 'MV',
+							default: '1',
+							useVariables: true,
+						},
+						{
+							type: 'textinput',
+							id: 'windowIndex',
+							label: 'Window #',
+							default: '1',
+							useVariables: true,
+						},
+						{
+							type: 'textinput',
+							id: 'source',
+							label: 'Source',
+							default: '1',
+							useVariables: true,
+						},
+					],
+					callback: async (action, context) => {
+						const multiViewerId =
+							Number(await context.parseVariablesInString(action.options.multiViewerId as string)) - 1
+						const windowIndex = Number(await context.parseVariablesInString(action.options.windowIndex as string)) - 1
+						const source = Number(await context.parseVariablesInString(action.options.source as string))
+
+						if (isNaN(multiViewerId) || isNaN(windowIndex) || isNaN(source)) return
+
+						await atem?.setMultiViewerWindowSource(source, multiViewerId, windowIndex)
+					},
+					learn: async (action, context) => {
+						const multiViewerId =
+							Number(await context.parseVariablesInString(action.options.multiViewerId as string)) - 1
+						const windowIndex = Number(await context.parseVariablesInString(action.options.windowIndex as string)) - 1
+
+						const window = getMultiviewerWindow(state, multiViewerId, windowIndex)
 
 						if (window) {
 							return {
