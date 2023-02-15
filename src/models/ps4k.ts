@@ -13,6 +13,7 @@ export const ModelSpecPS4K: ModelSpec = {
 	DVEs: 0,
 	SSrc: 0,
 	macros: 100,
+	displayClock: 0,
 	media: {
 		players: 2,
 		stills: 20,

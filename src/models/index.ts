@@ -86,6 +86,7 @@ export function GetParsedModelSpec({
 	recording,
 	audio,
 	fairlight,
+	displayClock,
 }: AtemState): ModelSpec {
 	const defaults = GetAutoDetectModel()
 	const simpleInputs = compact(Object.values(inputs)).map((inp) => ({
@@ -107,6 +108,7 @@ export function GetParsedModelSpec({
 		DVEs: info.capabilities?.DVEs ?? defaults.DVEs,
 		SSrc: info.capabilities?.superSources ?? defaults.SSrc,
 		macros: info.macroPool?.macroCount ?? defaults.macros,
+		displayClock: displayClock ? 1 : 0,
 		media: {
 			players: info.capabilities?.mediaPlayers ?? defaults.media.players,
 			stills: info.mediaPool?.stillCount ?? defaults.media.stills,

@@ -13,6 +13,7 @@ export const ModelSpecAuto: ModelSpec = {
 	DVEs: 0,
 	SSrc: 0,
 	macros: 100,
+	displayClock: 0,
 	media: {
 		players: 2,
 		stills: 20,

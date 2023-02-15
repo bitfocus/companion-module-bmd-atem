@@ -1,4 +1,4 @@
-import { type Atem, type AtemState, Enums, type InputState, type VideoState } from 'atem-connection'
+import { type Atem, type AtemState, Enums, type InputState, type VideoState, type DisplayClock } from 'atem-connection'
 import {
 	CHOICES_KEYTRANS,
 	GetDSKIdChoices,
@@ -42,6 +42,8 @@ import {
 	AtemSuperSourceArtPropertiesPickers,
 	AtemDSKMaskPropertiesPickers,
 	AtemDSKPreMultipliedKeyPropertiesPickers,
+	AtemDisplayClockPropertiesPickers,
+	AtemDisplayClockTimePickers,
 } from './input.js'
 import type { ModelSpec } from './models/index.js'
 import {
@@ -70,6 +72,7 @@ import type {
 	UpstreamKeyerMaskSettings,
 	UpstreamKeyerDVESettings,
 } from 'atem-connection/dist/state/video/upstreamKeyers.js'
+import { DisplayClockClockState } from 'atem-connection/dist/enums/index.js'
 
 export enum ActionId {
 	Program = 'program',
@@ -143,6 +146,9 @@ export enum ActionId {
 	SaveStartupState = 'saveStartupState',
 	ClearStartupState = 'clearStartupState',
 	InputName = 'inputName',
+	DisplayClockState = 'displayClockState',
+	DisplayClockConfigure = 'displayClockConfigure',
+	DisplayClockStartTime = 'displayClockStartTime',
 }
 
 type CompanionActionsExt = { [id in ActionId]: CompanionActionDefinition | undefined }
@@ -2775,6 +2781,120 @@ export function GetActionsList(
 				}
 			},
 		} satisfies CompanionActionDefinition,
+		[ActionId.DisplayClockState]: model.displayClock
+			? ({
+					name: 'Display Clock: Start/Stop',
+					options: [
+						{
+							id: 'state',
+							label: 'State',
+							type: 'dropdown',
+							default: 'toggle',
+							choices: [
+								{ id: 'toggle', label: 'Toggle' },
+								{ id: DisplayClockClockState.Running, label: 'Start' },
+								{ id: DisplayClockClockState.Stopped, label: 'Stop' },
+								{ id: DisplayClockClockState.Reset, label: 'Reset' },
+							],
+						},
+					],
+					callback: async (action) => {
+						let newState: DisplayClockClockState | undefined
+						switch (action.options.state) {
+							case 'toggle':
+								newState =
+									state.displayClock?.properties?.clockState === DisplayClockClockState.Running
+										? DisplayClockClockState.Stopped
+										: DisplayClockClockState.Running
+								break
+							case DisplayClockClockState.Running:
+							case DisplayClockClockState.Stopped:
+							case DisplayClockClockState.Reset:
+								newState = action.options.state
+								break
+						}
+
+						if (newState !== undefined) {
+							await atem?.setDisplayClockState(newState)
+						}
+					},
+			  } satisfies CompanionActionDefinition)
+			: undefined,
+		[ActionId.DisplayClockConfigure]: model.displayClock
+			? ({
+					name: 'Display Clock: Configure',
+					options: [...AtemDisplayClockPropertiesPickers()],
+					callback: async (action) => {
+						const newProps: Partial<DisplayClock.DisplayClockProperties> = {}
+
+						const props = action.options.properties
+						if (props && Array.isArray(props)) {
+							if (props.includes('enabled')) newProps.enabled = !!action.options.enabled
+
+							if (props.includes('size')) newProps.size = getOptNumber(action, 'size') * 100
+							if (props.includes('opacity')) newProps.opacity = getOptNumber(action, 'opacity') * 100
+							if (props.includes('x')) newProps.positionX = getOptNumber(action, 'x') * 1000
+							if (props.includes('y')) newProps.positionY = getOptNumber(action, 'y') * 1000
+
+							if (props.includes('autoHide')) newProps.autoHide = !!action.options.autoHide
+
+							if (props.includes('clockMode')) newProps.clockMode = getOptNumber(action, 'clockMode')
+						}
+
+						if (Object.keys(newProps).length === 0) return
+
+						await atem?.setDisplayClockProperties(newProps)
+					},
+					learn: (action) => {
+						const displayClockConfig = state?.displayClock?.properties
+						if (displayClockConfig) {
+							return {
+								...action.options,
+								enabled: displayClockConfig.enabled,
+								size: displayClockConfig.size / 100,
+								opacity: displayClockConfig.opacity / 100,
+								x: displayClockConfig.positionX / 1000,
+								y: displayClockConfig.positionY / 1000,
+								autoHide: displayClockConfig.autoHide,
+								clockMode: displayClockConfig.clockMode,
+							}
+						} else {
+							return undefined
+						}
+					},
+			  } satisfies CompanionActionDefinition)
+			: undefined,
+		[ActionId.DisplayClockStartTime]: model.displayClock
+			? ({
+					name: 'Display Clock: Set Start Time',
+					options: [...AtemDisplayClockTimePickers()],
+					callback: async (action) => {
+						const time: DisplayClock.DisplayClockTime = {
+							hours: getOptNumber(action, 'hours'),
+							minutes: getOptNumber(action, 'minutes'),
+							seconds: getOptNumber(action, 'seconds'),
+							frames: 0,
+						}
+
+						await atem?.setDisplayClockProperties({
+							startFrom: time,
+						})
+					},
+					learn: (action) => {
+						const displayClockConfig = state?.displayClock?.properties
+						if (displayClockConfig) {
+							return {
+								...action.options,
+								hours: displayClockConfig.startFrom.hours,
+								minutes: displayClockConfig.startFrom.minutes,
+								seconds: displayClockConfig.startFrom.seconds,
+							}
+						} else {
+							return undefined
+						}
+					},
+			  } satisfies CompanionActionDefinition)
+			: undefined,
 	}
 
 	return actions

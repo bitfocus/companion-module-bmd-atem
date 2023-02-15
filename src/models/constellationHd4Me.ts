@@ -13,6 +13,7 @@ export const ModelSpecConstellationHD4ME: ModelSpec = {
 	DVEs: 4,
 	SSrc: 2,
 	macros: 100,
+	displayClock: 1,
 	media: {
 		players: 4,
 		stills: 60,

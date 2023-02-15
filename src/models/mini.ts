@@ -13,6 +13,7 @@ export const ModelSpecMini: ModelSpec = {
 	DVEs: 1,
 	SSrc: 0,
 	macros: 100,
+	displayClock: 0,
 	media: {
 		players: 1,
 		stills: 20,

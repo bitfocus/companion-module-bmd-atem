@@ -13,6 +13,7 @@ export const ModelSpecConstellation8KAs8K: ModelSpec = {
 	DVEs: 1,
 	SSrc: 1,
 	macros: 100,
+	displayClock: 0,
 	media: {
 		players: 1,
 		stills: 24,

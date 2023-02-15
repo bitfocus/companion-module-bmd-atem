@@ -15,6 +15,7 @@ export interface ModelSpec {
 	multiviewerFullGrid: boolean
 	SSrc: number
 	macros: number
+	displayClock: number
 	media: {
 		players: number
 		stills: number

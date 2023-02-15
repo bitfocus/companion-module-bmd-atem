@@ -13,6 +13,7 @@ export const ModelSpecTwoME: ModelSpec = {
 	DVEs: 1,
 	SSrc: 1,
 	macros: 100,
+	displayClock: 0,
 	media: {
 		players: 2,
 		stills: 32,

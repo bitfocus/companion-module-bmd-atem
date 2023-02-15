@@ -13,6 +13,7 @@ export const ModelSpecFourME4K: ModelSpec = {
 	DVEs: 1,
 	SSrc: 1,
 	macros: 100,
+	displayClock: 0,
 	media: {
 		players: 4,
 		stills: 64,

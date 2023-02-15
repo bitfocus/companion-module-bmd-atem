@@ -13,6 +13,7 @@ export const ModelSpecConstellationAsHDOr4K: ModelSpec = {
 	DVEs: 4,
 	SSrc: 2,
 	macros: 100,
+	displayClock: 0,
 	media: {
 		players: 4,
 		stills: 64,

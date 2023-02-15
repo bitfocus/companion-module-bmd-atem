@@ -223,6 +223,7 @@ export const ModelSpecMiniExtreme: ModelSpec = {
 	DVEs: 2,
 	SSrc: 1,
 	macros: 100,
+	displayClock: 0,
 	media: {
 		players: 2,
 		stills: 20,

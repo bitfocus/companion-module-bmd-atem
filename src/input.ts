@@ -1138,3 +1138,136 @@ export const InvertInput: CompanionInputFieldCheckbox = {
 	id: 'invert',
 	default: false,
 }
+
+export function AtemDisplayClockPropertiesPickers(): Array<
+	| CompanionInputFieldNumber
+	| CompanionInputFieldCheckbox
+	| CompanionInputFieldDropdown
+	| CompanionInputFieldMultiDropdown
+> {
+	const offset = false
+	const allProps: ReturnType<typeof AtemDisplayClockPropertiesPickers> = compact([
+		{
+			type: 'checkbox',
+			id: 'enabled',
+			label: 'Display',
+			default: false,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('enabled'),
+		},
+		{
+			type: 'number',
+			id: 'size',
+			label: 'Size',
+			min: offset ? -1 : 0,
+			max: 1,
+			range: true,
+			default: offset ? 0 : 0.5,
+			step: 0.01,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('size'),
+		},
+		{
+			type: 'number',
+			id: 'opacity',
+			label: 'Opacity',
+			min: offset ? -1 : 0,
+			max: 1,
+			range: true,
+			default: offset ? 0 : 1,
+			step: 0.01,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('opacity'),
+		},
+		{
+			type: 'number',
+			id: 'x',
+			label: 'X',
+			min: -16,
+			max: 16,
+			range: true,
+			default: 0,
+			step: 0.01,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('x'),
+		},
+		{
+			type: 'number',
+			id: 'y',
+			label: 'Y',
+			min: -9,
+			max: 9,
+			range: true,
+			default: 0,
+			step: 0.01,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('y'),
+		},
+		!offset
+			? {
+					type: 'checkbox',
+					id: 'autoHide',
+					label: 'Auto Hide',
+					default: false,
+					isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('autoHide'),
+			  }
+			: undefined,
+		// startFrom: 1 << 6,
+		!offset
+			? {
+					id: 'clockMode',
+					label: 'Mode',
+					type: 'dropdown',
+					default: Enums.DisplayClockClockMode.Countdown,
+					choices: [
+						{ id: Enums.DisplayClockClockMode.Countdown, label: 'Count down' },
+						{ id: Enums.DisplayClockClockMode.Countup, label: 'Count up' },
+						{ id: Enums.DisplayClockClockMode.TimeOfDay, label: 'Time of Day' },
+					],
+					isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('clockMode'),
+			  }
+			: undefined,
+	])
+
+	return compact([
+		{
+			type: 'multidropdown',
+			id: 'properties',
+			label: 'Properties',
+			minSelection: 1,
+			default: allProps.map((p) => p.id),
+			choices: allProps.map((p) => ({ id: p.id, label: p.label })),
+		},
+		...allProps,
+	])
+}
+
+export function AtemDisplayClockTimePickers(): Array<CompanionInputFieldNumber> {
+	return [
+		{
+			type: 'number',
+			id: 'hours',
+			label: 'Hours',
+			min: 0,
+			max: 23,
+			range: true,
+			default: 0,
+			step: 1,
+		},
+		{
+			type: 'number',
+			id: 'minutes',
+			label: 'Minutes',
+			min: 0,
+			max: 59,
+			range: true,
+			default: 0,
+			step: 1,
+		},
+		{
+			type: 'number',
+			id: 'seconds',
+			label: 'Seconds',
+			min: 0,
+			max: 59,
+			range: true,
+			default: 0,
+			step: 1,
+		},
+	]
+}
