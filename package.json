@@ -36,12 +36,12 @@
 		"bonjour-service": "^1.1.0",
 		"debounce-fn": "^5.1.2",
 		"debug": "^4.3.4",
-		"type-fest": "^3.5.3"
+		"type-fest": "^3.5.7"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "^0.5.2",
+		"@companion-module/tools": "^1.0.0",
 		"@types/debug": "^4.1.7",
-		"@types/node": "^18.11.18",
+		"@types/node": "^18.13.0",
 		"husky": "^8.0.3",
 		"lint-staged": "^13.1.0",
 		"rimraf": "^4.1.2",
