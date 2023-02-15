@@ -239,6 +239,7 @@ export const ModelSpecSDIExtremeISO: ModelSpec = {
 		players: 2,
 		stills: 20,
 		clips: 0,
+		captureStills: true,
 	},
 	streaming: true,
 	recording: true,

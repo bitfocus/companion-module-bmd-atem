@@ -113,6 +113,7 @@ export enum ActionId {
 	TransitionRate = 'transitionRate',
 	MediaPlayerSource = 'mediaPlayerSource',
 	MediaPlayerCycle = 'mediaPlayerCycle',
+	MediaCaptureStill = 'mediaCaptureStill',
 	FadeToBlackAuto = 'fadeToBlackAuto',
 	FadeToBlackRate = 'fadeToBlackRate',
 	StreamStartStop = 'streamStartStop',
@@ -2678,6 +2679,15 @@ export function GetActionsList(
 								playerId
 							)
 						}
+					},
+			  } satisfies CompanionActionDefinition)
+			: undefined,
+		[ActionId.MediaCaptureStill]: model.media.captureStills
+			? ({
+					name: 'Media player: Capture still',
+					options: [],
+					callback: async () => {
+						await atem?.captureMediaPoolStill()
 					},
 			  } satisfies CompanionActionDefinition)
 			: undefined,

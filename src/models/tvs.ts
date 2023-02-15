@@ -17,6 +17,7 @@ export const ModelSpecTVS: ModelSpec = {
 		players: 2,
 		stills: 20,
 		clips: 0,
+		captureStills: false,
 	},
 	streaming: false,
 	recording: false,

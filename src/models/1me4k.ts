@@ -17,6 +17,7 @@ export const ModelSpecOneME4K: ModelSpec = {
 		players: 2,
 		stills: 32,
 		clips: 2,
+		captureStills: false,
 	},
 	streaming: false,
 	recording: false,

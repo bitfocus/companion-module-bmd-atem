@@ -27,6 +27,7 @@ import { ModelSpecConstellationHD4ME } from './constellationHd4Me.js'
 import { ModelSpecSDI } from './sdi.js'
 import { ModelSpecSDIProISO } from './sdiproiso.js'
 import { ModelSpecSDIExtremeISO } from './sdiextremeiso.js'
+import { Model } from 'atem-connection/dist/enums/index.js'
 
 export * from './types.js'
 
@@ -110,6 +111,7 @@ export function GetParsedModelSpec({
 			players: info.capabilities?.mediaPlayers ?? defaults.media.players,
 			stills: info.mediaPool?.stillCount ?? defaults.media.stills,
 			clips: info.mediaPool?.clipCount ?? defaults.media.clips,
+			captureStills: !!info.mediaPool?.stillCount && info.model >= Model.Mini,
 		},
 		streaming: streaming != undefined,
 		recording: recording != undefined,

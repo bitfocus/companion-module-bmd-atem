@@ -19,6 +19,7 @@ export interface ModelSpec {
 		players: number
 		stills: number
 		clips: number
+		captureStills: boolean
 	}
 	streaming: boolean
 	recording: boolean

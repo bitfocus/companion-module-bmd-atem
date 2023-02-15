@@ -17,6 +17,7 @@ export const ModelSpecConstellation8KAs8K: ModelSpec = {
 		players: 1,
 		stills: 24,
 		clips: 2,
+		captureStills: false,
 	},
 	streaming: false,
 	recording: false,

@@ -17,6 +17,7 @@ export const ModelSpecSDI: ModelSpec = {
 		players: 1,
 		stills: 20,
 		clips: 0,
+		captureStills: true,
 	},
 	streaming: false,
 	recording: false,

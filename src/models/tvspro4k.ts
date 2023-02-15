@@ -17,6 +17,7 @@ export const ModelSpecTVSPro4K: ModelSpec = {
 		players: 2,
 		stills: 20,
 		clips: 2,
+		captureStills: false,
 	},
 	streaming: false,
 	recording: false,

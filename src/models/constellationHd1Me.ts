@@ -17,6 +17,7 @@ export const ModelSpecConstellationHD1ME: ModelSpec = {
 		players: 2,
 		stills: 20,
 		clips: 2,
+		captureStills: true,
 	},
 	streaming: false,
 	recording: false,
