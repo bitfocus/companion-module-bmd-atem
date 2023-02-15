@@ -23,6 +23,12 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.2.0
+
+- Add capture still action
+
+- Add display-clock actions
+
 ## v3.1.0
 
 - Add feedbacks which support variables
