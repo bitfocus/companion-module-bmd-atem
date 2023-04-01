@@ -2,7 +2,8 @@
 
 Should work with all models of Blackmagic Design ATEM mixers.
 
-Supports firmware 7.2 & 7.5.2 - 8.10.0
+Firmware versions 7.5.2 and later are known to work, other versions may experience problems.  
+Firmware versions after 9.0 are not verified to be working at the time of writing, but they likely will work fine.
 
 Devices must be controlled over a network, USB control is NOT supported.
 
