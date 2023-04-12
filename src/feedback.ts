@@ -204,14 +204,14 @@ function previewFeedbacks(model: ModelSpec, state: AtemState) {
 				bgcolor: combineRgb(0, 255, 0),
 			},
 			callback: async (feedback, context) => {
-				const mixeffect = Number(await context.parseVariablesInString(feedback.options.mixeffect as string))
+				const mixeffect = Number(await context.parseVariablesInString(feedback.options.mixeffect as string)) - 1
 				const input = Number(await context.parseVariablesInString(feedback.options.input as string))
 
 				const me = getMixEffect(state, mixeffect)
 				return me?.previewInput === input
 			},
 			learn: async (feedback, context) => {
-				const mixeffect = Number(await context.parseVariablesInString(feedback.options.mixeffect as string))
+				const mixeffect = Number(await context.parseVariablesInString(feedback.options.mixeffect as string)) - 1
 
 				const me = getMixEffect(state, mixeffect)
 
@@ -423,14 +423,14 @@ function programFeedbacks(model: ModelSpec, state: AtemState) {
 				bgcolor: combineRgb(0, 255, 0),
 			},
 			callback: async (feedback, context) => {
-				const mixeffect = Number(await context.parseVariablesInString(feedback.options.mixeffect as string))
+				const mixeffect = Number(await context.parseVariablesInString(feedback.options.mixeffect as string)) - 1
 				const input = Number(await context.parseVariablesInString(feedback.options.input as string))
 
 				const me = getMixEffect(state, mixeffect)
 				return me?.programInput === input
 			},
 			learn: async (feedback, context) => {
-				const mixeffect = Number(await context.parseVariablesInString(feedback.options.mixeffect as string))
+				const mixeffect = Number(await context.parseVariablesInString(feedback.options.mixeffect as string)) - 1
 
 				const me = getMixEffect(state, mixeffect)
 
