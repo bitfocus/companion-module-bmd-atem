@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.2.1
+
+- Some feedbacks off by one on me index
+
 ## v3.2.0
 
 - Add capture still action
