@@ -15,7 +15,7 @@ function scaleValue(obj: { [key: string]: InputValue | undefined }, key: string,
 }
 
 export function upgradeV2x2x0(
-	_context: CompanionUpgradeContext,
+	_context: CompanionUpgradeContext<AtemConfig>,
 	props: CompanionStaticUpgradeProps<AtemConfig>
 ): CompanionStaticUpgradeResult<AtemConfig> {
 	const result: CompanionStaticUpgradeResult<AtemConfig> = {
@@ -96,7 +96,7 @@ export const BooleanFeedbackUpgradeMap: {
 }
 
 export function upgradeAddSSrcPropertiesPicker(
-	_context: CompanionUpgradeContext,
+	_context: CompanionUpgradeContext<AtemConfig>,
 	props: CompanionStaticUpgradeProps<AtemConfig>
 ): CompanionStaticUpgradeResult<AtemConfig> {
 	const result: CompanionStaticUpgradeResult<AtemConfig> = {
@@ -126,7 +126,7 @@ export function upgradeAddSSrcPropertiesPicker(
 }
 
 export function fixUsingFairlightAudioFaderGainInsteadOfFairlightAudioMonitorFaderGain(
-	_context: CompanionUpgradeContext,
+	_context: CompanionUpgradeContext<AtemConfig>,
 	props: CompanionStaticUpgradeProps<AtemConfig>
 ): CompanionStaticUpgradeResult<AtemConfig> {
 	const result: CompanionStaticUpgradeResult<AtemConfig> = {
