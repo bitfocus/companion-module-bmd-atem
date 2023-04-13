@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.2.2
+
+- Fix build errors
+
 ## v3.2.1
 
 - Some feedbacks off by one on me index
