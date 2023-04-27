@@ -35,6 +35,7 @@ const { Atem, AtemConnectionStatus, AtemStateUtil } = AtemPkg
 
 // eslint-disable-next-line node/no-extraneous-import
 import { ThreadedClassManager, RegisterExitHandlers } from 'threadedclass'
+import { CompanionPropertyType } from '@companion-module/base/dist/module-api/properties.js'
 
 // HACK: This stops it from registering an unhandledException handler, as that causes companion to exit on error
 ThreadedClassManager.handleExit = RegisterExitHandlers.NO
@@ -176,6 +177,29 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		this.setActionDefinitions(
 			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.atemState)
 		)
+		this.setPropertyDefinitions({
+			program: {
+				name: 'ME Program',
+				description: '',
+
+				type: CompanionPropertyType.Number,
+
+				instanceIds: [
+					{
+						id: 1,
+						label: 'ME 1',
+					},
+				],
+
+				getValue: async (instanceId) => {
+					console.log('TODO get program value', instanceId)
+					return 0
+				},
+				setValue: async (instanceId, value) => {
+					console.log('TODO set program value', instanceId, value)
+				},
+			},
+		})
 
 		this.checkFeedbacks()
 	}
