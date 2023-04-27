@@ -1,5 +1,4 @@
 import { Regex, type SomeCompanionConfigField } from '@companion-module/base'
-import { AtemMdnsDetectorInstance } from './mdns-detector.js'
 import { ALL_MODEL_CHOICES } from './models/index.js'
 import type { InstanceBaseExt } from './util.js'
 
@@ -32,17 +31,34 @@ export function GetConfigFields(_self: InstanceBaseExt<AtemConfig>): SomeCompani
 				'Devices must be controlled over a network, USB control is NOT supported.',
 		},
 		{
-			type: 'dropdown',
+			type: 'bonjour-device',
+			id: 'bonjour-test',
+			label: 'Bonjour Test',
+			width: 6,
+			bonjourQuery: {
+				type: 'blackmagic',
+				protocol: 'tcp',
+				txt: {
+					class: 'AtemSwitcher',
+				},
+			},
+		},
+		{
+			type: 'textinput',
 			id: 'host',
 			label: 'Target IP',
 			width: 6,
-			choices: AtemMdnsDetectorInstance.listKnown().map((d) => ({
-				id: d.address,
-				label: `${d.address} (${d.modelName})`,
-			})),
+			isVisible: (options) => !options['bonjour-test'],
 			default: '',
-			allowCustom: true,
 			regex: Regex.IP,
+		},
+		{
+			type: 'static-text',
+			id: 'host-filler',
+			width: 6,
+			label: '',
+			isVisible: (options) => !!options['bonjour-test'],
+			value: '',
 		},
 		// {
 		// 	type: 'textinput',

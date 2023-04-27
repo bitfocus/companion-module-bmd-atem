@@ -21,7 +21,6 @@ import {
 	InstanceStatus,
 	type CompanionVariableValues,
 } from '@companion-module/base'
-import { AtemMdnsDetectorInstance } from './mdns-detector.js'
 import { isEqual } from 'lodash-es'
 import { UpgradeScripts } from './upgrades.js'
 import { calculateTallyForInputId } from './util.js'
@@ -84,8 +83,6 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		this.isActive = true
 		this.updateStatus(InstanceStatus.Disconnected)
 
-		AtemMdnsDetectorInstance.subscribe(this.id)
-
 		this.setupAtemConnection()
 
 		await this.configUpdated(config)
@@ -140,8 +137,6 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	 */
 	public async destroy(): Promise<void> {
 		this.isActive = false
-
-		AtemMdnsDetectorInstance.unsubscribe(this.id)
 
 		this.atemTransitions.stopAll()
 
