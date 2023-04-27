@@ -177,6 +177,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		this.setActionDefinitions(
 			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.atemState)
 		)
+
 		this.setPropertyDefinitions({
 			program: {
 				name: 'ME Program',
