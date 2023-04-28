@@ -1,5 +1,4 @@
 import { type AtemState, Enums } from 'atem-connection'
-import { GetSourcesListForType, type SourceInfo } from './choices.js'
 import { type AtemConfig, PresetStyleName } from './config.js'
 import type { ModelSpec } from './models/index.js'
 import {
@@ -12,7 +11,7 @@ import {
 } from './state.js'
 import { assertUnreachable, type InstanceBaseExt, pad } from './util.js'
 import type { Timecode } from 'atem-connection/dist/state/common.js'
-import type { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
+import type { CompanionVariableValues, DropdownChoiceId } from '@companion-module/base'
 
 function getSourcePresetName(instance: InstanceBaseExt<AtemConfig>, state: AtemState, id: number): string {
 	const input = state.inputs[id]
@@ -47,7 +46,10 @@ export function updateChangedVariables(
 	state: AtemState,
 	changes: UpdateVariablesProps
 ): void {
+	const changedProps: Record<string, DropdownChoiceId[] | null> = {}
 	const newValues: CompanionVariableValues = {}
+
+	if (changes.meProgram.size > 0) changedProps['me_program'] = null
 
 	for (const meIndex of changes.meProgram) updateMEProgramVariable(instance, state, meIndex, newValues)
 	for (const meIndex of changes.mePreview) updateMEPreviewVariable(instance, state, meIndex, newValues)
@@ -67,8 +69,13 @@ export function updateChangedVariables(
 		updateFairlightAudioVariables(state, fairlightAudioIndex, newValues)
 	for (const classicAudioIndex of changes.classicAudio) updateClassicAudioVariables(state, classicAudioIndex, newValues)
 
+	if (Object.keys(changedProps).length > 0) {
+		instance.notifyPropertiesChanged(changedProps)
+	}
+
 	if (Object.keys(newValues).length > 0) {
-		instance.setVariableValues(newValues)
+		// TODO
+		// instance.setVariableValues(newValues)
 	}
 }
 
@@ -131,15 +138,15 @@ function updateMacroVariable(state: AtemState, id: number, values: CompanionVari
 	values[`macro_${id + 1}`] = macro?.name || `Macro ${id + 1}`
 }
 
-function updateMediaStillVariable(state: AtemState, id: number, values: CompanionVariableValues): void {
-	const still = state.media.stillPool[id]
-	values[`still_${id + 1}`] = still?.fileName || `Still ${id + 1}`
-}
+// function updateMediaStillVariable(state: AtemState, id: number, values: CompanionVariableValues): void {
+// 	const still = state.media.stillPool[id]
+// 	values[`still_${id + 1}`] = still?.fileName || `Still ${id + 1}`
+// }
 
-function updateMediaClipVariable(state: AtemState, id: number, values: CompanionVariableValues): void {
-	const clip = state.media.clipPool[id]
-	values[`clip_${id + 1}`] = clip?.name || `Clip ${id + 1}`
-}
+// function updateMediaClipVariable(state: AtemState, id: number, values: CompanionVariableValues): void {
+// 	const clip = state.media.clipPool[id]
+// 	values[`clip_${id + 1}`] = clip?.name || `Clip ${id + 1}`
+// }
 
 function updateMediaPlayerVariables(state: AtemState, id: number, values: CompanionVariableValues): void {
 	const player = state.media.players[id]
@@ -160,10 +167,10 @@ function updateMediaPlayerVariables(state: AtemState, id: number, values: Compan
 	values[`mp_source_${id + 1}`] = sourceStr
 }
 
-function updateInputVariables(src: SourceInfo, values: CompanionVariableValues): void {
-	values[`long_${src.id}`] = src.longName
-	values[`short_${src.id}`] = src.shortName
-}
+// function updateInputVariables(src: SourceInfo, values: CompanionVariableValues): void {
+// 	values[`long_${src.id}`] = src.longName
+// 	values[`short_${src.id}`] = src.shortName
+// }
 
 function formatDuration(durationObj: Timecode | undefined): { hms: string; hm: string; ms: string } {
 	let durationHMS = '00:00:00'
@@ -333,301 +340,270 @@ function updateSuperSourceVariables(
 	}
 }
 
-export function updateDeviceIpVariable(instance: InstanceBaseExt<AtemConfig>, values: CompanionVariableValues): void {
-	values['device_ip'] = instance.config?.host || ''
-}
+// export function updateDeviceIpVariable(instance: InstanceBaseExt<AtemConfig>, values: CompanionVariableValues): void {
+// 	values['device_ip'] = instance.config?.host || ''
+// }
 
-export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: ModelSpec, state: AtemState): void {
-	const variables: CompanionVariableDefinition[] = []
-
-	const values: CompanionVariableValues = {}
-
-	variables.push({
-		name: 'IP address of ATEM',
-		variableId: `device_ip`,
-	})
-	updateDeviceIpVariable(instance, values)
-
-	// PGM/PV busses
-	for (let i = 0; i < model.MEs; ++i) {
-		variables.push({
-			name: `Label of input active on program bus (M/E ${i + 1})`,
-			variableId: `pgm${i + 1}_input`,
-		})
-		variables.push({
-			name: `Id of input active on program bus (M/E ${i + 1})`,
-			variableId: `pgm${i + 1}_input_id`,
-		})
-		updateMEProgramVariable(instance, state, i, values)
-
-		variables.push({
-			name: `Label of input active on preview bus (M/E ${i + 1})`,
-			variableId: `pvw${i + 1}_input`,
-		})
-		variables.push({
-			name: `Id of input active on preview bus (M/E ${i + 1})`,
-			variableId: `pvw${i + 1}_input_id`,
-		})
-		updateMEPreviewVariable(instance, state, i, values)
-
-		for (let k = 0; k < model.USKs; ++k) {
-			variables.push({
-				name: `Label of input active on M/E ${i + 1} Key ${k + 1}`,
-				variableId: `usk_${i + 1}_${k + 1}_input`,
-			})
-			variables.push({
-				name: `Id of input active on M/E ${i + 1} Key ${k + 1}`,
-				variableId: `usk_${i + 1}_${k + 1}_input_id`,
-			})
-
-			updateUSKVariable(instance, state, i, k, values)
-		}
-	}
-
-	// Auxs
-	for (let a = 0; a < model.auxes; ++a) {
-		variables.push({
-			name: `Label of input active on Aux ${a + 1}`,
-			variableId: `aux${a + 1}_input`,
-		})
-		variables.push({
-			name: `Id of input active on Aux ${a + 1}`,
-			variableId: `aux${a + 1}_input_id`,
-		})
-
-		updateAuxVariable(instance, state, a, values)
-	}
-
-	// DSKs
-	for (let k = 0; k < model.DSKs; ++k) {
-		variables.push({
-			name: `Label of input active on DSK ${k + 1}`,
-			variableId: `dsk_${k + 1}_input`,
-		})
-		variables.push({
-			name: `Id of input active on DSK ${k + 1}`,
-			variableId: `dsk_${k + 1}_input_id`,
-		})
-
-		updateDSKVariable(instance, state, k, values)
-	}
-
-	// Source names
-	for (const src of GetSourcesListForType(model, state)) {
-		variables.push({
-			name: `Long name of source id ${src.id}`,
-			variableId: `long_${src.id}`,
-		})
-		variables.push({
-			name: `Short name of source id ${src.id}`,
-			variableId: `short_${src.id}`,
-		})
-
-		updateInputVariables(src, values)
-	}
-
-	// Macros
-	for (let i = 0; i < model.macros; i++) {
-		variables.push({
-			name: `Name of macro #${i + 1}`,
-			variableId: `macro_${i + 1}`,
-		})
-
-		updateMacroVariable(state, i, values)
-	}
-
-	// Media
-	for (let i = 0; i < model.media.stills; i++) {
-		variables.push({
-			name: `Name of still #${i + 1}`,
-			variableId: `still_${i + 1}`,
-		})
-
-		updateMediaStillVariable(state, i, values)
-	}
-	for (let i = 0; i < model.media.clips; i++) {
-		variables.push({
-			name: `Name of clip #${i + 1}`,
-			variableId: `clip_${i + 1}`,
-		})
-
-		updateMediaClipVariable(state, i, values)
-	}
-	for (let i = 0; i < model.media.players; i++) {
-		variables.push({
-			name: `Name of media player source #${i + 1}`,
-			variableId: `mp_source_${i + 1}`,
-		})
-		variables.push({
-			name: `Name of media player index #${i + 1}`,
-			variableId: `mp_index_${i + 1}`,
-		})
-
-		updateMediaPlayerVariables(state, i, values)
-	}
-
-	if (model.streaming) {
-		variables.push({
-			name: 'Streaming bitrate in MB/s',
-			variableId: 'stream_bitrate',
-		})
-		variables.push({
-			name: 'Streaming duration (hh:mm)',
-			variableId: 'stream_duration_hm',
-		})
-		variables.push({
-			name: 'Streaming duration (hh:mm:ss)',
-			variableId: 'stream_duration_hms',
-		})
-		variables.push({
-			name: 'Streaming duration (mm:ss)',
-			variableId: 'stream_duration_ms',
-		})
-
-		updateStreamingVariables(state, values)
-	}
-
-	if (model.recording) {
-		variables.push({
-			name: 'Recording duration (hh:mm)',
-			variableId: 'record_duration_hm',
-		})
-		variables.push({
-			name: 'Recording duration (hh:mm:ss)',
-			variableId: 'record_duration_hms',
-		})
-		variables.push({
-			name: 'Recording duration (mm:ss)',
-			variableId: 'record_duration_ms',
-		})
-
-		variables.push({
-			name: 'Recording time remaining (hh:mm)',
-			variableId: 'record_remaining_hm',
-		})
-		variables.push({
-			name: 'Recording time remaining (hh:mm:ss)',
-			variableId: 'record_remaining_hms',
-		})
-		variables.push({
-			name: 'Recording time remaining (mm:ss)',
-			variableId: 'record_remaining_ms',
-		})
-
-		updateRecordingVariables(state, values)
-	}
-
-	// Supersource
-	for (let i = 0; i < model.SSrc; i++) {
-		for (let b = 0; b < 4; b++) {
-			variables.push({
-				name: `Supersource ${i + 1} Box ${b + 1} source`,
-				variableId: `ssrc${i + 1}_box${b + 1}_source`,
-			})
-			variables.push({
-				name: `Supersource ${i + 1} Box ${b + 1} source id`,
-				variableId: `ssrc${i + 1}_box${b + 1}_source_id`,
-			})
-		}
-
-		updateSuperSourceVariables(instance, state, i, values)
-	}
-
-	// Fairlight audio
-	if (state.fairlight) {
-		for (const [inputId, input] of Object.entries(state.fairlight.inputs)) {
-			if (input?.sources !== undefined && input.sources[-65280]) {
-				variables.push({
-					name: `Pan for input ${inputId}`,
-					variableId: `audio_input_${inputId}_balance`,
-				})
-				variables.push({
-					name: `Fader gain for input ${inputId}`,
-					variableId: `audio_input_${inputId}_faderGain`,
-				})
-				variables.push({
-					name: `Frames delay for input ${inputId}`,
-					variableId: `audio_input_${inputId}_framesDelay`,
-				})
-				variables.push({
-					name: `Gain for input ${inputId}`,
-					variableId: `audio_input_${inputId}_gain`,
-				})
-				variables.push({
-					name: `Mix option for input ${inputId}`,
-					variableId: `audio_input_${inputId}_mixOption`,
-				})
-			}
-
-			if (input?.sources !== undefined && input.sources[-256]) {
-				variables.push({
-					name: `Pan for input ${inputId} - left`,
-					variableId: `audio_input_${inputId}_left_balance`,
-				})
-				variables.push({
-					name: `Fader gain for input ${inputId} - left`,
-					variableId: `audio_input_${inputId}_left_faderGain`,
-				})
-				variables.push({
-					name: `Frames delay for input ${inputId} - left`,
-					variableId: `audio_input_${inputId}_left_framesDelay`,
-				})
-				variables.push({
-					name: `Gain for input ${inputId} - left`,
-					variableId: `audio_input_${inputId}_left_gain`,
-				})
-				variables.push({
-					name: `Mix option for input ${inputId} - left`,
-					variableId: `audio_input_${inputId}_left_mixOption`,
-				})
-			}
-
-			if (input?.sources !== undefined && input.sources[-255]) {
-				variables.push({
-					name: `Pan for input ${inputId} - right`,
-					variableId: `audio_input_${inputId}_right_balance`,
-				})
-				variables.push({
-					name: `Fader gain for input ${inputId} - right`,
-					variableId: `audio_input_${inputId}_right_faderGain`,
-				})
-				variables.push({
-					name: `Frames delay for input ${inputId} - right`,
-					variableId: `audio_input_${inputId}_right_framesDelay`,
-				})
-				variables.push({
-					name: `Gain for input ${inputId} - right`,
-					variableId: `audio_input_${inputId}_right_gain`,
-				})
-				variables.push({
-					name: `Mix option for input ${inputId} - right`,
-					variableId: `audio_input_${inputId}_right_mixOption`,
-				})
-			}
-
-			updateFairlightAudioVariables(state, Number(inputId), values)
-		}
-	}
-
-	// Classic audio
-	if (model.classicAudio) {
-		for (const entry of model.classicAudio.inputs) {
-			variables.push({
-				name: `Pan for input ${entry.id}`,
-				variableId: `audio_input_${entry.id}_balance`,
-			})
-			variables.push({
-				name: `Gain for input ${entry.id}`,
-				variableId: `audio_input_${entry.id}_gain`,
-			})
-			variables.push({
-				name: `Mix option for input ${entry.id}`,
-				variableId: `audio_input_${entry.id}_mixOption`,
-			})
-			updateClassicAudioVariables(state, entry.id, values)
-		}
-	}
-
-	instance.setVariableDefinitions(variables)
-	instance.setVariableValues(values)
+export function InitVariables(_instance: InstanceBaseExt<AtemConfig>, _model: ModelSpec, _state: AtemState): void {
+	// const variables: CompanionVariableDefinition[] = []
+	// const values: CompanionVariableValues = {}
+	// variables.push({
+	// 	name: 'IP address of ATEM',
+	// 	variableId: `device_ip`,
+	// })
+	// updateDeviceIpVariable(instance, values)
+	// // PGM/PV busses
+	// for (let i = 0; i < model.MEs; ++i) {
+	// 	variables.push({
+	// 		name: `Label of input active on program bus (M/E ${i + 1})`,
+	// 		variableId: `pgm${i + 1}_input`,
+	// 	})
+	// 	variables.push({
+	// 		name: `Id of input active on program bus (M/E ${i + 1})`,
+	// 		variableId: `pgm${i + 1}_input_id`,
+	// 	})
+	// 	updateMEProgramVariable(instance, state, i, values)
+	// 	variables.push({
+	// 		name: `Label of input active on preview bus (M/E ${i + 1})`,
+	// 		variableId: `pvw${i + 1}_input`,
+	// 	})
+	// 	variables.push({
+	// 		name: `Id of input active on preview bus (M/E ${i + 1})`,
+	// 		variableId: `pvw${i + 1}_input_id`,
+	// 	})
+	// 	updateMEPreviewVariable(instance, state, i, values)
+	// 	for (let k = 0; k < model.USKs; ++k) {
+	// 		variables.push({
+	// 			name: `Label of input active on M/E ${i + 1} Key ${k + 1}`,
+	// 			variableId: `usk_${i + 1}_${k + 1}_input`,
+	// 		})
+	// 		variables.push({
+	// 			name: `Id of input active on M/E ${i + 1} Key ${k + 1}`,
+	// 			variableId: `usk_${i + 1}_${k + 1}_input_id`,
+	// 		})
+	// 		updateUSKVariable(instance, state, i, k, values)
+	// 	}
+	// }
+	// // Auxs
+	// for (let a = 0; a < model.auxes; ++a) {
+	// 	variables.push({
+	// 		name: `Label of input active on Aux ${a + 1}`,
+	// 		variableId: `aux${a + 1}_input`,
+	// 	})
+	// 	variables.push({
+	// 		name: `Id of input active on Aux ${a + 1}`,
+	// 		variableId: `aux${a + 1}_input_id`,
+	// 	})
+	// 	updateAuxVariable(instance, state, a, values)
+	// }
+	// // DSKs
+	// for (let k = 0; k < model.DSKs; ++k) {
+	// 	variables.push({
+	// 		name: `Label of input active on DSK ${k + 1}`,
+	// 		variableId: `dsk_${k + 1}_input`,
+	// 	})
+	// 	variables.push({
+	// 		name: `Id of input active on DSK ${k + 1}`,
+	// 		variableId: `dsk_${k + 1}_input_id`,
+	// 	})
+	// 	updateDSKVariable(instance, state, k, values)
+	// }
+	// // Source names
+	// for (const src of GetSourcesListForType(model, state)) {
+	// 	variables.push({
+	// 		name: `Long name of source id ${src.id}`,
+	// 		variableId: `long_${src.id}`,
+	// 	})
+	// 	variables.push({
+	// 		name: `Short name of source id ${src.id}`,
+	// 		variableId: `short_${src.id}`,
+	// 	})
+	// 	updateInputVariables(src, values)
+	// }
+	// // Macros
+	// for (let i = 0; i < model.macros; i++) {
+	// 	variables.push({
+	// 		name: `Name of macro #${i + 1}`,
+	// 		variableId: `macro_${i + 1}`,
+	// 	})
+	// 	updateMacroVariable(state, i, values)
+	// }
+	// // Media
+	// for (let i = 0; i < model.media.stills; i++) {
+	// 	variables.push({
+	// 		name: `Name of still #${i + 1}`,
+	// 		variableId: `still_${i + 1}`,
+	// 	})
+	// 	updateMediaStillVariable(state, i, values)
+	// }
+	// for (let i = 0; i < model.media.clips; i++) {
+	// 	variables.push({
+	// 		name: `Name of clip #${i + 1}`,
+	// 		variableId: `clip_${i + 1}`,
+	// 	})
+	// 	updateMediaClipVariable(state, i, values)
+	// }
+	// for (let i = 0; i < model.media.players; i++) {
+	// 	variables.push({
+	// 		name: `Name of media player source #${i + 1}`,
+	// 		variableId: `mp_source_${i + 1}`,
+	// 	})
+	// 	variables.push({
+	// 		name: `Name of media player index #${i + 1}`,
+	// 		variableId: `mp_index_${i + 1}`,
+	// 	})
+	// 	updateMediaPlayerVariables(state, i, values)
+	// }
+	// if (model.streaming) {
+	// 	variables.push({
+	// 		name: 'Streaming bitrate in MB/s',
+	// 		variableId: 'stream_bitrate',
+	// 	})
+	// 	variables.push({
+	// 		name: 'Streaming duration (hh:mm)',
+	// 		variableId: 'stream_duration_hm',
+	// 	})
+	// 	variables.push({
+	// 		name: 'Streaming duration (hh:mm:ss)',
+	// 		variableId: 'stream_duration_hms',
+	// 	})
+	// 	variables.push({
+	// 		name: 'Streaming duration (mm:ss)',
+	// 		variableId: 'stream_duration_ms',
+	// 	})
+	// 	updateStreamingVariables(state, values)
+	// }
+	// if (model.recording) {
+	// 	variables.push({
+	// 		name: 'Recording duration (hh:mm)',
+	// 		variableId: 'record_duration_hm',
+	// 	})
+	// 	variables.push({
+	// 		name: 'Recording duration (hh:mm:ss)',
+	// 		variableId: 'record_duration_hms',
+	// 	})
+	// 	variables.push({
+	// 		name: 'Recording duration (mm:ss)',
+	// 		variableId: 'record_duration_ms',
+	// 	})
+	// 	variables.push({
+	// 		name: 'Recording time remaining (hh:mm)',
+	// 		variableId: 'record_remaining_hm',
+	// 	})
+	// 	variables.push({
+	// 		name: 'Recording time remaining (hh:mm:ss)',
+	// 		variableId: 'record_remaining_hms',
+	// 	})
+	// 	variables.push({
+	// 		name: 'Recording time remaining (mm:ss)',
+	// 		variableId: 'record_remaining_ms',
+	// 	})
+	// 	updateRecordingVariables(state, values)
+	// }
+	// // Supersource
+	// for (let i = 0; i < model.SSrc; i++) {
+	// 	for (let b = 0; b < 4; b++) {
+	// 		variables.push({
+	// 			name: `Supersource ${i + 1} Box ${b + 1} source`,
+	// 			variableId: `ssrc${i + 1}_box${b + 1}_source`,
+	// 		})
+	// 		variables.push({
+	// 			name: `Supersource ${i + 1} Box ${b + 1} source id`,
+	// 			variableId: `ssrc${i + 1}_box${b + 1}_source_id`,
+	// 		})
+	// 	}
+	// 	updateSuperSourceVariables(instance, state, i, values)
+	// }
+	// // Fairlight audio
+	// if (state.fairlight) {
+	// 	for (const [inputId, input] of Object.entries(state.fairlight.inputs)) {
+	// 		if (input?.sources !== undefined && input.sources[-65280]) {
+	// 			variables.push({
+	// 				name: `Pan for input ${inputId}`,
+	// 				variableId: `audio_input_${inputId}_balance`,
+	// 			})
+	// 			variables.push({
+	// 				name: `Fader gain for input ${inputId}`,
+	// 				variableId: `audio_input_${inputId}_faderGain`,
+	// 			})
+	// 			variables.push({
+	// 				name: `Frames delay for input ${inputId}`,
+	// 				variableId: `audio_input_${inputId}_framesDelay`,
+	// 			})
+	// 			variables.push({
+	// 				name: `Gain for input ${inputId}`,
+	// 				variableId: `audio_input_${inputId}_gain`,
+	// 			})
+	// 			variables.push({
+	// 				name: `Mix option for input ${inputId}`,
+	// 				variableId: `audio_input_${inputId}_mixOption`,
+	// 			})
+	// 		}
+	// 		if (input?.sources !== undefined && input.sources[-256]) {
+	// 			variables.push({
+	// 				name: `Pan for input ${inputId} - left`,
+	// 				variableId: `audio_input_${inputId}_left_balance`,
+	// 			})
+	// 			variables.push({
+	// 				name: `Fader gain for input ${inputId} - left`,
+	// 				variableId: `audio_input_${inputId}_left_faderGain`,
+	// 			})
+	// 			variables.push({
+	// 				name: `Frames delay for input ${inputId} - left`,
+	// 				variableId: `audio_input_${inputId}_left_framesDelay`,
+	// 			})
+	// 			variables.push({
+	// 				name: `Gain for input ${inputId} - left`,
+	// 				variableId: `audio_input_${inputId}_left_gain`,
+	// 			})
+	// 			variables.push({
+	// 				name: `Mix option for input ${inputId} - left`,
+	// 				variableId: `audio_input_${inputId}_left_mixOption`,
+	// 			})
+	// 		}
+	// 		if (input?.sources !== undefined && input.sources[-255]) {
+	// 			variables.push({
+	// 				name: `Pan for input ${inputId} - right`,
+	// 				variableId: `audio_input_${inputId}_right_balance`,
+	// 			})
+	// 			variables.push({
+	// 				name: `Fader gain for input ${inputId} - right`,
+	// 				variableId: `audio_input_${inputId}_right_faderGain`,
+	// 			})
+	// 			variables.push({
+	// 				name: `Frames delay for input ${inputId} - right`,
+	// 				variableId: `audio_input_${inputId}_right_framesDelay`,
+	// 			})
+	// 			variables.push({
+	// 				name: `Gain for input ${inputId} - right`,
+	// 				variableId: `audio_input_${inputId}_right_gain`,
+	// 			})
+	// 			variables.push({
+	// 				name: `Mix option for input ${inputId} - right`,
+	// 				variableId: `audio_input_${inputId}_right_mixOption`,
+	// 			})
+	// 		}
+	// 		updateFairlightAudioVariables(state, Number(inputId), values)
+	// 	}
+	// }
+	// // Classic audio
+	// if (model.classicAudio) {
+	// 	for (const entry of model.classicAudio.inputs) {
+	// 		variables.push({
+	// 			name: `Pan for input ${entry.id}`,
+	// 			variableId: `audio_input_${entry.id}_balance`,
+	// 		})
+	// 		variables.push({
+	// 			name: `Gain for input ${entry.id}`,
+	// 			variableId: `audio_input_${entry.id}_gain`,
+	// 		})
+	// 		variables.push({
+	// 			name: `Mix option for input ${entry.id}`,
+	// 			variableId: `audio_input_${entry.id}_mixOption`,
+	// 		})
+	// 		updateClassicAudioVariables(state, entry.id, values)
+	// 	}
+	// }
+	// instance.setVariableDefinitions(variables)
+	// instance.setVariableValues(values)
 }

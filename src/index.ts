@@ -12,12 +12,7 @@ import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, type ModelSpec } 
 import { GetPresetsList } from './presets.js'
 import type { TallyBySource } from './state.js'
 import { MODEL_AUTO_DETECT } from './models/types.js'
-import {
-	InitVariables,
-	type UpdateVariablesProps,
-	updateChangedVariables,
-	updateDeviceIpVariable,
-} from './variables.js'
+import { InitVariables, type UpdateVariablesProps, updateChangedVariables } from './variables.js'
 import { AtemCommandBatching } from './batching.js'
 import { AtemTransitions } from './transitions.js'
 import debounceFn from 'debounce-fn'
@@ -27,7 +22,8 @@ import {
 	runEntrypoint,
 	CreateConvertToBooleanFeedbackUpgradeScript,
 	InstanceStatus,
-	type CompanionVariableValues,
+	type DropdownChoiceId,
+	type CompanionVariableValue,
 } from '@companion-module/base'
 import { AtemMdnsDetectorInstance } from './mdns-detector.js'
 
@@ -101,9 +97,11 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	public async configUpdated(config: AtemConfig): Promise<void> {
 		this.config = config
 
-		const variables: CompanionVariableValues = {}
-		updateDeviceIpVariable(this, variables)
-		this.setVariableValues(variables)
+		this.notifyPropertyChanged('device_ip', null)
+
+		// const variables: CompanionVariableValues = {}
+		// updateDeviceIpVariable(this, variables)
+		// this.setVariableValues(variables)
 
 		this.model = GetModelSpec(this.getBestModelId() || MODEL_AUTO_DETECT) || GetAutoDetectModel()
 		this.log('debug', 'ATEM changed model: ' + this.model.id)
@@ -179,7 +177,17 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		)
 
 		this.setPropertyDefinitions({
-			program: {
+			device_ip: {
+				name: 'IP address of ATEM',
+				description: '',
+
+				type: CompanionPropertyType.String,
+
+				getValues: async () => {
+					return this.config.host ?? ''
+				},
+			},
+			me_program: {
 				name: 'ME Program',
 				description: '',
 
@@ -192,12 +200,21 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 					},
 				],
 
-				getValue: async (instanceId) => {
-					console.log('TODO get program value', instanceId)
-					return 0
+				getValues: async () => {
+					console.log('TODO get program value')
+					const values: Record<DropdownChoiceId, CompanionVariableValue> = {}
+
+					for (const me of this.atemState.video.mixEffects) {
+						if (me) {
+							values[me.index + 1] = me.programInput
+						}
+					}
+
+					return values
 				},
 				setValue: async (instanceId, value) => {
 					console.log('TODO set program value', instanceId, value)
+					await this.atem?.changeProgramInput(Number(value), instanceId ? Number(instanceId) - 1 : 0)
 				},
 			},
 		})
