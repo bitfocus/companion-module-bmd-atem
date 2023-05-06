@@ -162,6 +162,7 @@ export interface MiniSourceInfo {
 	longName: string
 }
 export interface SourceInfo extends MiniSourceInfo {
+	longId: string
 	shortName: string
 }
 export function GetSourcesListForType(
@@ -169,13 +170,14 @@ export function GetSourcesListForType(
 	state: AtemState,
 	subset?: 'me' | 'aux' | 'mv' | 'key' | 'ssrc-box' | 'ssrc-art'
 ): SourceInfo[] {
-	const getSource = (id: number, defShort: string, defLong: string): SourceInfo => {
+	const getSource = (id: number, longId: string, defShort: string, defLong: string): SourceInfo => {
 		const input = state.inputs[id]
 		const shortName = input?.shortName || defShort
 		const longName = input?.longName || defLong
 
 		return {
 			id,
+			longId,
 			shortName,
 			longName,
 		}
@@ -211,52 +213,52 @@ export function GetSourcesListForType(
 
 		switch (input.portType) {
 			case Enums.InternalPortType.External:
-				sources.push(getSource(input.id, `In ${input.id}`, `Input ${input.id}`))
+				sources.push(getSource(input.id, `Input${input.id}`, `In ${input.id}`, `Input ${input.id}`))
 				break
 			case Enums.InternalPortType.ColorBars:
-				sources.push(getSource(input.id, 'Bars', 'Bars'))
+				sources.push(getSource(input.id, 'Bars', 'Bars', 'Bars'))
 				break
 			case Enums.InternalPortType.ColorGenerator: {
 				const colId = input.id - 2000
-				sources.push(getSource(input.id, `Col${colId}`, `Color ${colId}`))
+				sources.push(getSource(input.id, `Color${colId}`, `Col${colId}`, `Color ${colId}`))
 				break
 			}
 			case Enums.InternalPortType.MediaPlayerFill: {
 				const mpId = (input.id - 3000) / 10
-				sources.push(getSource(input.id, `MP ${mpId}`, `Media Player ${mpId}`))
+				sources.push(getSource(input.id, `MediaPlayer${mpId}`, `MP ${mpId}`, `Media Player ${mpId}`))
 				break
 			}
 			case Enums.InternalPortType.MediaPlayerKey: {
 				const mpId = (input.id - 3000 - 1) / 10
-				sources.push(getSource(input.id, `MP${mpId}K`, `Media Player ${mpId} Key`))
+				sources.push(getSource(input.id, `MediaPlayer${mpId}Key`, `MP${mpId}K`, `Media Player ${mpId} Key`))
 				break
 			}
 			case Enums.InternalPortType.SuperSource: {
 				const ssrcId = input.id - 6000 + 1
-				sources.push(getSource(input.id, `SSc${ssrcId}`, `Super Source ${ssrcId}`))
+				sources.push(getSource(input.id, `SuperSource${ssrcId}`, `SSc${ssrcId}`, `Super Source ${ssrcId}`))
 				break
 			}
 			case Enums.InternalPortType.ExternalDirect: {
 				const inputId = input.id - 11000
-				sources.push(getSource(input.id, `In${inputId}D`, `Input ${inputId} - Direct`))
+				sources.push(getSource(input.id, `Input${inputId}Direct`, `In${inputId}D`, `Input ${inputId} - Direct`))
 				break
 			}
 			case Enums.InternalPortType.MEOutput: {
 				if (input.id < 8000) {
 					const clnId = input.id - 7000
-					sources.push(getSource(input.id, `Cln${clnId}`, `Clean Feed ${clnId}`))
+					sources.push(getSource(input.id, `Clean${clnId}`, `Cln${clnId}`, `Clean Feed ${clnId}`))
 				} else if (input.id % 2 === 1) {
 					const meId = (input.id - 10000 - 1) / 10
-					sources.push(getSource(input.id, `M${meId}PV`, `ME ${meId} Preview`))
+					sources.push(getSource(input.id, `Preview${meId}`, `M${meId}PV`, `ME ${meId} Preview`))
 				} else {
 					const meId = (input.id - 10000) / 10
-					sources.push(getSource(input.id, `M${meId}PG`, `ME ${meId} Program`))
+					sources.push(getSource(input.id, `Program${meId}`, `M${meId}PG`, `ME ${meId} Program`))
 				}
 				break
 			}
 			case Enums.InternalPortType.Auxiliary: {
 				const auxId = input.id - 8000
-				sources.push(getSource(input.id, `Aux${auxId}`, `Auxiliary ${auxId}`))
+				sources.push(getSource(input.id, `Aux${auxId}`, `Aux${auxId}`, `Auxiliary ${auxId}`))
 				break
 			}
 			case Enums.InternalPortType.Mask: {
@@ -267,11 +269,11 @@ export function GetSourcesListForType(
 			}
 			case Enums.InternalPortType.MultiViewer: {
 				const mvId = input.id - 9000
-				sources.push(getSource(input.id, `MV ${mvId}`, `MultiView ${mvId}`))
+				sources.push(getSource(input.id, `MultiView${mvId}`, `MV ${mvId}`, `MultiView ${mvId}`))
 				break
 			}
 			case Enums.InternalPortType.Black:
-				sources.push(getSource(input.id, 'Blk', 'Black'))
+				sources.push(getSource(input.id, 'Black', 'Blk', 'Black'))
 				break
 			default:
 				assertUnreachable(input.portType)
@@ -347,6 +349,13 @@ export function GetAudioInputsList(model: ModelSpec, state: AtemState): MiniSour
 export function SourcesToChoices(sources: MiniSourceInfo[]): DropdownChoice[] {
 	return sources.map((s) => ({
 		id: s.id,
+		label: s.longName,
+	}))
+}
+
+export function SourcesToLongChoices(sources: SourceInfo[]): DropdownChoice[] {
+	return sources.map((s) => ({
+		id: s.longId,
 		label: s.longName,
 	}))
 }

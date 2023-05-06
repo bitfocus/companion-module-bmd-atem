@@ -49,7 +49,12 @@ export function updateChangedVariables(
 	const changedProps: Record<string, DropdownChoiceId[] | null> = {}
 	const newValues: CompanionVariableValues = {}
 
-	if (changes.meProgram.size > 0) changedProps['me_program'] = null
+	if (changes.meProgram.size > 0) {
+		changedProps['me_program'] = null
+		changedProps['me_program_raw'] = null
+		changedProps['me_program_input_long_name'] = null
+		changedProps['me_program_input_short_name'] = null
+	}
 
 	for (const meIndex of changes.meProgram) updateMEProgramVariable(instance, state, meIndex, newValues)
 	for (const meIndex of changes.mePreview) updateMEPreviewVariable(instance, state, meIndex, newValues)

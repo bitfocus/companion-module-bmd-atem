@@ -23,7 +23,7 @@ import {
 	CreateConvertToBooleanFeedbackUpgradeScript,
 	InstanceStatus,
 	type DropdownChoiceId,
-	type CompanionVariableValue,
+	type DropdownChoice,
 } from '@companion-module/base'
 import { AtemMdnsDetectorInstance } from './mdns-detector.js'
 
@@ -32,9 +32,18 @@ const { Atem, AtemConnectionStatus, AtemStateUtil } = AtemPkg
 // eslint-disable-next-line node/no-extraneous-import
 import { ThreadedClassManager, RegisterExitHandlers } from 'threadedclass'
 import { CompanionPropertyType } from '@companion-module/base/dist/module-api/properties.js'
+import { GetSourcesListForType, SourcesToLongChoices, type SourceInfo } from './choices.js'
 
 // HACK: This stops it from registering an unhandledException handler, as that causes companion to exit on error
 ThreadedClassManager.handleExit = RegisterExitHandlers.NO
+
+process.on('disconnect', () => {
+	setTimeout(() => {
+		console.error('Parent disconnected 10s ago...')
+		// eslint-disable-next-line no-process-exit
+		process.exit(1)
+	}, 10000)
+})
 
 /**
  * Companion instance class for the Blackmagic ATEM Switchers.
@@ -56,6 +65,8 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	 */
 	constructor(internal: unknown) {
 		super(internal)
+
+		this.instanceOptions.experimentalProperties = true
 
 		this.commandBatching = new AtemCommandBatching()
 		this.atemState = AtemStateUtil.Create()
@@ -176,6 +187,26 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.atemState)
 		)
 
+		const mixEffectIds: DropdownChoice[] = []
+		for (let i = 1; i <= this.model.MEs; i++) {
+			mixEffectIds.push({
+				id: i,
+				label: `ME ${i}`,
+			})
+		}
+		const mixEffectSources = GetSourcesListForType(this.model, this.atemState, 'me')
+
+		function parseSourceId(source: string | number, knownSources: SourceInfo[]): number | null {
+			if (typeof source === 'number' && source >= 0) return source
+			if (typeof source === 'string') {
+				// HACK match the source to what we know is valid. This should be parsing the string and converting back to ids instead of doing a lookup
+				const matchedSource = knownSources.find((src) => src.longId.trim().toLowerCase() == source.trim().toLowerCase())
+				return matchedSource?.id ?? null
+			}
+
+			return null
+		}
+
 		this.setPropertyDefinitions({
 			device_ip: {
 				name: 'IP address of ATEM',
@@ -191,18 +222,49 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				name: 'ME Program',
 				description: '',
 
-				type: CompanionPropertyType.Number,
+				type: CompanionPropertyType.Dropdown,
 
-				instanceIds: [
-					{
-						id: 1,
-						label: 'ME 1',
-					},
-				],
+				instanceIds: mixEffectIds,
+
+				choices: SourcesToLongChoices(mixEffectSources),
 
 				getValues: async () => {
 					console.log('TODO get program value')
-					const values: Record<DropdownChoiceId, CompanionVariableValue> = {}
+					const values: Record<DropdownChoiceId, DropdownChoiceId> = {}
+
+					for (const me of this.atemState.video.mixEffects) {
+						if (me) {
+							const source = mixEffectSources.find((src) => src.id === me.programInput)
+							values[me.index + 1] = source?.longId ?? `Unknown${me.programInput}`
+						}
+					}
+
+					return values
+				},
+				setValue: async (instanceId, value) => {
+					console.log('TODO set program value', instanceId, value)
+
+					if (!instanceId || typeof instanceId !== 'number' || instanceId <= 0) throw new Error('Invalid mixEffect id')
+
+					const parsedValue = parseSourceId(value, mixEffectSources)
+					if (typeof parsedValue !== 'number') throw new Error('Invalid target value')
+
+					await this.atem?.changeProgramInput(parsedValue, instanceId - 1)
+				},
+			},
+			me_program_raw: {
+				name: 'ME Program RAW',
+				description: '',
+
+				type: CompanionPropertyType.Number,
+
+				min: 0,
+				max: 100000, // TODO - a better value?
+				step: 1,
+
+				getValues: async () => {
+					console.log('TODO get program value')
+					const values: Record<DropdownChoiceId, number> = {}
 
 					for (const me of this.atemState.video.mixEffects) {
 						if (me) {
@@ -214,7 +276,57 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				},
 				setValue: async (instanceId, value) => {
 					console.log('TODO set program value', instanceId, value)
-					await this.atem?.changeProgramInput(Number(value), instanceId ? Number(instanceId) - 1 : 0)
+
+					if (!instanceId || typeof instanceId !== 'number' || instanceId <= 0) throw new Error('Invalid mixEffect id')
+
+					const parsedValue = parseSourceId(value, mixEffectSources)
+					if (typeof parsedValue !== 'number') throw new Error('Invalid target value')
+
+					await this.atem?.changeProgramInput(parsedValue, instanceId - 1)
+				},
+			},
+			me_program_input_long_name: {
+				name: 'ME Program Input Long Name',
+				description: '',
+
+				type: CompanionPropertyType.String,
+
+				instanceIds: mixEffectIds,
+
+				getValues: async () => {
+					console.log('TODO get program value')
+					const values: Record<DropdownChoiceId, string> = {}
+
+					for (const me of this.atemState.video.mixEffects) {
+						if (me) {
+							const source = mixEffectSources.find((src) => src.id === me.programInput)
+							values[me.index + 1] = source?.longName ?? `Unknown (${me.programInput})`
+						}
+					}
+
+					return values
+				},
+			},
+			me_program_input_short_name: {
+				name: 'ME Program Input Short Name',
+				description: '',
+
+				type: CompanionPropertyType.String,
+
+				instanceIds: mixEffectIds,
+
+				getValues: async () => {
+					console.log('TODO get program value')
+					const values: Record<DropdownChoiceId, string> = {}
+
+					for (const me of this.atemState.video.mixEffects) {
+						if (me) {
+							const source = mixEffectSources.find((src) => src.id === me.programInput)
+							values[me.index + 1] = source?.shortName ?? `Unknown (${me.programInput})`
+						}
+					}
+
+					return values
 				},
 			},
 		})
