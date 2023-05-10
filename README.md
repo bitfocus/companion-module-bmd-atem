@@ -25,7 +25,7 @@ To add a new model to the list:
 
 ## v3.3.0
 
-- Fix build errors
+- Add Television Studio HD8 models
 
 ## v3.2.2
 
