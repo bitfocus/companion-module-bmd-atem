@@ -1,7 +1,7 @@
 /* eslint-disable no-process-exit */
-import fs = require('fs')
-import { Atem } from 'atem-connection'
-import { GetParsedModelSpec } from './src/models'
+import * as fs from 'fs'
+import Atem from 'atem-connection'
+import { GetParsedModelSpec } from './src/models/index.js'
 
 const args = process.argv.slice(2)
 if (args.length < 1) {
@@ -10,7 +10,7 @@ if (args.length < 1) {
 	process.exit()
 }
 
-const atem = new Atem({
+const atem = new Atem.Atem({
 	address: args[0],
 	port: 9910,
 })

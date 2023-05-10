@@ -28,6 +28,8 @@ import { ModelSpecSDI } from './sdi.js'
 import { ModelSpecSDIProISO } from './sdiproiso.js'
 import { ModelSpecSDIExtremeISO } from './sdiextremeiso.js'
 import { Model } from 'atem-connection/dist/enums/index.js'
+import { ModelSpecTVSHD8 } from './tvshd8.js'
+import { ModelSpecTVSHD8ISO } from './tvshd8iso.js'
 
 export * from './types.js'
 
@@ -56,6 +58,8 @@ export const ALL_MODELS: ModelSpec[] = [
 	ModelSpecSDI,
 	ModelSpecSDIProISO,
 	ModelSpecSDIExtremeISO,
+	ModelSpecTVSHD8,
+	ModelSpecTVSHD8ISO,
 ]
 
 export const ALL_MODEL_CHOICES: DropdownChoice[] = ALL_MODELS.map(({ id, label }) => ({ id, label }))
