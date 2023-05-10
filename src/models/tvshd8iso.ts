@@ -5,7 +5,7 @@ import { ModelSpecTVSHD } from './tvshd.js'
 
 export const ModelSpecTVSHD8ISO: ModelSpec = {
 	...ModelSpecTVSHD,
-	id: 27 as Enums.Model, // TODO
+	id: Enums.Model.TelevisionStudioHD8ISO,
 	label: 'Television Studio HD8 ISO',
 	recordISO: true,
 }

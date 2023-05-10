@@ -9,7 +9,7 @@ const sourceAvailabilityAll =
 	Enums.SourceAvailability.KeySource
 
 export const ModelSpecTVSHD8: ModelSpec = {
-	id: 26 as Enums.Model, // TODO
+	id: Enums.Model.TelevisionStudioHD8,
 	label: 'Television Studio HD8',
 	inputs: [
 		{
