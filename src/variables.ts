@@ -1,17 +1,11 @@
 import { type AtemState, Enums } from 'atem-connection'
 import { type AtemConfig, PresetStyleName } from './config.js'
 import type { ModelSpec } from './models/index.js'
-import {
-	getClassicAudioInput,
-	getDSK,
-	getFairlightAudioInput,
-	getMixEffect,
-	getSuperSourceBox,
-	getUSK,
-} from './state.js'
+import { getClassicAudioInput, getDSK, getFairlightAudioInput, getSuperSourceBox, getUSK } from './state.js'
 import { assertUnreachable, type InstanceBaseExt, pad } from './util.js'
 import type { Timecode } from 'atem-connection/dist/state/common.js'
 import type { CompanionVariableValues, DropdownChoiceId } from '@companion-module/base'
+import { PropertyId } from './properties/id.js'
 
 function getSourcePresetName(instance: InstanceBaseExt<AtemConfig>, state: AtemState, id: number): string {
 	const input = state.inputs[id]
@@ -46,18 +40,23 @@ export function updateChangedVariables(
 	state: AtemState,
 	changes: UpdateVariablesProps
 ): void {
-	const changedProps: Record<string, DropdownChoiceId[] | null> = {}
+	const changedProps: Partial<Record<PropertyId, DropdownChoiceId[] | null>> = {}
 	const newValues: CompanionVariableValues = {}
 
 	if (changes.meProgram.size > 0) {
-		changedProps['me_program'] = null
-		changedProps['me_program_raw'] = null
-		changedProps['me_program_input_long_name'] = null
-		changedProps['me_program_input_short_name'] = null
+		// TODO - more specific?
+		changedProps[PropertyId.MEProgram] = null
+		changedProps[PropertyId.MEProgramRaw] = null
+		changedProps[PropertyId.MEProgramInputLongName] = null
+		changedProps[PropertyId.MEProgramInputShortName] = null
 	}
-
-	for (const meIndex of changes.meProgram) updateMEProgramVariable(instance, state, meIndex, newValues)
-	for (const meIndex of changes.mePreview) updateMEPreviewVariable(instance, state, meIndex, newValues)
+	if (changes.meProgram.size > 0) {
+		// TODO - more specific?
+		changedProps[PropertyId.MEPreview] = null
+		changedProps[PropertyId.MEPreviewRaw] = null
+		changedProps[PropertyId.MEPreviewInputLongName] = null
+		changedProps[PropertyId.MEPreviewInputShortName] = null
+	}
 
 	for (const auxIndex of changes.auxes) updateAuxVariable(instance, state, auxIndex, newValues)
 	for (const dsk of changes.dsk) updateDSKVariable(instance, state, dsk, newValues)
@@ -82,27 +81,6 @@ export function updateChangedVariables(
 		// TODO
 		// instance.setVariableValues(newValues)
 	}
-}
-
-function updateMEProgramVariable(
-	instance: InstanceBaseExt<AtemConfig>,
-	state: AtemState,
-	meIndex: number,
-	values: CompanionVariableValues
-): void {
-	const input = getMixEffect(state, meIndex)?.programInput ?? 0
-	values[`pgm${meIndex + 1}_input`] = getSourcePresetName(instance, state, input)
-	values[`pgm${meIndex + 1}_input_id`] = input
-}
-function updateMEPreviewVariable(
-	instance: InstanceBaseExt<AtemConfig>,
-	state: AtemState,
-	meIndex: number,
-	values: CompanionVariableValues
-): void {
-	const input = getMixEffect(state, meIndex)?.previewInput ?? 0
-	values[`pvw${meIndex + 1}_input`] = getSourcePresetName(instance, state, input)
-	values[`pvw${meIndex + 1}_input_id`] = input
 }
 
 function updateUSKVariable(
