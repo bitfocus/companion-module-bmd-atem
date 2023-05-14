@@ -5,6 +5,7 @@ import { createMeProgramPropertyDefinitions } from './me_program.js'
 import { GetSourcesListForType } from '../choices.js'
 import type { DropdownChoice } from '@companion-module/base'
 import { createMePreviewPropertyDefinitions } from './me_preview.js'
+import { createSourceNamePropertyDefinitions } from './sources.js'
 
 export function createAllPropertyDefinitions(this: AtemInstance): CompanionPropertyDefinitions {
 	const mixEffectIds: DropdownChoice[] = []
@@ -21,5 +22,6 @@ export function createAllPropertyDefinitions(this: AtemInstance): CompanionPrope
 		...createMiscPropertyDefinitions.bind(this)(),
 		...createMeProgramPropertyDefinitions.bind(this)(mixEffectIds, mixEffectSources),
 		...createMePreviewPropertyDefinitions.bind(this)(mixEffectIds, mixEffectSources),
+		...createSourceNamePropertyDefinitions.bind(this)(),
 	}
 }

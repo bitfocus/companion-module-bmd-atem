@@ -11,6 +11,6 @@ export enum PropertyId {
 	MEPreviewInputLongName = 'me_preview_input_long_name',
 	MEPreviewInputShortName = 'me_preview_input_short_name',
 
-	SourceNameLong = 'source_name_long',
-	SourceNameShort = 'source_name_short',
+	SourceLongName = 'source_long_name',
+	SourceShortName = 'source_short_name',
 }

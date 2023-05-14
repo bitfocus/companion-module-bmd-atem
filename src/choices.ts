@@ -177,7 +177,7 @@ export function GetSourcesListForType(
 
 		return {
 			id,
-			longId,
+			longId: longId.toLowerCase(), // TODO - is this sensible?
 			shortName,
 			longName,
 		}
@@ -353,9 +353,9 @@ export function SourcesToChoices(sources: MiniSourceInfo[]): DropdownChoice[] {
 	}))
 }
 
-export function SourcesToLongChoices(sources: SourceInfo[]): DropdownChoice[] {
+export function SourcesToLongChoices(sources: SourceInfo[], toLower?: boolean): DropdownChoice[] {
 	return sources.map((s) => ({
-		id: s.longId,
+		id: toLower ? s.longId.toLowerCase() : s.longName,
 		label: s.longName,
 	}))
 }

@@ -62,7 +62,7 @@ export function GetPresetsList(
 	const useLongNames = instance.config.presets + '' === PresetStyleName.Long + ''
 	const pstText = useLongNames ? 'long_' : 'short_'
 	const pstSize = useLongNames ? 'auto' : '18'
-	const sourceNameProperty = useLongNames ? PropertyId.SourceNameLong : PropertyId.SourceNameShort
+	const sourceNameProperty = useLongNames ? PropertyId.SourceLongName : PropertyId.SourceShortName
 
 	const meSources = GetSourcesListForType(model, state, 'me')
 
