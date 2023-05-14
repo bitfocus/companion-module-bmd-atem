@@ -1,10 +1,10 @@
-import type { CompanionPropertyDefinitions } from '@companion-module/base/dist/module-api/properties'
-import type { AtemInstance } from '..'
-import { createMiscPropertyDefinitions } from './misc'
-import { createMeProgramPropertyDefinitions } from './me_program'
-import { GetSourcesListForType } from '../choices'
+import type { CompanionPropertyDefinitions } from '@companion-module/base/dist/module-api/properties.js'
+import type { AtemInstance } from '../index.js'
+import { createMiscPropertyDefinitions } from './misc.js'
+import { createMeProgramPropertyDefinitions } from './me_program.js'
+import { GetSourcesListForType } from '../choices.js'
 import type { DropdownChoice } from '@companion-module/base'
-import { createMePreviewPropertyDefinitions } from './me_preview'
+import { createMePreviewPropertyDefinitions } from './me_preview.js'
 
 export function createAllPropertyDefinitions(this: AtemInstance): CompanionPropertyDefinitions {
 	const mixEffectIds: DropdownChoice[] = []

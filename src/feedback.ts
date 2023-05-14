@@ -154,6 +154,7 @@ function tallyFeedbacks(model: ModelSpec, state: AtemState, tally: TallyBySource
 function previewFeedbacks(model: ModelSpec, state: AtemState) {
 	return {
 		[FeedbackId.PreviewBG]: {
+			// TODO - replace with PropertyId.MEPreview
 			type: 'boolean',
 			name: 'ME: One ME preview source',
 			description: 'If the input specified is in use by preview on the M/E stage specified, change style of the bank',
@@ -180,6 +181,7 @@ function previewFeedbacks(model: ModelSpec, state: AtemState) {
 			},
 		} satisfies CompanionFeedbackDefinition,
 		[FeedbackId.PreviewVariables]: {
+			// TODO - replace with PropertyId.MEPreview
 			type: 'boolean',
 			name: 'ME: One ME preview source from variables',
 			description: 'If the input specified is in use by preview on the M/E stage specified, change style of the bank',
@@ -373,6 +375,7 @@ function previewFeedbacks(model: ModelSpec, state: AtemState) {
 function programFeedbacks(model: ModelSpec, state: AtemState) {
 	return {
 		[FeedbackId.ProgramBG]: {
+			// TODO - replace with PropertyId.MEProgram
 			type: 'boolean',
 			name: 'ME: One ME program source',
 			description: 'If the input specified is in use by program on the M/E stage specified, change style of the bank',
@@ -399,6 +402,7 @@ function programFeedbacks(model: ModelSpec, state: AtemState) {
 			},
 		} satisfies CompanionFeedbackDefinition,
 		[FeedbackId.ProgramVariables]: {
+			// TODO - replace with PropertyId.MEProgram
 			type: 'boolean',
 			name: 'ME: One ME program source from variables',
 			description: 'If the input specified is in use by program on the M/E stage specified, change style of the bank',

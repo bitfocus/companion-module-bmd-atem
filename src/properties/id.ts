@@ -10,4 +10,7 @@ export enum PropertyId {
 	MEPreviewRaw = 'me_preview_raw',
 	MEPreviewInputLongName = 'me_preview_input_long_name',
 	MEPreviewInputShortName = 'me_preview_input_short_name',
+
+	SourceNameLong = 'source_name_long',
+	SourceNameShort = 'source_name_short',
 }

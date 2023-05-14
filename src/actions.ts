@@ -176,6 +176,7 @@ function meActions(
 ) {
 	return {
 		[ActionId.Program]: {
+			// TODO - replace with PropertyId.MEProgram
 			name: 'ME: Set Program input',
 			options: [AtemMEPicker(model, 0), AtemMESourcePicker(model, state, 0)],
 			callback: async (action) => {
@@ -195,6 +196,7 @@ function meActions(
 			},
 		} satisfies CompanionActionDefinition,
 		[ActionId.ProgramVariables]: {
+			// TODO - replace with PropertyId.MEProgram
 			name: 'ME: Set Program input from variables',
 			options: [
 				{
@@ -222,6 +224,7 @@ function meActions(
 			},
 		} satisfies CompanionActionDefinition,
 		[ActionId.Preview]: {
+			// TODO - replace with PropertyId.MEPreview
 			name: 'ME: Set Preview input',
 			options: [AtemMEPicker(model, 0), AtemMESourcePicker(model, state, 0)],
 			callback: async (action) => {
@@ -241,6 +244,7 @@ function meActions(
 			},
 		} satisfies CompanionActionDefinition,
 		[ActionId.PreviewVariables]: {
+			// TODO - replace with PropertyId.MEPreview
 			name: 'ME: Set Preview input from variables',
 			options: [
 				{

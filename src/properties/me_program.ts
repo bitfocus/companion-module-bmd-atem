@@ -1,12 +1,12 @@
 import {
 	CompanionPropertyType,
 	type CompanionPropertyDefinitions,
-} from '@companion-module/base/dist/module-api/properties'
-import type { AtemInstance } from '../index'
-import { PropertyId } from './id'
+} from '@companion-module/base/dist/module-api/properties.js'
+import type { AtemInstance } from '../index.js'
+import { PropertyId } from './id.js'
 import type { DropdownChoice, DropdownChoiceId } from '@companion-module/base'
-import { SourcesToLongChoices, type SourceInfo } from '../choices'
-import { parseSourceId } from './util'
+import { SourcesToLongChoices, type SourceInfo } from '../choices.js'
+import { parseSourceId } from './util.js'
 
 export function createMeProgramPropertyDefinitions(
 	this: AtemInstance,

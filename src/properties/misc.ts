@@ -1,9 +1,9 @@
 import {
 	CompanionPropertyType,
 	type CompanionPropertyDefinitions,
-} from '@companion-module/base/dist/module-api/properties'
-import type { AtemInstance } from '../index'
-import { PropertyId } from './id'
+} from '@companion-module/base/dist/module-api/properties.js'
+import type { AtemInstance } from '../index.js'
+import { PropertyId } from './id.js'
 
 export function createMiscPropertyDefinitions(this: AtemInstance): CompanionPropertyDefinitions {
 	return {

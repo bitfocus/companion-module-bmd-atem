@@ -1,4 +1,9 @@
-import { combineRgb, type CompanionPresetDefinitions } from '@companion-module/base'
+import {
+	combineRgb,
+	CompanionPresetPropertyActionId,
+	type CompanionPresetDefinitions,
+	formatVariableId,
+} from '@companion-module/base'
 import { type AtemState, Enums } from 'atem-connection'
 import { ActionId } from './actions.js'
 import { CHOICES_KEYFRAMES, GetSourcesListForType, GetTransitionStyleChoices } from './choices.js'
@@ -6,6 +11,7 @@ import { type AtemConfig, PresetStyleName } from './config.js'
 import { FeedbackId, MacroFeedbackType } from './feedback.js'
 import type { ModelSpec } from './models/index.js'
 import { calculateTransitionSelection, type InstanceBaseExt, MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util.js'
+import { PropertyId } from './properties/id.js'
 
 const rateOptions = [12, 15, 25, 30, 37, 45, 50, 60]
 
@@ -53,8 +59,10 @@ export function GetPresetsList(
 ): CompanionPresetDefinitions {
 	const presets: CompanionPresetDefinitions = {}
 
-	const pstText = instance.config.presets === PresetStyleName.Long + '' ? 'long_' : 'short_'
-	const pstSize = instance.config.presets === PresetStyleName.Long + '' ? 'auto' : '18'
+	const useLongNames = instance.config.presets + '' === PresetStyleName.Long + ''
+	const pstText = useLongNames ? 'long_' : 'short_'
+	const pstSize = useLongNames ? 'auto' : '18'
+	const sourceNameProperty = useLongNames ? PropertyId.SourceNameLong : PropertyId.SourceNameShort
 
 	const meSources = GetSourcesListForType(model, state, 'me')
 
@@ -65,7 +73,7 @@ export function GetPresetsList(
 				name: `Preview button for ${src.shortName}`,
 				type: 'button',
 				style: {
-					text: `$(atem:${pstText}${src.id})`,
+					text: formatVariableId(sourceNameProperty, src.longId.toLowerCase()),
 					size: pstSize,
 					color: combineRgb(255, 255, 255),
 					bgcolor: combineRgb(0, 0, 0),
@@ -87,11 +95,10 @@ export function GetPresetsList(
 					{
 						down: [
 							{
-								actionId: ActionId.Preview,
-								options: {
-									mixeffect: me,
-									input: src.id,
-								},
+								actionId: CompanionPresetPropertyActionId.SetValue,
+								propertyId: PropertyId.MEPreview,
+								instanceId: me + 1,
+								value: src.longId,
 							},
 						],
 						up: [],
@@ -104,7 +111,7 @@ export function GetPresetsList(
 				name: `Program button for ${src.shortName}`,
 				type: 'button',
 				style: {
-					text: `$(atem:${pstText}${src.id})`,
+					text: formatVariableId(sourceNameProperty, src.longId.toLowerCase()),
 					size: pstSize,
 					color: combineRgb(255, 255, 255),
 					bgcolor: combineRgb(0, 0, 0),
@@ -126,11 +133,10 @@ export function GetPresetsList(
 					{
 						down: [
 							{
-								actionId: ActionId.Program,
-								options: {
-									mixeffect: me,
-									input: src.id,
-								},
+								actionId: CompanionPresetPropertyActionId.SetValue,
+								propertyId: PropertyId.MEProgram,
+								instanceId: me + 1,
+								value: src.longId,
 							},
 						],
 						up: [],

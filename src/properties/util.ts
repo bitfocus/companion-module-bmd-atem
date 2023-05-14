@@ -1,4 +1,4 @@
-import type { SourceInfo } from '../choices'
+import type { SourceInfo } from '../choices.js'
 
 export function parseSourceId(source: string | number, knownSources: SourceInfo[]): number | null {
 	if (typeof source === 'number' && source >= 0) return source
