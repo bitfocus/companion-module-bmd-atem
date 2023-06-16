@@ -1143,7 +1143,7 @@ function ssrcFeedbacks(model: ModelSpec, state: AtemState) {
 					callback: async (feedback, context) => {
 						const ssrcId =
 							feedback.options.ssrcId && model.SSrc > 1
-								? Number(await context.parseVariablesInString(feedback.options.mixeffect as string)) - 1
+								? Number(await context.parseVariablesInString(feedback.options.ssrcId as string)) - 1
 								: 0
 						const boxIndex = Number(await context.parseVariablesInString(feedback.options.boxIndex as string)) - 1
 						const source = Number(await context.parseVariablesInString(feedback.options.source as string))
@@ -1154,7 +1154,7 @@ function ssrcFeedbacks(model: ModelSpec, state: AtemState) {
 					learn: async (feedback, context) => {
 						const ssrcId =
 							feedback.options.ssrcId && model.SSrc > 1
-								? Number(await context.parseVariablesInString(feedback.options.mixeffect as string)) - 1
+								? Number(await context.parseVariablesInString(feedback.options.ssrcId as string)) - 1
 								: 0
 						const boxIndex = Number(await context.parseVariablesInString(feedback.options.boxIndex as string)) - 1
 
