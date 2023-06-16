@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.3.1
+
+- Fix SSrcBoxSourceVariables feedback
+
 ## v3.3.0
 
 - Add Television Studio HD8 models
