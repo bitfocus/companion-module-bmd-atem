@@ -120,13 +120,11 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			}
 
 			this.updateStatus(InstanceStatus.Connecting)
-			try {
-				await this.atem.connect(this.config.host)
-			} catch (e) {
+			this.atem.connect(this.config.host).catch((e) => {
 				this.updateStatus(InstanceStatus.ConnectionFailure)
 
 				this.log('error', `Connecting failed: ${e}`)
-			}
+			})
 		}
 	}
 
