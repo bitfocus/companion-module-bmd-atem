@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.3.2
+
+- Fix connection stuck in a crash loop unable to open configuration
+
 ## v3.3.1
 
 - Fix SSrcBoxSourceVariables feedback
