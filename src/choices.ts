@@ -17,6 +17,8 @@ export const CHOICES_BORDER_BEVEL: DropdownChoice[] = [
 	{ id: 3, label: 'Out' },
 ]
 
+export type TrueFalseToggle = 'true' | 'false' | 'toggle'
+
 export const CHOICES_ON_OFF_TOGGLE: DropdownChoice[] = [
 	{ id: 'true', label: 'On' },
 	{ id: 'false', label: 'Off' },

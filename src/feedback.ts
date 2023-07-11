@@ -323,7 +323,7 @@ function previewFeedbacks(model: ModelSpec, state: StateWrapper) {
 								return undefined
 							}
 						},
-				  } satisfies CompanionFeedbackDefinition)
+					} satisfies CompanionFeedbackDefinition)
 				: undefined,
 		[FeedbackId.PreviewBG3]:
 			model.MEs >= 3
@@ -370,7 +370,7 @@ function previewFeedbacks(model: ModelSpec, state: StateWrapper) {
 								return undefined
 							}
 						},
-				  } satisfies CompanionFeedbackDefinition)
+					} satisfies CompanionFeedbackDefinition)
 				: undefined,
 		[FeedbackId.PreviewBG4]:
 			model.MEs >= 4
@@ -424,7 +424,7 @@ function previewFeedbacks(model: ModelSpec, state: StateWrapper) {
 								return undefined
 							}
 						},
-				  } satisfies CompanionFeedbackDefinition)
+					} satisfies CompanionFeedbackDefinition)
 				: undefined,
 	}
 }
@@ -542,7 +542,7 @@ function programFeedbacks(model: ModelSpec, state: StateWrapper) {
 								return undefined
 							}
 						},
-				  } satisfies CompanionFeedbackDefinition)
+					} satisfies CompanionFeedbackDefinition)
 				: undefined,
 		[FeedbackId.ProgramBG3]:
 			model.MEs >= 3
@@ -589,7 +589,7 @@ function programFeedbacks(model: ModelSpec, state: StateWrapper) {
 								return undefined
 							}
 						},
-				  } satisfies CompanionFeedbackDefinition)
+					} satisfies CompanionFeedbackDefinition)
 				: undefined,
 		[FeedbackId.ProgramBG4]:
 			model.MEs >= 4
@@ -642,7 +642,7 @@ function programFeedbacks(model: ModelSpec, state: StateWrapper) {
 								return undefined
 							}
 						},
-				  } satisfies CompanionFeedbackDefinition)
+					} satisfies CompanionFeedbackDefinition)
 				: undefined,
 	}
 }
@@ -664,7 +664,7 @@ function uskFeedbacks(model: ModelSpec, state: StateWrapper) {
 						const usk = getUSK(state.state, evt.options.mixeffect, evt.options.key)
 						return !!usk?.onAir
 					},
-			  } satisfies CompanionFeedbackDefinition)
+				} satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.USKSource]: model.USKs
 			? ({
@@ -692,7 +692,7 @@ function uskFeedbacks(model: ModelSpec, state: StateWrapper) {
 							return undefined
 						}
 					},
-			  } satisfies CompanionFeedbackDefinition)
+				} satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.USKSourceVariables]: model.USKs
 			? ({
@@ -749,7 +749,7 @@ function uskFeedbacks(model: ModelSpec, state: StateWrapper) {
 							return undefined
 						}
 					},
-			  } satisfies CompanionFeedbackDefinition)
+				} satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.USKKeyFrame]:
 			model.USKs && model.DVEs
@@ -788,7 +788,7 @@ function uskFeedbacks(model: ModelSpec, state: StateWrapper) {
 								return undefined
 							}
 						},
-				  } satisfies CompanionFeedbackDefinition)
+					} satisfies CompanionFeedbackDefinition)
 				: undefined,
 	}
 }
@@ -994,7 +994,7 @@ function compareAsInt(
 	targetStr: InputValue | undefined,
 	actual: number,
 	targetScale: number,
-	actualRounding = 1
+	actualRounding = 1,
 ): boolean {
 	if (targetStr === undefined) {
 		return false
@@ -1017,7 +1017,7 @@ function ssrcFeedbacks(model: ModelSpec, state: StateWrapper) {
 					description: 'If the specified SuperSource art properties match, change style of the bank',
 					options: compact([
 						AtemSuperSourceIdPicker(model),
-						...AtemSuperSourceArtPropertiesPickers(model, state.state, false),
+						...Object.values(AtemSuperSourceArtPropertiesPickers(model, state.state, false)),
 					]),
 					defaultStyle: {
 						color: combineRgb(0, 0, 0),
@@ -1062,7 +1062,7 @@ function ssrcFeedbacks(model: ModelSpec, state: StateWrapper) {
 							return undefined
 						}
 					},
-			  } satisfies CompanionFeedbackDefinition)
+				} satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.SSrcArtSource]: model.SSrc
 			? ({
@@ -1096,7 +1096,7 @@ function ssrcFeedbacks(model: ModelSpec, state: StateWrapper) {
 							return undefined
 						}
 					},
-			  } satisfies CompanionFeedbackDefinition)
+				} satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.SSrcArtOption]: model.SSrc
 			? ({
@@ -1128,7 +1128,7 @@ function ssrcFeedbacks(model: ModelSpec, state: StateWrapper) {
 							return undefined
 						}
 					},
-			  } satisfies CompanionFeedbackDefinition)
+				} satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.SSrcBoxSource]: model.SSrc
 			? ({
@@ -1163,7 +1163,7 @@ function ssrcFeedbacks(model: ModelSpec, state: StateWrapper) {
 							return undefined
 						}
 					},
-			  } satisfies CompanionFeedbackDefinition)
+				} satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.SSrcBoxSourceVariables]: model.SSrc
 			? ({
@@ -1179,7 +1179,7 @@ function ssrcFeedbacks(model: ModelSpec, state: StateWrapper) {
 									label: 'Super Source',
 									default: '1',
 									useVariables: true,
-							  }
+								}
 							: undefined,
 						{
 							type: 'textinput',
@@ -1229,7 +1229,7 @@ function ssrcFeedbacks(model: ModelSpec, state: StateWrapper) {
 							return undefined
 						}
 					},
-			  } satisfies CompanionFeedbackDefinition)
+				} satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.SSrcBoxOnAir]: model.SSrc
 			? ({
@@ -1247,7 +1247,7 @@ function ssrcFeedbacks(model: ModelSpec, state: StateWrapper) {
 						const box = getSuperSourceBox(state.state, evt.options.boxIndex, ssrcId)
 						return !!(box && box.enabled)
 					},
-			  } satisfies CompanionFeedbackDefinition)
+				} satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.SSrcBoxProperties]: model.SSrc
 			? ({
@@ -1257,7 +1257,7 @@ function ssrcFeedbacks(model: ModelSpec, state: StateWrapper) {
 					options: compact([
 						AtemSuperSourceIdPicker(model),
 						AtemSuperSourceBoxPicker(),
-						...AtemSuperSourcePropertiesPickers(model, state.state, false),
+						...Object.values(AtemSuperSourcePropertiesPickers(model, state.state)),
 					]),
 					defaultStyle: {
 						color: combineRgb(0, 0, 0),
@@ -1311,7 +1311,7 @@ function ssrcFeedbacks(model: ModelSpec, state: StateWrapper) {
 							return undefined
 						}
 					},
-			  } satisfies CompanionFeedbackDefinition)
+				} satisfies CompanionFeedbackDefinition)
 			: undefined,
 	}
 }
@@ -1333,7 +1333,7 @@ function dskFeedbacks(model: ModelSpec, state: StateWrapper) {
 						const dsk = getDSK(state.state, evt.options.key)
 						return !!dsk?.onAir
 					},
-			  } satisfies CompanionFeedbackDefinition)
+				} satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.DSKTie]: model.DSKs
 			? ({
@@ -1349,7 +1349,7 @@ function dskFeedbacks(model: ModelSpec, state: StateWrapper) {
 						const dsk = getDSK(state.state, evt.options.key)
 						return !!dsk?.properties?.tie
 					},
-			  } satisfies CompanionFeedbackDefinition)
+				} satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.DSKSource]: model.DSKs
 			? ({
@@ -1377,7 +1377,7 @@ function dskFeedbacks(model: ModelSpec, state: StateWrapper) {
 							return undefined
 						}
 					},
-			  } satisfies CompanionFeedbackDefinition)
+				} satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.DSKSourceVariables]: model.DSKs
 			? ({
@@ -1425,7 +1425,7 @@ function dskFeedbacks(model: ModelSpec, state: StateWrapper) {
 							return undefined
 						}
 					},
-			  } satisfies CompanionFeedbackDefinition)
+				} satisfies CompanionFeedbackDefinition)
 			: undefined,
 	}
 }
@@ -1470,7 +1470,7 @@ function streamRecordFeedbacks(model: ModelSpec, state: StateWrapper) {
 							return undefined
 						}
 					},
-			  } satisfies CompanionFeedbackDefinition)
+				} satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.RecordStatus]: model.recording
 			? ({
@@ -1509,7 +1509,7 @@ function streamRecordFeedbacks(model: ModelSpec, state: StateWrapper) {
 							return undefined
 						}
 					},
-			  } satisfies CompanionFeedbackDefinition)
+				} satisfies CompanionFeedbackDefinition)
 			: undefined,
 	}
 }
@@ -1840,7 +1840,7 @@ function audioFeedbacks(model: ModelSpec, state: StateWrapper) {
 						callback: (_evt: CompanionFeedbackBooleanEvent): boolean => {
 							return !!state.state.fairlight?.monitor?.inputMasterMuted
 						},
-				  } satisfies CompanionFeedbackDefinition)
+					} satisfies CompanionFeedbackDefinition)
 				: undefined,
 			[FeedbackId.FairlightAudioMonitorFaderGain]: model.fairlightAudio.monitor
 				? ({
@@ -1881,7 +1881,7 @@ function audioFeedbacks(model: ModelSpec, state: StateWrapper) {
 								return undefined
 							}
 						},
-				  } satisfies CompanionFeedbackDefinition)
+					} satisfies CompanionFeedbackDefinition)
 				: undefined,
 		}
 	} else {
@@ -1937,7 +1937,7 @@ export function GetFeedbacksList(model: ModelSpec, state: StateWrapper): Compani
 							return undefined
 						}
 					},
-			  } satisfies CompanionFeedbackDefinition)
+				} satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.AuxVariables]: model.auxes
 			? ({
@@ -1985,7 +1985,7 @@ export function GetFeedbacksList(model: ModelSpec, state: StateWrapper): Compani
 							return undefined
 						}
 					},
-			  } satisfies CompanionFeedbackDefinition)
+				} satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.Macro]: model.macros
 			? ({
@@ -2041,7 +2041,7 @@ export function GetFeedbacksList(model: ModelSpec, state: StateWrapper): Compani
 						}
 						return false
 					},
-			  } satisfies CompanionFeedbackDefinition)
+				} satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.MacroLoop]: model.macros
 			? ({
@@ -2063,7 +2063,7 @@ export function GetFeedbacksList(model: ModelSpec, state: StateWrapper): Compani
 					callback: (evt): boolean => {
 						return !!evt.options.loop === !!state.state.macro.macroPlayer.loop
 					},
-			  } satisfies CompanionFeedbackDefinition)
+				} satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.MVSource]: model.MVs
 			? ({
@@ -2087,7 +2087,7 @@ export function GetFeedbacksList(model: ModelSpec, state: StateWrapper): Compani
 						const window = getMultiviewerWindow(
 							state.state,
 							feedback.options.multiViewerId,
-							feedback.options.windowIndex
+							feedback.options.windowIndex,
 						)
 
 						if (window) {
@@ -2099,7 +2099,7 @@ export function GetFeedbacksList(model: ModelSpec, state: StateWrapper): Compani
 							return undefined
 						}
 					},
-			  } satisfies CompanionFeedbackDefinition)
+				} satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.MVSourceVariables]: model.MVs
 			? ({
@@ -2158,7 +2158,7 @@ export function GetFeedbacksList(model: ModelSpec, state: StateWrapper): Compani
 							return undefined
 						}
 					},
-			  } satisfies CompanionFeedbackDefinition)
+				} satisfies CompanionFeedbackDefinition)
 			: undefined,
 		[FeedbackId.MediaPlayerSource]: model.media.players
 			? ({
@@ -2198,7 +2198,7 @@ export function GetFeedbacksList(model: ModelSpec, state: StateWrapper): Compani
 							return undefined
 						}
 					},
-			  } satisfies CompanionFeedbackDefinition)
+				} satisfies CompanionFeedbackDefinition)
 			: undefined,
 	}
 
