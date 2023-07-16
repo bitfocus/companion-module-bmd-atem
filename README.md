@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.3.3
+
+- Fix TVS HD8 ISO being based off wrong model
+
 ## v3.3.2
 
 - Fix connection stuck in a crash loop unable to open configuration
