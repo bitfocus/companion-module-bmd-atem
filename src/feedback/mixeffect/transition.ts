@@ -3,7 +3,7 @@ import {
 	AtemMEPicker,
 	AtemMatchMethod,
 	AtemRatePicker,
-	AtemTransitionSelectionPickers,
+	AtemTransitionSelectionPicker,
 	AtemTransitionStylePicker,
 } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
@@ -21,6 +21,7 @@ export interface AtemTransitionFeedbacks {
 	[FeedbackId.TransitionSelection]: {
 		mixeffect: number
 		matchmethod: 'exact' | 'contains' | 'not-contain'
+		selection: ('background' | string)[]
 	}
 	[FeedbackId.TransitionRate]: {
 		mixeffect: number
@@ -34,7 +35,7 @@ export interface AtemTransitionFeedbacks {
 
 export function createTransitionFeedbacks(
 	model: ModelSpec,
-	state: StateWrapper,
+	state: StateWrapper
 ): MyFeedbackDefinitions<AtemTransitionFeedbacks> {
 	return {
 		[FeedbackId.TransitionStyle]: {
@@ -73,7 +74,7 @@ export function createTransitionFeedbacks(
 			options: {
 				mixeffect: AtemMEPicker(model, 0),
 				matchmethod: AtemMatchMethod(),
-				...AtemTransitionSelectionPickers(model),
+				selection: AtemTransitionSelectionPicker(model),
 			},
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -81,7 +82,7 @@ export function createTransitionFeedbacks(
 			},
 			callback: ({ options }): boolean => {
 				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
-				const expectedSelection = calculateTransitionSelection(model.USKs, options)
+				const expectedSelection = calculateTransitionSelection(model.USKs, options.getRaw('selection'))
 				if (me) {
 					switch (options.getPlainString('matchmethod')) {
 						case 'exact':

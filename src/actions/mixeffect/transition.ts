@@ -4,7 +4,7 @@ import {
 	AtemMEPicker,
 	AtemRatePicker,
 	AtemTransitionSelectionComponentPicker,
-	AtemTransitionSelectionPickers,
+	AtemTransitionSelectionPicker,
 	AtemTransitionStylePicker,
 } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
@@ -34,8 +34,7 @@ export interface AtemProgramPreviewActions {
 	}
 	[ActionId.TransitionSelection]: {
 		mixeffect: number
-		background: boolean
-		key0: boolean
+		selection: ('background' | string)[]
 	}
 	[ActionId.TransitionSelectComponents]: {
 		mixeffect: number
@@ -185,12 +184,12 @@ export function createTransitionActions(
 			name: 'Transition: Change selection',
 			options: {
 				mixeffect: AtemMEPicker(model, 0),
-				...AtemTransitionSelectionPickers(model),
+				selection: AtemTransitionSelectionPicker(model),
 			},
 			callback: async ({ options }) => {
 				await atem?.setTransitionStyle(
 					{
-						nextSelection: calculateTransitionSelection(model.USKs, options),
+						nextSelection: calculateTransitionSelection(model.USKs, options.getRaw('selection')),
 					},
 					options.getPlainNumber('mixeffect'),
 				)

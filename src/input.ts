@@ -83,26 +83,24 @@ export function AtemTransitionSelectComponentsPickers(model: ModelSpec): Compani
 
 	return pickers
 }
-export function AtemTransitionSelectionPickers(model: ModelSpec): CompanionInputFieldCheckbox[] {
-	const pickers: CompanionInputFieldCheckbox[] = [
-		{
-			type: 'checkbox',
-			id: 'background',
-			label: 'Background',
-			default: true,
-		},
-	]
+export function AtemTransitionSelectionPicker(model: ModelSpec): CompanionInputFieldMultiDropdown {
+	const choices: DropdownChoice[] = [{ id: 'background', label: 'Background' }]
 
 	for (let i = 0; i < model.USKs; i++) {
-		pickers.push({
-			type: 'checkbox',
+		choices.push({
 			id: `key${i}`,
 			label: `Key ${i + 1}`,
-			default: false,
 		})
 	}
 
-	return pickers
+	return {
+		type: 'multidropdown',
+		id: 'selection',
+		label: 'Selection',
+		default: ['background'],
+		minSelection: 1,
+		choices,
+	}
 }
 export function AtemTransitionSelectionComponentPicker(model: ModelSpec): CompanionInputFieldDropdown {
 	const options: DropdownChoice[] = [

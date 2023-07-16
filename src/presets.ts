@@ -302,14 +302,13 @@ export function GetPresetsList(
 
 		for (const opt of getTransitionSelectionOptions(model.USKs)) {
 			const transitionStringParts = opt[0] ? ['BG'] : []
-			const selectionProps: { [key: string]: boolean } = {
-				background: opt[0],
-			}
+			const selectionProps = opt[0] ? ['background'] : []
+
 			for (let i = 0; i < model.USKs; i++) {
 				if (opt[i + 1]) {
 					transitionStringParts.push(`K${i + 1}`)
+					selectionProps.push(`key${i}`)
 				}
-				selectionProps[`key${i}`] = opt[i + 1]
 			}
 
 			if (calculateTransitionSelection(model.USKs, selectionProps).length === 0) {
@@ -334,7 +333,7 @@ export function GetPresetsList(
 						feedbackId: FeedbackId.TransitionSelection,
 						options: {
 							mixeffect: me,
-							...selectionProps,
+							selection: selectionProps,
 						},
 						style: {
 							bgcolor: combineRgb(255, 255, 0),
@@ -349,7 +348,7 @@ export function GetPresetsList(
 								actionId: ActionId.TransitionSelection,
 								options: {
 									mixeffect: me,
-									...selectionProps,
+									selection: selectionProps,
 								},
 							},
 						],

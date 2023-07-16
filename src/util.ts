@@ -1,5 +1,5 @@
 import { Enums, type AtemState, listVisibleInputs } from 'atem-connection'
-import { type InputValue, InstanceBase } from '@companion-module/base'
+import { InstanceBase } from '@companion-module/base'
 
 export const MEDIA_PLAYER_SOURCE_CLIP_OFFSET = 1000
 
@@ -32,15 +32,17 @@ export function clamp(min: number, max: number, val: number): number {
 
 export function calculateTransitionSelection(
 	keyCount: number,
-	options: { [key: string]: InputValue | undefined },
+	rawSelection: ('background' | string)[] | undefined
 ): Enums.TransitionSelection[] {
+	if (!rawSelection || !Array.isArray(rawSelection)) return []
+
 	const selection: Enums.TransitionSelection[] = []
-	if (options.background) {
+	if (rawSelection.includes('background')) {
 		selection.push(Enums.TransitionSelection.Background)
 	}
 
 	for (let i = 0; i < keyCount; i++) {
-		if (options[`key${i}`]) {
+		if (rawSelection.includes(`key${i}`)) {
 			selection.push(1 << (i + 1))
 		}
 	}
