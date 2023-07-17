@@ -1139,7 +1139,7 @@ export function GetPresetsList(
 					},
 				},
 				{
-					feedbackId: FeedbackId.StreamStatus,
+					feedbackId: FeedbackId.RecordStatus,
 					options: {
 						state: Enums.RecordingStatus.Stopping,
 					},
@@ -1155,7 +1155,7 @@ export function GetPresetsList(
 						{
 							actionId: ActionId.RecordStartStop,
 							options: {
-								stream: 'toggle',
+								record: 'toggle',
 							},
 						},
 					],
