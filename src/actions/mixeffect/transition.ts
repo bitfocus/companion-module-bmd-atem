@@ -3,6 +3,7 @@ import { getMixEffect } from 'atem-connection/dist/state/util.js'
 import {
 	AtemMEPicker,
 	AtemRatePicker,
+	AtemTransitionSelectComponentsPickers,
 	AtemTransitionSelectionComponentPicker,
 	AtemTransitionSelectionPicker,
 	AtemTransitionStylePicker,

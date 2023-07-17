@@ -5,9 +5,9 @@ import type {
 	CompanionOptionValues,
 	SomeCompanionActionInputField,
 } from '@companion-module/base'
-import type { MyActionDefinition, MyActionEvent2, MyActionInfo2 } from './types'
-import type { Complete } from '@companion-module/base/dist/util'
-import { MyOptionsHelperImpl, type MyOptionsObject } from '../common'
+import type { MyActionDefinition, MyActionEvent2, MyActionInfo2 } from './types.js'
+import type { Complete } from '@companion-module/base/dist/util.js'
+import { MyOptionsHelperImpl, type MyOptionsObject } from '../common.js'
 
 function rewrapActionInfo<TOptions>(
 	action: CompanionActionInfo,

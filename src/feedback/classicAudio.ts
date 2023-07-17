@@ -1,4 +1,4 @@
-import { Enums } from 'atem-connection'
+import { Enums, type AtemState } from 'atem-connection'
 import type { ModelSpec } from '../models/index.js'
 import type { MyFeedbackDefinitions } from './types.js'
 import { FeedbackId } from './index.js'

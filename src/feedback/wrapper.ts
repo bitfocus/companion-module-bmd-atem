@@ -8,15 +8,15 @@ import type {
 	CompanionOptionValues,
 	SomeCompanionFeedbackInputField,
 } from '@companion-module/base'
-import { assertNever, type Complete } from '@companion-module/base/dist/util'
-import { MyOptionsHelperImpl, type MyOptionsObject } from '../common'
+import { assertNever, type Complete } from '@companion-module/base/dist/util.js'
+import { MyOptionsHelperImpl, type MyOptionsObject } from '../common.js'
 import type {
 	MyAdvancedFeedbackEvent,
 	MyBooleanFeedbackEvent,
 	MyFeedbackDefinition,
 	MyFeedbackDefinitionBase,
 	MyFeedbackInfo,
-} from './types'
+} from './types.js'
 
 function rewrapFeedbackInfo<TOptions>(
 	feedback: CompanionFeedbackInfo,

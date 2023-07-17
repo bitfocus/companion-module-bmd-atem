@@ -1,5 +1,5 @@
 import type { CompanionActionContext, SomeCompanionActionInputField } from '@companion-module/base'
-import type { MyOptionsHelper, MyOptionsObject } from '../common'
+import type { MyOptionsHelper, MyOptionsObject } from '../common.js'
 
 /**
  * Basic information about an instance of an action
