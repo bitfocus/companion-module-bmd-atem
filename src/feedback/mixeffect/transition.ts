@@ -8,7 +8,7 @@ import {
 } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import type { MyFeedbackDefinitions } from '../types.js'
-import { FeedbackId } from '../index.js'
+import { FeedbackId } from '../FeedbackId.js'
 import { combineRgb } from '@companion-module/base'
 import { getMixEffect, type StateWrapper } from '../../state.js'
 import { calculateTransitionSelection, assertUnreachable } from '../../util.js'

@@ -1,7 +1,7 @@
 import { type Atem } from 'atem-connection'
 import { AtemMEPicker, AtemRatePicker } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
-import { ActionId } from '../index.js'
+import { ActionId } from '../ActionId.js'
 import type { MyActionDefinitions } from './../types.js'
 import { getMixEffect, type StateWrapper } from '../../state.js'
 

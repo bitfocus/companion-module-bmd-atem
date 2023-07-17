@@ -1,7 +1,7 @@
 import { Enums } from 'atem-connection'
 import type { ModelSpec } from '../models/index.js'
 import type { MyFeedbackDefinitions } from './types.js'
-import { FeedbackId } from './index.js'
+import { FeedbackId } from './FeedbackId.js'
 import { combineRgb, type CompanionInputFieldDropdown } from '@companion-module/base'
 import type { StateWrapper } from '../state.js'
 

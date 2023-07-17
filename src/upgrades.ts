@@ -8,9 +8,9 @@ import {
 	CreateUseBuiltinInvertForFeedbacksUpgradeScript,
 	type CompanionOptionValues,
 } from '@companion-module/base'
-import { ActionId } from './actions/index.js'
+import { ActionId } from './actions/ActionId.js'
 import type { AtemConfig } from './config.js'
-import { FeedbackId } from './feedback/index.js'
+import { FeedbackId } from './feedback/FeedbackId.js'
 
 function scaleValue(obj: { [key: string]: InputValue | undefined }, key: string, scale: number): void {
 	if (obj[key] !== undefined) {

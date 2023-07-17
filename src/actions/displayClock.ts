@@ -1,7 +1,7 @@
 import { Enums, type Atem, type DisplayClock } from 'atem-connection'
 import { AtemDisplayClockPropertiesPickers, AtemDisplayClockTimePickers } from '../input.js'
 import type { ModelSpec } from '../models/index.js'
-import { ActionId } from './index.js'
+import { ActionId } from './ActionId.js'
 import type { MyActionDefinitions } from './types.js'
 import type { StateWrapper } from '../state.js'
 

@@ -1,6 +1,6 @@
 import type { ModelSpec } from '../models/index.js'
 import type { MyFeedbackDefinitions } from './types.js'
-import { FeedbackId } from './index.js'
+import { FeedbackId } from './FeedbackId.js'
 import { combineRgb } from '@companion-module/base'
 import { AtemAuxPicker, AtemAuxSourcePicker } from '../input.js'
 import type { StateWrapper } from '../state.js'

@@ -9,7 +9,7 @@ import {
 	AtemTransitionStylePicker,
 } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
-import { ActionId } from '../index.js'
+import { ActionId } from '../ActionId.js'
 import type { MyActionDefinitions } from './../types.js'
 import { AtemCommandBatching, CommandBatching } from '../../batching.js'
 import {

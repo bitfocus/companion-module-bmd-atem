@@ -1,6 +1,6 @@
 import { type Atem } from 'atem-connection'
 import type { ModelSpec } from '../models/index.js'
-import { ActionId } from './index.js'
+import { ActionId } from './ActionId.js'
 import type { MyActionDefinitions } from './types.js'
 import { GetMacroChoices, CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../choices.js'
 import type { StateWrapper } from '../state.js'

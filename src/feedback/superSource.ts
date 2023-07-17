@@ -1,7 +1,7 @@
 import { Enums } from 'atem-connection'
 import type { ModelSpec } from '../models/index.js'
 import type { MyFeedbackDefinitions } from './types.js'
-import { FeedbackId } from './index.js'
+import { FeedbackId } from './FeedbackId.js'
 import { combineRgb } from '@companion-module/base'
 import { getSuperSource } from 'atem-connection/dist/state/util.js'
 import {

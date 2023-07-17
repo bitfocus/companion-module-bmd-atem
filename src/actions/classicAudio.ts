@@ -1,6 +1,6 @@
 import { Enums, type Atem } from 'atem-connection'
 import type { ModelSpec } from '../models/index.js'
-import { ActionId } from './index.js'
+import { ActionId } from './ActionId.js'
 import type { MyActionDefinitions } from './types.js'
 import { CHOICES_CLASSIC_AUDIO_MIX_OPTION } from '../choices.js'
 import { AtemAudioInputPicker, FadeDurationChoice, FaderLevelDeltaChoice } from '../input.js'

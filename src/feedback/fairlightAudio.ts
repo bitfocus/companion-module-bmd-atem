@@ -1,7 +1,7 @@
 import { Enums } from 'atem-connection'
 import type { ModelSpec } from '../models/index.js'
 import type { MyFeedbackDefinitions } from './types.js'
-import { FeedbackId } from './index.js'
+import { FeedbackId } from './FeedbackId.js'
 import { combineRgb, type CompanionInputFieldDropdown, type CompanionInputFieldNumber } from '@companion-module/base'
 import { CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION } from '../choices.js'
 import { compareNumber, NumberComparitor } from '../util.js'
