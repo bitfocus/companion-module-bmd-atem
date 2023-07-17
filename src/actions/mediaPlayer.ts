@@ -1,6 +1,6 @@
 import { Enums, type Atem } from 'atem-connection'
 import type { ModelSpec } from '../models/index.js'
-import { ActionId } from '../actions.js'
+import { ActionId } from './index.js'
 import type { MyActionDefinitions } from './types.js'
 import { getMediaPlayer } from 'atem-connection/dist/state/util.js'
 import { AtemMediaPlayerPicker, AtemMediaPlayerSourcePicker } from '../input.js'

@@ -1,6 +1,6 @@
 import { Enums, VideoState, type Atem } from 'atem-connection'
 import type { ModelSpec } from '../models/index.js'
-import { ActionId } from '../actions.js'
+import { ActionId } from './index.js'
 import type { MyActionDefinitions } from './types.js'
 import {
 	AtemSuperSourceArtPropertiesPickers,
@@ -9,6 +9,8 @@ import {
 	AtemSuperSourceIdPicker,
 	AtemSuperSourcePropertiesPickers,
 	AtemSuperSourcePropertiesPickersForOffset,
+	type AtemSuperSourceArtProperties,
+	type AtemSuperSourceProperties,
 } from '../input.js'
 import type { SuperSource } from 'atem-connection/dist/state/video/index.js'
 import { CHOICES_KEYTRANS, type TrueFalseToggle } from '../choices.js'
@@ -18,16 +20,7 @@ import { clamp } from '../util.js'
 export interface AtemSuperSourceActions {
 	[ActionId.SuperSourceArt]: {
 		ssrcId: number | undefined
-
-		properties: Array<'fill' | 'key' | 'artOption' | 'artPreMultiplied' | 'artClip' | 'artGain' | 'artInvertKey'>
-		fill: number
-		key: number
-		artOption: 'unchanged' | Enums.SuperSourceArtOption | 'toggle'
-		artPreMultiplied: boolean
-		artClip: number
-		artGain: number
-		artInvertKey: boolean
-	}
+	} & AtemSuperSourceArtProperties
 	[ActionId.SuperSourceBoxSource]: {
 		ssrcId: number | undefined
 		boxIndex: number
@@ -46,21 +39,7 @@ export interface AtemSuperSourceActions {
 	[ActionId.SuperSourceBoxProperties]: {
 		ssrcId: number | undefined
 		boxIndex: number
-
-		properties: Array<
-			'size' | 'onair' | 'source' | 'x' | 'y' | 'cropEnable' | 'cropTop' | 'cropBottom' | 'cropLeft' | 'cropRight'
-		>
-		size: number
-		onair: TrueFalseToggle
-		source: number
-		x: number
-		y: number
-		cropEnable: boolean
-		cropTop: number
-		cropBottom: number
-		cropLeft: number
-		cropRight: number
-	}
+	} & AtemSuperSourceProperties
 	[ActionId.SuperSourceBoxPropertiesDelta]: {
 		ssrcId: number | undefined
 		boxIndex: number

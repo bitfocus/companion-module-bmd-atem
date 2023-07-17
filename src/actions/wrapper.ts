@@ -5,83 +5,14 @@ import type {
 	CompanionOptionValues,
 	SomeCompanionActionInputField,
 } from '@companion-module/base'
-import type { MyActionDefinition, MyActionEvent2, MyActionInfo2, MyActionOptionsObject, MyOptionsHelper } from './types'
+import type { MyActionDefinition, MyActionEvent2, MyActionInfo2 } from './types'
 import type { Complete } from '@companion-module/base/dist/util'
-import type { ConditionalKeys } from 'type-fest'
-
-class MyOptionsHelperImpl<TOptions> implements MyOptionsHelper<TOptions> {
-	readonly #options: any
-	readonly #context: CompanionActionContext
-	readonly #fields: MyActionOptionsObject<TOptions>
-
-	constructor(
-		options: CompanionOptionValues,
-		context: CompanionActionContext,
-		fields: MyActionOptionsObject<TOptions>,
-	) {
-		this.#options = options
-		this.#context = context
-		this.#fields = fields
-	}
-
-	getJson(): TOptions {
-		return { ...this.#options }
-	}
-	getRaw<Key extends keyof TOptions>(fieldName: Key) {
-		// TODO - should this populate defaults?
-		return this.#options[fieldName]
-	}
-
-	getPlainString<Key extends ConditionalKeys<TOptions, string>>(fieldName: Key): TOptions[Key] {
-		const fieldSpec = this.#fields[fieldName]
-		const defaultValue = fieldSpec && 'default' in fieldSpec ? fieldSpec.default : undefined
-
-		const rawValue = this.#options[fieldName]
-		if (defaultValue !== undefined && rawValue === undefined) return String(defaultValue) as any
-
-		return String(rawValue) as any
-	}
-
-	getPlainNumber<Key extends ConditionalKeys<TOptions, number>>(fieldName: Key): TOptions[Key] {
-		const fieldSpec = this.#fields[fieldName]
-		const defaultValue = fieldSpec && 'default' in fieldSpec ? fieldSpec.default : undefined
-
-		const rawValue = this.#options[fieldName]
-		if (defaultValue !== undefined && rawValue === undefined) return Number(defaultValue) as any
-
-		const value = Number(rawValue)
-		if (isNaN(value)) {
-			throw new Error(`Invalid option '${String(fieldName)}'`)
-		}
-		return value as any
-	}
-
-	getPlainBoolean<Key extends ConditionalKeys<TOptions, boolean>>(fieldName: Key): boolean {
-		const fieldSpec = this.#fields[fieldName]
-		const defaultValue = fieldSpec && 'default' in fieldSpec ? fieldSpec.default : undefined
-
-		const rawValue = this.#options[fieldName]
-		if (defaultValue !== undefined && rawValue === undefined) return Boolean(defaultValue)
-
-		return Boolean(rawValue)
-	}
-
-	async getParsedString<Key extends ConditionalKeys<TOptions, string | undefined>>(fieldName: Key): Promise<string> {
-		const rawValue = this.#options[fieldName]
-
-		return this.#context.parseVariablesInString(rawValue)
-	}
-	async getParsedNumber<Key extends ConditionalKeys<TOptions, string | undefined>>(fieldName: Key): Promise<number> {
-		const str = await this.getParsedString(fieldName)
-
-		return Number(str)
-	}
-}
+import { MyOptionsHelperImpl, type MyOptionsObject } from '../common'
 
 function rewrapActionInfo<TOptions>(
 	action: CompanionActionInfo,
 	context: CompanionActionContext,
-	fields: MyActionOptionsObject<TOptions>,
+	fields: MyOptionsObject<TOptions, any>,
 ): MyActionInfo2<TOptions> {
 	return {
 		id: action.id,
@@ -92,7 +23,7 @@ function rewrapActionInfo<TOptions>(
 	} satisfies Complete<MyActionInfo2<TOptions>>
 }
 
-export function convertMyActionToCompanionAction<TOptions>(
+function convertMyActionToCompanionAction<TOptions>(
 	actionDef: MyActionDefinition<TOptions>,
 ): CompanionActionDefinition {
 	const { subscribe, unsubscribe, learn } = actionDef

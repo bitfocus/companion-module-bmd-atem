@@ -32,7 +32,7 @@ export function clamp(min: number, max: number, val: number): number {
 
 export function calculateTransitionSelection(
 	keyCount: number,
-	options: { [key: string]: InputValue | undefined }
+	options: { [key: string]: InputValue | undefined },
 ): Enums.TransitionSelection[] {
 	const selection: Enums.TransitionSelection[] = []
 	if (options.background) {
@@ -57,11 +57,7 @@ export enum NumberComparitor {
 	GreaterThanEqual = 'gte',
 }
 
-export function compareNumber(
-	target: InputValue | undefined,
-	comparitor: InputValue | undefined,
-	currentValue: number
-): boolean {
+export function compareNumber(target: number, comparitor: NumberComparitor, currentValue: number): boolean {
 	const targetValue = Number(target)
 	if (isNaN(targetValue)) {
 		return false

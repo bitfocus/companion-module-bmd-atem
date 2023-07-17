@@ -1,7 +1,7 @@
 import AtemPkg, { type Atem as IAtem, type AtemState, Commands } from 'atem-connection'
-import { GetActionsList } from './actions.js'
+import { GetActionsList } from './actions/index.js'
 import { type AtemConfig, GetConfigFields } from './config.js'
-import { FeedbackId, GetFeedbacksList } from './feedback.js'
+import { FeedbackId, GetFeedbacksList } from './feedback/index.js'
 import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, type ModelSpec } from './models/index.js'
 import { GetPresetsList } from './presets.js'
 import type { StateWrapper } from './state.js'
@@ -172,7 +172,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		this.setPresetDefinitions(GetPresetsList(this, this.model, this.wrappedState.state))
 		this.setFeedbackDefinitions(GetFeedbacksList(this.model, this.wrappedState))
 		this.setActionDefinitions(
-			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.wrappedState)
+			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.wrappedState),
 		)
 
 		this.checkFeedbacks()
@@ -476,7 +476,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 					this.model = GetParsedModelSpec(this.wrappedState.state)
 					this.updateStatus(
 						InstanceStatus.UnknownWarning,
-						`Unknown model: ${atemInfo.productIdentifier}. Some bits may be missing`
+						`Unknown model: ${atemInfo.productIdentifier}. Some bits may be missing`,
 					)
 				}
 
@@ -498,7 +498,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 							atemInfo.productIdentifier +
 							', but instance is configured for ' +
 							this.model.label +
-							".  Change instance to 'Auto Detect' or the appropriate model to ensure stability."
+							".  Change instance to 'Auto Detect' or the appropriate model to ensure stability.",
 					)
 				}
 

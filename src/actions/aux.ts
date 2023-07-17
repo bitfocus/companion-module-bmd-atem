@@ -1,6 +1,6 @@
 import { type Atem } from 'atem-connection'
 import type { ModelSpec } from '../models/index.js'
-import { ActionId } from '../actions.js'
+import { ActionId } from './index.js'
 import type { MyActionDefinitions } from './types.js'
 import { AtemAuxPicker, AtemAuxSourcePicker } from '../input.js'
 import type { StateWrapper } from '../state.js'

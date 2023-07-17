@@ -1,11 +1,12 @@
 import { combineRgb, type CompanionPresetDefinitions } from '@companion-module/base'
 import { type AtemState, Enums } from 'atem-connection'
-import { ActionId } from './actions.js'
+import { ActionId } from './actions/index.js'
 import { CHOICES_KEYFRAMES, GetSourcesListForType, GetTransitionStyleChoices } from './choices.js'
 import { type AtemConfig, PresetStyleName } from './config.js'
-import { FeedbackId, MacroFeedbackType } from './feedback.js'
+import { FeedbackId } from './feedback/index.js'
 import type { ModelSpec } from './models/index.js'
 import { calculateTransitionSelection, type InstanceBaseExt, MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util.js'
+import { MacroFeedbackType } from './feedback/macro.js'
 
 const rateOptions = [12, 15, 25, 30, 37, 45, 50, 60]
 
