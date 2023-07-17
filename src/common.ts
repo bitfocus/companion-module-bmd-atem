@@ -1,4 +1,9 @@
-import type { CompanionActionContext, CompanionInputFieldBase, CompanionOptionValues } from '@companion-module/base'
+import type {
+	CompanionActionContext,
+	CompanionInputFieldBase,
+	CompanionOptionValues,
+	DropdownChoiceId,
+} from '@companion-module/base'
 import type { CompanionCommonCallbackContext } from '@companion-module/base/dist/module-api/common'
 import type { ConditionalKeys } from 'type-fest'
 
@@ -13,6 +18,13 @@ import type { ConditionalKeys } from 'type-fest'
 
 export type MyOptionsObject<TOptions, TFields extends CompanionInputFieldBase> = {
 	[K in keyof TOptions]: undefined extends TOptions[K] ? TFields | undefined : TFields
+}
+
+export interface MyDropdownChoice<T extends DropdownChoiceId = DropdownChoiceId> {
+	/** Value of the option */
+	id: T
+	/** Label to show to users */
+	label: string
 }
 
 export interface MyOptionsHelper<TOptions> {

@@ -5,7 +5,7 @@ import { ActionId } from './ActionId.js'
 import type { MyActionDefinitions } from './types.js'
 import type { StateWrapper } from '../state.js'
 
-export interface AtemProgramPreviewActions {
+export interface AtemDisplayClockActions {
 	[ActionId.DisplayClockState]: {
 		state: 'toggle' | Enums.DisplayClockClockState
 	}
@@ -31,7 +31,7 @@ export function createDisplayClockActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	state: StateWrapper,
-): MyActionDefinitions<AtemProgramPreviewActions> {
+): MyActionDefinitions<AtemDisplayClockActions> {
 	if (!model.displayClock) {
 		return {
 			[ActionId.DisplayClockState]: undefined,

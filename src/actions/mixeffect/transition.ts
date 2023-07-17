@@ -23,7 +23,7 @@ import { getTransitionProperties, getUSK, type StateWrapper } from '../../state.
 import { type InstanceBaseExt, assertUnreachable, calculateTransitionSelection } from '../../util.js'
 import type { InputValue } from '@companion-module/base'
 
-export interface AtemProgramPreviewActions {
+export interface AtemTransitionActions {
 	[ActionId.TransitionStyle]: {
 		mixeffect: number
 		style: Enums.TransitionStyle
@@ -59,7 +59,7 @@ export function createTransitionActions(
 	model: ModelSpec,
 	commandBatching: AtemCommandBatching,
 	state: StateWrapper,
-): MyActionDefinitions<AtemProgramPreviewActions> {
+): MyActionDefinitions<AtemTransitionActions> {
 	return {
 		[ActionId.TransitionStyle]: {
 			name: 'Transition: Set style/pattern',

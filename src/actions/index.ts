@@ -4,30 +4,49 @@ import type { ModelSpec } from '../models/index.js'
 import { type InstanceBaseExt } from '../util.js'
 import { AtemCommandBatching } from '../batching.js'
 import { AtemTransitions } from '../transitions.js'
-import type { CompanionActionDefinition } from '@companion-module/base'
-import { createProgramPreviewActions } from './mixeffect/programPreview.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
+import { createProgramPreviewActions, type AtemProgramPreviewActions } from './mixeffect/programPreview.js'
 import { convertMyActionDefinitions } from './wrapper.js'
-import { createTransitionActions } from './mixeffect/transition.js'
-import { createDisplayClockActions } from './displayClock.js'
-import { createMacroActions } from './macro.js'
-import { createStreamingActions } from './streaming.js'
-import { createRecordingActions } from './recording.js'
-import { createDownstreamKeyerActions } from './dsk.js'
-import { createAuxOutputActions } from './aux.js'
-import { createMultiviewerActions } from './multiviewer.js'
-import { createMediaPlayerActions } from './mediaPlayer.js'
-import { createSettingsActions } from './settings.js'
-import { createSuperSourceActions } from './superSource.js'
-import { createUpstreamKeyerCommonActions } from './mixeffect/upstreamKeyerCommon.js'
-import { createFadeToBlackActions } from './mixeffect/fadeToBlack.js'
-import { createUpstreamKeyerDVEActions } from './mixeffect/upstreamKeyerDVE.js'
-import { createClassicAudioActions } from './classicAudio.js'
-import { createFairlightAudioActions } from './fairlightAudio.js'
+import { createTransitionActions, type AtemTransitionActions } from './mixeffect/transition.js'
+import { createDisplayClockActions, type AtemDisplayClockActions } from './displayClock.js'
+import { createMacroActions, type AtemMacroActions } from './macro.js'
+import { createStreamingActions, type AtemStreamingActions } from './streaming.js'
+import { createRecordingActions, type AtemRecordingActions } from './recording.js'
+import { createDownstreamKeyerActions, type AtemDownstreamKeyerActions } from './dsk.js'
+import { createAuxOutputActions, type AtemAuxOutputActions } from './aux.js'
+import { createMultiviewerActions, type AtemMultiviewerActions } from './multiviewer.js'
+import { createMediaPlayerActions, type AtemMediaPlayerActions } from './mediaPlayer.js'
+import { createSettingsActions, type AtemSettingsActions } from './settings.js'
+import { createSuperSourceActions, type AtemSuperSourceActions } from './superSource.js'
+import {
+	createUpstreamKeyerCommonActions,
+	type AtemUpstreamKeyerCommonActions,
+} from './mixeffect/upstreamKeyerCommon.js'
+import { createFadeToBlackActions, type AtemFadeToBlackActions } from './mixeffect/fadeToBlack.js'
+import { createUpstreamKeyerDVEActions, type AtemUpstreamKeyerDVEActions } from './mixeffect/upstreamKeyerDVE.js'
+import { createClassicAudioActions, type AtemClassicAudioActions } from './classicAudio.js'
+import { createFairlightAudioActions, type AtemFairlightAudioActions } from './fairlightAudio.js'
 import type { MyActionDefinition } from './types.js'
 import { ActionId } from './ActionId.js'
 import type { StateWrapper } from '../state.js'
 
-type CompanionActionsExt = { [id in ActionId]: CompanionActionDefinition | undefined }
+export type ActionTypes = AtemProgramPreviewActions &
+	AtemTransitionActions &
+	AtemUpstreamKeyerCommonActions &
+	AtemUpstreamKeyerDVEActions &
+	AtemFadeToBlackActions &
+	AtemDownstreamKeyerActions &
+	AtemMacroActions &
+	AtemSuperSourceActions &
+	AtemStreamingActions &
+	AtemRecordingActions &
+	AtemClassicAudioActions &
+	AtemFairlightAudioActions &
+	AtemAuxOutputActions &
+	AtemMultiviewerActions &
+	AtemMediaPlayerActions &
+	AtemSettingsActions &
+	AtemDisplayClockActions
 
 export function GetActionsList(
 	instance: InstanceBaseExt<AtemConfig>,
@@ -36,7 +55,7 @@ export function GetActionsList(
 	commandBatching: AtemCommandBatching,
 	transitions: AtemTransitions,
 	state: StateWrapper,
-): CompanionActionsExt {
+): CompanionActionDefinitions {
 	const actions: { [id in ActionId]: MyActionDefinition<any> | undefined } = {
 		...createProgramPreviewActions(atem, model, transitions, state),
 		...createTransitionActions(instance, atem, model, commandBatching, state),
