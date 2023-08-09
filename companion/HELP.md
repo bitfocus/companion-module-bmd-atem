@@ -41,6 +41,13 @@ Devices must be controlled over a network, USB control is NOT supported.
 - Classic audio inputs control
 - Fairlight audio inputs control
 
+## Common issues
+
+### Macros not showing as running
+
+Companion is not always able to detect that a macro has been run. This happens when the macro has zero length.
+You can resolve this by giving the macro a pause/sleep of 1 frame.
+
 ### Diagnosing connection issues
 
 The most common cause of Companion not being able to connect to your ATEM is misconfiguration of the networking. Due to how the discovery protocol works, it will see ATEMs that you may not be able to connect to.    
