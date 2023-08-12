@@ -1,28 +1,45 @@
 import { type CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { type StateWrapper } from '../state.js'
-import { createTallyFeedbacks } from './mixeffect/tally.js'
+import { createTallyFeedbacks, type AtemTallyFeedbacks } from './mixeffect/tally.js'
 import { convertMyFeedbackDefinitions } from './wrapper.js'
-import { createPreviewFeedbacks } from './mixeffect/preview.js'
-import { createProgramFeedbacks } from './mixeffect/program.js'
-import { createFadeToBlackFeedbacks } from './mixeffect/fadeToBlack.js'
-import { createMediaPlayerFeedbacks } from './mediaPlayer.js'
+import { createPreviewFeedbacks, type AtemPreviewFeedbacks } from './mixeffect/preview.js'
+import { createProgramFeedbacks, type AtemProgramFeedbacks } from './mixeffect/program.js'
+import { createFadeToBlackFeedbacks, type AtemFadeToBlackFeedbacks } from './mixeffect/fadeToBlack.js'
+import { createMediaPlayerFeedbacks, type AtemMediaPlayerFeedbacks } from './mediaPlayer.js'
 import type { MyFeedbackDefinition } from './types.js'
-import { createMultiviewerFeedbacks } from './multiviewer.js'
-import { createMacroFeedbacks } from './macro.js'
-import { createAuxOutputFeedbacks } from './aux.js'
-import { createRecordingFeedbacks } from './recording.js'
-import { createStreamingFeedbacks } from './streaming.js'
-import { createDownstreamKeyerFeedbacks } from './dsk.js'
-import { createUpstreamKeyerFeedbacks } from './mixeffect/usk.js'
-import { createTransitionFeedbacks } from './mixeffect/transition.js'
-import { createSuperSourceFeedbacks } from './superSource.js'
-import { createClassicAudioFeedbacks } from './classicAudio.js'
-import { createFairlightAudioFeedbacks } from './fairlightAudio.js'
+import { createMultiviewerFeedbacks, type AtemMultiviewerFeedbacks } from './multiviewer.js'
+import { createMacroFeedbacks, type AtemMacroFeedbacks } from './macro.js'
+import { createAuxOutputFeedbacks, type AtemAuxOutputFeedbacks } from './aux.js'
+import { createRecordingFeedbacks, type AtemRecordingFeedbacks } from './recording.js'
+import { createStreamingFeedbacks, type AtemStreamingFeedbacks } from './streaming.js'
+import { createDownstreamKeyerFeedbacks, type AtemDownstreamKeyerFeedbacks } from './dsk.js'
+import { createUpstreamKeyerFeedbacks, type AtemUpstreamKeyerFeedbacks } from './mixeffect/usk.js'
+import { createTransitionFeedbacks, type AtemTransitionFeedbacks } from './mixeffect/transition.js'
+import { createSuperSourceFeedbacks, type AtemSuperSourceFeedbacks } from './superSource.js'
+import { createClassicAudioFeedbacks, type AtemClassicAudioFeedbacks } from './classicAudio.js'
+import { createFairlightAudioFeedbacks, type AtemFairlightAudioFeedbacks } from './fairlightAudio.js'
 import { FeedbackId } from './FeedbackId.js'
 
+export type FeedbackTypes = AtemTallyFeedbacks &
+	AtemPreviewFeedbacks &
+	AtemProgramFeedbacks &
+	AtemUpstreamKeyerFeedbacks &
+	AtemDownstreamKeyerFeedbacks &
+	AtemSuperSourceFeedbacks &
+	AtemFadeToBlackFeedbacks &
+	AtemTransitionFeedbacks &
+	AtemStreamingFeedbacks &
+	AtemRecordingFeedbacks &
+	AtemClassicAudioFeedbacks &
+	AtemFairlightAudioFeedbacks &
+	AtemAuxOutputFeedbacks &
+	AtemMacroFeedbacks &
+	AtemMultiviewerFeedbacks &
+	AtemMediaPlayerFeedbacks
+
 export function GetFeedbacksList(model: ModelSpec, state: StateWrapper): CompanionFeedbackDefinitions {
-	const feedbacks: { [id in FeedbackId]: MyFeedbackDefinition<any> | undefined } = {
+	const feedbacks: { [id in FeedbackId]: MyFeedbackDefinition<FeedbackTypes> | undefined } = {
 		...createTallyFeedbacks(model, state),
 		...createPreviewFeedbacks(model, state),
 		...createProgramFeedbacks(model, state),
