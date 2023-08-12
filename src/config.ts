@@ -35,13 +35,6 @@ export function GetConfigFields(_self: InstanceBaseExt<AtemConfig>): SomeCompani
 			id: 'bonjour-test',
 			label: 'Bonjour Test',
 			width: 6,
-			bonjourQuery: {
-				type: 'blackmagic',
-				protocol: 'tcp',
-				txt: {
-					class: 'AtemSwitcher',
-				},
-			},
 		},
 		{
 			type: 'textinput',

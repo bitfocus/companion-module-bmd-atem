@@ -1,4 +1,5 @@
 {
+	"$schema": "../node_modules/@companion-module/base/assets/manifest.schema.json",
 	"id": "bmd-atem",
 	"name": "bmd-atem",
 	"shortname": "atem",
@@ -22,5 +23,14 @@
 	},
 	"manufacturer": "Blackmagic Design",
 	"products": ["ATEM"],
-	"keywords": ["Vision Mixer"]
+	"keywords": ["Vision Mixer"],
+	"bonjourQueries": {
+		"bonjour-test": {
+			"type": "blackmagic",
+			"protocol": "tcp",
+			"txt": {
+				"class": "AtemSwitcher"
+			}
+		}
+	}
 }
