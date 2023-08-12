@@ -10,6 +10,7 @@ export enum PresetStyleName {
 }
 
 export interface AtemConfig {
+	bonjour_host?: string
 	host?: string
 	modelID?: string
 	presets?: string
@@ -32,8 +33,8 @@ export function GetConfigFields(_self: InstanceBaseExt<AtemConfig>): SomeCompani
 		},
 		{
 			type: 'bonjour-device',
-			id: 'bonjour-test',
-			label: 'Bonjour Test',
+			id: 'bonjour_host',
+			label: 'Device',
 			width: 6,
 		},
 		{
@@ -41,7 +42,7 @@ export function GetConfigFields(_self: InstanceBaseExt<AtemConfig>): SomeCompani
 			id: 'host',
 			label: 'Target IP',
 			width: 6,
-			isVisible: (options) => !options['bonjour-test'],
+			isVisible: (options) => !options['bonjour_host'],
 			default: '',
 			regex: Regex.IP,
 		},
@@ -50,7 +51,7 @@ export function GetConfigFields(_self: InstanceBaseExt<AtemConfig>): SomeCompani
 			id: 'host-filler',
 			width: 6,
 			label: '',
-			isVisible: (options) => !!options['bonjour-test'],
+			isVisible: (options) => !!options['bonjour_host'],
 			value: '',
 		},
 		// {
