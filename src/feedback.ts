@@ -1264,14 +1264,14 @@ function dskFeedbacks(model: ModelSpec, state: AtemState) {
 					type: 'boolean',
 					name: 'Downstream key: OnAir',
 					description: 'If the specified downstream keyer is onair, change style of the bank',
-					options: [AtemDSKPicker(model), InvertInput],
+					options: [AtemDSKPicker(model)],
 					defaultStyle: {
 						color: combineRgb(255, 255, 255),
 						bgcolor: combineRgb(255, 0, 0),
 					},
 					callback: (evt: CompanionFeedbackBooleanEvent): boolean => {
 						const dsk = getDSK(state, evt.options.key)
-						return !!dsk?.onAir === !evt.options.invert
+						return !!dsk?.onAir
 					},
 			  } satisfies CompanionFeedbackDefinition)
 			: undefined,

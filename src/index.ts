@@ -4,6 +4,7 @@ import { type AtemConfig, GetConfigFields } from './config.js'
 import { FeedbackId, GetFeedbacksList } from './feedback.js'
 import {
 	BooleanFeedbackUpgradeMap,
+	builtinInvert,
 	fixUsingFairlightAudioFaderGainInsteadOfFairlightAudioMonitorFaderGain,
 	upgradeAddSSrcPropertiesPicker,
 	upgradeV2x2x0,
@@ -518,4 +519,5 @@ runEntrypoint(AtemInstance, [
 	CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap),
 	upgradeAddSSrcPropertiesPicker,
 	fixUsingFairlightAudioFaderGainInsteadOfFairlightAudioMonitorFaderGain,
+	builtinInvert,
 ])

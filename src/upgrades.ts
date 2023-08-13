@@ -144,3 +144,24 @@ export function fixUsingFairlightAudioFaderGainInsteadOfFairlightAudioMonitorFad
 
 	return result
 }
+
+export function builtinInvert(
+	_context: CompanionUpgradeContext<AtemConfig>,
+	props: CompanionStaticUpgradeProps<AtemConfig>
+): CompanionStaticUpgradeResult<AtemConfig> {
+	const result: CompanionStaticUpgradeResult<AtemConfig> = {
+		updatedActions: [],
+		updatedConfig: null,
+		updatedFeedbacks: [],
+	}
+
+	for (const feedback of props.feedbacks) {
+		if (feedback.feedbackId === FeedbackId.DSKOnAir && feedback.options['invert'] !== undefined) {
+			feedback.isInverted = !!feedback.options['invert']
+			delete feedback.options['invert']
+			result.updatedFeedbacks.push(feedback)
+		}
+	}
+
+	return result
+}
