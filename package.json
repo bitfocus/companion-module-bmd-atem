@@ -31,7 +31,7 @@
 		"node": "^18.12"
 	},
 	"dependencies": {
-		"@companion-module/base": "~1.4.1",
+		"@companion-module/base": "~1.5.0",
 		"atem-connection": "^3.3.0-nightly-chore-yarn3-20230428-120533-e64ab368.0",
 		"bonjour-service": "^1.1.1",
 		"debounce-fn": "^5.1.2",
