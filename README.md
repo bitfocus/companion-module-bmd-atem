@@ -23,6 +23,11 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.4.0
+
+- Use builtin invert support for all feedbacks
+- Update atem library, to get more responsive multiviewer feedbacks
+
 ## v3.3.3
 
 - Fix TVS HD8 ISO being based off wrong model
