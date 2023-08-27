@@ -14,7 +14,6 @@ import {
 } from './variables.js'
 import { AtemCommandBatching } from './batching.js'
 import { AtemTransitions } from './transitions.js'
-import debounceFn from 'debounce-fn'
 import {
 	InstanceBase,
 	type SomeCompanionConfigField,
@@ -294,9 +293,8 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			}
 
 			if (path.match(/settings.multiViewers.(\d+).windows.(\d+)/)) {
-				// Debounce, because of a bug with the Constellation HD
-				this.debounceUpdateMVSource()
-				// changedFeedbacks.add(FeedbackId.MVSource)
+				changedFeedbacks.add(FeedbackId.MVSource)
+				changedFeedbacks.add(FeedbackId.MVSourceVariables)
 				continue
 			}
 
@@ -404,23 +402,6 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			if (changedFeedbacks.size > 0) this.checkFeedbacks(...Array.from(changedFeedbacks))
 		}
 	}
-
-	/**
-	 * The Constellation HD sends every MV source for every frame, which floods companion with checking for feedbacks.
-	 * Until the bug is fixed, apply a simple debounce, to limit the update speed
-	 */
-	private debounceUpdateMVSource = debounceFn(
-		() => {
-			this.checkFeedbacks(FeedbackId.MVSource)
-			this.checkFeedbacks(FeedbackId.MVSourceVariables)
-		},
-		{
-			before: true,
-			after: true,
-			wait: 50, // Shortest frame time is 40ms, this gives some headroom
-			maxWait: 500, // Update at least twice a second
-		}
-	)
 
 	private setupAtemConnection(): void {
 		this.atem = new Atem()

@@ -34,7 +34,6 @@
 		"@companion-module/base": "~1.5.0",
 		"atem-connection": "^3.3.0",
 		"bonjour-service": "^1.1.1",
-		"debounce-fn": "^5.1.2",
 		"debug": "^4.3.4",
 		"type-fest": "^3.10.0"
 	},
