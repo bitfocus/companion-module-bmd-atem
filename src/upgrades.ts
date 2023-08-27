@@ -148,31 +148,14 @@ function fixUsingFairlightAudioFaderGainInsteadOfFairlightAudioMonitorFaderGain(
 	return result
 }
 
-// function builtinInvert(
-// 	_context: CompanionUpgradeContext<AtemConfig>,
-// 	props: CompanionStaticUpgradeProps<AtemConfig>
-// ): CompanionStaticUpgradeResult<AtemConfig> {
-// 	const result: CompanionStaticUpgradeResult<AtemConfig> = {
-// 		updatedActions: [],
-// 		updatedConfig: null,
-// 		updatedFeedbacks: [],
-// 	}
-
-// 	for (const feedback of props.feedbacks) {
-// 		if (feedback.feedbackId === FeedbackId.DSKOnAir && feedback.options['invert'] !== undefined) {
-// 			feedback.isInverted = !!feedback.options['invert']
-// 			delete feedback.options['invert']
-// 			result.updatedFeedbacks.push(feedback)
-// 		}
-// 	}
-
-// 	return result
-// }
-
 const InvertableFeedbackUpgradeMap: {
 	[id in FeedbackId]?: string
 } = {
+	[FeedbackId.ProgramTally]: 'invert',
+	[FeedbackId.PreviewTally]: 'invert',
 	[FeedbackId.DSKOnAir]: 'invert',
+	[FeedbackId.DSKTie]: 'invert',
+	[FeedbackId.USKOnAir]: 'invert',
 }
 
 export const UpgradeScripts: CompanionStaticUpgradeScript<AtemConfig>[] = [
@@ -180,6 +163,5 @@ export const UpgradeScripts: CompanionStaticUpgradeScript<AtemConfig>[] = [
 	CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap),
 	upgradeAddSSrcPropertiesPicker,
 	fixUsingFairlightAudioFaderGainInsteadOfFairlightAudioMonitorFaderGain,
-	// builtinInvert,
 	CreateUseBuiltinInvertForFeedbacksUpgradeScript(InvertableFeedbackUpgradeMap),
 ]
