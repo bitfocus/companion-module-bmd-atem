@@ -1132,13 +1132,6 @@ export function AtemAllSourcePicker(model: ModelSpec, state: AtemState): Compani
 	}
 }
 
-export const InvertInput: CompanionInputFieldCheckbox = {
-	type: 'checkbox',
-	label: 'Invert',
-	id: 'invert',
-	default: false,
-}
-
 export function AtemDisplayClockPropertiesPickers(): Array<
 	| CompanionInputFieldNumber
 	| CompanionInputFieldCheckbox

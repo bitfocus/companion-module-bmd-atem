@@ -1,8 +1,11 @@
-import type {
-	CompanionStaticUpgradeProps,
-	CompanionStaticUpgradeResult,
-	CompanionUpgradeContext,
-	InputValue,
+import {
+	CreateConvertToBooleanFeedbackUpgradeScript,
+	type CompanionStaticUpgradeProps,
+	type CompanionStaticUpgradeResult,
+	type CompanionUpgradeContext,
+	type InputValue,
+	type CompanionStaticUpgradeScript,
+	CreateUseBuiltinInvertForFeedbacksUpgradeScript,
 } from '@companion-module/base'
 import { ActionId } from './actions.js'
 import type { AtemConfig } from './config.js'
@@ -14,7 +17,7 @@ function scaleValue(obj: { [key: string]: InputValue | undefined }, key: string,
 	}
 }
 
-export function upgradeV2x2x0(
+function upgradeV2x2x0(
 	_context: CompanionUpgradeContext<AtemConfig>,
 	props: CompanionStaticUpgradeProps<AtemConfig>
 ): CompanionStaticUpgradeResult<AtemConfig> {
@@ -55,7 +58,7 @@ export function upgradeV2x2x0(
 	return result
 }
 
-export const BooleanFeedbackUpgradeMap: {
+const BooleanFeedbackUpgradeMap: {
 	[id in FeedbackId]?: true
 } = {
 	[FeedbackId.PreviewBG]: true,
@@ -95,7 +98,7 @@ export const BooleanFeedbackUpgradeMap: {
 	[FeedbackId.FairlightAudioMixOption]: true,
 }
 
-export function upgradeAddSSrcPropertiesPicker(
+function upgradeAddSSrcPropertiesPicker(
 	_context: CompanionUpgradeContext<AtemConfig>,
 	props: CompanionStaticUpgradeProps<AtemConfig>
 ): CompanionStaticUpgradeResult<AtemConfig> {
@@ -125,7 +128,7 @@ export function upgradeAddSSrcPropertiesPicker(
 	return result
 }
 
-export function fixUsingFairlightAudioFaderGainInsteadOfFairlightAudioMonitorFaderGain(
+function fixUsingFairlightAudioFaderGainInsteadOfFairlightAudioMonitorFaderGain(
 	_context: CompanionUpgradeContext<AtemConfig>,
 	props: CompanionStaticUpgradeProps<AtemConfig>
 ): CompanionStaticUpgradeResult<AtemConfig> {
@@ -144,3 +147,21 @@ export function fixUsingFairlightAudioFaderGainInsteadOfFairlightAudioMonitorFad
 
 	return result
 }
+
+const InvertableFeedbackUpgradeMap: {
+	[id in FeedbackId]?: string
+} = {
+	[FeedbackId.ProgramTally]: 'invert',
+	[FeedbackId.PreviewTally]: 'invert',
+	[FeedbackId.DSKOnAir]: 'invert',
+	[FeedbackId.DSKTie]: 'invert',
+	[FeedbackId.USKOnAir]: 'invert',
+}
+
+export const UpgradeScripts: CompanionStaticUpgradeScript<AtemConfig>[] = [
+	upgradeV2x2x0,
+	CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap),
+	upgradeAddSSrcPropertiesPicker,
+	fixUsingFairlightAudioFaderGainInsteadOfFairlightAudioMonitorFaderGain,
+	CreateUseBuiltinInvertForFeedbacksUpgradeScript(InvertableFeedbackUpgradeMap),
+]
