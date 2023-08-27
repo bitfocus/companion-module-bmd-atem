@@ -2,13 +2,6 @@ import AtemPkg, { type Atem as IAtem, type AtemState, Commands } from 'atem-conn
 import { GetActionsList } from './actions.js'
 import { type AtemConfig, GetConfigFields } from './config.js'
 import { FeedbackId, GetFeedbacksList } from './feedback.js'
-import {
-	BooleanFeedbackUpgradeMap,
-	builtinInvert,
-	fixUsingFairlightAudioFaderGainInsteadOfFairlightAudioMonitorFaderGain,
-	upgradeAddSSrcPropertiesPicker,
-	upgradeV2x2x0,
-} from './upgrades.js'
 import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, type ModelSpec } from './models/index.js'
 import { GetPresetsList } from './presets.js'
 import type { TallyBySource } from './state.js'
@@ -26,7 +19,6 @@ import {
 	InstanceBase,
 	type SomeCompanionConfigField,
 	runEntrypoint,
-	CreateConvertToBooleanFeedbackUpgradeScript,
 	InstanceStatus,
 	type CompanionVariableValues,
 } from '@companion-module/base'
@@ -36,6 +28,7 @@ const { Atem, AtemConnectionStatus, AtemStateUtil } = AtemPkg
 
 // eslint-disable-next-line node/no-extraneous-import
 import { ThreadedClassManager, RegisterExitHandlers } from 'threadedclass'
+import { UpgradeScripts } from './upgrades.js'
 
 // HACK: This stops it from registering an unhandledException handler, as that causes companion to exit on error
 ThreadedClassManager.handleExit = RegisterExitHandlers.NO
@@ -514,10 +507,4 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	}
 }
 
-runEntrypoint(AtemInstance, [
-	upgradeV2x2x0,
-	CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap),
-	upgradeAddSSrcPropertiesPicker,
-	fixUsingFairlightAudioFaderGainInsteadOfFairlightAudioMonitorFaderGain,
-	builtinInvert,
-])
+runEntrypoint(AtemInstance, UpgradeScripts)
