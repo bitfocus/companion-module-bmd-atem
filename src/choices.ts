@@ -334,6 +334,9 @@ export function GetAudioInputsList(model: ModelSpec, state: AtemState): MiniSour
 			case Enums.ExternalPortType.TRSJack:
 				sources.push(getSource(input.id, undefined, `TRS`))
 				break
+			case Enums.ExternalPortType.RJ45:
+				sources.push(getSource(input.id, undefined, 'RJ45'))
+				break
 			default:
 				assertUnreachable(input.portType)
 				break
