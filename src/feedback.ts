@@ -155,7 +155,7 @@ function previewFeedbacks(model: ModelSpec, state: AtemState) {
 		[FeedbackId.PreviewBG]: {
 			type: 'boolean',
 			name: 'ME: One ME preview source',
-			description: 'If the input specified is in use by preview on the M/E stage specified, change style of the bank',
+			description: 'If the input specified is selected in preview on the M/E stage specified, change style of the bank',
 			options: [AtemMEPicker(model, 0), AtemMESourcePicker(model, state, 0)],
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -181,7 +181,7 @@ function previewFeedbacks(model: ModelSpec, state: AtemState) {
 		[FeedbackId.PreviewVariables]: {
 			type: 'boolean',
 			name: 'ME: One ME preview source from variables',
-			description: 'If the input specified is in use by preview on the M/E stage specified, change style of the bank',
+			description: 'If the input specified is selected in preview on the M/E stage specified, change style of the bank',
 			options: [
 				{
 					type: 'textinput',
@@ -374,7 +374,7 @@ function programFeedbacks(model: ModelSpec, state: AtemState) {
 		[FeedbackId.ProgramBG]: {
 			type: 'boolean',
 			name: 'ME: One ME program source',
-			description: 'If the input specified is in use by program on the M/E stage specified, change style of the bank',
+			description: 'If the input specified is selected in program on the M/E stage specified, change style of the bank',
 			options: [AtemMEPicker(model, 0), AtemMESourcePicker(model, state, 0)],
 			defaultStyle: {
 				color: combineRgb(255, 255, 255),
@@ -400,7 +400,7 @@ function programFeedbacks(model: ModelSpec, state: AtemState) {
 		[FeedbackId.ProgramVariables]: {
 			type: 'boolean',
 			name: 'ME: One ME program source from variables',
-			description: 'If the input specified is in use by program on the M/E stage specified, change style of the bank',
+			description: 'If the input specified is selected in program on the M/E stage specified, change style of the bank',
 			options: [
 				{
 					type: 'textinput',
@@ -609,7 +609,7 @@ function uskFeedbacks(model: ModelSpec, state: AtemState) {
 			? ({
 					type: 'boolean',
 					name: 'Upstream key: Fill source',
-					description: 'If the input specified is in use by the USK specified, change style of the bank',
+					description: 'If the input specified is selected in the USK specified, change style of the bank',
 					options: [AtemMEPicker(model, 0), AtemUSKPicker(model), AtemKeyFillSourcePicker(model, state)],
 					defaultStyle: {
 						color: combineRgb(0, 0, 0),
@@ -637,7 +637,7 @@ function uskFeedbacks(model: ModelSpec, state: AtemState) {
 			? ({
 					type: 'boolean',
 					name: 'Upstream key: Fill source from variables',
-					description: 'If the input specified is in use by the USK specified, change style of the bank',
+					description: 'If the input specified is selected in the USK specified, change style of the bank',
 					options: [
 						{
 							type: 'textinput',
@@ -1294,7 +1294,7 @@ function dskFeedbacks(model: ModelSpec, state: AtemState) {
 			? ({
 					type: 'boolean',
 					name: 'Downstream key: Fill source',
-					description: 'If the input specified is in use by the DSK specified, change style of the bank',
+					description: 'If the input specified is selected in the DSK specified, change style of the bank',
 					options: [AtemDSKPicker(model), AtemKeyFillSourcePicker(model, state)],
 					defaultStyle: {
 						color: combineRgb(0, 0, 0),
@@ -1322,7 +1322,7 @@ function dskFeedbacks(model: ModelSpec, state: AtemState) {
 			? ({
 					type: 'boolean',
 					name: 'Downstream key: Fill source from variables',
-					description: 'If the input specified is in use by the DSK specified, change style of the bank',
+					description: 'If the input specified is selected in the DSK specified, change style of the bank',
 					options: [
 						{
 							type: 'textinput',
@@ -1858,7 +1858,7 @@ export function GetFeedbacksList(
 			? ({
 					type: 'boolean',
 					name: 'Aux/Output: Source',
-					description: 'If the input specified is in use by the aux bus specified, change style of the bank',
+					description: 'If the input specified is selected in the aux bus specified, change style of the bank',
 					options: [AtemAuxPicker(model), AtemAuxSourcePicker(model, state)],
 					defaultStyle: {
 						color: combineRgb(0, 0, 0),
@@ -1886,7 +1886,7 @@ export function GetFeedbacksList(
 			? ({
 					type: 'boolean',
 					name: 'Aux/Output: Source from variables',
-					description: 'If the input specified is in use by the aux bus specified, change style of the bank',
+					description: 'If the input specified is selected in the aux bus specified, change style of the bank',
 					options: [
 						{
 							type: 'textinput',
