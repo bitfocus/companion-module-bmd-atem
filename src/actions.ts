@@ -212,9 +212,9 @@ function meActions(
 					useVariables: true,
 				},
 			],
-			callback: async (action) => {
-				const mixeffect = Number(await instance.parseVariablesInString(action.options.mixeffect as string))
-				const input = Number(await instance.parseVariablesInString(action.options.input as string))
+			callback: async (action, context) => {
+				const mixeffect = Number(await context.parseVariablesInString(action.options.mixeffect as string))
+				const input = Number(await context.parseVariablesInString(action.options.input as string))
 
 				if (!isNaN(mixeffect) && !isNaN(input)) {
 					await atem?.changeProgramInput(input, mixeffect - 1)
@@ -258,9 +258,9 @@ function meActions(
 					useVariables: true,
 				},
 			],
-			callback: async (action) => {
-				const mixeffect = Number(await instance.parseVariablesInString(action.options.mixeffect as string))
-				const input = Number(await instance.parseVariablesInString(action.options.input as string))
+			callback: async (action, context) => {
+				const mixeffect = Number(await context.parseVariablesInString(action.options.mixeffect as string))
+				const input = Number(await context.parseVariablesInString(action.options.input as string))
 
 				if (!isNaN(mixeffect) && !isNaN(input)) {
 					await atem?.changePreviewInput(input, mixeffect - 1)
@@ -1584,12 +1584,7 @@ function ssrcActions(atem: Atem | undefined, model: ModelSpec, state: AtemState)
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function streamRecordActions(
-	instance: InstanceBaseExt<AtemConfig>,
-	atem: Atem | undefined,
-	model: ModelSpec,
-	state: AtemState
-) {
+function streamRecordActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) {
 	return {
 		[ActionId.StreamStartStop]: model.streaming
 			? ({
@@ -1636,25 +1631,34 @@ function streamRecordActions(
 							label: 'Service',
 							type: 'textinput',
 							default: '',
+							useVariables: true,
 						},
 						{
 							id: 'url',
 							label: 'URL',
 							type: 'textinput',
 							default: '',
+							useVariables: true,
 						},
 						{
 							id: 'key',
 							label: 'Key',
 							type: 'textinput',
 							default: '',
+							useVariables: true,
 						},
 					],
-					callback: async (action) => {
+					callback: async (action, context) => {
+						const [serviceName, url, key] = await Promise.all([
+							context.parseVariablesInString(`${action.options.service || ''}`),
+							context.parseVariablesInString(`${action.options.url || ''}`),
+							context.parseVariablesInString(`${action.options.key || ''}`),
+						])
+
 						await atem?.setStreamingService({
-							serviceName: `${action.options.service || ''}`,
-							url: `${action.options.url || ''}`,
-							key: `${action.options.key || ''}`,
+							serviceName,
+							url,
+							key,
 						})
 					},
 					learn: (feedback) => {
@@ -1727,8 +1731,9 @@ function streamRecordActions(
 							default: '',
 						},
 					],
-					callback: async (action) => {
-						const filename = await instance.parseVariablesInString(`${action.options.filename || ''}`)
+					callback: async (action, context) => {
+						const filename = await context.parseVariablesInString(`${action.options.filename || ''}`)
+
 						await atem?.setRecordingSettings({
 							filename: `${filename || ''}`,
 						})
@@ -2469,7 +2474,7 @@ export function GetActionsList(
 		...dskActions(atem, model, state),
 		...macroActions(atem, model, state),
 		...ssrcActions(atem, model, state),
-		...streamRecordActions(instance, atem, model, state),
+		...streamRecordActions(atem, model, state),
 		...audioActions(atem, model, transitions, state),
 		[ActionId.Aux]: model.auxes
 			? ({
@@ -2511,9 +2516,9 @@ export function GetActionsList(
 							useVariables: true,
 						},
 					],
-					callback: async (action) => {
-						const output = Number(await instance.parseVariablesInString(action.options.aux as string))
-						const input = Number(await instance.parseVariablesInString(action.options.input as string))
+					callback: async (action, context) => {
+						const output = Number(await context.parseVariablesInString(action.options.aux as string))
+						const input = Number(await context.parseVariablesInString(action.options.input as string))
 
 						if (!isNaN(output) && !isNaN(input)) {
 							await atem?.setAuxSource(input, output - 1)
@@ -2744,7 +2749,7 @@ export function GetActionsList(
 					useVariables: true,
 				},
 			],
-			callback: async (action) => {
+			callback: async (action, context) => {
 				const source = getOptNumber(action, 'source')
 				const setShort = getOptBool(action, 'short_enable')
 				const setLong = getOptBool(action, 'long_enable')
@@ -2752,11 +2757,11 @@ export function GetActionsList(
 				const newProps: Partial<Pick<InputState.InputChannel, 'longName' | 'shortName'>> = {}
 				if (setShort && typeof action.options.short_value === 'string') {
 					const rawVal = action.options.short_value
-					newProps.shortName = await instance.parseVariablesInString(rawVal)
+					newProps.shortName = await context.parseVariablesInString(rawVal)
 				}
 				if (setLong && typeof action.options.long_value === 'string') {
 					const rawVal = action.options.long_value
-					newProps.longName = await instance.parseVariablesInString(rawVal)
+					newProps.longName = await context.parseVariablesInString(rawVal)
 				}
 
 				await Promise.all([
