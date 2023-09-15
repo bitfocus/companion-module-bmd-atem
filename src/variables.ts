@@ -17,7 +17,7 @@ import type { CompanionVariableDefinition, CompanionVariableValues } from '@comp
 function getSourcePresetName(instance: InstanceBaseExt<AtemConfig>, state: AtemState, id: number): string {
 	const input = state.inputs[id]
 	if (input) {
-		return instance.config.presets === PresetStyleName.Long + '' ? input.longName : input.shortName
+		return Number(instance.config.presets) === PresetStyleName.Long ? input.longName : input.shortName
 	} else if (id === 0) {
 		return 'Black'
 	} else if (id === undefined) {

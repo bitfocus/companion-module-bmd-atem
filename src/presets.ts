@@ -53,8 +53,8 @@ export function GetPresetsList(
 ): CompanionPresetDefinitions {
 	const presets: CompanionPresetDefinitions = {}
 
-	const pstText = instance.config.presets === PresetStyleName.Long + '' ? 'long_' : 'short_'
-	const pstSize = instance.config.presets === PresetStyleName.Long + '' ? 'auto' : '18'
+	const pstText = Number(instance.config.presets) === PresetStyleName.Long ? 'long_' : 'short_'
+	const pstSize = Number(instance.config.presets) === PresetStyleName.Long ? 'auto' : '18'
 
 	const meSources = GetSourcesListForType(model, state, 'me')
 
