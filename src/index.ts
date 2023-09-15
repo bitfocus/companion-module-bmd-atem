@@ -212,6 +212,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			recording: false,
 			fairlightAudio: new Set(),
 			classicAudio: new Set(),
+			mvWindow: new Set(),
 		}
 
 		for (const path of paths) {
@@ -294,7 +295,12 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				continue
 			}
 
-			if (path.match(/settings.multiViewers.(\d+).windows.(\d+)/)) {
+			const mvWindowMatch = path.match(/settings.multiViewers.(\d+).windows.(\d+)/)
+			if (mvWindowMatch) {
+				const meIndex = parseInt(mvWindowMatch[1], 10)
+				const windowIndex = parseInt(mvWindowMatch[2], 10)
+				changedVariables.mvWindow.add([meIndex + 1, windowIndex + 1])
+
 				changedFeedbacks.add(FeedbackId.MVSource)
 				changedFeedbacks.add(FeedbackId.MVSourceVariables)
 				continue

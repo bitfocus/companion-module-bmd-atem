@@ -40,6 +40,7 @@ export interface UpdateVariablesProps {
 	recording: boolean
 	classicAudio: Set<number>
 	fairlightAudio: Set<number>
+	mvWindow: Set<[index: number, window: number]>
 }
 
 export function updateChangedVariables(
@@ -66,6 +67,9 @@ export function updateChangedVariables(
 	for (const fairlightAudioIndex of changes.fairlightAudio)
 		updateFairlightAudioVariables(state, fairlightAudioIndex, newValues)
 	for (const classicAudioIndex of changes.classicAudio) updateClassicAudioVariables(state, classicAudioIndex, newValues)
+
+	for (const [index, window] of changes.mvWindow)
+		updateMultiviewerWindowInput(instance, state, index, window, newValues)
 
 	if (Object.keys(newValues).length > 0) {
 		instance.setVariableValues(newValues)
@@ -331,6 +335,18 @@ function updateSuperSourceVariables(
 		values[`ssrc${i + 1}_box${b + 1}_source`] = getSourcePresetName(instance, state, input)
 		values[`ssrc${i + 1}_box${b + 1}_source_id`] = input
 	}
+}
+
+function updateMultiviewerWindowInput(
+	instance: InstanceBaseExt<AtemConfig>,
+	state: AtemState,
+	index: number, // 1 index
+	window: number, // 1 index
+	values: CompanionVariableValues
+): void {
+	const inputId = state.settings.multiViewers[index - 1]?.windows?.[window - 1]?.source ?? 0
+	values[`mv_${index}_window_${window}_input_id`] = inputId
+	values[`mv_${index}_window_${window}_input`] = getSourcePresetName(instance, state, inputId)
 }
 
 export function updateDeviceIpVariable(instance: InstanceBaseExt<AtemConfig>, values: CompanionVariableValues): void {
@@ -625,6 +641,21 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 				variableId: `audio_input_${entry.id}_mixOption`,
 			})
 			updateClassicAudioVariables(state, entry.id, values)
+		}
+	}
+
+	const boxPerMultiviewer = model.multiviewerFullGrid ? 16 : 10
+	for (let index = 1; index <= model.MVs; index++) {
+		for (let window = 1; window <= boxPerMultiviewer; window++) {
+			variables.push({
+				name: `Label of input in multiviewer ${index} window ${window}`,
+				variableId: `mv_${index}_window_${window}_input`,
+			})
+			variables.push({
+				name: `Id of input in multiviewer ${index} window ${window}`,
+				variableId: `mv_${index}_window_${window}_input_id`,
+			})
+			updateMultiviewerWindowInput(instance, state, index, window, values)
 		}
 	}
 
