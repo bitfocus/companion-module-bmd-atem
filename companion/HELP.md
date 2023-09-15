@@ -3,7 +3,7 @@
 Should work with all models of Blackmagic Design ATEM mixers.
 
 Firmware versions 7.5.2 and later are known to work, other versions may experience problems.  
-Firmware versions after 9.0 are not verified to be working at the time of writing, but they likely will work fine.
+Firmware versions after 9.2 are not verified to be working at the time of writing, but they likely will work fine.
 
 Devices must be controlled over a network, USB control is NOT supported.
 
@@ -50,7 +50,7 @@ You can resolve this by giving the macro a pause/sleep of 1 frame.
 
 ### Diagnosing connection issues
 
-The most common cause of Companion not being able to connect to your ATEM is misconfiguration of the networking. Due to how the discovery protocol works, it will see ATEMs that you may not be able to connect to.    
+The most common cause of Companion not being able to connect to your ATEM is misconfiguration of the networking. Due to how the discovery protocol works, it will see ATEMs that you may not be able to connect to.  
 A good way to rule out Companion as being at fault, is to disconnect the USB to your ATEM, and use the ATEM software. If that is unable to connect then it is most likely a network configuration issue.
 
 To be able to connect to your ATEM, both the ATEM and your Companion machine must be connected to the same network (ideally cabled, but wifi should work). They must also be of the same IP address range. For example, your network could be `192.168.0.x`, where each machine has a different number instead of the `x`. In most cases the subnet mask should be 255.255.255.0, unless your network is setup to use something else.
