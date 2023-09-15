@@ -30,6 +30,7 @@ function getSourcePresetName(instance: InstanceBaseExt<AtemConfig>, state: AtemS
 export interface UpdateVariablesProps {
 	meProgram: Set<number>
 	mePreview: Set<number>
+	transitionPosition: Set<number>
 	auxes: Set<number>
 	dsk: Set<number>
 	usk: Set<[me: number, key: number]>
@@ -52,6 +53,7 @@ export function updateChangedVariables(
 
 	for (const meIndex of changes.meProgram) updateMEProgramVariable(instance, state, meIndex, newValues)
 	for (const meIndex of changes.mePreview) updateMEPreviewVariable(instance, state, meIndex, newValues)
+	for (const meIndex of changes.transitionPosition) updateMETransitionPositionVariable(state, meIndex, newValues)
 
 	for (const auxIndex of changes.auxes) updateAuxVariable(instance, state, auxIndex, newValues)
 	for (const dsk of changes.dsk) updateDSKVariable(instance, state, dsk, newValues)
@@ -95,6 +97,10 @@ function updateMEPreviewVariable(
 	const input = getMixEffect(state, meIndex)?.previewInput ?? 0
 	values[`pvw${meIndex + 1}_input`] = getSourcePresetName(instance, state, input)
 	values[`pvw${meIndex + 1}_input_id`] = input
+}
+function updateMETransitionPositionVariable(state: AtemState, meIndex: number, values: CompanionVariableValues) {
+	const rawPosition = state.video.mixEffects[meIndex]?.transitionPosition?.handlePosition ?? 0
+	values[`tbar_${meIndex + 1}`] = Math.round(rawPosition / 100)
 }
 
 function updateUSKVariable(
@@ -385,6 +391,12 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 			variableId: `pvw${i + 1}_input_id`,
 		})
 		updateMEPreviewVariable(instance, state, i, values)
+
+		variables.push({
+			name: `Position of T-bar (M/E ${i + 1})`,
+			variableId: `tbar_${i + 1}`,
+		})
+		updateMETransitionPositionVariable(state, i, values)
 
 		for (let k = 0; k < model.USKs; ++k) {
 			variables.push({

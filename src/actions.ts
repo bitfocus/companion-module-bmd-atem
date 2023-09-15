@@ -82,6 +82,7 @@ export enum ActionId {
 	PreviewVariables = 'previewVariables',
 	Cut = 'cut',
 	Auto = 'auto',
+	TBar = 'tBar',
 	Aux = 'aux',
 	AuxVariables = 'auxVariables',
 	USKSource = 'uskSource',
@@ -174,6 +175,7 @@ function meActions(
 	instance: InstanceBaseExt<AtemConfig>,
 	atem: Atem | undefined,
 	model: ModelSpec,
+	transitions: AtemTransitions,
 	commandBatching: AtemCommandBatching,
 	state: StateWrapper
 ) {
@@ -282,6 +284,39 @@ function meActions(
 			options: [AtemMEPicker(model, 0)],
 			callback: async (action) => {
 				await atem?.autoTransition(getOptNumber(action, 'mixeffect'))
+			},
+		} satisfies CompanionActionDefinition,
+		[ActionId.TBar]: {
+			name: 'ME: Set TBar position',
+			options: [
+				AtemMEPicker(model, 0),
+
+				{
+					type: 'textinput',
+					id: 'position',
+					label: 'Position (0 - 100)',
+					default: '0',
+					useVariables: true,
+				},
+
+				FadeDurationChoice,
+			],
+			callback: async (action, context) => {
+				const position = Number(await context.parseVariablesInString(`${action.options.position || '0'}`))
+				if (isNaN(position)) return
+
+				const meIndex = getOptNumber(action, 'mixeffect')
+				const meState = getMixEffect(state.state, meIndex)
+
+				await transitions.run(
+					`me.${meIndex}.tbar`,
+					async (value) => {
+						await atem?.setTransitionPosition(value, meIndex)
+					},
+					meState?.transitionPosition.handlePosition,
+					position * 100,
+					getOptNumber(action, 'fadeDuration', 0)
+				)
 			},
 		} satisfies CompanionActionDefinition,
 
@@ -2550,7 +2585,7 @@ export function GetActionsList(
 	state: StateWrapper
 ): CompanionActionsExt {
 	const actions: CompanionActionsExt = {
-		...meActions(instance, atem, model, commandBatching, state),
+		...meActions(instance, atem, model, transitions, commandBatching, state),
 		...dskActions(atem, model, state),
 		...macroActions(atem, model, state),
 		...ssrcActions(atem, model, state),

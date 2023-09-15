@@ -202,6 +202,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		const changedVariables: UpdateVariablesProps = {
 			meProgram: new Set(),
 			mePreview: new Set(),
+			transitionPosition: new Set(),
 			auxes: new Set(),
 			dsk: new Set(),
 			usk: new Set(),
@@ -356,7 +357,11 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				changedFeedbacks.add(FeedbackId.TransitionRate)
 				continue
 			}
-			if (path.match(/video.mixEffects.(\d+).transitionPosition/)) {
+			const transitionPositionMatch = path.match(/video.mixEffects.(\d+).transitionPosition/)
+			if (transitionPositionMatch) {
+				const meIndex = parseInt(transitionPositionMatch[1], 10)
+				changedVariables.transitionPosition.add(meIndex)
+
 				changedFeedbacks.add(FeedbackId.InTransition)
 				continue
 			}

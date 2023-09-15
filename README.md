@@ -31,6 +31,7 @@ To add a new model to the list:
 - Add multiviewer window source variables #245
 - Add CUT preset #224
 - Adjust master pan in classic audio mixer #180
+- Set T-bar position #241
 
 ## v3.4.0
 
