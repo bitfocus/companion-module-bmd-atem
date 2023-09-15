@@ -23,6 +23,14 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.5.0
+
+- Support variables in 'Stream: Set service' #256
+- New tally feedback, to provide tally for ME2 #188
+- Fix potential feedback reactivity issue
+- Add multiviewer window source variables #245
+- Add CUT preset #224
+
 ## v3.4.0
 
 - Use builtin invert support for all feedbacks
