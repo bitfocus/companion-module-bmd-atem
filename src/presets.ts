@@ -141,6 +141,42 @@ export function GetPresetsList(
 	}
 
 	for (let me = 0; me < model.MEs; ++me) {
+		presets[`transition_cut_me_${me}`] = {
+			category: `Transitions (M/E ${me + 1})`,
+			name: `CUT`,
+			type: 'button',
+			style: {
+				text: 'CUT',
+				size: pstSize,
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 0),
+			},
+			feedbacks: [
+				{
+					feedbackId: FeedbackId.InTransition,
+					options: {
+						mixeffect: me,
+					},
+					style: {
+						bgcolor: combineRgb(255, 0, 0),
+						color: combineRgb(255, 255, 255),
+					},
+				},
+			],
+			steps: [
+				{
+					down: [
+						{
+							actionId: ActionId.Cut,
+							options: {
+								mixeffect: me,
+							},
+						},
+					],
+					up: [],
+				},
+			],
+		}
 		presets[`transition_auto_me_${me}`] = {
 			category: `Transitions (M/E ${me + 1})`,
 			name: `AUTO`,
@@ -177,6 +213,7 @@ export function GetPresetsList(
 				},
 			],
 		}
+
 		for (const opt of GetTransitionStyleChoices()) {
 			presets[`transition_style_me_${me}_${opt.id}`] = {
 				category: `Transitions (M/E ${me + 1})`,
