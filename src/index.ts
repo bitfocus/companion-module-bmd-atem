@@ -4,7 +4,7 @@ import { type AtemConfig, GetConfigFields } from './config.js'
 import { FeedbackId, GetFeedbacksList } from './feedback.js'
 import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, type ModelSpec } from './models/index.js'
 import { GetPresetsList } from './presets.js'
-import type { TallyBySource, TallyCache } from './state.js'
+import type { StateWrapper } from './state.js'
 import { MODEL_AUTO_DETECT } from './models/types.js'
 import {
 	InitVariables,
@@ -40,10 +40,8 @@ ThreadedClassManager.handleExit = RegisterExitHandlers.NO
 class AtemInstance extends InstanceBase<AtemConfig> {
 	private model: ModelSpec
 	private atem: IAtem | undefined
-	private atemState: AtemState
+	private wrappedState: StateWrapper
 	private commandBatching: AtemCommandBatching
-	private atemTally: TallyBySource
-	private tallyCache: TallyCache
 	private isActive: boolean
 	private durationInterval: NodeJS.Timer | undefined
 	private atemTransitions: AtemTransitions
@@ -57,9 +55,11 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		super(internal)
 
 		this.commandBatching = new AtemCommandBatching()
-		this.atemState = AtemStateUtil.Create()
-		this.atemTally = {}
-		this.tallyCache = new Map()
+		this.wrappedState = {
+			state: AtemStateUtil.Create(),
+			tally: {},
+			tallyCache: new Map(),
+		}
 		this.atemTransitions = new AtemTransitions(this.config)
 
 		// Fix bugged config
@@ -105,7 +105,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		this.log('debug', 'ATEM changed model: ' + this.model.id)
 
 		// Force clear the cached state
-		this.atemState = AtemStateUtil.Create()
+		this.wrappedState.state = AtemStateUtil.Create()
 		this.atemTransitions.stopAll()
 		this.atemTransitions = new AtemTransitions(this.config)
 		this.updateCompanionBits()
@@ -155,7 +155,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		if (configModel) {
 			return configModel
 		} else {
-			const info = this.atemState.info
+			const info = this.wrappedState.state.info
 			if (info && info.model) {
 				return info.model
 			} else {
@@ -165,11 +165,11 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	}
 
 	private updateCompanionBits(): void {
-		InitVariables(this, this.model, this.atemState)
-		this.setPresetDefinitions(GetPresetsList(this, this.model, this.atemState))
-		this.setFeedbackDefinitions(GetFeedbacksList(this.model, this.atemState, this.atemTally, this.tallyCache))
+		InitVariables(this, this.model, this.wrappedState.state)
+		this.setPresetDefinitions(GetPresetsList(this, this.model, this.wrappedState.state))
+		this.setFeedbackDefinitions(GetFeedbacksList(this.model, this.wrappedState))
 		this.setActionDefinitions(
-			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.atemState)
+			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.wrappedState)
 		)
 
 		this.checkFeedbacks()
@@ -185,9 +185,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	private processReceivedCommands(commands: Commands.IDeserializedCommand[]): void {
 		commands.forEach((command) => {
 			if (command instanceof Commands.TallyBySourceCommand) {
-				// The feedback holds a reference to the old object, so we need
-				// to update it in place
-				Object.assign(this.atemTally, command.properties)
+				this.wrappedState.tally = command.properties
 				this.checkFeedbacks(FeedbackId.ProgramTally, FeedbackId.PreviewTally)
 			}
 		})
@@ -197,7 +195,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	 */
 	private processStateChange(newState: AtemState, paths: string[]): void {
 		// TODO - do we need to clone this object?
-		this.atemState = newState
+		this.wrappedState.state = newState
 
 		let reInit = false
 		const changedFeedbacks = new Set<FeedbackId>()
@@ -400,9 +398,9 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 
 		// Invalidate any tally
 		const changedFeedbackIds = new Set<string>()
-		for (const [inputId, tally] of this.tallyCache.entries()) {
+		for (const [inputId, tally] of this.wrappedState.tallyCache.entries()) {
 			if (tally.referencedFeedbackIds.size) {
-				const newTally = calculateTallyForInputId(this.atemState, inputId)
+				const newTally = calculateTallyForInputId(this.wrappedState.state, inputId)
 				if (tally.lastVisibleInputs.length !== newTally.length || !isEqual(newTally, tally.lastVisibleInputs)) {
 					// Tally has changed
 					tally.referencedFeedbackIds.forEach((id) => changedFeedbackIds.add(id))
@@ -418,7 +416,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		if (reInit) {
 			this.updateCompanionBits()
 		} else {
-			updateChangedVariables(this, this.atemState, changedVariables)
+			updateChangedVariables(this, this.wrappedState.state, changedVariables)
 			if (changedFeedbacks.size > 0) this.checkFeedbacks(...Array.from(changedFeedbacks))
 			if (changedFeedbackIds.size > 0) this.checkFeedbacksById(...Array.from(changedFeedbackIds))
 		}
@@ -429,9 +427,9 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 
 		this.atem.on('connected', () => {
 			if (this.atem?.state) {
-				this.atemState = this.atem.state
+				this.wrappedState.state = this.atem.state
 
-				const atemInfo = this.atemState.info
+				const atemInfo = this.wrappedState.state.info
 				this.log('info', 'Connected to a ' + atemInfo.productIdentifier)
 				this.updateStatus(InstanceStatus.Ok)
 
@@ -440,7 +438,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				if (newModelSpec) {
 					this.model = newModelSpec
 				} else {
-					this.model = GetParsedModelSpec(this.atemState)
+					this.model = GetParsedModelSpec(this.wrappedState.state)
 					this.updateStatus(
 						InstanceStatus.UnknownWarning,
 						`Unknown model: ${atemInfo.productIdentifier}. Some bits may be missing`
@@ -462,14 +460,14 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 
 				this.updateCompanionBits()
 
-				if (!this.durationInterval && (this.atemState.streaming || this.atemState.recording)) {
+				if (!this.durationInterval && (this.wrappedState.state.streaming || this.wrappedState.state.recording)) {
 					this.durationInterval = setInterval(() => {
-						if (this.atem && this.atemState.streaming) {
+						if (this.atem && this.wrappedState.state.streaming) {
 							this.atem.requestStreamingDuration().catch((e) => {
 								this.log('debug', 'Action execution error: ' + e)
 							})
 						}
-						if (this.atem && this.atemState.recording) {
+						if (this.atem && this.wrappedState.state.recording) {
 							this.atem.requestRecordingDuration().catch((e) => {
 								this.log('debug', 'Action execution error: ' + e)
 							})

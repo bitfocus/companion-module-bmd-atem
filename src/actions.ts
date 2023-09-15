@@ -1,4 +1,4 @@
-import { type Atem, type AtemState, Enums, type InputState, type VideoState, type DisplayClock } from 'atem-connection'
+import { type Atem, Enums, type InputState, type VideoState, type DisplayClock } from 'atem-connection'
 import {
 	CHOICES_KEYTRANS,
 	GetDSKIdChoices,
@@ -54,6 +54,7 @@ import {
 	getMediaPlayer,
 	getMixEffect,
 	getMultiviewerWindow,
+	type StateWrapper,
 } from './state.js'
 import {
 	assertUnreachable,
@@ -172,17 +173,17 @@ function meActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	commandBatching: AtemCommandBatching,
-	state: AtemState
+	state: StateWrapper
 ) {
 	return {
 		[ActionId.Program]: {
 			name: 'ME: Set Program input',
-			options: [AtemMEPicker(model, 0), AtemMESourcePicker(model, state, 0)],
+			options: [AtemMEPicker(model, 0), AtemMESourcePicker(model, state.state, 0)],
 			callback: async (action) => {
 				await atem?.changeProgramInput(getOptNumber(action, 'input'), getOptNumber(action, 'mixeffect'))
 			},
 			learn: (action) => {
-				const me = getMixEffect(state, getOptNumber(action, 'mixeffect'))
+				const me = getMixEffect(state.state, getOptNumber(action, 'mixeffect'))
 
 				if (me) {
 					return {
@@ -223,12 +224,12 @@ function meActions(
 		} satisfies CompanionActionDefinition,
 		[ActionId.Preview]: {
 			name: 'ME: Set Preview input',
-			options: [AtemMEPicker(model, 0), AtemMESourcePicker(model, state, 0)],
+			options: [AtemMEPicker(model, 0), AtemMESourcePicker(model, state.state, 0)],
 			callback: async (action) => {
 				await atem?.changePreviewInput(getOptNumber(action, 'input'), getOptNumber(action, 'mixeffect'))
 			},
 			learn: (action) => {
-				const me = getMixEffect(state, getOptNumber(action, 'mixeffect'))
+				const me = getMixEffect(state.state, getOptNumber(action, 'mixeffect'))
 
 				if (me) {
 					return {
@@ -288,8 +289,8 @@ function meActions(
 					options: [
 						AtemMEPicker(model, 0),
 						AtemUSKPicker(model),
-						AtemKeyFillSourcePicker(model, state),
-						AtemKeyCutSourcePicker(model, state),
+						AtemKeyFillSourcePicker(model, state.state),
+						AtemKeyCutSourcePicker(model, state.state),
 					],
 					callback: async (action) => {
 						await Promise.all([
@@ -306,7 +307,7 @@ function meActions(
 						])
 					},
 					learn: (action) => {
-						const usk = getUSK(state, getOptNumber(action, 'mixeffect'), getOptNumber(action, 'key'))
+						const usk = getUSK(state.state, getOptNumber(action, 'mixeffect'), getOptNumber(action, 'key'))
 
 						if (usk) {
 							return {
@@ -370,7 +371,7 @@ function meActions(
 						const mixeffect = Number(await context.parseVariablesInString(action.options.mixeffect as string)) - 1
 						const key = Number(await context.parseVariablesInString(action.options.key as string)) - 1
 
-						const usk = getUSK(state, mixeffect, key)
+						const usk = getUSK(state.state, mixeffect, key)
 
 						if (usk) {
 							return {
@@ -402,14 +403,14 @@ function meActions(
 						const meIndex = getOptNumber(action, 'mixeffect')
 						const keyIndex = getOptNumber(action, 'key')
 						if (action.options.onair === 'toggle') {
-							const usk = getUSK(state, meIndex, keyIndex)
+							const usk = getUSK(state.state, meIndex, keyIndex)
 							await atem?.setUpstreamKeyerOnAir(!usk?.onAir, meIndex, keyIndex)
 						} else {
 							await atem?.setUpstreamKeyerOnAir(action.options.onair === 'true', meIndex, keyIndex)
 						}
 					},
 					learn: (action) => {
-						const usk = getUSK(state, getOptNumber(action, 'mixeffect'), getOptNumber(action, 'key'))
+						const usk = getUSK(state.state, getOptNumber(action, 'mixeffect'), getOptNumber(action, 'key'))
 
 						if (usk) {
 							return {
@@ -434,7 +435,7 @@ function meActions(
 				)
 			},
 			learn: (action) => {
-				const me = getMixEffect(state, getOptNumber(action, 'mixeffect'))
+				const me = getMixEffect(state.state, getOptNumber(action, 'mixeffect'))
 
 				if (me) {
 					return {
@@ -495,7 +496,7 @@ function meActions(
 				}
 			},
 			learn: (action) => {
-				const me = getMixEffect(state, action.options.mixeffect)
+				const me = getMixEffect(state.state, action.options.mixeffect)
 
 				if (me?.transitionSettings) {
 					const style = Number(action.options.style) as Enums.TransitionStyle
@@ -558,7 +559,7 @@ function meActions(
 			],
 			callback: async (action) => {
 				const me = getOptNumber(action, 'mixeffect')
-				const tp = getTransitionProperties(state, me)
+				const tp = getTransitionProperties(state.state, me)
 				if (tp && atem) {
 					let batch = commandBatching.meTransitionSelection.get(me)
 					if (!batch) {
@@ -613,7 +614,7 @@ function meActions(
 				await atem?.setFadeToBlackRate(getOptNumber(action, 'rate'), getOptNumber(action, 'mixeffect'))
 			},
 			learn: (action) => {
-				const me = getMixEffect(state, action.options.mixeffect)
+				const me = getMixEffect(state.state, action.options.mixeffect)
 
 				if (me?.fadeToBlack) {
 					return {
@@ -658,7 +659,7 @@ function meActions(
 						await atem?.setUpstreamKeyerMaskSettings(newProps, mixEffectId, keyId)
 					},
 					learn: (action) => {
-						const usk = getUSK(state, getOptNumber(action, 'mixeffect'), getOptNumber(action, 'key'))
+						const usk = getUSK(state.state, getOptNumber(action, 'mixeffect'), getOptNumber(action, 'key'))
 
 						if (usk?.maskSettings) {
 							return {
@@ -771,7 +772,7 @@ function meActions(
 						await atem?.setUpstreamKeyerDVESettings(newProps, mixEffectId, keyId)
 					},
 					learn: (action) => {
-						const usk = getUSK(state, getOptNumber(action, 'mixeffect'), getOptNumber(action, 'key'))
+						const usk = getUSK(state.state, getOptNumber(action, 'mixeffect'), getOptNumber(action, 'key'))
 
 						if (usk?.dveSettings) {
 							return {
@@ -832,7 +833,7 @@ function meActions(
 							)
 						},
 						learn: (action) => {
-							const usk = getUSK(state, getOptNumber(action, 'mixeffect'), getOptNumber(action, 'key'))
+							const usk = getUSK(state.state, getOptNumber(action, 'mixeffect'), getOptNumber(action, 'key'))
 
 							if (usk?.flyProperties) {
 								return {
@@ -868,7 +869,7 @@ function meActions(
 							)
 						},
 						learn: (action) => {
-							const usk = getUSK(state, getOptNumber(action, 'mixeffect'), getOptNumber(action, 'key'))
+							const usk = getUSK(state.state, getOptNumber(action, 'mixeffect'), getOptNumber(action, 'key'))
 
 							if (usk?.flyProperties) {
 								return {
@@ -885,12 +886,16 @@ function meActions(
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function dskActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) {
+function dskActions(atem: Atem | undefined, model: ModelSpec, state: StateWrapper) {
 	return {
 		[ActionId.DSKSource]: model.DSKs
 			? ({
 					name: 'Downstream key: Set inputs',
-					options: [AtemDSKPicker(model), AtemKeyFillSourcePicker(model, state), AtemKeyCutSourcePicker(model, state)],
+					options: [
+						AtemDSKPicker(model),
+						AtemKeyFillSourcePicker(model, state.state),
+						AtemKeyCutSourcePicker(model, state.state),
+					],
 					callback: async (action) => {
 						await Promise.all([
 							atem?.setDownstreamKeyFillSource(getOptNumber(action, 'fill'), getOptNumber(action, 'key')),
@@ -898,7 +903,7 @@ function dskActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) 
 						])
 					},
 					learn: (feedback) => {
-						const dsk = getDSK(state, feedback.options.key)
+						const dsk = getDSK(state.state, feedback.options.key)
 
 						if (dsk?.sources) {
 							return {
@@ -950,7 +955,7 @@ function dskActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) 
 					learn: async (action, context) => {
 						const key = Number(await context.parseVariablesInString(action.options.key as string)) - 1
 
-						const dsk = getDSK(state, key)
+						const dsk = getDSK(state.state, key)
 
 						if (dsk?.sources) {
 							return {
@@ -972,7 +977,7 @@ function dskActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) 
 						await atem?.setDownstreamKeyRate(getOptNumber(action, 'rate'), getOptNumber(action, 'key'))
 					},
 					learn: (feedback) => {
-						const dsk = getDSK(state, feedback.options.key)
+						const dsk = getDSK(state.state, feedback.options.key)
 
 						if (dsk?.properties) {
 							return {
@@ -1017,7 +1022,7 @@ function dskActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) 
 						await atem?.setDownstreamKeyMaskSettings(newProps, keyId)
 					},
 					learn: (feedback) => {
-						const dsk = getDSK(state, feedback.options.key)
+						const dsk = getDSK(state.state, feedback.options.key)
 
 						if (dsk?.properties?.mask) {
 							return {
@@ -1063,7 +1068,7 @@ function dskActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) 
 						await atem?.setDownstreamKeyGeneralProperties(newProps, keyId)
 					},
 					learn: (feedback) => {
-						const dsk = getDSK(state, feedback.options.key)
+						const dsk = getDSK(state.state, feedback.options.key)
 
 						if (dsk?.properties) {
 							return {
@@ -1112,14 +1117,14 @@ function dskActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) 
 					callback: async (action) => {
 						const keyIndex = getOptNumber(action, 'key')
 						if (action.options.onair === 'toggle') {
-							const dsk = getDSK(state, keyIndex)
+							const dsk = getDSK(state.state, keyIndex)
 							await atem?.setDownstreamKeyOnAir(!dsk?.onAir, keyIndex)
 						} else {
 							await atem?.setDownstreamKeyOnAir(action.options.onair === 'true', keyIndex)
 						}
 					},
 					learn: (feedback) => {
-						const dsk = getDSK(state, feedback.options.key)
+						const dsk = getDSK(state.state, feedback.options.key)
 
 						if (dsk) {
 							return {
@@ -1148,14 +1153,14 @@ function dskActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) 
 					callback: async (action) => {
 						const keyIndex = getOptNumber(action, 'key')
 						if (action.options.state === 'toggle') {
-							const dsk = getDSK(state, keyIndex)
+							const dsk = getDSK(state.state, keyIndex)
 							await atem?.setDownstreamKeyTie(!dsk?.properties?.tie, keyIndex)
 						} else {
 							await atem?.setDownstreamKeyTie(action.options.state === 'true', keyIndex)
 						}
 					},
 					learn: (feedback) => {
-						const dsk = getDSK(state, feedback.options.key)
+						const dsk = getDSK(state.state, feedback.options.key)
 
 						if (dsk?.properties) {
 							return {
@@ -1172,7 +1177,7 @@ function dskActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) 
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function macroActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) {
+function macroActions(atem: Atem | undefined, model: ModelSpec, state: StateWrapper) {
 	return {
 		[ActionId.MacroRun]: model.macros
 			? ({
@@ -1183,7 +1188,7 @@ function macroActions(atem: Atem | undefined, model: ModelSpec, state: AtemState
 							id: 'macro',
 							label: 'Macro',
 							default: 1,
-							choices: GetMacroChoices(model, state),
+							choices: GetMacroChoices(model, state.state),
 						},
 						{
 							type: 'dropdown',
@@ -1198,7 +1203,7 @@ function macroActions(atem: Atem | undefined, model: ModelSpec, state: AtemState
 					],
 					callback: async (action) => {
 						const macroIndex = getOptNumber(action, 'macro') - 1
-						const { macroPlayer, macroRecorder } = state.macro
+						const { macroPlayer, macroRecorder } = state.state.macro
 						if (
 							action.options.action === 'runContinue' &&
 							macroPlayer.isWaiting &&
@@ -1246,7 +1251,7 @@ function macroActions(atem: Atem | undefined, model: ModelSpec, state: AtemState
 					callback: async (action) => {
 						let newState = action.options.loop === 'true'
 						if (action.options.loop === 'toggle') {
-							newState = !state.macro.macroPlayer.loop
+							newState = !state.state.macro.macroPlayer.loop
 						}
 
 						await atem?.macroSetLoop(newState)
@@ -1257,14 +1262,14 @@ function macroActions(atem: Atem | undefined, model: ModelSpec, state: AtemState
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function ssrcActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) {
+function ssrcActions(atem: Atem | undefined, model: ModelSpec, state: StateWrapper) {
 	return {
 		[ActionId.SuperSourceArt]: model.SSrc
 			? ({
 					name: 'SuperSource: Set art properties',
 					options: compact([
 						AtemSuperSourceIdPicker(model),
-						...AtemSuperSourceArtPropertiesPickers(model, state, true),
+						...AtemSuperSourceArtPropertiesPickers(model, state.state, true),
 					]),
 					callback: async (action) => {
 						const ssrcId = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
@@ -1278,7 +1283,7 @@ function ssrcActions(atem: Atem | undefined, model: ModelSpec, state: AtemState)
 							if (props.includes('artOption')) {
 								const rawArtOption = action.options.artOption
 								if (rawArtOption === 'toggle') {
-									const ssrc = state.video.superSources[ssrcId]
+									const ssrc = state.state.video.superSources[ssrcId]
 
 									newProps.artOption =
 										ssrc?.properties?.artOption === Enums.SuperSourceArtOption.Background
@@ -1328,7 +1333,7 @@ function ssrcActions(atem: Atem | undefined, model: ModelSpec, state: AtemState)
 					options: compact([
 						AtemSuperSourceIdPicker(model),
 						AtemSuperSourceBoxPicker(),
-						AtemSuperSourceBoxSourcePicker(model, state),
+						AtemSuperSourceBoxSourcePicker(model, state.state),
 					]),
 					callback: async (action) => {
 						await atem?.setSuperSourceBoxSettings(
@@ -1343,7 +1348,7 @@ function ssrcActions(atem: Atem | undefined, model: ModelSpec, state: AtemState)
 						const ssrcId = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
 						const boxId = getOptNumber(action, 'boxIndex')
 
-						const ssrcConfig = state?.video.superSources?.[ssrcId]?.boxes[boxId]
+						const ssrcConfig = state.state.video.superSources?.[ssrcId]?.boxes[boxId]
 						if (ssrcConfig) {
 							return {
 								...action.options,
@@ -1409,7 +1414,7 @@ function ssrcActions(atem: Atem | undefined, model: ModelSpec, state: AtemState)
 								: 0
 						const boxId = Number(await context.parseVariablesInString(action.options.boxIndex as string)) - 1
 
-						const ssrcConfig = state?.video.superSources?.[ssrcId]?.boxes[boxId]
+						const ssrcConfig = state.state.video.superSources?.[ssrcId]?.boxes[boxId]
 						if (ssrcConfig) {
 							return {
 								...action.options,
@@ -1441,7 +1446,7 @@ function ssrcActions(atem: Atem | undefined, model: ModelSpec, state: AtemState)
 						const boxIndex = getOptNumber(action, 'boxIndex')
 
 						if (action.options.onair === 'toggle') {
-							const box = getSuperSourceBox(state, boxIndex, ssrcId)
+							const box = getSuperSourceBox(state.state, boxIndex, ssrcId)
 							await atem?.setSuperSourceBoxSettings(
 								{
 									enabled: !box?.enabled,
@@ -1463,7 +1468,7 @@ function ssrcActions(atem: Atem | undefined, model: ModelSpec, state: AtemState)
 						const ssrcId = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
 						const boxId = getOptNumber(action, 'boxIndex')
 
-						const ssrcConfig = state?.video.superSources?.[ssrcId]?.boxes[boxId]
+						const ssrcConfig = state.state.video.superSources?.[ssrcId]?.boxes[boxId]
 						if (ssrcConfig) {
 							return {
 								...action.options,
@@ -1481,7 +1486,7 @@ function ssrcActions(atem: Atem | undefined, model: ModelSpec, state: AtemState)
 					options: compact([
 						AtemSuperSourceIdPicker(model),
 						AtemSuperSourceBoxPicker(),
-						...AtemSuperSourcePropertiesPickers(model, state, false),
+						...AtemSuperSourcePropertiesPickers(model, state.state, false),
 					]),
 					callback: async (action) => {
 						const ssrcId = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
@@ -1493,7 +1498,7 @@ function ssrcActions(atem: Atem | undefined, model: ModelSpec, state: AtemState)
 						if (props && Array.isArray(props)) {
 							if (props.includes('onair')) {
 								if (action.options.onair === 'toggle') {
-									const box = getSuperSourceBox(state, boxIndex, ssrcId)
+									const box = getSuperSourceBox(state.state, boxIndex, ssrcId)
 									newProps.enabled = !box?.enabled
 								} else {
 									newProps.enabled = action.options.onair === 'true'
@@ -1521,7 +1526,7 @@ function ssrcActions(atem: Atem | undefined, model: ModelSpec, state: AtemState)
 						const ssrcId = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
 						const boxId = getOptNumber(action, 'boxIndex')
 
-						const ssrcConfig = state?.video.superSources?.[ssrcId]?.boxes[boxId]
+						const ssrcConfig = state.state.video.superSources?.[ssrcId]?.boxes[boxId]
 						if (ssrcConfig) {
 							return {
 								...action.options,
@@ -1548,7 +1553,7 @@ function ssrcActions(atem: Atem | undefined, model: ModelSpec, state: AtemState)
 					options: compact([
 						AtemSuperSourceIdPicker(model),
 						AtemSuperSourceBoxPicker(),
-						...AtemSuperSourcePropertiesPickers(model, state, true),
+						...AtemSuperSourcePropertiesPickers(model, state.state, true),
 					]),
 					callback: async (action) => {
 						const ssrcId = action.options.ssrcId && model.SSrc > 1 ? Number(action.options.ssrcId) : 0
@@ -1556,7 +1561,7 @@ function ssrcActions(atem: Atem | undefined, model: ModelSpec, state: AtemState)
 
 						const newProps: Partial<SuperSource.SuperSourceBox> = {}
 
-						const box = getSuperSourceBox(state, boxIndex, ssrcId)
+						const box = getSuperSourceBox(state.state, boxIndex, ssrcId)
 
 						const props = action.options.properties
 						if (box && props && Array.isArray(props)) {
@@ -1584,7 +1589,7 @@ function ssrcActions(atem: Atem | undefined, model: ModelSpec, state: AtemState)
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function streamRecordActions(atem: Atem | undefined, model: ModelSpec, state: AtemState) {
+function streamRecordActions(atem: Atem | undefined, model: ModelSpec, state: StateWrapper) {
 	return {
 		[ActionId.StreamStartStop]: model.streaming
 			? ({
@@ -1601,7 +1606,7 @@ function streamRecordActions(atem: Atem | undefined, model: ModelSpec, state: At
 					callback: async (action) => {
 						let newState = action.options.stream === 'true'
 						if (action.options.stream === 'toggle') {
-							newState = state.streaming?.status?.state === Enums.StreamingStatus.Idle
+							newState = state.state.streaming?.status?.state === Enums.StreamingStatus.Idle
 						}
 
 						if (newState) {
@@ -1611,10 +1616,10 @@ function streamRecordActions(atem: Atem | undefined, model: ModelSpec, state: At
 						}
 					},
 					learn: (feedback) => {
-						if (state.streaming?.status) {
+						if (state.state.streaming?.status) {
 							return {
 								...feedback.options,
-								state: state.streaming.status.state,
+								state: state.state.streaming.status.state,
 							}
 						} else {
 							return undefined
@@ -1662,12 +1667,12 @@ function streamRecordActions(atem: Atem | undefined, model: ModelSpec, state: At
 						})
 					},
 					learn: (feedback) => {
-						if (state.streaming?.service) {
+						if (state.state.streaming?.service) {
 							return {
 								...feedback.options,
-								service: state.streaming.service.serviceName,
-								url: state.streaming.service.url,
-								key: state.streaming.service.key,
+								service: state.state.streaming.service.serviceName,
+								url: state.state.streaming.service.url,
+								key: state.state.streaming.service.key,
 							}
 						} else {
 							return undefined
@@ -1690,7 +1695,7 @@ function streamRecordActions(atem: Atem | undefined, model: ModelSpec, state: At
 					callback: async (action) => {
 						let newState = action.options.record === 'true'
 						if (action.options.record === 'toggle') {
-							newState = state.recording?.status?.state === Enums.RecordingStatus.Idle
+							newState = state.state.recording?.status?.state === Enums.RecordingStatus.Idle
 						}
 
 						if (newState) {
@@ -1700,10 +1705,10 @@ function streamRecordActions(atem: Atem | undefined, model: ModelSpec, state: At
 						}
 					},
 					learn: (feedback) => {
-						if (state.recording?.status) {
+						if (state.state.recording?.status) {
 							return {
 								...feedback.options,
-								state: state.recording.status.state,
+								state: state.state.recording.status.state,
 							}
 						} else {
 							return undefined
@@ -1739,10 +1744,10 @@ function streamRecordActions(atem: Atem | undefined, model: ModelSpec, state: At
 						})
 					},
 					learn: (feedback) => {
-						if (state.recording?.properties) {
+						if (state.state.recording?.properties) {
 							return {
 								...feedback.options,
-								filename: state.recording?.properties.filename,
+								filename: state.state.recording?.properties.filename,
 							}
 						} else {
 							return undefined
@@ -1754,9 +1759,9 @@ function streamRecordActions(atem: Atem | undefined, model: ModelSpec, state: At
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: AtemTransitions, state: AtemState) {
+function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: AtemTransitions, state: StateWrapper) {
 	if (model.classicAudio) {
-		const audioInputOption = AtemAudioInputPicker(model, state)
+		const audioInputOption = AtemAudioInputPicker(model, state.state)
 		return {
 			[ActionId.ClassicAudioGain]: {
 				name: 'Classic Audio: Set input gain',
@@ -1777,7 +1782,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 				],
 				callback: async (action) => {
 					const inputId = getOptNumber(action, 'input')
-					const audioChannels = state.audio?.channels ?? {}
+					const audioChannels = state.state.audio?.channels ?? {}
 					const channel = audioChannels[inputId]
 
 					await transitions.run(
@@ -1791,7 +1796,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 					)
 				},
 				learn: (action) => {
-					const audioChannels = state.audio?.channels ?? {}
+					const audioChannels = state.state.audio?.channels ?? {}
 					const channel = audioChannels[Number(action.options.input)]
 
 					if (channel) {
@@ -1809,7 +1814,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 				options: [audioInputOption, FaderLevelDeltaChoice, FadeDurationChoice],
 				callback: async (action) => {
 					const inputId = getOptNumber(action, 'input')
-					const audioChannels = state.audio?.channels ?? {}
+					const audioChannels = state.state.audio?.channels ?? {}
 					const channel = audioChannels[inputId]
 
 					if (typeof channel?.gain === 'number') {
@@ -1845,7 +1850,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 				],
 				callback: async (action) => {
 					const inputId = getOptNumber(action, 'input')
-					const audioChannels = state.audio?.channels ?? {}
+					const audioChannels = state.state.audio?.channels ?? {}
 					const toggleVal =
 						audioChannels[inputId]?.mixOption === Enums.AudioMixOption.On
 							? Enums.AudioMixOption.Off
@@ -1854,7 +1859,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 					await atem?.setClassicAudioMixerInputProps(inputId, { mixOption: newVal })
 				},
 				learn: (action) => {
-					const audioChannels = state.audio?.channels ?? {}
+					const audioChannels = state.state.audio?.channels ?? {}
 					const channel = audioChannels[Number(action.options.input)]
 
 					if (channel) {
@@ -1934,7 +1939,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 					)
 				},
 				learn: (action) => {
-					const props = state.audio?.master
+					const props = state.state.audio?.master
 
 					if (props) {
 						return {
@@ -1950,7 +1955,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 				name: 'Classic Audio: Adjust master gain',
 				options: [FaderLevelDeltaChoice, FadeDurationChoice],
 				callback: async (action) => {
-					const currentGain = state.audio?.master?.gain
+					const currentGain = state.state.audio?.master?.gain
 
 					if (typeof currentGain === 'number') {
 						await transitions.run(
@@ -1980,7 +1985,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 			// [ActionId.FairlightAudioMonitorMasterGain]: undefined,
 		}
 	} else if (model.fairlightAudio) {
-		const audioInputOption = AtemAudioInputPicker(model, state)
+		const audioInputOption = AtemAudioInputPicker(model, state.state)
 		const audioSourceOption = AtemFairlightAudioSourcePicker()
 		return {
 			[ActionId.ClassicAudioGain]: undefined,
@@ -2011,7 +2016,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 					const inputId = getOptNumber(action, 'input')
 					const sourceId = action.options.source + ''
 
-					const audioChannels = state.fairlight?.inputs ?? {}
+					const audioChannels = state.state.fairlight?.inputs ?? {}
 					const audioSources = audioChannels[inputId]?.sources ?? {}
 					const source = audioSources[sourceId]
 
@@ -2028,7 +2033,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 					)
 				},
 				learn: (action) => {
-					const audioChannels = state.fairlight?.inputs ?? {}
+					const audioChannels = state.state.fairlight?.inputs ?? {}
 					const audioSources = audioChannels[Number(action.options.input)]?.sources ?? {}
 					const source = audioSources[action.options.source + '']
 
@@ -2049,7 +2054,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 					const inputId = getOptNumber(action, 'input')
 					const sourceId = action.options.source + ''
 
-					const audioChannels = state.fairlight?.inputs ?? {}
+					const audioChannels = state.state.fairlight?.inputs ?? {}
 					const audioSources = audioChannels[inputId]?.sources ?? {}
 					const source = audioSources[sourceId]
 
@@ -2090,7 +2095,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 					const inputId = getOptNumber(action, 'input')
 					const sourceId = action.options.source + ''
 
-					const audioChannels = state.fairlight?.inputs ?? {}
+					const audioChannels = state.state.fairlight?.inputs ?? {}
 					const audioSources = audioChannels[inputId]?.sources ?? {}
 					const source = audioSources[sourceId]
 
@@ -2107,7 +2112,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 					)
 				},
 				learn: (action) => {
-					const audioChannels = state.fairlight?.inputs ?? {}
+					const audioChannels = state.state.fairlight?.inputs ?? {}
 					const audioSources = audioChannels[Number(action.options.input)]?.sources ?? {}
 					const source = audioSources[action.options.source + '']
 
@@ -2128,7 +2133,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 					const inputId = getOptNumber(action, 'input')
 					const sourceId = action.options.source + ''
 
-					const audioChannels = state.fairlight?.inputs ?? {}
+					const audioChannels = state.state.fairlight?.inputs ?? {}
 					const audioSources = audioChannels[inputId]?.sources ?? {}
 					const source = audioSources[sourceId]
 
@@ -2169,7 +2174,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 				callback: async (action) => {
 					const inputId = getOptNumber(action, 'input')
 					const sourceId = action.options.source + ''
-					const audioChannels = state.fairlight?.inputs ?? {}
+					const audioChannels = state.state.fairlight?.inputs ?? {}
 					const audioSources = audioChannels[inputId]?.sources ?? {}
 					const toggleVal =
 						audioSources[sourceId]?.properties?.mixOption === Enums.FairlightAudioMixOption.On
@@ -2179,7 +2184,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 					await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, { mixOption: newVal })
 				},
 				learn: (action) => {
-					const audioChannels = state.fairlight?.inputs ?? {}
+					const audioChannels = state.state.fairlight?.inputs ?? {}
 					const audioSources = audioChannels[Number(action.options.input)]?.sources ?? {}
 					const source = audioSources[action.options.source + '']
 
@@ -2265,7 +2270,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 					)
 				},
 				learn: (action) => {
-					const props = state.fairlight?.master?.properties
+					const props = state.state.fairlight?.master?.properties
 
 					if (props) {
 						return {
@@ -2281,7 +2286,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 				name: 'Fairlight Audio: Adjust master gain',
 				options: [FaderLevelDeltaChoice, FadeDurationChoice],
 				callback: async (action) => {
-					const currentGain = state.fairlight?.master?.properties?.faderGain
+					const currentGain = state.state.fairlight?.master?.properties?.faderGain
 
 					if (typeof currentGain === 'number') {
 						await transitions.run(
@@ -2323,7 +2328,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 							})
 						},
 						learn: (action) => {
-							const props = state.fairlight?.monitor
+							const props = state.state.fairlight?.monitor
 
 							if (props) {
 								return {
@@ -2367,7 +2372,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 							)
 						},
 						learn: (action) => {
-							const props = state.fairlight?.monitor
+							const props = state.state.fairlight?.monitor
 
 							if (props) {
 								return {
@@ -2467,7 +2472,7 @@ export function GetActionsList(
 	model: ModelSpec,
 	commandBatching: AtemCommandBatching,
 	transitions: AtemTransitions,
-	state: AtemState
+	state: StateWrapper
 ): CompanionActionsExt {
 	const actions: CompanionActionsExt = {
 		...meActions(instance, atem, model, commandBatching, state),
@@ -2479,12 +2484,12 @@ export function GetActionsList(
 		[ActionId.Aux]: model.auxes
 			? ({
 					name: 'Aux/Output: Set source',
-					options: [AtemAuxPicker(model), AtemAuxSourcePicker(model, state)],
+					options: [AtemAuxPicker(model), AtemAuxSourcePicker(model, state.state)],
 					callback: async (action) => {
 						await atem?.setAuxSource(getOptNumber(action, 'input'), getOptNumber(action, 'aux'))
 					},
 					learn: (action) => {
-						const auxSource = state.video.auxilliaries[Number(action.options.aux)]
+						const auxSource = state.state.video.auxilliaries[Number(action.options.aux)]
 
 						if (auxSource !== undefined) {
 							return {
@@ -2532,7 +2537,7 @@ export function GetActionsList(
 					options: [
 						AtemMultiviewerPicker(model),
 						AtemMultiviewWindowPicker(model),
-						AtemMultiviewSourcePicker(model, state),
+						AtemMultiviewSourcePicker(model, state.state),
 					],
 					callback: async (action) => {
 						await atem?.setMultiViewerWindowSource(
@@ -2542,7 +2547,7 @@ export function GetActionsList(
 						)
 					},
 					learn: (action) => {
-						const window = getMultiviewerWindow(state, action.options.multiViewerId, action.options.windowIndex)
+						const window = getMultiviewerWindow(state.state, action.options.multiViewerId, action.options.windowIndex)
 
 						if (window) {
 							return {
@@ -2596,7 +2601,7 @@ export function GetActionsList(
 							Number(await context.parseVariablesInString(action.options.multiViewerId as string)) - 1
 						const windowIndex = Number(await context.parseVariablesInString(action.options.windowIndex as string)) - 1
 
-						const window = getMultiviewerWindow(state, multiViewerId, windowIndex)
+						const window = getMultiviewerWindow(state.state, multiViewerId, windowIndex)
 
 						if (window) {
 							return {
@@ -2612,7 +2617,7 @@ export function GetActionsList(
 		[ActionId.MediaPlayerSource]: model.media.players
 			? ({
 					name: 'Media player: Set source',
-					options: [AtemMediaPlayerPicker(model), AtemMediaPlayerSourcePicker(model, state)],
+					options: [AtemMediaPlayerPicker(model), AtemMediaPlayerSourcePicker(model, state.state)],
 					callback: async (action) => {
 						const source = getOptNumber(action, 'source')
 						if (source >= MEDIA_PLAYER_SOURCE_CLIP_OFFSET) {
@@ -2634,7 +2639,7 @@ export function GetActionsList(
 						}
 					},
 					learn: (action) => {
-						const player = state.media.players[Number(action.options.mediaplayer)]
+						const player = state.state.media.players[Number(action.options.mediaplayer)]
 
 						if (player) {
 							return {
@@ -2668,16 +2673,16 @@ export function GetActionsList(
 								},
 							],
 						},
-						// AtemMediaPlayerSourcePicker(model, state)
+						// AtemMediaPlayerSourcePicker(model, state.state)
 					],
 					callback: async (action) => {
 						const playerId = getOptNumber(action, 'mediaplayer')
 						const direction = action.options.direction as string
 						const offset = direction === 'next' ? 1 : -1
 
-						const player = getMediaPlayer(state, playerId)
+						const player = getMediaPlayer(state.state, playerId)
 						if (player?.sourceType == Enums.MediaSourceType.Still) {
-							const maxIndex = state.media.stillPool.length
+							const maxIndex = state.state.media.stillPool.length
 							let nextIndex = player.stillIndex + offset
 							if (nextIndex >= maxIndex) nextIndex = 0
 							if (nextIndex < 0) nextIndex = maxIndex - 1
@@ -2719,7 +2724,7 @@ export function GetActionsList(
 		[ActionId.InputName]: {
 			name: 'Input: Set name',
 			options: [
-				AtemAllSourcePicker(model, state),
+				AtemAllSourcePicker(model, state.state),
 				{
 					id: 'short_enable',
 					label: 'Set short name',
@@ -2773,7 +2778,7 @@ export function GetActionsList(
 			},
 			learn: (action) => {
 				const source = getOptNumber(action, 'source')
-				const props = state.inputs[source]
+				const props = state.state.inputs[source]
 
 				if (props) {
 					return {
@@ -2808,7 +2813,7 @@ export function GetActionsList(
 						switch (action.options.state) {
 							case 'toggle':
 								newState =
-									state.displayClock?.properties?.clockState === DisplayClockClockState.Running
+									state.state.displayClock?.properties?.clockState === DisplayClockClockState.Running
 										? DisplayClockClockState.Stopped
 										: DisplayClockClockState.Running
 								break
@@ -2851,7 +2856,7 @@ export function GetActionsList(
 						await atem?.setDisplayClockProperties(newProps)
 					},
 					learn: (action) => {
-						const displayClockConfig = state?.displayClock?.properties
+						const displayClockConfig = state.state.displayClock?.properties
 						if (displayClockConfig) {
 							return {
 								...action.options,
@@ -2886,7 +2891,7 @@ export function GetActionsList(
 						})
 					},
 					learn: (action) => {
-						const displayClockConfig = state?.displayClock?.properties
+						const displayClockConfig = state.state.displayClock?.properties
 						if (displayClockConfig) {
 							return {
 								...action.options,

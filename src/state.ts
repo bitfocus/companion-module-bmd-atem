@@ -12,6 +12,12 @@ import type { InputValue } from '@companion-module/base'
 
 export type TallyBySource = Commands.TallyBySourceCommand['properties']
 
+export interface StateWrapper {
+	state: AtemState
+	tally: TallyBySource
+	tallyCache: TallyCache
+}
+
 export type TallyCache = Map<
 	number, // InputId of the mix/output
 	{
