@@ -12,6 +12,14 @@ import type { InputValue } from '@companion-module/base'
 
 export type TallyBySource = Commands.TallyBySourceCommand['properties']
 
+export type TallyCache = Map<
+	number, // InputId of the mix/output
+	{
+		lastVisibleInputs: number[]
+		referencedFeedbackIds: Set<string>
+	}
+>
+
 export function getMixEffect(state: AtemState, meIndex: InputValue | undefined): VideoState.MixEffect | undefined {
 	return state.video.mixEffects[Number(meIndex)]
 }

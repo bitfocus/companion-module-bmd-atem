@@ -4,7 +4,7 @@ import { type AtemConfig, GetConfigFields } from './config.js'
 import { FeedbackId, GetFeedbacksList } from './feedback.js'
 import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, type ModelSpec } from './models/index.js'
 import { GetPresetsList } from './presets.js'
-import type { TallyBySource } from './state.js'
+import type { TallyBySource, TallyCache } from './state.js'
 import { MODEL_AUTO_DETECT } from './models/types.js'
 import {
 	InitVariables,
@@ -22,12 +22,14 @@ import {
 	type CompanionVariableValues,
 } from '@companion-module/base'
 import { AtemMdnsDetectorInstance } from './mdns-detector.js'
+import { isEqual } from 'lodash-es'
+import { UpgradeScripts } from './upgrades.js'
+import { calculateTallyForInputId } from './util.js'
 
 const { Atem, AtemConnectionStatus, AtemStateUtil } = AtemPkg
 
 // eslint-disable-next-line node/no-extraneous-import
 import { ThreadedClassManager, RegisterExitHandlers } from 'threadedclass'
-import { UpgradeScripts } from './upgrades.js'
 
 // HACK: This stops it from registering an unhandledException handler, as that causes companion to exit on error
 ThreadedClassManager.handleExit = RegisterExitHandlers.NO
@@ -41,6 +43,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	private atemState: AtemState
 	private commandBatching: AtemCommandBatching
 	private atemTally: TallyBySource
+	private tallyCache: TallyCache
 	private isActive: boolean
 	private durationInterval: NodeJS.Timer | undefined
 	private atemTransitions: AtemTransitions
@@ -56,6 +59,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		this.commandBatching = new AtemCommandBatching()
 		this.atemState = AtemStateUtil.Create()
 		this.atemTally = {}
+		this.tallyCache = new Map()
 		this.atemTransitions = new AtemTransitions(this.config)
 
 		// Fix bugged config
@@ -163,7 +167,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	private updateCompanionBits(): void {
 		InitVariables(this, this.model, this.atemState)
 		this.setPresetDefinitions(GetPresetsList(this, this.model, this.atemState))
-		this.setFeedbackDefinitions(GetFeedbacksList(this.model, this.atemState, this.atemTally))
+		this.setFeedbackDefinitions(GetFeedbacksList(this.model, this.atemState, this.atemTally, this.tallyCache))
 		this.setActionDefinitions(
 			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.atemState)
 		)
@@ -394,12 +398,29 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			}
 		}
 
+		// Invalidate any tally
+		const changedFeedbackIds = new Set<string>()
+		for (const [inputId, tally] of this.tallyCache.entries()) {
+			if (tally.referencedFeedbackIds.size) {
+				const newTally = calculateTallyForInputId(this.atemState, inputId)
+				if (tally.lastVisibleInputs.length !== newTally.length || !isEqual(newTally, tally.lastVisibleInputs)) {
+					// Tally has changed
+					tally.referencedFeedbackIds.forEach((id) => changedFeedbackIds.add(id))
+					tally.lastVisibleInputs = newTally
+				}
+			} else {
+				// Not used, clear it out
+				tally.lastVisibleInputs = []
+			}
+		}
+
 		// Apply the change
 		if (reInit) {
 			this.updateCompanionBits()
 		} else {
 			updateChangedVariables(this, this.atemState, changedVariables)
 			if (changedFeedbacks.size > 0) this.checkFeedbacks(...Array.from(changedFeedbacks))
+			if (changedFeedbackIds.size > 0) this.checkFeedbacksById(...Array.from(changedFeedbackIds))
 		}
 	}
 

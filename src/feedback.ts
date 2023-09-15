@@ -14,6 +14,8 @@ import {
 	CHOICES_CURRENTKEYFRAMES,
 	CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION,
 	GetMacroChoices,
+	GetSourcesListForType,
+	SourcesToChoices,
 } from './choices.js'
 import {
 	AtemAuxPicker,
@@ -45,13 +47,22 @@ import {
 	AtemSuperSourceArtPropertiesPickers,
 } from './input.js'
 import type { ModelSpec } from './models/index.js'
-import { getDSK, getMixEffect, getMultiviewerWindow, getSuperSourceBox, getUSK, type TallyBySource } from './state.js'
+import {
+	getDSK,
+	getMixEffect,
+	getMultiviewerWindow,
+	getSuperSourceBox,
+	getUSK,
+	type TallyBySource,
+	type TallyCache,
+} from './state.js'
 import {
 	assertUnreachable,
 	calculateTransitionSelection,
 	MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
 	compact,
 	compareNumber,
+	calculateTallyForInputId,
 } from './util.js'
 
 export enum FeedbackId {
@@ -95,6 +106,7 @@ export enum FeedbackId {
 	FadeToBlackRate = 'fadeToBlackRate',
 	ProgramTally = 'program_tally',
 	PreviewTally = 'preview_tally',
+	AdvancedTally = 'advanced_tally',
 	StreamStatus = 'streamStatus',
 	RecordStatus = 'recordStatus',
 	ClassicAudioGain = 'classicAudioGain',
@@ -116,7 +128,7 @@ export enum MacroFeedbackType {
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function tallyFeedbacks(model: ModelSpec, state: AtemState, tally: TallyBySource) {
+function tallyFeedbacks(model: ModelSpec, state: AtemState, tally: TallyBySource, tallyCache: TallyCache) {
 	return {
 		[FeedbackId.ProgramTally]: {
 			type: 'boolean',
@@ -135,7 +147,7 @@ function tallyFeedbacks(model: ModelSpec, state: AtemState, tally: TallyBySource
 		[FeedbackId.PreviewTally]: {
 			type: 'boolean',
 			name: 'Tally: Preview',
-			description: 'If the input specified has an active preview tally light, change style of the bank',
+			description: 'Check if the input specified has an active preview tally light',
 			options: [AtemMESourcePicker(model, state, 0)],
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -144,6 +156,63 @@ function tallyFeedbacks(model: ModelSpec, state: AtemState, tally: TallyBySource
 			callback: (evt: CompanionFeedbackBooleanEvent): boolean => {
 				const source = tally[Number(evt.options.input)]
 				return !!source?.preview
+			},
+		} satisfies CompanionFeedbackDefinition,
+		[FeedbackId.AdvancedTally]: {
+			type: 'boolean',
+			name: 'Tally: Advanced',
+			description: 'Check if the input specified is active in one of the selected outputs/mixes',
+			options: [
+				{
+					id: `inputIds`,
+					label: `Mixes`,
+					type: 'multidropdown',
+					default: [10010],
+					choices: SourcesToChoices(GetSourcesListForType(model, state, 'tally')),
+				},
+				AtemMESourcePicker(model, state, 0),
+			],
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(255, 0, 0),
+			},
+			callback: (evt: CompanionFeedbackBooleanEvent): boolean => {
+				const selectedInputIds = evt.options.inputIds ?? []
+				if (!Array.isArray(selectedInputIds)) return false
+
+				const matchInputId = Number(evt.options.input)
+
+				for (const inputId of selectedInputIds) {
+					const cacheEntry = tallyCache.get(Number(inputId))
+					if (cacheEntry && cacheEntry.lastVisibleInputs.includes(matchInputId)) {
+						return true
+					}
+				}
+
+				return false
+			},
+			subscribe: (info): void => {
+				const selectedInputIds = info.options.inputIds ?? []
+				if (!Array.isArray(selectedInputIds)) return
+
+				for (const inputId of selectedInputIds) {
+					if (typeof inputId !== 'number') continue
+
+					const cacheEntry = tallyCache.get(inputId)
+					if (cacheEntry) {
+						cacheEntry.referencedFeedbackIds.add(info.id)
+					} else {
+						tallyCache.set(inputId, {
+							referencedFeedbackIds: new Set([info.id]),
+							lastVisibleInputs: calculateTallyForInputId(state, inputId),
+						})
+					}
+				}
+			},
+			unsubscribe: (info): void => {
+				for (const tally of tallyCache.values()) {
+					tally.referencedFeedbackIds.delete(info.id)
+				}
 			},
 		} satisfies CompanionFeedbackDefinition,
 	}
@@ -1841,10 +1910,11 @@ function audioFeedbacks(model: ModelSpec, state: AtemState) {
 export function GetFeedbacksList(
 	model: ModelSpec,
 	state: AtemState,
-	tally: TallyBySource
+	tally: TallyBySource,
+	tallyCache: TallyCache
 ): CompanionFeedbackDefinitions {
 	const feedbacks: { [id in FeedbackId]: CompanionFeedbackDefinition | undefined } = {
-		...tallyFeedbacks(model, state, tally),
+		...tallyFeedbacks(model, state, tally, tallyCache),
 		...previewFeedbacks(model, state),
 		...programFeedbacks(model, state),
 		...uskFeedbacks(model, state),

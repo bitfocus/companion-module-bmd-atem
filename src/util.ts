@@ -1,4 +1,4 @@
-import { Enums } from 'atem-connection'
+import { Enums, type AtemState, listVisibleInputs } from 'atem-connection'
 import { type InputValue, InstanceBase } from '@companion-module/base'
 
 export const MEDIA_PLAYER_SOURCE_CLIP_OFFSET = 1000
@@ -85,4 +85,16 @@ export function compareNumber(
 
 export interface InstanceBaseExt<TConfig> extends InstanceBase<TConfig> {
 	config: TConfig
+}
+
+export function calculateTallyForInputId(state: AtemState, inputId: number): number[] {
+	if (inputId < 10000 || inputId > 11000) return []
+	// Future: This is copied from atem-connection, and should be exposed as a helper function
+	const nestedMeId = (inputId - (inputId % 10) - 10000) / 10 - 1
+	const nestedMeMode = (inputId - 10000) % 10 === 0 ? 'program' : 'preview'
+
+	// Ensure the ME exists in the state
+	if (!state.video.mixEffects[nestedMeId]) return []
+
+	return listVisibleInputs(nestedMeMode, state, nestedMeId)
 }

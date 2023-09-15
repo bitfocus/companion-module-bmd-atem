@@ -35,11 +35,13 @@
 		"atem-connection": "^3.3.0",
 		"bonjour-service": "^1.1.1",
 		"debug": "^4.3.4",
+		"lodash-es": "^4.17.21",
 		"type-fest": "^3.10.0"
 	},
 	"devDependencies": {
 		"@companion-module/tools": "^1.2.0",
 		"@types/debug": "^4.1.7",
+		"@types/lodash-es": "^4.17.9",
 		"@types/node": "^18.15.11",
 		"husky": "^8.0.3",
 		"lint-staged": "^13.2.2",
