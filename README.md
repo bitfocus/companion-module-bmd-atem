@@ -30,6 +30,7 @@ To add a new model to the list:
 - Fix potential feedback reactivity issue
 - Add multiviewer window source variables #245
 - Add CUT preset #224
+- Adjust master pan in classic audio mixer #180
 
 ## v3.4.0
 

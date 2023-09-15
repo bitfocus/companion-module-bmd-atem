@@ -131,6 +131,8 @@ export enum ActionId {
 	ClassicAudioResetPeaks = 'classicAudioResetPeaks',
 	ClassicAudioMasterGain = 'classicAudioMasterGain',
 	ClassicAudioMasterGainDelta = 'classicAudioMasterGainDelta',
+	ClassicAudioMasterPan = 'classicAudioMasterPan',
+	ClassicAudioMasterPanDelta = 'classicAudioMasterPanDelta',
 	FairlightAudioFaderGain = 'fairlightAudioFaderGain',
 	FairlightAudioFaderGainDelta = 'fairlightAudioFaderGainDelta',
 	FairlightAudioInputGain = 'fairlightAudioInputGain',
@@ -1970,6 +1972,75 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 					}
 				},
 			} satisfies CompanionActionDefinition,
+			[ActionId.ClassicAudioMasterPan]: {
+				name: 'Classic Audio: Set master pan',
+				options: [
+					{
+						type: 'number',
+						label: 'Pan',
+						id: 'balance',
+						range: true,
+						required: true,
+						default: 0,
+						step: 1,
+						min: -50,
+						max: 50,
+					},
+					FadeDurationChoice,
+				],
+				callback: async (action) => {
+					await transitions.run(
+						`audio.master.pan`,
+						async (value) => {
+							await atem?.setClassicAudioMixerMasterProps({ balance: value })
+						},
+						atem?.state?.audio?.master?.balance,
+						getOptNumber(action, 'balance'),
+						getOptNumber(action, 'fadeDuration', 0)
+					)
+				},
+				learn: (action) => {
+					const props = state.state.audio?.master
+
+					if (props) {
+						return {
+							...action.options,
+							balance: props.balance,
+						}
+					} else {
+						return undefined
+					}
+				},
+			} satisfies CompanionActionDefinition,
+			[ActionId.ClassicAudioMasterPanDelta]: {
+				name: 'Classic Audio: Adjust master pan',
+				options: [
+					{
+						type: 'number',
+						label: 'Delta',
+						id: 'delta',
+						default: 1,
+						max: 50,
+						min: -50,
+					},
+					FadeDurationChoice,
+				],
+				callback: async (action) => {
+					const currentBalance = state.state.audio?.master?.balance
+
+					if (typeof currentBalance === 'number') {
+						await transitions.run(
+							`audio.master.gain`,
+							async (value) => {
+								await atem?.setClassicAudioMixerMasterProps({ balance: value })
+							},
+							currentBalance,
+							currentBalance + getOptNumber(action, 'balance'),
+							getOptNumber(action, 'fadeDuration', 0)
+						)
+					}
+				},
+			} satisfies CompanionActionDefinition,
 			[ActionId.FairlightAudioInputGain]: undefined,
 			[ActionId.FairlightAudioInputGainDelta]: undefined,
 			[ActionId.FairlightAudioFaderGain]: undefined,
@@ -1994,6 +2065,8 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 			[ActionId.ClassicAudioResetPeaks]: undefined,
 			[ActionId.ClassicAudioMasterGain]: undefined,
 			[ActionId.ClassicAudioMasterGainDelta]: undefined,
+			[ActionId.ClassicAudioMasterPan]: undefined,
+			[ActionId.ClassicAudioMasterPanDelta]: undefined,
 			[ActionId.FairlightAudioInputGain]: {
 				name: 'Fairlight Audio: Set input gain',
 				options: [
@@ -2449,6 +2522,8 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 			[ActionId.ClassicAudioResetPeaks]: undefined,
 			[ActionId.ClassicAudioMasterGain]: undefined,
 			[ActionId.ClassicAudioMasterGainDelta]: undefined,
+			[ActionId.ClassicAudioMasterPan]: undefined,
+			[ActionId.ClassicAudioMasterPanDelta]: undefined,
 			[ActionId.FairlightAudioInputGain]: undefined,
 			[ActionId.FairlightAudioInputGainDelta]: undefined,
 			[ActionId.FairlightAudioFaderGain]: undefined,
