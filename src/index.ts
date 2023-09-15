@@ -402,6 +402,19 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			}
 		}
 
+		const changedFeedbackIds = this.invalidateCachedTallyState()
+
+		// Apply the change
+		if (reInit) {
+			this.updateCompanionBits()
+		} else {
+			updateChangedVariables(this, this.wrappedState.state, changedVariables)
+			if (changedFeedbacks.size > 0) this.checkFeedbacks(...Array.from(changedFeedbacks))
+			if (changedFeedbackIds.size > 0) this.checkFeedbacksById(...Array.from(changedFeedbackIds))
+		}
+	}
+
+	private invalidateCachedTallyState() {
 		// Invalidate any tally
 		const changedFeedbackIds = new Set<string>()
 		for (const [inputId, tally] of this.wrappedState.tallyCache.entries()) {
@@ -418,14 +431,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			}
 		}
 
-		// Apply the change
-		if (reInit) {
-			this.updateCompanionBits()
-		} else {
-			updateChangedVariables(this, this.wrappedState.state, changedVariables)
-			if (changedFeedbacks.size > 0) this.checkFeedbacks(...Array.from(changedFeedbacks))
-			if (changedFeedbackIds.size > 0) this.checkFeedbacksById(...Array.from(changedFeedbackIds))
-		}
+		return changedFeedbackIds
 	}
 
 	private setupAtemConnection(): void {
@@ -434,6 +440,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		this.atem.on('connected', () => {
 			if (this.atem?.state) {
 				this.wrappedState.state = this.atem.state
+				this.invalidateCachedTallyState()
 
 				const atemInfo = this.wrappedState.state.info
 				this.log('info', 'Connected to a ' + atemInfo.productIdentifier)
