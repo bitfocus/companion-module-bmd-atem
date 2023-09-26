@@ -32,20 +32,20 @@
 	},
 	"dependencies": {
 		"@companion-module/base": "~1.5.0",
-		"atem-connection": "^3.3.0",
+		"atem-connection": "^3.3.1",
 		"bonjour-service": "^1.1.1",
 		"debug": "^4.3.4",
 		"lodash-es": "^4.17.21",
 		"type-fest": "^3.10.0"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "^1.2.0",
-		"@types/debug": "^4.1.7",
+		"@companion-module/tools": "^1.4.1",
+		"@types/debug": "^4.1.9",
 		"@types/lodash-es": "^4.17.9",
 		"@types/node": "^18.15.11",
 		"husky": "^8.0.3",
 		"lint-staged": "^13.2.2",
-		"rimraf": "^5.0.0",
+		"rimraf": "^5.0.4",
 		"ts-node": "^10.9.1",
 		"typescript": "~5.0.4"
 	}
