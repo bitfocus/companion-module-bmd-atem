@@ -89,6 +89,9 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		this.setupAtemConnection()
 
 		await this.configUpdated(config)
+
+		// Wait for a second to give the discovery a chance to discover atems
+		await new Promise((resolve) => setTimeout(resolve, 1000))
 	}
 
 	/**
@@ -169,7 +172,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		this.setPresetDefinitions(GetPresetsList(this, this.model, this.wrappedState.state))
 		this.setFeedbackDefinitions(GetFeedbacksList(this.model, this.wrappedState))
 		this.setActionDefinitions(
-			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.wrappedState)
+			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.wrappedState),
 		)
 
 		this.checkFeedbacks()
@@ -459,7 +462,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 					this.model = GetParsedModelSpec(this.wrappedState.state)
 					this.updateStatus(
 						InstanceStatus.UnknownWarning,
-						`Unknown model: ${atemInfo.productIdentifier}. Some bits may be missing`
+						`Unknown model: ${atemInfo.productIdentifier}. Some bits may be missing`,
 					)
 				}
 
@@ -472,7 +475,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 							atemInfo.productIdentifier +
 							', but instance is configured for ' +
 							this.model.label +
-							".  Change instance to 'Auto Detect' or the appropriate model to ensure stability."
+							".  Change instance to 'Auto Detect' or the appropriate model to ensure stability.",
 					)
 				}
 
