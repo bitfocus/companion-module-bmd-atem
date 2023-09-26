@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.5.2
+
+- Attempt to make discovery a bit more reliable
+
 ## v3.5.1
 
 - Add definitions for Constellation 4K 4ME
