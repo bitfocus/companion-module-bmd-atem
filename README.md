@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.5.1
+
+- Add definitions for Constellation 4K 4ME
+
 ## v3.5.0
 
 - Support variables in 'Stream: Set service' #256
