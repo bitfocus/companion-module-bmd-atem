@@ -34,7 +34,7 @@
 		"@companion-module/base": "~1.6.0",
 		"atem-connection": "^3.3.2",
 		"lodash-es": "^4.17.21",
-		"type-fest": "^3.13.1"
+		"type-fest": "^4.6.0"
 	},
 	"devDependencies": {
 		"@companion-module/tools": "^1.4.1",
@@ -44,6 +44,6 @@
 		"lint-staged": "^15.0.2",
 		"rimraf": "^5.0.5",
 		"ts-node": "^10.9.1",
-		"typescript": "~5.0.4"
+		"typescript": "~5.2"
 	}
 }
