@@ -42,7 +42,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	private wrappedState: StateWrapper
 	private commandBatching: AtemCommandBatching
 	private isActive: boolean
-	private durationInterval: NodeJS.Timer | undefined
+	private durationInterval: NodeJS.Timeout | undefined
 	private atemTransitions: AtemTransitions
 
 	public config: AtemConfig = {}
@@ -70,7 +70,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		}
 
 		this.model = GetModelSpec(this.getBestModelId() || MODEL_AUTO_DETECT) || GetAutoDetectModel()
-		this.config.modelID = this.model.id + ''
+		// this.config.modelID = this.model.id + ''
 
 		this.isActive = false
 	}
@@ -154,9 +154,9 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	}
 
 	private getBestModelId(): number | undefined {
-		const configModel = this.config.modelID ? parseInt(this.config.modelID, 10) : undefined
-		if (configModel) {
-			return configModel
+		const configModelId = Number(this.config.autoModelID) || Number(this.config.modelID)
+		if (!isNaN(configModelId)) {
+			return configModelId
 		} else {
 			const info = this.wrappedState.state.info
 			if (info && info.model) {
@@ -464,6 +464,15 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 						InstanceStatus.UnknownWarning,
 						`Unknown model: ${atemInfo.productIdentifier}. Some bits may be missing`
 					)
+				}
+
+				// Track the modelId that was last connected
+				if (this.config.modelID + '' === '0') {
+					this.config.autoModelID = this.model.id
+					this.config.autoModelName = this.model.label
+				} else {
+					delete this.config.autoModelID
+					delete this.config.autoModelName
 				}
 
 				// Log if the config mismatches the device

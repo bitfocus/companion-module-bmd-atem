@@ -10,7 +10,7 @@ export class AtemTransitions {
 	private readonly transitions: Map<string, TransitionInfo>
 	private readonly fps: number
 
-	private tickInterval: NodeJS.Timer | undefined
+	private tickInterval: NodeJS.Timeout | undefined
 
 	constructor(instanceConfig: AtemConfig) {
 		this.transitions = new Map()

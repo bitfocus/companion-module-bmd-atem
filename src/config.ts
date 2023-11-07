@@ -13,6 +13,8 @@ export interface AtemConfig {
 	bonjourHost?: string
 	host?: string
 	modelID?: string
+	autoModelID?: number
+	autoModelName?: string
 	presets?: string
 	fadeFps?: number
 }
@@ -54,13 +56,6 @@ export function GetConfigFields(_self: InstanceBaseExt<AtemConfig>): SomeCompani
 			isVisible: (options) => !!options['bonjourHost'],
 			value: '',
 		},
-		// {
-		// 	type: 'textinput',
-		// 	id: 'host',
-		// 	label: 'Target IP',
-		// 	width: 6,
-		// 	regex: self.REGEX_IP,
-		// },
 		{
 			type: 'dropdown',
 			id: 'modelID',
@@ -68,6 +63,22 @@ export function GetConfigFields(_self: InstanceBaseExt<AtemConfig>): SomeCompani
 			width: 6,
 			choices: ALL_MODEL_CHOICES,
 			default: 0,
+		},
+		{
+			type: 'static-text',
+			id: 'autoModelName',
+			label: 'Detected Model',
+			width: 6,
+			isVisible: (options) => options['modelID'] + '' === '0',
+			value: _self.config.autoModelName ?? 'Pending',
+		},
+		{
+			type: 'static-text',
+			id: 'autoModelName-filler',
+			width: 6,
+			label: '',
+			isVisible: (options) => options['modelID'] + '' !== '0',
+			value: '',
 		},
 		{
 			type: 'dropdown',
