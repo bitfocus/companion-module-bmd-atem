@@ -531,8 +531,8 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	parseIpAndPort(): IpAndPort | null {
 		const ipRegex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
 
-		if (this.config.bonjour_host) {
-			const [ip, rawPort] = this.config.bonjour_host.split(':')
+		if (this.config.bonjourHost) {
+			const [ip, rawPort] = this.config.bonjourHost.split(':')
 			const port = Number(rawPort)
 			if (ip.match(ipRegex) && !isNaN(port)) {
 				return {

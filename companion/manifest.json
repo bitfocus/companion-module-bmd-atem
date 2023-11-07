@@ -25,7 +25,7 @@
 	"products": ["ATEM"],
 	"keywords": ["Vision Mixer"],
 	"bonjourQueries": {
-		"bonjour_host": {
+		"bonjourHost": {
 			"type": "blackmagic",
 			"protocol": "tcp",
 			"txt": {
