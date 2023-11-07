@@ -27,7 +27,7 @@ import { calculateTallyForInputId, type IpAndPort } from './util.js'
 
 const { Atem, AtemConnectionStatus, AtemStateUtil } = AtemPkg
 
-// eslint-disable-next-line node/no-extraneous-import
+// eslint-disable-next-line n/no-extraneous-import
 import { ThreadedClassManager, RegisterExitHandlers } from 'threadedclass'
 
 // HACK: This stops it from registering an unhandledException handler, as that causes companion to exit on error
@@ -172,7 +172,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		this.setPresetDefinitions(GetPresetsList(this, this.model, this.wrappedState.state))
 		this.setFeedbackDefinitions(GetFeedbacksList(this.model, this.wrappedState))
 		this.setActionDefinitions(
-			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.wrappedState),
+			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.wrappedState)
 		)
 
 		this.checkFeedbacks()
@@ -462,7 +462,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 					this.model = GetParsedModelSpec(this.wrappedState.state)
 					this.updateStatus(
 						InstanceStatus.UnknownWarning,
-						`Unknown model: ${atemInfo.productIdentifier}. Some bits may be missing`,
+						`Unknown model: ${atemInfo.productIdentifier}. Some bits may be missing`
 					)
 				}
 
@@ -475,7 +475,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 							atemInfo.productIdentifier +
 							', but instance is configured for ' +
 							this.model.label +
-							".  Change instance to 'Auto Detect' or the appropriate model to ensure stability.",
+							".  Change instance to 'Auto Detect' or the appropriate model to ensure stability."
 					)
 				}
 
