@@ -21,10 +21,9 @@ import {
 	InstanceStatus,
 	type CompanionVariableValues,
 } from '@companion-module/base'
-import { AtemMdnsDetectorInstance } from './mdns-detector.js'
 import { isEqual } from 'lodash-es'
 import { UpgradeScripts } from './upgrades.js'
-import { calculateTallyForInputId } from './util.js'
+import { calculateTallyForInputId, type IpAndPort } from './util.js'
 
 const { Atem, AtemConnectionStatus, AtemStateUtil } = AtemPkg
 
@@ -84,8 +83,6 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		this.isActive = true
 		this.updateStatus(InstanceStatus.Disconnected)
 
-		AtemMdnsDetectorInstance.subscribe(this.id)
-
 		this.setupAtemConnection()
 
 		await this.configUpdated(config)
@@ -113,18 +110,23 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		this.atemTransitions = new AtemTransitions(this.config)
 		this.updateCompanionBits()
 
-		if (this.config.host !== undefined && this.atem) {
+		if (this.atem) {
 			if (this.atem.status !== AtemConnectionStatus.CLOSED) {
 				// Ignore error
 				this.atem.disconnect().catch(() => null)
 			}
 
-			this.updateStatus(InstanceStatus.Connecting)
-			this.atem.connect(this.config.host).catch((e) => {
-				this.updateStatus(InstanceStatus.ConnectionFailure)
+			const target = this.parseIpAndPort()
+			if (target) {
+				this.updateStatus(InstanceStatus.Connecting)
+				this.atem.connect(target.ip, target.port).catch((e) => {
+					this.updateStatus(InstanceStatus.ConnectionFailure)
 
-				this.log('error', `Connecting failed: ${e}`)
-			})
+					this.log('error', `Connecting failed: ${e}`)
+				})
+			} else {
+				this.updateStatus(InstanceStatus.Disconnected)
+			}
 		}
 	}
 
@@ -140,8 +142,6 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	 */
 	public async destroy(): Promise<void> {
 		this.isActive = false
-
-		AtemMdnsDetectorInstance.unsubscribe(this.id)
 
 		this.atemTransitions.stopAll()
 
@@ -518,13 +518,37 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		this.atem.on('stateChanged', this.processStateChange.bind(this))
 		this.atem.on('receivedCommands', this.processReceivedCommands.bind(this))
 
-		if (this.config.host) {
+		const target = this.parseIpAndPort()
+		if (target) {
 			this.updateStatus(InstanceStatus.Connecting)
-			this.atem.connect(this.config.host).catch((e) => {
+			this.atem.connect(target.ip, target.port).catch((e) => {
 				this.updateStatus(InstanceStatus.ConnectionFailure)
 				this.log('error', `Connecting failed: ${e}`)
 			})
 		}
+	}
+
+	parseIpAndPort(): IpAndPort | null {
+		const ipRegex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+
+		if (this.config.bonjour_host) {
+			const [ip, rawPort] = this.config.bonjour_host.split(':')
+			const port = Number(rawPort)
+			if (ip.match(ipRegex) && !isNaN(port)) {
+				return {
+					ip,
+					port,
+				}
+			}
+		} else if (this.config.host) {
+			if (this.config.host.match(ipRegex)) {
+				return {
+					ip: this.config.host,
+					port: undefined,
+				}
+			}
+		}
+		return null
 	}
 }
 

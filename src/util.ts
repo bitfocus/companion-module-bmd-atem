@@ -83,8 +83,15 @@ export function compareNumber(
 	}
 }
 
+export interface IpAndPort {
+	ip: string
+	port: number | undefined
+}
+
 export interface InstanceBaseExt<TConfig> extends InstanceBase<TConfig> {
 	config: TConfig
+
+	parseIpAndPort(): IpAndPort | null
 }
 
 export function calculateTallyForInputId(state: AtemState, inputId: number): number[] {

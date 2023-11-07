@@ -356,7 +356,7 @@ function updateMultiviewerWindowInput(
 }
 
 export function updateDeviceIpVariable(instance: InstanceBaseExt<AtemConfig>, values: CompanionVariableValues): void {
-	values['device_ip'] = instance.config?.host || ''
+	values['device_ip'] = instance.parseIpAndPort()?.ip || ''
 }
 
 export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: ModelSpec, state: AtemState): void {
