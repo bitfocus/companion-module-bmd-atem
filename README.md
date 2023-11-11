@@ -23,6 +23,12 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.6.0
+
+- Use Companion builtin ATEM discovery
+- Track last connected model, to provide a better experience when offline
+- New action to arbitrarily alter the presence of every component in the next selection
+
 ## v3.5.2
 
 - Attempt to make discovery a bit more reliable
