@@ -23,6 +23,38 @@ export const CHOICES_ON_OFF_TOGGLE: DropdownChoice[] = [
 	{ id: 'toggle', label: 'Toggle' },
 ]
 
+export enum NextTransBackgroundChoices {
+	NoChange = 'no-change',
+	Include = 'include',
+	Omit = 'omit',
+	Toggle = 'toggle',
+}
+
+export const CHOICES_NEXTTRANS_BACKGROUND: DropdownChoice[] = [
+	{ id: NextTransBackgroundChoices.NoChange, label: 'No change' },
+	{ id: NextTransBackgroundChoices.Include, label: 'Include' },
+	{ id: NextTransBackgroundChoices.Omit, label: 'Omit' },
+	{ id: NextTransBackgroundChoices.Toggle, label: 'Toggle' },
+]
+
+export enum NextTransKeyChoices {
+	NoChange = 'no-change',
+	On = 'on',
+	Off = 'off',
+	Toggle = 'toggle',
+	Include = 'include',
+	Omit = 'omit',
+}
+
+export const CHOICES_NEXTTRANS_KEY: DropdownChoice[] = [
+	{ id: NextTransKeyChoices.NoChange, label: 'No change' },
+	{ id: NextTransKeyChoices.On, label: 'On' },
+	{ id: NextTransKeyChoices.Off, label: 'Off' },
+	{ id: NextTransKeyChoices.Toggle, label: 'Toggle' },
+	{ id: NextTransKeyChoices.Include, label: 'Include' },
+	{ id: NextTransKeyChoices.Omit, label: 'Omit' },
+]
+
 export const CHOICES_KEYTRANS: DropdownChoice[] = [
 	{ id: 'true', label: 'On Air' },
 	{ id: 'false', label: 'Off' },

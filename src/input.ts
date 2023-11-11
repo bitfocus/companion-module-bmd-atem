@@ -10,6 +10,8 @@ import {
 	CHOICES_KEYTRANS,
 	CHOICES_SSRCBOXES,
 	CHOICES_BORDER_BEVEL,
+	CHOICES_NEXTTRANS_BACKGROUND,
+	CHOICES_NEXTTRANS_KEY,
 	GetAudioInputsList,
 	GetAuxIdChoices,
 	GetDSKIdChoices,
@@ -20,6 +22,8 @@ import {
 	GetSuperSourceIdChoices,
 	GetTransitionStyleChoices,
 	GetUSKIdChoices,
+	NextTransBackgroundChoices,
+	NextTransKeyChoices,
 	SourcesToChoices,
 } from './choices.js'
 import type { ModelSpec } from './models/index.js'
@@ -53,6 +57,29 @@ export function AtemRatePicker(label: string): CompanionInputFieldNumber {
 		range: true,
 		default: 25,
 	}
+}
+export function AtemTransitionSelectComponentsPickers(model: ModelSpec): CompanionInputFieldDropdown[] {
+	const pickers: CompanionInputFieldDropdown[] = [
+		{
+			type: 'dropdown',
+			id: 'background',
+			label: 'Background',
+			choices: CHOICES_NEXTTRANS_BACKGROUND,
+			default: NextTransBackgroundChoices.NoChange,
+		},
+	]
+
+	for (let i = 0; i < model.USKs; i++) {
+		pickers.push({
+			label: `Key ${i + 1}`,
+			type: 'dropdown',
+			id: `key${i}`,
+			choices: CHOICES_NEXTTRANS_KEY,
+			default: NextTransKeyChoices.NoChange,
+		})
+	}
+
+	return pickers
 }
 export function AtemTransitionSelectionPickers(model: ModelSpec): CompanionInputFieldCheckbox[] {
 	const pickers: CompanionInputFieldCheckbox[] = [
