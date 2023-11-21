@@ -1922,11 +1922,11 @@ export function GetFeedbacksList(model: ModelSpec, state: StateWrapper): Compani
 						bgcolor: combineRgb(255, 255, 0),
 					},
 					callback: (evt: CompanionFeedbackBooleanEvent): boolean => {
-						const auxSource = state.state.video.auxilliaries[Number(evt.options.aux)]
+						const auxSource = state.state.video.auxiliaries[Number(evt.options.aux)]
 						return auxSource === Number(evt.options.input)
 					},
 					learn: (feedback) => {
-						const auxSource = state.state.video.auxilliaries[Number(feedback.options.aux)]
+						const auxSource = state.state.video.auxiliaries[Number(feedback.options.aux)]
 
 						if (auxSource !== undefined) {
 							return {
@@ -1968,13 +1968,13 @@ export function GetFeedbacksList(model: ModelSpec, state: StateWrapper): Compani
 						const output = Number(await context.parseVariablesInString(feedback.options.aux as string)) - 1
 						const input = Number(await context.parseVariablesInString(feedback.options.input as string))
 
-						const auxSource = state.state.video.auxilliaries[output]
+						const auxSource = state.state.video.auxiliaries[output]
 						return auxSource === input
 					},
 					learn: async (feedback, context) => {
 						const output = Number(await context.parseVariablesInString(feedback.options.aux as string)) - 1
 
-						const auxSource = state.state.video.auxilliaries[output]
+						const auxSource = state.state.video.auxiliaries[output]
 
 						if (auxSource !== undefined) {
 							return {

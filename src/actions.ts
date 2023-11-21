@@ -111,7 +111,7 @@ export enum ActionId {
 	MultiviewerWindowSourceVariables = 'setMvSourceVariables',
 	SuperSourceArt = 'ssrcArt',
 	SuperSourceBoxSource = 'setSsrcBoxSource',
-	SuperSourceBoxSourceVaraibles = 'setSsrcBoxSourceVariables',
+	SuperSourceBoxSourceVariables = 'setSsrcBoxSourceVariables',
 	SuperSourceBoxOnAir = 'setSsrcBoxEnable',
 	SuperSourceBoxProperties = 'setSsrcBoxProperties',
 	SuperSourceBoxPropertiesDelta = 'setSsrcBoxPropertiesDelta',
@@ -1521,7 +1521,7 @@ function ssrcActions(atem: Atem | undefined, model: ModelSpec, state: StateWrapp
 					},
 			  } satisfies CompanionActionDefinition)
 			: undefined,
-		[ActionId.SuperSourceBoxSourceVaraibles]: model.SSrc
+		[ActionId.SuperSourceBoxSourceVariables]: model.SSrc
 			? ({
 					// TODO - combine into ActionId.SuperSourceBoxProperties
 					name: 'SuperSource: Set box source from variables',
@@ -2723,7 +2723,7 @@ export function GetActionsList(
 						await atem?.setAuxSource(getOptNumber(action, 'input'), getOptNumber(action, 'aux'))
 					},
 					learn: (action) => {
-						const auxSource = state.state.video.auxilliaries[Number(action.options.aux)]
+						const auxSource = state.state.video.auxiliaries[Number(action.options.aux)]
 
 						if (auxSource !== undefined) {
 							return {

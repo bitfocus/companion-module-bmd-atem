@@ -105,7 +105,7 @@ export function GetParsedModelSpec({
 		id: info.model,
 		label: info.productIdentifier ?? 'Blackmagic ATEM',
 		inputs: simpleInputs,
-		auxes: info.capabilities?.auxilliaries ?? defaults.auxes,
+		auxes: info.capabilities?.auxiliaries ?? defaults.auxes,
 		MEs: info.capabilities?.mixEffects ?? defaults.MEs,
 		USKs: info.mixEffects[0]?.keyCount ?? defaults.USKs,
 		DSKs: info.capabilities?.downstreamKeyers ?? defaults.DSKs,

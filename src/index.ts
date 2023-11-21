@@ -222,7 +222,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		for (const path of paths) {
 			if (reInit) break
 
-			const auxMatch = path.match(/video.auxilliaries.(\d+)/)
+			const auxMatch = path.match(/video.auxiliaries.(\d+)/)
 			if (auxMatch) {
 				changedFeedbacks.add(FeedbackId.AuxBG)
 				changedFeedbacks.add(FeedbackId.AuxVariables)

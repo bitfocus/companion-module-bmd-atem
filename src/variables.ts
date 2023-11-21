@@ -131,7 +131,7 @@ function updateAuxVariable(
 	auxIndex: number,
 	values: CompanionVariableValues
 ): void {
-	const input = state.video.auxilliaries[auxIndex] ?? 0
+	const input = state.video.auxiliaries[auxIndex] ?? 0
 	values[`aux${auxIndex + 1}_input`] = getSourcePresetName(instance, state, input)
 	values[`aux${auxIndex + 1}_input_id`] = input
 }
