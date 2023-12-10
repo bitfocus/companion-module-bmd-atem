@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.6.1
+
+- Add definitions for TVS 4K8
+
 ## v3.6.0
 
 - Use Companion builtin ATEM discovery
