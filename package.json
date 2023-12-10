@@ -32,7 +32,7 @@
 	},
 	"dependencies": {
 		"@companion-module/base": "~1.6.0",
-		"atem-connection": "^3.3.2",
+		"atem-connection": "^3.3.3",
 		"lodash-es": "^4.17.21",
 		"type-fest": "^4.6.0"
 	},

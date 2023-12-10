@@ -31,6 +31,7 @@ import { Model } from 'atem-connection/dist/enums/index.js'
 import { ModelSpecTVSHD8 } from './tvshd8.js'
 import { ModelSpecTVSHD8ISO } from './tvshd8iso.js'
 import { ModelSpecConstellation4K4ME } from './constellation4K4Me.js'
+import { ModelSpecTVS4K8 } from './tvs4k8.js'
 
 export * from './types.js'
 
@@ -62,6 +63,7 @@ export const ALL_MODELS: ModelSpec[] = [
 	ModelSpecTVSHD8,
 	ModelSpecTVSHD8ISO,
 	ModelSpecConstellation4K4ME,
+	ModelSpecTVS4K8,
 ]
 
 export const ALL_MODEL_CHOICES: DropdownChoice[] = ALL_MODELS.map(({ id, label }) => ({ id, label }))

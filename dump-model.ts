@@ -5,8 +5,8 @@ import { GetParsedModelSpec } from './src/models/index.js'
 
 const args = process.argv.slice(2)
 if (args.length < 1) {
-	console.log('Usage: yarn ts-node dump-model.ts <atem-ip>')
-	console.log('eg: yarn ts-node dump-model.ts 10.42.13.99')
+	console.log('Usage: yarn ts-node-esm dump-model.ts <atem-ip>')
+	console.log('eg: yarn ts-node-esm dump-model.ts 10.42.13.99')
 	process.exit()
 }
 
