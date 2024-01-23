@@ -77,3 +77,11 @@ export function getFairlightAudioInput(state: AtemState, index: number): Fairlig
 export function getClassicAudioInput(state: AtemState, index: number): ClassicAudio.ClassicAudioChannel | undefined {
 	return state.audio?.channels[index]
 }
+
+export function getFairlightAudioMasterChannel(state: AtemState): Fairlight.FairlightAudioMasterChannel | undefined {
+	return state.fairlight?.master
+}
+
+export function getFairlightAudioMonitorChannel(state: AtemState): Fairlight.FairlightAudioMonitorChannel | undefined {
+	return state.fairlight?.monitor
+}

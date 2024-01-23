@@ -215,6 +215,8 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			streaming: false,
 			recording: false,
 			fairlightAudio: new Set(),
+			fairlightAudioMaster: false,
+			fairlightAudioMonitor: false,
 			classicAudio: new Set(),
 			mvWindow: new Set(),
 		}
@@ -254,6 +256,18 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				changedVariables.classicAudio.add(parseInt(classicAudioInputMatch[1], 10))
 				changedFeedbacks.add(FeedbackId.ClassicAudioGain)
 				changedFeedbacks.add(FeedbackId.ClassicAudioMixOption)
+				continue
+			}
+
+			if (path.match(/fairlight.master/)) {
+				changedVariables.fairlightAudioMaster = true
+				changedFeedbacks.add(FeedbackId.FairlightAudioMasterGain)
+				continue
+			}
+
+			if (path.match(/fairlight.monitor/)) {
+				changedVariables.fairlightAudioMonitor = true
+				changedFeedbacks.add(FeedbackId.FairlightAudioMonitorFaderGain)
 				continue
 			}
 

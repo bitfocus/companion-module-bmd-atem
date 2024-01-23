@@ -6,6 +6,8 @@ import {
 	getClassicAudioInput,
 	getDSK,
 	getFairlightAudioInput,
+	getFairlightAudioMasterChannel,
+	getFairlightAudioMonitorChannel,
 	getMixEffect,
 	getSuperSourceBox,
 	getUSK,
@@ -41,6 +43,8 @@ export interface UpdateVariablesProps {
 	recording: boolean
 	classicAudio: Set<number>
 	fairlightAudio: Set<number>
+	fairlightAudioMaster: boolean
+	fairlightAudioMonitor: boolean
 	mvWindow: Set<[index: number, window: number]>
 }
 
@@ -69,6 +73,8 @@ export function updateChangedVariables(
 	for (const fairlightAudioIndex of changes.fairlightAudio)
 		updateFairlightAudioVariables(state, fairlightAudioIndex, newValues)
 	for (const classicAudioIndex of changes.classicAudio) updateClassicAudioVariables(state, classicAudioIndex, newValues)
+	if (changes.fairlightAudioMaster) updateFairlightAudioMasterVariables(state, newValues)
+	if (changes.fairlightAudioMonitor) updateFairlightAudioMonitorVariables(state, newValues)
 
 	for (const [index, window] of changes.mvWindow)
 		updateMultiviewerWindowInput(instance, state, index, window, newValues)
@@ -328,6 +334,16 @@ function updateClassicAudioVariables(
 	values[`audio_input_${classicAudioIndex}_balance`] = formatAudioProperty(channel?.balance, 1)
 	values[`audio_input_${classicAudioIndex}_gain`] = formatAudioProperty(channel?.gain, 1)
 	values[`audio_input_${classicAudioIndex}_mixOption`] = formatAudioMixOption(channel?.mixOption)
+}
+
+function updateFairlightAudioMasterVariables(state: AtemState, values: CompanionVariableValues): void {
+	const master = getFairlightAudioMasterChannel(state)
+	values[`audio_master_faderGain`] = formatAudioProperty(master?.properties?.faderGain)
+}
+
+function updateFairlightAudioMonitorVariables(state: AtemState, values: CompanionVariableValues): void {
+	const monitor = getFairlightAudioMonitorChannel(state)
+	values[`audio_monitor_gain`] = formatAudioProperty(monitor?.gain)
 }
 
 function updateSuperSourceVariables(
@@ -635,6 +651,20 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 
 			updateFairlightAudioVariables(state, Number(inputId), values)
 		}
+
+		//master
+		variables.push({
+			name: `Fader gain for master`,
+			variableId: `audio_master_faderGain`,
+		})
+		updateFairlightAudioMasterVariables(state, values)
+
+		//monitor
+		variables.push({
+			name: `Gain for Monitor/Headphone`,
+			variableId: `audio_monitor_gain`,
+		})
+		updateFairlightAudioMonitorVariables(state, values)
 	}
 
 	// Classic audio
