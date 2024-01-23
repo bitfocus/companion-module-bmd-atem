@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.7.0
+
+- Add variables for fairlight audio master/monitor
+
 ## v3.6.1
 
 - Add definitions for TVS 4K8
