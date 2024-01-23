@@ -2575,7 +2575,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 				: undefined,
 			[ActionId.FairlightAudioMonitorGain]: model.fairlightAudio.monitor
 				? ({
-						name: 'Fairlight Audio: Monitor/Headphone fader gain',
+						name: 'Fairlight Audio: Set Monitor/Headphone fader gain',
 						options: [
 							{
 								type: 'number',
@@ -2620,7 +2620,7 @@ function audioActions(atem: Atem | undefined, model: ModelSpec, transitions: Ate
 			[ActionId.FairlightAudioMonitorGainDelta]: model.fairlightAudio.monitor
 				? ({
 						name: 'Fairlight Audio: Adjust Monitor/Headphone fader gain',
-						options: [audioInputOption, audioSourceOption, FaderLevelDeltaChoice, FadeDurationChoice],
+						options: [FaderLevelDeltaChoice, FadeDurationChoice],
 						callback: async (action) => {
 							const currentGain = atem?.state?.fairlight?.monitor?.gain
 							if (typeof currentGain === 'number') {
