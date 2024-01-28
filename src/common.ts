@@ -5,6 +5,7 @@ import type {
 	DropdownChoiceId,
 } from '@companion-module/base'
 import type { CompanionCommonCallbackContext } from '@companion-module/base/dist/module-api/common.js'
+// eslint-disable-next-line n/no-missing-import
 import type { ConditionalKeys } from 'type-fest'
 
 // type InputFieldNumber = CompanionInputFieldColor | CompanionInputFieldNumber
