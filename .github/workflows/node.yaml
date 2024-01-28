@@ -1,0 +1,65 @@
+name: Node CI
+
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+  pull_request:
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+      - name: Prepare Environment
+        run: |
+          corepack enable
+          yarn install
+          yarn build
+        env:
+          CI: true
+      - name: Run typecheck and linter
+        run: |
+          yarn lint
+        env:
+          CI: true
+
+  # test:
+  #   name: Test
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 15
+
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Use Node.js 18.x
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 18.x
+  #     - name: Prepare Environment
+  #       run: |
+  #         corepack enable
+  #         yarn install
+  #       env:
+  #         CI: true
+  #     - name: Run tests
+  #       run: |
+  #         yarn unit
+  #       env:
+  #         CI: true
+  #     - name: Send coverage
+  #       uses: codecov/codecov-action@v3
+  #     - name: Check docs generation
+  #       run: |
+  #         yarn docs:test
+  #       env:
+  #         CI: true

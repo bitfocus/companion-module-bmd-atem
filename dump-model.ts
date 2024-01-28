@@ -1,4 +1,4 @@
-/* eslint-disable no-process-exit */
+/* eslint-disable n/no-process-exit */
 import * as fs from 'fs'
 import Atem from 'atem-connection'
 import { GetParsedModelSpec } from './src/models/index.js'

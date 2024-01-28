@@ -5,13 +5,15 @@
 	"main": "dist/index.js",
 	"type": "module",
 	"scripts": {
-		"prepare": "husky install",
-		"dev": "yarn build:main --watch",
-		"build": "rimraf dist && yarn build:main",
+		"postinstall": "husky install",
+		"dev": "run build:main --watch",
+		"build": "rimraf dist && yarn buil`d:main",
 		"build:main": "tsc -p tsconfig.build.json",
-		"lint:raw": "eslint --ext .ts --ext .js --ignore-pattern dist --ignore-pattern pkg",
+		"lint:raw": "run eslint --ext .ts --ext .js --ignore-pattern dist --ignore-pattern pkg",
 		"lint": "yarn lint:raw .",
-		"dist": "yarn companion-module-build"
+		"dist": "yarn companion-module-build",
+		"eslint": "./node_modules/.bin/eslint",
+		"prettier": "./node_modules/.bin/prettier"
 	},
 	"repository": {
 		"type": "git",
@@ -21,10 +23,10 @@
 	"prettier": "@companion-module/tools/.prettierrc.json",
 	"lint-staged": {
 		"*.{css,json,md,scss}": [
-			"prettier --write"
+			"run prettier --write"
 		],
 		"*.{ts,tsx,js,jsx}": [
-			"yarn lint:raw --fix"
+			"run lint:raw --fix"
 		]
 	},
 	"engines": {
@@ -45,5 +47,6 @@
 		"rimraf": "^5.0.5",
 		"ts-node": "^10.9.1",
 		"typescript": "~5.2"
-	}
+	},
+	"packageManager": "yarn@4.0.2"
 }
