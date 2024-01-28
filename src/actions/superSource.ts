@@ -58,7 +58,7 @@ export interface AtemSuperSourceActions {
 export function createSuperSourceActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
-	state: StateWrapper,
+	state: StateWrapper
 ): MyActionDefinitions<AtemSuperSourceActions> {
 	if (!model.SSrc) {
 		return {
@@ -146,7 +146,7 @@ export function createSuperSourceActions(
 						source: options.getPlainNumber('source'),
 					},
 					options.getPlainNumber('boxIndex'),
-					options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0,
+					options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
 				)
 			},
 			learn: ({ options }) => {
@@ -176,7 +176,7 @@ export function createSuperSourceActions(
 								label: 'Super Source',
 								default: '1',
 								useVariables: true,
-							}
+						  }
 						: undefined,
 				boxIndex: {
 					type: 'textinput',
@@ -206,7 +206,7 @@ export function createSuperSourceActions(
 						source: source,
 					},
 					boxIndex,
-					ssrcId,
+					ssrcId
 				)
 			},
 			learn: async ({ options }) => {
@@ -250,7 +250,7 @@ export function createSuperSourceActions(
 							enabled: !box?.enabled,
 						},
 						boxIndex,
-						ssrcId,
+						ssrcId
 					)
 				} else {
 					await atem?.setSuperSourceBoxSettings(
@@ -258,7 +258,7 @@ export function createSuperSourceActions(
 							enabled: options.getRaw('onair') === 'true',
 						},
 						boxIndex,
-						ssrcId,
+						ssrcId
 					)
 				}
 			},

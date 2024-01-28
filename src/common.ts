@@ -4,7 +4,7 @@ import type {
 	CompanionOptionValues,
 	DropdownChoiceId,
 } from '@companion-module/base'
-import type { CompanionCommonCallbackContext } from '@companion-module/base/dist/module-api/common'
+import type { CompanionCommonCallbackContext } from '@companion-module/base/dist/module-api/common.js'
 import type { ConditionalKeys } from 'type-fest'
 
 // type InputFieldNumber = CompanionInputFieldColor | CompanionInputFieldNumber

@@ -12,7 +12,7 @@ export function createUpstreamKeyerPresets(
 	model: ModelSpec,
 	pstSize: CompanionButtonStyleProps['size'],
 	pstText: string,
-	meSources: SourceInfo[],
+	meSources: SourceInfo[]
 ): MyPresetDefinitionCategory<ActionTypes, FeedbackTypes>[] {
 	const result: MyPresetDefinitionCategory<ActionTypes, FeedbackTypes>[] = []
 

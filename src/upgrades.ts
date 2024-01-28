@@ -20,7 +20,7 @@ function scaleValue(obj: { [key: string]: InputValue | undefined }, key: string,
 
 function upgradeV2x2x0(
 	_context: CompanionUpgradeContext<AtemConfig>,
-	props: CompanionStaticUpgradeProps<AtemConfig>,
+	props: CompanionStaticUpgradeProps<AtemConfig>
 ): CompanionStaticUpgradeResult<AtemConfig> {
 	const result: CompanionStaticUpgradeResult<AtemConfig> = {
 		updatedActions: [],
@@ -101,7 +101,7 @@ const BooleanFeedbackUpgradeMap: {
 
 function upgradeAddSSrcPropertiesPicker(
 	_context: CompanionUpgradeContext<AtemConfig>,
-	props: CompanionStaticUpgradeProps<AtemConfig>,
+	props: CompanionStaticUpgradeProps<AtemConfig>
 ): CompanionStaticUpgradeResult<AtemConfig> {
 	const result: CompanionStaticUpgradeResult<AtemConfig> = {
 		updatedActions: [],
@@ -131,7 +131,7 @@ function upgradeAddSSrcPropertiesPicker(
 
 function fixUsingFairlightAudioFaderGainInsteadOfFairlightAudioMonitorFaderGain(
 	_context: CompanionUpgradeContext<AtemConfig>,
-	props: CompanionStaticUpgradeProps<AtemConfig>,
+	props: CompanionStaticUpgradeProps<AtemConfig>
 ): CompanionStaticUpgradeResult<AtemConfig> {
 	const result: CompanionStaticUpgradeResult<AtemConfig> = {
 		updatedActions: [],
@@ -161,7 +161,7 @@ const InvertableFeedbackUpgradeMap: {
 
 function combineTransitionSelectionToDropdown(
 	_context: CompanionUpgradeContext<AtemConfig>,
-	props: CompanionStaticUpgradeProps<AtemConfig>,
+	props: CompanionStaticUpgradeProps<AtemConfig>
 ): CompanionStaticUpgradeResult<AtemConfig> {
 	const result: CompanionStaticUpgradeResult<AtemConfig> = {
 		updatedActions: [],

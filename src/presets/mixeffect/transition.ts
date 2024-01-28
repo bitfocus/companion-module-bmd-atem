@@ -28,7 +28,7 @@ function getTransitionSelectionOptions(keyCount: number): boolean[][] {
 export function createTransitionPresets(
 	model: ModelSpec,
 	pstSize: CompanionButtonStyleProps['size'],
-	rateOptions: number[],
+	rateOptions: number[]
 ): MyPresetDefinitionCategory<ActionTypes, FeedbackTypes>[] {
 	const result: MyPresetDefinitionCategory<ActionTypes, FeedbackTypes>[] = []
 

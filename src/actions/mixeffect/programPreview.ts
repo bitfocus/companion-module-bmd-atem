@@ -1,7 +1,7 @@
 import type { Atem } from 'atem-connection'
 import { getMixEffect } from 'atem-connection/dist/state/util.js'
 import { AtemMEPicker, AtemMESourcePicker, FadeDurationChoice } from '../../input.js'
-import type { ModelSpec } from '../../models/index'
+import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
 import type { MyActionDefinitions } from '../types.js'
 import type { StateWrapper } from '../../state.js'
@@ -41,7 +41,7 @@ export function createProgramPreviewActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	transitions: AtemTransitions,
-	state: StateWrapper,
+	state: StateWrapper
 ): MyActionDefinitions<AtemProgramPreviewActions> {
 	return {
 		[ActionId.Program]: {
@@ -191,7 +191,7 @@ export function createProgramPreviewActions(
 					},
 					meState?.transitionPosition.handlePosition,
 					position * 100,
-					options.getPlainNumber('fadeDuration'),
+					options.getPlainNumber('fadeDuration')
 				)
 			},
 		},

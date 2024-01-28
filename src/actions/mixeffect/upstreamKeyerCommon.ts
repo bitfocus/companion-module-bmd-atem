@@ -47,7 +47,7 @@ export interface AtemUpstreamKeyerCommonActions {
 export function createUpstreamKeyerCommonActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
-	state: StateWrapper,
+	state: StateWrapper
 ): MyActionDefinitions<AtemUpstreamKeyerCommonActions> {
 	if (!model.USKs) {
 		return {
@@ -72,12 +72,12 @@ export function createUpstreamKeyerCommonActions(
 					atem?.setUpstreamKeyerFillSource(
 						options.getPlainNumber('fill'),
 						options.getPlainNumber('mixeffect'),
-						options.getPlainNumber('key'),
+						options.getPlainNumber('key')
 					),
 					atem?.setUpstreamKeyerCutSource(
 						options.getPlainNumber('cut'),
 						options.getPlainNumber('mixeffect'),
-						options.getPlainNumber('key'),
+						options.getPlainNumber('key')
 					),
 				])
 			},

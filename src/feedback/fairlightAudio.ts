@@ -39,7 +39,7 @@ export interface AtemFairlightAudioFeedbacks {
 
 export function createFairlightAudioFeedbacks(
 	model: ModelSpec,
-	state: StateWrapper,
+	state: StateWrapper
 ): MyFeedbackDefinitions<AtemFairlightAudioFeedbacks> {
 	if (!model.fairlightAudio) {
 		return {
@@ -89,7 +89,7 @@ export function createFairlightAudioFeedbacks(
 					compareNumber(
 						options.getPlainNumber('gain'),
 						options.getPlainString('comparitor'),
-						source.properties.gain / 100,
+						source.properties.gain / 100
 					)
 				)
 			},
@@ -141,7 +141,7 @@ export function createFairlightAudioFeedbacks(
 					compareNumber(
 						options.getPlainNumber('gain'),
 						options.getPlainString('comparitor'),
-						source.properties.faderGain / 100,
+						source.properties.faderGain / 100
 					)
 				)
 			},
@@ -257,7 +257,7 @@ export function createFairlightAudioFeedbacks(
 					callback: (): boolean => {
 						return !!state.state.fairlight?.monitor?.inputMasterMuted
 					},
-				}
+			  }
 			: undefined,
 		[FeedbackId.FairlightAudioMonitorFaderGain]: model.fairlightAudio.monitor
 			? {
@@ -301,7 +301,7 @@ export function createFairlightAudioFeedbacks(
 							return undefined
 						}
 					},
-				}
+			  }
 			: undefined,
 	}
 }

@@ -42,7 +42,7 @@ export interface AtemProgramFeedbacks {
 
 export function createProgramFeedbacks(
 	model: ModelSpec,
-	state: StateWrapper,
+	state: StateWrapper
 ): MyFeedbackDefinitions<AtemProgramFeedbacks> {
 	return {
 		[FeedbackId.ProgramBG]: {
@@ -159,7 +159,7 @@ export function createProgramFeedbacks(
 								return undefined
 							}
 						},
-					}
+				  }
 				: undefined,
 		[FeedbackId.ProgramBG3]:
 			model.MEs >= 3
@@ -206,7 +206,7 @@ export function createProgramFeedbacks(
 								return undefined
 							}
 						},
-					}
+				  }
 				: undefined,
 		[FeedbackId.ProgramBG4]:
 			model.MEs >= 4
@@ -259,7 +259,7 @@ export function createProgramFeedbacks(
 								return undefined
 							}
 						},
-					}
+				  }
 				: undefined,
 	}
 }

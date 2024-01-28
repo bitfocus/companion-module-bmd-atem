@@ -64,7 +64,7 @@ export interface AtemDownstreamKeyerActions {
 export function createDownstreamKeyerActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
-	state: StateWrapper,
+	state: StateWrapper
 ): MyActionDefinitions<AtemDownstreamKeyerActions> {
 	if (!model.DSKs) {
 		return {

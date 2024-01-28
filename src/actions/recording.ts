@@ -18,7 +18,7 @@ export interface AtemRecordingActions {
 export function createRecordingActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
-	state: StateWrapper,
+	state: StateWrapper
 ): MyActionDefinitions<AtemRecordingActions> {
 	if (!model.recording) {
 		return {

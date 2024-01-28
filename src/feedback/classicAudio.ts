@@ -26,7 +26,7 @@ export interface AtemClassicAudioFeedbacks {
 
 export function createClassicAudioFeedbacks(
 	model: ModelSpec,
-	state: StateWrapper,
+	state: StateWrapper
 ): MyFeedbackDefinitions<AtemClassicAudioFeedbacks> {
 	if (!model.classicAudio) {
 		return {

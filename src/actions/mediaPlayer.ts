@@ -22,7 +22,7 @@ export interface AtemMediaPlayerActions {
 export function createMediaPlayerActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
-	state: StateWrapper,
+	state: StateWrapper
 ): MyActionDefinitions<AtemMediaPlayerActions> {
 	if (!model.media.players) {
 		return {
@@ -46,7 +46,7 @@ export function createMediaPlayerActions(
 							sourceType: Enums.MediaSourceType.Clip,
 							clipIndex: source - MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
 						},
-						options.getPlainNumber('mediaplayer'),
+						options.getPlainNumber('mediaplayer')
 					)
 				} else {
 					await atem?.setMediaPlayerSource(
@@ -54,7 +54,7 @@ export function createMediaPlayerActions(
 							sourceType: Enums.MediaSourceType.Still,
 							stillIndex: source,
 						},
-						options.getPlainNumber('mediaplayer'),
+						options.getPlainNumber('mediaplayer')
 					)
 				}
 			},
@@ -110,7 +110,7 @@ export function createMediaPlayerActions(
 							sourceType: Enums.MediaSourceType.Still,
 							stillIndex: nextIndex,
 						},
-						playerId,
+						playerId
 					)
 				}
 			},

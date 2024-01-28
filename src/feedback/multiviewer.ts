@@ -20,7 +20,7 @@ export interface AtemMultiviewerFeedbacks {
 
 export function createMultiviewerFeedbacks(
 	model: ModelSpec,
-	state: StateWrapper,
+	state: StateWrapper
 ): MyFeedbackDefinitions<AtemMultiviewerFeedbacks> {
 	if (!model.MVs) {
 		return {
@@ -46,7 +46,7 @@ export function createMultiviewerFeedbacks(
 				const window = getMultiviewerWindow(
 					state.state,
 					options.getPlainNumber('multiViewerId'),
-					options.getPlainNumber('windowIndex'),
+					options.getPlainNumber('windowIndex')
 				)
 				return window?.source === options.getPlainNumber('source')
 			},
@@ -54,7 +54,7 @@ export function createMultiviewerFeedbacks(
 				const window = getMultiviewerWindow(
 					state.state,
 					options.getPlainNumber('multiViewerId'),
-					options.getPlainNumber('windowIndex'),
+					options.getPlainNumber('windowIndex')
 				)
 
 				if (window) {

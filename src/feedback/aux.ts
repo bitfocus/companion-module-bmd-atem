@@ -18,7 +18,7 @@ export interface AtemAuxOutputFeedbacks {
 
 export function createAuxOutputFeedbacks(
 	model: ModelSpec,
-	state: StateWrapper,
+	state: StateWrapper
 ): MyFeedbackDefinitions<AtemAuxOutputFeedbacks> {
 	if (!model.auxes) {
 		return {

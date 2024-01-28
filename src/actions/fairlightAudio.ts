@@ -74,7 +74,7 @@ export function createFairlightAudioActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	transitions: AtemTransitions,
-	state: StateWrapper,
+	state: StateWrapper
 ): MyActionDefinitions<AtemFairlightAudioActions> {
 	if (!model.fairlightAudio) {
 		return {
@@ -133,7 +133,7 @@ export function createFairlightAudioActions(
 					},
 					source?.properties?.gain,
 					options.getPlainNumber('gain') * 100,
-					options.getPlainNumber('fadeDuration'),
+					options.getPlainNumber('fadeDuration')
 				)
 			},
 			learn: ({ options }) => {
@@ -177,7 +177,7 @@ export function createFairlightAudioActions(
 						},
 						source.properties.gain,
 						source.properties.gain + options.getPlainNumber('delta') * 100,
-						options.getPlainNumber('fadeDuration'),
+						options.getPlainNumber('fadeDuration')
 					)
 				}
 			},
@@ -217,7 +217,7 @@ export function createFairlightAudioActions(
 					},
 					source?.properties?.faderGain,
 					options.getPlainNumber('gain') * 100,
-					options.getPlainNumber('fadeDuration'),
+					options.getPlainNumber('fadeDuration')
 				)
 			},
 			learn: ({ options }) => {
@@ -261,7 +261,7 @@ export function createFairlightAudioActions(
 						},
 						source.properties.faderGain,
 						source.properties.faderGain + options.getPlainNumber('delta') * 100,
-						options.getPlainNumber('fadeDuration'),
+						options.getPlainNumber('fadeDuration')
 					)
 				}
 			},
@@ -384,7 +384,7 @@ export function createFairlightAudioActions(
 					},
 					atem?.state?.fairlight?.master?.properties?.faderGain,
 					options.getPlainNumber('gain') * 100,
-					options.getPlainNumber('fadeDuration'),
+					options.getPlainNumber('fadeDuration')
 				)
 			},
 			learn: ({ options }) => {
@@ -419,7 +419,7 @@ export function createFairlightAudioActions(
 						},
 						currentGain,
 						currentGain + options.getPlainNumber('delta') * 100,
-						options.getPlainNumber('fadeDuration'),
+						options.getPlainNumber('fadeDuration')
 					)
 				}
 			},
@@ -460,7 +460,7 @@ export function createFairlightAudioActions(
 							return undefined
 						}
 					},
-				}
+			  }
 			: undefined,
 		[ActionId.FairlightAudioMonitorGain]: model.fairlightAudio.monitor
 			? {
@@ -489,7 +489,7 @@ export function createFairlightAudioActions(
 							},
 							atem?.state?.fairlight?.monitor?.gain,
 							options.getPlainNumber('gain') * 100,
-							options.getPlainNumber('fadeDuration'),
+							options.getPlainNumber('fadeDuration')
 						)
 					},
 					learn: ({ options }) => {
@@ -504,7 +504,7 @@ export function createFairlightAudioActions(
 							return undefined
 						}
 					},
-				}
+			  }
 			: undefined,
 		[ActionId.FairlightAudioMonitorGainDelta]: model.fairlightAudio.monitor
 			? {
@@ -525,11 +525,11 @@ export function createFairlightAudioActions(
 								},
 								currentGain,
 								currentGain + options.getPlainNumber('delta') * 100,
-								options.getPlainNumber('fadeDuration'),
+								options.getPlainNumber('fadeDuration')
 							)
 						}
 					},
-				}
+			  }
 			: undefined,
 		// [ActionId.FairlightAudioMonitorMasterGain]: literal<CompanionActionExt>({
 		// 	label: 'Fairlight Audio: Monitor/Headphone master gain',

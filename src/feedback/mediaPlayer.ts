@@ -16,7 +16,7 @@ export interface AtemMediaPlayerFeedbacks {
 
 export function createMediaPlayerFeedbacks(
 	model: ModelSpec,
-	state: StateWrapper,
+	state: StateWrapper
 ): MyFeedbackDefinitions<AtemMediaPlayerFeedbacks> {
 	if (!model.media.players) {
 		return {

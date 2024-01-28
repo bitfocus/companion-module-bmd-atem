@@ -59,7 +59,7 @@ function compareAsInt(value: number, actual: number, targetScale: number, actual
 
 export function createSuperSourceFeedbacks(
 	model: ModelSpec,
-	state: StateWrapper,
+	state: StateWrapper
 ): MyFeedbackDefinitions<AtemSuperSourceFeedbacks> {
 	if (!model.SSrc) {
 		return {
@@ -239,7 +239,7 @@ export function createSuperSourceFeedbacks(
 								label: 'Super Source',
 								default: '1',
 								useVariables: true,
-							}
+						  }
 						: undefined,
 				boxIndex: {
 					type: 'textinput',
