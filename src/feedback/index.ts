@@ -39,7 +39,7 @@ export type FeedbackTypes = AtemTallyFeedbacks &
 	AtemMediaPlayerFeedbacks
 
 export function GetFeedbacksList(model: ModelSpec, state: StateWrapper): CompanionFeedbackDefinitions {
-	const feedbacks: { [id in FeedbackId]: MyFeedbackDefinition<FeedbackTypes> | undefined } = {
+	const feedbacks: { [id in FeedbackId]: MyFeedbackDefinition<any> | undefined } = {
 		...createTallyFeedbacks(model, state),
 		...createPreviewFeedbacks(model, state),
 		...createProgramFeedbacks(model, state),
