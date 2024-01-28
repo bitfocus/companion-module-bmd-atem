@@ -60,25 +60,28 @@ export function AtemRatePicker(label: string): CompanionInputFieldNumber {
 		default: 25,
 	}
 }
-export function AtemTransitionSelectComponentsPickers(model: ModelSpec): CompanionInputFieldDropdown[] {
-	const pickers: CompanionInputFieldDropdown[] = [
-		{
+export function AtemTransitionSelectComponentsPickers(model: ModelSpec): {
+	background: CompanionInputFieldDropdown
+	[id: `key${string}`]: CompanionInputFieldDropdown
+} {
+	const pickers: ReturnType<typeof AtemTransitionSelectComponentsPickers> = {
+		background: {
 			type: 'dropdown',
 			id: 'background',
 			label: 'Background',
 			choices: CHOICES_NEXTTRANS_BACKGROUND,
 			default: NextTransBackgroundChoices.NoChange,
 		},
-	]
+	}
 
 	for (let i = 0; i < model.USKs; i++) {
-		pickers.push({
+		pickers[`key${i}`] = {
 			label: `Key ${i + 1}`,
 			type: 'dropdown',
 			id: `key${i}`,
 			choices: CHOICES_NEXTTRANS_KEY,
 			default: NextTransKeyChoices.NoChange,
-		})
+		}
 	}
 
 	return pickers

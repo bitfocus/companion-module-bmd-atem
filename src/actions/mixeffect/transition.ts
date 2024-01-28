@@ -40,11 +40,7 @@ export interface AtemTransitionActions {
 	[ActionId.TransitionSelectComponents]: {
 		mixeffect: number
 		background: NextTransBackgroundChoices
-		// // unknown index signature
-		key0: NextTransKeyChoices
-		// } | {
-		// 	// unknown index signature
-		// 	[key: `key${i}`]: NextTransKeyChoices
+		[id: `key${string}`]: NextTransKeyChoices
 	}
 	[ActionId.TransitionSelectionComponent]: {
 		mixeffect: number
@@ -244,7 +240,7 @@ export function createTransitionActions(
 						const component = 1 << (key + 1)
 						const inNextSelection = currentNextSelection.includes(component)
 
-						const mode = options.getPlainString(`key${key}`) as NextTransKeyChoices
+						const mode = options.getPlainString(`key${key}`)
 						let include
 						switch (mode) {
 							case NextTransKeyChoices.NoChange:
