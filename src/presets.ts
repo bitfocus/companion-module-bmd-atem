@@ -1,11 +1,12 @@
 import { combineRgb, type CompanionPresetDefinitions } from '@companion-module/base'
 import { type AtemState, Enums } from 'atem-connection'
-import { ActionId } from './actions.js'
+import { ActionId } from './actions/ActionId.js'
 import { CHOICES_KEYFRAMES, GetSourcesListForType, GetTransitionStyleChoices } from './choices.js'
 import { type AtemConfig, PresetStyleName } from './config.js'
-import { FeedbackId, MacroFeedbackType } from './feedback.js'
+import { FeedbackId } from './feedback/FeedbackId.js'
 import type { ModelSpec } from './models/index.js'
 import { calculateTransitionSelection, type InstanceBaseExt, MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util.js'
+import { MacroFeedbackType } from './feedback/macro.js'
 
 const rateOptions = [12, 15, 25, 30, 37, 45, 50, 60]
 
@@ -301,14 +302,13 @@ export function GetPresetsList(
 
 		for (const opt of getTransitionSelectionOptions(model.USKs)) {
 			const transitionStringParts = opt[0] ? ['BG'] : []
-			const selectionProps: { [key: string]: boolean } = {
-				background: opt[0],
-			}
+			const selectionProps = opt[0] ? ['background'] : []
+
 			for (let i = 0; i < model.USKs; i++) {
 				if (opt[i + 1]) {
 					transitionStringParts.push(`K${i + 1}`)
+					selectionProps.push(`key${i}`)
 				}
-				selectionProps[`key${i}`] = opt[i + 1]
 			}
 
 			if (calculateTransitionSelection(model.USKs, selectionProps).length === 0) {
@@ -333,7 +333,7 @@ export function GetPresetsList(
 						feedbackId: FeedbackId.TransitionSelection,
 						options: {
 							mixeffect: me,
-							...selectionProps,
+							selection: selectionProps,
 						},
 						style: {
 							bgcolor: combineRgb(255, 255, 0),
@@ -348,7 +348,7 @@ export function GetPresetsList(
 								actionId: ActionId.TransitionSelection,
 								options: {
 									mixeffect: me,
-									...selectionProps,
+									selection: selectionProps,
 								},
 							},
 						],

@@ -6,10 +6,11 @@ import {
 	type InputValue,
 	type CompanionStaticUpgradeScript,
 	CreateUseBuiltinInvertForFeedbacksUpgradeScript,
+	type CompanionOptionValues,
 } from '@companion-module/base'
-import { ActionId } from './actions.js'
+import { ActionId } from './actions/ActionId.js'
 import type { AtemConfig } from './config.js'
-import { FeedbackId } from './feedback.js'
+import { FeedbackId } from './feedback/FeedbackId.js'
 
 function scaleValue(obj: { [key: string]: InputValue | undefined }, key: string, scale: number): void {
 	if (obj[key] !== undefined) {
@@ -158,10 +159,54 @@ const InvertableFeedbackUpgradeMap: {
 	[FeedbackId.USKOnAir]: 'invert',
 }
 
+function combineTransitionSelectionToDropdown(
+	_context: CompanionUpgradeContext<AtemConfig>,
+	props: CompanionStaticUpgradeProps<AtemConfig>
+): CompanionStaticUpgradeResult<AtemConfig> {
+	const result: CompanionStaticUpgradeResult<AtemConfig> = {
+		updatedActions: [],
+		updatedConfig: null,
+		updatedFeedbacks: [],
+	}
+
+	const convertSelection = (options: CompanionOptionValues) => {
+		options.selection = []
+
+		if (options.background) options.selection.push('background')
+		delete options.background
+
+		for (const key of Object.keys(options)) {
+			if (key.startsWith('key')) {
+				if (options[key]) options.selection.push(key)
+				delete options[key]
+			}
+		}
+	}
+
+	for (const action of props.actions) {
+		if (action.actionId === ActionId.TransitionSelection && action.options['selection'] === undefined) {
+			convertSelection(action.options)
+
+			result.updatedActions.push(action)
+		}
+	}
+
+	for (const feedback of props.feedbacks) {
+		if (feedback.feedbackId === FeedbackId.TransitionSelection && feedback.options['selection'] === undefined) {
+			convertSelection(feedback.options)
+
+			result.updatedFeedbacks.push(feedback)
+		}
+	}
+
+	return result
+}
+
 export const UpgradeScripts: CompanionStaticUpgradeScript<AtemConfig>[] = [
 	upgradeV2x2x0,
 	CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap),
 	upgradeAddSSrcPropertiesPicker,
 	fixUsingFairlightAudioFaderGainInsteadOfFairlightAudioMonitorFaderGain,
 	CreateUseBuiltinInvertForFeedbacksUpgradeScript(InvertableFeedbackUpgradeMap),
+	combineTransitionSelectionToDropdown,
 ]

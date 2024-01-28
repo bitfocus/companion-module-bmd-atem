@@ -2,6 +2,7 @@ import type { DropdownChoice } from '@companion-module/base'
 import { type AtemState, Enums } from 'atem-connection'
 import type { ModelSpec } from './models/index.js'
 import { iterateTimes, assertUnreachable } from './util.js'
+import type { MyDropdownChoice } from './common.js'
 
 export const CHOICES_SSRCBOXES: DropdownChoice[] = [
 	{ id: 0, label: 'Box 1' },
@@ -17,7 +18,9 @@ export const CHOICES_BORDER_BEVEL: DropdownChoice[] = [
 	{ id: 3, label: 'Out' },
 ]
 
-export const CHOICES_ON_OFF_TOGGLE: DropdownChoice[] = [
+export type TrueFalseToggle = 'true' | 'false' | 'toggle'
+
+export const CHOICES_ON_OFF_TOGGLE: MyDropdownChoice<TrueFalseToggle>[] = [
 	{ id: 'true', label: 'On' },
 	{ id: 'false', label: 'Off' },
 	{ id: 'toggle', label: 'Toggle' },
@@ -30,7 +33,7 @@ export enum NextTransBackgroundChoices {
 	Toggle = 'toggle',
 }
 
-export const CHOICES_NEXTTRANS_BACKGROUND: DropdownChoice[] = [
+export const CHOICES_NEXTTRANS_BACKGROUND: MyDropdownChoice<NextTransBackgroundChoices>[] = [
 	{ id: NextTransBackgroundChoices.NoChange, label: 'No change' },
 	{ id: NextTransBackgroundChoices.Include, label: 'Include' },
 	{ id: NextTransBackgroundChoices.Omit, label: 'Omit' },
@@ -46,7 +49,7 @@ export enum NextTransKeyChoices {
 	Omit = 'omit',
 }
 
-export const CHOICES_NEXTTRANS_KEY: DropdownChoice[] = [
+export const CHOICES_NEXTTRANS_KEY: MyDropdownChoice<NextTransKeyChoices>[] = [
 	{ id: NextTransKeyChoices.NoChange, label: 'No change' },
 	{ id: NextTransKeyChoices.On, label: 'On' },
 	{ id: NextTransKeyChoices.Off, label: 'Off' },
@@ -55,25 +58,29 @@ export const CHOICES_NEXTTRANS_KEY: DropdownChoice[] = [
 	{ id: NextTransKeyChoices.Omit, label: 'Omit' },
 ]
 
-export const CHOICES_KEYTRANS: DropdownChoice[] = [
+export const CHOICES_KEYTRANS: MyDropdownChoice<TrueFalseToggle>[] = [
 	{ id: 'true', label: 'On Air' },
 	{ id: 'false', label: 'Off' },
 	{ id: 'toggle', label: 'Toggle' },
 ]
 
-export const CHOICES_KEYFRAMES: DropdownChoice[] = [
+export const CHOICES_KEYFRAMES: MyDropdownChoice<
+	Enums.FlyKeyKeyFrame.A | Enums.FlyKeyKeyFrame.B | Enums.FlyKeyKeyFrame.Full
+>[] = [
 	{ id: Enums.FlyKeyKeyFrame.A, label: 'A' },
 	{ id: Enums.FlyKeyKeyFrame.B, label: 'B' },
 	{ id: Enums.FlyKeyKeyFrame.Full, label: 'Full' },
 ]
 
-export const CHOICES_CURRENTKEYFRAMES: DropdownChoice[] = [
+export const CHOICES_CURRENTKEYFRAMES: MyDropdownChoice<
+	Enums.IsAtKeyFrame.A | Enums.IsAtKeyFrame.B | Enums.IsAtKeyFrame.RunToInfinite
+>[] = [
 	{ id: Enums.IsAtKeyFrame.A, label: 'A' },
 	{ id: Enums.IsAtKeyFrame.B, label: 'B' },
 	{ id: Enums.IsAtKeyFrame.RunToInfinite, label: 'Full / Infinite' },
 ]
 
-export const CHOICES_FLYDIRECTIONS: DropdownChoice[] = [
+export const CHOICES_FLYDIRECTIONS: MyDropdownChoice<Enums.FlyKeyDirection>[] = [
 	{ id: Enums.FlyKeyDirection.CentreOfKey, label: 'Centre of key' },
 	{ id: Enums.FlyKeyDirection.TopLeft, label: 'Top left' },
 	{ id: Enums.FlyKeyDirection.TopCentre, label: 'Top centre' },
@@ -86,7 +93,7 @@ export const CHOICES_FLYDIRECTIONS: DropdownChoice[] = [
 	{ id: Enums.FlyKeyDirection.BottomRight, label: 'Bottom right' },
 ]
 
-export const CHOICES_CLASSIC_AUDIO_MIX_OPTION: DropdownChoice[] = [
+export const CHOICES_CLASSIC_AUDIO_MIX_OPTION: MyDropdownChoice<Enums.AudioMixOption>[] = [
 	{
 		id: Enums.AudioMixOption.On,
 		label: 'On',
@@ -101,7 +108,7 @@ export const CHOICES_CLASSIC_AUDIO_MIX_OPTION: DropdownChoice[] = [
 	},
 ]
 
-export const CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION: DropdownChoice[] = [
+export const CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION: MyDropdownChoice<Enums.FairlightAudioMixOption>[] = [
 	{
 		id: Enums.FairlightAudioMixOption.On,
 		label: 'On',
@@ -116,7 +123,7 @@ export const CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION: DropdownChoice[] = [
 	},
 ]
 
-export function GetTransitionStyleChoices(skipSting?: boolean): DropdownChoice[] {
+export function GetTransitionStyleChoices(skipSting?: boolean): MyDropdownChoice<Enums.TransitionStyle>[] {
 	const options = [
 		{ id: Enums.TransitionStyle.MIX, label: 'Mix' },
 		{ id: Enums.TransitionStyle.DIP, label: 'Dip' },

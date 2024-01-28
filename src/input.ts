@@ -25,9 +25,11 @@ import {
 	NextTransBackgroundChoices,
 	NextTransKeyChoices,
 	SourcesToChoices,
+	type TrueFalseToggle,
 } from './choices.js'
 import type { ModelSpec } from './models/index.js'
 import { iterateTimes, MEDIA_PLAYER_SOURCE_CLIP_OFFSET, compact, NumberComparitor } from './util.js'
+import type { MyOptionsObject } from './common.js'
 
 export function AtemMESourcePicker(model: ModelSpec, state: AtemState, id: number): CompanionInputFieldDropdown {
 	return {
@@ -58,49 +60,50 @@ export function AtemRatePicker(label: string): CompanionInputFieldNumber {
 		default: 25,
 	}
 }
-export function AtemTransitionSelectComponentsPickers(model: ModelSpec): CompanionInputFieldDropdown[] {
-	const pickers: CompanionInputFieldDropdown[] = [
-		{
+export function AtemTransitionSelectComponentsPickers(model: ModelSpec): {
+	background: CompanionInputFieldDropdown
+	[id: `key${string}`]: CompanionInputFieldDropdown
+} {
+	const pickers: ReturnType<typeof AtemTransitionSelectComponentsPickers> = {
+		background: {
 			type: 'dropdown',
 			id: 'background',
 			label: 'Background',
 			choices: CHOICES_NEXTTRANS_BACKGROUND,
 			default: NextTransBackgroundChoices.NoChange,
 		},
-	]
+	}
 
 	for (let i = 0; i < model.USKs; i++) {
-		pickers.push({
+		pickers[`key${i}`] = {
 			label: `Key ${i + 1}`,
 			type: 'dropdown',
 			id: `key${i}`,
 			choices: CHOICES_NEXTTRANS_KEY,
 			default: NextTransKeyChoices.NoChange,
-		})
+		}
 	}
 
 	return pickers
 }
-export function AtemTransitionSelectionPickers(model: ModelSpec): CompanionInputFieldCheckbox[] {
-	const pickers: CompanionInputFieldCheckbox[] = [
-		{
-			type: 'checkbox',
-			id: 'background',
-			label: 'Background',
-			default: true,
-		},
-	]
+export function AtemTransitionSelectionPicker(model: ModelSpec): CompanionInputFieldMultiDropdown {
+	const choices: DropdownChoice[] = [{ id: 'background', label: 'Background' }]
 
 	for (let i = 0; i < model.USKs; i++) {
-		pickers.push({
-			type: 'checkbox',
+		choices.push({
 			id: `key${i}`,
 			label: `Key ${i + 1}`,
-			default: false,
 		})
 	}
 
-	return pickers
+	return {
+		type: 'multidropdown',
+		id: 'selection',
+		label: 'Selection',
+		default: ['background'],
+		minSelection: 1,
+		choices,
+	}
 }
 export function AtemTransitionSelectionComponentPicker(model: ModelSpec): CompanionInputFieldDropdown {
 	const options: DropdownChoice[] = [
@@ -143,21 +146,23 @@ export function AtemDSKPicker(model: ModelSpec): CompanionInputFieldDropdown {
 		choices: GetDSKIdChoices(model),
 	}
 }
-export function AtemDSKMaskPropertiesPickers(): Array<
-	| CompanionInputFieldNumber
-	| CompanionInputFieldCheckbox
-	| CompanionInputFieldDropdown
-	| CompanionInputFieldMultiDropdown
-> {
-	const allProps: ReturnType<typeof AtemDSKMaskPropertiesPickers> = compact([
-		{
+export function AtemDSKMaskPropertiesPickers(): {
+	properties: CompanionInputFieldMultiDropdown
+	maskEnabled: CompanionInputFieldCheckbox
+	maskTop: CompanionInputFieldNumber
+	maskBottom: CompanionInputFieldNumber
+	maskLeft: CompanionInputFieldNumber
+	maskRight: CompanionInputFieldNumber
+} {
+	const allProps: Omit<ReturnType<typeof AtemDSKMaskPropertiesPickers>, 'properties'> = {
+		maskEnabled: {
 			type: 'checkbox',
 			label: 'Enabled',
 			id: 'maskEnabled',
 			default: true,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskEnabled'),
 		},
-		{
+		maskTop: {
 			type: 'number',
 			label: 'Top',
 			id: 'maskTop',
@@ -167,7 +172,7 @@ export function AtemDSKMaskPropertiesPickers(): Array<
 			max: 9,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskTop'),
 		},
-		{
+		maskBottom: {
 			type: 'number',
 			label: 'Bottom',
 			id: 'maskBottom',
@@ -177,7 +182,7 @@ export function AtemDSKMaskPropertiesPickers(): Array<
 			max: 9,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskBottom'),
 		},
-		{
+		maskLeft: {
 			type: 'number',
 			label: 'Left',
 			id: 'maskLeft',
@@ -187,7 +192,7 @@ export function AtemDSKMaskPropertiesPickers(): Array<
 			max: 16,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskLeft'),
 		},
-		{
+		maskRight: {
 			type: 'number',
 			label: 'Right',
 			id: 'maskRight',
@@ -197,36 +202,37 @@ export function AtemDSKMaskPropertiesPickers(): Array<
 			max: 16,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskRight'),
 		},
-	])
+	}
 
-	return compact([
-		{
+	return {
+		properties: {
 			type: 'multidropdown',
 			id: 'properties',
 			label: 'Properties',
 			minSelection: 1,
-			default: allProps.map((p) => p.id),
-			choices: allProps.map((p) => ({ id: p.id, label: p.label })),
+			default: Object.values(allProps).map((p) => p.id),
+			choices: Object.values(allProps).map((p) => ({ id: p.id, label: p.label })),
 		},
 		...allProps,
-	])
+	}
 }
 
-export function AtemDSKPreMultipliedKeyPropertiesPickers(): Array<
-	| CompanionInputFieldNumber
-	| CompanionInputFieldCheckbox
-	| CompanionInputFieldDropdown
-	| CompanionInputFieldMultiDropdown
-> {
-	const allProps: ReturnType<typeof AtemDSKMaskPropertiesPickers> = compact([
-		{
+export function AtemDSKPreMultipliedKeyPropertiesPickers(): {
+	properties: CompanionInputFieldMultiDropdown
+	preMultiply: CompanionInputFieldCheckbox
+	clip: CompanionInputFieldNumber
+	gain: CompanionInputFieldNumber
+	invert: CompanionInputFieldCheckbox
+} {
+	const allProps: Omit<ReturnType<typeof AtemDSKPreMultipliedKeyPropertiesPickers>, 'properties'> = {
+		preMultiply: {
 			type: 'checkbox',
 			label: 'Enabled',
 			id: 'preMultiply',
 			default: true,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('preMultiply'),
 		},
-		{
+		clip: {
 			type: 'number',
 			label: 'Clip',
 			id: 'clip',
@@ -237,7 +243,7 @@ export function AtemDSKPreMultipliedKeyPropertiesPickers(): Array<
 			max: 100,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('clip'),
 		},
-		{
+		gain: {
 			type: 'number',
 			label: 'Gain',
 			id: 'gain',
@@ -248,26 +254,26 @@ export function AtemDSKPreMultipliedKeyPropertiesPickers(): Array<
 			max: 100,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('gain'),
 		},
-		{
+		invert: {
 			type: 'checkbox',
 			label: 'Invert key',
 			id: 'invert',
 			default: false,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('invert'),
 		},
-	])
+	}
 
-	return compact([
-		{
+	return {
+		properties: {
 			type: 'multidropdown',
 			id: 'properties',
 			label: 'Properties',
 			minSelection: 1,
-			default: allProps.map((p) => p.id),
-			choices: allProps.map((p) => ({ id: p.id, label: p.label })),
+			default: Object.values(allProps).map((p) => p.id),
+			choices: Object.values(allProps).map((p) => ({ id: p.id, label: p.label })),
 		},
 		...allProps,
-	])
+	}
 }
 
 export function AtemUSKPicker(model: ModelSpec): CompanionInputFieldDropdown {
@@ -279,21 +285,23 @@ export function AtemUSKPicker(model: ModelSpec): CompanionInputFieldDropdown {
 		choices: GetUSKIdChoices(model),
 	}
 }
-export function AtemUSKMaskPropertiesPickers(): Array<
-	| CompanionInputFieldNumber
-	| CompanionInputFieldCheckbox
-	| CompanionInputFieldDropdown
-	| CompanionInputFieldMultiDropdown
-> {
-	const allProps: ReturnType<typeof AtemUSKMaskPropertiesPickers> = compact([
-		{
+export function AtemUSKMaskPropertiesPickers(): {
+	properties: CompanionInputFieldMultiDropdown
+	maskEnabled: CompanionInputFieldCheckbox
+	maskTop: CompanionInputFieldNumber
+	maskBottom: CompanionInputFieldNumber
+	maskLeft: CompanionInputFieldNumber
+	maskRight: CompanionInputFieldNumber
+} {
+	const allProps: Omit<ReturnType<typeof AtemUSKMaskPropertiesPickers>, 'properties'> = {
+		maskEnabled: {
 			type: 'checkbox',
 			label: 'Enabled',
 			id: 'maskEnabled',
 			default: true,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskEnabled'),
 		},
-		{
+		maskTop: {
 			type: 'number',
 			label: 'Top',
 			id: 'maskTop',
@@ -303,7 +311,7 @@ export function AtemUSKMaskPropertiesPickers(): Array<
 			max: 9,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskTop'),
 		},
-		{
+		maskBottom: {
 			type: 'number',
 			label: 'Bottom',
 			id: 'maskBottom',
@@ -313,7 +321,7 @@ export function AtemUSKMaskPropertiesPickers(): Array<
 			max: 9,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskBottom'),
 		},
-		{
+		maskLeft: {
 			type: 'number',
 			label: 'Left',
 			id: 'maskLeft',
@@ -323,7 +331,7 @@ export function AtemUSKMaskPropertiesPickers(): Array<
 			max: 16,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskLeft'),
 		},
-		{
+		maskRight: {
 			type: 'number',
 			label: 'Right',
 			id: 'maskRight',
@@ -333,28 +341,52 @@ export function AtemUSKMaskPropertiesPickers(): Array<
 			max: 16,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskRight'),
 		},
-	])
+	}
 
-	return compact([
-		{
+	return {
+		properties: {
 			type: 'multidropdown',
 			id: 'properties',
 			label: 'Properties',
 			minSelection: 1,
-			default: allProps.map((p) => p.id),
-			choices: allProps.map((p) => ({ id: p.id, label: p.label })),
+			default: Object.values(allProps).map((p) => p.id),
+			choices: Object.values(allProps).map((p) => ({ id: p.id, label: p.label })),
 		},
 		...allProps,
-	])
+	}
 }
-export function AtemUSKDVEPropertiesPickers(): Array<
-	| CompanionInputFieldNumber
-	| CompanionInputFieldCheckbox
-	| CompanionInputFieldDropdown
-	| CompanionInputFieldMultiDropdown
-> {
-	const allProps: ReturnType<typeof AtemUSKDVEPropertiesPickers> = compact([
-		{
+export function AtemUSKDVEPropertiesPickers(): {
+	properties: CompanionInputFieldMultiDropdown
+
+	positionX: CompanionInputFieldNumber
+	positionY: CompanionInputFieldNumber
+	sizeX: CompanionInputFieldNumber
+	sizeY: CompanionInputFieldNumber
+	rotation: CompanionInputFieldNumber
+	maskEnabled: CompanionInputFieldCheckbox
+	maskTop: CompanionInputFieldNumber
+	maskBottom: CompanionInputFieldNumber
+	maskLeft: CompanionInputFieldNumber
+	maskRight: CompanionInputFieldNumber
+	shadowEnabled: CompanionInputFieldCheckbox
+	lightSourceDirection: CompanionInputFieldNumber
+	lightSourceAltitude: CompanionInputFieldNumber
+	borderEnabled: CompanionInputFieldCheckbox
+	borderHue: CompanionInputFieldNumber
+	borderSaturation: CompanionInputFieldNumber
+	borderLuma: CompanionInputFieldNumber
+	borderBevel: CompanionInputFieldDropdown
+	borderOuterWidth: CompanionInputFieldNumber
+	borderInnerWidth: CompanionInputFieldNumber
+	borderOuterSoftness: CompanionInputFieldNumber
+	borderInnerSoftness: CompanionInputFieldNumber
+	borderOpacity: CompanionInputFieldNumber
+	borderBevelPosition: CompanionInputFieldNumber
+	borderBevelSoftness: CompanionInputFieldNumber
+	rate: CompanionInputFieldNumber
+} {
+	const allProps: Omit<ReturnType<typeof AtemUSKDVEPropertiesPickers>, 'properties'> = {
+		positionX: {
 			type: 'number',
 			label: 'Position: X',
 			id: 'positionX',
@@ -365,7 +397,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			max: 1000,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionX'),
 		},
-		{
+		positionY: {
 			type: 'number',
 			label: 'Position: Y',
 			id: 'positionY',
@@ -376,7 +408,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			max: 1000,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionY'),
 		},
-		{
+		sizeX: {
 			type: 'number',
 			label: 'Size: X',
 			id: 'sizeX',
@@ -387,7 +419,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			max: 99.99,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('sizeX'),
 		},
-		{
+		sizeY: {
 			type: 'number',
 			label: 'Size: Y',
 			id: 'sizeY',
@@ -398,7 +430,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			max: 99.99,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('sizeY'),
 		},
-		{
+		rotation: {
 			type: 'number',
 			label: 'Rotation',
 			id: 'rotation',
@@ -408,14 +440,14 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			max: 360,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('rotation'),
 		},
-		{
+		maskEnabled: {
 			type: 'checkbox',
 			label: 'Mask: Enabled',
 			id: 'maskEnabled',
 			default: true,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskEnabled'),
 		},
-		{
+		maskTop: {
 			type: 'number',
 			label: 'Mask: Top',
 			id: 'maskTop',
@@ -426,7 +458,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			max: 38,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskTop'),
 		},
-		{
+		maskBottom: {
 			type: 'number',
 			label: 'Mask: Bottom',
 			id: 'maskBottom',
@@ -437,7 +469,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			max: 38,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskBottom'),
 		},
-		{
+		maskLeft: {
 			type: 'number',
 			label: 'Mask: Left',
 			id: 'maskLeft',
@@ -448,7 +480,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			max: 52,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskLeft'),
 		},
-		{
+		maskRight: {
 			type: 'number',
 			label: 'Mask: Right',
 			id: 'maskRight',
@@ -459,14 +491,14 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			max: 52,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskRight'),
 		},
-		{
+		shadowEnabled: {
 			type: 'checkbox',
 			label: 'Shadow: Enabled',
 			id: 'shadowEnabled',
 			default: false,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('shadowEnabled'),
 		},
-		{
+		lightSourceDirection: {
 			type: 'number',
 			label: 'Shadow: Angle',
 			id: 'lightSourceDirection',
@@ -477,7 +509,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			max: 359,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('lightSourceDirection'),
 		},
-		{
+		lightSourceAltitude: {
 			type: 'number',
 			label: 'Shadow: Altitude',
 			id: 'lightSourceAltitude',
@@ -488,14 +520,14 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			max: 100,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('lightSourceAltitude'),
 		},
-		{
+		borderEnabled: {
 			type: 'checkbox',
 			label: 'Border: Enabled',
 			id: 'borderEnabled',
 			default: true,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderEnabled'),
 		},
-		{
+		borderHue: {
 			type: 'number',
 			label: 'Border: Hue',
 			id: 'borderHue',
@@ -506,7 +538,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			max: 360,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderHue'),
 		},
-		{
+		borderSaturation: {
 			type: 'number',
 			label: 'Border: Sat',
 			id: 'borderSaturation',
@@ -517,7 +549,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			max: 100,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderSaturation'),
 		},
-		{
+		borderLuma: {
 			type: 'number',
 			label: 'Border: Lum',
 			id: 'borderLuma',
@@ -528,14 +560,14 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			max: 100,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderLuma'),
 		},
-		{
+		borderBevel: {
 			type: 'dropdown',
 			label: 'Border: Style',
 			id: 'borderBevel',
 			default: 0,
 			choices: CHOICES_BORDER_BEVEL,
 		},
-		{
+		borderOuterWidth: {
 			type: 'number',
 			label: 'Border: Outer Width',
 			id: 'borderOuterWidth',
@@ -546,7 +578,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			max: 16,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderOuterWidth'),
 		},
-		{
+		borderInnerWidth: {
 			type: 'number',
 			label: 'Border: Inner Width',
 			id: 'borderInnerWidth',
@@ -557,7 +589,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			max: 16,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderInnerWidth'),
 		},
-		{
+		borderOuterSoftness: {
 			type: 'number',
 			label: 'Border: Outer Soften',
 			id: 'borderOuterSoftness',
@@ -568,7 +600,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			max: 100,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderOuterSoftness'),
 		},
-		{
+		borderInnerSoftness: {
 			type: 'number',
 			label: 'Border: Inner Soften',
 			id: 'borderInnerSoftness',
@@ -579,7 +611,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			max: 100,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderInnerSoftness'),
 		},
-		{
+		borderOpacity: {
 			type: 'number',
 			label: 'Border: Opacity',
 			id: 'borderOpacity',
@@ -590,7 +622,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			max: 100,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderOpacity'),
 		},
-		{
+		borderBevelPosition: {
 			type: 'number',
 			label: 'Border: Bevel Position',
 			id: 'borderBevelPosition',
@@ -601,7 +633,7 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			max: 100,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderBevelPosition'),
 		},
-		{
+		borderBevelSoftness: {
 			type: 'number',
 			label: 'Border: Bevel Soften',
 			id: 'borderBevelSoftness',
@@ -612,20 +644,20 @@ export function AtemUSKDVEPropertiesPickers(): Array<
 			max: 100,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderBevelSoftness'),
 		},
-		AtemRatePicker('Rate'),
-	])
+		rate: AtemRatePicker('Rate'),
+	}
 
-	return compact([
-		{
+	return {
+		properties: {
 			type: 'multidropdown',
 			id: 'properties',
 			label: 'Properties',
 			minSelection: 1,
-			default: allProps.map((p) => p.id),
-			choices: allProps.map((p) => ({ id: p.id, label: p.label })),
+			default: Object.values(allProps).map((p) => p.id),
+			choices: Object.values(allProps).map((p) => ({ id: p.id, label: p.label })),
 		},
 		...allProps,
-	])
+	}
 }
 
 export function AtemAuxPicker(model: ModelSpec): CompanionInputFieldDropdown {
@@ -727,52 +759,62 @@ export function AtemSuperSourceArtOption(action: boolean): CompanionInputFieldDr
 		choices: options,
 	}
 }
+
+export interface AtemSuperSourceProperties {
+	properties: Array<
+		'size' | 'onair' | 'source' | 'x' | 'y' | 'cropEnable' | 'cropTop' | 'cropBottom' | 'cropLeft' | 'cropRight'
+	>
+	size: number
+	onair: TrueFalseToggle
+	source: number
+	x: number
+	y: number
+	cropEnable: boolean
+	cropTop: number
+	cropBottom: number
+	cropLeft: number
+	cropRight: number
+}
 export function AtemSuperSourcePropertiesPickers(
 	model: ModelSpec,
-	state: AtemState,
-	offset: boolean
-): Array<
+	state: AtemState
+): MyOptionsObject<
+	AtemSuperSourceProperties,
+	| CompanionInputFieldMultiDropdown
+	| CompanionInputFieldDropdown
 	| CompanionInputFieldNumber
 	| CompanionInputFieldCheckbox
-	| CompanionInputFieldDropdown
-	| CompanionInputFieldMultiDropdown
 > {
-	const allProps: ReturnType<typeof AtemSuperSourcePropertiesPickers> = compact([
-		{
+	const allProps: Omit<ReturnType<typeof AtemSuperSourcePropertiesPickers>, 'properties'> = {
+		size: {
 			type: 'number',
 			id: 'size',
 			label: 'Size',
-			min: offset ? -1 : 0,
+			min: 0,
 			max: 1,
 			range: true,
-			default: offset ? 0 : 0.5,
+			default: 0.5,
 			step: 0.01,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('size'),
 		},
 
-		!offset
-			? {
-					id: 'onair',
-					type: 'dropdown',
-					label: 'On Air',
-					default: 'true',
-					choices: CHOICES_KEYTRANS,
-					isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('onair'),
-			  }
-			: undefined,
-
-		!offset
-			? {
-					type: 'dropdown',
-					id: 'source',
-					label: 'Source',
-					default: 0,
-					choices: SourcesToChoices(GetSourcesListForType(model, state, 'ssrc-box')),
-					isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('source'),
-			  }
-			: undefined,
-
-		{
+		onair: {
+			id: 'onair',
+			type: 'dropdown',
+			label: 'On Air',
+			default: 'true',
+			choices: CHOICES_KEYTRANS,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('onair'),
+		},
+		source: {
+			type: 'dropdown',
+			id: 'source',
+			label: 'Source',
+			default: 0,
+			choices: SourcesToChoices(GetSourcesListForType(model, state, 'ssrc-box')),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('source'),
+		},
+		x: {
 			type: 'number',
 			id: 'x',
 			label: 'X',
@@ -783,7 +825,7 @@ export function AtemSuperSourcePropertiesPickers(
 			step: 0.01,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('x'),
 		},
-		{
+		y: {
 			type: 'number',
 			id: 'y',
 			label: 'Y',
@@ -794,87 +836,200 @@ export function AtemSuperSourcePropertiesPickers(
 			step: 0.01,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('y'),
 		},
-		offset
-			? undefined
-			: {
-					type: 'checkbox',
-					id: 'cropEnable',
-					label: 'Crop Enable',
-					default: false,
-					isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropEnable'),
-			  },
-		{
+		cropEnable: {
+			type: 'checkbox',
+			id: 'cropEnable',
+			label: 'Crop Enable',
+			default: false,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropEnable'),
+		},
+		cropTop: {
 			type: 'number',
 			id: 'cropTop',
 			label: 'Crop Top',
-			min: offset ? -18 : 0,
+			min: 0,
 			max: 18,
 			range: true,
 			default: 0,
 			step: 0.01,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropTop'),
 		},
-		{
+		cropBottom: {
 			type: 'number',
 			id: 'cropBottom',
 			label: 'Crop Bottom',
-			min: offset ? -18 : 0,
+			min: 0,
 			max: 18,
 			range: true,
 			default: 0,
 			step: 0.01,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropBottom'),
 		},
-		{
+		cropLeft: {
 			type: 'number',
 			id: 'cropLeft',
 			label: 'Crop Left',
-			min: offset ? -32 : 0,
+			min: 0,
 			max: 32,
 			range: true,
 			default: 0,
 			step: 0.01,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropLeft'),
 		},
-		{
+		cropRight: {
 			type: 'number',
 			id: 'cropRight',
 			label: 'Crop Right',
-			min: offset ? -32 : 0,
+			min: 0,
 			max: 32,
 			range: true,
 			default: 0,
 			step: 0.01,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropRight'),
 		},
-	])
+	}
 
-	return compact([
-		{
+	return {
+		properties: {
 			type: 'multidropdown',
 			id: 'properties',
 			label: 'Properties',
 			minSelection: 1,
-			default: allProps.map((p) => p.id),
-			choices: allProps.map((p) => ({ id: p.id, label: p.label })),
+			default: Object.values(allProps).map((p) => p.id),
+			choices: Object.values(allProps).map((p) => ({ id: p.id, label: p.label })),
 		},
 		...allProps,
-	])
+	}
+}
+export function AtemSuperSourcePropertiesPickersForOffset(): {
+	properties: CompanionInputFieldMultiDropdown
+	size: CompanionInputFieldNumber
+	x: CompanionInputFieldNumber
+	y: CompanionInputFieldNumber
+	cropTop: CompanionInputFieldNumber
+	cropBottom: CompanionInputFieldNumber
+	cropLeft: CompanionInputFieldNumber
+	cropRight: CompanionInputFieldNumber
+} {
+	const allProps: Omit<ReturnType<typeof AtemSuperSourcePropertiesPickersForOffset>, 'properties'> = {
+		size: {
+			type: 'number',
+			id: 'size',
+			label: 'Size',
+			min: -1,
+			max: 1,
+			range: true,
+			default: 0,
+			step: 0.01,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('size'),
+		},
+
+		x: {
+			type: 'number',
+			id: 'x',
+			label: 'X',
+			min: -48,
+			max: 48,
+			range: true,
+			default: 0,
+			step: 0.01,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('x'),
+		},
+		y: {
+			type: 'number',
+			id: 'y',
+			label: 'Y',
+			min: -27,
+			max: 27,
+			range: true,
+			default: 0,
+			step: 0.01,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('y'),
+		},
+
+		cropTop: {
+			type: 'number',
+			id: 'cropTop',
+			label: 'Crop Top',
+			min: -18,
+			max: 18,
+			range: true,
+			default: 0,
+			step: 0.01,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropTop'),
+		},
+		cropBottom: {
+			type: 'number',
+			id: 'cropBottom',
+			label: 'Crop Bottom',
+			min: -18,
+			max: 18,
+			range: true,
+			default: 0,
+			step: 0.01,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropBottom'),
+		},
+		cropLeft: {
+			type: 'number',
+			id: 'cropLeft',
+			label: 'Crop Left',
+			min: -32,
+			max: 32,
+			range: true,
+			default: 0,
+			step: 0.01,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropLeft'),
+		},
+		cropRight: {
+			type: 'number',
+			id: 'cropRight',
+			label: 'Crop Right',
+			min: -32,
+			max: 32,
+			range: true,
+			default: 0,
+			step: 0.01,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropRight'),
+		},
+	}
+
+	return {
+		properties: {
+			type: 'multidropdown',
+			id: 'properties',
+			label: 'Properties',
+			minSelection: 1,
+			default: Object.values(allProps).map((p) => p.id),
+			choices: Object.values(allProps).map((p) => ({ id: p.id, label: p.label })),
+		},
+		...allProps,
+	}
+}
+export interface AtemSuperSourceArtProperties {
+	properties: Array<'fill' | 'key' | 'artOption' | 'artPreMultiplied' | 'artClip' | 'artGain' | 'artInvertKey'>
+	fill: number
+	key: number
+	artOption: 'unchanged' | Enums.SuperSourceArtOption | 'toggle'
+	artPreMultiplied: boolean
+	artClip: number
+	artGain: number
+	artInvertKey: boolean
 }
 export function AtemSuperSourceArtPropertiesPickers(
 	model: ModelSpec,
 	state: AtemState,
 	action: boolean
-): Array<
-	| CompanionInputFieldNumber
+): MyOptionsObject<
+	AtemSuperSourceArtProperties,
 	| CompanionInputFieldCheckbox
 	| CompanionInputFieldDropdown
+	| CompanionInputFieldNumber
 	| CompanionInputFieldMultiDropdown
 > {
 	const artSources = SourcesToChoices(GetSourcesListForType(model, state, 'ssrc-art'))
 
-	const allProps: ReturnType<typeof AtemSuperSourcePropertiesPickers> = compact([
-		{
+	const allProps: Omit<ReturnType<typeof AtemSuperSourceArtPropertiesPickers>, 'properties'> = {
+		fill: {
 			type: 'dropdown',
 			id: 'fill',
 			label: 'Fill Source',
@@ -882,7 +1037,7 @@ export function AtemSuperSourceArtPropertiesPickers(
 			choices: artSources,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('fill'),
 		},
-		{
+		key: {
 			type: 'dropdown',
 			id: 'key',
 			label: 'Key Source',
@@ -890,19 +1045,18 @@ export function AtemSuperSourceArtPropertiesPickers(
 			choices: artSources,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('key'),
 		},
-		{
+		artOption: {
 			...AtemSuperSourceArtOption(action),
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('artOption'),
 		},
-
-		{
+		artPreMultiplied: {
 			type: 'checkbox',
 			id: 'artPreMultiplied',
 			label: 'Pre-multiplied',
 			default: true,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('artPreMultiplied'),
 		},
-		{
+		artClip: {
 			type: 'number',
 			id: 'artClip',
 			label: 'Clip',
@@ -913,7 +1067,7 @@ export function AtemSuperSourceArtPropertiesPickers(
 			step: 1,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('artClip'),
 		},
-		{
+		artGain: {
 			type: 'number',
 			id: 'artGain',
 			label: 'Gain',
@@ -924,26 +1078,26 @@ export function AtemSuperSourceArtPropertiesPickers(
 			step: 1,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('artGain'),
 		},
-		{
+		artInvertKey: {
 			type: 'checkbox',
 			id: 'artInvertKey',
 			label: 'Invert Key',
 			default: false,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('artInvertKey'),
 		},
-	])
+	}
 
-	return compact([
-		{
+	return {
+		properties: {
 			type: 'multidropdown',
 			id: 'properties',
 			label: 'Properties',
 			minSelection: 1,
-			default: allProps.map((p) => p.id),
-			choices: allProps.map((p) => ({ id: p.id, label: p.label })),
+			default: Object.values(allProps).map((p) => p.id),
+			choices: Object.values(allProps).map((p) => ({ id: p.id, label: p.label })),
 		},
 		...allProps,
-	])
+	}
 }
 export function AtemSuperSourceArtSourcePicker(
 	model: ModelSpec,
@@ -1159,22 +1313,32 @@ export function AtemAllSourcePicker(model: ModelSpec, state: AtemState): Compani
 	}
 }
 
-export function AtemDisplayClockPropertiesPickers(): Array<
-	| CompanionInputFieldNumber
-	| CompanionInputFieldCheckbox
-	| CompanionInputFieldDropdown
-	| CompanionInputFieldMultiDropdown
-> {
+export function AtemDisplayClockPropertiesPickers(): {
+	enabled: CompanionInputFieldCheckbox
+	size: CompanionInputFieldNumber
+	opacity: CompanionInputFieldNumber
+	x: CompanionInputFieldNumber
+	y: CompanionInputFieldNumber
+	autoHide: CompanionInputFieldCheckbox
+	clockMode: CompanionInputFieldDropdown
+	properties: CompanionInputFieldMultiDropdown
+} {
+	// Array <
+	// 	| CompanionInputFieldNumber
+	// 	| CompanionInputFieldCheckbox
+	// 	| CompanionInputFieldDropdown
+	// 	| CompanionInputFieldMultiDropdown
+	// >
 	const offset = false
-	const allProps: ReturnType<typeof AtemDisplayClockPropertiesPickers> = compact([
-		{
+	const allProps: Omit<ReturnType<typeof AtemDisplayClockPropertiesPickers>, 'properties'> = {
+		enabled: {
 			type: 'checkbox',
 			id: 'enabled',
 			label: 'Display',
 			default: false,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('enabled'),
 		},
-		{
+		size: {
 			type: 'number',
 			id: 'size',
 			label: 'Size',
@@ -1185,7 +1349,7 @@ export function AtemDisplayClockPropertiesPickers(): Array<
 			step: 0.01,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('size'),
 		},
-		{
+		opacity: {
 			type: 'number',
 			id: 'opacity',
 			label: 'Opacity',
@@ -1196,7 +1360,7 @@ export function AtemDisplayClockPropertiesPickers(): Array<
 			step: 0.01,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('opacity'),
 		},
-		{
+		x: {
 			type: 'number',
 			id: 'x',
 			label: 'X',
@@ -1207,7 +1371,7 @@ export function AtemDisplayClockPropertiesPickers(): Array<
 			step: 0.01,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('x'),
 		},
-		{
+		y: {
 			type: 'number',
 			id: 'y',
 			label: 'Y',
@@ -1218,48 +1382,50 @@ export function AtemDisplayClockPropertiesPickers(): Array<
 			step: 0.01,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('y'),
 		},
-		!offset
-			? {
-					type: 'checkbox',
-					id: 'autoHide',
-					label: 'Auto Hide',
-					default: false,
-					isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('autoHide'),
-			  }
-			: undefined,
+		//!offset?
+		autoHide: {
+			type: 'checkbox',
+			id: 'autoHide',
+			label: 'Auto Hide',
+			default: false,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('autoHide'),
+		},
 		// startFrom: 1 << 6,
-		!offset
-			? {
-					id: 'clockMode',
-					label: 'Mode',
-					type: 'dropdown',
-					default: Enums.DisplayClockClockMode.Countdown,
-					choices: [
-						{ id: Enums.DisplayClockClockMode.Countdown, label: 'Count down' },
-						{ id: Enums.DisplayClockClockMode.Countup, label: 'Count up' },
-						{ id: Enums.DisplayClockClockMode.TimeOfDay, label: 'Time of Day' },
-					],
-					isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('clockMode'),
-			  }
-			: undefined,
-	])
+		//!offset?
+		clockMode: {
+			id: 'clockMode',
+			label: 'Mode',
+			type: 'dropdown',
+			default: Enums.DisplayClockClockMode.Countdown,
+			choices: [
+				{ id: Enums.DisplayClockClockMode.Countdown, label: 'Count down' },
+				{ id: Enums.DisplayClockClockMode.Countup, label: 'Count up' },
+				{ id: Enums.DisplayClockClockMode.TimeOfDay, label: 'Time of Day' },
+			],
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('clockMode'),
+		},
+	}
 
-	return compact([
-		{
+	return {
+		properties: {
 			type: 'multidropdown',
 			id: 'properties',
 			label: 'Properties',
 			minSelection: 1,
-			default: allProps.map((p) => p.id),
-			choices: allProps.map((p) => ({ id: p.id, label: p.label })),
+			default: Object.values(allProps).map((p) => p.id),
+			choices: Object.values(allProps).map((p) => ({ id: p.id, label: p.label })),
 		},
 		...allProps,
-	])
+	}
 }
 
-export function AtemDisplayClockTimePickers(): Array<CompanionInputFieldNumber> {
-	return [
-		{
+export function AtemDisplayClockTimePickers(): {
+	hours: CompanionInputFieldNumber
+	minutes: CompanionInputFieldNumber
+	seconds: CompanionInputFieldNumber
+} {
+	return {
+		hours: {
 			type: 'number',
 			id: 'hours',
 			label: 'Hours',
@@ -1269,7 +1435,7 @@ export function AtemDisplayClockTimePickers(): Array<CompanionInputFieldNumber> 
 			default: 0,
 			step: 1,
 		},
-		{
+		minutes: {
 			type: 'number',
 			id: 'minutes',
 			label: 'Minutes',
@@ -1279,7 +1445,7 @@ export function AtemDisplayClockTimePickers(): Array<CompanionInputFieldNumber> 
 			default: 0,
 			step: 1,
 		},
-		{
+		seconds: {
 			type: 'number',
 			id: 'seconds',
 			label: 'Seconds',
@@ -1289,5 +1455,5 @@ export function AtemDisplayClockTimePickers(): Array<CompanionInputFieldNumber> 
 			default: 0,
 			step: 1,
 		},
-	]
+	}
 }
