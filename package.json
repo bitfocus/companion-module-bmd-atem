@@ -5,7 +5,7 @@
 	"main": "dist/index.js",
 	"type": "module",
 	"scripts": {
-		"postinstall": "husky install",
+		"postinstall": "husky",
 		"dev": "run build:main --watch",
 		"build": "rimraf dist && yarn buil`d:main",
 		"build:main": "tsc -p tsconfig.build.json",
@@ -33,20 +33,20 @@
 		"node": "^18.12"
 	},
 	"dependencies": {
-		"@companion-module/base": "~1.6.0",
-		"atem-connection": "^3.3.3",
+		"@companion-module/base": "~1.7.0",
+		"atem-connection": "^3.4.0",
 		"lodash-es": "^4.17.21",
-		"type-fest": "^4.6.0"
+		"type-fest": "^4.10.1"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "^1.4.1",
-		"@types/lodash-es": "^4.17.11",
-		"@types/node": "^18.18.8",
-		"husky": "^8.0.3",
-		"lint-staged": "^15.0.2",
+		"@companion-module/tools": "^1.4.2",
+		"@types/lodash-es": "^4.17.12",
+		"@types/node": "^18.19.10",
+		"husky": "^9.0.6",
+		"lint-staged": "^15.2.0",
 		"rimraf": "^5.0.5",
-		"ts-node": "^10.9.1",
-		"typescript": "~5.2"
+		"ts-node": "^10.9.2",
+		"typescript": "~5.2.2"
 	},
 	"packageManager": "yarn@4.0.2"
 }
