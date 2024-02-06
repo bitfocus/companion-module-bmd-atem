@@ -219,11 +219,13 @@ function formatDurationSeconds(totalSeconds: number | undefined): { hms: string;
 function updateStreamingVariables(state: AtemState, values: CompanionVariableValues): void {
 	const bitrate = (state.streaming?.stats?.encodingBitrate ?? 0) / (1024 * 1024)
 	const durations = formatDuration(state.streaming?.duration)
+	const cacheused = state.streaming?.stats?.cacheUsed
 
 	values[`stream_bitrate`] = bitrate.toFixed(2)
 	values[`stream_duration_hm`] = durations.hm
 	values[`stream_duration_hms`] = durations.hms
 	values[`stream_duration_ms`] = durations.ms
+	values[`stream_cache_used`] = cacheused
 }
 
 function updateRecordingVariables(state: AtemState, values: CompanionVariableValues): void {
@@ -526,6 +528,10 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 		variables.push({
 			name: 'Streaming duration (mm:ss)',
 			variableId: 'stream_duration_ms',
+		})
+		variables.push({
+			name: 'Streaming Cache Used',
+			variableId: 'stream_cache_used',
 		})
 
 		updateStreamingVariables(state, values)
