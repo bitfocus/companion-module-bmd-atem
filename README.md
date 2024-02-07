@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.7.1
+
+- Fix auto-detect not reporting state correctly
+
 ## v3.7.0
 
 - Add variables for fairlight audio master/monitor
