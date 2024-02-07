@@ -155,7 +155,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 
 	private getBestModelId(): number | undefined {
 		const configModelId = Number(this.config.autoModelID) || Number(this.config.modelID)
-		if (!isNaN(configModelId)) {
+		if (!isNaN(configModelId) && configModelId > 0) {
 			return configModelId
 		} else {
 			const info = this.wrappedState.state.info
