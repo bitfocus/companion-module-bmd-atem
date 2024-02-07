@@ -42,6 +42,7 @@ export enum FeedbackId {
 	AdvancedTally = 'advanced_tally',
 	StreamStatus = 'streamStatus',
 	RecordStatus = 'recordStatus',
+	RecordISO = 'recordISO',
 	ClassicAudioGain = 'classicAudioGain',
 	ClassicAudioMixOption = 'classicAudioMixOption',
 	ClassicAudioMasterGain = 'classicAudioMasterGain',

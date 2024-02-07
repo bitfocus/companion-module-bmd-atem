@@ -13,6 +13,9 @@ export interface AtemRecordingActions {
 	[ActionId.RecordFilename]: {
 		filename: string
 	}
+	[ActionId.RecordISO]: {
+		recordISO: TrueFalseToggle
+	}
 }
 
 export function createRecordingActions(
@@ -25,6 +28,7 @@ export function createRecordingActions(
 			[ActionId.RecordStartStop]: undefined,
 			[ActionId.RecordSwitchDisk]: undefined,
 			[ActionId.RecordFilename]: undefined,
+			[ActionId.RecordISO]: undefined,
 		}
 	}
 	return {
@@ -88,6 +92,36 @@ export function createRecordingActions(
 					return {
 						...options.getJson(),
 						filename: state.state.recording?.properties.filename,
+					}
+				} else {
+					return undefined
+				}
+			},
+		},
+		[ActionId.RecordISO]: {
+			name: 'Recording: Enable/Disable ISO',
+			options: {
+				recordISO: {
+					id: 'recordISO',
+					type: 'dropdown',
+					label: 'Record ISO',
+					default: 'toggle',
+					choices: CHOICES_ON_OFF_TOGGLE,
+				},
+			},
+			callback: async ({ options }) => {
+				let newState = options.getPlainString('recordISO') === 'true'
+				if (options.getPlainString('recordISO') === 'toggle') {
+					newState = !state.state.recording?.recordAllInputs
+				}
+
+				await atem?.setEnableISORecording(newState)
+			},
+			learn: ({ options }) => {
+				if (state.state.recording?.recordAllInputs != undefined) {
+					return {
+						...options.getJson(),
+						state: state.state.recording.recordAllInputs,
 					}
 				} else {
 					return undefined

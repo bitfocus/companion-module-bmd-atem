@@ -125,7 +125,7 @@ export function GetParsedModelSpec({
 		},
 		streaming: streaming != undefined,
 		recording: recording != undefined,
-		recordISO: false,
+		recordISO: recording?.recordAllInputs != undefined,
 		classicAudio: audio
 			? {
 					inputs: compact(

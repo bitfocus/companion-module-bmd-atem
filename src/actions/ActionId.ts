@@ -50,6 +50,7 @@ export enum ActionId {
 	RecordStartStop = 'recordStartStop',
 	RecordSwitchDisk = 'recordSwitchDisk',
 	RecordFilename = 'recordFilename',
+	RecordISO = 'recordISO',
 	ClassicAudioGain = 'classicAudioGain',
 	ClassicAudioGainDelta = 'classicAudioGainDelta',
 	ClassicAudioMixOption = 'classicAudioMixOption',

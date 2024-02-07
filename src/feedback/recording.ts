@@ -9,6 +9,7 @@ export interface AtemRecordingFeedbacks {
 	[FeedbackId.RecordStatus]: {
 		state: Enums.RecordingStatus
 	}
+	[FeedbackId.RecordISO]: Record<never, never>
 }
 
 export function createRecordingFeedbacks(
@@ -18,6 +19,7 @@ export function createRecordingFeedbacks(
 	if (!model.recording) {
 		return {
 			[FeedbackId.RecordStatus]: undefined,
+			[FeedbackId.RecordISO]: undefined,
 		}
 	}
 	return {
@@ -56,6 +58,19 @@ export function createRecordingFeedbacks(
 				} else {
 					return undefined
 				}
+			},
+		},
+		[FeedbackId.RecordISO]: {
+			type: 'boolean',
+			name: 'Recording: ISO enabled',
+			description: 'If ISO recording is enabled',
+			options: {},
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(0, 255, 0),
+			},
+			callback: (): boolean => {
+				return !!state.state.recording?.recordAllInputs
 			},
 		},
 	}
