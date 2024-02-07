@@ -23,6 +23,7 @@ export enum FeedbackId {
 	MacroLoop = 'macroloop',
 	MVSource = 'mv_source',
 	MVSourceVariables = 'mv_source_variables',
+	MultiviewerLayout = 'multiviewerLayout',
 	SSrcArtProperties = 'ssrc_art_properties',
 	SSrcArtSource = 'ssrc_art_source',
 	SSrcArtOption = 'ssrc_art_option',

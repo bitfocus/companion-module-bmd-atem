@@ -316,12 +316,19 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 
 			const mvWindowMatch = path.match(/settings.multiViewers.(\d+).windows.(\d+)/)
 			if (mvWindowMatch) {
-				const meIndex = parseInt(mvWindowMatch[1], 10)
+				const mvIndex = parseInt(mvWindowMatch[1], 10)
 				const windowIndex = parseInt(mvWindowMatch[2], 10)
-				changedVariables.mvWindow.add([meIndex + 1, windowIndex + 1])
+				changedVariables.mvWindow.add([mvIndex + 1, windowIndex + 1])
 
 				changedFeedbacks.add(FeedbackId.MVSource)
 				changedFeedbacks.add(FeedbackId.MVSourceVariables)
+				continue
+			}
+
+			const mvPropsMatch = path.match(/settings.multiViewers.(\d+).properties/)
+			if (mvPropsMatch) {
+				// const mvIndex = parseInt(mvPropsMatch[1], 10)
+				changedFeedbacks.add(FeedbackId.MultiviewerLayout)
 				continue
 			}
 

@@ -2,8 +2,18 @@ import { AtemMultiviewSourcePicker, AtemMultiviewWindowPicker, AtemMultiviewerPi
 import type { ModelSpec } from '../models/index.js'
 import type { MyFeedbackDefinitions } from './types.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb } from '@companion-module/base'
-import { getMultiviewerWindow, type StateWrapper } from '../state.js'
+import { assertNever, combineRgb } from '@companion-module/base'
+import { getMultiviewer, getMultiviewerWindow, type StateWrapper } from '../state.js'
+import { Enums } from 'atem-connection'
+import type { MyDropdownChoice } from '../common.js'
+
+type MultiviewerQuadrantState = 'single' | 'quad' | 'ignore'
+
+const ChoicesMultiviewerQuadrantState: MyDropdownChoice<MultiviewerQuadrantState>[] = [
+	{ id: 'ignore', label: 'Ignored' },
+	{ id: 'single', label: 'Single' },
+	{ id: 'quad', label: 'Quad' },
+]
 
 export interface AtemMultiviewerFeedbacks {
 	[FeedbackId.MVSource]: {
@@ -16,6 +26,13 @@ export interface AtemMultiviewerFeedbacks {
 		windowIndex: string
 		source: string
 	}
+	[FeedbackId.MultiviewerLayout]: {
+		multiViewerId: string
+		topLeft: MultiviewerQuadrantState
+		topRight: MultiviewerQuadrantState
+		bottomLeft: MultiviewerQuadrantState
+		bottomRight: MultiviewerQuadrantState
+	}
 }
 
 export function createMultiviewerFeedbacks(
@@ -26,6 +43,7 @@ export function createMultiviewerFeedbacks(
 		return {
 			[FeedbackId.MVSource]: undefined,
 			[FeedbackId.MVSourceVariables]: undefined,
+			[FeedbackId.MultiviewerLayout]: undefined,
 		}
 	}
 	return {
@@ -116,6 +134,99 @@ export function createMultiviewerFeedbacks(
 					return {
 						...options.getJson(),
 						source: window.source + '',
+					}
+				} else {
+					return undefined
+				}
+			},
+		},
+		[FeedbackId.MultiviewerLayout]: {
+			type: 'boolean',
+			name: 'Multiviewer: Layout',
+			options: {
+				multiViewerId: {
+					type: 'textinput',
+					id: 'multiViewerId',
+					label: 'MV',
+					default: '1',
+					useVariables: true,
+				},
+				topLeft: {
+					id: 'topLeft',
+					type: 'dropdown',
+					label: 'Top left',
+					choices: ChoicesMultiviewerQuadrantState,
+					default: 'ignore',
+				},
+				topRight: {
+					id: 'topRight',
+					type: 'dropdown',
+					label: 'Top right',
+					choices: ChoicesMultiviewerQuadrantState,
+					default: 'ignore',
+				},
+				bottomLeft: {
+					id: 'bottomLeft',
+					type: 'dropdown',
+					label: 'Bottom left',
+					choices: ChoicesMultiviewerQuadrantState,
+					default: 'ignore',
+				},
+				bottomRight: {
+					id: 'bottomRight',
+					type: 'dropdown',
+					label: 'Bottom right',
+					choices: ChoicesMultiviewerQuadrantState,
+					default: 'ignore',
+				},
+			},
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: async ({ options }) => {
+				const multiViewerId = (await options.getParsedNumber('multiViewerId')) - 1
+
+				const mv = getMultiviewer(state.state, multiViewerId)
+				const layout = mv?.properties?.layout ?? Enums.MultiViewerLayout.Default
+
+				const checkMatches = (selected: MultiviewerQuadrantState, value: Enums.MultiViewerLayout) => {
+					switch (selected) {
+						case 'ignore':
+							return true
+						case 'single':
+							return (layout & value) == 0
+						case 'quad':
+							return (layout & value) > 0
+						default:
+							assertNever(selected)
+							return false
+					}
+				}
+
+				return (
+					checkMatches(options.getPlainString('topLeft'), Enums.MultiViewerLayout.TopLeftSmall) &&
+					checkMatches(options.getPlainString('topRight'), Enums.MultiViewerLayout.TopRightSmall) &&
+					checkMatches(options.getPlainString('bottomLeft'), Enums.MultiViewerLayout.BottomLeftSmall) &&
+					checkMatches(options.getPlainString('bottomRight'), Enums.MultiViewerLayout.BottomRightSmall)
+				)
+			},
+			learn: async ({ options }) => {
+				const multiViewerId = (await options.getParsedNumber('multiViewerId')) - 1
+
+				const mv = getMultiviewer(state.state, multiViewerId)
+
+				if (mv?.properties) {
+					const layout = mv.properties.layout
+
+					const getState = (value: Enums.MultiViewerLayout) => (layout & value ? 'quad' : 'single')
+
+					return {
+						...options.getJson(),
+						topLeft: getState(Enums.MultiViewerLayout.TopLeftSmall),
+						topRight: getState(Enums.MultiViewerLayout.TopRightSmall),
+						bottomLeft: getState(Enums.MultiViewerLayout.BottomLeftSmall),
+						bottomRight: getState(Enums.MultiViewerLayout.BottomRightSmall),
 					}
 				} else {
 					return undefined
