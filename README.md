@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.8.1
+
+- Build tooling update
+
 ## v3.8.0
 
 - Enable/disable ISO recording
