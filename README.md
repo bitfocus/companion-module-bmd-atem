@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.8.3
+
+- Build tooling update
+
 ## v3.8.2
 
 - Build tooling update

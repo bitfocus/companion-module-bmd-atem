@@ -10,4 +10,5 @@ module.exports = {
 		},
 		// /^(atemSocketChild)$/i,
 	],
+	forceRemoveNodeGypFromPkg: true,
 }
