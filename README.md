@@ -23,6 +23,13 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.8.0
+
+- Enable/disable ISO recording
+- Multiviewer layout control
+- Basic camera control
+- Stream cache variable
+
 ## v3.7.1
 
 - Fix auto-detect not reporting state correctly
