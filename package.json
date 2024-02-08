@@ -33,8 +33,9 @@
 		"node": "^18.12"
 	},
 	"dependencies": {
+		"@atem-connection/camera-control": "^0.1.0",
 		"@companion-module/base": "~1.7.0",
-		"atem-connection": "^3.4.0",
+		"atem-connection": "^3.5.0",
 		"lodash-es": "^4.17.21",
 		"type-fest": "^4.10.1"
 	},

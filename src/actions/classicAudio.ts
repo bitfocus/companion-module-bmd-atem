@@ -240,7 +240,7 @@ export function createClassicAudioActions(
 					async (value) => {
 						await atem?.setClassicAudioMixerMasterProps({ gain: value })
 					},
-					atem?.state?.audio?.master?.gain,
+					state.state.audio?.master?.gain,
 					options.getPlainNumber('gain'),
 					options.getPlainNumber('fadeDuration')
 				)

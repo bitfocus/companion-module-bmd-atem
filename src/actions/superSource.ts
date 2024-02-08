@@ -114,7 +114,7 @@ export function createSuperSourceActions(
 			learn: ({ options }) => {
 				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
 
-				const ssrcConfig = atem?.state?.video.superSources?.[ssrcId]?.properties
+				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.properties
 				if (ssrcConfig) {
 					return {
 						...options.getJson(),

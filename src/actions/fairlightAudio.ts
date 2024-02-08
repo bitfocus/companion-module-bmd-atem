@@ -382,7 +382,7 @@ export function createFairlightAudioActions(
 							faderGain: value,
 						})
 					},
-					atem?.state?.fairlight?.master?.properties?.faderGain,
+					state.state.fairlight?.master?.properties?.faderGain,
 					options.getPlainNumber('gain') * 100,
 					options.getPlainNumber('fadeDuration')
 				)
@@ -439,7 +439,7 @@ export function createFairlightAudioActions(
 					callback: async ({ options }) => {
 						let target: boolean
 						if (options.getPlainString('state') === 'toggle') {
-							target = !atem?.state?.fairlight?.monitor?.inputMasterMuted
+							target = !state.state.fairlight?.monitor?.inputMasterMuted
 						} else {
 							target = options.getPlainString('state') === 'true'
 						}
@@ -487,7 +487,7 @@ export function createFairlightAudioActions(
 									gain: value,
 								})
 							},
-							atem?.state?.fairlight?.monitor?.gain,
+							state.state.fairlight?.monitor?.gain,
 							options.getPlainNumber('gain') * 100,
 							options.getPlainNumber('fadeDuration')
 						)
@@ -514,7 +514,7 @@ export function createFairlightAudioActions(
 						fadeDuration: FadeDurationChoice,
 					},
 					callback: async ({ options }) => {
-						const currentGain = atem?.state?.fairlight?.monitor?.gain
+						const currentGain = state.state.fairlight?.monitor?.gain
 						if (typeof currentGain === 'number') {
 							await transitions.run(
 								`audio.monitor.faderGain`,
@@ -558,7 +558,7 @@ export function createFairlightAudioActions(
 		// 					})
 		// 				)
 		// 			},
-		// 			atem?.state?.fairlight?.monitor?.inputMasterGain,
+		// 			state.state.fairlight?.monitor?.inputMasterGain,
 		// 			options.getPlainNumber( 'gain') * 100,
 		// 			options.getPlainNumber( 'fadeDuration', )
 		// 		)

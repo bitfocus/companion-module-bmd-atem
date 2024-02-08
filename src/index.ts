@@ -12,7 +12,7 @@ import {
 	type UpdateVariablesProps,
 	updateChangedVariables,
 	updateDeviceIpVariable,
-} from './variables.js'
+} from './variables/lib.js'
 import { AtemCommandBatching } from './batching.js'
 import { AtemTransitions } from './transitions.js'
 import {
@@ -25,11 +25,13 @@ import {
 import { isEqual } from 'lodash-es'
 import { UpgradeScripts } from './upgrades.js'
 import { calculateTallyForInputId, type IpAndPort } from './util.js'
+import { AtemCameraControlStateBuilder, createEmptyState } from '@atem-connection/camera-control'
 
 const { Atem, AtemConnectionStatus, AtemStateUtil } = AtemPkg
 
 // eslint-disable-next-line n/no-extraneous-import
 import { ThreadedClassManager, RegisterExitHandlers } from 'threadedclass'
+import { updateCameraControlVariables } from './variables/cameraControl.js'
 
 // HACK: This stops it from registering an unhandledException handler, as that causes companion to exit on error
 ThreadedClassManager.handleExit = RegisterExitHandlers.NO
@@ -40,7 +42,7 @@ ThreadedClassManager.handleExit = RegisterExitHandlers.NO
 class AtemInstance extends InstanceBase<AtemConfig> {
 	private model: ModelSpec
 	private atem: IAtem | undefined
-	private wrappedState: StateWrapper
+	private readonly wrappedState: StateWrapper
 	private commandBatching: AtemCommandBatching
 	private isActive: boolean
 	private durationInterval: NodeJS.Timeout | undefined
@@ -59,6 +61,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			state: AtemStateUtil.Create(),
 			tally: {},
 			tallyCache: new Map(),
+			atemCameraState: new AtemCameraControlStateBuilder(0), // TODO - when should this be emptied?
 		}
 		this.atemTransitions = new AtemTransitions(this.config)
 
@@ -107,6 +110,8 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 
 		// Force clear the cached state
 		this.wrappedState.state = AtemStateUtil.Create()
+		this.wrappedState.atemCameraState.reset(0)
+
 		this.atemTransitions.stopAll()
 		this.atemTransitions = new AtemTransitions(this.config)
 		this.updateCompanionBits()
@@ -169,7 +174,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	}
 
 	private updateCompanionBits(): void {
-		InitVariables(this, this.model, this.wrappedState.state)
+		InitVariables(this, this.model, this.wrappedState)
 		this.setPresetDefinitions(GetPresetsList(this, this.model, this.wrappedState.state))
 		this.setFeedbackDefinitions(GetFeedbacksList(this.model, this.wrappedState))
 		this.setActionDefinitions(
@@ -187,12 +192,36 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	 * Handle tally packets
 	 */
 	private processReceivedCommands(commands: Commands.IDeserializedCommand[]): void {
-		commands.forEach((command) => {
+		const cameraCommands: Commands.CameraControlUpdateCommand[] = []
+
+		for (const command of commands) {
 			if (command instanceof Commands.TallyBySourceCommand) {
 				this.wrappedState.tally = command.properties
 				this.checkFeedbacks(FeedbackId.ProgramTally, FeedbackId.PreviewTally)
+			} else if (this.config.enableCameraControl && command instanceof Commands.CameraControlUpdateCommand) {
+				cameraCommands.push(command)
 			}
-		})
+		}
+
+		if (this.config.enableCameraControl && cameraCommands.length > 0) {
+			const cameraChanges = this.wrappedState.atemCameraState.applyCommands(cameraCommands)
+
+			// Future: should this be more granular?
+
+			const changedCameraIds = new Set<number>()
+			for (const change of cameraChanges) {
+				changedCameraIds.add(change.cameraId)
+			}
+
+			const values: CompanionVariableValues = {}
+
+			for (const cameraId of changedCameraIds) {
+				const cameraState = this.wrappedState.atemCameraState.get(cameraId) ?? createEmptyState(cameraId)
+				updateCameraControlVariables(this, cameraState, values)
+			}
+
+			this.setVariableValues(values)
+		}
 	}
 	/**
 	 * Handle ATEM state changes

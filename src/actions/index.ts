@@ -29,6 +29,10 @@ import { createFairlightAudioActions, type AtemFairlightAudioActions } from './f
 import type { MyActionDefinition } from './types.js'
 import { ActionId } from './ActionId.js'
 import type { StateWrapper } from '../state.js'
+import { createCameraControlLensActions, type AtemCameraControlLensActions } from './cameraControl/lens.js'
+import { createCameraControlDisplayActions, type AtemCameraControlDisplayActions } from './cameraControl/display.js'
+import { createCameraControlVideoActions, type AtemCameraControlVideoActions } from './cameraControl/video.js'
+import { createCameraControlColorActions, type AtemCameraControlColorActions } from './cameraControl/color.js'
 
 export type ActionTypes = AtemProgramPreviewActions &
 	AtemTransitionActions &
@@ -46,7 +50,11 @@ export type ActionTypes = AtemProgramPreviewActions &
 	AtemMultiviewerActions &
 	AtemMediaPlayerActions &
 	AtemSettingsActions &
-	AtemDisplayClockActions
+	AtemDisplayClockActions &
+	AtemCameraControlLensActions &
+	AtemCameraControlDisplayActions &
+	AtemCameraControlVideoActions &
+	AtemCameraControlColorActions
 
 export function GetActionsList(
 	instance: InstanceBaseExt<AtemConfig>,
@@ -78,6 +86,11 @@ export function GetActionsList(
 		...createSettingsActions(atem, model, state),
 
 		...createDisplayClockActions(atem, model, state),
+
+		...createCameraControlLensActions(instance.config, atem, state),
+		...createCameraControlDisplayActions(instance.config, atem, state),
+		...createCameraControlVideoActions(instance.config, atem, state),
+		...createCameraControlColorActions(instance.config, atem, state),
 	}
 
 	return convertMyActionDefinitions(actions)

@@ -1,7 +1,7 @@
 import { type AtemState, Enums } from 'atem-connection'
-import { GetSourcesListForType, type SourceInfo } from './choices.js'
-import { type AtemConfig, PresetStyleName } from './config.js'
-import type { ModelSpec } from './models/index.js'
+import { GetSourcesListForType, type SourceInfo } from '../choices.js'
+import { type AtemConfig, PresetStyleName } from '../config.js'
+import type { ModelSpec } from '../models/index.js'
 import {
 	getClassicAudioInput,
 	getDSK,
@@ -11,10 +11,13 @@ import {
 	getMixEffect,
 	getSuperSourceBox,
 	getUSK,
-} from './state.js'
-import { assertUnreachable, type InstanceBaseExt, pad } from './util.js'
+	type StateWrapper,
+} from '../state.js'
+import { assertUnreachable, type InstanceBaseExt, pad } from '../util.js'
 import type { Timecode } from 'atem-connection/dist/state/common.js'
 import type { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
+import { initCameraControlVariables, updateCameraControlVariables } from './cameraControl.js'
+import { createEmptyState } from '@atem-connection/camera-control'
 
 function getSourcePresetName(instance: InstanceBaseExt<AtemConfig>, state: AtemState, id: number): string {
 	const input = state.inputs[id]
@@ -375,7 +378,7 @@ export function updateDeviceIpVariable(instance: InstanceBaseExt<AtemConfig>, va
 	values['device_ip'] = instance.parseIpAndPort()?.ip || ''
 }
 
-export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: ModelSpec, state: AtemState): void {
+export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: ModelSpec, state: StateWrapper): void {
 	const variables: CompanionVariableDefinition[] = []
 
 	const values: CompanionVariableValues = {}
@@ -396,7 +399,7 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 			name: `Id of input active on program bus (M/E ${i + 1})`,
 			variableId: `pgm${i + 1}_input_id`,
 		})
-		updateMEProgramVariable(instance, state, i, values)
+		updateMEProgramVariable(instance, state.state, i, values)
 
 		variables.push({
 			name: `Label of input active on preview bus (M/E ${i + 1})`,
@@ -406,13 +409,13 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 			name: `Id of input active on preview bus (M/E ${i + 1})`,
 			variableId: `pvw${i + 1}_input_id`,
 		})
-		updateMEPreviewVariable(instance, state, i, values)
+		updateMEPreviewVariable(instance, state.state, i, values)
 
 		variables.push({
 			name: `Position of T-bar (M/E ${i + 1})`,
 			variableId: `tbar_${i + 1}`,
 		})
-		updateMETransitionPositionVariable(state, i, values)
+		updateMETransitionPositionVariable(state.state, i, values)
 
 		for (let k = 0; k < model.USKs; ++k) {
 			variables.push({
@@ -424,7 +427,7 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 				variableId: `usk_${i + 1}_${k + 1}_input_id`,
 			})
 
-			updateUSKVariable(instance, state, i, k, values)
+			updateUSKVariable(instance, state.state, i, k, values)
 		}
 	}
 
@@ -439,7 +442,7 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 			variableId: `aux${a + 1}_input_id`,
 		})
 
-		updateAuxVariable(instance, state, a, values)
+		updateAuxVariable(instance, state.state, a, values)
 	}
 
 	// DSKs
@@ -453,11 +456,11 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 			variableId: `dsk_${k + 1}_input_id`,
 		})
 
-		updateDSKVariable(instance, state, k, values)
+		updateDSKVariable(instance, state.state, k, values)
 	}
 
 	// Source names
-	for (const src of GetSourcesListForType(model, state)) {
+	for (const src of GetSourcesListForType(model, state.state)) {
 		variables.push({
 			name: `Long name of source id ${src.id}`,
 			variableId: `long_${src.id}`,
@@ -477,7 +480,7 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 			variableId: `macro_${i + 1}`,
 		})
 
-		updateMacroVariable(state, i, values)
+		updateMacroVariable(state.state, i, values)
 	}
 
 	// Media
@@ -487,7 +490,7 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 			variableId: `still_${i + 1}`,
 		})
 
-		updateMediaStillVariable(state, i, values)
+		updateMediaStillVariable(state.state, i, values)
 	}
 	for (let i = 0; i < model.media.clips; i++) {
 		variables.push({
@@ -495,7 +498,7 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 			variableId: `clip_${i + 1}`,
 		})
 
-		updateMediaClipVariable(state, i, values)
+		updateMediaClipVariable(state.state, i, values)
 	}
 	for (let i = 0; i < model.media.players; i++) {
 		variables.push({
@@ -507,7 +510,7 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 			variableId: `mp_index_${i + 1}`,
 		})
 
-		updateMediaPlayerVariables(state, i, values)
+		updateMediaPlayerVariables(state.state, i, values)
 	}
 
 	if (model.streaming) {
@@ -528,7 +531,7 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 			variableId: 'stream_duration_ms',
 		})
 
-		updateStreamingVariables(state, values)
+		updateStreamingVariables(state.state, values)
 	}
 
 	if (model.recording) {
@@ -558,7 +561,7 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 			variableId: 'record_remaining_ms',
 		})
 
-		updateRecordingVariables(state, values)
+		updateRecordingVariables(state.state, values)
 	}
 
 	// Supersource
@@ -574,12 +577,12 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 			})
 		}
 
-		updateSuperSourceVariables(instance, state, i, values)
+		updateSuperSourceVariables(instance, state.state, i, values)
 	}
 
 	// Fairlight audio
-	if (state.fairlight) {
-		for (const [inputId, input] of Object.entries(state.fairlight.inputs)) {
+	if (state.state.fairlight) {
+		for (const [inputId, input] of Object.entries(state.state.fairlight.inputs)) {
 			if (input?.sources !== undefined && input.sources[-65280]) {
 				variables.push({
 					name: `Pan for input ${inputId}`,
@@ -649,7 +652,7 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 				})
 			}
 
-			updateFairlightAudioVariables(state, Number(inputId), values)
+			updateFairlightAudioVariables(state.state, Number(inputId), values)
 		}
 
 		//master
@@ -657,14 +660,14 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 			name: `Fader gain for master`,
 			variableId: `audio_master_faderGain`,
 		})
-		updateFairlightAudioMasterVariables(state, values)
+		updateFairlightAudioMasterVariables(state.state, values)
 
 		//monitor
 		variables.push({
 			name: `Gain for Monitor/Headphone`,
 			variableId: `audio_monitor_gain`,
 		})
-		updateFairlightAudioMonitorVariables(state, values)
+		updateFairlightAudioMonitorVariables(state.state, values)
 	}
 
 	// Classic audio
@@ -682,7 +685,7 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 				name: `Mix option for input ${entry.id}`,
 				variableId: `audio_input_${entry.id}_mixOption`,
 			})
-			updateClassicAudioVariables(state, entry.id, values)
+			updateClassicAudioVariables(state.state, entry.id, values)
 		}
 	}
 
@@ -697,7 +700,19 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 				name: `Id of input in multiviewer ${index} window ${window}`,
 				variableId: `mv_${index}_window_${window}_input_id`,
 			})
-			updateMultiviewerWindowInput(instance, state, index, window, values)
+			updateMultiviewerWindowInput(instance, state.state, index, window, values)
+		}
+	}
+
+	// Camera control
+	if (instance.config.enableCameraControl) {
+		for (const input of model.inputs) {
+			if (input.portType !== Enums.InternalPortType.External) continue
+
+			initCameraControlVariables(instance, input.id, variables)
+
+			const cameraState = state.atemCameraState.get(input.id) ?? createEmptyState(input.id)
+			updateCameraControlVariables(instance, cameraState, values)
 		}
 	}
 

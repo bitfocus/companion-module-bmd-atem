@@ -17,6 +17,8 @@ export interface AtemConfig {
 	autoModelName?: string
 	presets?: string
 	fadeFps?: number
+
+	enableCameraControl?: boolean
 }
 
 export function GetConfigFields(_self: InstanceBaseExt<AtemConfig>): SomeCompanionConfigField[] {
@@ -101,6 +103,13 @@ export function GetConfigFields(_self: InstanceBaseExt<AtemConfig>): SomeCompani
 			max: 60,
 			step: 1,
 			default: fadeFpsDefault,
+		},
+		{
+			type: 'checkbox',
+			id: 'enableCameraControl',
+			label: 'Enable Camera Control',
+			width: 6,
+			default: false,
 		},
 	]
 }

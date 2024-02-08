@@ -79,4 +79,27 @@ export enum ActionId {
 	DisplayClockState = 'displayClockState',
 	DisplayClockConfigure = 'displayClockConfigure',
 	DisplayClockStartTime = 'displayClockStartTime',
+
+	CameraControlLensFocus = 'cameraControlLensFocus',
+	CameraControlLensAutoFocus = 'cameraControlLensAutoFocus',
+	CameraControlLensIris = 'cameraControlLensIris',
+	CameraControlLensAutoIris = 'cameraControlLensAutoIris',
+	CameraControlLensOpticalImageStabilisation = 'cameraControlLensOpticalImageStabilisation',
+
+	CameraControlVideoManualWhiteBalance = 'cameraControlVideoManualWhiteBalance',
+	CameraControlVideoAutoWhiteBalance = 'cameraControlVideoAutoWhiteBalance',
+	CameraControlVideoExposure = 'cameraControlVideoExposure',
+	CameraControlVideoSharpeningLevel = 'cameraControlVideoSharpeningLevel',
+	CameraControlVideoGain = 'cameraControlVideoGain',
+	CameraControlVideoNdFilterStop = 'cameraControlVideoNdFilterStop',
+
+	CameraControlDisplayColorBars = 'cameraControlDisplayColorBars',
+
+	CameraControlColorLiftAdjust = 'cameraControlColorLiftAdjust',
+	CameraControlColorGammaAdjust = 'cameraControlColorGammaAdjust',
+	CameraControlColorGainAdjust = 'cameraControlColorGainAdjust',
+	CameraControlColorOffsetAdjust = 'cameraControlColorOffsetAdjust',
+	CameraControlColorContrastAdjust = 'cameraControlColorContrastAdjust',
+	CameraControlColorLumaMix = 'cameraControlColorLumaMix',
+	CameraControlColorHueSaturationAdjust = 'cameraControlColorHueSaturationAdjust',
 }

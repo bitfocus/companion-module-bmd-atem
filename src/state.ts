@@ -9,6 +9,7 @@ import type {
 } from 'atem-connection'
 import type { SuperSource, TransitionProperties } from 'atem-connection/dist/state/video/index.js'
 import type { InputValue } from '@companion-module/base'
+import type { AtemCameraControlStateBuilder } from '@atem-connection/camera-control'
 
 export type TallyBySource = Commands.TallyBySourceCommand['properties']
 
@@ -16,6 +17,8 @@ export interface StateWrapper {
 	state: AtemState
 	tally: TallyBySource
 	tallyCache: TallyCache
+
+	readonly atemCameraState: AtemCameraControlStateBuilder
 }
 
 export type TallyCache = Map<
