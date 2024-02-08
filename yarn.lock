@@ -42,9 +42,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@companion-module/tools@npm:^1.4.3":
-  version: 1.4.3
-  resolution: "@companion-module/tools@npm:1.4.3"
+"@companion-module/tools@npm:^1.4.4":
+  version: 1.4.4
+  resolution: "@companion-module/tools@npm:1.4.4"
   dependencies:
     "@typescript-eslint/eslint-plugin": "npm:^5.59.9"
     "@typescript-eslint/parser": "npm:^5.59.9"
@@ -65,7 +65,7 @@ __metadata:
     companion-generate-manifest: scripts/generate-manifest.js
     companion-module-build: scripts/build.js
     companion-module-check: scripts/check.js
-  checksum: ade32b67d94d04449829b3afee88a9abb9ea979268a3baceae40be3ba0af08389a287e5dd94975da93067ce692036865bff33cf2a9881b12abc49be0b3920290
+  checksum: ddcd0ac96c79c4a9062746814d2e2f52fed5dbe70cc2d3ed12bf3db494e0f241ab1cf4da4ae5f2fcd06d004fef4ef8c41c8e62b7cebf79e301beabfbb6d0c9e9
   languageName: node
   linkType: hard
 
@@ -1034,7 +1034,7 @@ __metadata:
   dependencies:
     "@atem-connection/camera-control": "npm:^0.1.0"
     "@companion-module/base": "npm:~1.7.0"
-    "@companion-module/tools": "npm:^1.4.3"
+    "@companion-module/tools": "npm:^1.4.4"
     "@types/lodash-es": "npm:^4.17.12"
     "@types/node": "npm:^18.19.10"
     atem-connection: "npm:^3.5.0"
