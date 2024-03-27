@@ -91,6 +91,7 @@ export enum ActionId {
 	CameraControlVideoExposure = 'cameraControlVideoExposure',
 	CameraControlVideoSharpeningLevel = 'cameraControlVideoSharpeningLevel',
 	CameraControlVideoGain = 'cameraControlVideoGain',
+	CameraControlIncrementVideoGain = 'CameraControlIncrementVideoGain',
 	CameraControlVideoNdFilterStop = 'cameraControlVideoNdFilterStop',
 
 	CameraControlDisplayColorBars = 'cameraControlDisplayColorBars',

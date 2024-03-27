@@ -27,6 +27,10 @@ export interface AtemCameraControlVideoActions {
 		cameraId: string
 		gain: string
 	}
+	[ActionId.CameraControlIncrementVideoGain]: {
+		cameraId: string
+		increment: string
+	}
 	[ActionId.CameraControlVideoNdFilterStop]: {
 		cameraId: string
 		stop: string
@@ -45,6 +49,7 @@ export function createCameraControlVideoActions(
 			[ActionId.CameraControlVideoExposure]: undefined,
 			[ActionId.CameraControlVideoSharpeningLevel]: undefined,
 			[ActionId.CameraControlVideoGain]: undefined,
+			[ActionId.CameraControlIncrementVideoGain]: undefined,
 			[ActionId.CameraControlVideoNdFilterStop]: undefined,
 		}
 	}
@@ -169,6 +174,35 @@ export function createCameraControlVideoActions(
 				const gain = await options.getParsedNumber('gain')
 
 				await commandSender?.videoGain(cameraId, gain)
+			},
+		},
+
+		[ActionId.CameraControlIncrementVideoGain]: {
+			name: 'Camera Control: Increment Video Gain',
+			options: {
+				cameraId: CameraControlSourcePicker(),
+				increment: {
+					id: 'increment',
+					type: 'textinput',
+					label: 'Value',
+					default: '10',
+					tooltip: 'e.g 10 or -10',
+					useVariables: true,
+				},
+			},
+			callback: async ({ options }) => {
+				const cameraId = await options.getParsedNumber('cameraId')
+				const increment = await options.getParsedNumber('increment')
+
+				let target_gain = (_state.atemCameraState.get(cameraId)?.video.gain ?? 0) + increment
+
+				if (target_gain > 128) {
+					target_gain = 128
+				} else if (target_gain < 0) {
+					target_gain = 0
+				}
+
+				await commandSender?.videoGain(cameraId, target_gain)
 			},
 		},
 
