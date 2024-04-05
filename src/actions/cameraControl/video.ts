@@ -196,8 +196,8 @@ export function createCameraControlVideoActions(
 
 				let target_gain = (_state.atemCameraState.get(cameraId)?.video.gain ?? 0) + increment
 
-				if (target_gain > 128) {
-					target_gain = 128
+				if (target_gain > 127) {
+					target_gain = 127
 				} else if (target_gain < 0) {
 					target_gain = 0
 				}
