@@ -207,6 +207,8 @@ function updateRecordingVariables(state: AtemState, values: CompanionVariableVal
 	values['record_remaining_hm'] = remaining.hm
 	values['record_remaining_hms'] = remaining.hms
 	values['record_remaining_ms'] = remaining.ms
+
+	values['record_filename'] = state.recording?.properties.filename || ''
 }
 
 function formatAudioProperty(value: number | undefined, scale = 100) {
@@ -531,6 +533,11 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 		variables.push({
 			name: 'Recording time remaining (mm:ss)',
 			variableId: 'record_remaining_ms',
+		})
+
+		variables.push({
+			name: 'Recording filename',
+			variableId: 'record_filename',
 		})
 
 		updateRecordingVariables(state.state, values)
