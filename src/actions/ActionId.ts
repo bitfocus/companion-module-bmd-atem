@@ -44,6 +44,7 @@ export enum ActionId {
 	MediaPlayerSource = 'mediaPlayerSource',
 	MediaPlayerCycle = 'mediaPlayerCycle',
 	MediaCaptureStill = 'mediaCaptureStill',
+	MediaDeleteStill = 'mediaDeleteStill',
 	FadeToBlackAuto = 'fadeToBlackAuto',
 	FadeToBlackRate = 'fadeToBlackRate',
 	StreamStartStop = 'streamStartStop',

@@ -17,6 +17,9 @@ export interface AtemMediaPlayerActions {
 		direction: 'next' | 'previous'
 	}
 	[ActionId.MediaCaptureStill]: Record<string, never>
+	[ActionId.MediaDeleteStill]: {
+		slot: string
+	}
 }
 
 export function createMediaPlayerActions(
@@ -29,6 +32,7 @@ export function createMediaPlayerActions(
 			[ActionId.MediaPlayerSource]: undefined,
 			[ActionId.MediaPlayerCycle]: undefined,
 			[ActionId.MediaCaptureStill]: undefined,
+			[ActionId.MediaDeleteStill]: undefined,
 		}
 	}
 	return {
@@ -120,6 +124,23 @@ export function createMediaPlayerActions(
 			options: {},
 			callback: async () => {
 				await atem?.captureMediaPoolStill()
+			},
+		},
+		[ActionId.MediaDeleteStill]: {
+			name: 'Media player: Delete still',
+			options: {
+				slot: {
+					id: 'slot',
+					type: 'textinput',
+					label: 'Slot',
+					default: '1',
+					useVariables: true,
+				},
+			},
+			callback: async ({ options }) => {
+				const slot = await options.getParsedNumber('slot')
+
+				await atem?.clearMediaPoolStill(slot - 1)
 			},
 		},
 	}
