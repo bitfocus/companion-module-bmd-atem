@@ -13,11 +13,12 @@ import {
 	getUSK,
 	type StateWrapper,
 } from '../state.js'
-import { assertUnreachable, type InstanceBaseExt, pad } from '../util.js'
-import type { Timecode } from 'atem-connection/dist/state/common.js'
+import { assertUnreachable, type InstanceBaseExt } from '../util.js'
 import type { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
 import { initCameraControlVariables, updateCameraControlVariables } from './cameraControl.js'
 import { createEmptyState } from '@atem-connection/camera-control'
+import { updateTimecodeVariables } from './timecode.js'
+import { formatDuration, formatDurationSeconds } from './util.js'
 
 function getSourcePresetName(instance: InstanceBaseExt<AtemConfig>, state: AtemState, id: number): string {
 	const input = state.inputs[id]
@@ -182,41 +183,6 @@ function updateMediaPlayerVariables(state: AtemState, id: number, values: Compan
 function updateInputVariables(src: SourceInfo, values: CompanionVariableValues): void {
 	values[`long_${src.id}`] = src.longName
 	values[`short_${src.id}`] = src.shortName
-}
-
-function formatDuration(durationObj: Timecode | undefined): { hms: string; hm: string; ms: string } {
-	let durationHMS = '00:00:00'
-	let durationHM = '00:00'
-	let durationMS = '00:00'
-
-	if (durationObj) {
-		durationHM = `${pad(`${durationObj.hours}`, '0', 2)}:${pad(`${durationObj.minutes}`, '0', 2)}`
-		durationHMS = `${durationHM}:${pad(`${durationObj.seconds}`, '0', 2)}`
-		durationMS = `${durationObj.hours * 60 + durationObj.minutes}:${pad(`${durationObj.seconds}`, '0', 2)}`
-	}
-
-	return { hm: durationHM, hms: durationHMS, ms: durationMS }
-}
-function formatDurationSeconds(totalSeconds: number | undefined): { hms: string; hm: string; ms: string } {
-	let timecode: Timecode | undefined
-
-	if (totalSeconds) {
-		timecode = {
-			hours: 0,
-			minutes: 0,
-			seconds: 0,
-			frames: 0,
-			isDropFrame: false,
-		}
-
-		timecode.seconds = totalSeconds % 60
-		totalSeconds = Math.floor(totalSeconds / 60)
-		timecode.minutes = totalSeconds % 60
-		totalSeconds = Math.floor(totalSeconds / 60)
-		timecode.hours = totalSeconds
-	}
-
-	return formatDuration(timecode)
 }
 
 function updateStreamingVariables(state: AtemState, values: CompanionVariableValues): void {
@@ -720,6 +686,14 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 			const cameraState = state.atemCameraState.get(input.id) ?? createEmptyState(input.id)
 			updateCameraControlVariables(instance, cameraState, values)
 		}
+	}
+
+	if (instance.config.pollTimecode) {
+		variables.push({
+			name: `Timecode`,
+			variableId: `timecode`,
+		})
+		updateTimecodeVariables(instance, state.state, values)
 	}
 
 	instance.setVariableDefinitions(variables)

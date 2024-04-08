@@ -32,6 +32,7 @@ const { Atem, AtemConnectionStatus, AtemStateUtil } = AtemPkg
 // eslint-disable-next-line n/no-extraneous-import
 import { ThreadedClassManager, RegisterExitHandlers } from 'threadedclass'
 import { updateCameraControlVariables } from './variables/cameraControl.js'
+import { updateTimecodeVariables } from './variables/timecode.js'
 
 // HACK: This stops it from registering an unhandledException handler, as that causes companion to exit on error
 ThreadedClassManager.handleExit = RegisterExitHandlers.NO
@@ -49,6 +50,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	private atemTransitions: AtemTransitions
 
 	public config: AtemConfig = {}
+	public timecodeSeconds = 0
 
 	/**
 	 * Create an instance of an ATEM module.
@@ -194,12 +196,18 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	private processReceivedCommands(commands: Commands.IDeserializedCommand[]): void {
 		const cameraCommands: Commands.CameraControlUpdateCommand[] = []
 
+		const values: CompanionVariableValues = {}
+
 		for (const command of commands) {
 			if (command instanceof Commands.TallyBySourceCommand) {
 				this.wrappedState.tally = command.properties
 				this.checkFeedbacks(FeedbackId.ProgramTally, FeedbackId.PreviewTally)
 			} else if (this.config.enableCameraControl && command instanceof Commands.CameraControlUpdateCommand) {
 				cameraCommands.push(command)
+			} else if (this.config.pollTimecode && command instanceof Commands.TimeCommand) {
+				this.timecodeSeconds =
+					command.properties.hour * 3600 + command.properties.minute * 60 + command.properties.second
+				updateTimecodeVariables(this, this.wrappedState.state, values)
 			}
 		}
 
@@ -213,13 +221,13 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				changedCameraIds.add(change.cameraId)
 			}
 
-			const values: CompanionVariableValues = {}
-
 			for (const cameraId of changedCameraIds) {
 				const cameraState = this.wrappedState.atemCameraState.get(cameraId) ?? createEmptyState(cameraId)
 				updateCameraControlVariables(this, cameraState, values)
 			}
+		}
 
+		if (Object.keys(values).length > 0) {
 			this.setVariableValues(values)
 		}
 	}
@@ -541,19 +549,27 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 
 				this.updateCompanionBits()
 
-				if (!this.durationInterval && (this.wrappedState.state.streaming || this.wrappedState.state.recording)) {
+				if (
+					!this.durationInterval &&
+					(this.wrappedState.state.streaming || this.wrappedState.state.recording || this.config.pollTimecode)
+				) {
 					this.durationInterval = setInterval(() => {
 						if (this.atem && this.wrappedState.state.streaming) {
 							this.atem.requestStreamingDuration().catch((e) => {
-								this.log('debug', 'Action execution error: ' + e)
+								this.log('debug', 'Request streaming duration error: ' + e)
 							})
 						}
 						if (this.atem && this.wrappedState.state.recording) {
 							this.atem.requestRecordingDuration().catch((e) => {
-								this.log('debug', 'Action execution error: ' + e)
+								this.log('debug', 'Request recording duration error: ' + e)
 							})
 						}
-					}, 1000)
+						if (this.atem && this.config.pollTimecode) {
+							this.atem.requestTime().catch((e) => {
+								this.log('debug', 'Request time error: ' + e)
+							})
+						}
+					}, 500)
 				}
 			}
 		})

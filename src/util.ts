@@ -88,6 +88,7 @@ export interface IpAndPort {
 
 export interface InstanceBaseExt<TConfig> extends InstanceBase<TConfig> {
 	config: TConfig
+	timecodeSeconds: number
 
 	parseIpAndPort(): IpAndPort | null
 }
