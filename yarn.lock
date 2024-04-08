@@ -982,9 +982,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"atem-connection@npm:^3.5.0":
-  version: 3.5.0
-  resolution: "atem-connection@npm:3.5.0"
+"atem-connection@npm:3.6.0-nightly-master-20240408-233100-9e469df9.0":
+  version: 3.6.0-nightly-master-20240408-233100-9e469df9.0
+  resolution: "atem-connection@npm:3.6.0-nightly-master-20240408-233100-9e469df9.0"
   dependencies:
     "@julusian/freetype2": "npm:^1.1.2"
     debug: "npm:^4.3.4"
@@ -996,7 +996,7 @@ __metadata:
     threadedclass: "npm:^1.2.1"
     tslib: "npm:^2.6.2"
     wavefile: "npm:^8.4.6"
-  checksum: 43283a726aa06c3a40781c982f0ff74901d2d0e18c7e4dca53bb49c4734f0b3116b6ebec5709aae80414d5e775892fc3ebb55dab58baf64ef7daaf443d28649b
+  checksum: 52a58bd7895e86cac34952286679b6e93fc9e09e381dcb55d499041bd3c81aae040fb8839ce77d04523f164271f5f25f7bf8fea59f0977982192fdc951e11f27
   languageName: node
   linkType: hard
 
@@ -1037,7 +1037,7 @@ __metadata:
     "@companion-module/tools": "npm:^1.5.0"
     "@types/lodash-es": "npm:^4.17.12"
     "@types/node": "npm:^18.19.30"
-    atem-connection: "npm:^3.5.0"
+    atem-connection: "npm:3.6.0-nightly-master-20240408-233100-9e469df9.0"
     husky: "npm:^9.0.11"
     lint-staged: "npm:^15.2.2"
     lodash-es: "npm:^4.17.21"
