@@ -23,6 +23,18 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.9.0
+
+- Add timecode as a variable
+- Actions to set the ATEM timecode
+- Fix bug in model selection
+- Fix ISO record feedback not updating
+- Add support for fairlight audio delay (this may not be correctly defined for all models)
+- Expose record filename as a variable, and support variables in action
+- Add action to delete a still
+- Add action to set media player source from a variable
+- Support switching upstream keyer type
+
 ## v3.8.3
 
 - Build tooling update
