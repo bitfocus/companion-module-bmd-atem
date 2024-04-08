@@ -107,12 +107,12 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		updateDeviceIpVariable(this, variables)
 		this.setVariableValues(variables)
 
-		this.model = GetModelSpec(this.getBestModelId() || MODEL_AUTO_DETECT) || GetAutoDetectModel()
-		this.log('debug', 'ATEM changed model: ' + this.model.id)
-
 		// Force clear the cached state
 		this.wrappedState.state = AtemStateUtil.Create()
 		this.wrappedState.atemCameraState.reset(0)
+
+		this.model = GetModelSpec(this.getBestModelId() || MODEL_AUTO_DETECT) || GetAutoDetectModel()
+		this.log('debug', 'ATEM changed model: ' + this.model.id)
 
 		this.atemTransitions.stopAll()
 		this.atemTransitions = new AtemTransitions(this.config)
@@ -162,17 +162,21 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	}
 
 	private getBestModelId(): number | undefined {
-		const configModelId = Number(this.config.autoModelID) || Number(this.config.modelID)
+		const configModelId = Number(this.config.modelID)
 		if (!isNaN(configModelId) && configModelId > 0) {
 			return configModelId
-		} else {
-			const info = this.wrappedState.state.info
-			if (info && info.model) {
-				return info.model
-			} else {
-				return undefined
-			}
 		}
+		const info = this.wrappedState.state.info
+		if (info && info.model) {
+			return info.model
+		}
+
+		const configCachedAutoModelId = this.config.modelID + '' === '0' ? Number(this.config.autoModelID) : 0
+		if (!isNaN(configCachedAutoModelId) && configCachedAutoModelId > 0) {
+			return configCachedAutoModelId
+		}
+
+		return undefined
 	}
 
 	private updateCompanionBits(): void {
@@ -537,6 +541,10 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 					delete this.config.autoModelID
 					delete this.config.autoModelName
 				}
+				setImmediate(() => {
+					console.log('save', this.config)
+					this.saveConfig(this.config)
+				})
 
 				// Log if the config mismatches the device
 				const configModelId = this.config.modelID ? parseInt(this.config.modelID, 10) : undefined
