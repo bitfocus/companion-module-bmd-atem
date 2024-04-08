@@ -178,7 +178,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	private updateCompanionBits(): void {
 		InitVariables(this, this.model, this.wrappedState)
 		this.setPresetDefinitions(GetPresetsList(this, this.model, this.wrappedState.state))
-		this.setFeedbackDefinitions(GetFeedbacksList(this.model, this.wrappedState))
+		this.setFeedbackDefinitions(GetFeedbacksList(this.config, this.model, this.wrappedState))
 		this.setActionDefinitions(
 			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.wrappedState)
 		)
@@ -465,6 +465,10 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			}
 			if (path.match(/fairlight.monitor/)) {
 				changedFeedbacks.add(FeedbackId.FairlightAudioMonitorMasterMuted)
+				continue
+			}
+			if (path.match(/settings.timeMode/)) {
+				changedFeedbacks.add(FeedbackId.TimecodeMode)
 				continue
 			}
 		}

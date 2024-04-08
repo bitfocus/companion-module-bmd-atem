@@ -79,6 +79,8 @@ export enum ActionId {
 	DisplayClockState = 'displayClockState',
 	DisplayClockConfigure = 'displayClockConfigure',
 	DisplayClockStartTime = 'displayClockStartTime',
+	Timecode = 'timecode',
+	TimecodeMode = 'timecodeMode',
 
 	CameraControlLensFocus = 'cameraControlLensFocus',
 	CameraControlLensAutoFocus = 'cameraControlLensAutoFocus',

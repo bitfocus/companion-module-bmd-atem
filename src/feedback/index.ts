@@ -20,6 +20,8 @@ import { createSuperSourceFeedbacks, type AtemSuperSourceFeedbacks } from './sup
 import { createClassicAudioFeedbacks, type AtemClassicAudioFeedbacks } from './classicAudio.js'
 import { createFairlightAudioFeedbacks, type AtemFairlightAudioFeedbacks } from './fairlightAudio.js'
 import { FeedbackId } from './FeedbackId.js'
+import { createTimecodeFeedbacks, type AtemTimecodeFeedbacks } from './timecode.js'
+import type { AtemConfig } from '../config.js'
 
 export type FeedbackTypes = AtemTallyFeedbacks &
 	AtemPreviewFeedbacks &
@@ -36,9 +38,14 @@ export type FeedbackTypes = AtemTallyFeedbacks &
 	AtemAuxOutputFeedbacks &
 	AtemMacroFeedbacks &
 	AtemMultiviewerFeedbacks &
-	AtemMediaPlayerFeedbacks
+	AtemMediaPlayerFeedbacks &
+	AtemTimecodeFeedbacks
 
-export function GetFeedbacksList(model: ModelSpec, state: StateWrapper): CompanionFeedbackDefinitions {
+export function GetFeedbacksList(
+	config: AtemConfig,
+	model: ModelSpec,
+	state: StateWrapper
+): CompanionFeedbackDefinitions {
 	const feedbacks: { [id in FeedbackId]: MyFeedbackDefinition<any> | undefined } = {
 		...createTallyFeedbacks(model, state),
 		...createPreviewFeedbacks(model, state),
@@ -56,6 +63,7 @@ export function GetFeedbacksList(model: ModelSpec, state: StateWrapper): Compani
 		...createMacroFeedbacks(model, state),
 		...createMultiviewerFeedbacks(model, state),
 		...createMediaPlayerFeedbacks(model, state),
+		...createTimecodeFeedbacks(config, model, state),
 	}
 
 	return convertMyFeedbackDefinitions(feedbacks)
