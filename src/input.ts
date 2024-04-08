@@ -1242,7 +1242,7 @@ export function AtemAudioInputPicker(
 		type: 'dropdown',
 		id: 'input',
 		label: 'Input',
-		default: inputs[0].id,
+		default: inputs[0]?.id,
 		choices: inputs,
 	}
 }

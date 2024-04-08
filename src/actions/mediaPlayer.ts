@@ -12,6 +12,11 @@ export interface AtemMediaPlayerActions {
 		mediaplayer: number
 		source: number
 	}
+	[ActionId.MediaPlayerSourceVariables]: {
+		mediaplayer: number
+		isClip?: boolean
+		slot: string
+	}
 	[ActionId.MediaPlayerCycle]: {
 		mediaplayer: number
 		direction: 'next' | 'previous'
@@ -30,6 +35,7 @@ export function createMediaPlayerActions(
 	if (!model.media.players) {
 		return {
 			[ActionId.MediaPlayerSource]: undefined,
+			[ActionId.MediaPlayerSourceVariables]: undefined,
 			[ActionId.MediaPlayerCycle]: undefined,
 			[ActionId.MediaCaptureStill]: undefined,
 			[ActionId.MediaDeleteStill]: undefined,
@@ -69,6 +75,62 @@ export function createMediaPlayerActions(
 					return {
 						...options.getJson(),
 						source: player.sourceType ? player.stillIndex : player.clipIndex + MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
+					}
+				} else {
+					return undefined
+				}
+			},
+		},
+		[ActionId.MediaPlayerSourceVariables]: {
+			name: 'Media player: Set source from variable',
+			options: {
+				mediaplayer: AtemMediaPlayerPicker(model),
+				isClip:
+					model.media.clips > 0
+						? {
+								type: 'checkbox',
+								id: 'isClip',
+								label: 'Is clip',
+								default: false,
+						  }
+						: undefined,
+				slot: {
+					id: 'slot',
+					type: 'textinput',
+					label: 'Slot',
+					default: '1',
+					useVariables: true,
+				},
+			},
+			callback: async ({ options }) => {
+				const slot = await options.getParsedNumber('slot')
+				if (model.media.clips > 0 && options.getPlainBoolean('isClip')) {
+					await atem?.setMediaPlayerSource(
+						{
+							sourceType: Enums.MediaSourceType.Clip,
+							clipIndex: slot - 1,
+						},
+						options.getPlainNumber('mediaplayer')
+					)
+				} else {
+					await atem?.setMediaPlayerSource(
+						{
+							sourceType: Enums.MediaSourceType.Still,
+							stillIndex: slot - 1,
+						},
+						options.getPlainNumber('mediaplayer')
+					)
+				}
+			},
+			learn: ({ options }) => {
+				const player = state.state.media.players[options.getPlainNumber('mediaplayer')]
+
+				if (player) {
+					const isClip = player.sourceType === Enums.MediaSourceType.Clip
+					return {
+						...options.getJson(),
+						isClip,
+						source: isClip ? player.clipIndex : player.stillIndex,
 					}
 				} else {
 					return undefined

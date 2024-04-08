@@ -41,10 +41,12 @@ function convertMyFeedbackBaseToCompanionFeedback<TOptions>(
 	return {
 		name: feedbackDef.name,
 		description: feedbackDef.description,
-		options: Object.entries(feedbackDef.options).map(([id, option]) => ({
-			...(option as SomeCompanionFeedbackInputField),
-			id,
-		})),
+		options: Object.entries(feedbackDef.options)
+			.filter((o) => !!o[1])
+			.map(([id, option]) => ({
+				...(option as SomeCompanionFeedbackInputField),
+				id,
+			})),
 		// callback: async (action, context) => {
 		// 	return feedbackDef.callback(
 		// 		{
