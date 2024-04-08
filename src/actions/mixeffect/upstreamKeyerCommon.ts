@@ -1,10 +1,11 @@
-import { type Atem } from 'atem-connection'
+import { Enums, type Atem } from 'atem-connection'
 import {
 	AtemKeyCutSourcePicker,
 	AtemKeyFillSourcePicker,
 	AtemMEPicker,
 	AtemUSKMaskPropertiesPickers,
 	AtemUSKPicker,
+	AtemUpstreamKeyerTypePicker,
 } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
@@ -14,6 +15,11 @@ import { getUSK, type StateWrapper } from '../../state.js'
 import type { UpstreamKeyerMaskSettings } from 'atem-connection/dist/state/video/upstreamKeyers.js'
 
 export interface AtemUpstreamKeyerCommonActions {
+	[ActionId.USKType]: {
+		mixeffect: number
+		key: number
+		type: Enums.MixEffectKeyType
+	}
 	[ActionId.USKSource]: {
 		mixeffect: number
 		key: number
@@ -52,6 +58,7 @@ export function createUpstreamKeyerCommonActions(
 	if (!model.USKs) {
 		return {
 			[ActionId.USKSource]: undefined,
+			[ActionId.USKType]: undefined,
 			[ActionId.USKSourceVariables]: undefined,
 			[ActionId.USKOnAir]: undefined,
 			[ActionId.USKMaskLumaChromaPattern]: undefined,
@@ -89,6 +96,35 @@ export function createUpstreamKeyerCommonActions(
 						...options.getJson(),
 						cut: usk.cutSource,
 						fill: usk.fillSource,
+					}
+				} else {
+					return undefined
+				}
+			},
+		},
+		[ActionId.USKType]: {
+			name: 'Upstream key: Set type',
+			options: {
+				mixeffect: AtemMEPicker(model, 0),
+				key: AtemUSKPicker(model),
+				type: AtemUpstreamKeyerTypePicker(),
+			},
+			callback: async ({ options }) => {
+				await atem?.setUpstreamKeyerType(
+					{
+						mixEffectKeyType: options.getPlainNumber('type'),
+					},
+					options.getPlainNumber('mixeffect'),
+					options.getPlainNumber('key')
+				)
+			},
+			learn: ({ options }) => {
+				const usk = getUSK(state.state, options.getPlainNumber('mixeffect'), options.getPlainNumber('key'))
+
+				if (usk) {
+					return {
+						...options.getJson(),
+						type: usk.mixEffectKeyType,
 					}
 				} else {
 					return undefined

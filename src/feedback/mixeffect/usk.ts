@@ -1,5 +1,5 @@
 import type { Enums } from 'atem-connection'
-import { AtemKeyFillSourcePicker, AtemMEPicker, AtemUSKPicker } from '../../input.js'
+import { AtemKeyFillSourcePicker, AtemMEPicker, AtemUSKPicker, AtemUpstreamKeyerTypePicker } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import type { MyFeedbackDefinitions } from '../types.js'
 import { FeedbackId } from '../FeedbackId.js'
@@ -11,6 +11,11 @@ export interface AtemUpstreamKeyerFeedbacks {
 	[FeedbackId.USKOnAir]: {
 		mixeffect: number
 		key: number
+	}
+	[FeedbackId.USKType]: {
+		mixeffect: number
+		key: number
+		type: Enums.MixEffectKeyType
 	}
 	[FeedbackId.USKSource]: {
 		mixeffect: number
@@ -36,6 +41,7 @@ export function createUpstreamKeyerFeedbacks(
 	if (!model.USKs) {
 		return {
 			[FeedbackId.USKOnAir]: undefined,
+			[FeedbackId.USKType]: undefined,
 			[FeedbackId.USKSource]: undefined,
 			[FeedbackId.USKSourceVariables]: undefined,
 			[FeedbackId.USKKeyFrame]: undefined,
@@ -57,6 +63,24 @@ export function createUpstreamKeyerFeedbacks(
 			callback: ({ options }): boolean => {
 				const usk = getUSK(state.state, options.getPlainNumber('mixeffect'), options.getPlainNumber('key'))
 				return !!usk?.onAir
+			},
+		},
+		[FeedbackId.USKType]: {
+			type: 'boolean',
+			name: 'Upstream key: Key type',
+			description: 'If the specified upstream keyer has the specified type, change style of the bank',
+			options: {
+				mixeffect: AtemMEPicker(model, 0),
+				key: AtemUSKPicker(model),
+				type: AtemUpstreamKeyerTypePicker(),
+			},
+			defaultStyle: {
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(255, 0, 0),
+			},
+			callback: ({ options }): boolean => {
+				const usk = getUSK(state.state, options.getPlainNumber('mixeffect'), options.getPlainNumber('key'))
+				return usk?.mixEffectKeyType === options.getPlainNumber('type')
 			},
 		},
 		[FeedbackId.USKSource]: {

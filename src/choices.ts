@@ -135,6 +135,15 @@ export function GetTransitionStyleChoices(skipSting?: boolean): MyDropdownChoice
 	}
 	return options
 }
+export function GetUpstreamKeyerTypeChoices(): MyDropdownChoice<Enums.MixEffectKeyType>[] {
+	const options = [
+		{ id: Enums.MixEffectKeyType.Luma, label: 'Luma' },
+		{ id: Enums.MixEffectKeyType.Chroma, label: 'Chroma' },
+		{ id: Enums.MixEffectKeyType.Pattern, label: 'Pattern' },
+		{ id: Enums.MixEffectKeyType.DVE, label: 'DVE' },
+	]
+	return options
+}
 
 export function GetMEIdChoices(model: ModelSpec): DropdownChoice[] {
 	return iterateTimes(model.MEs, (i) => ({

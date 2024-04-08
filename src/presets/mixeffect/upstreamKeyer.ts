@@ -5,7 +5,7 @@ import type { MyPresetDefinitionCategory } from '../types.js'
 import type { ActionTypes } from '../../actions/index.js'
 import type { FeedbackTypes } from '../../feedback/index.js'
 import type { ModelSpec } from '../../models/types.js'
-import { CHOICES_KEYFRAMES, type SourceInfo } from '../../choices.js'
+import { CHOICES_KEYFRAMES, GetUpstreamKeyerTypeChoices, type SourceInfo } from '../../choices.js'
 import { Enums } from 'atem-connection'
 
 export function createUpstreamKeyerPresets(
@@ -28,7 +28,11 @@ export function createUpstreamKeyerPresets(
 		name: 'KEYs Fly',
 		presets: {},
 	}
-	result.push(onAirCategory, nextCategory, flyCategory)
+	const keyTypeCategory: MyPresetDefinitionCategory<ActionTypes, FeedbackTypes> = {
+		name: 'KEYs Type',
+		presets: {},
+	}
+	result.push(onAirCategory, nextCategory, flyCategory, keyTypeCategory)
 
 	// Upstream keyers
 	for (let me = 0; me < model.MEs; ++me) {
@@ -210,6 +214,49 @@ export function createUpstreamKeyerPresets(
 										mixeffect: me,
 										key,
 										keyframe: flydirection.id,
+									},
+								},
+							],
+							up: [],
+						},
+					],
+				}
+			}
+
+			const keyTypes = GetUpstreamKeyerTypeChoices()
+			for (const keyType of keyTypes) {
+				keyTypeCategory.presets[`key_fly_me_${me}_${key}_type_${keyType.id}`] = {
+					name: `M/E ${me + 1} KEY ${key + 1} to ${keyType.label}`,
+					type: 'button',
+					style: {
+						text: `${keyType.label}`,
+						size: pstSize,
+						color: combineRgb(255, 255, 255),
+						bgcolor: combineRgb(0, 0, 0),
+					},
+					feedbacks: [
+						{
+							feedbackId: FeedbackId.USKType,
+							options: {
+								mixeffect: me,
+								key,
+								type: keyType.id,
+							},
+							style: {
+								bgcolor: combineRgb(238, 238, 0),
+								color: combineRgb(0, 0, 0),
+							},
+						},
+					],
+					steps: [
+						{
+							down: [
+								{
+									actionId: ActionId.USKType,
+									options: {
+										mixeffect: me,
+										key,
+										type: keyType.id,
 									},
 								},
 							],

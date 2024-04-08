@@ -4,7 +4,7 @@ import { type AtemConfig, GetConfigFields } from './config.js'
 import { GetFeedbacksList } from './feedback/index.js'
 import { FeedbackId } from './feedback/FeedbackId.js'
 import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, type ModelSpec } from './models/index.js'
-import { GetPresetsList } from './presets.js'
+import { GetPresetsList } from './presets/index.js'
 import type { StateWrapper } from './state.js'
 import { MODEL_AUTO_DETECT } from './models/types.js'
 import {
@@ -335,6 +335,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				const keyIndex = parseInt(uskSourceMatch[2], 10)
 
 				changedVariables.usk.add([meIndex, keyIndex])
+				changedFeedbacks.add(FeedbackId.USKType)
 				changedFeedbacks.add(FeedbackId.USKSource)
 				changedFeedbacks.add(FeedbackId.USKSourceVariables)
 				continue

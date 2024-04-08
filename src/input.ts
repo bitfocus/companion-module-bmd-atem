@@ -27,6 +27,7 @@ import {
 	SourcesToChoices,
 	type TrueFalseToggle,
 	type AudioInputSubset,
+	GetUpstreamKeyerTypeChoices,
 } from './choices.js'
 import type { ModelSpec } from './models/index.js'
 import { iterateTimes, MEDIA_PLAYER_SOURCE_CLIP_OFFSET, compact, NumberComparitor } from './util.js'
@@ -48,6 +49,15 @@ export function AtemTransitionStylePicker(skipSting?: boolean): CompanionInputFi
 		label: 'Transition Style',
 		default: Enums.TransitionStyle.MIX,
 		choices: GetTransitionStyleChoices(skipSting),
+	}
+}
+export function AtemUpstreamKeyerTypePicker(): CompanionInputFieldDropdown {
+	return {
+		type: 'dropdown',
+		id: 'style',
+		label: 'Key Type',
+		default: Enums.MixEffectKeyType.Luma,
+		choices: GetUpstreamKeyerTypeChoices(),
 	}
 }
 export function AtemRatePicker(label: string): CompanionInputFieldNumber {
