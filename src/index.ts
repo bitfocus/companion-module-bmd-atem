@@ -459,6 +459,10 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				changedFeedbacks.add(FeedbackId.RecordStatus)
 				continue
 			}
+			if (path.match(/recording.recordAllInputs/)) {
+				changedFeedbacks.add(FeedbackId.RecordISO)
+				continue
+			}
 			if (path.match(/streaming.duration/) || path.match(/streaming.stats/)) {
 				changedVariables.streaming = true
 				continue
