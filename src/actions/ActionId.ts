@@ -64,6 +64,8 @@ export enum ActionId {
 	FairlightAudioFaderGainDelta = 'fairlightAudioFaderGainDelta',
 	FairlightAudioInputGain = 'fairlightAudioInputGain',
 	FairlightAudioInputGainDelta = 'fairlightAudioInputGainDelta',
+	FairlightAudioInputDelay = 'fairlightAudioInputDelay',
+	FairlightAudioInputDelayDelta = 'fairlightAudioInputDelayDelta',
 	FairlightAudioMixOption = 'fairlightAudioMixOption',
 	FairlightAudioResetPeaks = 'fairlightAudioResetPeaks',
 	FairlightAudioResetSourcePeaks = 'fairlightAudioResetSourcePeaks',

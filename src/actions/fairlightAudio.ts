@@ -25,6 +25,16 @@ export interface AtemFairlightAudioActions {
 		delta: number
 		fadeDuration: number
 	}
+	[ActionId.FairlightAudioInputDelay]: {
+		input: number
+		source: string
+		delay: number
+	}
+	[ActionId.FairlightAudioInputDelayDelta]: {
+		input: number
+		source: string
+		delay: number
+	}
 	[ActionId.FairlightAudioFaderGain]: {
 		input: number
 		source: string
@@ -80,6 +90,8 @@ export function createFairlightAudioActions(
 		return {
 			[ActionId.FairlightAudioInputGain]: undefined,
 			[ActionId.FairlightAudioInputGainDelta]: undefined,
+			[ActionId.FairlightAudioInputDelay]: undefined,
+			[ActionId.FairlightAudioInputDelayDelta]: undefined,
 			[ActionId.FairlightAudioFaderGain]: undefined,
 			[ActionId.FairlightAudioFaderGainDelta]: undefined,
 			[ActionId.FairlightAudioMixOption]: undefined,
@@ -96,6 +108,8 @@ export function createFairlightAudioActions(
 
 	const audioInputOption = AtemAudioInputPicker(model, state.state)
 	const audioSourceOption = AtemFairlightAudioSourcePicker()
+
+	const audioInputFrameDelayOption = AtemAudioInputPicker(model, state.state, 'delay')
 
 	return {
 		[ActionId.FairlightAudioInputGain]: {
@@ -182,6 +196,85 @@ export function createFairlightAudioActions(
 				}
 			},
 		},
+		[ActionId.FairlightAudioInputDelay]: audioInputFrameDelayOption
+			? {
+					name: 'Fairlight Audio: Set delay',
+					options: {
+						input: audioInputFrameDelayOption,
+						source: audioSourceOption,
+						delay: {
+							type: 'number',
+							label: 'Delay (frames)',
+							id: 'gain',
+							range: true,
+							required: true,
+							default: 0,
+							step: 1,
+							min: 0,
+							max: 8,
+						},
+					},
+					callback: async ({ options }) => {
+						const inputId = options.getPlainNumber('input')
+						const sourceId = options.getPlainString('source')
+
+						await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
+							framesDelay: options.getPlainNumber('delay'),
+						})
+					},
+					learn: ({ options }) => {
+						const audioChannels = state.state.fairlight?.inputs ?? {}
+						const audioSources = audioChannels[options.getPlainNumber('input')]?.sources ?? {}
+						const source = audioSources[options.getPlainString('source')]
+
+						if (source?.properties) {
+							return {
+								...options.getJson(),
+								delay: source.properties.framesDelay,
+							}
+						} else {
+							return undefined
+						}
+					},
+			  }
+			: undefined,
+		[ActionId.FairlightAudioInputDelayDelta]: audioInputFrameDelayOption
+			? {
+					name: 'Fairlight Audio: Adjust delay',
+					options: {
+						input: audioInputFrameDelayOption,
+						source: audioSourceOption,
+						delay: {
+							type: 'number',
+							label: 'Adjustment (frames)',
+							id: 'gain',
+							range: true,
+							required: true,
+							default: 0,
+							step: 1,
+							min: -8,
+							max: 8,
+						},
+					},
+					callback: async ({ options }) => {
+						const inputId = options.getPlainNumber('input')
+						const sourceId = options.getPlainString('source')
+
+						const delta = options.getPlainNumber('delay')
+
+						const audioChannels = state.state.fairlight?.inputs ?? {}
+						const audioSources = audioChannels[options.getPlainNumber('input')]?.sources ?? {}
+						const source = audioSources[options.getPlainString('source')]
+
+						const existingDelay = source?.properties?.framesDelay
+						if (existingDelay === undefined) return
+
+						await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
+							framesDelay: existingDelay + delta,
+						})
+					},
+			  }
+			: undefined,
 		[ActionId.FairlightAudioFaderGain]: {
 			name: 'Fairlight Audio: Set fader gain',
 			options: {

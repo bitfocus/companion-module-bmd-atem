@@ -26,6 +26,7 @@ import {
 	NextTransKeyChoices,
 	SourcesToChoices,
 	type TrueFalseToggle,
+	type AudioInputSubset,
 } from './choices.js'
 import type { ModelSpec } from './models/index.js'
 import { iterateTimes, MEDIA_PLAYER_SOURCE_CLIP_OFFSET, compact, NumberComparitor } from './util.js'
@@ -1231,8 +1232,12 @@ export function AtemMatchMethod(): CompanionInputFieldDropdown {
 	}
 }
 
-export function AtemAudioInputPicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
-	const inputs = SourcesToChoices(GetAudioInputsList(model, state))
+export function AtemAudioInputPicker(
+	model: ModelSpec,
+	state: AtemState,
+	subset?: AudioInputSubset
+): CompanionInputFieldDropdown {
+	const inputs = SourcesToChoices(GetAudioInputsList(model, state, subset))
 	return {
 		type: 'dropdown',
 		id: 'input',

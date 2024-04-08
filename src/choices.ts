@@ -326,7 +326,9 @@ export function GetSourcesListForType(
 	return sources
 }
 
-export function GetAudioInputsList(model: ModelSpec, state: AtemState): MiniSourceInfo[] {
+export type AudioInputSubset = 'delay'
+
+export function GetAudioInputsList(model: ModelSpec, state: AtemState, subset?: AudioInputSubset): MiniSourceInfo[] {
 	const getSource = (id: number, videoId: number | undefined, defLong: string): MiniSourceInfo => {
 		const input = videoId !== undefined ? state.inputs[videoId] : undefined
 		const longName = input?.longName || defLong
@@ -339,6 +341,8 @@ export function GetAudioInputsList(model: ModelSpec, state: AtemState): MiniSour
 
 	const sources: MiniSourceInfo[] = []
 	for (const input of model.classicAudio?.inputs ?? model.fairlightAudio?.inputs ?? []) {
+		if (subset === 'delay' && (!('maxDelay' in input) || !input.maxDelay)) continue
+
 		switch (input.portType) {
 			case Enums.ExternalPortType.Unknown:
 			case Enums.ExternalPortType.Component:
