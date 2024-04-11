@@ -4,7 +4,7 @@ import { type AtemConfig, GetConfigFields } from './config.js'
 import { GetFeedbacksList } from './feedback/index.js'
 import { FeedbackId } from './feedback/FeedbackId.js'
 import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, type ModelSpec } from './models/index.js'
-import { GetPresetsList } from './presets.js'
+import { GetPresetsList } from './presets/index.js'
 import type { StateWrapper } from './state.js'
 import { MODEL_AUTO_DETECT } from './models/types.js'
 import {
@@ -32,6 +32,7 @@ const { Atem, AtemConnectionStatus, AtemStateUtil } = AtemPkg
 // eslint-disable-next-line n/no-extraneous-import
 import { ThreadedClassManager, RegisterExitHandlers } from 'threadedclass'
 import { updateCameraControlVariables } from './variables/cameraControl.js'
+import { updateTimecodeVariables } from './variables/timecode.js'
 
 // HACK: This stops it from registering an unhandledException handler, as that causes companion to exit on error
 ThreadedClassManager.handleExit = RegisterExitHandlers.NO
@@ -49,6 +50,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	private atemTransitions: AtemTransitions
 
 	public config: AtemConfig = {}
+	public timecodeSeconds = 0
 
 	/**
 	 * Create an instance of an ATEM module.
@@ -105,12 +107,12 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		updateDeviceIpVariable(this, variables)
 		this.setVariableValues(variables)
 
-		this.model = GetModelSpec(this.getBestModelId() || MODEL_AUTO_DETECT) || GetAutoDetectModel()
-		this.log('debug', 'ATEM changed model: ' + this.model.id)
-
 		// Force clear the cached state
 		this.wrappedState.state = AtemStateUtil.Create()
 		this.wrappedState.atemCameraState.reset(0)
+
+		this.model = GetModelSpec(this.getBestModelId() || MODEL_AUTO_DETECT) || GetAutoDetectModel()
+		this.log('debug', 'ATEM changed model: ' + this.model.id)
 
 		this.atemTransitions.stopAll()
 		this.atemTransitions = new AtemTransitions(this.config)
@@ -160,23 +162,27 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	}
 
 	private getBestModelId(): number | undefined {
-		const configModelId = Number(this.config.autoModelID) || Number(this.config.modelID)
+		const configModelId = Number(this.config.modelID)
 		if (!isNaN(configModelId) && configModelId > 0) {
 			return configModelId
-		} else {
-			const info = this.wrappedState.state.info
-			if (info && info.model) {
-				return info.model
-			} else {
-				return undefined
-			}
 		}
+		const info = this.wrappedState.state.info
+		if (info && info.model) {
+			return info.model
+		}
+
+		const configCachedAutoModelId = this.config.modelID + '' === '0' ? Number(this.config.autoModelID) : 0
+		if (!isNaN(configCachedAutoModelId) && configCachedAutoModelId > 0) {
+			return configCachedAutoModelId
+		}
+
+		return undefined
 	}
 
 	private updateCompanionBits(): void {
 		InitVariables(this, this.model, this.wrappedState)
 		this.setPresetDefinitions(GetPresetsList(this, this.model, this.wrappedState.state))
-		this.setFeedbackDefinitions(GetFeedbacksList(this.model, this.wrappedState))
+		this.setFeedbackDefinitions(GetFeedbacksList(this.config, this.model, this.wrappedState))
 		this.setActionDefinitions(
 			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.wrappedState)
 		)
@@ -194,12 +200,18 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	private processReceivedCommands(commands: Commands.IDeserializedCommand[]): void {
 		const cameraCommands: Commands.CameraControlUpdateCommand[] = []
 
+		const values: CompanionVariableValues = {}
+
 		for (const command of commands) {
 			if (command instanceof Commands.TallyBySourceCommand) {
 				this.wrappedState.tally = command.properties
 				this.checkFeedbacks(FeedbackId.ProgramTally, FeedbackId.PreviewTally)
 			} else if (this.config.enableCameraControl && command instanceof Commands.CameraControlUpdateCommand) {
 				cameraCommands.push(command)
+			} else if (this.config.pollTimecode && command instanceof Commands.TimeCommand) {
+				this.timecodeSeconds =
+					command.properties.hour * 3600 + command.properties.minute * 60 + command.properties.second
+				updateTimecodeVariables(this, this.wrappedState.state, values)
 			}
 		}
 
@@ -213,13 +225,13 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				changedCameraIds.add(change.cameraId)
 			}
 
-			const values: CompanionVariableValues = {}
-
 			for (const cameraId of changedCameraIds) {
 				const cameraState = this.wrappedState.atemCameraState.get(cameraId) ?? createEmptyState(cameraId)
 				updateCameraControlVariables(this, cameraState, values)
 			}
+		}
 
+		if (Object.keys(values).length > 0) {
 			this.setVariableValues(values)
 		}
 	}
@@ -323,6 +335,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				const keyIndex = parseInt(uskSourceMatch[2], 10)
 
 				changedVariables.usk.add([meIndex, keyIndex])
+				changedFeedbacks.add(FeedbackId.USKType)
 				changedFeedbacks.add(FeedbackId.USKSource)
 				changedFeedbacks.add(FeedbackId.USKSourceVariables)
 				continue
@@ -447,6 +460,10 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				changedFeedbacks.add(FeedbackId.RecordStatus)
 				continue
 			}
+			if (path.match(/recording.recordAllInputs/)) {
+				changedFeedbacks.add(FeedbackId.RecordISO)
+				continue
+			}
 			if (path.match(/streaming.duration/) || path.match(/streaming.stats/)) {
 				changedVariables.streaming = true
 				continue
@@ -457,6 +474,10 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			}
 			if (path.match(/fairlight.monitor/)) {
 				changedFeedbacks.add(FeedbackId.FairlightAudioMonitorMasterMuted)
+				continue
+			}
+			if (path.match(/settings.timeMode/)) {
+				changedFeedbacks.add(FeedbackId.TimecodeMode)
 				continue
 			}
 		}
@@ -525,6 +546,10 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 					delete this.config.autoModelID
 					delete this.config.autoModelName
 				}
+				setImmediate(() => {
+					console.log('save', this.config)
+					this.saveConfig(this.config)
+				})
 
 				// Log if the config mismatches the device
 				const configModelId = this.config.modelID ? parseInt(this.config.modelID, 10) : undefined
@@ -541,19 +566,27 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 
 				this.updateCompanionBits()
 
-				if (!this.durationInterval && (this.wrappedState.state.streaming || this.wrappedState.state.recording)) {
+				if (
+					!this.durationInterval &&
+					(this.wrappedState.state.streaming || this.wrappedState.state.recording || this.config.pollTimecode)
+				) {
 					this.durationInterval = setInterval(() => {
 						if (this.atem && this.wrappedState.state.streaming) {
 							this.atem.requestStreamingDuration().catch((e) => {
-								this.log('debug', 'Action execution error: ' + e)
+								this.log('debug', 'Request streaming duration error: ' + e)
 							})
 						}
 						if (this.atem && this.wrappedState.state.recording) {
 							this.atem.requestRecordingDuration().catch((e) => {
-								this.log('debug', 'Action execution error: ' + e)
+								this.log('debug', 'Request recording duration error: ' + e)
 							})
 						}
-					}, 1000)
+						if (this.atem && this.config.pollTimecode) {
+							this.atem.requestTime().catch((e) => {
+								this.log('debug', 'Request time error: ' + e)
+							})
+						}
+					}, 500)
 				}
 			}
 		})

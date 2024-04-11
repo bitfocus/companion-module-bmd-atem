@@ -33,6 +33,7 @@ import { createCameraControlLensActions, type AtemCameraControlLensActions } fro
 import { createCameraControlDisplayActions, type AtemCameraControlDisplayActions } from './cameraControl/display.js'
 import { createCameraControlVideoActions, type AtemCameraControlVideoActions } from './cameraControl/video.js'
 import { createCameraControlColorActions, type AtemCameraControlColorActions } from './cameraControl/color.js'
+import { createTimecodeActions, type AtemTimecodeActions } from './timecode.js'
 
 export type ActionTypes = AtemProgramPreviewActions &
 	AtemTransitionActions &
@@ -54,7 +55,8 @@ export type ActionTypes = AtemProgramPreviewActions &
 	AtemCameraControlLensActions &
 	AtemCameraControlDisplayActions &
 	AtemCameraControlVideoActions &
-	AtemCameraControlColorActions
+	AtemCameraControlColorActions &
+	AtemTimecodeActions
 
 export function GetActionsList(
 	instance: InstanceBaseExt<AtemConfig>,
@@ -91,6 +93,8 @@ export function GetActionsList(
 		...createCameraControlDisplayActions(instance.config, atem, state),
 		...createCameraControlVideoActions(instance.config, atem, state),
 		...createCameraControlColorActions(instance.config, atem, state),
+
+		...createTimecodeActions(instance, atem, state),
 	}
 
 	return convertMyActionDefinitions(actions)

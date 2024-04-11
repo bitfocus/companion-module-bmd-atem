@@ -45,6 +45,7 @@ export interface ModelSpec {
 			portType: Enums.ExternalPortType
 			// supportedConfigurations: Enums.FairlightInputConfiguration[]
 			// portType: 'video' | 'audio' | 'internal'
+			maxDelay?: number
 		}>
 	}
 }

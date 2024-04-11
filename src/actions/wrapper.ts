@@ -31,10 +31,12 @@ function convertMyActionToCompanionAction<TOptions>(
 	return {
 		name: actionDef.name,
 		description: actionDef.description,
-		options: Object.entries(actionDef.options).map(([id, option]) => ({
-			...(option as SomeCompanionActionInputField),
-			id,
-		})),
+		options: Object.entries(actionDef.options)
+			.filter((o) => !!o[1])
+			.map(([id, option]) => ({
+				...(option as SomeCompanionActionInputField),
+				id,
+			})),
 		callback: async (action, context) => {
 			return actionDef.callback(
 				{

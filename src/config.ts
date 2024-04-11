@@ -19,6 +19,7 @@ export interface AtemConfig {
 	fadeFps?: number
 
 	enableCameraControl?: boolean
+	pollTimecode?: boolean
 }
 
 export function GetConfigFields(_self: InstanceBaseExt<AtemConfig>): SomeCompanionConfigField[] {
@@ -108,6 +109,13 @@ export function GetConfigFields(_self: InstanceBaseExt<AtemConfig>): SomeCompani
 			type: 'checkbox',
 			id: 'enableCameraControl',
 			label: 'Enable Camera Control',
+			width: 6,
+			default: false,
+		},
+		{
+			type: 'checkbox',
+			id: 'pollTimecode',
+			label: 'Enable Timecode variable',
 			width: 6,
 			default: false,
 		},

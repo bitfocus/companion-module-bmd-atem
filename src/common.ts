@@ -33,7 +33,7 @@ export interface MyOptionsHelper<TOptions> {
 	getRaw<Key extends keyof TOptions>(fieldName: Key): TOptions[Key] | undefined
 	getPlainString<Key extends ConditionalKeys<TOptions, string>>(fieldName: Key): TOptions[Key]
 	getPlainNumber<Key extends ConditionalKeys<TOptions, number>>(fieldName: Key): TOptions[Key]
-	getPlainBoolean<Key extends ConditionalKeys<TOptions, boolean>>(fieldName: Key): boolean
+	getPlainBoolean<Key extends ConditionalKeys<TOptions, boolean | undefined>>(fieldName: Key): boolean
 
 	getParsedString<Key extends ConditionalKeys<TOptions, string | undefined>>(fieldName: Key): Promise<string>
 	getParsedNumber<Key extends ConditionalKeys<TOptions, string | undefined>>(fieldName: Key): Promise<number>
@@ -82,7 +82,7 @@ export class MyOptionsHelperImpl<TOptions> implements MyOptionsHelper<TOptions> 
 		return value as any
 	}
 
-	getPlainBoolean<Key extends ConditionalKeys<TOptions, boolean>>(fieldName: Key): boolean {
+	getPlainBoolean<Key extends ConditionalKeys<TOptions, boolean | undefined>>(fieldName: Key): boolean {
 		const fieldSpec = this.#fields[fieldName]
 		const defaultValue = fieldSpec && 'default' in fieldSpec ? fieldSpec.default : undefined
 

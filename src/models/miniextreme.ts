@@ -271,10 +271,12 @@ export const ModelSpecMiniExtreme: ModelSpec = {
 			{
 				id: 1301,
 				portType: Enums.ExternalPortType.TSJack,
+				maxDelay: 8,
 			},
 			{
 				id: 1302,
 				portType: Enums.ExternalPortType.TSJack,
+				maxDelay: 8,
 			},
 		],
 	},

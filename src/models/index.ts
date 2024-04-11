@@ -148,6 +148,7 @@ export function GetParsedModelSpec({
 							return {
 								id: Number(id),
 								portType: ch.properties.externalPortType,
+								maxDelay: Math.max(...Object.values(ch.sources).map((s) => s?.properties?.maxFramesDelay ?? 0)),
 								// supportedConfigurations: ch.properties.supportedConfigurations,
 							}
 						})

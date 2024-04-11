@@ -12,6 +12,7 @@ export enum FeedbackId {
 	AuxBG = 'aux_bg',
 	AuxVariables = 'auxVariables',
 	USKOnAir = 'usk_bg',
+	USKType = 'usk_type',
 	USKSource = 'usk_source',
 	USKSourceVariables = 'usk_source_variables',
 	USKKeyFrame = 'usk_keyframe',
@@ -53,4 +54,5 @@ export enum FeedbackId {
 	FairlightAudioMasterGain = 'fairlightAudioMasterGain',
 	FairlightAudioMonitorMasterMuted = 'fairlightAudioMonitorMasterMuted',
 	FairlightAudioMonitorFaderGain = 'fairlightAudioMonitorFaderGain',
+	TimecodeMode = 'timecodeMode',
 }

@@ -25,7 +25,7 @@ function wrapAction(action: MyPresetAction<any>): CompanionPresetAction {
 function wrapStep(step: MyButtonStepActions<any>): CompanionButtonStepActions {
 	const res: CompanionButtonStepActions = {
 		up: step.up.map(wrapAction),
-		down: step.up.map(wrapAction),
+		down: step.down.map(wrapAction),
 		rotate_left: step.rotate_left?.map(wrapAction),
 		rotate_right: step.rotate_right?.map(wrapAction),
 	} satisfies Complete<CompanionButtonStepActions>

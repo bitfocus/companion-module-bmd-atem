@@ -81,6 +81,7 @@ export function createRecordingActions(
 					label: 'Filename',
 					type: 'textinput',
 					default: '',
+					useVariables: true,
 				},
 			},
 			callback: async ({ options }) => {
