@@ -145,15 +145,15 @@ export function createCameraControlLensActions(
 				const cameraId = await options.getParsedNumber('cameraId')
 				const increment = await options.getParsedNumber('normalisedIncrement')
 
-				let targetIris = (state.atemCameraState.get(cameraId)?.lens.iris ?? 0) + increment
+				let iris = (state.atemCameraState.get(cameraId)?.lens.iris ?? 0) + increment
 
-				if (targetIris > 1) {
-					targetIris = 1
-				} else if (targetIris < 0) {
-					targetIris = 0
+				if (iris > 1) {
+					iris = 1
+				} else if (iris < 0) {
+					iris = 0
 				}
 
-				await commandSender?.lensIrisNormalised(cameraId, targetIris)
+				await commandSender?.lensIrisNormalised(cameraId, iris)
 			},
 		},
 

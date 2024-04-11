@@ -187,10 +187,9 @@ export function createCameraControlVideoActions(
 				const cameraId = await options.getParsedNumber('cameraId')
 				const increment = await options.getParsedNumber('increment')
 
-				const targetExposure =
-					(_state.atemCameraState.get(cameraId)?.video.exposure ?? 0) + Math.round(1000000 / increment)
+				const framerate = (_state.atemCameraState.get(cameraId)?.video.exposure ?? 0) + Math.round(1000000 / increment)
 
-				await commandSender?.videoExposureUs(cameraId, targetExposure)
+				await commandSender?.videoExposureUs(cameraId, framerate)
 			},
 		},
 
@@ -269,15 +268,15 @@ export function createCameraControlVideoActions(
 				const cameraId = await options.getParsedNumber('cameraId')
 				const increment = await options.getParsedNumber('increment')
 
-				let targetGain = (_state.atemCameraState.get(cameraId)?.video.gain ?? 0) + increment
+				let gain = (_state.atemCameraState.get(cameraId)?.video.gain ?? 0) + increment
 
-				if (targetGain > 127) {
-					targetGain = 127
-				} else if (targetGain < 0) {
-					targetGain = 0
+				if (gain > 127) {
+					gain = 127
+				} else if (gain < 0) {
+					gain = 0
 				}
 
-				await commandSender?.videoGain(cameraId, targetGain)
+				await commandSender?.videoGain(cameraId, gain)
 			},
 		},
 
