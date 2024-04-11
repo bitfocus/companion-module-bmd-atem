@@ -12,12 +12,21 @@ export interface AtemCameraControlVideoActions {
 		colorTemperature: string
 		tint: string
 	}
+	[ActionId.CameraControlVideoIncrementManualWhiteBalance]: {
+		cameraId: string
+		colorTemperatureIncrement: string
+		tintIncrement: string
+	}
 	[ActionId.CameraControlVideoAutoWhiteBalance]: {
 		cameraId: string
 	}
 	[ActionId.CameraControlVideoExposure]: {
 		cameraId: string
 		framerate: string
+	}
+	[ActionId.CameraControlIncrementVideoExposure]: {
+		cameraId: string
+		increment: string
 	}
 	[ActionId.CameraControlVideoSharpeningLevel]: {
 		cameraId: string
@@ -45,8 +54,10 @@ export function createCameraControlVideoActions(
 	if (!config.enableCameraControl) {
 		return {
 			[ActionId.CameraControlVideoManualWhiteBalance]: undefined,
+			[ActionId.CameraControlVideoIncrementManualWhiteBalance]: undefined,
 			[ActionId.CameraControlVideoAutoWhiteBalance]: undefined,
 			[ActionId.CameraControlVideoExposure]: undefined,
+			[ActionId.CameraControlIncrementVideoExposure]: undefined,
 			[ActionId.CameraControlVideoSharpeningLevel]: undefined,
 			[ActionId.CameraControlVideoGain]: undefined,
 			[ActionId.CameraControlIncrementVideoGain]: undefined,
@@ -86,6 +97,46 @@ export function createCameraControlVideoActions(
 			},
 		},
 
+		[ActionId.CameraControlVideoIncrementManualWhiteBalance]: {
+			name: 'Camera Control: Increment White Balance',
+			options: {
+				cameraId: CameraControlSourcePicker(),
+				colorTemperatureIncrement: {
+					id: 'colorTemperatureIncrement',
+					type: 'textinput',
+					label: 'Color Temperature Increment',
+					default: '100',
+					tooltip: 'e.g. 100 or -100',
+					useVariables: true,
+				},
+				tintIncrement: {
+					id: 'tintIncrement',
+					type: 'textinput',
+					label: 'Tint Increment',
+					default: '0',
+					tooltip: 'e.g 10 or -10',
+					useVariables: true,
+				},
+			},
+			callback: async ({ options }) => {
+				const cameraId = await options.getParsedNumber('cameraId')
+				const colorTemperatureIncrement = await options.getParsedNumber('colorTemperatureIncrement')
+				const tintIncrement = await options.getParsedNumber('tintIncrement')
+
+				const colorTemperature =
+					(_state.atemCameraState.get(cameraId)?.video.whiteBalance[0] ?? 0) + colorTemperatureIncrement
+				let tint = (_state.atemCameraState.get(cameraId)?.video.whiteBalance[1] ?? 0) + tintIncrement
+
+				if (tint > 50) {
+					tint = 50
+				} else if (tint < -50) {
+					tint = -50
+				}
+
+				await commandSender?.videoManualWhiteBalance(cameraId, colorTemperature, tint)
+			},
+		},
+
 		[ActionId.CameraControlVideoAutoWhiteBalance]: {
 			name: 'Camera Control: Trigger Auto White Balance',
 			options: {
@@ -116,6 +167,30 @@ export function createCameraControlVideoActions(
 				const framerate = await options.getParsedNumber('framerate')
 
 				await commandSender?.videoExposureUs(cameraId, Math.round(1000000 / framerate))
+			},
+		},
+
+		[ActionId.CameraControlIncrementVideoExposure]: {
+			name: 'Camera Control: Increment Video Exposure',
+			options: {
+				cameraId: CameraControlSourcePicker(),
+				increment: {
+					id: 'increment',
+					type: 'textinput',
+					label: 'Value',
+					default: '10',
+					tooltip: 'e.g 10 or -10 for 1/10 increments',
+					useVariables: true,
+				},
+			},
+			callback: async ({ options }) => {
+				const cameraId = await options.getParsedNumber('cameraId')
+				const increment = await options.getParsedNumber('increment')
+
+				const targetExposure =
+					(_state.atemCameraState.get(cameraId)?.video.exposure ?? 0) + Math.round(1000000 / increment)
+
+				await commandSender?.videoExposureUs(cameraId, targetExposure)
 			},
 		},
 
@@ -194,15 +269,15 @@ export function createCameraControlVideoActions(
 				const cameraId = await options.getParsedNumber('cameraId')
 				const increment = await options.getParsedNumber('increment')
 
-				let target_gain = (_state.atemCameraState.get(cameraId)?.video.gain ?? 0) + increment
+				let targetGain = (_state.atemCameraState.get(cameraId)?.video.gain ?? 0) + increment
 
-				if (target_gain > 127) {
-					target_gain = 127
-				} else if (target_gain < 0) {
-					target_gain = 0
+				if (targetGain > 127) {
+					targetGain = 127
+				} else if (targetGain < 0) {
+					targetGain = 0
 				}
 
-				await commandSender?.videoGain(cameraId, target_gain)
+				await commandSender?.videoGain(cameraId, targetGain)
 			},
 		},
 

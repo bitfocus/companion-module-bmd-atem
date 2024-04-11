@@ -20,6 +20,10 @@ export interface AtemCameraControlLensActions {
 		fStop: string
 		normalised: string
 	}
+	[ActionId.CameraControlIncrementLensIris]: {
+		cameraId: string
+		normalisedIncrement: string
+	}
 	[ActionId.CameraControlLensAutoIris]: {
 		cameraId: string
 	}
@@ -39,6 +43,7 @@ export function createCameraControlLensActions(
 			[ActionId.CameraControlLensFocus]: undefined,
 			[ActionId.CameraControlLensAutoFocus]: undefined,
 			[ActionId.CameraControlLensIris]: undefined,
+			[ActionId.CameraControlIncrementLensIris]: undefined,
 			[ActionId.CameraControlLensAutoIris]: undefined,
 			[ActionId.CameraControlLensOpticalImageStabilisation]: undefined,
 		}
@@ -120,6 +125,35 @@ export function createCameraControlLensActions(
 					const value = await options.getParsedNumber('fStop')
 					await commandSender?.lensIrisFStop(cameraId, value)
 				}
+			},
+		},
+
+		[ActionId.CameraControlIncrementLensIris]: {
+			name: 'Camera Control: Increment Iris',
+			options: {
+				cameraId: CameraControlSourcePicker(),
+				normalisedIncrement: {
+					id: 'normalisedIncrement',
+					type: 'textinput',
+					label: 'Value',
+					default: '0.1',
+					tooltip: 'e.g. 0.1 or -0.1',
+					useVariables: true,
+				},
+			},
+			callback: async ({ options }) => {
+				const cameraId = await options.getParsedNumber('cameraId')
+				const increment = await options.getParsedNumber('normalisedIncrement')
+
+				let targetIris = (state.atemCameraState.get(cameraId)?.lens.iris ?? 0) + increment
+
+				if (targetIris > 1) {
+					targetIris = 1
+				} else if (targetIris < 0) {
+					targetIris = 0
+				}
+
+				await commandSender?.lensIrisNormalised(cameraId, targetIris)
 			},
 		},
 
