@@ -317,6 +317,9 @@ function updateFairlightAudioMasterVariables(state: AtemState, values: Companion
 function updateFairlightAudioMonitorVariables(state: AtemState, values: CompanionVariableValues): void {
 	const monitor = getFairlightAudioMonitorChannel(state)
 	values[`audio_monitor_gain`] = formatAudioProperty(monitor?.gain)
+	values[`audio_monitor_master_gain`] = formatAudioProperty(monitor?.inputMasterGain)
+	values[`audio_monitor_talkback_gain`] = formatAudioProperty(monitor?.inputTalkbackGain)
+	values[`audio_monitor_sidetone_gain`] = formatAudioProperty(monitor?.inputSidetoneGain)
 }
 
 function updateSuperSourceVariables(
@@ -645,6 +648,18 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 		variables.push({
 			name: `Gain for Monitor/Headphone`,
 			variableId: `audio_monitor_gain`,
+		})
+		variables.push({
+			name: `Gain for Monitor/Headphone Master`,
+			variableId: `audio_monitor_master_gain`,
+		})
+		variables.push({
+			name: `Gain for Monitor/Headphone Talkback`,
+			variableId: `audio_monitor_talkback_gain`,
+		})
+		variables.push({
+			name: `Gain for Monitor/Headphone Sidetone`,
+			variableId: `audio_monitor_sidetone_gain`,
 		})
 		updateFairlightAudioMonitorVariables(state.state, values)
 	}

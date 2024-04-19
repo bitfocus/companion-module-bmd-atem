@@ -309,7 +309,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 
 			if (path.match(/fairlight.monitor/)) {
 				changedVariables.fairlightAudioMonitor = true
-				changedFeedbacks.add(FeedbackId.FairlightAudioMonitorFaderGain)
+				changedFeedbacks.add(FeedbackId.FairlightAudioMonitorOutputFaderGain)
 				continue
 			}
 

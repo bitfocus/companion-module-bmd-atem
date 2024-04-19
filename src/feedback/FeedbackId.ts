@@ -52,7 +52,11 @@ export enum FeedbackId {
 	FairlightAudioInputGain = 'fairlightAudioInputGain',
 	FairlightAudioMixOption = 'fairlightAudioMixOption',
 	FairlightAudioMasterGain = 'fairlightAudioMasterGain',
+	FairlightAudioMonitorOutputFaderGain = 'fairlightAudioMonitorFaderGain',
 	FairlightAudioMonitorMasterMuted = 'fairlightAudioMonitorMasterMuted',
-	FairlightAudioMonitorFaderGain = 'fairlightAudioMonitorFaderGain',
+	FairlightAudioMonitorMasterGain = 'fairlightAudioMonitorMasterGain',
+	FairlightAudioMonitorTalkbackMuted = 'fairlightAudioMonitorTalkbackMuted',
+	FairlightAudioMonitorTalkbackGain = 'fairlightAudioMonitorTalkbackGain',
+	FairlightAudioMonitorSidetoneGain = 'fairlightAudioMonitorSidetoneGain',
 	TimecodeMode = 'timecodeMode',
 }
