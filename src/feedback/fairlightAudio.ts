@@ -30,6 +30,11 @@ export interface AtemFairlightAudioFeedbacks {
 		comparitor: NumberComparitor
 		gain: number
 	}
+	[FeedbackId.FairlightAudioMonitorSolo]: {
+		nothing: boolean
+		input: number
+		source: string
+	}
 	[FeedbackId.FairlightAudioMonitorOutputFaderGain]: {
 		comparitor: NumberComparitor
 		gain: number
@@ -60,6 +65,7 @@ export function createFairlightAudioFeedbacks(
 			[FeedbackId.FairlightAudioFaderGain]: undefined,
 			[FeedbackId.FairlightAudioMixOption]: undefined,
 			[FeedbackId.FairlightAudioMasterGain]: undefined,
+			[FeedbackId.FairlightAudioMonitorSolo]: undefined,
 			[FeedbackId.FairlightAudioMonitorOutputFaderGain]: undefined,
 			[FeedbackId.FairlightAudioMonitorMasterMuted]: undefined,
 			[FeedbackId.FairlightAudioMonitorMasterGain]: undefined,
@@ -259,6 +265,53 @@ export function createFairlightAudioFeedbacks(
 				}
 			},
 		},
+		[FeedbackId.FairlightAudioMonitorSolo]: model.fairlightAudio.monitor
+			? {
+					type: 'boolean',
+					name: 'Fairlight Audio: Solo source',
+					description: 'If the specified source is soloed, change style of the bank',
+					options: {
+						nothing: {
+							id: 'nothing',
+							type: 'checkbox',
+							label: 'No solo',
+							default: false,
+						},
+						input: { ...audioInputOption, isVisible: (options) => !options.nothing },
+						source: { ...audioSourceOption, isVisible: (options) => !options.nothing },
+					},
+					defaultStyle: {
+						color: combineRgb(0, 0, 0),
+						bgcolor: combineRgb(0, 255, 0),
+					},
+					callback: ({ options }): boolean => {
+						const soloState = state.state.fairlight?.solo
+						if (options.getPlainBoolean('nothing')) {
+							return !soloState?.solo
+						} else {
+							return (
+								!!soloState?.solo &&
+								soloState?.index === options.getPlainNumber('input') &&
+								soloState?.source === options.getPlainString('source')
+							)
+						}
+					},
+					learn: ({ options }) => {
+						const audioChannels = state.state.fairlight?.inputs ?? {}
+						const audioSources = audioChannels[options.getPlainNumber('input')]?.sources ?? {}
+						const source = audioSources[options.getPlainString('source')]
+
+						if (source?.properties) {
+							return {
+								...options.getJson(),
+								gain: source.properties.faderGain / 100,
+							}
+						} else {
+							return undefined
+						}
+					},
+			  }
+			: undefined,
 		[FeedbackId.FairlightAudioMonitorOutputFaderGain]: model.fairlightAudio.monitor
 			? {
 					type: 'boolean',

@@ -74,6 +74,7 @@ export enum ActionId {
 	FairlightAudioResetSourcePeaks = 'fairlightAudioResetSourcePeaks',
 	FairlightAudioMasterGain = 'fairlightAudioMasterGain',
 	FairlightAudioMasterGainDelta = 'fairlightAudioMasterGainDelta',
+	FairlightAudioMonitorSolo = 'fairlightAudioMonitorSolo',
 	FairlightAudioMonitorOutputGain = 'fairlightAudioMonitorGain',
 	FairlightAudioMonitorOutputGainDelta = 'fairlightAudioMonitorGainDelta',
 	FairlightAudioMonitorMasterMuted = 'fairlightAudioMonitorMasterMuted',

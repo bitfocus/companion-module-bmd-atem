@@ -67,6 +67,11 @@ export interface AtemFairlightAudioActions {
 		delta: number
 		fadeDuration: number
 	}
+	[ActionId.FairlightAudioMonitorSolo]: {
+		solo: TrueFalseToggle
+		input: number
+		source: string
+	}
 	[ActionId.FairlightAudioMonitorOutputGain]: {
 		gain: number
 		fadeDuration: number
@@ -130,6 +135,7 @@ export function createFairlightAudioActions(
 			[ActionId.FairlightAudioResetSourcePeaks]: undefined,
 			[ActionId.FairlightAudioMasterGain]: undefined,
 			[ActionId.FairlightAudioMasterGainDelta]: undefined,
+			[ActionId.FairlightAudioMonitorSolo]: undefined,
 			[ActionId.FairlightAudioMonitorOutputGain]: undefined,
 			[ActionId.FairlightAudioMonitorOutputGainDelta]: undefined,
 			[ActionId.FairlightAudioMonitorMasterMuted]: undefined,
@@ -555,6 +561,40 @@ export function createFairlightAudioActions(
 				}
 			},
 		},
+
+		[ActionId.FairlightAudioMonitorSolo]: model.fairlightAudio.monitor
+			? {
+					name: 'Fairlight Audio: Solo source',
+					options: {
+						solo: {
+							id: 'solo',
+							type: 'dropdown',
+							label: 'State',
+							default: 'true',
+							choices: CHOICES_ON_OFF_TOGGLE,
+						},
+						input: audioInputOption,
+						source: audioSourceOption,
+					},
+					callback: async ({ options }) => {
+						const inputId = options.getPlainNumber('input')
+						const sourceId = options.getPlainString('source')
+
+						let target: boolean
+						if (options.getPlainString('solo') === 'toggle') {
+							target = !state.state.fairlight?.monitor?.inputMasterMuted
+						} else {
+							target = options.getPlainString('solo') === 'true'
+						}
+
+						await atem?.setFairlightAudioMixerMonitorSolo({
+							solo: target,
+							index: inputId,
+							source: sourceId,
+						})
+					},
+			  }
+			: undefined,
 
 		[ActionId.FairlightAudioMonitorOutputGain]: model.fairlightAudio.monitor
 			? {
