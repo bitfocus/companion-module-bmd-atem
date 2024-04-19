@@ -90,14 +90,18 @@ export enum ActionId {
 	CameraControlLensFocus = 'cameraControlLensFocus',
 	CameraControlLensAutoFocus = 'cameraControlLensAutoFocus',
 	CameraControlLensIris = 'cameraControlLensIris',
+	CameraControlIncrementLensIris = 'cameraControlIncrementLensIris',
 	CameraControlLensAutoIris = 'cameraControlLensAutoIris',
 	CameraControlLensOpticalImageStabilisation = 'cameraControlLensOpticalImageStabilisation',
 
 	CameraControlVideoManualWhiteBalance = 'cameraControlVideoManualWhiteBalance',
+	CameraControlVideoIncrementManualWhiteBalance = 'cameraControlVideoIncrementManualWhiteBalance',
 	CameraControlVideoAutoWhiteBalance = 'cameraControlVideoAutoWhiteBalance',
 	CameraControlVideoExposure = 'cameraControlVideoExposure',
+	CameraControlIncrementVideoExposure = 'cameraControlIncrementVideoExposure',
 	CameraControlVideoSharpeningLevel = 'cameraControlVideoSharpeningLevel',
 	CameraControlVideoGain = 'cameraControlVideoGain',
+	CameraControlIncrementVideoGain = 'cameraControlIncrementVideoGain',
 	CameraControlVideoNdFilterStop = 'cameraControlVideoNdFilterStop',
 
 	CameraControlDisplayColorBars = 'cameraControlDisplayColorBars',
