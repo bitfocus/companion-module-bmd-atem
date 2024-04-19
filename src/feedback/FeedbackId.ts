@@ -32,6 +32,7 @@ export enum FeedbackId {
 	SSrcBoxSource = 'ssrc_box_source',
 	SSrcBoxSourceVariables = 'ssrc_box_source_variables',
 	SSrcBoxProperties = 'ssrc_box_properties',
+	PreviewTransition = 'previewTransition',
 	TransitionStyle = 'transitionStyle',
 	TransitionSelection = 'transitionSelection',
 	TransitionRate = 'transitionRate',

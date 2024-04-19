@@ -39,6 +39,43 @@ export function createTransitionPresets(
 		}
 		result.push(transitionCategory)
 
+		transitionCategory.presets[`transition_preview_me_${me}`] = {
+			name: `PREVIEW`,
+			type: 'button',
+			style: {
+				text: 'PREV TRANS',
+				size: pstSize,
+				color: combineRgb(255, 255, 255),
+				bgcolor: combineRgb(0, 0, 0),
+			},
+			feedbacks: [
+				{
+					feedbackId: FeedbackId.PreviewTransition,
+					options: {
+						mixeffect: me,
+					},
+					style: {
+						bgcolor: combineRgb(255, 0, 0),
+						color: combineRgb(255, 255, 255),
+					},
+				},
+			],
+			steps: [
+				{
+					down: [
+						{
+							actionId: ActionId.PreviewTransition,
+							options: {
+								mixeffect: me + 1 + '',
+								state: 'toggle',
+							},
+						},
+					],
+					up: [],
+				},
+			],
+		}
+
 		transitionCategory.presets[`transition_cut_me_${me}`] = {
 			name: `CUT`,
 			type: 'button',

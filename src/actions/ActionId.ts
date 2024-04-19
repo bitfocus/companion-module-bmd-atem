@@ -37,6 +37,7 @@ export enum ActionId {
 	SuperSourceBoxOnAir = 'setSsrcBoxEnable',
 	SuperSourceBoxProperties = 'setSsrcBoxProperties',
 	SuperSourceBoxPropertiesDelta = 'setSsrcBoxPropertiesDelta',
+	PreviewTransition = 'previewTransition',
 	TransitionStyle = 'transitionStyle',
 	TransitionSelection = 'transitionSelection',
 	TransitionSelectionComponent = 'transitionSelectionComponent',

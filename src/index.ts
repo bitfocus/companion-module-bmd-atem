@@ -434,6 +434,10 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				changedFeedbacks.add(FeedbackId.TransitionRate)
 				continue
 			}
+			if (path.match(/video.mixEffects.(\d+).transitionPreview/)) {
+				changedFeedbacks.add(FeedbackId.PreviewTransition)
+				continue
+			}
 			const transitionPositionMatch = path.match(/video.mixEffects.(\d+).transitionPosition/)
 			if (transitionPositionMatch) {
 				const meIndex = parseInt(transitionPositionMatch[1], 10)
