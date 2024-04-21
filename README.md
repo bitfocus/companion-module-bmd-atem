@@ -23,6 +23,13 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.10.0
+
+- Add PREV TRANS support
+- Add fairlight solo support
+- Improve fairlight headphone support
+- Add incrementing camera control
+
 ## v3.9.0
 
 - Add timecode as a variable

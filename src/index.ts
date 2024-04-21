@@ -309,7 +309,17 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 
 			if (path.match(/fairlight.monitor/)) {
 				changedVariables.fairlightAudioMonitor = true
-				changedFeedbacks.add(FeedbackId.FairlightAudioMonitorFaderGain)
+				changedFeedbacks.add(FeedbackId.FairlightAudioMonitorOutputFaderGain)
+				changedFeedbacks.add(FeedbackId.FairlightAudioMonitorMasterGain)
+				changedFeedbacks.add(FeedbackId.FairlightAudioMonitorMasterMuted)
+				changedFeedbacks.add(FeedbackId.FairlightAudioMonitorSidetoneGain)
+				changedFeedbacks.add(FeedbackId.FairlightAudioMonitorTalkbackGain)
+				changedFeedbacks.add(FeedbackId.FairlightAudioMonitorTalkbackMuted)
+				continue
+			}
+
+			if (path.match(/fairlight.solo/)) {
+				changedFeedbacks.add(FeedbackId.FairlightAudioMonitorSolo)
 				continue
 			}
 
@@ -422,6 +432,10 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			}
 			if (path.match(/video.mixEffects.(\d+).transitionSettings/)) {
 				changedFeedbacks.add(FeedbackId.TransitionRate)
+				continue
+			}
+			if (path.match(/video.mixEffects.(\d+).transitionPreview/)) {
+				changedFeedbacks.add(FeedbackId.PreviewTransition)
 				continue
 			}
 			const transitionPositionMatch = path.match(/video.mixEffects.(\d+).transitionPosition/)

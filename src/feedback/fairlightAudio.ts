@@ -30,8 +30,26 @@ export interface AtemFairlightAudioFeedbacks {
 		comparitor: NumberComparitor
 		gain: number
 	}
+	[FeedbackId.FairlightAudioMonitorSolo]: {
+		nothing: boolean
+		input: number
+		source: string
+	}
+	[FeedbackId.FairlightAudioMonitorOutputFaderGain]: {
+		comparitor: NumberComparitor
+		gain: number
+	}
 	[FeedbackId.FairlightAudioMonitorMasterMuted]: Record<string, never>
-	[FeedbackId.FairlightAudioMonitorFaderGain]: {
+	[FeedbackId.FairlightAudioMonitorMasterGain]: {
+		comparitor: NumberComparitor
+		gain: number
+	}
+	[FeedbackId.FairlightAudioMonitorTalkbackMuted]: Record<string, never>
+	[FeedbackId.FairlightAudioMonitorTalkbackGain]: {
+		comparitor: NumberComparitor
+		gain: number
+	}
+	[FeedbackId.FairlightAudioMonitorSidetoneGain]: {
 		comparitor: NumberComparitor
 		gain: number
 	}
@@ -47,8 +65,13 @@ export function createFairlightAudioFeedbacks(
 			[FeedbackId.FairlightAudioFaderGain]: undefined,
 			[FeedbackId.FairlightAudioMixOption]: undefined,
 			[FeedbackId.FairlightAudioMasterGain]: undefined,
+			[FeedbackId.FairlightAudioMonitorSolo]: undefined,
+			[FeedbackId.FairlightAudioMonitorOutputFaderGain]: undefined,
 			[FeedbackId.FairlightAudioMonitorMasterMuted]: undefined,
-			[FeedbackId.FairlightAudioMonitorFaderGain]: undefined,
+			[FeedbackId.FairlightAudioMonitorMasterGain]: undefined,
+			[FeedbackId.FairlightAudioMonitorTalkbackMuted]: undefined,
+			[FeedbackId.FairlightAudioMonitorTalkbackGain]: undefined,
+			[FeedbackId.FairlightAudioMonitorSidetoneGain]: undefined,
 		}
 	}
 
@@ -242,24 +265,54 @@ export function createFairlightAudioFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.FairlightAudioMonitorMasterMuted]: model.fairlightAudio.monitor
+		[FeedbackId.FairlightAudioMonitorSolo]: model.fairlightAudio.monitor
 			? {
 					type: 'boolean',
-					name: 'Fairlight Audio: Monitor/Headphone Master muted',
-					description: 'If the headphone master is muted, change style of the bank',
+					name: 'Fairlight Audio: Solo source',
+					description: 'If the specified source is soloed, change style of the bank',
 					options: {
-						// audioInputOption,
+						nothing: {
+							id: 'nothing',
+							type: 'checkbox',
+							label: 'No solo',
+							default: false,
+						},
+						input: { ...audioInputOption, isVisible: (options) => !options.nothing },
+						source: { ...audioSourceOption, isVisible: (options) => !options.nothing },
 					},
 					defaultStyle: {
 						color: combineRgb(0, 0, 0),
 						bgcolor: combineRgb(0, 255, 0),
 					},
-					callback: (): boolean => {
-						return !!state.state.fairlight?.monitor?.inputMasterMuted
+					callback: ({ options }): boolean => {
+						const soloState = state.state.fairlight?.solo
+						if (options.getPlainBoolean('nothing')) {
+							return !soloState?.solo
+						} else {
+							return (
+								!!soloState?.solo &&
+								soloState?.index === options.getPlainNumber('input') &&
+								soloState?.source === options.getPlainString('source')
+							)
+						}
+					},
+					learn: ({ options }) => {
+						const audioChannels = state.state.fairlight?.inputs ?? {}
+						const audioSources = audioChannels[options.getPlainNumber('input')]?.sources ?? {}
+						const source = audioSources[options.getPlainString('source')]
+
+						if (source?.properties) {
+							return {
+								...options.getJson(),
+								gain: source.properties.faderGain / 100,
+							}
+						} else {
+							return undefined
+						}
 					},
 			  }
 			: undefined,
-		[FeedbackId.FairlightAudioMonitorFaderGain]: model.fairlightAudio.monitor
+		[FeedbackId.FairlightAudioMonitorOutputFaderGain]: model.fairlightAudio.monitor
 			? {
 					type: 'boolean',
 					name: 'Fairlight Audio: Monitor/Headphone Gain',
@@ -303,5 +356,174 @@ export function createFairlightAudioFeedbacks(
 					},
 			  }
 			: undefined,
+		[FeedbackId.FairlightAudioMonitorMasterMuted]: model.fairlightAudio.monitor
+			? {
+					type: 'boolean',
+					name: 'Fairlight Audio: Monitor/Headphone Master muted',
+					description: 'If the headphone master is muted, change style of the bank',
+					options: {
+						// audioInputOption,
+					},
+					defaultStyle: {
+						color: combineRgb(0, 0, 0),
+						bgcolor: combineRgb(0, 255, 0),
+					},
+					callback: (): boolean => {
+						return !!state.state.fairlight?.monitor?.inputMasterMuted
+					},
+			  }
+			: undefined,
+		[FeedbackId.FairlightAudioMonitorMasterGain]:
+			model.fairlightAudio.monitor === 'split'
+				? {
+						type: 'boolean',
+						name: 'Fairlight Audio: Monitor/Headphone master Gain',
+						description: 'If the headphone/monitor has the specified master gain, change style of the bank',
+						options: {
+							comparitor: NumberComparitorPicker(),
+							gain: {
+								type: 'number',
+								label: 'Fader Level (-60 = Min)',
+								id: 'gain',
+								range: true,
+								required: true,
+								default: 0,
+								step: 0.1,
+								min: -60,
+								max: 10,
+							} satisfies CompanionInputFieldNumber,
+						},
+						defaultStyle: {
+							color: combineRgb(0, 0, 0),
+							bgcolor: combineRgb(0, 255, 0),
+						},
+						callback: ({ options }): boolean => {
+							const gain = state.state.fairlight?.monitor?.inputMasterGain
+							return !!(
+								typeof gain === 'number' &&
+								compareNumber(options.getPlainNumber('gain'), options.getPlainString('comparitor'), gain / 100)
+							)
+						},
+						learn: ({ options }) => {
+							const props = state.state.fairlight?.monitor
+
+							if (props) {
+								return {
+									...options.getJson(),
+									gain: props.inputMasterGain / 100,
+								}
+							} else {
+								return undefined
+							}
+						},
+				  }
+				: undefined,
+		[FeedbackId.FairlightAudioMonitorTalkbackMuted]: model.fairlightAudio.monitor
+			? {
+					type: 'boolean',
+					name: 'Fairlight Audio: Monitor/Headphone Talkback muted',
+					description: 'If the headphone talkback is muted, change style of the bank',
+					options: {
+						// audioInputOption,
+					},
+					defaultStyle: {
+						color: combineRgb(0, 0, 0),
+						bgcolor: combineRgb(0, 255, 0),
+					},
+					callback: (): boolean => {
+						return !!state.state.fairlight?.monitor?.inputTalkbackMuted
+					},
+			  }
+			: undefined,
+		[FeedbackId.FairlightAudioMonitorTalkbackGain]:
+			model.fairlightAudio.monitor === 'split'
+				? {
+						type: 'boolean',
+						name: 'Fairlight Audio: Monitor/Headphone talkback Gain',
+						description: 'If the headphone/monitor has the specified talkback gain, change style of the bank',
+						options: {
+							comparitor: NumberComparitorPicker(),
+							gain: {
+								type: 'number',
+								label: 'Fader Level (-60 = Min)',
+								id: 'gain',
+								range: true,
+								required: true,
+								default: 0,
+								step: 0.1,
+								min: -60,
+								max: 10,
+							} satisfies CompanionInputFieldNumber,
+						},
+						defaultStyle: {
+							color: combineRgb(0, 0, 0),
+							bgcolor: combineRgb(0, 255, 0),
+						},
+						callback: ({ options }): boolean => {
+							const gain = state.state.fairlight?.monitor?.inputTalkbackGain
+							return !!(
+								typeof gain === 'number' &&
+								compareNumber(options.getPlainNumber('gain'), options.getPlainString('comparitor'), gain / 100)
+							)
+						},
+						learn: ({ options }) => {
+							const props = state.state.fairlight?.monitor
+
+							if (props) {
+								return {
+									...options.getJson(),
+									gain: props.inputTalkbackGain / 100,
+								}
+							} else {
+								return undefined
+							}
+						},
+				  }
+				: undefined,
+		[FeedbackId.FairlightAudioMonitorSidetoneGain]:
+			model.fairlightAudio.monitor === 'split'
+				? {
+						type: 'boolean',
+						name: 'Fairlight Audio: Monitor/Headphone sidetone Gain',
+						description: 'If the headphone/monitor has the specified sidetone gain, change style of the bank',
+						options: {
+							comparitor: NumberComparitorPicker(),
+							gain: {
+								type: 'number',
+								label: 'Fader Level (-60 = Min)',
+								id: 'gain',
+								range: true,
+								required: true,
+								default: 0,
+								step: 0.1,
+								min: -60,
+								max: 10,
+							} satisfies CompanionInputFieldNumber,
+						},
+						defaultStyle: {
+							color: combineRgb(0, 0, 0),
+							bgcolor: combineRgb(0, 255, 0),
+						},
+						callback: ({ options }): boolean => {
+							const gain = state.state.fairlight?.monitor?.inputSidetoneGain
+							return !!(
+								typeof gain === 'number' &&
+								compareNumber(options.getPlainNumber('gain'), options.getPlainString('comparitor'), gain / 100)
+							)
+						},
+						learn: ({ options }) => {
+							const props = state.state.fairlight?.monitor
+
+							if (props) {
+								return {
+									...options.getJson(),
+									gain: props.inputSidetoneGain / 100,
+								}
+							} else {
+								return undefined
+							}
+						},
+				  }
+				: undefined,
 	}
 }

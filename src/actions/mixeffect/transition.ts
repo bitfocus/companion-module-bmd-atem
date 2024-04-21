@@ -14,6 +14,7 @@ import type { MyActionDefinitions } from './../types.js'
 import { AtemCommandBatching, CommandBatching } from '../../batching.js'
 import {
 	CHOICES_KEYTRANS,
+	CHOICES_ON_OFF_TOGGLE,
 	NextTransBackgroundChoices,
 	NextTransKeyChoices,
 	type TrueFalseToggle,
@@ -24,6 +25,10 @@ import { type InstanceBaseExt, assertUnreachable, calculateTransitionSelection }
 import type { InputValue } from '@companion-module/base'
 
 export interface AtemTransitionActions {
+	[ActionId.PreviewTransition]: {
+		mixeffect: string
+		state: TrueFalseToggle
+	}
 	[ActionId.TransitionStyle]: {
 		mixeffect: number
 		style: Enums.TransitionStyle
@@ -57,6 +62,42 @@ export function createTransitionActions(
 	state: StateWrapper
 ): MyActionDefinitions<AtemTransitionActions> {
 	return {
+		[ActionId.PreviewTransition]: {
+			name: 'Transition: Preview',
+			options: {
+				mixeffect: {
+					type: 'textinput',
+					id: 'mixeffect',
+					label: 'M/E',
+					default: '1',
+					useVariables: true,
+				},
+				state: {
+					id: 'state',
+					type: 'dropdown',
+					label: 'State',
+					default: 'toggle',
+					choices: CHOICES_ON_OFF_TOGGLE,
+				},
+			},
+			callback: async ({ options }) => {
+				const mixeffect = await options.getParsedNumber('mixeffect')
+
+				let target: boolean
+				if (options.getPlainString('state') === 'toggle') {
+					const meState = getMixEffect(state.state, mixeffect - 1)
+					target = !meState.transitionPreview
+				} else {
+					target = options.getPlainString('state') === 'true'
+				}
+
+				console.log('previewTransition', target, mixeffect)
+
+				if (!isNaN(mixeffect)) {
+					await atem?.previewTransition(target, mixeffect - 1)
+				}
+			},
+		},
 		[ActionId.TransitionStyle]: {
 			name: 'Transition: Set style/pattern',
 			options: {

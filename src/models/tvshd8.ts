@@ -201,7 +201,7 @@ export const ModelSpecTVSHD8: ModelSpec = {
 	recording: true,
 	recordISO: false,
 	fairlightAudio: {
-		monitor: true,
+		monitor: 'split',
 		inputs: [
 			{
 				id: 1,

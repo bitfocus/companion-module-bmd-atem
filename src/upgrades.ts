@@ -141,7 +141,7 @@ function fixUsingFairlightAudioFaderGainInsteadOfFairlightAudioMonitorFaderGain(
 
 	for (const feedback of props.feedbacks) {
 		if (feedback.feedbackId === FeedbackId.FairlightAudioFaderGain && feedback.options['input'] === undefined) {
-			feedback.feedbackId = FeedbackId.FairlightAudioMonitorFaderGain
+			feedback.feedbackId = FeedbackId.FairlightAudioMonitorOutputFaderGain
 			result.updatedFeedbacks.push(feedback)
 		}
 	}

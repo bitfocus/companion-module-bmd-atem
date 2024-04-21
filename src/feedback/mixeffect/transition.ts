@@ -14,6 +14,9 @@ import { getMixEffect, type StateWrapper } from '../../state.js'
 import { calculateTransitionSelection, assertUnreachable } from '../../util.js'
 
 export interface AtemTransitionFeedbacks {
+	[FeedbackId.PreviewTransition]: {
+		mixeffect: number
+	}
 	[FeedbackId.TransitionStyle]: {
 		mixeffect: number
 		style: Enums.TransitionStyle
@@ -38,6 +41,34 @@ export function createTransitionFeedbacks(
 	state: StateWrapper
 ): MyFeedbackDefinitions<AtemTransitionFeedbacks> {
 	return {
+		[FeedbackId.PreviewTransition]: {
+			type: 'boolean',
+			name: 'Transition: Preview',
+			description: 'If the specified transition is being previewed, change style of the bank',
+			options: {
+				mixeffect: AtemMEPicker(model, 0),
+			},
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: ({ options }): boolean => {
+				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
+				return !!me?.transitionPreview
+			},
+			learn: ({ options }) => {
+				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
+
+				if (me) {
+					return {
+						...options.getJson(),
+						state: me.transitionPreview + '',
+					}
+				} else {
+					return undefined
+				}
+			},
+		},
 		[FeedbackId.TransitionStyle]: {
 			type: 'boolean',
 			name: 'Transition: Style',

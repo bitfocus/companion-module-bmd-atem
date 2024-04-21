@@ -1024,7 +1024,7 @@ export const ModelSpecConstellationHD4ME: ModelSpec = {
 		},
 	],
 	fairlightAudio: {
-		monitor: true,
+		monitor: 'split',
 		inputs: [
 			{
 				id: 1,
