@@ -26,7 +26,7 @@ export interface AtemCameraControlVideoActions {
 	}
 	[ActionId.CameraControlIncrementVideoExposure]: {
 		cameraId: string
-		increment: string
+		direction: string
 	}
 	[ActionId.CameraControlVideoSharpeningLevel]: {
 		cameraId: string
@@ -174,22 +174,36 @@ export function createCameraControlVideoActions(
 			name: 'Camera Control: Increment Video Exposure',
 			options: {
 				cameraId: CameraControlSourcePicker(),
-				increment: {
-					id: 'increment',
-					type: 'textinput',
-					label: 'Value',
-					default: '10',
-					tooltip: 'e.g 10 or -10 for 1/10 increments',
-					useVariables: true,
+				direction: {
+					id: 'direction',
+					type: 'dropdown',
+					label: 'Direction',
+					choices: [
+						{ id: 'up', label: 'Up +' },
+						{ id: 'down', label: 'Down -' },
+					],
+					default: 'up',
+					tooltip: 'Up for faster shutter speeds, down for slower.',
 				},
 			},
 			callback: async ({ options }) => {
+				const exposureUs = [
+					41667, 40000, 33333, 20833, 20000, 16667, 13333, 11111, 10000, 8333, 6667, 5556, 4000, 2778, 2000, 1379, 1000,
+					690, 500,
+				]
+
 				const cameraId = await options.getParsedNumber('cameraId')
-				const increment = await options.getParsedNumber('increment')
+				const increment = options.getPlainString('direction') == 'up' ? 1 : -1
 
-				const framerate = (_state.atemCameraState.get(cameraId)?.video.exposure ?? 0) + Math.round(1000000 / increment)
+				const currentExposreIndex = exposureUs.indexOf(_state.atemCameraState.get(cameraId)?.video.exposure ?? 41667)
 
-				await commandSender?.videoExposureUs(cameraId, framerate)
+				let targetExposureIndex = currentExposreIndex + increment
+
+				if (targetExposureIndex < 0 || targetExposureIndex > exposureUs.length - 1) {
+					targetExposureIndex = currentExposreIndex
+				}
+
+				await commandSender?.videoExposureUs(cameraId, exposureUs[targetExposureIndex])
 			},
 		},
 
