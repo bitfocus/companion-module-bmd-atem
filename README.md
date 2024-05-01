@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.10.1
+
+- Improve increment camera iris and exposure
+
 ## v3.10.0
 
 - Add PREV TRANS support
