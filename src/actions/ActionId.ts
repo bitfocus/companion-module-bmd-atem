@@ -102,6 +102,7 @@ export enum ActionId {
 	CameraControlIncrementLensIris = 'cameraControlIncrementLensIris',
 	CameraControlLensAutoIris = 'cameraControlLensAutoIris',
 	CameraControlLensOpticalImageStabilisation = 'cameraControlLensOpticalImageStabilisation',
+	CameraControlLensZoom = 'cameraControlLensZoom',
 
 	CameraControlVideoManualWhiteBalance = 'cameraControlVideoManualWhiteBalance',
 	CameraControlVideoIncrementManualWhiteBalance = 'cameraControlVideoIncrementManualWhiteBalance',
