@@ -256,6 +256,7 @@ export const ModelSpecTVS4K8: ModelSpec = {
 	recordISO: false,
 	fairlightAudio: {
 		monitor: 'split',
+		audioRouting: true,
 		inputs: [
 			{
 				id: 1,

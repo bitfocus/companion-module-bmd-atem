@@ -307,6 +307,7 @@ export const ModelSpecConstellation8KAs8K: ModelSpec = {
 	],
 	fairlightAudio: {
 		monitor: 'split',
+		audioRouting: true,
 		inputs: [
 			{
 				id: 1,

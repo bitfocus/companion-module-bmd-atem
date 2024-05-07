@@ -111,6 +111,7 @@ export const ModelSpecMini: ModelSpec = {
 	],
 	fairlightAudio: {
 		monitor: null,
+		audioRouting: false,
 		inputs: [
 			{
 				id: 1,

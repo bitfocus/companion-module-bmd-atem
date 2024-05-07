@@ -117,6 +117,7 @@ export const ModelSpecSDI: ModelSpec = {
 	],
 	fairlightAudio: {
 		monitor: null,
+		audioRouting: false,
 		inputs: [
 			{
 				id: 1,

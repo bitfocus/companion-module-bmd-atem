@@ -1025,6 +1025,7 @@ export const ModelSpecConstellationAsHDOr4K: ModelSpec = {
 	],
 	fairlightAudio: {
 		monitor: 'split',
+		audioRouting: true,
 		inputs: [
 			{
 				id: 1,

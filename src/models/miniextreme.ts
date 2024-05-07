@@ -235,6 +235,7 @@ export const ModelSpecMiniExtreme: ModelSpec = {
 	recordISO: false,
 	fairlightAudio: {
 		monitor: 'split',
+		audioRouting: false,
 		inputs: [
 			{
 				id: 1,

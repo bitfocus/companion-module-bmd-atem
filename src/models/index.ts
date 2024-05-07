@@ -146,6 +146,7 @@ export function GetParsedModelSpec({
 		fairlightAudio: fairlight
 			? {
 					monitor: fairlight.monitor ? 'split' : null,
+					audioRouting: !!fairlight.audioRouting,
 					inputs: compact(
 						Object.entries(fairlight.inputs).map(([id, ch]) => {
 							if (!ch?.properties) return undefined

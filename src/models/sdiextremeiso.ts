@@ -247,6 +247,7 @@ export const ModelSpecSDIExtremeISO: ModelSpec = {
 	recordISO: true,
 	fairlightAudio: {
 		monitor: 'split',
+		audioRouting: false,
 		inputs: [
 			{
 				id: 1,

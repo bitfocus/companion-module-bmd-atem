@@ -40,6 +40,7 @@ export interface ModelSpec {
 	}
 	fairlightAudio?: {
 		monitor: 'combined' | 'split' | null
+		audioRouting: boolean
 		inputs: Array<{
 			id: number
 			portType: Enums.ExternalPortType

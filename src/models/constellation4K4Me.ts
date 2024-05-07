@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type { ModelSpec } from './types.js'
 import { Enums } from 'atem-connection'
 import { ModelSpecConstellationHD4ME } from './constellationHd4Me.js'
@@ -11,5 +12,9 @@ export const ModelSpecConstellation4K4ME: ModelSpec = {
 		stills: 64,
 		clips: 4,
 		captureStills: true,
+	},
+	fairlightAudio: {
+		...ModelSpecConstellationHD4ME.fairlightAudio!,
+		audioRouting: true,
 	},
 }
