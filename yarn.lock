@@ -12,20 +12,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@atem-connection/camera-control@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@atem-connection/camera-control@npm:0.1.0"
+"@atem-connection/camera-control@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "@atem-connection/camera-control@npm:0.2.0"
   dependencies:
     tslib: "npm:^2.6.2"
   peerDependencies:
-    atem-connection: ^3.4.1-nightly-fix-camera-control-float-encoding-20240128-155053-c17fb338.0 || ^3.5.0
-  checksum: 10c0/ebf30f445ee0a89733c3be34cdad33ca7b84c28259dbaeea6fac244b2913c521b9c961a3e8bda9d2cab750377e9c921e7ac1740827c89cb7f9671bdc841e134b
+    atem-connection: ^3.5.0
+  checksum: 10c0/059d19c58c064e23f1e5ca202f7022d83d9889533a735dd2b637b9362509123ff8a2dae5063a8597e8b6fb3fc4d1ba2cbc161d6d9b97bad8844ead1dc7fd29d0
   languageName: node
   linkType: hard
 
-"@companion-module/base@npm:~1.7.0":
-  version: 1.7.0
-  resolution: "@companion-module/base@npm:1.7.0"
+"@companion-module/base@npm:~1.7.1":
+  version: 1.7.1
+  resolution: "@companion-module/base@npm:1.7.1"
   dependencies:
     "@sentry/node": "npm:^7.82.0"
     "@sentry/tracing": "npm:^7.82.0"
@@ -38,7 +38,7 @@ __metadata:
     p-queue: "npm:^6.6.2"
     p-timeout: "npm:^4.1.0"
     tslib: "npm:^2.6.2"
-  checksum: 10c0/6f644e3ad44d0332c105a7377bea686d0c8cc9bde19d784abc5d0cd6e63ad33a6c0ae0d8fc5cf04c9bbe3b29bd3b25f1057644be9960bd5c43509d89410f0cf1
+  checksum: 10c0/cde67118dff6ff50c8190a20c0b8ccc243df5383929d58d65b2cfd3dc53e9d8add47c9fd98e7defd394980cdfee7d26f11970ab335a7eb1fb547773a8ee8b4ac
   languageName: node
   linkType: hard
 
@@ -466,12 +466,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.16.3, @types/node@npm:^18.19.31":
-  version: 18.19.31
-  resolution: "@types/node@npm:18.19.31"
+"@types/node@npm:^18.16.3, @types/node@npm:^18.19.32":
+  version: 18.19.32
+  resolution: "@types/node@npm:18.19.32"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10c0/bfebae8389220c0188492c82eaf328f4ba15e6e9b4abee33d6bf36d3b13f188c2f53eb695d427feb882fff09834f467405e2ed9be6aeb6ad4705509822d2ea08
+  checksum: 10c0/29d60ddd83a8216daf90d4bf101a6eff7fcf034b24bb89da90291017ec54c33b5ce30e7c125aef3f23f756037f0c382d15ebd434ad9c4536c8db8f1fb129f0ce
   languageName: node
   linkType: hard
 
@@ -1032,18 +1032,18 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "bmd-atem@workspace:."
   dependencies:
-    "@atem-connection/camera-control": "npm:^0.1.0"
-    "@companion-module/base": "npm:~1.7.0"
+    "@atem-connection/camera-control": "npm:^0.2.0"
+    "@companion-module/base": "npm:~1.7.1"
     "@companion-module/tools": "npm:^1.5.0"
     "@types/lodash-es": "npm:^4.17.12"
-    "@types/node": "npm:^18.19.31"
+    "@types/node": "npm:^18.19.32"
     atem-connection: "npm:3.6.0-nightly-master-20240419-215343-75a89856.0"
     husky: "npm:^9.0.11"
     lint-staged: "npm:^15.2.2"
     lodash-es: "npm:^4.17.21"
     rimraf: "npm:^5.0.5"
     ts-node: "npm:^10.9.2"
-    type-fest: "npm:^4.15.0"
+    type-fest: "npm:^4.18.2"
     typescript: "npm:~5.2.2"
   languageName: unknown
   linkType: soft
@@ -3915,10 +3915,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-fest@npm:^4.15.0":
-  version: 4.15.0
-  resolution: "type-fest@npm:4.15.0"
-  checksum: 10c0/677a7da18dbbe07668bdf47fcb976fdcbea77e118156a7245182fdf65633d69228ce773b0022d507636945a8f22b593e09a3c08f695d2aecf96f035ff0186825
+"type-fest@npm:^4.18.2":
+  version: 4.18.2
+  resolution: "type-fest@npm:4.18.2"
+  checksum: 10c0/5e669128bf7cbc9f9cea4e4862c974517a1d9f77652589c2ac0908a8be5d852d4e52593ed14f4d8a44a604fb5e8a8ec1b658e461acd8bb7592f5e5265a04cbab
   languageName: node
   linkType: hard
 
