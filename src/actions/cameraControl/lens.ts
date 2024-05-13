@@ -33,7 +33,7 @@ export interface AtemCameraControlLensActions {
 	}
 	[ActionId.CameraControlLensZoom]: {
 		cameraId: string
-		delta: string
+		zoom: string
 	}
 }
 
@@ -205,22 +205,19 @@ export function createCameraControlLensActions(
 			name: 'Camera Control: Zoom (Continuous)',
 			options: {
 				cameraId: CameraControlSourcePicker(),
-				delta: {
-					id: 'delta',
+				zoom: {
+					id: 'zoom',
 					type: 'textinput',
-					label: 'Delta',
-					default: '0.1',
+					label: 'Zoom speed',
+					default: '0.0',
 					tooltip: 'Max range -1.0 - 1.0',
 					useVariables: true,
 				},
 			},
 			callback: async ({ options }) => {
 				const cameraId = await options.getParsedNumber('cameraId')
-				const value = await options.getParsedNumber('delta')
+				const value = await options.getParsedNumber('zoom')
 				await commandSender?.lensSetContinuousZoomSpeed(cameraId, value)
-				setTimeout(() => {
-					void commandSender?.lensSetContinuousZoomSpeed(cameraId, 0)
-				}, 50)
 			},
 		},
 	}
