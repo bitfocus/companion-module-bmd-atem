@@ -23,6 +23,12 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.11.0
+
+- Add camera continuous zoom action
+
+- Support for Constellation 1ME 4K and 2ME 4K
+
 ## v3.10.1
 
 - Improve increment camera iris and exposure
