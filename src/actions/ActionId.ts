@@ -32,6 +32,7 @@ export enum ActionId {
 	MultiviewerWindowSourceVariables = 'setMvSourceVariables',
 	MultiviewerLayout = 'multiviewerLayout',
 	SuperSourceArt = 'ssrcArt',
+	SuperSourceArtVariables = 'ssrcArtVariables',
 	SuperSourceBoxSource = 'setSsrcBoxSource',
 	SuperSourceBoxSourceVaraibles = 'setSsrcBoxSourceVariables',
 	SuperSourceBoxOnAir = 'setSsrcBoxEnable',

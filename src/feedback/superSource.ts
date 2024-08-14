@@ -14,13 +14,19 @@ import {
 	AtemSuperSourcePropertiesPickers,
 	type AtemSuperSourceArtProperties,
 	type AtemSuperSourceProperties,
+	type AtemSuperSourceArtPropertiesVariables,
+	AtemSuperSourceArtPropertiesVariablesPickers,
 } from '../input.js'
 import { getSuperSourceBox, type StateWrapper } from '../state.js'
+import type { SuperSourceProperties } from 'atem-connection/dist/state/video/superSource.js'
 
 export interface AtemSuperSourceFeedbacks {
 	[FeedbackId.SSrcArtProperties]: {
 		ssrcId: number | undefined
 	} & AtemSuperSourceArtProperties
+	[FeedbackId.SSrcArtPropertiesVariables]: {
+		ssrcId: number | undefined
+	} & AtemSuperSourceArtPropertiesVariables
 	[FeedbackId.SSrcArtSource]: {
 		ssrcId: number | undefined
 		source: number
@@ -64,6 +70,7 @@ export function createSuperSourceFeedbacks(
 	if (!model.SSrc) {
 		return {
 			[FeedbackId.SSrcArtProperties]: undefined,
+			[FeedbackId.SSrcArtPropertiesVariables]: undefined,
 			[FeedbackId.SSrcArtSource]: undefined,
 			[FeedbackId.SSrcArtOption]: undefined,
 			[FeedbackId.SSrcBoxSource]: undefined,
@@ -122,6 +129,73 @@ export function createSuperSourceFeedbacks(
 						artClip: ssrcConfig.artClip / 10,
 						artGain: ssrcConfig.artGain / 10,
 						artInvertKey: ssrcConfig.artInvertKey,
+					}
+				} else {
+					return undefined
+				}
+			},
+		},
+		[FeedbackId.SSrcArtPropertiesVariables]: {
+			type: 'boolean',
+			name: 'Supersource: Art sources from variables',
+			description: 'If the specified SuperSource art properties match, change style of the bank',
+			options: {
+				ssrcId: AtemSuperSourceIdPicker(model),
+				...AtemSuperSourceArtPropertiesVariablesPickers(),
+			},
+			defaultStyle: {
+				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(255, 255, 0),
+			},
+			callback: async ({ options }): Promise<boolean> => {
+				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
+				const ssrc = getSuperSource(state.state, ssrcId).properties
+
+				const props = options.getRaw('properties')
+				if (!ssrc || !props || !Array.isArray(props)) return false
+
+				const ps: Promise<boolean>[] = []
+				const pushComparison = <T extends keyof SuperSourceProperties>(
+					key: T,
+					value: Promise<SuperSourceProperties[T]>
+				) => ps.push(value.then((v) => ssrc[key] == v))
+
+				if (props.includes('fill')) pushComparison('artFillSource', options.getParsedNumber('fill'))
+				if (props.includes('key')) pushComparison('artCutSource', options.getParsedNumber('key'))
+
+				// if (props.includes('artOption') && ssrc.artOption !== options.getRaw('artOption')) return false
+				// if (props.includes('artPreMultiplied') && ssrc.artPreMultiplied !== options.getPlainBoolean('artPreMultiplied'))
+				// 	return false
+				// if (props.includes('artClip') && !compareAsInt(options.getPlainNumber('artClip'), ssrc.artClip, 10))
+				// 	return false
+				// if (props.includes('artGain') && !compareAsInt(options.getPlainNumber('artGain'), ssrc.artGain, 10))
+				// 	return false
+				// if (props.includes('artInvertKey') && ssrc.artInvertKey !== options.getPlainBoolean('artInvertKey'))
+				// 	return false
+
+				// Check each value
+				const results = await Promise.all(ps)
+				for (const value of results) {
+					if (!value) return false
+				}
+
+				return true
+			},
+			learn: ({ options }) => {
+				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
+
+				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.properties
+				if (ssrcConfig) {
+					return {
+						...options.getJson(),
+						fill: ssrcConfig.artFillSource + '',
+						key: ssrcConfig.artCutSource + '',
+
+						// artOption: ssrcConfig.artOption,
+						// artPreMultiplied: ssrcConfig.artPreMultiplied,
+						// artClip: ssrcConfig.artClip / 10,
+						// artGain: ssrcConfig.artGain / 10,
+						// artInvertKey: ssrcConfig.artInvertKey,
 					}
 				} else {
 					return undefined

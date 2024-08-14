@@ -11,6 +11,8 @@ import {
 	AtemSuperSourcePropertiesPickersForOffset,
 	type AtemSuperSourceArtProperties,
 	type AtemSuperSourceProperties,
+	AtemSuperSourceArtPropertiesVariablesPickers,
+	type AtemSuperSourceArtPropertiesVariables,
 } from '../input.js'
 import type { SuperSource } from 'atem-connection/dist/state/video/index.js'
 import { CHOICES_KEYTRANS, type TrueFalseToggle } from '../choices.js'
@@ -21,6 +23,9 @@ export interface AtemSuperSourceActions {
 	[ActionId.SuperSourceArt]: {
 		ssrcId: number | undefined
 	} & AtemSuperSourceArtProperties
+	[ActionId.SuperSourceArtVariables]: {
+		ssrcId: number | undefined
+	} & AtemSuperSourceArtPropertiesVariables
 	[ActionId.SuperSourceBoxSource]: {
 		ssrcId: number | undefined
 		boxIndex: number
@@ -63,6 +68,7 @@ export function createSuperSourceActions(
 	if (!model.SSrc) {
 		return {
 			[ActionId.SuperSourceArt]: undefined,
+			[ActionId.SuperSourceArtVariables]: undefined,
 			[ActionId.SuperSourceBoxSource]: undefined,
 			[ActionId.SuperSourceBoxSourceVaraibles]: undefined,
 			[ActionId.SuperSourceBoxOnAir]: undefined,
@@ -132,6 +138,78 @@ export function createSuperSourceActions(
 				}
 			},
 		},
+		[ActionId.SuperSourceArtVariables]: {
+			name: 'SuperSource: Set art sources from variables',
+			options: {
+				ssrcId: AtemSuperSourceIdPicker(model),
+				...AtemSuperSourceArtPropertiesVariablesPickers(),
+			},
+			callback: async ({ options }) => {
+				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
+				const newProps: Partial<VideoState.SuperSource.SuperSourceProperties> = {}
+
+				const ps: Promise<any>[] = []
+				const setPropAsync = <T extends keyof typeof newProps>(key: T, value: Promise<(typeof newProps)[T]>) =>
+					ps.push(
+						value.then((v) => {
+							newProps[key] = v
+						})
+					)
+
+				const props = options.getRaw('properties')
+				if (props && Array.isArray(props)) {
+					if (props.includes('fill')) setPropAsync('artFillSource', options.getParsedNumber('fill'))
+					if (props.includes('key')) setPropAsync('artCutSource', options.getParsedNumber('key'))
+
+					// if (props.includes('artOption')) {
+					// 	const rawArtOption = options.getRaw('artOption')
+					// 	if (rawArtOption === 'toggle') {
+					// 		const ssrc = state.state.video.superSources[ssrcId]
+
+					// 		newProps.artOption =
+					// 			ssrc?.properties?.artOption === Enums.SuperSourceArtOption.Background
+					// 				? Enums.SuperSourceArtOption.Foreground
+					// 				: Enums.SuperSourceArtOption.Background
+					// 	} else if (rawArtOption !== 'unchanged') {
+					// 		newProps.artOption = Number(options.getRaw('artOption'))
+					// 	}
+					// }
+
+					// if (props.includes('artPreMultiplied'))
+					// 	newProps.artPreMultiplied = options.getPlainBoolean('artPreMultiplied')
+					// if (props.includes('artClip')) newProps.artClip = options.getPlainNumber('artClip') * 10
+					// if (props.includes('artGain')) newProps.artGain = options.getPlainNumber('artGain') * 10
+					// if (props.includes('artInvertKey')) newProps.artInvertKey = options.getPlainBoolean('artInvertKey')
+				}
+
+				await Promise.all(ps)
+
+				if (Object.keys(newProps).length === 0) return
+
+				await atem?.setSuperSourceProperties(newProps, ssrcId)
+			},
+			learn: ({ options }) => {
+				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
+
+				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.properties
+				if (ssrcConfig) {
+					return {
+						...options.getJson(),
+						fill: ssrcConfig.artFillSource + '',
+						key: ssrcConfig.artCutSource + '',
+
+						// artOption: ssrcConfig.artOption,
+						// artPreMultiplied: ssrcConfig.artPreMultiplied,
+						// artClip: ssrcConfig.artClip / 10,
+						// artGain: ssrcConfig.artGain / 10,
+						// artInvertKey: ssrcConfig.artInvertKey,
+					}
+				} else {
+					return undefined
+				}
+			},
+		},
+
 		[ActionId.SuperSourceBoxSource]: {
 			// TODO - combine into ActionId.SuperSourceBoxProperties
 			name: 'SuperSource: Set box source',

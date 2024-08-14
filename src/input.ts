@@ -3,6 +3,7 @@ import type {
 	CompanionInputFieldDropdown,
 	CompanionInputFieldMultiDropdown,
 	CompanionInputFieldNumber,
+	CompanionInputFieldTextInput,
 	CompanionOptionValues,
 	DropdownChoice,
 } from '@companion-module/base'
@@ -218,14 +219,7 @@ export function AtemDSKMaskPropertiesPickers(): {
 	}
 
 	return {
-		properties: {
-			type: 'multidropdown',
-			id: 'properties',
-			label: 'Properties',
-			minSelection: 1,
-			default: Object.values(allProps).map((p) => p.id),
-			choices: Object.values(allProps).map((p) => ({ id: p.id, label: p.label })),
-		},
+		properties: DropdownPropertiesPicker(allProps),
 		...allProps,
 	}
 }
@@ -277,14 +271,7 @@ export function AtemDSKPreMultipliedKeyPropertiesPickers(): {
 	}
 
 	return {
-		properties: {
-			type: 'multidropdown',
-			id: 'properties',
-			label: 'Properties',
-			minSelection: 1,
-			default: Object.values(allProps).map((p) => p.id),
-			choices: Object.values(allProps).map((p) => ({ id: p.id, label: p.label })),
-		},
+		properties: DropdownPropertiesPicker(allProps),
 		...allProps,
 	}
 }
@@ -357,14 +344,7 @@ export function AtemUSKMaskPropertiesPickers(): {
 	}
 
 	return {
-		properties: {
-			type: 'multidropdown',
-			id: 'properties',
-			label: 'Properties',
-			minSelection: 1,
-			default: Object.values(allProps).map((p) => p.id),
-			choices: Object.values(allProps).map((p) => ({ id: p.id, label: p.label })),
-		},
+		properties: DropdownPropertiesPicker(allProps),
 		...allProps,
 	}
 }
@@ -661,14 +641,7 @@ export function AtemUSKDVEPropertiesPickers(): {
 	}
 
 	return {
-		properties: {
-			type: 'multidropdown',
-			id: 'properties',
-			label: 'Properties',
-			minSelection: 1,
-			default: Object.values(allProps).map((p) => p.id),
-			choices: Object.values(allProps).map((p) => ({ id: p.id, label: p.label })),
-		},
+		properties: DropdownPropertiesPicker(allProps),
 		...allProps,
 	}
 }
@@ -903,14 +876,7 @@ export function AtemSuperSourcePropertiesPickers(
 	}
 
 	return {
-		properties: {
-			type: 'multidropdown',
-			id: 'properties',
-			label: 'Properties',
-			minSelection: 1,
-			default: Object.values(allProps).map((p) => p.id),
-			choices: Object.values(allProps).map((p) => ({ id: p.id, label: p.label })),
-		},
+		properties: DropdownPropertiesPicker(allProps),
 		...allProps,
 	}
 }
@@ -1007,14 +973,7 @@ export function AtemSuperSourcePropertiesPickersForOffset(): {
 	}
 
 	return {
-		properties: {
-			type: 'multidropdown',
-			id: 'properties',
-			label: 'Properties',
-			minSelection: 1,
-			default: Object.values(allProps).map((p) => p.id),
-			choices: Object.values(allProps).map((p) => ({ id: p.id, label: p.label })),
-		},
+		properties: DropdownPropertiesPicker(allProps),
 		...allProps,
 	}
 }
@@ -1101,17 +1060,70 @@ export function AtemSuperSourceArtPropertiesPickers(
 	}
 
 	return {
-		properties: {
-			type: 'multidropdown',
-			id: 'properties',
-			label: 'Properties',
-			minSelection: 1,
-			default: Object.values(allProps).map((p) => p.id),
-			choices: Object.values(allProps).map((p) => ({ id: p.id, label: p.label })),
-		},
+		properties: DropdownPropertiesPicker(allProps),
 		...allProps,
 	}
 }
+
+export interface AtemSuperSourceArtPropertiesVariables {
+	properties: Array<'fill' | 'key'> // | 'artOption' | 'artPreMultiplied' | 'artClip' | 'artGain' | 'artInvertKey'>
+	fill: string
+	key: string
+	// artOption: 'unchanged' | Enums.SuperSourceArtOption | 'toggle'
+	// artPreMultiplied: boolean
+	// artClip: number
+	// artGain: number
+	// artInvertKey: boolean
+}
+export function AtemSuperSourceArtPropertiesVariablesPickers(): MyOptionsObject<
+	AtemSuperSourceArtPropertiesVariables,
+	CompanionInputFieldTextInput | CompanionInputFieldMultiDropdown
+> {
+	const allProps: Omit<ReturnType<typeof AtemSuperSourceArtPropertiesVariablesPickers>, 'properties'> = {
+		fill: {
+			type: 'textinput',
+			id: 'fill',
+			label: 'Fill Source',
+			default: '1',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('fill'),
+		},
+		key: {
+			type: 'textinput',
+			id: 'key',
+			label: 'Key Source',
+			default: '1',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('key'),
+		},
+	}
+
+	return {
+		properties: DropdownPropertiesPicker(allProps),
+		...allProps,
+	}
+}
+
+export function DropdownPropertiesPicker(
+	allProps: Record<
+		string,
+		| CompanionInputFieldTextInput
+		| CompanionInputFieldCheckbox
+		| CompanionInputFieldDropdown
+		| CompanionInputFieldNumber
+		| CompanionInputFieldMultiDropdown
+	>
+): CompanionInputFieldMultiDropdown {
+	return {
+		type: 'multidropdown',
+		id: 'properties',
+		label: 'Properties',
+		minSelection: 1,
+		default: Object.values(allProps).map((p) => p.id),
+		choices: Object.values(allProps).map((p) => ({ id: p.id, label: p.label })),
+	}
+}
+
 export function AtemSuperSourceArtSourcePicker(
 	model: ModelSpec,
 	state: AtemState,
@@ -1477,14 +1489,7 @@ export function AtemDisplayClockPropertiesPickers(): {
 	}
 
 	return {
-		properties: {
-			type: 'multidropdown',
-			id: 'properties',
-			label: 'Properties',
-			minSelection: 1,
-			default: Object.values(allProps).map((p) => p.id),
-			choices: Object.values(allProps).map((p) => ({ id: p.id, label: p.label })),
-		},
+		properties: DropdownPropertiesPicker(allProps),
 		...allProps,
 	}
 }

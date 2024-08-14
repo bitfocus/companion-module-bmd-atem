@@ -422,6 +422,8 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			if (path.match(/video.superSources.(\d+).properties/)) {
 				changedFeedbacks.add(FeedbackId.SSrcArtOption)
 				changedFeedbacks.add(FeedbackId.SSrcArtSource)
+				changedFeedbacks.add(FeedbackId.SSrcArtProperties)
+				changedFeedbacks.add(FeedbackId.SSrcArtPropertiesVariables)
 				continue
 			}
 
