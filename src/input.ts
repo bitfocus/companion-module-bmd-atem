@@ -3,6 +3,7 @@ import type {
 	CompanionInputFieldDropdown,
 	CompanionInputFieldMultiDropdown,
 	CompanionInputFieldNumber,
+	CompanionOptionValues,
 	DropdownChoice,
 } from '@companion-module/base'
 import { type AtemState, Enums } from 'atem-connection'
@@ -32,6 +33,7 @@ import {
 import type { ModelSpec } from './models/index.js'
 import { iterateTimes, MEDIA_PLAYER_SOURCE_CLIP_OFFSET, compact, NumberComparitor } from './util.js'
 import type { MyOptionsObject } from './common.js'
+import * as Easing from './easings.js'
 
 export function AtemMESourcePicker(model: ModelSpec, state: AtemState, id: number): CompanionInputFieldDropdown {
 	return {
@@ -1300,15 +1302,68 @@ export function NumberComparitorPicker(): CompanionInputFieldDropdown {
 	}
 }
 
-export const FadeDurationChoice: CompanionInputFieldNumber = {
-	type: 'number',
-	label: 'Fade Duration (ms)',
-	id: 'fadeDuration',
-	default: 0,
-	min: 0,
-	step: 10,
-	max: 60000,
+export interface FadeDurationFieldsType {
+	fadeDuration: number
+	fadeAlgorithm: Easing.algorithm
+	fadeCurve: Easing.curve
 }
+
+export const FadeDurationFields: MyOptionsObject<
+	FadeDurationFieldsType,
+	CompanionInputFieldNumber | CompanionInputFieldDropdown
+> = {
+	fadeDuration: {
+		type: 'number',
+		label: 'Fade Duration (ms)',
+		id: 'fadeDuration',
+		default: 0,
+		min: 0,
+		step: 10,
+		max: 60000,
+	},
+	fadeAlgorithm: {
+		type: 'dropdown',
+		label: 'Algorithm',
+		id: 'fadeAlgorithm',
+		default: 'linear',
+		choices: [
+			{ id: 'linear', label: 'Linear' },
+			{ id: 'quadratic', label: 'Quadratic' },
+			{ id: 'cubic', label: 'Cubic' },
+			{ id: 'quartic', label: 'Quartic' },
+			{ id: 'quintic', label: 'Quintic' },
+			{ id: 'sinusoidal', label: 'Sinusoidal' },
+			{ id: 'exponential', label: 'Exponential' },
+			{ id: 'circular', label: 'Circular' },
+			{ id: 'elastic', label: 'Elastic' },
+			{ id: 'back', label: 'Back' },
+			{ id: 'bounce', label: 'Bounce' },
+		],
+		isVisible: (options: CompanionOptionValues): boolean => {
+			return options.fadeDuration != null && (options.fadeDuration as number) > 0
+		},
+	},
+	fadeCurve: {
+		type: 'dropdown',
+		label: 'Fade curve',
+		id: 'fadeCurve',
+		default: 'ease-in',
+		choices: [
+			{ id: 'ease-in', label: 'Ease-in' },
+			{ id: 'ease-out', label: 'Ease-out' },
+			{ id: 'ease-in-out', label: 'Ease-in-out' },
+		],
+		isVisible: (options: CompanionOptionValues): boolean => {
+			return (
+				options.fadeDuration != null &&
+				options.fadeAlgorithm != null &&
+				(options.fadeDuration as number) > 0 &&
+				(options.fadeAlgorithm as string) !== 'linear'
+			)
+		},
+	},
+}
+
 export const FaderLevelDeltaChoice: CompanionInputFieldNumber = {
 	type: 'number',
 	label: 'Delta',

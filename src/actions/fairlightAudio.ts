@@ -5,8 +5,9 @@ import type { MyActionDefinitions } from './types.js'
 import {
 	AtemAudioInputPicker,
 	AtemFairlightAudioSourcePicker,
-	FadeDurationChoice,
+	FadeDurationFields,
 	FaderLevelDeltaChoice,
+	type FadeDurationFieldsType,
 } from '../input.js'
 import type { AtemTransitions } from '../transitions.js'
 import { CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION, CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../choices.js'
@@ -17,14 +18,12 @@ export interface AtemFairlightAudioActions {
 		input: number
 		source: string
 		gain: number
-		fadeDuration: number
-	}
+	} & FadeDurationFieldsType
 	[ActionId.FairlightAudioInputGainDelta]: {
 		input: number
 		source: string
 		delta: number
-		fadeDuration: number
-	}
+	} & FadeDurationFieldsType
 	[ActionId.FairlightAudioInputDelay]: {
 		input: number
 		source: string
@@ -39,14 +38,12 @@ export interface AtemFairlightAudioActions {
 		input: number
 		source: string
 		gain: number
-		fadeDuration: number
-	}
+	} & FadeDurationFieldsType
 	[ActionId.FairlightAudioFaderGainDelta]: {
 		input: number
 		source: string
 		delta: number
-		fadeDuration: number
-	}
+	} & FadeDurationFieldsType
 	[ActionId.FairlightAudioMixOption]: {
 		input: number
 		source: string
@@ -61,12 +58,10 @@ export interface AtemFairlightAudioActions {
 	}
 	[ActionId.FairlightAudioMasterGain]: {
 		gain: number
-		fadeDuration: number
-	}
+	} & FadeDurationFieldsType
 	[ActionId.FairlightAudioMasterGainDelta]: {
 		delta: number
-		fadeDuration: number
-	}
+	} & FadeDurationFieldsType
 	[ActionId.FairlightAudioMonitorSolo]: {
 		solo: TrueFalseToggle
 		input: number
@@ -74,46 +69,38 @@ export interface AtemFairlightAudioActions {
 	}
 	[ActionId.FairlightAudioMonitorOutputGain]: {
 		gain: number
-		fadeDuration: number
-	}
+	} & FadeDurationFieldsType
 	[ActionId.FairlightAudioMonitorOutputGainDelta]: {
 		delta: number
-		fadeDuration: number
-	}
+	} & FadeDurationFieldsType
 
 	[ActionId.FairlightAudioMonitorMasterMuted]: {
 		state: TrueFalseToggle
 	}
 	[ActionId.FairlightAudioMonitorMasterGain]: {
 		gain: number
-		fadeDuration: number
-	}
+	} & FadeDurationFieldsType
 	[ActionId.FairlightAudioMonitorMasterGainDelta]: {
 		delta: number
-		fadeDuration: number
-	}
+	} & FadeDurationFieldsType
 	[ActionId.FairlightAudioMonitorTalkbackMuted]: {
 		state: TrueFalseToggle
 	}
 	[ActionId.FairlightAudioMonitorTalkbackGain]: {
 		gain: number
-		fadeDuration: number
-	}
+	} & FadeDurationFieldsType
 	[ActionId.FairlightAudioMonitorTalkbackGainDelta]: {
 		delta: number
-		fadeDuration: number
-	}
+	} & FadeDurationFieldsType
 	// [ActionId.FairlightAudioMonitorSidetoneMuted]: {
 	// 	state: TrueFalseToggle
 	// }
 	[ActionId.FairlightAudioMonitorSidetoneGain]: {
 		gain: number
-		fadeDuration: number
-	}
+	} & FadeDurationFieldsType
 	[ActionId.FairlightAudioMonitorSidetoneGainDelta]: {
 		delta: number
-		fadeDuration: number
-	}
+	} & FadeDurationFieldsType
 }
 
 export function createFairlightAudioActions(
@@ -172,7 +159,7 @@ export function createFairlightAudioActions(
 					min: -100,
 					max: 6,
 				},
-				fadeDuration: FadeDurationChoice,
+				...FadeDurationFields,
 			},
 			callback: async ({ options }) => {
 				const inputId = options.getPlainNumber('input')
@@ -182,7 +169,7 @@ export function createFairlightAudioActions(
 				const audioSources = audioChannels[inputId]?.sources ?? {}
 				const source = audioSources[sourceId]
 
-				await transitions.run(
+				await transitions.runForFadeOptions(
 					`audio.${inputId}.${sourceId}.gain`,
 					async (value) => {
 						await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
@@ -191,7 +178,7 @@ export function createFairlightAudioActions(
 					},
 					source?.properties?.gain,
 					options.getPlainNumber('gain') * 100,
-					options.getPlainNumber('fadeDuration')
+					options
 				)
 			},
 			learn: ({ options }) => {
@@ -215,7 +202,7 @@ export function createFairlightAudioActions(
 				input: audioInputOption,
 				source: audioSourceOption,
 				delta: FaderLevelDeltaChoice,
-				fadeDuration: FadeDurationChoice,
+				...FadeDurationFields,
 			},
 			callback: async ({ options }) => {
 				const inputId = options.getPlainNumber('input')
@@ -226,7 +213,7 @@ export function createFairlightAudioActions(
 				const source = audioSources[sourceId]
 
 				if (typeof source?.properties?.gain === 'number') {
-					await transitions.run(
+					await transitions.runForFadeOptions(
 						`audio.${inputId}.${sourceId}.gain`,
 						async (value) => {
 							await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
@@ -235,7 +222,7 @@ export function createFairlightAudioActions(
 						},
 						source.properties.gain,
 						source.properties.gain + options.getPlainNumber('delta') * 100,
-						options.getPlainNumber('fadeDuration')
+						options
 					)
 				}
 			},
@@ -335,7 +322,7 @@ export function createFairlightAudioActions(
 					min: -100,
 					max: 10,
 				},
-				fadeDuration: FadeDurationChoice,
+				...FadeDurationFields,
 			},
 			callback: async ({ options }) => {
 				const inputId = options.getPlainNumber('input')
@@ -345,7 +332,7 @@ export function createFairlightAudioActions(
 				const audioSources = audioChannels[inputId]?.sources ?? {}
 				const source = audioSources[sourceId]
 
-				await transitions.run(
+				await transitions.runForFadeOptions(
 					`audio.${inputId}.${sourceId}.faderGain`,
 					async (value) => {
 						await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
@@ -354,7 +341,7 @@ export function createFairlightAudioActions(
 					},
 					source?.properties?.faderGain,
 					options.getPlainNumber('gain') * 100,
-					options.getPlainNumber('fadeDuration')
+					options
 				)
 			},
 			learn: ({ options }) => {
@@ -378,7 +365,7 @@ export function createFairlightAudioActions(
 				input: audioInputOption,
 				source: audioSourceOption,
 				delta: FaderLevelDeltaChoice,
-				fadeDuration: FadeDurationChoice,
+				...FadeDurationFields,
 			},
 			callback: async ({ options }) => {
 				const inputId = options.getPlainNumber('input')
@@ -389,7 +376,7 @@ export function createFairlightAudioActions(
 				const source = audioSources[sourceId]
 
 				if (typeof source?.properties?.faderGain === 'number') {
-					await transitions.run(
+					await transitions.runForFadeOptions(
 						`audio.${inputId}.${sourceId}.faderGain`,
 						async (value) => {
 							await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
@@ -398,7 +385,7 @@ export function createFairlightAudioActions(
 						},
 						source.properties.faderGain,
 						source.properties.faderGain + options.getPlainNumber('delta') * 100,
-						options.getPlainNumber('fadeDuration')
+						options
 					)
 				}
 			},
@@ -509,10 +496,10 @@ export function createFairlightAudioActions(
 					min: -100,
 					max: 6,
 				},
-				fadeDuration: FadeDurationChoice,
+				...FadeDurationFields,
 			},
 			callback: async ({ options }) => {
-				await transitions.run(
+				await transitions.runForFadeOptions(
 					`audio.master.gain`,
 					async (value) => {
 						await atem?.setFairlightAudioMixerMasterProps({
@@ -521,7 +508,7 @@ export function createFairlightAudioActions(
 					},
 					state.state.fairlight?.master?.properties?.faderGain,
 					options.getPlainNumber('gain') * 100,
-					options.getPlainNumber('fadeDuration')
+					options
 				)
 			},
 			learn: ({ options }) => {
@@ -541,13 +528,13 @@ export function createFairlightAudioActions(
 			name: 'Fairlight Audio: Adjust master gain',
 			options: {
 				delta: FaderLevelDeltaChoice,
-				fadeDuration: FadeDurationChoice,
+				...FadeDurationFields,
 			},
 			callback: async ({ options }) => {
 				const currentGain = state.state.fairlight?.master?.properties?.faderGain
 
 				if (typeof currentGain === 'number') {
-					await transitions.run(
+					await transitions.runForFadeOptions(
 						`audio.master.gain`,
 						async (value) => {
 							await atem?.setFairlightAudioMixerMasterProps({
@@ -556,7 +543,7 @@ export function createFairlightAudioActions(
 						},
 						currentGain,
 						currentGain + options.getPlainNumber('delta') * 100,
-						options.getPlainNumber('fadeDuration')
+						options
 					)
 				}
 			},
@@ -611,10 +598,10 @@ export function createFairlightAudioActions(
 							min: -60,
 							max: 10,
 						},
-						fadeDuration: FadeDurationChoice,
+						...FadeDurationFields,
 					},
 					callback: async ({ options }) => {
-						await transitions.run(
+						await transitions.runForFadeOptions(
 							`audio.monitor.faderGain`,
 							async (value) => {
 								await atem?.setFairlightAudioMixerMonitorProps({
@@ -623,7 +610,7 @@ export function createFairlightAudioActions(
 							},
 							state.state.fairlight?.monitor?.gain,
 							options.getPlainNumber('gain') * 100,
-							options.getPlainNumber('fadeDuration')
+							options
 						)
 					},
 					learn: ({ options }) => {
@@ -645,12 +632,12 @@ export function createFairlightAudioActions(
 					name: 'Fairlight Audio: Adjust Monitor/Headphone fader gain',
 					options: {
 						delta: FaderLevelDeltaChoice,
-						fadeDuration: FadeDurationChoice,
+						...FadeDurationFields,
 					},
 					callback: async ({ options }) => {
 						const currentGain = state.state.fairlight?.monitor?.gain
 						if (typeof currentGain === 'number') {
-							await transitions.run(
+							await transitions.runForFadeOptions(
 								`audio.monitor.faderGain`,
 								async (value) => {
 									await atem?.setFairlightAudioMixerMonitorProps({
@@ -659,7 +646,7 @@ export function createFairlightAudioActions(
 								},
 								currentGain,
 								currentGain + options.getPlainNumber('delta') * 100,
-								options.getPlainNumber('fadeDuration')
+								options
 							)
 						}
 					},
@@ -739,10 +726,10 @@ function HeadphoneMasterActions(
 								min: -60,
 								max: 10,
 							},
-							fadeDuration: FadeDurationChoice,
+							...FadeDurationFields,
 						},
 						callback: async ({ options }) => {
-							await transitions.run(
+							await transitions.runForFadeOptions(
 								`audio.monitor.inputMasterGain`,
 								async (value) => {
 									await atem?.setFairlightAudioMixerMonitorProps({
@@ -751,7 +738,7 @@ function HeadphoneMasterActions(
 								},
 								state.state.fairlight?.monitor?.inputMasterGain,
 								options.getPlainNumber('gain') * 100,
-								options.getPlainNumber('fadeDuration')
+								options
 							)
 						},
 						learn: ({ options }) => {
@@ -774,12 +761,12 @@ function HeadphoneMasterActions(
 						name: 'Fairlight Audio: Adjust Monitor/Headphone master gain',
 						options: {
 							delta: FaderLevelDeltaChoice,
-							fadeDuration: FadeDurationChoice,
+							...FadeDurationFields,
 						},
 						callback: async ({ options }) => {
 							const currentGain = state.state.fairlight?.monitor?.inputMasterGain
 							if (typeof currentGain === 'number') {
-								await transitions.run(
+								await transitions.runForFadeOptions(
 									`audio.monitor.inputMasterGain`,
 									async (value) => {
 										await atem?.setFairlightAudioMixerMonitorProps({
@@ -788,7 +775,7 @@ function HeadphoneMasterActions(
 									},
 									currentGain,
 									currentGain + options.getPlainNumber('delta') * 100,
-									options.getPlainNumber('fadeDuration')
+									options
 								)
 							}
 						},
@@ -865,10 +852,10 @@ function HeadphoneTalkbackActions(
 								min: -60,
 								max: 10,
 							},
-							fadeDuration: FadeDurationChoice,
+							...FadeDurationFields,
 						},
 						callback: async ({ options }) => {
-							await transitions.run(
+							await transitions.runForFadeOptions(
 								`audio.monitor.inputTalkbackGain`,
 								async (value) => {
 									await atem?.setFairlightAudioMixerMonitorProps({
@@ -877,7 +864,7 @@ function HeadphoneTalkbackActions(
 								},
 								state.state.fairlight?.monitor?.inputTalkbackGain,
 								options.getPlainNumber('gain') * 100,
-								options.getPlainNumber('fadeDuration')
+								options
 							)
 						},
 						learn: ({ options }) => {
@@ -900,12 +887,12 @@ function HeadphoneTalkbackActions(
 						name: 'Fairlight Audio: Adjust Monitor/Headphone talkback gain',
 						options: {
 							delta: FaderLevelDeltaChoice,
-							fadeDuration: FadeDurationChoice,
+							...FadeDurationFields,
 						},
 						callback: async ({ options }) => {
 							const currentGain = state.state.fairlight?.monitor?.inputTalkbackGain
 							if (typeof currentGain === 'number') {
-								await transitions.run(
+								await transitions.runForFadeOptions(
 									`audio.monitor.inputTalkbackGain`,
 									async (value) => {
 										await atem?.setFairlightAudioMixerMonitorProps({
@@ -914,7 +901,7 @@ function HeadphoneTalkbackActions(
 									},
 									currentGain,
 									currentGain + options.getPlainNumber('delta') * 100,
-									options.getPlainNumber('fadeDuration')
+									options
 								)
 							}
 						},
@@ -990,10 +977,10 @@ function HeadphoneSidetoneActions(
 								min: -60,
 								max: 10,
 							},
-							fadeDuration: FadeDurationChoice,
+							...FadeDurationFields,
 						},
 						callback: async ({ options }) => {
-							await transitions.run(
+							await transitions.runForFadeOptions(
 								`audio.monitor.inputSidetoneGain`,
 								async (value) => {
 									await atem?.setFairlightAudioMixerMonitorProps({
@@ -1002,7 +989,7 @@ function HeadphoneSidetoneActions(
 								},
 								state.state.fairlight?.monitor?.inputSidetoneGain,
 								options.getPlainNumber('gain') * 100,
-								options.getPlainNumber('fadeDuration')
+								options
 							)
 						},
 						learn: ({ options }) => {
@@ -1025,12 +1012,12 @@ function HeadphoneSidetoneActions(
 						name: 'Fairlight Audio: Adjust Monitor/Headphone sidetone gain',
 						options: {
 							delta: FaderLevelDeltaChoice,
-							fadeDuration: FadeDurationChoice,
+							...FadeDurationFields,
 						},
 						callback: async ({ options }) => {
 							const currentGain = state.state.fairlight?.monitor?.inputSidetoneGain
 							if (typeof currentGain === 'number') {
-								await transitions.run(
+								await transitions.runForFadeOptions(
 									`audio.monitor.inputSidetoneGain`,
 									async (value) => {
 										await atem?.setFairlightAudioMixerMonitorProps({
@@ -1039,7 +1026,7 @@ function HeadphoneSidetoneActions(
 									},
 									currentGain,
 									currentGain + options.getPlainNumber('delta') * 100,
-									options.getPlainNumber('fadeDuration')
+									options
 								)
 							}
 						},

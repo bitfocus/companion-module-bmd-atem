@@ -1,5 +1,7 @@
+import type { MyOptionsHelper } from './common.js'
 import { fadeFpsDefault, type AtemConfig } from './config.js'
 import * as Easing from './easings.js'
+import type { FadeDurationFieldsType } from './input.js'
 
 export interface TransitionInfo {
 	sendFcn: (value: number) => Promise<void>
@@ -52,12 +54,29 @@ export class AtemTransitions {
 		}
 	}
 
+	public async runForFadeOptions(
+		id: string,
+		sendFcn: TransitionInfo['sendFcn'],
+		from: number | undefined,
+		to: number,
+		options: MyOptionsHelper<FadeDurationFieldsType>
+	): Promise<void> {
+		const duration = options.getPlainNumber('fadeDuration')
+
+		const algorithm = options.getPlainString('fadeAlgorithm')
+		const curve = options.getPlainString('fadeCurve')
+
+		return this.run(id, sendFcn, from, to, duration, algorithm, curve)
+	}
+
 	public async run(
 		id: string,
 		sendFcn: TransitionInfo['sendFcn'],
 		from: number | undefined,
 		to: number,
-		duration: number
+		duration: number,
+		algorithm?: Easing.algorithm,
+		curve?: Easing.curve
 	): Promise<void> {
 		const interval = 1000 / this.fps
 		const stepCount = Math.ceil(duration / interval)
@@ -69,7 +88,7 @@ export class AtemTransitions {
 		} else {
 			const diff = to - from
 			const steps: number[] = []
-			const easing = Easing.Linear.None // TODO - dynamic
+			const easing = Easing.getEasing(algorithm, curve)
 			for (let i = 1; i <= stepCount; i++) {
 				const fraction = easing(i / stepCount)
 				steps.push(from + diff * fraction)

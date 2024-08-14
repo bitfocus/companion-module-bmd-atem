@@ -4,6 +4,130 @@
  *
  * @class Easing
  */
+
+export type algorithm =
+	| 'linear'
+	| 'quadratic'
+	| 'cubic'
+	| 'quartic'
+	| 'quintic'
+	| 'sinusoidal'
+	| 'exponential'
+	| 'circular'
+	| 'elastic'
+	| 'back'
+	| 'bounce'
+
+export type curve = 'ease-in' | 'ease-out' | 'ease-in-out'
+
+export function getEasing(algorithm?: algorithm, curve?: curve): (k: number) => number {
+	if (algorithm == 'linear' || algorithm == null || curve == null) {
+		return Linear.None
+	}
+
+	if (algorithm == 'quadratic' && curve == 'ease-in') {
+		return Quadratic.In
+	}
+	if (algorithm == 'quadratic' && curve == 'ease-out') {
+		return Quadratic.Out
+	}
+	if (algorithm == 'quadratic' && curve == 'ease-in-out') {
+		return Quadratic.InOut
+	}
+
+	if (algorithm == 'cubic' && curve == 'ease-in') {
+		return Cubic.In
+	}
+	if (algorithm == 'cubic' && curve == 'ease-out') {
+		return Cubic.Out
+	}
+	if (algorithm == 'cubic' && curve == 'ease-in-out') {
+		return Cubic.InOut
+	}
+
+	if (algorithm == 'quartic' && curve == 'ease-in') {
+		return Quartic.In
+	}
+	if (algorithm == 'quartic' && curve == 'ease-out') {
+		return Quartic.Out
+	}
+	if (algorithm == 'quartic' && curve == 'ease-in-out') {
+		return Quartic.InOut
+	}
+
+	if (algorithm == 'quintic' && curve == 'ease-in') {
+		return Quintic.In
+	}
+	if (algorithm == 'quintic' && curve == 'ease-out') {
+		return Quintic.Out
+	}
+	if (algorithm == 'quintic' && curve == 'ease-in-out') {
+		return Quintic.InOut
+	}
+
+	if (algorithm == 'sinusoidal' && curve == 'ease-in') {
+		return Sinusoidal.In
+	}
+	if (algorithm == 'sinusoidal' && curve == 'ease-out') {
+		return Sinusoidal.Out
+	}
+	if (algorithm == 'sinusoidal' && curve == 'ease-in-out') {
+		return Sinusoidal.InOut
+	}
+
+	if (algorithm == 'exponential' && curve == 'ease-in') {
+		return Exponential.In
+	}
+	if (algorithm == 'exponential' && curve == 'ease-out') {
+		return Exponential.Out
+	}
+	if (algorithm == 'exponential' && curve == 'ease-in-out') {
+		return Exponential.InOut
+	}
+
+	if (algorithm == 'circular' && curve == 'ease-in') {
+		return Circular.In
+	}
+	if (algorithm == 'circular' && curve == 'ease-out') {
+		return Circular.Out
+	}
+	if (algorithm == 'circular' && curve == 'ease-in-out') {
+		return Circular.InOut
+	}
+
+	if (algorithm == 'elastic' && curve == 'ease-in') {
+		return Elastic.In
+	}
+	if (algorithm == 'elastic' && curve == 'ease-out') {
+		return Elastic.Out
+	}
+	if (algorithm == 'elastic' && curve == 'ease-in-out') {
+		return Elastic.InOut
+	}
+
+	if (algorithm == 'back' && curve == 'ease-in') {
+		return Back.In
+	}
+	if (algorithm == 'back' && curve == 'ease-out') {
+		return Back.Out
+	}
+	if (algorithm == 'back' && curve == 'ease-in-out') {
+		return Back.InOut
+	}
+
+	if (algorithm == 'bounce' && curve == 'ease-in') {
+		return Bounce.In
+	}
+	if (algorithm == 'bounce' && curve == 'ease-out') {
+		return Bounce.Out
+	}
+	if (algorithm == 'bounce' && curve == 'ease-in-out') {
+		return Bounce.InOut
+	}
+
+	return Linear.None
+}
+
 /**
  * Linear easing.
  *

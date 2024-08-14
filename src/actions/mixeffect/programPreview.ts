@@ -1,6 +1,6 @@
 import type { Atem } from 'atem-connection'
 import { getMixEffect } from 'atem-connection/dist/state/util.js'
-import { AtemMEPicker, AtemMESourcePicker, FadeDurationChoice } from '../../input.js'
+import { AtemMEPicker, AtemMESourcePicker, FadeDurationFields, type FadeDurationFieldsType } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
 import type { MyActionDefinitions } from '../types.js'
@@ -33,8 +33,7 @@ export interface AtemProgramPreviewActions {
 	[ActionId.TBar]: {
 		mixeffect: number
 		position: string
-		fadeDuration: number
-	}
+	} & FadeDurationFieldsType
 }
 
 export function createProgramPreviewActions(
@@ -176,7 +175,7 @@ export function createProgramPreviewActions(
 					useVariables: true,
 				},
 
-				fadeDuration: FadeDurationChoice,
+				...FadeDurationFields,
 			},
 			callback: async ({ options }) => {
 				const position = await options.getParsedNumber('position')
@@ -185,14 +184,14 @@ export function createProgramPreviewActions(
 				const meIndex = options.getPlainNumber('mixeffect')
 				const meState = getMixEffect(state.state, meIndex)
 
-				await transitions.run(
+				await transitions.runForFadeOptions(
 					`me.${meIndex}.tbar`,
 					async (value) => {
 						await atem?.setTransitionPosition(value, meIndex)
 					},
 					meState?.transitionPosition.handlePosition,
 					position * 100,
-					options.getPlainNumber('fadeDuration')
+					options
 				)
 			},
 		},
