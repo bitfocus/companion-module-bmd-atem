@@ -17,6 +17,7 @@ import type { Complete } from '@companion-module/base/dist/util.js'
 function wrapAction(action: MyPresetAction<any>): CompanionPresetAction {
 	return {
 		actionId: String(action.actionId),
+		headline: undefined,
 		options: action.options,
 		delay: action.delay,
 	} satisfies Complete<CompanionPresetAction>
@@ -24,6 +25,7 @@ function wrapAction(action: MyPresetAction<any>): CompanionPresetAction {
 
 function wrapStep(step: MyButtonStepActions<any>): CompanionButtonStepActions {
 	const res: CompanionButtonStepActions = {
+		name: undefined,
 		up: step.up.map(wrapAction),
 		down: step.down.map(wrapAction),
 		rotate_left: step.rotate_left?.map(wrapAction),
@@ -62,6 +64,7 @@ function convertMyPresetToCompanionPreset(
 			(feedback) =>
 				({
 					feedbackId: String(feedback.feedbackId),
+					headline: undefined,
 					options: feedback.options,
 					style: feedback.style,
 					isInverted: feedback.isInverted,
