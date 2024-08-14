@@ -569,7 +569,14 @@ export function createFairlightAudioActions(
 
 						let target: boolean
 						if (options.getPlainString('solo') === 'toggle') {
-							target = !state.state.fairlight?.monitor?.inputMasterMuted
+							const soloProps = state.state.fairlight?.solo
+							if (soloProps) {
+								const isSourceSelectedForSolo = soloProps.index === inputId && soloProps.source === sourceId
+
+								target = !soloProps.solo || !isSourceSelectedForSolo
+							} else {
+								target = true
+							}
 						} else {
 							target = options.getPlainString('solo') === 'true'
 						}
