@@ -202,6 +202,28 @@ function combineTransitionSelectionToDropdown(
 	return result
 }
 
+function ChangeMediaPlayerSourceVariablesDropdownToText(
+	_context: CompanionUpgradeContext<AtemConfig>,
+	props: CompanionStaticUpgradeProps<AtemConfig>
+): CompanionStaticUpgradeResult<AtemConfig> {
+	const result: CompanionStaticUpgradeResult<AtemConfig> = {
+		updatedActions: [],
+		updatedConfig: null,
+		updatedFeedbacks: [],
+	}
+
+	for (const action of props.actions) {
+		if (action.actionId === 'mediaPlayerSourceVariables') {
+			action.actionId = ActionId.MediaPlayerSourceVariables
+			action.options.mediaplayer = Number(action.options.mediaplayer) + 1
+
+			result.updatedActions.push(action)
+		}
+	}
+
+	return result
+}
+
 export const UpgradeScripts: CompanionStaticUpgradeScript<AtemConfig>[] = [
 	upgradeV2x2x0,
 	CreateConvertToBooleanFeedbackUpgradeScript(BooleanFeedbackUpgradeMap),
@@ -209,4 +231,5 @@ export const UpgradeScripts: CompanionStaticUpgradeScript<AtemConfig>[] = [
 	fixUsingFairlightAudioFaderGainInsteadOfFairlightAudioMonitorFaderGain,
 	CreateUseBuiltinInvertForFeedbacksUpgradeScript(InvertableFeedbackUpgradeMap),
 	combineTransitionSelectionToDropdown,
+	ChangeMediaPlayerSourceVariablesDropdownToText,
 ]

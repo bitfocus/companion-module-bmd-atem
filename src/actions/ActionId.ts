@@ -44,7 +44,7 @@ export enum ActionId {
 	TransitionSelectComponents = 'transitionSelectComponents',
 	TransitionRate = 'transitionRate',
 	MediaPlayerSource = 'mediaPlayerSource',
-	MediaPlayerSourceVariables = 'mediaPlayerSourceVariables',
+	MediaPlayerSourceVariables = 'mediaPlayerSourceVariables2',
 	MediaPlayerCycle = 'mediaPlayerCycle',
 	MediaCaptureStill = 'mediaCaptureStill',
 	MediaDeleteStill = 'mediaDeleteStill',

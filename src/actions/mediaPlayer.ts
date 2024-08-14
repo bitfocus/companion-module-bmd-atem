@@ -13,7 +13,7 @@ export interface AtemMediaPlayerActions {
 		source: number
 	}
 	[ActionId.MediaPlayerSourceVariables]: {
-		mediaplayer: number
+		mediaplayer: string
 		isClip?: boolean
 		slot: string
 	}
@@ -82,9 +82,15 @@ export function createMediaPlayerActions(
 			},
 		},
 		[ActionId.MediaPlayerSourceVariables]: {
-			name: 'Media player: Set source from variable',
+			name: 'Media player: Set source from variables',
 			options: {
-				mediaplayer: AtemMediaPlayerPicker(model),
+				mediaplayer: {
+					id: 'mediaplayer',
+					type: 'textinput',
+					label: 'Media Player',
+					default: '1',
+					useVariables: true,
+				},
 				isClip:
 					model.media.clips > 0
 						? {
@@ -103,14 +109,18 @@ export function createMediaPlayerActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const slot = await options.getParsedNumber('slot')
+				const [mediaplayer, slot] = await Promise.all([
+					options.getParsedNumber('mediaplayer'),
+					options.getParsedNumber('slot'),
+				])
+
 				if (model.media.clips > 0 && options.getPlainBoolean('isClip')) {
 					await atem?.setMediaPlayerSource(
 						{
 							sourceType: Enums.MediaSourceType.Clip,
 							clipIndex: slot - 1,
 						},
-						options.getPlainNumber('mediaplayer')
+						mediaplayer - 1
 					)
 				} else {
 					await atem?.setMediaPlayerSource(
@@ -118,12 +128,13 @@ export function createMediaPlayerActions(
 							sourceType: Enums.MediaSourceType.Still,
 							stillIndex: slot - 1,
 						},
-						options.getPlainNumber('mediaplayer')
+						mediaplayer - 1
 					)
 				}
 			},
-			learn: ({ options }) => {
-				const player = state.state.media.players[options.getPlainNumber('mediaplayer')]
+			learn: async ({ options }) => {
+				const mediaplayer = await options.getParsedNumber('mediaplayer')
+				const player = state.state.media.players[mediaplayer - 1]
 
 				if (player) {
 					const isClip = player.sourceType === Enums.MediaSourceType.Clip

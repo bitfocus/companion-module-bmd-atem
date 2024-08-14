@@ -457,6 +457,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				const mediaPlayer = parseInt(mediaPlayerMatch[1], 10)
 				changedVariables.mediaPlayer.add(mediaPlayer)
 				changedFeedbacks.add(FeedbackId.MediaPlayerSource)
+				changedFeedbacks.add(FeedbackId.MediaPlayerSourceVariables)
 				continue
 			}
 
