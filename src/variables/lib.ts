@@ -23,7 +23,8 @@ import { formatDuration, formatDurationSeconds } from './util.js'
 function getSourcePresetName(instance: InstanceBaseExt<AtemConfig>, state: AtemState, id: number): string {
 	const input = state.inputs[id]
 	if (input) {
-		return Number(instance.config.presets) === PresetStyleName.Long ? input.longName : input.shortName
+		const fallbackName = input.longName || input.shortName || `Input ${id}`
+		return (Number(instance.config.presets) === PresetStyleName.Long ? input.longName : input.shortName) || fallbackName
 	} else if (id === 0) {
 		return 'Black'
 	} else if (id === undefined) {
