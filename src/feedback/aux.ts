@@ -20,7 +20,7 @@ export function createAuxOutputFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper
 ): MyFeedbackDefinitions<AtemAuxOutputFeedbacks> {
-	if (!model.auxes) {
+	if (model.outputs.length === 0) {
 		return {
 			[FeedbackId.AuxBG]: undefined,
 			[FeedbackId.AuxVariables]: undefined,

@@ -1,10 +1,16 @@
-import type { ModelSpec } from './types.js'
+import { generateOutputs, type ModelSpec } from './types.js'
 import { Enums } from 'atem-connection'
 
 export const ModelSpecSDI: ModelSpec = {
 	id: Enums.Model.SDI,
 	label: 'SDI',
-	auxes: 2,
+	outputs: [
+		...generateOutputs('Output', 2),
+		{
+			id: 2,
+			name: 'Webcam (3)',
+		},
+	],
 	MEs: 1,
 	USKs: 1,
 	DSKs: 1,

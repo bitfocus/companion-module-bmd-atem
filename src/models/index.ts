@@ -18,7 +18,7 @@ import { ModelSpecConstellation8KAs8K } from './constellation8kas8k.js'
 import { ModelSpecMini } from './mini.js'
 import { ModelSpecMiniPro } from './minipro.js'
 import { ModelSpecMiniProISO } from './miniproiso.js'
-import { type ModelId, type ModelSpec, MODEL_AUTO_DETECT } from './types.js'
+import { type ModelId, type ModelSpec, MODEL_AUTO_DETECT, generateOutputs } from './types.js'
 import { ModelSpecMiniExtreme } from './miniextreme.js'
 import { ModelSpecMiniExtremeISO } from './miniextremeiso.js'
 import { ModelSpecConstellationHD1ME } from './constellationHd1Me.js'
@@ -111,7 +111,7 @@ export function GetParsedModelSpec({
 		id: info.model,
 		label: info.productIdentifier ?? 'Blackmagic ATEM',
 		inputs: simpleInputs,
-		auxes: info.capabilities?.auxilliaries ?? defaults.auxes,
+		outputs: info.capabilities ? generateOutputs('Aux/Output', info.capabilities.auxilliaries) : defaults.outputs,
 		MEs: info.capabilities?.mixEffects ?? defaults.MEs,
 		USKs: info.mixEffects[0]?.keyCount ?? defaults.USKs,
 		DSKs: info.capabilities?.downstreamKeyers ?? defaults.DSKs,

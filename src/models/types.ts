@@ -6,7 +6,10 @@ export type ModelId = 0 | Enums.Model
 export interface ModelSpec {
 	id: ModelId
 	label: string
-	auxes: number
+	outputs: Array<{
+		id: number
+		name: string
+	}>
 	MEs: number
 	USKs: number
 	DSKs: number
@@ -49,4 +52,15 @@ export interface ModelSpec {
 			maxDelay?: number
 		}>
 	}
+}
+
+export function generateOutputs(prefix: string, count: number): ModelSpec['outputs'] {
+	const outputs: ModelSpec['outputs'] = []
+	for (let i = 0; i < count; i++) {
+		outputs.push({
+			id: i,
+			name: `${prefix} ${i + 1}`,
+		})
+	}
+	return outputs
 }

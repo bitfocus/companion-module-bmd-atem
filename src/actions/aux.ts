@@ -21,7 +21,7 @@ export function createAuxOutputActions(
 	model: ModelSpec,
 	state: StateWrapper
 ): MyActionDefinitions<AtemAuxOutputActions> {
-	if (!model.auxes) {
+	if (model.outputs.length === 0) {
 		return {
 			[ActionId.Aux]: undefined,
 			[ActionId.AuxVariables]: undefined,

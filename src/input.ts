@@ -675,7 +675,7 @@ export function AtemAuxPicker(model: ModelSpec): CompanionInputFieldDropdown {
 	return {
 		type: 'dropdown',
 		id: 'aux',
-		label: 'AUX',
+		label: 'Aux/Output',
 		default: 0,
 		choices: GetAuxIdChoices(model),
 	}

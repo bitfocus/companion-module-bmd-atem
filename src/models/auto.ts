@@ -1,10 +1,10 @@
-import { type ModelSpec, MODEL_AUTO_DETECT } from './types.js'
+import { type ModelSpec, MODEL_AUTO_DETECT, generateOutputs } from './types.js'
 import { Enums } from 'atem-connection'
 
 export const ModelSpecAuto: ModelSpec = {
 	id: MODEL_AUTO_DETECT,
 	label: 'Auto Detect',
-	auxes: 3,
+	outputs: generateOutputs('Aux/Output', 3),
 	MEs: 1,
 	USKs: 1,
 	DSKs: 2,

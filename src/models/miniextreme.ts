@@ -1,4 +1,4 @@
-import type { ModelSpec } from './types.js'
+import { generateOutputs, type ModelSpec } from './types.js'
 import { Enums } from 'atem-connection'
 
 const sourceAvailabilityAll =
@@ -214,7 +214,13 @@ export const ModelSpecMiniExtreme: ModelSpec = {
 			meAvailability: Enums.MeAvailability.None,
 		},
 	],
-	auxes: 2,
+	outputs: [
+		...generateOutputs('Output', 2),
+		{
+			id: 2,
+			name: 'Webcam (3)',
+		},
+	],
 	MEs: 1,
 	USKs: 4,
 	DSKs: 2,

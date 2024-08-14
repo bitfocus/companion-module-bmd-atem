@@ -1,10 +1,10 @@
-import type { ModelSpec } from './types.js'
+import { generateOutputs, type ModelSpec } from './types.js'
 import { Enums } from 'atem-connection'
 
 export const ModelSpecTVSPro4K: ModelSpec = {
 	id: Enums.Model.TVSPro4K,
 	label: 'TV Studio Pro 4K',
-	auxes: 1,
+	outputs: generateOutputs('Aux', 1),
 	MEs: 1,
 	USKs: 1,
 	DSKs: 2,

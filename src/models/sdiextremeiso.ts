@@ -1,4 +1,4 @@
-import type { ModelSpec } from './types.js'
+import { generateOutputs, type ModelSpec } from './types.js'
 import { Enums } from 'atem-connection'
 
 const sourceAvailabilityAll =
@@ -226,7 +226,13 @@ export const ModelSpecSDIExtremeISO: ModelSpec = {
 			meAvailability: Enums.MeAvailability.None,
 		},
 	],
-	auxes: 4,
+	outputs: [
+		...generateOutputs('Output', 4),
+		{
+			id: 4,
+			name: 'Webcam (5)',
+		},
+	],
 	MEs: 1,
 	USKs: 4,
 	DSKs: 2,

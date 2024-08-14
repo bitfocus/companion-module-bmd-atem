@@ -405,17 +405,17 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 	}
 
 	// Auxs
-	for (let a = 0; a < model.auxes; ++a) {
+	for (const output of model.outputs) {
 		variables.push({
-			name: `Label of input active on Aux ${a + 1}`,
-			variableId: `aux${a + 1}_input`,
+			name: `Label of input active on ${output.name}`,
+			variableId: `aux${output.id + 1}_input`,
 		})
 		variables.push({
-			name: `Id of input active on Aux ${a + 1}`,
-			variableId: `aux${a + 1}_input_id`,
+			name: `Id of input active on ${output.name}`,
+			variableId: `aux${output.id + 1}_input_id`,
 		})
 
-		updateAuxVariable(instance, state.state, a, values)
+		updateAuxVariable(instance, state.state, output.id, values)
 	}
 
 	// DSKs

@@ -16,16 +16,16 @@ export function createAuxOutputPresets(
 ): MyPresetDefinitionCategory<ActionTypes, FeedbackTypes>[] {
 	const result: MyPresetDefinitionCategory<ActionTypes, FeedbackTypes>[] = []
 
-	for (let aux = 0; aux < model.auxes; ++aux) {
+	for (const output of model.outputs) {
 		const category: MyPresetDefinitionCategory<ActionTypes, FeedbackTypes> = {
-			name: `AUX ${aux + 1}`,
+			name: output.name,
 			presets: {},
 		}
 		result.push(category)
 
 		for (const src of GetSourcesListForType(model, state, 'aux')) {
-			category.presets[`aux_${aux}_${src.id}`] = {
-				name: `AUX ${aux + 1} button for ${src.shortName}`,
+			category.presets[`aux_${output.id}_${src.id}`] = {
+				name: `${output.name} button for ${src.shortName}`,
 				type: 'button',
 				style: {
 					text: `$(atem:${pstText}${src.id})`,
@@ -38,7 +38,7 @@ export function createAuxOutputPresets(
 						feedbackId: FeedbackId.AuxBG,
 						options: {
 							input: src.id,
-							aux,
+							aux: output.id,
 						},
 						style: {
 							bgcolor: combineRgb(255, 255, 0),
@@ -52,7 +52,7 @@ export function createAuxOutputPresets(
 							{
 								actionId: ActionId.Aux,
 								options: {
-									aux,
+									aux: output.id,
 									input: src.id,
 								},
 							},

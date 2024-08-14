@@ -153,9 +153,9 @@ export function GetMEIdChoices(model: ModelSpec): DropdownChoice[] {
 }
 
 export function GetAuxIdChoices(model: ModelSpec): DropdownChoice[] {
-	return iterateTimes(model.auxes, (i) => ({
-		id: i,
-		label: `${i + 1}`,
+	return model.outputs.map((output) => ({
+		id: output.id,
+		label: output.name,
 	}))
 }
 

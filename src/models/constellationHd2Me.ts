@@ -1,10 +1,10 @@
-import type { ModelSpec } from './types.js'
+import { generateOutputs, type ModelSpec } from './types.js'
 import { Enums } from 'atem-connection'
 
 export const ModelSpecConstellationHD2ME: ModelSpec = {
 	id: Enums.Model.ConstellationHD2ME,
 	label: '2 M/E Constellation HD',
-	auxes: 12,
+	outputs: generateOutputs('Output', 12),
 	MEs: 2,
 	USKs: 4,
 	DSKs: 2,
