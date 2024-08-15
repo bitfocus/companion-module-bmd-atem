@@ -1421,9 +1421,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"atem-connection@npm:3.6.0-nightly-master-20240419-215343-75a89856.0":
-  version: 3.6.0-nightly-master-20240419-215343-75a89856.0
-  resolution: "atem-connection@npm:3.6.0-nightly-master-20240419-215343-75a89856.0"
+"atem-connection@portal:/home/julus/Projects/libs/atem-connection::locator=bmd-atem%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "atem-connection@portal:/home/julus/Projects/libs/atem-connection::locator=bmd-atem%40workspace%3A."
   dependencies:
     "@julusian/freetype2": "npm:^1.1.2"
     debug: "npm:^4.3.4"
@@ -1435,9 +1435,8 @@ __metadata:
     threadedclass: "npm:^1.2.1"
     tslib: "npm:^2.6.2"
     wavefile: "npm:^8.4.6"
-  checksum: 10c0/94a8564394fa3b212d0579cfe7917960aabb74898e9f092a1b0f5bac6e4278b972dfc729d4dac00af59aa56b18e015c67e94dd4398ed756f318d75dba9ea3c1d
   languageName: node
-  linkType: hard
+  linkType: soft
 
 "author-regex@npm:^1.0.0":
   version: 1.0.0

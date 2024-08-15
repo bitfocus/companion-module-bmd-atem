@@ -49,5 +49,8 @@
 		"ts-node": "^10.9.2",
 		"typescript": "~5.2.2"
 	},
-	"packageManager": "yarn@4.4.0"
+	"packageManager": "yarn@4.4.0",
+	"resolutions": {
+		"atem-connection": "portal:/home/julus/Projects/libs/atem-connection"
+	}
 }
