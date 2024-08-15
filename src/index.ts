@@ -5,7 +5,8 @@ import { GetFeedbacksList } from './feedback/index.js'
 import { FeedbackId } from './feedback/FeedbackId.js'
 import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, type ModelSpec } from './models/index.js'
 import { GetPresetsList } from './presets/index.js'
-import { MediaPoolPreviewCache, type StateWrapper } from './state.js'
+import { type StateWrapper } from './state.js'
+import { MediaPoolPreviewCache } from './mediaPoolPreviews.js'
 import { MODEL_AUTO_DETECT } from './models/types.js'
 import {
 	InitVariables,
@@ -71,10 +72,9 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				emptyState,
 				async (isClip, slot) => {
 					if (!this.atem) throw new Error('Atem not initialised')
-					// TODO
-					// return this.atem?.downloadStill(0)
 
 					if (isClip) {
+						// TODO
 						throw new Error('Not implemented!')
 					} else {
 						const buffer = await this.atem.downloadStill(slot /* 'raw'*/) // TODO - perform optimised conversions

@@ -1,13 +1,13 @@
-import { AtemMediaPlayerPicker, AtemMediaPlayerSourcePicker } from '../input.js'
+import { AtemMediaPlayerSourcePicker } from '../input.js'
 import type { ModelSpec } from '../models/index.js'
 import type { MyAdvancedFeedbackEvent, MyFeedbackDefinitions } from './types.js'
 import { FeedbackId } from './FeedbackId.js'
-import type { MediaPoolPreviewOptions, StateWrapper } from '../state.js'
+import type { StateWrapper } from '../state.js'
+import type { MediaPoolPreviewOptions } from '../mediaPoolPreviews.js'
 import type { MyOptionsHelper } from '../common.js'
 
 export interface AtemMediaPoolFeedbacks {
 	[FeedbackId.MediaPoolPreview]: {
-		mediaplayer: number
 		// TODO - clip vs still?
 		source: number
 
@@ -31,7 +31,6 @@ export function createMediaPoolFeedbacks(
 			name: 'Media pool: Preview image',
 			description: 'Preview of the specified media pool slot',
 			options: {
-				mediaplayer: AtemMediaPlayerPicker(model),
 				source: AtemMediaPlayerSourcePicker(model, state.state),
 
 				crop: {
@@ -56,18 +55,31 @@ export function createMediaPoolFeedbacks(
 						{ id: 'center', label: 'Center' },
 						{ id: 'bottom', label: 'Bottom' },
 					],
-					isVisible: (options) => options['crop'] !== 'none',
+					isVisible: (options) => options['crop'] === 'none',
 				},
 			},
-			callback: async ({ id, options, image }) => {
-				console.log('check feedback', id, options.getJson())
+			callback: async ({ options, image }) => {
+				const source = options.getPlainNumber('source')
 
 				const previewOptions = parsePreviewOptions(options, image)
 				if (!previewOptions) return {}
 
-				const imageBuffer = await state.mediaPoolCache.getPreviewImage(options.getPlainNumber('source'), previewOptions)
+				const imageBuffer = await state.mediaPoolCache.getPreviewImage(source, previewOptions)
 				if (imageBuffer) {
 					return imageBuffer
+				}
+
+				// make sure the load was triggered
+				state.mediaPoolCache.ensureLoaded(source)
+
+				const isSlotOccupied = state.mediaPoolCache.isSlotOccupied(source)
+				if (!isSlotOccupied) {
+					return {
+						text: 'Empty',
+						size: 'auto',
+						bgcolor: 0,
+						fgcolor: 0xffffff,
+					}
 				}
 
 				// TODO
@@ -79,9 +91,6 @@ export function createMediaPoolFeedbacks(
 				}
 			},
 			subscribe: ({ id, options }) => {
-				// const previewOptions = parsePreviewOptions(options)
-				// if (!previewOptions) return
-
 				state.mediaPoolCache.subscribe(options.getPlainNumber('source'), id)
 			},
 			unsubscribe: ({ id, options }) => {

@@ -460,6 +460,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@julusian/image-rs@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@julusian/image-rs@npm:1.1.1"
+  checksum: 10c0/c8f4d6080145a7826c5d7c50f86e29acbd1ce853a5b8a366b65e4470465811fb4b1c58c01a2661735d1acaf4ee92ec4a2728649381b126021c54ae9530cb0a28
+  languageName: node
+  linkType: hard
+
 "@nodelib/fs.scandir@npm:2.1.5":
   version: 2.1.5
   resolution: "@nodelib/fs.scandir@npm:2.1.5"
@@ -1266,7 +1273,7 @@ __metadata:
     wavefile: "npm:^8.4.6"
   checksum: 10c0/0da804256286cb9485889acae9bdcececc3e38cb1e9165b2184433f7243ff910b508ecf12362aa136f47c7969cd3ed46303f93df89fb9f0797c49e10431e2a75
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "author-regex@npm:^1.0.0":
   version: 1.0.0
@@ -1303,6 +1310,7 @@ __metadata:
     "@atem-connection/camera-control": "npm:^0.3.0"
     "@companion-module/base": "npm:~1.11.3"
     "@companion-module/tools": "npm:^2.3.0"
+    "@julusian/image-rs": "npm:^1.1.1"
     "@types/lodash-es": "npm:^4.17.12"
     "@types/node": "npm:^22.15.21"
     atem-connection: "npm:3.6.0-nightly-master-20250524-142646-fbf40faa.0"
