@@ -8,8 +8,9 @@ import type {
 	ClassicAudio,
 } from 'atem-connection'
 import type { SuperSource, TransitionProperties } from 'atem-connection/dist/state/video/index.js'
-import type { InputValue } from '@companion-module/base'
+import { type InputValue } from '@companion-module/base'
 import type { AtemCameraControlStateBuilder } from '@atem-connection/camera-control'
+import { MediaPoolPreviewCache } from './mediaPoolPreviews.js'
 
 export type TallyBySource = Commands.TallyBySourceCommand['properties']
 
@@ -19,6 +20,9 @@ export interface StateWrapper {
 	tallyCache: TallyCache
 
 	readonly atemCameraState: AtemCameraControlStateBuilder
+
+	// readonly mediaPoolSubscriptions: MediaPoolPreviewSubscriptions
+	readonly mediaPoolCache: MediaPoolPreviewCache
 }
 
 export type TallyCache = Map<

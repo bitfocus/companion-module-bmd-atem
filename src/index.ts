@@ -5,7 +5,8 @@ import { GetFeedbacksList } from './feedback/index.js'
 import { FeedbackId } from './feedback/FeedbackId.js'
 import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, type ModelSpec } from './models/index.js'
 import { GetPresetsList } from './presets/index.js'
-import type { StateWrapper } from './state.js'
+import { type StateWrapper } from './state.js'
+import { MediaPoolPreviewCache } from './mediaPoolPreviews.js'
 import { MODEL_AUTO_DETECT } from './models/types.js'
 import {
 	InitVariables,
@@ -59,11 +60,36 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		super(internal)
 
 		this.commandBatching = new AtemCommandBatching()
+		const emptyState = AtemStateUtil.Create()
 		this.wrappedState = {
-			state: AtemStateUtil.Create(),
+			state: emptyState,
 			tally: {},
 			tallyCache: new Map(),
 			atemCameraState: new AtemCameraControlStateBuilder(0), // TODO - when should this be emptied?
+
+			// mediaPoolSubscriptions: new MediaPoolPreviewSubscriptions(),
+			mediaPoolCache: new MediaPoolPreviewCache(
+				emptyState,
+				async (isClip, slot) => {
+					if (!this.atem) throw new Error('Atem not initialised')
+
+					if (isClip) {
+						// TODO
+						throw new Error('Not implemented!')
+					} else {
+						const buffer = await this.atem.downloadStill(slot /* 'raw'*/) // TODO - perform optimised conversions
+						const videoMode = this.atem.videoMode
+						if (!videoMode) throw new Error('No video mode')
+
+						return {
+							buffer,
+							width: videoMode.width,
+							height: videoMode.height,
+						}
+					}
+				},
+				(ids) => this.checkFeedbacksById(...ids)
+			),
 		}
 		this.atemTransitions = new AtemTransitions(this.config)
 
@@ -241,6 +267,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	private processStateChange(newState: AtemState, paths: string[]): void {
 		// TODO - do we need to clone this object?
 		this.wrappedState.state = newState
+		this.wrappedState.mediaPoolCache.checkUpdatedState(newState)
 
 		let reInit = false
 		const changedFeedbacks = new Set<FeedbackId>()
