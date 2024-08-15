@@ -32,6 +32,7 @@ interface MediaPoolPreviewCacheEntry {
 
 export interface PreviewImageResult {
 	imageBuffer: Uint8Array
+	imageBufferEncoding: unknown // nocommit use the type
 	imageBufferPosition: CompanionImageBufferPosition
 }
 
@@ -146,6 +147,9 @@ export class MediaPoolPreviewCache {
 		const cacheEntry = this.#cache.get(cacheEntryId)
 		if (!cacheEntry || cacheEntry.isLoading || !cacheEntry.rawImage) return null
 
+		// Oversample the image, to match the oversampling of Companion
+		const oversampling = 4
+
 		// Join an existing, or start a new scale operation
 		const previewKey = getPreviewOptionsKey(options)
 		let existingScaleOp = cacheEntry.scaledImages.get(previewKey)
@@ -183,22 +187,8 @@ export class MediaPoolPreviewCache {
 			}
 
 			existingScaleOp = transformChain
-				.scale(options.buttonWidth, options.buttonHeight, ResizeMode.Fit)
+				.scale(options.buttonWidth * oversampling, options.buttonHeight * oversampling, ResizeMode.Fit)
 				.toBuffer(PixelFormat.Rgba)
-				.then((buffer) => {
-					for (let i = 0; i < buffer.buffer.length; i += 4) {
-						const r = buffer.buffer.readUint8(i)
-						const g = buffer.buffer.readUint8(i + 1)
-						const b = buffer.buffer.readUint8(i + 2)
-						const a = buffer.buffer.readUint8(i + 3)
-						buffer.buffer.writeUint8(a, i)
-						buffer.buffer.writeUint8(r, i + 1)
-						buffer.buffer.writeUint8(g, i + 2)
-						buffer.buffer.writeUint8(b, i + 3)
-					}
-
-					return buffer
-				})
 
 			cacheEntry.scaledImages.set(previewKey, existingScaleOp)
 		}
@@ -206,14 +196,17 @@ export class MediaPoolPreviewCache {
 		// Wait for the scale operation to complete
 		const scaledImage = await existingScaleOp
 
-		let drawY = Math.floor((options.buttonHeight - scaledImage.height) / 2)
+		// const drawWidth = scaledImage.width /// oversampling
+		const drawHeight = scaledImage.height / oversampling
+
+		let drawY = Math.floor((options.buttonHeight - drawHeight) / 2)
 		if (options.crop === 'none') {
 			switch (options.position) {
 				case 'top':
 					drawY = 0
 					break
 				case 'bottom':
-					drawY = options.buttonHeight - scaledImage.height
+					drawY = options.buttonHeight - drawHeight
 					break
 				case 'center':
 					// Default behaviour
@@ -227,11 +220,15 @@ export class MediaPoolPreviewCache {
 		// Return the scaled image
 		return {
 			imageBuffer: scaledImage.buffer,
+			imageBufferEncoding: {
+				pixelFormat: 'RGBA',
+			},
 			imageBufferPosition: {
 				x: 0,
 				y: drawY,
 				width: scaledImage.width,
 				height: scaledImage.height,
+				drawScale: 1 / oversampling,
 			},
 		}
 	}
