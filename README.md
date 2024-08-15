@@ -23,6 +23,20 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.12.0
+
+- Support USB Webcam on Mini/SDI range
+
+- Mediaplayer source from variables
+
+- Easing curves for fades
+
+- Supersource art sources from variables
+
+- Fix missing labels for mini multiview status sources
+
+- Fix fairlight source solo
+
 ## v3.11.0
 
 - Add camera continuous zoom action
