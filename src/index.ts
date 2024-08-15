@@ -67,17 +67,29 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			atemCameraState: new AtemCameraControlStateBuilder(0), // TODO - when should this be emptied?
 
 			// mediaPoolSubscriptions: new MediaPoolPreviewSubscriptions(),
-			mediaPoolCache: new MediaPoolPreviewCache(emptyState, async (isClip, slot) => {
-				if (!this.atem) throw new Error('Atem not initialised')
-				// TODO
-				// return this.atem?.downloadStill(0)
+			mediaPoolCache: new MediaPoolPreviewCache(
+				emptyState,
+				async (isClip, slot) => {
+					if (!this.atem) throw new Error('Atem not initialised')
+					// TODO
+					// return this.atem?.downloadStill(0)
 
-				if (isClip) {
-					throw new Error('Not implemented!')
-				} else {
-					return this.atem.downloadStill(slot, 'raw')
-				}
-			}),
+					if (isClip) {
+						throw new Error('Not implemented!')
+					} else {
+						const buffer = await this.atem.downloadStill(slot /* 'raw'*/) // TODO - perform optimised conversions
+						const videoMode = this.atem.videoMode
+						if (!videoMode) throw new Error('No video mode')
+
+						return {
+							buffer,
+							width: videoMode.width,
+							height: videoMode.height,
+						}
+					}
+				},
+				(ids) => this.checkFeedbacksById(...ids)
+			),
 		}
 		this.atemTransitions = new AtemTransitions(this.config)
 
