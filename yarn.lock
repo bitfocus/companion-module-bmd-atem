@@ -1266,7 +1266,7 @@ __metadata:
     wavefile: "npm:^8.4.6"
   checksum: 10c0/0da804256286cb9485889acae9bdcececc3e38cb1e9165b2184433f7243ff910b508ecf12362aa136f47c7969cd3ed46303f93df89fb9f0797c49e10431e2a75
   languageName: node
-  linkType: hard
+  linkType: soft
 
 "author-regex@npm:^1.0.0":
   version: 1.0.0
