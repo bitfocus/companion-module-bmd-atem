@@ -34,7 +34,7 @@
 	},
 	"dependencies": {
 		"@atem-connection/camera-control": "^0.2.0",
-		"@companion-module/base": "~1.9.0",
+		"@companion-module/base": "~1.10.0-1",
 		"atem-connection": "3.6.0-nightly-master-20240419-215343-75a89856.0",
 		"lodash-es": "^4.17.21",
 		"type-fest": "^4.24.0"

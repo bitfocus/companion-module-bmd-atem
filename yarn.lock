@@ -23,9 +23,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@companion-module/base@npm:~1.9.0":
-  version: 1.9.0
-  resolution: "@companion-module/base@npm:1.9.0"
+"@companion-module/base@npm:~1.10.0-1":
+  version: 1.10.0-1
+  resolution: "@companion-module/base@npm:1.10.0-1"
   dependencies:
     "@sentry/node": "npm:^8.13.0"
     ajv: "npm:^8.16.0"
@@ -37,7 +37,7 @@ __metadata:
     p-queue: "npm:^6.6.2"
     p-timeout: "npm:^4.1.0"
     tslib: "npm:^2.6.3"
-  checksum: 10c0/e36ca1dd4a69dcb4cf70f7877658277679dd34830e52849180524d6924bffa3c56c2758398675556b8d6152c530e7b8e3336a4a7e9bdfba2f92df26ba65cc775
+  checksum: 10c0/a3aac35b5991fe4cb14c279a54370312efad63dd596d088d2009efc5c128d06748cd6660e9f24a1065abd668e4ba4550152197af57b868dc1877955d8e7a9865
   languageName: node
   linkType: hard
 
@@ -1472,7 +1472,7 @@ __metadata:
   resolution: "bmd-atem@workspace:."
   dependencies:
     "@atem-connection/camera-control": "npm:^0.2.0"
-    "@companion-module/base": "npm:~1.9.0"
+    "@companion-module/base": "npm:~1.10.0-1"
     "@companion-module/tools": "npm:^1.5.1"
     "@types/lodash-es": "npm:^4.17.12"
     "@types/node": "npm:^18.19.44"

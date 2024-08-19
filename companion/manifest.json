@@ -25,12 +25,19 @@
 	"products": ["ATEM"],
 	"keywords": ["Vision Mixer"],
 	"bonjourQueries": {
-		"bonjourHost": {
-			"type": "blackmagic",
-			"protocol": "tcp",
-			"txt": {
-				"class": "AtemSwitcher"
+		"bonjourHost": [
+			{
+				"type": "blackmagic",
+				"protocol": "tcp",
+				"txt": {
+					"class": "AtemSwitcher"
+				}
+			},
+			{
+				"type": "switcher_ctrl",
+				"protocol": "udp",
+				"txt": {}
 			}
-		}
+		]
 	}
 }

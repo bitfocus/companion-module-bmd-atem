@@ -125,6 +125,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			}
 
 			const target = this.parseIpAndPort()
+			this.log('info', `Connecting to ${target?.ip}:${target?.port}`)
 			if (target) {
 				this.updateStatus(InstanceStatus.Connecting)
 				this.atem.connect(target.ip, target.port).catch((e) => {
