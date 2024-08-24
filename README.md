@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.12.1
+
+- Fix device discovery for recent models/firmwares
+
 ## v3.12.0
 
 - Support USB Webcam on Mini/SDI range
