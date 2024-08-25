@@ -215,7 +215,7 @@ export interface SourceInfo extends MiniSourceInfo {
 export function GetSourcesListForType(
 	model: ModelSpec,
 	state: AtemState,
-	subset?: 'me' | 'aux' | 'mv' | 'key' | 'ssrc-box' | 'ssrc-art' | 'tally'
+	subset?: 'me' | 'aux' | 'mv' | 'key' | 'ssrc-box' | 'ssrc-art' | 'tally',
 ): SourceInfo[] {
 	const getSource = (id: number, defShort: string, defLong: string): SourceInfo => {
 		const input = state.inputs[id]

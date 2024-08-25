@@ -21,7 +21,7 @@ import type {
 function rewrapFeedbackInfo<TOptions>(
 	feedback: CompanionFeedbackInfo,
 	context: CompanionFeedbackContext,
-	fields: MyOptionsObject<TOptions, any>
+	fields: MyOptionsObject<TOptions, any>,
 ): MyFeedbackInfo<TOptions> {
 	return {
 		type: feedback.type,
@@ -34,7 +34,7 @@ function rewrapFeedbackInfo<TOptions>(
 }
 
 function convertMyFeedbackBaseToCompanionFeedback<TOptions>(
-	feedbackDef: MyFeedbackDefinitionBase<TOptions>
+	feedbackDef: MyFeedbackDefinitionBase<TOptions>,
 ): Complete<Omit<CompanionFeedbackDefinitionBase, 'type'>> {
 	const { subscribe, unsubscribe, learn } = feedbackDef
 
@@ -60,12 +60,12 @@ function convertMyFeedbackBaseToCompanionFeedback<TOptions>(
 		subscribe: subscribe
 			? async (action, context) => {
 					return subscribe(rewrapFeedbackInfo(action, context, feedbackDef.options), context)
-			  }
+				}
 			: undefined,
 		unsubscribe: unsubscribe
 			? async (action, context) => {
 					return unsubscribe(rewrapFeedbackInfo(action, context, feedbackDef.options), context)
-			  }
+				}
 			: undefined,
 		learn: learn
 			? async (action, context) => {
@@ -73,7 +73,7 @@ function convertMyFeedbackBaseToCompanionFeedback<TOptions>(
 						| CompanionOptionValues
 						| undefined
 						| Promise<CompanionOptionValues | undefined>
-			  }
+				}
 			: undefined,
 		learnTimeout: undefined,
 	}
@@ -84,7 +84,7 @@ type Test<TTypes> = {
 }
 
 export function convertMyFeedbackDefinitions<TTypes extends Record<string, MyFeedbackDefinition<any> | undefined>>(
-	feedbackDefs: TTypes
+	feedbackDefs: TTypes,
 ): Test<TTypes> {
 	const res: Test<TTypes> = {} as any
 
@@ -105,7 +105,7 @@ export function convertMyFeedbackDefinitions<TTypes extends Record<string, MyFee
 							{
 								...rewrapFeedbackInfo(feedback, context, def.options),
 							} satisfies Complete<MyBooleanFeedbackEvent<any>>,
-							context
+							context,
 						)
 					},
 				} satisfies Complete<CompanionBooleanFeedbackDefinition>
@@ -120,7 +120,7 @@ export function convertMyFeedbackDefinitions<TTypes extends Record<string, MyFee
 								...rewrapFeedbackInfo(feedback, context, def.options),
 								image: feedback.image,
 							} satisfies Complete<MyAdvancedFeedbackEvent<any>>,
-							context
+							context,
 						)
 					},
 				} satisfies Complete<CompanionAdvancedFeedbackDefinition>

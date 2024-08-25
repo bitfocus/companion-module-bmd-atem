@@ -24,7 +24,7 @@ export interface AtemDownstreamKeyerFeedbacks {
 
 export function createDownstreamKeyerFeedbacks(
 	model: ModelSpec,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyFeedbackDefinitions<AtemDownstreamKeyerFeedbacks> {
 	if (!model.DSKs) {
 		return {

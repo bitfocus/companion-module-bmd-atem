@@ -46,7 +46,7 @@ export function createClassicAudioActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	transitions: AtemTransitions,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyActionDefinitions<AtemClassicAudioActions> {
 	if (!model.classicAudio) {
 		return {
@@ -93,7 +93,7 @@ export function createClassicAudioActions(
 					},
 					channel?.gain,
 					options.getPlainNumber('gain'),
-					options
+					options,
 				)
 			},
 			learn: ({ options }) => {
@@ -130,7 +130,7 @@ export function createClassicAudioActions(
 						},
 						channel.gain,
 						channel.gain + options.getPlainNumber('delta'),
-						options
+						options,
 					)
 				}
 			},
@@ -241,7 +241,7 @@ export function createClassicAudioActions(
 					},
 					state.state.audio?.master?.gain,
 					options.getPlainNumber('gain'),
-					options
+					options,
 				)
 			},
 			learn: ({ options }) => {
@@ -274,7 +274,7 @@ export function createClassicAudioActions(
 						},
 						currentGain,
 						currentGain + options.getPlainNumber('delta'),
-						options
+						options,
 					)
 				}
 			},
@@ -303,7 +303,7 @@ export function createClassicAudioActions(
 					},
 					state.state.audio?.master?.balance,
 					options.getPlainNumber('balance'),
-					options
+					options,
 				)
 			},
 			learn: ({ options }) => {
@@ -343,7 +343,7 @@ export function createClassicAudioActions(
 						},
 						currentBalance,
 						currentBalance + options.getPlainNumber('delta'),
-						options
+						options,
 					)
 				}
 			},

@@ -19,7 +19,7 @@ export interface AtemAuxOutputActions {
 export function createAuxOutputActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyActionDefinitions<AtemAuxOutputActions> {
 	if (model.outputs.length === 0) {
 		return {

@@ -42,7 +42,7 @@ export interface AtemPreviewFeedbacks {
 
 export function createPreviewFeedbacks(
 	model: ModelSpec,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyFeedbackDefinitions<AtemPreviewFeedbacks> {
 	return {
 		[FeedbackId.PreviewBG]: {
@@ -159,7 +159,7 @@ export function createPreviewFeedbacks(
 								return undefined
 							}
 						},
-				  }
+					}
 				: undefined,
 		[FeedbackId.PreviewBG3]:
 			model.MEs >= 3
@@ -206,7 +206,7 @@ export function createPreviewFeedbacks(
 								return undefined
 							}
 						},
-				  }
+					}
 				: undefined,
 		[FeedbackId.PreviewBG4]:
 			model.MEs >= 4
@@ -259,7 +259,7 @@ export function createPreviewFeedbacks(
 								return undefined
 							}
 						},
-				  }
+					}
 				: undefined,
 	}
 }

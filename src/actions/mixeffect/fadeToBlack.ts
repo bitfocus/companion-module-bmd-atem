@@ -18,7 +18,7 @@ export interface AtemFadeToBlackActions {
 export function createFadeToBlackActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyActionDefinitions<AtemFadeToBlackActions> {
 	return {
 		[ActionId.FadeToBlackAuto]: {

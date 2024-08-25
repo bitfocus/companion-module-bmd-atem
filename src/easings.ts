@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/unbound-method */
+
 /**
  * A collection of easing methods defining ease-in ease-out curves from https://github.com/photonstorm/phaser licensed
  * under MIT

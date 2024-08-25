@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type { ModelSpec } from './types.js'
 // import { Enums } from 'atem-connection'
 import { ModelSpecConstellationHD2ME } from './constellationHd2Me.js'

@@ -30,7 +30,7 @@ export interface AtemDisplayClockActions {
 export function createDisplayClockActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyActionDefinitions<AtemDisplayClockActions> {
 	if (!model.displayClock) {
 		return {

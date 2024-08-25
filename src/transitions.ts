@@ -59,7 +59,7 @@ export class AtemTransitions {
 		sendFcn: TransitionInfo['sendFcn'],
 		from: number | undefined,
 		to: number,
-		options: MyOptionsHelper<FadeDurationFieldsType>
+		options: MyOptionsHelper<FadeDurationFieldsType>,
 	): Promise<void> {
 		const duration = options.getPlainNumber('fadeDuration')
 
@@ -76,7 +76,7 @@ export class AtemTransitions {
 		to: number,
 		duration: number,
 		algorithm?: Easing.algorithm,
-		curve?: Easing.curve
+		curve?: Easing.curve,
 	): Promise<void> {
 		const interval = 1000 / this.fps
 		const stepCount = Math.ceil(duration / interval)

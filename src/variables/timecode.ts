@@ -7,7 +7,7 @@ import { formatDurationSeconds } from './util.js'
 export function updateTimecodeVariables(
 	instance: InstanceBaseExt<AtemConfig>,
 	_state: AtemState,
-	values: CompanionVariableValues
+	values: CompanionVariableValues,
 ): void {
 	values['timecode'] = formatDurationSeconds(instance.timecodeSeconds).hms
 	// values['timecode_ms'] = formatDurationSeconds(instance.timecodeSeconds).hms

@@ -19,7 +19,7 @@ export interface AtemStreamingActions {
 export function createStreamingActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyActionDefinitions<AtemStreamingActions> {
 	if (!model.streaming) {
 		return {

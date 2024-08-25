@@ -47,7 +47,7 @@ export interface MyActionDefinition<TOptions> {
 	 */
 	learn?: (
 		action: MyActionEvent2<TOptions>,
-		context: CompanionActionContext
+		context: CompanionActionContext,
 	) => TOptions | undefined | Promise<TOptions | undefined>
 }
 

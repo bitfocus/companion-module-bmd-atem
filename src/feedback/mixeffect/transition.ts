@@ -38,7 +38,7 @@ export interface AtemTransitionFeedbacks {
 
 export function createTransitionFeedbacks(
 	model: ModelSpec,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyFeedbackDefinitions<AtemTransitionFeedbacks> {
 	return {
 		[FeedbackId.PreviewTransition]: {

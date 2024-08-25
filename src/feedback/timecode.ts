@@ -15,7 +15,7 @@ export interface AtemTimecodeFeedbacks {
 export function createTimecodeFeedbacks(
 	config: AtemConfig,
 	_model: ModelSpec,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyFeedbackDefinitions<AtemTimecodeFeedbacks> {
 	if (!config.pollTimecode) {
 		return {

@@ -40,7 +40,7 @@ export interface AtemCameraControlLensActions {
 export function createCameraControlLensActions(
 	config: AtemConfig,
 	atem: Atem | undefined,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyActionDefinitions<AtemCameraControlLensActions> {
 	if (!config.enableCameraControl) {
 		return {
