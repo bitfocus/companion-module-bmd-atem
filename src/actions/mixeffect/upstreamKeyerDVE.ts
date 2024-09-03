@@ -1,11 +1,19 @@
 import { Enums, type Atem } from 'atem-connection'
-import { AtemMEPicker, AtemUSKDVEPropertiesPickers, AtemUSKPicker } from '../../input.js'
+import {
+	AtemMEPicker,
+	AtemUSKDVEPropertiesPickers,
+	AtemUSKPicker,
+	AtemUSKKeyframePropertiesPickers,
+} from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
 import type { MyActionDefinitions } from '../types.js'
-import { CHOICES_FLYDIRECTIONS, CHOICES_KEYFRAMES } from '../../choices.js'
+import { CHOICES_FLYDIRECTIONS, CHOICES_KEYFRAMES, CHOICES_KEYFRAMES_CONFIGURABLE } from '../../choices.js'
 import { getUSK, type StateWrapper } from '../../state.js'
-import type { UpstreamKeyerDVESettings } from 'atem-connection/dist/state/video/upstreamKeyers.js'
+import type {
+	UpstreamKeyerDVESettings,
+	UpstreamKeyerFlyKeyframe,
+} from 'atem-connection/dist/state/video/upstreamKeyers.js'
 
 export interface AtemUpstreamKeyerDVEActions {
 	[ActionId.USKDVEProperties]: {
@@ -68,6 +76,64 @@ export interface AtemUpstreamKeyerDVEActions {
 		borderBevelSoftness: number
 		rate: number
 	}
+	[ActionId.USKSetKeyframe]: {
+		mixeffect: number
+		key: number
+		keyframe: Enums.FlyKeyKeyFrame.A | Enums.FlyKeyKeyFrame.B
+
+		properties: Array<
+			| 'positionX'
+			| 'positionY'
+			| 'sizeX'
+			| 'sizeY'
+			| 'rotation'
+			| 'maskTop'
+			| 'maskBottom'
+			| 'maskLeft'
+			| 'maskRight'
+			| 'shadowEnabled'
+			| 'lightSourceDirection'
+			| 'lightSourceAltitude'
+			| 'borderEnabled'
+			| 'borderHue'
+			| 'borderSaturation'
+			| 'borderLuma'
+			| 'borderOuterWidth'
+			| 'borderInnerWidth'
+			| 'borderOuterSoftness'
+			| 'borderInnerSoftness'
+			| 'borderOpacity'
+			| 'borderBevelPosition'
+			| 'borderBevelSoftness'
+		>
+
+		positionX: number
+		positionY: number
+		sizeX: number
+		sizeY: number
+		rotation: number
+		maskTop: number
+		maskBottom: number
+		maskLeft: number
+		maskRight: number
+		lightSourceDirection: number
+		lightSourceAltitude: number
+		borderHue: number
+		borderSaturation: number
+		borderLuma: number
+		borderOuterWidth: number
+		borderInnerWidth: number
+		borderOuterSoftness: number
+		borderInnerSoftness: number
+		borderOpacity: number
+		borderBevelPosition: number
+		borderBevelSoftness: number
+	}
+	[ActionId.USKStoreKeyframe]: {
+		mixeffect: number
+		key: number
+		keyframe: Enums.FlyKeyKeyFrame.A | Enums.FlyKeyKeyFrame.B
+	}
 	[ActionId.USKFly]: {
 		mixeffect: number
 		key: number
@@ -88,6 +154,8 @@ export function createUpstreamKeyerDVEActions(
 	if (!model.USKs || !model.DVEs) {
 		return {
 			[ActionId.USKDVEProperties]: undefined,
+			[ActionId.USKSetKeyframe]: undefined,
+			[ActionId.USKStoreKeyframe]: undefined,
 			[ActionId.USKFly]: undefined,
 			[ActionId.USKFlyInfinite]: undefined,
 		}
@@ -228,6 +296,119 @@ export function createUpstreamKeyerDVEActions(
 				} else {
 					return undefined
 				}
+			},
+		},
+		[ActionId.USKSetKeyframe]: {
+			name: 'Upstream key: Set Keyframe from values',
+			options: {
+				mixeffect: AtemMEPicker(model, 0),
+				key: AtemUSKPicker(model),
+				keyframe: {
+					type: 'dropdown',
+					id: 'keyframe',
+					label: 'Key Frame',
+					choices: CHOICES_KEYFRAMES_CONFIGURABLE,
+					default: CHOICES_KEYFRAMES_CONFIGURABLE[0].id,
+				},
+				...AtemUSKKeyframePropertiesPickers(),
+			},
+			callback: async ({ options }) => {
+				const mixEffectId = options.getPlainNumber('mixeffect')
+				const keyId = options.getPlainNumber('key')
+				const keyframeId = options.getPlainNumber('keyframe')
+				const properties: Partial<UpstreamKeyerFlyKeyframe> = {}
+
+				const props = options.getRaw('properties')
+				if (props && Array.isArray(props)) {
+					if (props.includes('maskTop')) {
+						properties.maskTop = options.getPlainNumber('maskTop') * 1000
+					}
+					if (props.includes('maskBottom')) {
+						properties.maskBottom = options.getPlainNumber('maskBottom') * 1000
+					}
+					if (props.includes('maskLeft')) {
+						properties.maskLeft = options.getPlainNumber('maskLeft') * 1000
+					}
+					if (props.includes('maskRight')) {
+						properties.maskRight = options.getPlainNumber('maskRight') * 1000
+					}
+					if (props.includes('sizeX')) {
+						properties.sizeX = options.getPlainNumber('sizeX') * 1000
+					}
+					if (props.includes('sizeY')) {
+						properties.sizeY = options.getPlainNumber('sizeY') * 1000
+					}
+					if (props.includes('positionX')) {
+						properties.positionX = options.getPlainNumber('positionX') * 1000
+					}
+					if (props.includes('positionY')) {
+						properties.positionY = options.getPlainNumber('positionY') * 1000
+					}
+					if (props.includes('rotation')) {
+						properties.rotation = options.getPlainNumber('rotation')
+					}
+					if (props.includes('borderOuterWidth')) {
+						properties.borderOuterWidth = options.getPlainNumber('borderOuterWidth') * 100
+					}
+					if (props.includes('borderInnerWidth')) {
+						properties.borderInnerWidth = options.getPlainNumber('borderInnerWidth') * 100
+					}
+					if (props.includes('borderOuterSoftness')) {
+						properties.borderOuterSoftness = options.getPlainNumber('borderOuterSoftness')
+					}
+					if (props.includes('borderInnerSoftness')) {
+						properties.borderInnerSoftness = options.getPlainNumber('borderInnerSoftness')
+					}
+					if (props.includes('borderBevelSoftness')) {
+						properties.borderBevelSoftness = options.getPlainNumber('borderBevelSoftness')
+					}
+					if (props.includes('borderBevelPosition')) {
+						properties.borderBevelPosition = options.getPlainNumber('borderBevelPosition')
+					}
+					if (props.includes('borderOpacity')) {
+						properties.borderOpacity = options.getPlainNumber('borderOpacity')
+					}
+					if (props.includes('borderHue')) {
+						properties.borderHue = options.getPlainNumber('borderHue') * 10
+					}
+					if (props.includes('borderSaturation')) {
+						properties.borderSaturation = options.getPlainNumber('borderSaturation') * 10
+					}
+					if (props.includes('borderLuma')) {
+						properties.borderLuma = options.getPlainNumber('borderLuma') * 10
+					}
+					if (props.includes('lightSourceDirection')) {
+						properties.lightSourceDirection = options.getPlainNumber('lightSourceDirection') * 10
+					}
+					if (props.includes('lightSourceAltitude')) {
+						properties.lightSourceAltitude = options.getPlainNumber('lightSourceAltitude')
+					}
+				}
+
+				if (Object.keys(properties).length === 0) return
+
+				await atem?.setUpstreamKeyerFlyKeyKeyframe(mixEffectId, keyId, keyframeId, properties)
+			},
+		},
+		[ActionId.USKStoreKeyframe]: {
+			name: 'Upstream key: Set keyframe from current key state',
+			options: {
+				mixeffect: AtemMEPicker(model, 0),
+				key: AtemUSKPicker(model),
+				keyframe: {
+					type: 'dropdown',
+					id: 'keyframe',
+					label: 'Key Frame',
+					choices: CHOICES_KEYFRAMES_CONFIGURABLE,
+					default: CHOICES_KEYFRAMES_CONFIGURABLE[0].id,
+				},
+			},
+			callback: async ({ options }) => {
+				await atem?.storeUpstreamKeyerFlyKeyKeyframe(
+					options.getPlainNumber('mixeffect'),
+					options.getPlainNumber('key'),
+					options.getPlainNumber('keyframe')
+				)
 			},
 		},
 		[ActionId.USKFly]: {

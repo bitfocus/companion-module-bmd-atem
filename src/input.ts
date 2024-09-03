@@ -645,7 +645,269 @@ export function AtemUSKDVEPropertiesPickers(): {
 		...allProps,
 	}
 }
+export function AtemUSKKeyframePropertiesPickers(): {
+	properties: CompanionInputFieldMultiDropdown
 
+	positionX: CompanionInputFieldNumber
+	positionY: CompanionInputFieldNumber
+	sizeX: CompanionInputFieldNumber
+	sizeY: CompanionInputFieldNumber
+	rotation: CompanionInputFieldNumber
+	maskTop: CompanionInputFieldNumber
+	maskBottom: CompanionInputFieldNumber
+	maskLeft: CompanionInputFieldNumber
+	maskRight: CompanionInputFieldNumber
+	lightSourceDirection: CompanionInputFieldNumber
+	lightSourceAltitude: CompanionInputFieldNumber
+	borderHue: CompanionInputFieldNumber
+	borderSaturation: CompanionInputFieldNumber
+	borderLuma: CompanionInputFieldNumber
+	borderOuterWidth: CompanionInputFieldNumber
+	borderInnerWidth: CompanionInputFieldNumber
+	borderOuterSoftness: CompanionInputFieldNumber
+	borderInnerSoftness: CompanionInputFieldNumber
+	borderOpacity: CompanionInputFieldNumber
+	borderBevelPosition: CompanionInputFieldNumber
+	borderBevelSoftness: CompanionInputFieldNumber
+} {
+	const allProps: Omit<ReturnType<typeof AtemUSKKeyframePropertiesPickers>, 'properties'> = {
+		positionX: {
+			type: 'number',
+			label: 'Position: X',
+			id: 'positionX',
+			default: 0,
+			min: -1000,
+			range: true,
+			step: 0.01,
+			max: 1000,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionX'),
+		},
+		positionY: {
+			type: 'number',
+			label: 'Position: Y',
+			id: 'positionY',
+			default: 0,
+			range: true,
+			min: -1000,
+			step: 0.01,
+			max: 1000,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionY'),
+		},
+		sizeX: {
+			type: 'number',
+			label: 'Size: X',
+			id: 'sizeX',
+			default: 0.5,
+			range: true,
+			min: 0,
+			step: 0.01,
+			max: 99.99,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('sizeX'),
+		},
+		sizeY: {
+			type: 'number',
+			label: 'Size: Y',
+			id: 'sizeY',
+			default: 0.5,
+			range: true,
+			min: 0,
+			step: 0.01,
+			max: 99.99,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('sizeY'),
+		},
+		rotation: {
+			type: 'number',
+			label: 'Rotation',
+			id: 'rotation',
+			range: true,
+			default: 0,
+			min: 0,
+			max: 360,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('rotation'),
+		},
+		maskTop: {
+			type: 'number',
+			label: 'Mask: Top',
+			id: 'maskTop',
+			default: 0,
+			range: true,
+			min: 0,
+			step: 0.01,
+			max: 38,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskTop'),
+		},
+		maskBottom: {
+			type: 'number',
+			label: 'Mask: Bottom',
+			id: 'maskBottom',
+			default: 0,
+			range: true,
+			min: 0,
+			step: 0.01,
+			max: 38,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskBottom'),
+		},
+		maskLeft: {
+			type: 'number',
+			label: 'Mask: Left',
+			id: 'maskLeft',
+			default: 0,
+			range: true,
+			min: 0,
+			step: 0.01,
+			max: 52,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskLeft'),
+		},
+		maskRight: {
+			type: 'number',
+			label: 'Mask: Right',
+			id: 'maskRight',
+			default: 0,
+			range: true,
+			min: 0,
+			step: 0.01,
+			max: 52,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskRight'),
+		},
+		lightSourceDirection: {
+			type: 'number',
+			label: 'Shadow: Angle',
+			id: 'lightSourceDirection',
+			default: 36,
+			min: 0,
+			range: true,
+			step: 1,
+			max: 359,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('lightSourceDirection'),
+		},
+		lightSourceAltitude: {
+			type: 'number',
+			label: 'Shadow: Altitude',
+			id: 'lightSourceAltitude',
+			default: 25,
+			min: 10,
+			range: true,
+			step: 1,
+			max: 100,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('lightSourceAltitude'),
+		},
+		borderHue: {
+			type: 'number',
+			label: 'Border: Hue',
+			id: 'borderHue',
+			default: 0,
+			min: 0,
+			range: true,
+			step: 0.1,
+			max: 360,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderHue'),
+		},
+		borderSaturation: {
+			type: 'number',
+			label: 'Border: Sat',
+			id: 'borderSaturation',
+			default: 0,
+			min: 0,
+			range: true,
+			step: 0.1,
+			max: 100,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderSaturation'),
+		},
+		borderLuma: {
+			type: 'number',
+			label: 'Border: Lum',
+			id: 'borderLuma',
+			default: 0,
+			min: 0,
+			range: true,
+			step: 0.1,
+			max: 100,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderLuma'),
+		},
+		borderOuterWidth: {
+			type: 'number',
+			label: 'Border: Outer Width',
+			id: 'borderOuterWidth',
+			default: 0,
+			min: 0,
+			range: true,
+			step: 0.01,
+			max: 16,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderOuterWidth'),
+		},
+		borderInnerWidth: {
+			type: 'number',
+			label: 'Border: Inner Width',
+			id: 'borderInnerWidth',
+			default: 0.2,
+			min: 0,
+			range: true,
+			step: 0.01,
+			max: 16,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderInnerWidth'),
+		},
+		borderOuterSoftness: {
+			type: 'number',
+			label: 'Border: Outer Soften',
+			id: 'borderOuterSoftness',
+			default: 0,
+			min: 0,
+			range: true,
+			step: 1,
+			max: 100,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderOuterSoftness'),
+		},
+		borderInnerSoftness: {
+			type: 'number',
+			label: 'Border: Inner Soften',
+			id: 'borderInnerSoftness',
+			default: 0,
+			min: 0,
+			range: true,
+			step: 1,
+			max: 100,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderInnerSoftness'),
+		},
+		borderOpacity: {
+			type: 'number',
+			label: 'Border: Opacity',
+			id: 'borderOpacity',
+			default: 100,
+			min: 0,
+			range: true,
+			step: 1,
+			max: 100,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderOpacity'),
+		},
+		borderBevelPosition: {
+			type: 'number',
+			label: 'Border: Bevel Position',
+			id: 'borderBevelPosition',
+			default: 0,
+			min: 0,
+			range: true,
+			step: 1,
+			max: 100,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderBevelPosition'),
+		},
+		borderBevelSoftness: {
+			type: 'number',
+			label: 'Border: Bevel Soften',
+			id: 'borderBevelSoftness',
+			default: 0,
+			min: 0,
+			range: true,
+			step: 1,
+			max: 100,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderBevelSoftness'),
+		},
+	}
+
+	return {
+		properties: DropdownPropertiesPicker(allProps),
+		...allProps,
+	}
+}
 export function AtemAuxPicker(model: ModelSpec): CompanionInputFieldDropdown {
 	return {
 		type: 'dropdown',
