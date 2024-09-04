@@ -389,6 +389,38 @@ export function createUpstreamKeyerDVEActions(
 
 				await atem?.setUpstreamKeyerFlyKeyKeyframe(mixEffectId, keyId, keyframeId, properties)
 			},
+			learn: ({ options }) => {
+				const usk = getUSK(state.state, options.getPlainNumber('mixeffect'), options.getPlainNumber('key'))
+
+				if (usk?.dveSettings) {
+					return {
+						...options.getJson(),
+						maskTop: usk.dveSettings.maskTop / 1000,
+						maskBottom: usk.dveSettings.maskBottom / 1000,
+						maskLeft: usk.dveSettings.maskLeft / 1000,
+						maskRight: usk.dveSettings.maskRight / 1000,
+						sizeX: usk.dveSettings.sizeX / 1000,
+						sizeY: usk.dveSettings.sizeY / 1000,
+						positionX: usk.dveSettings.positionX / 1000,
+						positionY: usk.dveSettings.positionY / 1000,
+						rotation: usk.dveSettings.rotation,
+						borderOuterWidth: usk.dveSettings.borderOuterWidth / 100,
+						borderInnerWidth: usk.dveSettings.borderInnerWidth / 100,
+						borderOuterSoftness: usk.dveSettings.borderOuterSoftness,
+						borderInnerSoftness: usk.dveSettings.borderInnerSoftness,
+						borderBevelSoftness: usk.dveSettings.borderBevelSoftness,
+						borderBevelPosition: usk.dveSettings.borderBevelPosition,
+						borderOpacity: usk.dveSettings.borderOpacity,
+						borderHue: usk.dveSettings.borderHue / 10,
+						borderSaturation: usk.dveSettings.borderSaturation / 10,
+						borderLuma: usk.dveSettings.borderLuma / 10,
+						lightSourceDirection: usk.dveSettings.lightSourceDirection / 10,
+						lightSourceAltitude: usk.dveSettings.lightSourceAltitude,
+					}
+				} else {
+					return undefined
+				}
+			},
 		},
 		[ActionId.USKStoreKeyframe]: {
 			name: 'Upstream key: Set keyframe from current key state',
