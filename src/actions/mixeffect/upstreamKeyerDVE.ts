@@ -439,7 +439,7 @@ export function createUpstreamKeyerDVEActions(
 				await atem?.storeUpstreamKeyerFlyKeyKeyframe(
 					options.getPlainNumber('mixeffect'),
 					options.getPlainNumber('key'),
-					options.getPlainNumber('keyframe')
+					options.getPlainNumber('keyframe'),
 				)
 			},
 		},
