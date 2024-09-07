@@ -43,7 +43,7 @@ type MyPresetFeedbackInner<TTypes, Id extends keyof TTypes> = Id extends any
 			 * If a boolean feedback, invert the value of the feedback
 			 */
 			isInverted?: boolean
-	  }
+		}
 	: never
 
 export type MyPresetFeedback<TFeedbacks> = MyPresetFeedbackInner<TFeedbacks, keyof TFeedbacks>
@@ -56,7 +56,7 @@ type MyPresetActionInner<TTypes, Id extends keyof TTypes> = Id extends any
 			options: TTypes[Id]
 			/** The execution delay of the action */
 			delay?: number
-	  }
+		}
 	: never
 
 export type MyPresetAction<TActions> = MyPresetActionInner<TActions, keyof TActions>

@@ -64,7 +64,7 @@ export function GetActionsList(
 	model: ModelSpec,
 	commandBatching: AtemCommandBatching,
 	transitions: AtemTransitions,
-	state: StateWrapper
+	state: StateWrapper,
 ): CompanionActionDefinitions {
 	const actions: { [id in ActionId]: MyActionDefinition<any> | undefined } = {
 		...createProgramPreviewActions(atem, model, transitions, state),

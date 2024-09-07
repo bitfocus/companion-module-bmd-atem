@@ -149,7 +149,7 @@ export interface AtemUpstreamKeyerDVEActions {
 export function createUpstreamKeyerDVEActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyActionDefinitions<AtemUpstreamKeyerDVEActions> {
 	if (!model.USKs || !model.DVEs) {
 		return {
@@ -460,7 +460,7 @@ export function createUpstreamKeyerDVEActions(
 				await atem?.runUpstreamKeyerFlyKeyTo(
 					options.getPlainNumber('mixeffect'),
 					options.getPlainNumber('key'),
-					options.getPlainNumber('keyframe')
+					options.getPlainNumber('keyframe'),
 				)
 			},
 			learn: ({ options }) => {
@@ -493,7 +493,7 @@ export function createUpstreamKeyerDVEActions(
 				await atem?.runUpstreamKeyerFlyKeyToInfinite(
 					options.getPlainNumber('mixeffect'),
 					options.getPlainNumber('key'),
-					options.getPlainNumber('flydirection')
+					options.getPlainNumber('flydirection'),
 				)
 			},
 			learn: ({ options }) => {

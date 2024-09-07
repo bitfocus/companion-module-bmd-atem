@@ -107,7 +107,7 @@ export function createFairlightAudioActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	transitions: AtemTransitions,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyActionDefinitions<AtemFairlightAudioActions> {
 	if (!model.fairlightAudio) {
 		return {
@@ -178,7 +178,7 @@ export function createFairlightAudioActions(
 					},
 					source?.properties?.gain,
 					options.getPlainNumber('gain') * 100,
-					options
+					options,
 				)
 			},
 			learn: ({ options }) => {
@@ -222,7 +222,7 @@ export function createFairlightAudioActions(
 						},
 						source.properties.gain,
 						source.properties.gain + options.getPlainNumber('delta') * 100,
-						options
+						options,
 					)
 				}
 			},
@@ -267,7 +267,7 @@ export function createFairlightAudioActions(
 							return undefined
 						}
 					},
-			  }
+				}
 			: undefined,
 		[ActionId.FairlightAudioInputDelayDelta]: audioInputFrameDelayOption
 			? {
@@ -304,7 +304,7 @@ export function createFairlightAudioActions(
 							framesDelay: existingDelay + delta,
 						})
 					},
-			  }
+				}
 			: undefined,
 		[ActionId.FairlightAudioFaderGain]: {
 			name: 'Fairlight Audio: Set fader gain',
@@ -341,7 +341,7 @@ export function createFairlightAudioActions(
 					},
 					source?.properties?.faderGain,
 					options.getPlainNumber('gain') * 100,
-					options
+					options,
 				)
 			},
 			learn: ({ options }) => {
@@ -385,7 +385,7 @@ export function createFairlightAudioActions(
 						},
 						source.properties.faderGain,
 						source.properties.faderGain + options.getPlainNumber('delta') * 100,
-						options
+						options,
 					)
 				}
 			},
@@ -508,7 +508,7 @@ export function createFairlightAudioActions(
 					},
 					state.state.fairlight?.master?.properties?.faderGain,
 					options.getPlainNumber('gain') * 100,
-					options
+					options,
 				)
 			},
 			learn: ({ options }) => {
@@ -543,7 +543,7 @@ export function createFairlightAudioActions(
 						},
 						currentGain,
 						currentGain + options.getPlainNumber('delta') * 100,
-						options
+						options,
 					)
 				}
 			},
@@ -587,7 +587,7 @@ export function createFairlightAudioActions(
 							source: sourceId,
 						})
 					},
-			  }
+				}
 			: undefined,
 
 		[ActionId.FairlightAudioMonitorOutputGain]: model.fairlightAudio.monitor
@@ -617,7 +617,7 @@ export function createFairlightAudioActions(
 							},
 							state.state.fairlight?.monitor?.gain,
 							options.getPlainNumber('gain') * 100,
-							options
+							options,
 						)
 					},
 					learn: ({ options }) => {
@@ -632,7 +632,7 @@ export function createFairlightAudioActions(
 							return undefined
 						}
 					},
-			  }
+				}
 			: undefined,
 		[ActionId.FairlightAudioMonitorOutputGainDelta]: model.fairlightAudio.monitor
 			? {
@@ -653,11 +653,11 @@ export function createFairlightAudioActions(
 								},
 								currentGain,
 								currentGain + options.getPlainNumber('delta') * 100,
-								options
+								options,
 							)
 						}
 					},
-			  }
+				}
 			: undefined,
 		...HeadphoneMasterActions(atem, model, transitions, state),
 		...HeadphoneTalkbackActions(atem, model, transitions, state),
@@ -669,7 +669,7 @@ function HeadphoneMasterActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	transitions: AtemTransitions,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyActionDefinitions<
 	Pick<
 		AtemFairlightAudioActions,
@@ -715,7 +715,7 @@ function HeadphoneMasterActions(
 							return undefined
 						}
 					},
-			  }
+				}
 			: undefined,
 		[ActionId.FairlightAudioMonitorMasterGain]:
 			model.fairlightAudio?.monitor === 'split'
@@ -745,7 +745,7 @@ function HeadphoneMasterActions(
 								},
 								state.state.fairlight?.monitor?.inputMasterGain,
 								options.getPlainNumber('gain') * 100,
-								options
+								options,
 							)
 						},
 						learn: ({ options }) => {
@@ -760,7 +760,7 @@ function HeadphoneMasterActions(
 								return undefined
 							}
 						},
-				  }
+					}
 				: undefined,
 		[ActionId.FairlightAudioMonitorMasterGainDelta]:
 			model.fairlightAudio?.monitor === 'split'
@@ -782,11 +782,11 @@ function HeadphoneMasterActions(
 									},
 									currentGain,
 									currentGain + options.getPlainNumber('delta') * 100,
-									options
+									options,
 								)
 							}
 						},
-				  }
+					}
 				: undefined,
 	}
 }
@@ -795,7 +795,7 @@ function HeadphoneTalkbackActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	transitions: AtemTransitions,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyActionDefinitions<
 	Pick<
 		AtemFairlightAudioActions,
@@ -841,7 +841,7 @@ function HeadphoneTalkbackActions(
 							return undefined
 						}
 					},
-			  }
+				}
 			: undefined,
 		[ActionId.FairlightAudioMonitorTalkbackGain]:
 			model.fairlightAudio?.monitor === 'split'
@@ -871,7 +871,7 @@ function HeadphoneTalkbackActions(
 								},
 								state.state.fairlight?.monitor?.inputTalkbackGain,
 								options.getPlainNumber('gain') * 100,
-								options
+								options,
 							)
 						},
 						learn: ({ options }) => {
@@ -886,7 +886,7 @@ function HeadphoneTalkbackActions(
 								return undefined
 							}
 						},
-				  }
+					}
 				: undefined,
 		[ActionId.FairlightAudioMonitorTalkbackGainDelta]:
 			model.fairlightAudio?.monitor === 'split'
@@ -908,11 +908,11 @@ function HeadphoneTalkbackActions(
 									},
 									currentGain,
 									currentGain + options.getPlainNumber('delta') * 100,
-									options
+									options,
 								)
 							}
 						},
-				  }
+					}
 				: undefined,
 	}
 }
@@ -921,7 +921,7 @@ function HeadphoneSidetoneActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	transitions: AtemTransitions,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyActionDefinitions<
 	Pick<
 		AtemFairlightAudioActions,
@@ -996,7 +996,7 @@ function HeadphoneSidetoneActions(
 								},
 								state.state.fairlight?.monitor?.inputSidetoneGain,
 								options.getPlainNumber('gain') * 100,
-								options
+								options,
 							)
 						},
 						learn: ({ options }) => {
@@ -1011,7 +1011,7 @@ function HeadphoneSidetoneActions(
 								return undefined
 							}
 						},
-				  }
+					}
 				: undefined,
 		[ActionId.FairlightAudioMonitorSidetoneGainDelta]:
 			model.fairlightAudio?.monitor === 'split'
@@ -1033,11 +1033,11 @@ function HeadphoneSidetoneActions(
 									},
 									currentGain,
 									currentGain + options.getPlainNumber('delta') * 100,
-									options
+									options,
 								)
 							}
 						},
-				  }
+					}
 				: undefined,
 	}
 }

@@ -56,7 +56,7 @@ export interface UpdateVariablesProps {
 export function updateChangedVariables(
 	instance: InstanceBaseExt<AtemConfig>,
 	state: AtemState,
-	changes: UpdateVariablesProps
+	changes: UpdateVariablesProps,
 ): void {
 	const newValues: CompanionVariableValues = {}
 
@@ -93,7 +93,7 @@ function updateMEProgramVariable(
 	instance: InstanceBaseExt<AtemConfig>,
 	state: AtemState,
 	meIndex: number,
-	values: CompanionVariableValues
+	values: CompanionVariableValues,
 ): void {
 	const input = getMixEffect(state, meIndex)?.programInput ?? 0
 	values[`pgm${meIndex + 1}_input`] = getSourcePresetName(instance, state, input)
@@ -103,7 +103,7 @@ function updateMEPreviewVariable(
 	instance: InstanceBaseExt<AtemConfig>,
 	state: AtemState,
 	meIndex: number,
-	values: CompanionVariableValues
+	values: CompanionVariableValues,
 ): void {
 	const input = getMixEffect(state, meIndex)?.previewInput ?? 0
 	values[`pvw${meIndex + 1}_input`] = getSourcePresetName(instance, state, input)
@@ -119,7 +119,7 @@ function updateUSKVariable(
 	state: AtemState,
 	meIndex: number,
 	keyIndex: number,
-	values: CompanionVariableValues
+	values: CompanionVariableValues,
 ): void {
 	const input = getUSK(state, meIndex, keyIndex)?.fillSource ?? 0
 	values[`usk_${meIndex + 1}_${keyIndex + 1}_input`] = getSourcePresetName(instance, state, input)
@@ -129,7 +129,7 @@ function updateDSKVariable(
 	instance: InstanceBaseExt<AtemConfig>,
 	state: AtemState,
 	keyIndex: number,
-	values: CompanionVariableValues
+	values: CompanionVariableValues,
 ): void {
 	const input = getDSK(state, keyIndex)?.sources?.fillSource ?? 0
 	values[`dsk_${keyIndex + 1}_input`] = getSourcePresetName(instance, state, input)
@@ -140,7 +140,7 @@ function updateAuxVariable(
 	instance: InstanceBaseExt<AtemConfig>,
 	state: AtemState,
 	auxIndex: number,
-	values: CompanionVariableValues
+	values: CompanionVariableValues,
 ): void {
 	const input = state.video.auxilliaries[auxIndex] ?? 0
 	values[`aux${auxIndex + 1}_input`] = getSourcePresetName(instance, state, input)
@@ -263,7 +263,7 @@ function formatAudioMixOption(value: Enums.AudioMixOption | undefined): string |
 function updateFairlightAudioVariables(
 	state: AtemState,
 	fairlightAudioIndex: number,
-	values: CompanionVariableValues
+	values: CompanionVariableValues,
 ): void {
 	const sources = getFairlightAudioInput(state, fairlightAudioIndex)?.sources
 	// combined channel (default)
@@ -283,7 +283,7 @@ function updateFairlightAudioVariables(
 		values[`audio_input_${fairlightAudioIndex}_left_framesDelay`] = leftProperties?.framesDelay.toString()
 		values[`audio_input_${fairlightAudioIndex}_left_gain`] = formatAudioProperty(leftProperties?.gain)
 		values[`audio_input_${fairlightAudioIndex}_left_mixOption`] = formatFairlightAudioMixOption(
-			leftProperties?.mixOption
+			leftProperties?.mixOption,
 		)
 	}
 
@@ -294,7 +294,7 @@ function updateFairlightAudioVariables(
 		values[`audio_input_${fairlightAudioIndex}_right_framesDelay`] = rightProperties?.framesDelay.toString()
 		values[`audio_input_${fairlightAudioIndex}_right_gain`] = formatAudioProperty(rightProperties?.gain)
 		values[`audio_input_${fairlightAudioIndex}_right_mixOption`] = formatFairlightAudioMixOption(
-			rightProperties?.mixOption
+			rightProperties?.mixOption,
 		)
 	}
 }
@@ -302,7 +302,7 @@ function updateFairlightAudioVariables(
 function updateClassicAudioVariables(
 	state: AtemState,
 	classicAudioIndex: number,
-	values: CompanionVariableValues
+	values: CompanionVariableValues,
 ): void {
 	const channel = getClassicAudioInput(state, classicAudioIndex)
 	values[`audio_input_${classicAudioIndex}_balance`] = formatAudioProperty(channel?.balance, 1)
@@ -327,7 +327,7 @@ function updateSuperSourceVariables(
 	instance: InstanceBaseExt<AtemConfig>,
 	state: AtemState,
 	i: number,
-	values: CompanionVariableValues
+	values: CompanionVariableValues,
 ): void {
 	for (let b = 0; b < 4; b++) {
 		const input = getSuperSourceBox(state, b, i)?.source ?? 0
@@ -341,7 +341,7 @@ function updateMultiviewerWindowInput(
 	state: AtemState,
 	index: number, // 1 index
 	window: number, // 1 index
-	values: CompanionVariableValues
+	values: CompanionVariableValues,
 ): void {
 	const inputId = state.settings.multiViewers[index - 1]?.windows?.[window - 1]?.source ?? 0
 	values[`mv_${index}_window_${window}_input_id`] = inputId

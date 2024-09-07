@@ -32,7 +32,7 @@ export function clamp(min: number, max: number, val: number): number {
 
 export function calculateTransitionSelection(
 	keyCount: number,
-	rawSelection: ('background' | string)[] | undefined
+	rawSelection: ('background' | string)[] | undefined,
 ): Enums.TransitionSelection[] {
 	if (!rawSelection || !Array.isArray(rawSelection)) return []
 

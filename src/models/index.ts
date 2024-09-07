@@ -139,9 +139,9 @@ export function GetParsedModelSpec({
 								id: Number(id),
 								portType: ch.portType,
 							}
-						})
+						}),
 					),
-			  }
+				}
 			: undefined,
 		fairlightAudio: fairlight
 			? {
@@ -156,9 +156,9 @@ export function GetParsedModelSpec({
 								maxDelay: Math.max(...Object.values(ch.sources).map((s) => s?.properties?.maxFramesDelay ?? 0)),
 								// supportedConfigurations: ch.properties.supportedConfigurations,
 							}
-						})
+						}),
 					),
-			  }
+				}
 			: undefined,
 	}
 }

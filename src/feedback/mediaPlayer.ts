@@ -21,7 +21,7 @@ export interface AtemMediaPlayerFeedbacks {
 
 export function createMediaPlayerFeedbacks(
 	model: ModelSpec,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyFeedbackDefinitions<AtemMediaPlayerFeedbacks> {
 	if (!model.media.players) {
 		return {
@@ -90,7 +90,7 @@ export function createMediaPlayerFeedbacks(
 								id: 'isClip',
 								label: 'Is clip',
 								default: false,
-						  }
+							}
 						: undefined,
 				slot: {
 					id: 'slot',

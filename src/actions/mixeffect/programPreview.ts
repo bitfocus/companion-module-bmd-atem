@@ -40,7 +40,7 @@ export function createProgramPreviewActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	transitions: AtemTransitions,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyActionDefinitions<AtemProgramPreviewActions> {
 	return {
 		[ActionId.Program]: {
@@ -191,7 +191,7 @@ export function createProgramPreviewActions(
 					},
 					meState?.transitionPosition.handlePosition,
 					position * 100,
-					options
+					options,
 				)
 			},
 		},

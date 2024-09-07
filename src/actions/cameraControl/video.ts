@@ -49,7 +49,7 @@ export interface AtemCameraControlVideoActions {
 export function createCameraControlVideoActions(
 	config: AtemConfig,
 	atem: Atem | undefined,
-	_state: StateWrapper
+	_state: StateWrapper,
 ): MyActionDefinitions<AtemCameraControlVideoActions> {
 	if (!config.enableCameraControl) {
 		return {

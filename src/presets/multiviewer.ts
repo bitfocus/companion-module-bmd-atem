@@ -12,7 +12,7 @@ export function createMultiviewerPresets(
 	model: ModelSpec,
 	state: AtemState,
 	pstSize: CompanionButtonStyleProps['size'],
-	pstText: string
+	pstText: string,
 ): MyPresetDefinitionCategory<ActionTypes, FeedbackTypes>[] {
 	const result: MyPresetDefinitionCategory<ActionTypes, FeedbackTypes>[] = []
 

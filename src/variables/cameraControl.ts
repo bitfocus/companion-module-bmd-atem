@@ -10,7 +10,7 @@ function roundToFactor(value: number, factor: number) {
 export function updateCameraControlVariables(
 	_instance: InstanceBaseExt<AtemConfig>,
 	state: AtemCameraControlState,
-	values: CompanionVariableValues
+	values: CompanionVariableValues,
 ): void {
 	values[`camera_${state.cameraId}_focus`] = roundToFactor(state.lens.focus, 1000)
 	values[`camera_${state.cameraId}_iris`] = roundToFactor(state.lens.iris, 1000)
@@ -43,14 +43,14 @@ export function updateCameraControlVariables(
 	values[`camera_${state.cameraId}_hue_adjust`] = roundToFactor(state.colorCorrection.colorAdjust.hue, 1000)
 	values[`camera_${state.cameraId}_saturation_adjust`] = roundToFactor(
 		state.colorCorrection.colorAdjust.saturation,
-		1000
+		1000,
 	)
 }
 
 export function initCameraControlVariables(
 	_instance: InstanceBaseExt<AtemConfig>,
 	cameraId: number,
-	variables: CompanionVariableDefinition[]
+	variables: CompanionVariableDefinition[],
 ): void {
 	variables.push({
 		variableId: `camera_${cameraId}_focus`,

@@ -43,7 +43,7 @@ function wrapStep(step: MyButtonStepActions<any>): CompanionButtonStepActions {
 			: ({
 					options: src.options,
 					actions: src.actions.map(wrapAction),
-			  } satisfies Complete<CompanionPresetActionsWithOptions>)
+				} satisfies Complete<CompanionPresetActionsWithOptions>)
 	}
 
 	return res
@@ -51,7 +51,7 @@ function wrapStep(step: MyButtonStepActions<any>): CompanionButtonStepActions {
 
 function convertMyPresetToCompanionPreset(
 	rawPreset: MyButtonPresetDefinition<any, any>,
-	category: MyPresetDefinitionCategory<any, any>
+	category: MyPresetDefinitionCategory<any, any>,
 ): CompanionButtonPresetDefinition {
 	return {
 		type: rawPreset.type,
@@ -68,14 +68,14 @@ function convertMyPresetToCompanionPreset(
 					options: feedback.options,
 					style: feedback.style,
 					isInverted: feedback.isInverted,
-				} satisfies Complete<CompanionPresetFeedback>)
+				}) satisfies Complete<CompanionPresetFeedback>,
 		),
 		steps: rawPreset.steps.map(wrapStep),
 	} satisfies Complete<CompanionButtonPresetDefinition>
 }
 
 export function convertMyPresetDefinitions<TActions, TFeedbacks>(
-	presets: (MyPresetDefinitionCategory<TActions, TFeedbacks> | undefined)[]
+	presets: (MyPresetDefinitionCategory<TActions, TFeedbacks> | undefined)[],
 ): CompanionPresetDefinitions {
 	const res: CompanionPresetDefinitions = {}
 

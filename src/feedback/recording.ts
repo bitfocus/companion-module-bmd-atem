@@ -14,7 +14,7 @@ export interface AtemRecordingFeedbacks {
 
 export function createRecordingFeedbacks(
 	model: ModelSpec,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyFeedbackDefinitions<AtemRecordingFeedbacks> {
 	if (!model.recording) {
 		return {

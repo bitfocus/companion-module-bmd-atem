@@ -9,7 +9,7 @@ import { MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from '../util.js'
 
 export function createMediaPlayerPresets(
 	model: ModelSpec,
-	pstSize: CompanionButtonStyleProps['size']
+	pstSize: CompanionButtonStyleProps['size'],
 ): MyPresetDefinitionCategory<ActionTypes, FeedbackTypes>[] {
 	const result: MyPresetDefinitionCategory<ActionTypes, FeedbackTypes>[] = []
 

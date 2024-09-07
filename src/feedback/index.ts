@@ -44,7 +44,7 @@ export type FeedbackTypes = AtemTallyFeedbacks &
 export function GetFeedbacksList(
 	config: AtemConfig,
 	model: ModelSpec,
-	state: StateWrapper
+	state: StateWrapper,
 ): CompanionFeedbackDefinitions {
 	const feedbacks: { [id in FeedbackId]: MyFeedbackDefinition<any> | undefined } = {
 		...createTallyFeedbacks(model, state),

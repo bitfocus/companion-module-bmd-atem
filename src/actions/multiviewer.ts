@@ -39,7 +39,7 @@ export interface AtemMultiviewerActions {
 export function createMultiviewerActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyActionDefinitions<AtemMultiviewerActions> {
 	if (!model.MVs) {
 		return {
@@ -60,14 +60,14 @@ export function createMultiviewerActions(
 				await atem?.setMultiViewerWindowSource(
 					options.getPlainNumber('source'),
 					options.getPlainNumber('multiViewerId'),
-					options.getPlainNumber('windowIndex')
+					options.getPlainNumber('windowIndex'),
 				)
 			},
 			learn: ({ options }) => {
 				const window = getMultiviewerWindow(
 					state.state,
 					options.getPlainNumber('multiViewerId'),
-					options.getPlainNumber('windowIndex')
+					options.getPlainNumber('windowIndex'),
 				)
 
 				if (window) {

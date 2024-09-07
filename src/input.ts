@@ -982,7 +982,7 @@ export function AtemSuperSourceArtOption(action: boolean): CompanionInputFieldDr
 			? {
 					id: 'unchanged',
 					label: 'Unchanged',
-			  }
+				}
 			: undefined,
 		{
 			id: Enums.SuperSourceArtOption.Foreground,
@@ -996,7 +996,7 @@ export function AtemSuperSourceArtOption(action: boolean): CompanionInputFieldDr
 			? {
 					id: 'toggle',
 					label: 'Toggle',
-			  }
+				}
 			: undefined,
 	])
 	return {
@@ -1025,7 +1025,7 @@ export interface AtemSuperSourceProperties {
 }
 export function AtemSuperSourcePropertiesPickers(
 	model: ModelSpec,
-	state: AtemState
+	state: AtemState,
 ): MyOptionsObject<
 	AtemSuperSourceProperties,
 	| CompanionInputFieldMultiDropdown
@@ -1252,7 +1252,7 @@ export interface AtemSuperSourceArtProperties {
 export function AtemSuperSourceArtPropertiesPickers(
 	model: ModelSpec,
 	state: AtemState,
-	action: boolean
+	action: boolean,
 ): MyOptionsObject<
 	AtemSuperSourceArtProperties,
 	| CompanionInputFieldCheckbox
@@ -1374,7 +1374,7 @@ export function DropdownPropertiesPicker(
 		| CompanionInputFieldDropdown
 		| CompanionInputFieldNumber
 		| CompanionInputFieldMultiDropdown
-	>
+	>,
 ): CompanionInputFieldMultiDropdown {
 	return {
 		type: 'multidropdown',
@@ -1390,7 +1390,7 @@ export function AtemSuperSourceArtSourcePicker(
 	model: ModelSpec,
 	state: AtemState,
 	id: string,
-	label: string
+	label: string,
 ): CompanionInputFieldDropdown {
 	return {
 		type: 'dropdown',
@@ -1423,11 +1423,11 @@ export function AtemMultiviewWindowPicker(model: ModelSpec): CompanionInputField
 		? iterateTimes(16, (i) => ({
 				id: i,
 				label: `Window ${i + 1}`,
-		  }))
+			}))
 		: iterateTimes(8, (i) => ({
 				id: i + 2,
 				label: `Window ${i + 3}`,
-		  }))
+			}))
 
 	return {
 		type: 'dropdown',
@@ -1521,7 +1521,7 @@ export function AtemMatchMethod(): CompanionInputFieldDropdown {
 export function AtemAudioInputPicker(
 	model: ModelSpec,
 	state: AtemState,
-	subset?: AudioInputSubset
+	subset?: AudioInputSubset,
 ): CompanionInputFieldDropdown {
 	const inputs = SourcesToChoices(GetAudioInputsList(model, state, subset))
 	return {

@@ -36,7 +36,7 @@ export interface AtemUpstreamKeyerFeedbacks {
 
 export function createUpstreamKeyerFeedbacks(
 	model: ModelSpec,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyFeedbackDefinitions<AtemUpstreamKeyerFeedbacks> {
 	if (!model.USKs) {
 		return {
@@ -204,7 +204,7 @@ export function createUpstreamKeyerFeedbacks(
 							return undefined
 						}
 					},
-			  }
+				}
 			: undefined,
 	}
 }

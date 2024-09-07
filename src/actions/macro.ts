@@ -20,7 +20,7 @@ export interface AtemMacroActions {
 export function createMacroActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyActionDefinitions<AtemMacroActions> {
 	if (!model.macros) {
 		return {

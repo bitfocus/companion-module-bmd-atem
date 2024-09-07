@@ -60,7 +60,7 @@ export interface MyFeedbackDefinitionBase<TOptions> {
 	 */
 	learn?: (
 		Feedback: MyFeedbackInfo<TOptions>,
-		context: CompanionFeedbackContext
+		context: CompanionFeedbackContext,
 	) => TOptions | undefined | Promise<TOptions | undefined>
 }
 
@@ -79,7 +79,7 @@ export interface MyBooleanFeedbackDefinition<TOptions> extends MyFeedbackDefinit
 	/** Called to execute the Feedback */
 	callback: (
 		Feedback: MyBooleanFeedbackEvent<TOptions>,
-		context: CompanionFeedbackContext
+		context: CompanionFeedbackContext,
 	) => Promise<boolean> | boolean
 }
 export interface MyAdvancedFeedbackDefinition<TOptions> extends MyFeedbackDefinitionBase<TOptions> {
@@ -88,7 +88,7 @@ export interface MyAdvancedFeedbackDefinition<TOptions> extends MyFeedbackDefini
 	/** Called to execute the Feedback */
 	callback: (
 		Feedback: MyAdvancedFeedbackEvent<TOptions>,
-		context: CompanionFeedbackContext
+		context: CompanionFeedbackContext,
 	) => Promise<CompanionAdvancedFeedbackResult> | CompanionAdvancedFeedbackResult
 }
 

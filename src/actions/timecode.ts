@@ -18,7 +18,7 @@ export interface AtemTimecodeActions {
 export function createTimecodeActions(
 	instance: InstanceBaseExt<AtemConfig>,
 	atem: Atem | undefined,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyActionDefinitions<AtemTimecodeActions> {
 	if (!instance.config.pollTimecode) {
 		return {

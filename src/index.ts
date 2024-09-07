@@ -185,7 +185,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		this.setPresetDefinitions(GetPresetsList(this, this.model, this.wrappedState.state))
 		this.setFeedbackDefinitions(GetFeedbacksList(this.config, this.model, this.wrappedState))
 		this.setActionDefinitions(
-			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.wrappedState)
+			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.wrappedState),
 		)
 
 		this.checkFeedbacks()
@@ -552,7 +552,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 					this.model = GetParsedModelSpec(this.wrappedState.state)
 					this.updateStatus(
 						InstanceStatus.UnknownWarning,
-						`Unknown model: ${atemInfo.productIdentifier}. Some bits may be missing`
+						`Unknown model: ${atemInfo.productIdentifier}. Some bits may be missing`,
 					)
 				}
 
@@ -578,7 +578,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 							atemInfo.productIdentifier +
 							', but instance is configured for ' +
 							this.model.label +
-							".  Change instance to 'Auto Detect' or the appropriate model to ensure stability."
+							".  Change instance to 'Auto Detect' or the appropriate model to ensure stability.",
 					)
 				}
 
@@ -609,7 +609,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			}
 		})
 		this.atem.on('info', (msg) => this.log('debug', msg))
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 		this.atem.on('error', (e: any) => {
 			this.log('error', e.message)
 			this.updateStatus(InstanceStatus.UnknownError, e.message)

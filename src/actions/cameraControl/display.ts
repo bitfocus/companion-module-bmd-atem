@@ -16,7 +16,7 @@ export interface AtemCameraControlDisplayActions {
 export function createCameraControlDisplayActions(
 	config: AtemConfig,
 	atem: Atem | undefined,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyActionDefinitions<AtemCameraControlDisplayActions> {
 	if (!config.enableCameraControl) {
 		return {

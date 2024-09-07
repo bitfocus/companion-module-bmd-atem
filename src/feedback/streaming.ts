@@ -13,7 +13,7 @@ export interface AtemStreamingFeedbacks {
 
 export function createStreamingFeedbacks(
 	model: ModelSpec,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyFeedbackDefinitions<AtemStreamingFeedbacks> {
 	if (!model.streaming) {
 		return {

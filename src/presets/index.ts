@@ -25,7 +25,7 @@ const rateOptions = [12, 15, 25, 30, 37, 45, 50, 60]
 export function GetPresetsList(
 	instance: InstanceBaseExt<AtemConfig>,
 	model: ModelSpec,
-	state: AtemState
+	state: AtemState,
 ): CompanionPresetDefinitions {
 	const pstText = Number(instance.config.presets) === PresetStyleName.Long ? 'long_' : 'short_'
 	const pstSize = Number(instance.config.presets) === PresetStyleName.Long ? 'auto' : '18'

@@ -12,7 +12,7 @@ import { MyOptionsHelperImpl, type MyOptionsObject } from '../common.js'
 function rewrapActionInfo<TOptions>(
 	action: CompanionActionInfo,
 	context: CompanionActionContext,
-	fields: MyOptionsObject<TOptions, any>
+	fields: MyOptionsObject<TOptions, any>,
 ): MyActionInfo2<TOptions> {
 	return {
 		id: action.id,
@@ -24,7 +24,7 @@ function rewrapActionInfo<TOptions>(
 }
 
 function convertMyActionToCompanionAction<TOptions>(
-	actionDef: MyActionDefinition<TOptions>
+	actionDef: MyActionDefinition<TOptions>,
 ): CompanionActionDefinition {
 	const { subscribe, unsubscribe, learn } = actionDef
 
@@ -44,18 +44,18 @@ function convertMyActionToCompanionAction<TOptions>(
 
 					surfaceId: action.surfaceId,
 				} satisfies Complete<MyActionEvent2<TOptions>>,
-				context
+				context,
 			)
 		},
 		subscribe: subscribe
 			? async (action, context) => {
 					return subscribe(rewrapActionInfo(action, context, actionDef.options), context)
-			  }
+				}
 			: undefined,
 		unsubscribe: unsubscribe
 			? async (action, context) => {
 					return unsubscribe(rewrapActionInfo(action, context, actionDef.options), context)
-			  }
+				}
 			: undefined,
 		learn: learn
 			? async (action, context) => {
@@ -65,9 +65,9 @@ function convertMyActionToCompanionAction<TOptions>(
 
 							surfaceId: action.surfaceId,
 						} satisfies Complete<MyActionEvent2<TOptions>>,
-						context
+						context,
 					) as CompanionOptionValues | undefined | Promise<CompanionOptionValues | undefined>
-			  }
+				}
 			: undefined,
 		learnTimeout: undefined,
 	} satisfies Complete<CompanionActionDefinition>
@@ -78,7 +78,7 @@ type Test<TTypes> = {
 }
 
 export function convertMyActionDefinitions<TTypes extends Record<string, MyActionDefinition<any> | undefined>>(
-	actionDefs: TTypes
+	actionDefs: TTypes,
 ): Test<TTypes> {
 	const res: Test<TTypes> = {} as any
 

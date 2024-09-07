@@ -38,7 +38,7 @@ export interface AtemCameraControlColorActions {
 export function createCameraControlColorActions(
 	config: AtemConfig,
 	atem: Atem | undefined,
-	_state: StateWrapper
+	_state: StateWrapper,
 ): MyActionDefinitions<AtemCameraControlColorActions> {
 	if (!config.enableCameraControl) {
 		return {
@@ -56,7 +56,7 @@ export function createCameraControlColorActions(
 
 	const createRgbaAction = (
 		name: string,
-		doSend: (cameraId: number, red: number, green: number, blue: number, luma: number) => Promise<void>
+		doSend: (cameraId: number, red: number, green: number, blue: number, luma: number) => Promise<void>,
 	): MyActionDefinition<RgbyAdjustmentProps> => ({
 		name: name,
 		options: {
@@ -108,19 +108,19 @@ export function createCameraControlColorActions(
 	return {
 		[ActionId.CameraControlColorLiftAdjust]: createRgbaAction(
 			'Camera Control: Color Lift Adjust',
-			async (cameraId, red, green, blue, luma) => commandSender?.colorLiftAdjust(cameraId, red, green, blue, luma)
+			async (cameraId, red, green, blue, luma) => commandSender?.colorLiftAdjust(cameraId, red, green, blue, luma),
 		),
 		[ActionId.CameraControlColorGammaAdjust]: createRgbaAction(
 			'Camera Control: Color Gamma Adjust',
-			async (cameraId, red, green, blue, luma) => commandSender?.colorGammaAdjust(cameraId, red, green, blue, luma)
+			async (cameraId, red, green, blue, luma) => commandSender?.colorGammaAdjust(cameraId, red, green, blue, luma),
 		),
 		[ActionId.CameraControlColorGainAdjust]: createRgbaAction(
 			'Camera Control: Color Gain Adjust',
-			async (cameraId, red, green, blue, luma) => commandSender?.colorGainAdjust(cameraId, red, green, blue, luma)
+			async (cameraId, red, green, blue, luma) => commandSender?.colorGainAdjust(cameraId, red, green, blue, luma),
 		),
 		[ActionId.CameraControlColorOffsetAdjust]: createRgbaAction(
 			'Camera Control: Color Offset Adjust',
-			async (cameraId, red, green, blue, luma) => commandSender?.colorOffsetAdjust(cameraId, red, green, blue, luma)
+			async (cameraId, red, green, blue, luma) => commandSender?.colorOffsetAdjust(cameraId, red, green, blue, luma),
 		),
 
 		[ActionId.CameraControlColorContrastAdjust]: {

@@ -59,7 +59,7 @@ export function createTransitionActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	commandBatching: AtemCommandBatching,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyActionDefinitions<AtemTransitionActions> {
 	return {
 		[ActionId.PreviewTransition]: {
@@ -109,7 +109,7 @@ export function createTransitionActions(
 					{
 						nextStyle: options.getPlainNumber('style'),
 					},
-					options.getPlainNumber('mixeffect')
+					options.getPlainNumber('mixeffect'),
 				)
 			},
 			learn: ({ options }) => {
@@ -140,7 +140,7 @@ export function createTransitionActions(
 							{
 								rate: options.getPlainNumber('rate'),
 							},
-							options.getPlainNumber('mixeffect')
+							options.getPlainNumber('mixeffect'),
 						)
 						break
 					case Enums.TransitionStyle.DIP:
@@ -148,7 +148,7 @@ export function createTransitionActions(
 							{
 								rate: options.getPlainNumber('rate'),
 							},
-							options.getPlainNumber('mixeffect')
+							options.getPlainNumber('mixeffect'),
 						)
 
 						break
@@ -157,7 +157,7 @@ export function createTransitionActions(
 							{
 								rate: options.getPlainNumber('rate'),
 							},
-							options.getPlainNumber('mixeffect')
+							options.getPlainNumber('mixeffect'),
 						)
 
 						break
@@ -166,7 +166,7 @@ export function createTransitionActions(
 							{
 								rate: options.getPlainNumber('rate'),
 							},
-							options.getPlainNumber('mixeffect')
+							options.getPlainNumber('mixeffect'),
 						)
 						break
 					case Enums.TransitionStyle.STING:
@@ -229,7 +229,7 @@ export function createTransitionActions(
 					{
 						nextSelection: calculateTransitionSelection(model.USKs, options.getRaw('selection')),
 					},
-					options.getPlainNumber('mixeffect')
+					options.getPlainNumber('mixeffect'),
 				)
 			},
 		},
@@ -381,12 +381,12 @@ export function createTransitionActions(
 									{
 										nextSelection: newVal,
 									},
-									me
+									me,
 								),
 							{
 								delayStep: 100,
 								maxBatch: 5,
-							}
+							},
 						)
 						commandBatching.meTransitionSelection.set(me, batch)
 					}

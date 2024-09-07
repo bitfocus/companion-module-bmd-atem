@@ -18,7 +18,7 @@ export interface AtemFadeToBlackFeedbacks {
 
 export function createFadeToBlackFeedbacks(
 	model: ModelSpec,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyFeedbackDefinitions<AtemFadeToBlackFeedbacks> {
 	return {
 		[FeedbackId.FadeToBlackIsBlack]: {

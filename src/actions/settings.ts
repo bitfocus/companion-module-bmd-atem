@@ -22,7 +22,7 @@ export interface AtemSettingsActions {
 export function createSettingsActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyActionDefinitions<AtemSettingsActions> {
 	if (!model.media.players) {
 		return {
