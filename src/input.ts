@@ -647,6 +647,250 @@ export function AtemUSKDVEPropertiesPickers(): {
 		...allProps,
 	}
 }
+export function AtemUSKDVEPropertiesVariablesPickers(): {
+	properties: CompanionInputFieldMultiDropdown
+
+	positionX: CompanionInputFieldTextInput
+	positionY: CompanionInputFieldTextInput
+	sizeX: CompanionInputFieldTextInput
+	sizeY: CompanionInputFieldTextInput
+	rotation: CompanionInputFieldTextInput
+	maskEnabled: CompanionInputFieldTextInput
+	maskTop: CompanionInputFieldTextInput
+	maskBottom: CompanionInputFieldTextInput
+	maskLeft: CompanionInputFieldTextInput
+	maskRight: CompanionInputFieldTextInput
+	shadowEnabled: CompanionInputFieldTextInput
+	lightSourceDirection: CompanionInputFieldTextInput
+	lightSourceAltitude: CompanionInputFieldTextInput
+	borderEnabled: CompanionInputFieldTextInput
+	borderHue: CompanionInputFieldTextInput
+	borderSaturation: CompanionInputFieldTextInput
+	borderLuma: CompanionInputFieldTextInput
+	borderBevel: CompanionInputFieldTextInput
+	borderOuterWidth: CompanionInputFieldTextInput
+	borderInnerWidth: CompanionInputFieldTextInput
+	borderOuterSoftness: CompanionInputFieldTextInput
+	borderInnerSoftness: CompanionInputFieldTextInput
+	borderOpacity: CompanionInputFieldTextInput
+	borderBevelPosition: CompanionInputFieldTextInput
+	borderBevelSoftness: CompanionInputFieldTextInput
+	rate: CompanionInputFieldTextInput
+} {
+	const allProps: Omit<ReturnType<typeof AtemUSKDVEPropertiesVariablesPickers>, 'properties'> = {
+		positionX: {
+			type: 'textinput',
+			label: 'Position: X',
+			id: 'positionX',
+			default: '0',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionX'),
+		},
+		positionY: {
+			type: 'textinput',
+			label: 'Position: Y',
+			id: 'positionY',
+			default: '0',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionY'),
+		},
+		sizeX: {
+			type: 'textinput',
+			label: 'Size: X',
+			id: 'sizeX',
+			default: '0.5',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('sizeX'),
+		},
+		sizeY: {
+			type: 'textinput',
+			label: 'Size: Y',
+			id: 'sizeY',
+			default: '0.5',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('sizeY'),
+		},
+		rotation: {
+			type: 'textinput',
+			label: 'Rotation',
+			id: 'rotation',
+			default: '0',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('rotation'),
+		},
+		maskEnabled: {
+			type: 'textinput',
+			label: 'Mask: Enabled',
+			id: 'maskEnabled',
+			default: 'true',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskEnabled'),
+		},
+		maskTop: {
+			type: 'textinput',
+			label: 'Mask: Top',
+			id: 'maskTop',
+			default: '0',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskTop'),
+		},
+		maskBottom: {
+			type: 'textinput',
+			label: 'Mask: Bottom',
+			id: 'maskBottom',
+			default: '0',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskBottom'),
+		},
+		maskLeft: {
+			type: 'textinput',
+			label: 'Mask: Left',
+			id: 'maskLeft',
+			default: '0',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskLeft'),
+		},
+		maskRight: {
+			type: 'textinput',
+			label: 'Mask: Right',
+			id: 'maskRight',
+			default: '0',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskRight'),
+		},
+		shadowEnabled: {
+			type: 'textinput',
+			label: 'Shadow: Enabled',
+			id: 'shadowEnabled',
+			default: 'false',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('shadowEnabled'),
+		},
+		lightSourceDirection: {
+			type: 'textinput',
+			label: 'Shadow: Angle',
+			id: 'lightSourceDirection',
+			default: '36',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('lightSourceDirection'),
+		},
+		lightSourceAltitude: {
+			type: 'textinput',
+			label: 'Shadow: Altitude',
+			id: 'lightSourceAltitude',
+			default: '25',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('lightSourceAltitude'),
+		},
+		borderEnabled: {
+			type: 'textinput',
+			label: 'Border: Enabled',
+			id: 'borderEnabled',
+			default: 'true',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderEnabled'),
+		},
+		borderHue: {
+			type: 'textinput',
+			label: 'Border: Hue',
+			id: 'borderHue',
+			default: '0',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderHue'),
+		},
+		borderSaturation: {
+			type: 'textinput',
+			label: 'Border: Sat',
+			id: 'borderSaturation',
+			default: '0',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderSaturation'),
+		},
+		borderLuma: {
+			type: 'textinput',
+			label: 'Border: Lum',
+			id: 'borderLuma',
+			default: '0',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderLuma'),
+		},
+		borderBevel: {
+			type: 'textinput',
+			label: 'Border: Style',
+			id: 'borderBevel',
+			default: '0',
+			useVariables: true,
+		},
+		borderOuterWidth: {
+			type: 'textinput',
+			label: 'Border: Outer Width',
+			id: 'borderOuterWidth',
+			default: '0',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderOuterWidth'),
+		},
+		borderInnerWidth: {
+			type: 'textinput',
+			label: 'Border: Inner Width',
+			id: 'borderInnerWidth',
+			default: '0.2',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderInnerWidth'),
+		},
+		borderOuterSoftness: {
+			type: 'textinput',
+			label: 'Border: Outer Soften',
+			id: 'borderOuterSoftness',
+			default: '0',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderOuterSoftness'),
+		},
+		borderInnerSoftness: {
+			type: 'textinput',
+			label: 'Border: Inner Soften',
+			id: 'borderInnerSoftness',
+			default: '0',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderInnerSoftness'),
+		},
+		borderOpacity: {
+			type: 'textinput',
+			label: 'Border: Opacity',
+			id: 'borderOpacity',
+			default: '100',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderOpacity'),
+		},
+		borderBevelPosition: {
+			type: 'textinput',
+			label: 'Border: Bevel Position',
+			id: 'borderBevelPosition',
+			default: '0',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderBevelPosition'),
+		},
+		borderBevelSoftness: {
+			type: 'textinput',
+			label: 'Border: Bevel Soften',
+			id: 'borderBevelSoftness',
+			default: '0',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderBevelSoftness'),
+		},
+		rate: {
+			type: 'textinput',
+			id: 'rate',
+			label: 'Rate',
+			default: '25',
+			useVariables: true,
+		},
+	}
+
+	return {
+		properties: DropdownPropertiesPicker(allProps),
+		...allProps,
+	}
+}
 export function AtemUSKKeyframePropertiesPickers(): {
 	properties: CompanionInputFieldMultiDropdown
 
