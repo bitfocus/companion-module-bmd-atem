@@ -16,6 +16,8 @@
 dist/
 *.log
 state.json
+raw-state.json
+test.json
 pkg
 pkg.tgz
 DEBUG-*

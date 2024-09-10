@@ -22,6 +22,8 @@ atem.on('disconnected', () => {
 atem.on('connected', () => {
 	if (!atem.state) throw new Error('No state once connected!')
 
+	fs.writeFileSync('raw-state.json', JSON.stringify(atem.state, undefined, 4))
+
 	const model = GetParsedModelSpec(atem.state)
 	fs.writeFileSync('state.json', JSON.stringify(model, undefined, 4))
 	console.log('done')
