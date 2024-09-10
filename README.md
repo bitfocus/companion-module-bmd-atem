@@ -23,6 +23,12 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.13.0
+
+- Audio routing support
+
+- Set DVE keyframes
+
 ## v3.12.1
 
 - Fix device discovery for recent models/firmwares
