@@ -185,7 +185,6 @@ export const ModelSpecTVSPro4K: ModelSpec = {
 	],
 	fairlightAudio: {
 		monitor: 'combined',
-		audioRouting: false,
 		inputs: [
 			{
 				id: 1,

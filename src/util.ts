@@ -1,5 +1,7 @@
 import { Enums, type AtemState, listVisibleInputs } from 'atem-connection'
 import { InstanceBase } from '@companion-module/base'
+import { AudioRoutingChannelsNames } from './choices.js'
+import { combineInputId } from './models/util/audioRouting.js'
 
 export const MEDIA_PLAYER_SOURCE_CLIP_OFFSET = 1000
 
@@ -103,4 +105,44 @@ export function calculateTallyForInputId(state: AtemState, inputId: number): num
 	if (!state.video.mixEffects[nestedMeId]) return []
 
 	return listVisibleInputs(nestedMeMode, state, nestedMeId)
+}
+
+export function formatAudioRoutingAsString(id: number): string {
+	const inputId = Math.floor(id >> 16)
+	const pair: Enums.AudioChannelPair = id & 0xff
+
+	const pairName = AudioRoutingChannelsNames[pair]?.replace('/', '_')
+
+	return `${inputId}-${pairName}`
+}
+export function parseAudioRoutingString(ids: string): number[] {
+	return ids
+		.split(/[,| ]/)
+		.map((id) => parseAudioRoutingStringSingle(id))
+		.filter((id): id is number => id !== null)
+}
+
+const ROUTING_STRING_REGEX = /(\d+)-([\d]+_[\d+])/i
+export function parseAudioRoutingStringSingle(id: string): number | null {
+	id = id.trim()
+	if (!id) return null
+
+	const match = ROUTING_STRING_REGEX.exec(id)
+	if (match) {
+		const inputId = Number(match[1])
+
+		const pairValueStr = match[2]?.replace('_', '/')
+		const pairValueOption = Object.entries(AudioRoutingChannelsNames).find(([, value]) => value === pairValueStr)
+		if (!pairValueOption) return null
+		const pairValue = Number(pairValueOption[0])
+
+		if (isNaN(inputId) || isNaN(pairValue)) return null
+
+		return combineInputId(inputId, pairValue)
+	}
+
+	const inputId = Number(id)
+	if (isNaN(inputId)) return null
+
+	return combineInputId(inputId, Enums.AudioChannelPair.Channel1_2)
 }

@@ -1,5 +1,18 @@
 import { generateOutputs, type ModelSpec } from './types.js'
 import { Enums } from 'atem-connection'
+import {
+	AUDIO_ROUTING_SOURCE_NO_AUDIO,
+	generateInputRoutingSources,
+	AUDIO_ROUTING_SOURCE_MICROPHONE,
+	AUDIO_ROUTING_SOURCE_TRS,
+	generateMadiRoutingSources,
+	generateMediaPlayerRoutingSources,
+	generateTalkbackRoutingSources,
+	AUDIO_ROUTING_SOURCE_PROGRAM,
+	generateMixMinusRoutingSources,
+	generateAuxRoutingOutputs,
+	generateMadiRoutingOutputs,
+} from './util/audioRouting.js'
 
 export const ModelSpecConstellation8KAs8K: ModelSpec = {
 	id: Enums.Model.Constellation8K,
@@ -307,7 +320,24 @@ export const ModelSpecConstellation8KAs8K: ModelSpec = {
 	],
 	fairlightAudio: {
 		monitor: 'split',
-		audioRouting: true,
+		audioRouting: {
+			sources: [
+				AUDIO_ROUTING_SOURCE_NO_AUDIO,
+				...generateInputRoutingSources(10),
+				AUDIO_ROUTING_SOURCE_MICROPHONE,
+				AUDIO_ROUTING_SOURCE_TRS,
+				...generateMadiRoutingSources(32),
+				...generateMediaPlayerRoutingSources(1),
+				...generateTalkbackRoutingSources(true, false),
+				AUDIO_ROUTING_SOURCE_PROGRAM,
+				...generateMixMinusRoutingSources(6),
+			],
+			outputs: [
+				//
+				...generateMadiRoutingOutputs(8),
+				...generateAuxRoutingOutputs(6),
+			],
+		},
 		inputs: [
 			{
 				id: 1,

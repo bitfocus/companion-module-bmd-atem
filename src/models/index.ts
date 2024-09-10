@@ -18,7 +18,14 @@ import { ModelSpecConstellation8KAs8K } from './constellation8kas8k.js'
 import { ModelSpecMini } from './mini.js'
 import { ModelSpecMiniPro } from './minipro.js'
 import { ModelSpecMiniProISO } from './miniproiso.js'
-import { type ModelId, type ModelSpec, MODEL_AUTO_DETECT, generateOutputs } from './types.js'
+import {
+	type ModelId,
+	type ModelSpec,
+	MODEL_AUTO_DETECT,
+	generateOutputs,
+	type AudioRoutingOutputInfo,
+	type AudioRoutingSourceInfo,
+} from './types.js'
 import { ModelSpecMiniExtreme } from './miniextreme.js'
 import { ModelSpecMiniExtremeISO } from './miniextremeiso.js'
 import { ModelSpecConstellationHD1ME } from './constellationHd1Me.js'
@@ -34,6 +41,7 @@ import { ModelSpecConstellation4K1ME } from './constellation4K1Me.js'
 import { ModelSpecConstellation4K2ME } from './constellation4K2Me.js'
 import { ModelSpecConstellation4K4ME } from './constellation4K4Me.js'
 import { ModelSpecTVS4K8 } from './tvs4k8.js'
+import type { FairlightAudioRouting } from 'atem-connection/dist/state/fairlight.js'
 
 export * from './types.js'
 
@@ -146,7 +154,7 @@ export function GetParsedModelSpec({
 		fairlightAudio: fairlight
 			? {
 					monitor: fairlight.monitor ? 'split' : null,
-					audioRouting: !!fairlight.audioRouting,
+					audioRouting: fairlight.audioRouting ? generateFairlightAudioRoutingProps(fairlight.audioRouting) : undefined,
 					inputs: compact(
 						Object.entries(fairlight.inputs).map(([id, ch]) => {
 							if (!ch?.properties) return undefined
@@ -164,3 +172,42 @@ export function GetParsedModelSpec({
 }
 
 // }
+
+function generateFairlightAudioRoutingProps(audioRouting: FairlightAudioRouting): {
+	sources: AudioRoutingSourceInfo[]
+	outputs: AudioRoutingOutputInfo[]
+} {
+	const sourcesById = new Map<number, AudioRoutingSourceInfo>()
+	const outputsById = new Map<number, AudioRoutingOutputInfo>()
+
+	for (const source of Object.values(audioRouting.sources)) {
+		const sourceInfo = sourcesById.get(source.audioSourceId)
+		if (sourceInfo) {
+			sourceInfo.channelPairs.push(source.audioChannelPair)
+		} else {
+			sourcesById.set(source.audioSourceId, {
+				sourceName: '', // Just use the name defined later
+				inputId: source.audioSourceId,
+				channelPairs: [source.audioChannelPair],
+			})
+		}
+	}
+
+	for (const output of Object.values(audioRouting.outputs)) {
+		const outputInfo = outputsById.get(output.audioOutputId)
+		if (outputInfo) {
+			outputInfo.channelPairs.push(output.audioChannelPair)
+		} else {
+			outputsById.set(output.audioOutputId, {
+				outputName: '', // Just use the name defined later
+				outputId: output.audioOutputId,
+				channelPairs: [output.audioChannelPair],
+			})
+		}
+	}
+
+	return {
+		sources: Array.from(sourcesById.values()),
+		outputs: Array.from(outputsById.values()),
+	}
+}

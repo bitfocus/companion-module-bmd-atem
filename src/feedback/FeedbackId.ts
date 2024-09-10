@@ -62,5 +62,7 @@ export enum FeedbackId {
 	FairlightAudioMonitorTalkbackMuted = 'fairlightAudioMonitorTalkbackMuted',
 	FairlightAudioMonitorTalkbackGain = 'fairlightAudioMonitorTalkbackGain',
 	FairlightAudioMonitorSidetoneGain = 'fairlightAudioMonitorSidetoneGain',
+	FairlightAudioRouting = 'fairlightAudioRouting',
+	FairlightAudioRoutingVariables = 'fairlightAudioRoutingVariables',
 	TimecodeMode = 'timecodeMode',
 }

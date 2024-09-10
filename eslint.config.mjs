@@ -12,7 +12,19 @@ const customConfig = [
 			'@typescript-eslint/no-unsafe-enum-comparison': 'off',
 			// misconfiguration of ts or something?
 			'n/no-missing-import': 'off',
-			'node/no-unpublished-import': 'off',
+			// 'm/no-unpublished-import': 'off',
+		},
+	},
+
+	{
+		files: ['**/__tests__/**/*'],
+		rules: {
+			'n/no-unpublished-import': [
+				'error',
+				{
+					allowModules: ['vitest'],
+				},
+			],
 		},
 	},
 ]

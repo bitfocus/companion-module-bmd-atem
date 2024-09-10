@@ -30,6 +30,8 @@ import {
 	type TrueFalseToggle,
 	type AudioInputSubset,
 	GetUpstreamKeyerTypeChoices,
+	FairlightAudioRoutingDestinations,
+	FairlightAudioRoutingSources,
 } from './choices.js'
 import type { ModelSpec } from './models/index.js'
 import { iterateTimes, MEDIA_PLAYER_SOURCE_CLIP_OFFSET, compact, NumberComparitor } from './util.js'
@@ -1530,5 +1532,47 @@ export function AtemDisplayClockTimePickers(): {
 			default: 0,
 			step: 1,
 		},
+	}
+}
+
+export function AtemFairlightAudioRoutingSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
+	const sources = FairlightAudioRoutingSources(model, state)
+
+	return {
+		type: 'dropdown',
+		id: 'source',
+		label: 'Source',
+		default: sources[0].id,
+		choices: sources,
+	}
+}
+
+export function AtemFairlightAudioRoutingDestinationsPicker(
+	model: ModelSpec,
+	state: AtemState,
+): CompanionInputFieldMultiDropdown {
+	const sources = FairlightAudioRoutingDestinations(model, state)
+
+	return {
+		type: 'multidropdown',
+		id: 'destinations',
+		label: 'Destinations',
+		default: [sources[0].id],
+		choices: sources,
+	}
+}
+
+export function AtemFairlightAudioRoutingDestinationPicker(
+	model: ModelSpec,
+	state: AtemState,
+): CompanionInputFieldDropdown {
+	const sources = FairlightAudioRoutingDestinations(model, state)
+
+	return {
+		type: 'dropdown',
+		id: 'destination',
+		label: 'Destination',
+		default: sources[0].id,
+		choices: sources,
 	}
 }

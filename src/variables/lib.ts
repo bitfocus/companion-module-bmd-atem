@@ -13,12 +13,17 @@ import {
 	getUSK,
 	type StateWrapper,
 } from '../state.js'
-import { assertUnreachable, type InstanceBaseExt } from '../util.js'
+import { assertUnreachable, formatAudioRoutingAsString, type InstanceBaseExt } from '../util.js'
 import type { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
 import { initCameraControlVariables, updateCameraControlVariables } from './cameraControl.js'
 import { createEmptyState } from '@atem-connection/camera-control'
 import { updateTimecodeVariables } from './timecode.js'
 import { formatDuration, formatDurationSeconds } from './util.js'
+import { combineInputId } from '../models/util/audioRouting.js'
+import {
+	updateFairlightAudioRoutingSourceVariables,
+	updateFairlightAudioRoutingOutputVariables,
+} from './audioRouting.js'
 
 function getSourcePresetName(instance: InstanceBaseExt<AtemConfig>, state: AtemState, id: number): string {
 	const input = state.inputs[id]
@@ -50,6 +55,8 @@ export interface UpdateVariablesProps {
 	fairlightAudio: Set<number>
 	fairlightAudioMaster: boolean
 	fairlightAudioMonitor: boolean
+	fairlightRoutingSources: Set<number>
+	fairlightRoutingOutputs: Set<number>
 	mvWindow: Set<[index: number, window: number]>
 }
 
@@ -80,6 +87,10 @@ export function updateChangedVariables(
 	for (const classicAudioIndex of changes.classicAudio) updateClassicAudioVariables(state, classicAudioIndex, newValues)
 	if (changes.fairlightAudioMaster) updateFairlightAudioMasterVariables(state, newValues)
 	if (changes.fairlightAudioMonitor) updateFairlightAudioMonitorVariables(state, newValues)
+	for (const sourceId of changes.fairlightRoutingSources)
+		updateFairlightAudioRoutingSourceVariables(state, sourceId, newValues)
+	for (const outputId of changes.fairlightRoutingOutputs)
+		updateFairlightAudioRoutingOutputVariables(state, outputId, newValues)
 
 	for (const [index, window] of changes.mvWindow)
 		updateMultiviewerWindowInput(instance, state, index, window, newValues)
@@ -663,6 +674,46 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 			variableId: `audio_monitor_sidetone_gain`,
 		})
 		updateFairlightAudioMonitorVariables(state.state, values)
+	}
+
+	if (model.fairlightAudio?.audioRouting) {
+		for (const output of model.fairlightAudio.audioRouting.outputs) {
+			for (const pair of output.channelPairs) {
+				const id = combineInputId(output.outputId, pair)
+				const stringId = formatAudioRoutingAsString(id)
+
+				variables.push(
+					{
+						name: `Name of audio routing destination ${stringId}`,
+						variableId: `audio_routing_destinations_${stringId}_name`,
+					},
+					{
+						name: `Source of audio routing destination ${stringId}`,
+						variableId: `audio_routing_destinations_${stringId}_source`,
+					},
+					{
+						name: `Name of source of audio routing destination ${stringId}`,
+						variableId: `audio_routing_destinations_${stringId}_source_name`,
+					},
+				)
+
+				updateFairlightAudioRoutingOutputVariables(state.state, id, values)
+			}
+		}
+
+		for (const source of model.fairlightAudio.audioRouting.sources) {
+			for (const pair of source.channelPairs) {
+				const id = combineInputId(source.inputId, pair)
+				const stringId = formatAudioRoutingAsString(id)
+
+				variables.push({
+					name: `Name of audio routing source ${stringId}`,
+					variableId: `audio_routing_source_${stringId}_name`,
+				})
+
+				updateFairlightAudioRoutingSourceVariables(state.state, id, values)
+			}
+		}
 	}
 
 	// Classic audio

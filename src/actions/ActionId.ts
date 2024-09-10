@@ -88,6 +88,9 @@ export enum ActionId {
 	// FairlightAudioMonitorSidetoneMuted = 'fairlightAudioMonitorSidetoneMuted',
 	FairlightAudioMonitorSidetoneGain = 'fairlightAudioMonitorSidetoneGain',
 	FairlightAudioMonitorSidetoneGainDelta = 'fairlightAudioMonitorSidetoneGainDelta',
+	FairlightAudioRouting = 'fairlightAudioRouting',
+	FairlightAudioRoutingVariables = 'fairlightAudioRoutingVariables',
+
 	SaveStartupState = 'saveStartupState',
 	ClearStartupState = 'clearStartupState',
 	InputName = 'inputName',

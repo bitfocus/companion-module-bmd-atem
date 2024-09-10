@@ -1,5 +1,25 @@
 import { generateOutputs, type ModelSpec } from './types.js'
 import { Enums } from 'atem-connection'
+import {
+	AUDIO_ROUTING_OUTPUT_PROGRAM,
+	AUDIO_ROUTING_OUTPUT_RETURN,
+	AUDIO_ROUTING_SOURCE_CONTROL,
+	AUDIO_ROUTING_SOURCE_HEADPHONES,
+	AUDIO_ROUTING_SOURCE_MICROPHONE,
+	AUDIO_ROUTING_SOURCE_MONITOR,
+	AUDIO_ROUTING_SOURCE_NO_AUDIO,
+	AUDIO_ROUTING_SOURCE_PROGRAM,
+	AUDIO_ROUTING_SOURCE_RCA,
+	AUDIO_ROUTING_SOURCE_STUDIO,
+	AUDIO_ROUTING_SOURCE_XLR,
+	generateAuxRoutingOutputs,
+	generateAuxRoutingSources,
+	generateInputRoutingSources,
+	generateMadiRoutingOutputs,
+	generateMadiRoutingSources,
+	generateMediaPlayerRoutingSources,
+	generateTalkbackRoutingSources,
+} from './util/audioRouting.js'
 
 const sourceAvailabilityAll =
 	Enums.SourceAvailability.Auxiliary |
@@ -202,7 +222,30 @@ export const ModelSpecTVSHD8: ModelSpec = {
 	recordISO: false,
 	fairlightAudio: {
 		monitor: 'split',
-		audioRouting: true,
+		audioRouting: {
+			sources: [
+				AUDIO_ROUTING_SOURCE_NO_AUDIO,
+				...generateInputRoutingSources(8),
+				AUDIO_ROUTING_SOURCE_XLR,
+				AUDIO_ROUTING_SOURCE_RCA,
+				AUDIO_ROUTING_SOURCE_MICROPHONE,
+				...generateMadiRoutingSources(16),
+				...generateMediaPlayerRoutingSources(2),
+				...generateTalkbackRoutingSources(true, true),
+				AUDIO_ROUTING_SOURCE_MONITOR,
+				AUDIO_ROUTING_SOURCE_PROGRAM,
+				AUDIO_ROUTING_SOURCE_CONTROL,
+				AUDIO_ROUTING_SOURCE_STUDIO,
+				AUDIO_ROUTING_SOURCE_HEADPHONES,
+				...generateAuxRoutingSources(2),
+			],
+			outputs: [
+				...generateMadiRoutingOutputs(32),
+				...generateAuxRoutingOutputs(2),
+				AUDIO_ROUTING_OUTPUT_PROGRAM,
+				AUDIO_ROUTING_OUTPUT_RETURN,
+			],
+		},
 		inputs: [
 			{
 				id: 1,

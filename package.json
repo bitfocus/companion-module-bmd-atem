@@ -11,7 +11,8 @@
 		"build:main": "tsc -p tsconfig.build.json",
 		"lint:raw": "eslint",
 		"lint": "yarn lint:raw .",
-		"dist": "yarn companion-module-build"
+		"dist": "yarn companion-module-build",
+		"test": "vitest"
 	},
 	"repository": {
 		"type": "git",
@@ -48,7 +49,8 @@
 		"rimraf": "^5.0.10",
 		"tsx": "^4.19.0",
 		"typescript": "~5.5.4",
-		"typescript-eslint": "^8.2.0"
+		"typescript-eslint": "^8.2.0",
+		"vitest": "^2.0.5"
 	},
 	"packageManager": "yarn@4.4.0"
 }

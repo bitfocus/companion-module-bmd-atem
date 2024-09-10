@@ -4,8 +4,14 @@ import type { MyFeedbackDefinitions } from './types.js'
 import { FeedbackId } from './FeedbackId.js'
 import { combineRgb, type CompanionInputFieldDropdown, type CompanionInputFieldNumber } from '@companion-module/base'
 import { CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION } from '../choices.js'
-import { compareNumber, NumberComparitor } from '../util.js'
-import { AtemAudioInputPicker, AtemFairlightAudioSourcePicker, NumberComparitorPicker } from '../input.js'
+import { compareNumber, NumberComparitor, parseAudioRoutingStringSingle } from '../util.js'
+import {
+	AtemAudioInputPicker,
+	AtemFairlightAudioRoutingDestinationPicker,
+	AtemFairlightAudioRoutingSourcePicker,
+	AtemFairlightAudioSourcePicker,
+	NumberComparitorPicker,
+} from '../input.js'
 import type { StateWrapper } from '../state.js'
 
 export interface AtemFairlightAudioFeedbacks {
@@ -53,6 +59,14 @@ export interface AtemFairlightAudioFeedbacks {
 		comparitor: NumberComparitor
 		gain: number
 	}
+	[FeedbackId.FairlightAudioRouting]: {
+		destination: number
+		source: number
+	}
+	[FeedbackId.FairlightAudioRoutingVariables]: {
+		destination: string
+		source: string
+	}
 }
 
 export function createFairlightAudioFeedbacks(
@@ -72,6 +86,8 @@ export function createFairlightAudioFeedbacks(
 			[FeedbackId.FairlightAudioMonitorTalkbackMuted]: undefined,
 			[FeedbackId.FairlightAudioMonitorTalkbackGain]: undefined,
 			[FeedbackId.FairlightAudioMonitorSidetoneGain]: undefined,
+			[FeedbackId.FairlightAudioRouting]: undefined,
+			[FeedbackId.FairlightAudioRoutingVariables]: undefined,
 		}
 	}
 
@@ -525,5 +541,92 @@ export function createFairlightAudioFeedbacks(
 						},
 					}
 				: undefined,
+
+		...AudioRoutingFeedbacks(model, state),
+	}
+}
+
+function AudioRoutingFeedbacks(
+	model: ModelSpec,
+	state: StateWrapper,
+): MyFeedbackDefinitions<
+	Pick<AtemFairlightAudioFeedbacks, FeedbackId.FairlightAudioRouting | FeedbackId.FairlightAudioRoutingVariables>
+> {
+	if (!model.fairlightAudio?.audioRouting)
+		return {
+			[FeedbackId.FairlightAudioRouting]: undefined,
+			[FeedbackId.FairlightAudioRoutingVariables]: undefined,
+		}
+
+	return {
+		[FeedbackId.FairlightAudioRouting]: {
+			type: 'boolean',
+			name: 'Fairlight Audio: Audio Routing',
+			description: 'Requires firmware 9.4+',
+			options: {
+				destination: AtemFairlightAudioRoutingDestinationPicker(model, state.state),
+				source: AtemFairlightAudioRoutingSourcePicker(model, state.state),
+			},
+			defaultStyle: {
+				color: 0x000000,
+				bgcolor: 0x00ff00,
+			},
+			callback: async ({ options }) => {
+				const outputsState = state.state.fairlight?.audioRouting?.outputs
+				if (!outputsState) return false
+
+				const sourceId = options.getPlainNumber('source')
+				const destinationId = options.getPlainNumber('destination')
+
+				const output = outputsState[destinationId]
+				return output && output.sourceId === sourceId
+			},
+		},
+		[FeedbackId.FairlightAudioRoutingVariables]: {
+			type: 'boolean',
+			name: 'Fairlight Audio: Audio Routing from variables',
+			description: 'Requires firmware 9.4+',
+			options: {
+				destination: {
+					type: 'textinput',
+					id: 'destination',
+					label: 'Destination',
+					default: '1-1',
+					tooltip:
+						'IDs are formed as "output:channel". channel can be omitted when wanting "1/2" eg 1503:3/4 for "MADI 3 3/4"',
+					useVariables: true,
+				},
+				source: {
+					type: 'textinput',
+					id: 'source',
+					label: 'Source',
+					default: '0',
+					tooltip:
+						'IDs are formed as "output:channel". channel can be omitted when wanting "1/2" eg 1503:3/4 for "MADI 3 3/4"',
+					useVariables: true,
+				},
+			},
+			defaultStyle: {
+				color: 0x000000,
+				bgcolor: 0x00ff00,
+			},
+			callback: async ({ options }) => {
+				const outputsState = state.state.fairlight?.audioRouting?.outputs
+				if (!outputsState) return false
+
+				const [sourceStr, destinationStr] = await Promise.all([
+					options.getParsedString('source'),
+					options.getParsedString('destination'),
+				])
+				if (!destinationStr || !sourceStr) return false
+
+				const source = parseAudioRoutingStringSingle(sourceStr) ?? 0
+				const destination = parseAudioRoutingStringSingle(destinationStr)
+				if (!destination) return false
+
+				const output = outputsState[destination]
+				return output && output.sourceId === source
+			},
+		},
 	}
 }

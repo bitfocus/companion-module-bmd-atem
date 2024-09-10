@@ -3,6 +3,8 @@ import { type AtemState, Enums } from 'atem-connection'
 import type { ModelSpec } from './models/index.js'
 import { iterateTimes, assertUnreachable } from './util.js'
 import type { MyDropdownChoice } from './common.js'
+import { AudioChannelPair } from 'atem-connection/dist/enums/index.js'
+import { combineInputId } from './models/util/audioRouting.js'
 
 export const CHOICES_SSRCBOXES: DropdownChoice[] = [
 	{ id: 0, label: 'Box 1' },
@@ -211,13 +213,14 @@ export interface MiniSourceInfo {
 }
 export interface SourceInfo extends MiniSourceInfo {
 	shortName: string
+	portType: Enums.InternalPortType
 }
 export function GetSourcesListForType(
 	model: ModelSpec,
 	state: AtemState,
 	subset?: 'me' | 'aux' | 'mv' | 'key' | 'ssrc-box' | 'ssrc-art' | 'tally',
 ): SourceInfo[] {
-	const getSource = (id: number, defShort: string, defLong: string): SourceInfo => {
+	const getSource = (id: number, portType: Enums.InternalPortType, defShort: string, defLong: string): SourceInfo => {
 		const input = state.inputs[id]
 		const shortName = input?.shortName || defShort
 		const longName = input?.longName || defLong
@@ -226,6 +229,7 @@ export function GetSourcesListForType(
 			id,
 			shortName,
 			longName,
+			portType,
 		}
 	}
 
@@ -263,52 +267,52 @@ export function GetSourcesListForType(
 
 		switch (input.portType) {
 			case Enums.InternalPortType.External:
-				sources.push(getSource(input.id, `In ${input.id}`, `Input ${input.id}`))
+				sources.push(getSource(input.id, input.portType, `In ${input.id}`, `Input ${input.id}`))
 				break
 			case Enums.InternalPortType.ColorBars:
-				sources.push(getSource(input.id, 'Bars', 'Bars'))
+				sources.push(getSource(input.id, input.portType, 'Bars', 'Bars'))
 				break
 			case Enums.InternalPortType.ColorGenerator: {
 				const colId = input.id - 2000
-				sources.push(getSource(input.id, `Col${colId}`, `Color ${colId}`))
+				sources.push(getSource(input.id, input.portType, `Col${colId}`, `Color ${colId}`))
 				break
 			}
 			case Enums.InternalPortType.MediaPlayerFill: {
 				const mpId = (input.id - 3000) / 10
-				sources.push(getSource(input.id, `MP ${mpId}`, `Media Player ${mpId}`))
+				sources.push(getSource(input.id, input.portType, `MP ${mpId}`, `Media Player ${mpId}`))
 				break
 			}
 			case Enums.InternalPortType.MediaPlayerKey: {
 				const mpId = (input.id - 3000 - 1) / 10
-				sources.push(getSource(input.id, `MP${mpId}K`, `Media Player ${mpId} Key`))
+				sources.push(getSource(input.id, input.portType, `MP${mpId}K`, `Media Player ${mpId} Key`))
 				break
 			}
 			case Enums.InternalPortType.SuperSource: {
 				const ssrcId = input.id - 6000 + 1
-				sources.push(getSource(input.id, `SSc${ssrcId}`, `Super Source ${ssrcId}`))
+				sources.push(getSource(input.id, input.portType, `SSc${ssrcId}`, `Super Source ${ssrcId}`))
 				break
 			}
 			case Enums.InternalPortType.ExternalDirect: {
 				const inputId = input.id - 11000
-				sources.push(getSource(input.id, `In${inputId}D`, `Input ${inputId} - Direct`))
+				sources.push(getSource(input.id, input.portType, `In${inputId}D`, `Input ${inputId} - Direct`))
 				break
 			}
 			case Enums.InternalPortType.MEOutput: {
 				if (input.id < 8000) {
 					const clnId = input.id - 7000
-					sources.push(getSource(input.id, `Cln${clnId}`, `Clean Feed ${clnId}`))
+					sources.push(getSource(input.id, input.portType, `Cln${clnId}`, `Clean Feed ${clnId}`))
 				} else if (input.id % 2 === 1) {
 					const meId = (input.id - 10000 - 1) / 10
-					sources.push(getSource(input.id, `M${meId}PV`, `ME ${meId} Preview`))
+					sources.push(getSource(input.id, input.portType, `M${meId}PV`, `ME ${meId} Preview`))
 				} else {
 					const meId = (input.id - 10000) / 10
-					sources.push(getSource(input.id, `M${meId}PG`, `ME ${meId} Program`))
+					sources.push(getSource(input.id, input.portType, `M${meId}PG`, `ME ${meId} Program`))
 				}
 				break
 			}
 			case Enums.InternalPortType.Auxiliary: {
 				const auxId = input.id - 8000
-				sources.push(getSource(input.id, `Aux${auxId}`, `Auxiliary ${auxId}`))
+				sources.push(getSource(input.id, input.portType, `Aux${auxId}`, `Auxiliary ${auxId}`))
 				break
 			}
 			case Enums.InternalPortType.Mask: {
@@ -319,11 +323,11 @@ export function GetSourcesListForType(
 			}
 			case Enums.InternalPortType.MultiViewer: {
 				const mvId = input.id - 9000
-				sources.push(getSource(input.id, `MV ${mvId}`, `MultiView ${mvId}`))
+				sources.push(getSource(input.id, input.portType, `MV ${mvId}`, `MultiView ${mvId}`))
 				break
 			}
 			case Enums.InternalPortType.Black:
-				sources.push(getSource(input.id, 'Blk', 'Black'))
+				sources.push(getSource(input.id, input.portType, 'Blk', 'Black'))
 				break
 			default:
 				assertUnreachable(input.portType)
@@ -335,7 +339,7 @@ export function GetSourcesListForType(
 	return sources
 }
 
-export type AudioInputSubset = 'delay'
+export type AudioInputSubset = 'delay' | 'routing'
 
 export function GetAudioInputsList(model: ModelSpec, state: AtemState, subset?: AudioInputSubset): MiniSourceInfo[] {
 	const getSource = (id: number, videoId: number | undefined, defLong: string): MiniSourceInfo => {
@@ -351,6 +355,7 @@ export function GetAudioInputsList(model: ModelSpec, state: AtemState, subset?: 
 	const sources: MiniSourceInfo[] = []
 	for (const input of model.classicAudio?.inputs ?? model.fairlightAudio?.inputs ?? []) {
 		if (subset === 'delay' && (!('maxDelay' in input) || !input.maxDelay)) continue
+		if (subset !== 'routing' && 'routingOnly' in input && input.routingOnly) continue
 
 		switch (input.portType) {
 			case Enums.ExternalPortType.Unknown:
@@ -418,4 +423,71 @@ export function CameraControlSourcePicker(): CompanionInputFieldTextInput {
 		default: '1',
 		label: 'Camera Id',
 	}
+}
+
+export const AudioRoutingChannelsNames: { [key in AudioChannelPair]: string } = {
+	[AudioChannelPair.Channel1_2]: `1/2`,
+	[AudioChannelPair.Channel3_4]: `3/4`,
+	[AudioChannelPair.Channel5_6]: `5/6`,
+	[AudioChannelPair.Channel7_8]: `7/8`,
+	[AudioChannelPair.Channel9_10]: `9/10`,
+	[AudioChannelPair.Channel11_12]: `11/12`,
+	[AudioChannelPair.Channel13_14]: `13/14`,
+	[AudioChannelPair.Channel15_16]: `15/16`,
+} as const
+
+export function FairlightAudioRoutingSources(model: ModelSpec, state: AtemState): DropdownChoice[] {
+	const sources: DropdownChoice[] = []
+
+	const stateSources = state.fairlight?.audioRouting?.sources ?? {}
+	for (const source of model.fairlightAudio?.audioRouting?.sources ?? []) {
+		for (const pair of source.channelPairs) {
+			const combinedId = combineInputId(source.inputId, pair)
+
+			sources.push({
+				id: combinedId,
+				label: compileAudioName(source.sourceName, stateSources[combinedId]?.name, pair, source.channelPairs),
+			})
+		}
+	}
+
+	return sources
+}
+
+export function FairlightAudioRoutingDestinations(model: ModelSpec, state: AtemState): DropdownChoice[] {
+	const sources: DropdownChoice[] = []
+
+	const stateOutputs = state.fairlight?.audioRouting?.outputs ?? {}
+	for (const output of model.fairlightAudio?.audioRouting?.outputs ?? []) {
+		for (const pair of output.channelPairs) {
+			const combinedId = combineInputId(output.outputId, pair)
+
+			sources.push({
+				id: combinedId,
+				label: compileAudioName(output.outputName, stateOutputs[combinedId]?.name, pair, output.channelPairs),
+			})
+		}
+	}
+
+	return sources
+}
+
+function compileAudioName(
+	defaultName: string,
+	currentName: string | undefined,
+	pair: Enums.AudioChannelPair,
+	allPairs: Enums.AudioChannelPair[],
+) {
+	let name = currentName ?? defaultName
+
+	if (allPairs.length !== 1 || pair !== Enums.AudioChannelPair.Channel1_2) {
+		const pairName = AudioRoutingChannelsNames[pair]
+		name = `${name} ${pairName}`
+	}
+
+	if (currentName && defaultName) {
+		name = `${currentName} (${defaultName})`
+	}
+
+	return name
 }

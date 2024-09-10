@@ -1,5 +1,18 @@
 import { generateOutputs, type ModelSpec } from './types.js'
 import { Enums } from 'atem-connection'
+import {
+	AUDIO_ROUTING_SOURCE_MICROPHONE,
+	AUDIO_ROUTING_SOURCE_NO_AUDIO,
+	AUDIO_ROUTING_SOURCE_PROGRAM,
+	AUDIO_ROUTING_SOURCE_TRS,
+	generateMixMinusRoutingSources,
+	generateAuxRoutingOutputs,
+	generateInputRoutingSources,
+	generateMadiRoutingOutputs,
+	generateMadiRoutingSources,
+	generateMediaPlayerRoutingSources,
+	generateTalkbackRoutingSources,
+} from './util/audioRouting.js'
 
 export const ModelSpecConstellationAsHDOr4K: ModelSpec = {
 	id: Enums.Model.Constellation,
@@ -1025,7 +1038,25 @@ export const ModelSpecConstellationAsHDOr4K: ModelSpec = {
 	],
 	fairlightAudio: {
 		monitor: 'split',
-		audioRouting: true,
+		audioRouting: {
+			// TODO: this is a guess based on the hd/4k setup
+			sources: [
+				AUDIO_ROUTING_SOURCE_NO_AUDIO,
+				...generateInputRoutingSources(40),
+				AUDIO_ROUTING_SOURCE_MICROPHONE,
+				AUDIO_ROUTING_SOURCE_TRS,
+				...generateMadiRoutingSources(32),
+				...generateMediaPlayerRoutingSources(4),
+				...generateTalkbackRoutingSources(true, false),
+				AUDIO_ROUTING_SOURCE_PROGRAM,
+				...generateMixMinusRoutingSources(24),
+			],
+			outputs: [
+				//
+				...generateMadiRoutingOutputs(32),
+				...generateAuxRoutingOutputs(24),
+			],
+		},
 		inputs: [
 			{
 				id: 1,

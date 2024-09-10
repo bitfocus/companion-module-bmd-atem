@@ -43,7 +43,10 @@ export interface ModelSpec {
 	}
 	fairlightAudio?: {
 		monitor: 'combined' | 'split' | null
-		audioRouting: boolean
+		audioRouting?: {
+			sources: AudioRoutingSourceInfo[]
+			outputs: AudioRoutingOutputInfo[]
+		}
 		inputs: Array<{
 			id: number
 			portType: Enums.ExternalPortType
@@ -52,6 +55,17 @@ export interface ModelSpec {
 			maxDelay?: number
 		}>
 	}
+}
+
+export interface AudioRoutingSourceInfo {
+	sourceName: string
+	inputId: number
+	channelPairs: Enums.AudioChannelPair[]
+}
+export interface AudioRoutingOutputInfo {
+	outputName: string
+	outputId: number
+	channelPairs: Enums.AudioChannelPair[]
 }
 
 export function generateOutputs(prefix: string, count: number): ModelSpec['outputs'] {

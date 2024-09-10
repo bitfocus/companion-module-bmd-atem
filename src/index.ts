@@ -260,6 +260,8 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			fairlightAudio: new Set(),
 			fairlightAudioMaster: false,
 			fairlightAudioMonitor: false,
+			fairlightRoutingSources: new Set(),
+			fairlightRoutingOutputs: new Set(),
 			classicAudio: new Set(),
 			mvWindow: new Set(),
 		}
@@ -492,6 +494,24 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			}
 			if (path.match(/fairlight.monitor/)) {
 				changedFeedbacks.add(FeedbackId.FairlightAudioMonitorMasterMuted)
+				continue
+			}
+
+			if (path.match(/fairlight.audioRouting/)) {
+				changedFeedbacks.add(FeedbackId.FairlightAudioRouting)
+				changedFeedbacks.add(FeedbackId.FairlightAudioRoutingVariables)
+
+				const sourceMatch = path.match(/fairlight.audioRouting.sources.(\d+)/)
+				if (sourceMatch) {
+					changedVariables.fairlightRoutingSources.add(Number(sourceMatch[1]))
+					continue
+				}
+				const outputMatch = path.match(/fairlight.audioRouting.outputs.(\d+)/)
+				if (outputMatch) {
+					changedVariables.fairlightRoutingSources.add(Number(outputMatch[1]))
+					continue
+				}
+
 				continue
 			}
 			if (path.match(/settings.timeMode/)) {

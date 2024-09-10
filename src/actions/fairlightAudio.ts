@@ -1,9 +1,11 @@
-import { Enums, type Atem } from 'atem-connection'
+import { Enums, type Atem, Commands } from 'atem-connection'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
 import type { MyActionDefinitions } from './types.js'
 import {
 	AtemAudioInputPicker,
+	AtemFairlightAudioRoutingDestinationsPicker,
+	AtemFairlightAudioRoutingSourcePicker,
 	AtemFairlightAudioSourcePicker,
 	FadeDurationFields,
 	FaderLevelDeltaChoice,
@@ -12,6 +14,7 @@ import {
 import type { AtemTransitions } from '../transitions.js'
 import { CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION, CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../choices.js'
 import type { StateWrapper } from '../state.js'
+import { parseAudioRoutingString, parseAudioRoutingStringSingle } from '../util.js'
 
 export interface AtemFairlightAudioActions {
 	[ActionId.FairlightAudioInputGain]: {
@@ -101,6 +104,15 @@ export interface AtemFairlightAudioActions {
 	[ActionId.FairlightAudioMonitorSidetoneGainDelta]: {
 		delta: number
 	} & FadeDurationFieldsType
+
+	[ActionId.FairlightAudioRouting]: {
+		destinations: number[]
+		source: number
+	}
+	[ActionId.FairlightAudioRoutingVariables]: {
+		destinations: string
+		source: string
+	}
 }
 
 export function createFairlightAudioActions(
@@ -134,6 +146,8 @@ export function createFairlightAudioActions(
 			// [ActionId.FairlightAudioMonitorSidetoneMuted]: undefined,
 			[ActionId.FairlightAudioMonitorSidetoneGain]: undefined,
 			[ActionId.FairlightAudioMonitorSidetoneGainDelta]: undefined,
+			[ActionId.FairlightAudioRouting]: undefined,
+			[ActionId.FairlightAudioRoutingVariables]: undefined,
 		}
 	}
 
@@ -662,6 +676,8 @@ export function createFairlightAudioActions(
 		...HeadphoneMasterActions(atem, model, transitions, state),
 		...HeadphoneTalkbackActions(atem, model, transitions, state),
 		...HeadphoneSidetoneActions(atem, model, transitions, state),
+
+		...AudioRoutingActions(atem, model, transitions, state),
 	}
 }
 
@@ -1039,5 +1055,91 @@ function HeadphoneSidetoneActions(
 						},
 					}
 				: undefined,
+	}
+}
+function AudioRoutingActions(
+	atem: Atem | undefined,
+	model: ModelSpec,
+	_transitions: AtemTransitions,
+	state: StateWrapper,
+): MyActionDefinitions<
+	Pick<AtemFairlightAudioActions, ActionId.FairlightAudioRouting | ActionId.FairlightAudioRoutingVariables>
+> {
+	if (!model.fairlightAudio?.audioRouting)
+		return {
+			[ActionId.FairlightAudioRouting]: undefined,
+			[ActionId.FairlightAudioRoutingVariables]: undefined,
+		}
+
+	return {
+		[ActionId.FairlightAudioRouting]: {
+			name: 'Fairlight Audio: Audio Routing',
+			description: 'Requires firmware 9.4+',
+			options: {
+				destinations: AtemFairlightAudioRoutingDestinationsPicker(model, state.state),
+				source: AtemFairlightAudioRoutingSourcePicker(model, state.state),
+			},
+			callback: async ({ options }) => {
+				const sourceId = options.getPlainNumber('source')
+				const destinations = options.getRaw('destinations')
+				if (!destinations || destinations.length === 0) return
+
+				// TODO - simpler batching
+				const commands: Commands.AudioRoutingOutputCommand[] = []
+				for (const destination of destinations) {
+					const cmd = new Commands.AudioRoutingOutputCommand(destination)
+					cmd.updateProps({ sourceId: sourceId })
+					commands.push(cmd)
+				}
+
+				await atem?.sendCommands(commands)
+			},
+		},
+		[ActionId.FairlightAudioRoutingVariables]: {
+			name: 'Fairlight Audio: Audio Routing from variables',
+			description: 'Requires firmware 9.4+',
+			options: {
+				destinations: {
+					type: 'textinput',
+					id: 'destinations',
+					label: 'Destinations',
+					default: '1-1',
+					tooltip:
+						'Comma/space separated list of destination IDs. IDs are formed as "output:channel". channel can be omitted when wanting "1/2" eg 1503:3/4 for "MADI 3 3/4"',
+					useVariables: true,
+				},
+				source: {
+					type: 'textinput',
+					id: 'source',
+					label: 'Source',
+					default: '0',
+					tooltip:
+						'IDs are formed as "output:channel". channel can be omitted when wanting "1/2" eg 1503:3/4 for "MADI 3 3/4"',
+					useVariables: true,
+				},
+			},
+			callback: async ({ options }) => {
+				const [sourceStr, destinationsStr] = await Promise.all([
+					options.getParsedString('source'),
+					options.getParsedString('destinations'),
+				])
+				if (!destinationsStr || !sourceStr) return
+
+				const source = parseAudioRoutingStringSingle(sourceStr) ?? 0
+				const destinations = parseAudioRoutingString(destinationsStr)
+
+				if (destinations.length === 0) return
+
+				// TODO - simpler batching
+				const commands: Commands.AudioRoutingOutputCommand[] = []
+				for (const destination of destinations) {
+					const cmd = new Commands.AudioRoutingOutputCommand(destination)
+					cmd.updateProps({ sourceId: source })
+					commands.push(cmd)
+				}
+
+				await atem?.sendCommands(commands)
+			},
+		},
 	}
 }
