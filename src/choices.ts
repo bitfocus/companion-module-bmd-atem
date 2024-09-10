@@ -74,6 +74,11 @@ export const CHOICES_KEYFRAMES: MyDropdownChoice<
 	{ id: Enums.FlyKeyKeyFrame.Full, label: 'Full' },
 ]
 
+export const CHOICES_KEYFRAMES_CONFIGURABLE: MyDropdownChoice<Enums.FlyKeyKeyFrame.A | Enums.FlyKeyKeyFrame.B>[] = [
+	{ id: Enums.FlyKeyKeyFrame.A, label: 'A' },
+	{ id: Enums.FlyKeyKeyFrame.B, label: 'B' },
+]
+
 export const CHOICES_CURRENTKEYFRAMES: MyDropdownChoice<
 	Enums.IsAtKeyFrame.A | Enums.IsAtKeyFrame.B | Enums.IsAtKeyFrame.RunToInfinite
 >[] = [
