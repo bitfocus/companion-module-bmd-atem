@@ -1105,7 +1105,7 @@ function AudioRoutingActions(
 					label: 'Destinations',
 					default: '1-1',
 					tooltip:
-						'Comma/space separated list of destination IDs. IDs are formed as "output:channel". channel can be omitted when wanting "1/2" eg 1503:3/4 for "MADI 3 3/4"',
+						'Comma/space separated list of destination IDs. IDs are formed as "output-channel". channel can be omitted when wanting "1/2" eg 1503-3_4 for "MADI 3 3/4"',
 					useVariables: true,
 				},
 				source: {
@@ -1114,7 +1114,7 @@ function AudioRoutingActions(
 					label: 'Source',
 					default: '0',
 					tooltip:
-						'IDs are formed as "output:channel". channel can be omitted when wanting "1/2" eg 1503:3/4 for "MADI 3 3/4"',
+						'IDs are formed as "output-channel". channel can be omitted when wanting "1/2" eg 1503-3_4 for "MADI 3 3/4"',
 					useVariables: true,
 				},
 			},
