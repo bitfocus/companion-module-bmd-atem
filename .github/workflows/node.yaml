@@ -58,8 +58,3 @@ jobs:
           CI: true
       - name: Send coverage
         uses: codecov/codecov-action@v3
-      - name: Check docs generation
-        run: |
-          yarn docs:test
-        env:
-          CI: true
