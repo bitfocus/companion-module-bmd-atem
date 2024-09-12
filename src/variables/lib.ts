@@ -135,6 +135,30 @@ function updateUSKVariable(
 	const input = getUSK(state, meIndex, keyIndex)?.fillSource ?? 0
 	values[`usk_${meIndex + 1}_${keyIndex + 1}_input`] = getSourcePresetName(instance, state, input)
 	values[`usk_${meIndex + 1}_${keyIndex + 1}_input_id`] = input
+	const dveSettings = state.video.mixEffects[meIndex]?.upstreamKeyers[keyIndex]?.dveSettings
+	if (dveSettings) {
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_maskTop`] = dveSettings.maskTop / 1000
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_maskBottom`] = dveSettings.maskBottom / 1000
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_maskLeft`] = dveSettings.maskLeft / 1000
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_maskRight`] = dveSettings.maskRight / 1000
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_positionX`] = dveSettings.positionX / 1000
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_positionY`] = dveSettings.positionY / 1000
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_sizeX`] = dveSettings.sizeX / 1000
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_sizeY`] = dveSettings.sizeY / 1000
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_rotation`] = dveSettings.rotation
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordOutWidth`] = dveSettings.borderOuterWidth / 100
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordInWidth`] = dveSettings.borderInnerWidth / 100
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordOutSoft`] = dveSettings.borderOuterSoftness
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordInSoft`] = dveSettings.borderInnerSoftness
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_bevelSoft`] = dveSettings.borderBevelSoftness
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_bevelPos`] = dveSettings.borderBevelPosition
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordOpacity`] = dveSettings.borderOpacity
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordHue`] = dveSettings.borderHue / 10
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordLum`] = dveSettings.borderLuma / 10
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_lightDirection`] = dveSettings.lightSourceDirection / 10
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_lightAltitude`] = dveSettings.lightSourceAltitude
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_rate`] = dveSettings.rate
+	}
 }
 function updateDSKVariable(
 	instance: InstanceBaseExt<AtemConfig>,
@@ -411,6 +435,92 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 				name: `Id of input active on M/E ${i + 1} Key ${k + 1}`,
 				variableId: `usk_${i + 1}_${k + 1}_input_id`,
 			})
+			if (model.USKs && model.DVEs) {
+				variables.push({
+					name: `Mask cutoff from the top of M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_maskTop`,
+				})
+				variables.push({
+					name: `Mask cutoff from the bottom of M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_maskBottom`,
+				})
+				variables.push({
+					name: `Mask cutoff from the left of M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_maskLeft`,
+				})
+				variables.push({
+					name: `Mask cutoff from the right of M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_maskRight`,
+				})
+				variables.push({
+					name: `X position of M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_positionX`,
+				})
+				variables.push({
+					name: `Y position of M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_positionY`,
+				})
+				variables.push({
+					name: `X scale of M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_sizeX`,
+				})
+				variables.push({
+					name: `Y scale of M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_sizeY`,
+				})
+				variables.push({
+					name: `Rotation of M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_rotation`,
+				})
+				variables.push({
+					name: `Border Width (Outer) of M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_bordOutWidth`,
+				})
+				variables.push({
+					name: `Border Width (Inner) of M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_bordInWidth`,
+				})
+				variables.push({
+					name: `Border Softness (Outer) of M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_bordOutSoft`,
+				})
+				variables.push({
+					name: `Border Softnesss (Inner) of M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_bordInSoft`,
+				})
+				variables.push({
+					name: `Border Bevel Softnesss of M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_bevelSoft`,
+				})
+				variables.push({
+					name: `Border Bevel Position of M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_bevelPos`,
+				})
+				variables.push({
+					name: `Border Opacity of M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_bordOpacity`,
+				})
+				variables.push({
+					name: `Border Hue of M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_bordHue`,
+				})
+				variables.push({
+					name: `Border Luma of M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_bordLum`,
+				})
+				variables.push({
+					name: `Light source Angle of shadow of M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_lightDirection`,
+				})
+				variables.push({
+					name: `Light source Altitude of shadow of M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_lightAltitude`,
+				})
+				variables.push({
+					name: `Keyframe transformation Rate of M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_rate`,
+				})
+			}
 
 			updateUSKVariable(instance, state.state, i, k, values)
 		}
