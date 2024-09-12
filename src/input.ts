@@ -820,6 +820,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'borderBevel',
 			default: '0',
 			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderStyle'),
 		},
 		borderOuterWidth: {
 			type: 'textinput',
@@ -883,6 +884,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			label: 'Rate',
 			default: '25',
 			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('rate'),
 		},
 	}
 
