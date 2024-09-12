@@ -137,6 +137,7 @@ function updateUSKVariable(
 	values[`usk_${meIndex + 1}_${keyIndex + 1}_input_id`] = input
 	const dveSettings = state.video.mixEffects[meIndex]?.upstreamKeyers[keyIndex]?.dveSettings
 	if (dveSettings) {
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_maskEnabled`] = dveSettings.maskEnabled
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_maskTop`] = dveSettings.maskTop / 1000
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_maskBottom`] = dveSettings.maskBottom / 1000
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_maskLeft`] = dveSettings.maskLeft / 1000
@@ -157,6 +158,8 @@ function updateUSKVariable(
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordLum`] = dveSettings.borderLuma / 10
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_lightDirection`] = dveSettings.lightSourceDirection / 10
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_lightAltitude`] = dveSettings.lightSourceAltitude
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordEnabled`] = dveSettings.borderEnabled
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_shadowEnabled`] = dveSettings.shadowEnabled
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_rate`] = dveSettings.rate
 	}
 }
@@ -437,6 +440,10 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 			})
 			if (model.USKs && model.DVEs) {
 				variables.push({
+					name: `Mask Enabled for M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_maskEnabled`,
+				})
+				variables.push({
 					name: `Mask cutoff from the top of M/E ${i + 1} Key ${k + 1}`,
 					variableId: `usk_${i + 1}_${k + 1}_maskTop`,
 				})
@@ -515,6 +522,14 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 				variables.push({
 					name: `Light source Altitude of shadow of M/E ${i + 1} Key ${k + 1}`,
 					variableId: `usk_${i + 1}_${k + 1}_lightAltitude`,
+				})
+				variables.push({
+					name: `Border Enabled for M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_bordEnabled`,
+				})
+				variables.push({
+					name: `Shadow Enabled for M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_shadowEnabled`,
 				})
 				variables.push({
 					name: `Keyframe transformation Rate of M/E ${i + 1} Key ${k + 1}`,
