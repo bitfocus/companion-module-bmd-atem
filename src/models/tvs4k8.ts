@@ -279,7 +279,7 @@ export const ModelSpecTVS4K8: ModelSpec = {
 		audioRouting: {
 			sources: [
 				AUDIO_ROUTING_SOURCE_NO_AUDIO,
-				...generateInputRoutingSources(8),
+				...generateInputRoutingSources(8, true),
 				AUDIO_ROUTING_SOURCE_XLR,
 				AUDIO_ROUTING_SOURCE_RCA,
 				AUDIO_ROUTING_SOURCE_MICROPHONE,

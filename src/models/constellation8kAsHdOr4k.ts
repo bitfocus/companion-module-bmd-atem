@@ -1042,7 +1042,7 @@ export const ModelSpecConstellationAsHDOr4K: ModelSpec = {
 			// TODO: this is a guess based on the hd/4k setup
 			sources: [
 				AUDIO_ROUTING_SOURCE_NO_AUDIO,
-				...generateInputRoutingSources(40),
+				...generateInputRoutingSources(40, true),
 				AUDIO_ROUTING_SOURCE_MICROPHONE,
 				AUDIO_ROUTING_SOURCE_TRS,
 				...generateMadiRoutingSources(32),

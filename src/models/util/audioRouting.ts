@@ -81,18 +81,20 @@ export const AUDIO_ROUTING_OUTPUT_RETURN: AudioRoutingOutputInfo = {
 	channelPairs: ALL_CHANNEL_PAIRS,
 }
 
-export function generateInputRoutingSources(inputCount: number): AudioRoutingSourceInfo[] {
+export function generateInputRoutingSources(inputCount: number, includeComms: boolean): AudioRoutingSourceInfo[] {
 	const sources: Array<AudioRoutingSourceInfo> = []
 	for (let i = 1; i <= inputCount; i++) {
 		sources.push({
 			inputId: i,
 			sourceName: `Input ${i} 1/2`,
-			channelPairs: [
-				Enums.AudioChannelPair.Channel1_2,
-				Enums.AudioChannelPair.Channel3_4,
-				Enums.AudioChannelPair.Channel13_14,
-				Enums.AudioChannelPair.Channel15_16,
-			],
+			channelPairs: includeComms
+				? [
+						Enums.AudioChannelPair.Channel1_2,
+						Enums.AudioChannelPair.Channel3_4,
+						Enums.AudioChannelPair.Channel13_14,
+						Enums.AudioChannelPair.Channel15_16,
+					]
+				: [Enums.AudioChannelPair.Channel1_2, Enums.AudioChannelPair.Channel3_4],
 		})
 	}
 	return sources
