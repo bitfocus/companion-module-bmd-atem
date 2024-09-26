@@ -1,5 +1,16 @@
 import { generateOutputs, type ModelSpec } from './types.js'
 import { Enums } from 'atem-connection'
+import {
+	AUDIO_ROUTING_SOURCE_NO_AUDIO,
+	generateInputRoutingSources,
+	AUDIO_ROUTING_SOURCE_MICROPHONE,
+	AUDIO_ROUTING_SOURCE_TRS,
+	generateMediaPlayerRoutingSources,
+	generateTalkbackRoutingSources,
+	AUDIO_ROUTING_SOURCE_PROGRAM,
+	generateMixMinusRoutingSources,
+	generateAuxRoutingOutputs,
+} from './util/audioRouting.js'
 
 export const ModelSpecConstellationHD2ME: ModelSpec = {
 	id: Enums.Model.ConstellationHD2ME,
@@ -615,5 +626,21 @@ export const ModelSpecConstellationHD2ME: ModelSpec = {
 				portType: Enums.ExternalPortType.Internal,
 			},
 		],
+		audioRouting: {
+			sources: [
+				AUDIO_ROUTING_SOURCE_NO_AUDIO,
+				...generateInputRoutingSources(20, false),
+				AUDIO_ROUTING_SOURCE_MICROPHONE,
+				AUDIO_ROUTING_SOURCE_TRS,
+				...generateMediaPlayerRoutingSources(2),
+				...generateTalkbackRoutingSources(false, false),
+				AUDIO_ROUTING_SOURCE_PROGRAM,
+				...generateMixMinusRoutingSources(12),
+			],
+			outputs: [
+				//
+				...generateAuxRoutingOutputs(12),
+			],
+		},
 	},
 }

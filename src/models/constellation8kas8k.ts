@@ -323,7 +323,7 @@ export const ModelSpecConstellation8KAs8K: ModelSpec = {
 		audioRouting: {
 			sources: [
 				AUDIO_ROUTING_SOURCE_NO_AUDIO,
-				...generateInputRoutingSources(10),
+				...generateInputRoutingSources(10, true),
 				AUDIO_ROUTING_SOURCE_MICROPHONE,
 				AUDIO_ROUTING_SOURCE_TRS,
 				...generateMadiRoutingSources(32),
