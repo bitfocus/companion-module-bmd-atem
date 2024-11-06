@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.14.1 & v3.13.1
+
+- Refine audio routing support
+
 ## v3.14.0
 
 - Tooling updates
