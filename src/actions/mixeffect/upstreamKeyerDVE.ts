@@ -2,6 +2,7 @@ import { Enums, type Atem } from 'atem-connection'
 import {
 	AtemMEPicker,
 	AtemUSKDVEPropertiesPickers,
+	AtemUSKDVEPropertiesVariablesPickers,
 	AtemUSKPicker,
 	AtemUSKKeyframePropertiesPickers,
 } from '../../input.js'
@@ -75,6 +76,66 @@ export interface AtemUpstreamKeyerDVEActions {
 		borderBevelPosition: number
 		borderBevelSoftness: number
 		rate: number
+	}
+	[ActionId.USKDVEPropertiesVariables]: {
+		mixeffect: string
+		key: string
+
+		properties: Array<
+			| 'positionX'
+			| 'positionY'
+			| 'sizeX'
+			| 'sizeY'
+			| 'rotation'
+			| 'maskEnabled'
+			| 'maskTop'
+			| 'maskBottom'
+			| 'maskLeft'
+			| 'maskRight'
+			| 'shadowEnabled'
+			| 'lightSourceDirection'
+			| 'lightSourceAltitude'
+			| 'borderEnabled'
+			| 'borderHue'
+			| 'borderSaturation'
+			| 'borderLuma'
+			| 'borderBevel'
+			| 'borderOuterWidth'
+			| 'borderInnerWidth'
+			| 'borderOuterSoftness'
+			| 'borderInnerSoftness'
+			| 'borderOpacity'
+			| 'borderBevelPosition'
+			| 'borderBevelSoftness'
+			| 'rate'
+		>
+
+		positionX: string
+		positionY: string
+		sizeX: string
+		sizeY: string
+		rotation: string
+		maskEnabled: string
+		maskTop: string
+		maskBottom: string
+		maskLeft: string
+		maskRight: string
+		shadowEnabled: string
+		lightSourceDirection: string
+		lightSourceAltitude: string
+		borderEnabled: string
+		borderHue: string
+		borderSaturation: string
+		borderLuma: string
+		borderBevel: string
+		borderOuterWidth: string
+		borderInnerWidth: string
+		borderOuterSoftness: string
+		borderInnerSoftness: string
+		borderOpacity: string
+		borderBevelPosition: string
+		borderBevelSoftness: string
+		rate: string
 	}
 	[ActionId.USKSetKeyframe]: {
 		mixeffect: number
@@ -154,6 +215,7 @@ export function createUpstreamKeyerDVEActions(
 	if (!model.USKs || !model.DVEs) {
 		return {
 			[ActionId.USKDVEProperties]: undefined,
+			[ActionId.USKDVEPropertiesVariables]: undefined,
 			[ActionId.USKSetKeyframe]: undefined,
 			[ActionId.USKStoreKeyframe]: undefined,
 			[ActionId.USKFly]: undefined,
@@ -292,6 +354,157 @@ export function createUpstreamKeyerDVEActions(
 						shadowEnabled: usk.dveSettings.shadowEnabled,
 						borderBevel: usk.dveSettings.borderBevel,
 						rate: usk.dveSettings.rate,
+					}
+				} else {
+					return undefined
+				}
+			},
+		},
+		[ActionId.USKDVEPropertiesVariables]: {
+			name: 'Upstream key: Change DVE properties from variables',
+			options: {
+				mixeffect: {
+					type: 'textinput',
+					id: 'mixeffect',
+					label: 'M/E',
+					default: '1',
+					useVariables: true,
+				},
+				key: {
+					type: 'textinput',
+					label: 'Key',
+					id: 'key',
+					default: '1',
+					useVariables: true,
+				},
+				...AtemUSKDVEPropertiesVariablesPickers(),
+			},
+			callback: async ({ options }) => {
+				const mixEffectId = (await options.getParsedNumber('mixeffect')) - 1
+				const keyId = (await options.getParsedNumber('key')) - 1
+				const newProps: Partial<UpstreamKeyerDVESettings> = {}
+
+				const props = options.getRaw('properties')
+				if (props && Array.isArray(props)) {
+					if (props.includes('maskEnabled')) {
+						newProps.maskEnabled = await options.getParsedBoolean('maskEnabled')
+					}
+					if (props.includes('maskTop')) {
+						newProps.maskTop = (await options.getParsedNumber('maskTop')) * 1000
+					}
+					if (props.includes('maskBottom')) {
+						newProps.maskBottom = (await options.getParsedNumber('maskBottom')) * 1000
+					}
+					if (props.includes('maskLeft')) {
+						newProps.maskLeft = (await options.getParsedNumber('maskLeft')) * 1000
+					}
+					if (props.includes('maskRight')) {
+						newProps.maskRight = (await options.getParsedNumber('maskRight')) * 1000
+					}
+					if (props.includes('sizeX')) {
+						newProps.sizeX = (await options.getParsedNumber('sizeX')) * 1000
+					}
+					if (props.includes('sizeY')) {
+						newProps.sizeY = (await options.getParsedNumber('sizeY')) * 1000
+					}
+					if (props.includes('positionX')) {
+						newProps.positionX = (await options.getParsedNumber('positionX')) * 1000
+					}
+					if (props.includes('positionY')) {
+						newProps.positionY = (await options.getParsedNumber('positionY')) * 1000
+					}
+					if (props.includes('rotation')) {
+						newProps.rotation = await options.getParsedNumber('rotation')
+					}
+					if (props.includes('borderOuterWidth')) {
+						newProps.borderOuterWidth = (await options.getParsedNumber('borderOuterWidth')) * 100
+					}
+					if (props.includes('borderInnerWidth')) {
+						newProps.borderInnerWidth = (await options.getParsedNumber('borderInnerWidth')) * 100
+					}
+					if (props.includes('borderOuterSoftness')) {
+						newProps.borderOuterSoftness = await options.getParsedNumber('borderOuterSoftness')
+					}
+					if (props.includes('borderInnerSoftness')) {
+						newProps.borderInnerSoftness = await options.getParsedNumber('borderInnerSoftness')
+					}
+					if (props.includes('borderBevelSoftness')) {
+						newProps.borderBevelSoftness = await options.getParsedNumber('borderBevelSoftness')
+					}
+					if (props.includes('borderBevelPosition')) {
+						newProps.borderBevelPosition = await options.getParsedNumber('borderBevelPosition')
+					}
+					if (props.includes('borderOpacity')) {
+						newProps.borderOpacity = await options.getParsedNumber('borderOpacity')
+					}
+					if (props.includes('borderHue')) {
+						newProps.borderHue = (await options.getParsedNumber('borderHue')) * 10
+					}
+					if (props.includes('borderSaturation')) {
+						newProps.borderSaturation = (await options.getParsedNumber('borderSaturation')) * 10
+					}
+					if (props.includes('borderLuma')) {
+						newProps.borderLuma = (await options.getParsedNumber('borderLuma')) * 10
+					}
+					if (props.includes('lightSourceDirection')) {
+						newProps.lightSourceDirection = (await options.getParsedNumber('lightSourceDirection')) * 10
+					}
+					if (props.includes('lightSourceAltitude')) {
+						newProps.lightSourceAltitude = await options.getParsedNumber('lightSourceAltitude')
+					}
+					if (props.includes('borderEnabled')) {
+						newProps.borderEnabled = await options.getParsedBoolean('borderEnabled')
+					}
+					if (props.includes('shadowEnabled')) {
+						newProps.shadowEnabled = await options.getParsedBoolean('shadowEnabled')
+					}
+					if (props.includes('borderBevel')) {
+						newProps.borderBevel = await options.getParsedNumber('borderBevel')
+					}
+					if (props.includes('rate')) {
+						newProps.rate = await options.getParsedNumber('rate')
+					}
+				}
+
+				if (isNaN(mixEffectId) || isNaN(keyId)) return
+				if (Object.keys(newProps).length === 0) return
+
+				await atem?.setUpstreamKeyerDVESettings(newProps, mixEffectId, keyId)
+			},
+			learn: async ({ options }) => {
+				const mixeffect = (await options.getParsedNumber('mixeffect')) - 1
+				const key = (await options.getParsedNumber('key')) - 1
+				const usk = getUSK(state.state, mixeffect, key)
+
+				if (usk?.dveSettings) {
+					return {
+						...options.getJson(),
+						maskEnabled: usk.dveSettings.maskEnabled + '',
+						maskTop: usk.dveSettings.maskTop / 1000 + '',
+						maskBottom: usk.dveSettings.maskBottom / 1000 + '',
+						maskLeft: usk.dveSettings.maskLeft / 1000 + '',
+						maskRight: usk.dveSettings.maskRight / 1000 + '',
+						sizeX: usk.dveSettings.sizeX / 1000 + '',
+						sizeY: usk.dveSettings.sizeY / 1000 + '',
+						positionX: usk.dveSettings.positionX / 1000 + '',
+						positionY: usk.dveSettings.positionY / 1000 + '',
+						rotation: usk.dveSettings.rotation + '',
+						borderOuterWidth: usk.dveSettings.borderOuterWidth / 100 + '',
+						borderInnerWidth: usk.dveSettings.borderInnerWidth / 100 + '',
+						borderOuterSoftness: usk.dveSettings.borderOuterSoftness + '',
+						borderInnerSoftness: usk.dveSettings.borderInnerSoftness + '',
+						borderBevelSoftness: usk.dveSettings.borderBevelSoftness + '',
+						borderBevelPosition: usk.dveSettings.borderBevelPosition + '',
+						borderOpacity: usk.dveSettings.borderOpacity + '',
+						borderHue: usk.dveSettings.borderHue / 10 + '',
+						borderSaturation: usk.dveSettings.borderSaturation / 10 + '',
+						borderLuma: usk.dveSettings.borderLuma / 10 + '',
+						lightSourceDirection: usk.dveSettings.lightSourceDirection / 10 + '',
+						lightSourceAltitude: usk.dveSettings.lightSourceAltitude + '',
+						borderEnabled: usk.dveSettings.borderEnabled + '',
+						shadowEnabled: usk.dveSettings.shadowEnabled + '',
+						borderBevel: usk.dveSettings.borderBevel + '',
+						rate: usk.dveSettings.rate + '',
 					}
 				} else {
 					return undefined
