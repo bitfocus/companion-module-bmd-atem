@@ -33,24 +33,24 @@
 	},
 	"dependencies": {
 		"@atem-connection/camera-control": "^0.2.0",
-		"@companion-module/base": "~1.11.0",
+		"@companion-module/base": "~1.11.2",
 		"atem-connection": "3.6.0-nightly-master-20240419-215343-75a89856.0",
 		"lodash-es": "^4.17.21",
-		"type-fest": "^4.26.1"
+		"type-fest": "^4.28.1"
 	},
 	"devDependencies": {
 		"@companion-module/tools": "^2.1.0",
 		"@types/lodash-es": "^4.17.12",
-		"@types/node": "^22.6.1",
-		"eslint": "^9.11.1",
-		"husky": "^9.1.6",
+		"@types/node": "^22.10.0",
+		"eslint": "^9.15.0",
+		"husky": "^9.1.7",
 		"lint-staged": "^15.2.10",
-		"prettier": "^3.3.3",
+		"prettier": "^3.4.1",
 		"rimraf": "^6.0.1",
-		"tsx": "^4.19.1",
-		"typescript": "~5.6.2",
-		"typescript-eslint": "^8.7.0",
-		"vitest": "^2.1.1"
+		"tsx": "^4.19.2",
+		"typescript": "~5.6.3",
+		"typescript-eslint": "^8.16.0",
+		"vitest": "^2.1.6"
 	},
 	"packageManager": "yarn@4.4.0"
 }
