@@ -122,6 +122,9 @@ export enum ActionId {
 
 	CameraControlDisplayColorBars = 'cameraControlDisplayColorBars',
 
+	CameraControlMediaRecordSingle = 'cameraControlMediaRecordSingle',
+	CameraControlMediaRecordMultiple = 'cameraControlMediaRecordMultiple',
+
 	CameraControlColorLiftAdjust = 'cameraControlColorLiftAdjust',
 	CameraControlColorGammaAdjust = 'cameraControlColorGammaAdjust',
 	CameraControlColorGainAdjust = 'cameraControlColorGainAdjust',

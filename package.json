@@ -32,7 +32,7 @@
 		"node": "^22.2"
 	},
 	"dependencies": {
-		"@atem-connection/camera-control": "^0.2.0",
+		"@atem-connection/camera-control": "^0.3.0",
 		"@companion-module/base": "~1.11.2",
 		"atem-connection": "3.6.0-nightly-master-20240419-215343-75a89856.0",
 		"lodash-es": "^4.17.21",
