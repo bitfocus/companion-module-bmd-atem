@@ -16,7 +16,7 @@ import { createMultiviewerPresets } from './multiviewer.js'
 import { createMacroPresets } from './macro.js'
 import { createProgramPreviewPresets } from './mixeffect/programPreview.js'
 import { createTransitionPresets } from './mixeffect/transition.js'
-import { createAuxOutputPresets } from './aux.js'
+import { createAuxOutputPresets } from './aux-outputs.js'
 import { createUpstreamKeyerPresets } from './mixeffect/upstreamKeyer.js'
 import { createDownstreamKeyerPresets } from './downstreamKeyer.js'
 

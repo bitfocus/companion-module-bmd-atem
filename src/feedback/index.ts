@@ -10,7 +10,7 @@ import { createMediaPlayerFeedbacks, type AtemMediaPlayerFeedbacks } from './med
 import type { MyFeedbackDefinition } from './types.js'
 import { createMultiviewerFeedbacks, type AtemMultiviewerFeedbacks } from './multiviewer.js'
 import { createMacroFeedbacks, type AtemMacroFeedbacks } from './macro.js'
-import { createAuxOutputFeedbacks, type AtemAuxOutputFeedbacks } from './aux.js'
+import { createAuxOutputFeedbacks, type AtemAuxOutputFeedbacks } from './aux-outputs.js'
 import { createRecordingFeedbacks, type AtemRecordingFeedbacks } from './recording.js'
 import { createStreamingFeedbacks, type AtemStreamingFeedbacks } from './streaming.js'
 import { createDownstreamKeyerFeedbacks, type AtemDownstreamKeyerFeedbacks } from './dsk.js'
