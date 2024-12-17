@@ -122,7 +122,7 @@ export function parseAudioRoutingString(ids: string): number[] {
 		.filter((id): id is number => id !== null)
 }
 
-const ROUTING_STRING_REGEX = /(\d+)-([\d]+_[\d+])/i
+const ROUTING_STRING_REGEX = /(\d+)-([\d]+_[\d]+)/i
 export function parseAudioRoutingStringSingle(id: string): number | null {
 	id = id.trim()
 	if (!id) return null
