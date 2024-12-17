@@ -53,7 +53,7 @@ export function getDSK(state: AtemState, keyIndex: InputValue | undefined): Vide
 export function getSuperSourceBox(
 	state: AtemState,
 	boxIndex: InputValue | undefined,
-	ssrcId?: InputValue | undefined,
+	ssrcId?: InputValue,
 ): SuperSource.SuperSourceBox | undefined {
 	const ssrc = state.video.superSources[Number(ssrcId ?? 0)]
 	return ssrc ? ssrc.boxes[Number(boxIndex)] : undefined

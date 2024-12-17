@@ -50,7 +50,7 @@ test('parseAudioRoutingStringSingle', () => {
 
 	const parse5 = parseAudioRoutingStringSingle('9291-8_9')
 	expect(parse5).toEqual(null)
-	
+
 	const parse6 = parseAudioRoutingStringSingle('2001-9_10')
 	expect(parse6).toEqual(combineInputId(2001, AudioChannelPair.Channel9_10))
 

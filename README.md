@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.15.1
+
+- Fix audio routing for higher channel pairs
+
 ## v3.15.0
 
 - Add camera control recording actions
