@@ -12,7 +12,6 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
-    continue-on-error: true
     timeout-minutes: 15
 
     steps:
@@ -28,7 +27,7 @@ jobs:
           yarn build
         env:
           CI: true
-      - name: Run typecheck and linter
+      - name: Run lint
         run: |
           yarn lint
         env:
