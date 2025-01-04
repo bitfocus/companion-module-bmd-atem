@@ -37,6 +37,7 @@ export interface MyOptionsHelper<TOptions> {
 
 	getParsedString<Key extends ConditionalKeys<TOptions, string | undefined>>(fieldName: Key): Promise<string>
 	getParsedNumber<Key extends ConditionalKeys<TOptions, string | undefined>>(fieldName: Key): Promise<number>
+	getParsedBoolean<Key extends ConditionalKeys<TOptions, string | undefined>>(fieldName: Key): Promise<boolean>
 }
 
 export class MyOptionsHelperImpl<TOptions> implements MyOptionsHelper<TOptions> {
@@ -101,5 +102,11 @@ export class MyOptionsHelperImpl<TOptions> implements MyOptionsHelper<TOptions> 
 		const str = await this.getParsedString(fieldName)
 
 		return Number(str)
+	}
+	async getParsedBoolean<Key extends ConditionalKeys<TOptions, string | undefined>>(fieldName: Key): Promise<boolean> {
+		const str = await this.getParsedString(fieldName)
+
+		if (str.toLowerCase() == 'false' || Number(str) == 0) return false
+		return true
 	}
 }
