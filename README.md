@@ -23,6 +23,11 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.16.0
+
+- Add variables for upstream key DVE
+- Add action to update upstream key DVE with variables
+
 ## v3.15.1
 
 - Fix audio routing for higher channel pairs
