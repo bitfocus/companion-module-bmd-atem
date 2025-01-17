@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.16.1
+
+- Fix -infinite values with classic audio
+
 ## v3.16.0
 
 - Add variables for upstream key DVE
