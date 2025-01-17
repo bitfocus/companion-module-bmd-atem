@@ -13,7 +13,7 @@ import {
 	getUSK,
 	type StateWrapper,
 } from '../state.js'
-import { assertUnreachable, formatAudioRoutingAsString, type InstanceBaseExt } from '../util.js'
+import { assertUnreachable, CLASSIC_AUDIO_MIN_GAIN, formatAudioRoutingAsString, type InstanceBaseExt } from '../util.js'
 import type { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
 import { initCameraControlVariables, updateCameraControlVariables } from './cameraControl.js'
 import { createEmptyState } from '@atem-connection/camera-control'
@@ -343,8 +343,10 @@ function updateClassicAudioVariables(
 	values: CompanionVariableValues,
 ): void {
 	const channel = getClassicAudioInput(state, classicAudioIndex)
+	const gain = channel && channel.gain <= CLASSIC_AUDIO_MIN_GAIN ? -Infinity : channel?.gain
+
 	values[`audio_input_${classicAudioIndex}_balance`] = formatAudioProperty(channel?.balance, 1)
-	values[`audio_input_${classicAudioIndex}_gain`] = formatAudioProperty(channel?.gain, 1)
+	values[`audio_input_${classicAudioIndex}_gain`] = formatAudioProperty(gain, 1)
 	values[`audio_input_${classicAudioIndex}_mixOption`] = formatAudioMixOption(channel?.mixOption)
 }
 

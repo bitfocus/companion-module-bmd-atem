@@ -3,6 +3,8 @@ import { InstanceBase } from '@companion-module/base'
 import { AudioRoutingChannelsNames } from './choices.js'
 import { combineInputId } from './models/util/audioRouting.js'
 
+export const CLASSIC_AUDIO_MIN_GAIN = -60 // The minimum value to consider as valid for classic audio gain
+
 export const MEDIA_PLAYER_SOURCE_CLIP_OFFSET = 1000
 
 export function assertUnreachable(_never: never): void {

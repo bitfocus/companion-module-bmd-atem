@@ -11,6 +11,7 @@ import {
 } from '../input.js'
 import type { AtemTransitions } from '../transitions.js'
 import type { StateWrapper } from '../state.js'
+import { CLASSIC_AUDIO_MIN_GAIN } from '../util.js'
 
 export interface AtemClassicAudioActions {
 	[ActionId.ClassicAudioGain]: {
@@ -123,13 +124,14 @@ export function createClassicAudioActions(
 				const channel = audioChannels[inputId]
 
 				if (typeof channel?.gain === 'number') {
+					const currentGain = Math.max(CLASSIC_AUDIO_MIN_GAIN, channel.gain)
 					await transitions.runForFadeOptions(
 						`audio.${inputId}.gain`,
 						async (value) => {
 							await atem?.setClassicAudioMixerInputProps(inputId, { gain: value })
 						},
-						channel.gain,
-						channel.gain + options.getPlainNumber('delta'),
+						currentGain,
+						currentGain + options.getPlainNumber('delta'),
 						options,
 					)
 				}
@@ -264,7 +266,7 @@ export function createClassicAudioActions(
 				...FadeDurationFields,
 			},
 			callback: async ({ options }) => {
-				const currentGain = state.state.audio?.master?.gain
+				const currentGain = Math.max(CLASSIC_AUDIO_MIN_GAIN, state.state.audio?.master?.gain ?? -Infinity)
 
 				if (typeof currentGain === 'number') {
 					await transitions.runForFadeOptions(
