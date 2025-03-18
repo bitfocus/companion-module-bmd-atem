@@ -38,7 +38,6 @@ import type { ModelSpec } from './models/index.js'
 import { iterateTimes, MEDIA_PLAYER_SOURCE_CLIP_OFFSET, compact, NumberComparitor } from './util.js'
 import type { MyOptionsObject } from './common.js'
 import * as Easing from './easings.js'
-//import { info } from 'console'
 
 export function AtemMESourcePicker(model: ModelSpec, state: AtemState, id: number): CompanionInputFieldDropdown {
 	return {
@@ -2096,16 +2095,6 @@ export function AtemFairlightAudioRoutingDestinationPicker(
 	}
 }
 
-// WILLIAM
-// USK Pattern Prop
-// Fill Source
-// Pattern Dropdown Selector?
-// Invert Pattern check box
-// Size % default 50
-// Symmetry % default 50
-// Softness % 83
-// posX, pos Y 0.0 - 1.0
-// AtemUpstreamKeyerPatternPicker
 export function AtemUSKPatternPropertiesPickers(): {
 	properties: CompanionInputFieldMultiDropdown
 	style: CompanionInputFieldDropdown
