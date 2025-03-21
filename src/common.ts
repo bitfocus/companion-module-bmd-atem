@@ -1,9 +1,4 @@
-import type {
-	CompanionActionContext,
-	CompanionInputFieldBase,
-	CompanionOptionValues,
-	DropdownChoiceId,
-} from '@companion-module/base'
+import type { CompanionInputFieldBase, CompanionOptionValues, DropdownChoiceId } from '@companion-module/base'
 import type { CompanionCommonCallbackContext } from '@companion-module/base/dist/module-api/common.js'
 
 import type { ConditionalKeys } from 'type-fest'
@@ -45,7 +40,11 @@ export class MyOptionsHelperImpl<TOptions> implements MyOptionsHelper<TOptions> 
 	readonly #context: CompanionCommonCallbackContext
 	readonly #fields: MyOptionsObject<TOptions, any>
 
-	constructor(options: CompanionOptionValues, context: CompanionActionContext, fields: MyOptionsObject<TOptions, any>) {
+	constructor(
+		options: CompanionOptionValues,
+		context: CompanionCommonCallbackContext,
+		fields: MyOptionsObject<TOptions, any>,
+	) {
 		this.#options = options
 		this.#context = context
 		this.#fields = fields

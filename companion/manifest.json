@@ -19,7 +19,11 @@
 		"type": "node22",
 		"api": "nodejs-ipc",
 		"apiVersion": "0.0.0",
-		"entrypoint": "../dist/index.js"
+		"entrypoint": "../dist/index.js",
+		"permissions": {
+			"native-addons": true,
+			"worker-threads": true
+		}
 	},
 	"manufacturer": "Blackmagic Design",
 	"products": ["ATEM"],
