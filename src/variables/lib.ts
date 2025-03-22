@@ -172,6 +172,10 @@ function updateUSKVariable(
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_pattern_positionY`] = patternSettings.positionY / 10000
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_pattern_invert`] = patternSettings.invert
 	}
+	if (state.video.mixEffects[meIndex]?.upstreamKeyers[keyIndex]) {
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_canFlyKey`] =
+			state.video.mixEffects[meIndex]?.upstreamKeyers[keyIndex]?.canFlyKey
+	}
 }
 function updateDSKVariable(
 	instance: InstanceBaseExt<AtemConfig>,
@@ -548,32 +552,36 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 					variableId: `usk_${i + 1}_${k + 1}_rate`,
 				})
 				variables.push({
-					name: `USK Pattern Style of M/E ${i + 1} Key ${k + 1}`,
+					name: `Pattern Style of M/E ${i + 1} Key ${k + 1}`,
 					variableId: `usk_${i + 1}_${k + 1}_pattern_style`,
 				})
 				variables.push({
-					name: `USK Pattern Size of M/E ${i + 1} Key ${k + 1}`,
+					name: `Pattern Size of M/E ${i + 1} Key ${k + 1}`,
 					variableId: `usk_${i + 1}_${k + 1}_pattern_size`,
 				})
 				variables.push({
-					name: `USK Pattern Symmetry of M/E ${i + 1} Key ${k + 1}`,
+					name: `Pattern Symmetry of M/E ${i + 1} Key ${k + 1}`,
 					variableId: `usk_${i + 1}_${k + 1}_pattern_symmetry`,
 				})
 				variables.push({
-					name: `USK Pattern Softness of M/E ${i + 1} Key ${k + 1}`,
+					name: `Pattern Softness of M/E ${i + 1} Key ${k + 1}`,
 					variableId: `usk_${i + 1}_${k + 1}_pattern_softness`,
 				})
 				variables.push({
-					name: `USK Pattern Position X of M/E ${i + 1} Key ${k + 1}`,
+					name: `Pattern Position X of M/E ${i + 1} Key ${k + 1}`,
 					variableId: `usk_${i + 1}_${k + 1}_pattern_positionX`,
 				})
 				variables.push({
-					name: `USK Pattern Position Y of M/E ${i + 1} Key ${k + 1}`,
+					name: `Pattern Position Y of M/E ${i + 1} Key ${k + 1}`,
 					variableId: `usk_${i + 1}_${k + 1}_pattern_positionY`,
 				})
 				variables.push({
-					name: `USK Pattern Invert of M/E ${i + 1} Key ${k + 1}`,
+					name: `Pattern Invert of M/E ${i + 1} Key ${k + 1}`,
 					variableId: `usk_${i + 1}_${k + 1}_pattern_invert`,
+				})
+				variables.push({
+					name: `(read only) Ability to Enable Fly Key or DVE of M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_canFlyKey`,
 				})
 			}
 
