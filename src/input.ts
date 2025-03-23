@@ -2104,7 +2104,6 @@ export function AtemUSKPatternPropertiesPickers(): {
 	softness: CompanionInputFieldNumber
 	positionX: CompanionInputFieldNumber
 	positionY: CompanionInputFieldNumber
-	myprivatestring: CompanionInputFieldTextInput
 } {
 	const allProps: Omit<ReturnType<typeof AtemUSKPatternPropertiesPickers>, 'properties'> = {
 		style: {
@@ -2177,16 +2176,7 @@ export function AtemUSKPatternPropertiesPickers(): {
 			max: 1.0,
 			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionY'),
 		},
-		myprivatestring: {
-			type: 'textinput',
-			label: 'Private Text',
-			id: 'privatetext',
-			default: 'some text here',
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('privatetext'),
-		},
 	}
-
-	console.log('AtemUSKPatternPropertiesPickers - log')
 	return {
 		properties: DropdownPropertiesPicker(allProps),
 		...allProps,

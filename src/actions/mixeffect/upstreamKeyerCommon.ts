@@ -416,7 +416,6 @@ export function createUpstreamKeyerCommonActions(
 
 				if (Object.keys(newUSKTypeProps).length !== 0) {
 					await atem?.setUpstreamKeyerType(newUSKTypeProps, mixEffectId, keyId)
-					//console.log('newUSKTypeProps written' + newUSKTypeProps)
 				}
 			},
 			learn: async ({ options }) => {
