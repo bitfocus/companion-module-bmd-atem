@@ -175,6 +175,8 @@ function updateUSKVariable(
 	if (state.video.mixEffects[meIndex]?.upstreamKeyers[keyIndex]) {
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_canFlyKey`] =
 			state.video.mixEffects[meIndex]?.upstreamKeyers[keyIndex]?.canFlyKey
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_flyEnabled`] =
+			state.video.mixEffects[meIndex]?.upstreamKeyers[keyIndex]?.flyEnabled
 	}
 }
 function updateDSKVariable(
@@ -582,6 +584,10 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 				variables.push({
 					name: `(read only) Ability to Enable Fly Key or DVE of M/E ${i + 1} Key ${k + 1}`,
 					variableId: `usk_${i + 1}_${k + 1}_canFlyKey`,
+				})
+				variables.push({
+					name: `Fly Key Enable Status of M/E ${i + 1} Key ${k + 1}`,
+					variableId: `usk_${i + 1}_${k + 1}_flyEnabled`,
 				})
 			}
 
