@@ -14,8 +14,14 @@ export enum ActionId {
 	USKOnAir = 'usk',
 	USKFly = 'uskFly',
 	USKMaskLumaChromaPattern = 'uskMaskLumaChromaPattern',
+	USKFlyKeyLumaChromaPattern = 'uskFlyKeyLumaChromaPattern',
+	USKFlyKeyLumaChromaPatternVariables = 'uskFlyKeyLumaChromaPatternVariables',
 	USKDVEProperties = 'uskDveProperties',
 	USKDVEPropertiesVariables = 'uskDvePropertiesVariables',
+
+	USKPatternProperties = 'uskPatternProperties',
+	USKPatternPropertiesVariables = 'uskPatternPropertiesVariables',
+
 	USKSetKeyframe = 'uskSetKeyframe',
 	USKStoreKeyframe = 'uskStoreKeyframe',
 	USKFlyInfinite = 'uskFlyInfinite',
