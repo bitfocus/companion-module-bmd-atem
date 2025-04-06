@@ -11,6 +11,12 @@ import {
 	generateMixMinusRoutingSources,
 	generateAuxRoutingOutputs,
 } from './util/audioRouting.js'
+import {
+	AUDIO_FAIRLIGHT_INPUT_TRS_JACK,
+	AUDIO_FAIRLIGHT_INPUT_TS_JACK,
+	generateFairlightInputMediaPlayer,
+	generateFairlightInputsOfType,
+} from './util/fairlight.js'
 
 export const ModelSpecConstellationHD2ME: ModelSpec = {
 	id: Enums.Model.ConstellationHD2ME,
@@ -529,102 +535,10 @@ export const ModelSpecConstellationHD2ME: ModelSpec = {
 	fairlightAudio: {
 		monitor: 'split',
 		inputs: [
-			{
-				id: 1,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 2,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 3,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 4,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 5,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 6,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 7,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 8,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 9,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 10,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 11,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 12,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 13,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 14,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 15,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 16,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 17,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 18,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 19,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 20,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 1301,
-				portType: Enums.ExternalPortType.TSJack,
-			},
-			{
-				id: 1401,
-				portType: Enums.ExternalPortType.TRSJack,
-			},
-			{
-				id: 2001,
-				portType: Enums.ExternalPortType.Internal,
-			},
-			{
-				id: 2002,
-				portType: Enums.ExternalPortType.Internal,
-			},
+			...generateFairlightInputsOfType(1, 20, Enums.ExternalPortType.SDI),
+			AUDIO_FAIRLIGHT_INPUT_TS_JACK,
+			AUDIO_FAIRLIGHT_INPUT_TRS_JACK,
+			...generateFairlightInputMediaPlayer(2),
 		],
 		audioRouting: {
 			sources: [

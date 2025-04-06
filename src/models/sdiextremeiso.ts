@@ -1,5 +1,6 @@
 import { generateOutputs, type ModelSpec } from './types.js'
 import { Enums } from 'atem-connection'
+import { AUDIO_FAIRLIGHT_INPUT_MINI_TS_JACKS, generateFairlightInputsOfType } from './util/fairlight.js'
 
 const sourceAvailabilityAll =
 	Enums.SourceAvailability.Auxiliary |
@@ -254,48 +255,8 @@ export const ModelSpecSDIExtremeISO: ModelSpec = {
 	fairlightAudio: {
 		monitor: 'split',
 		inputs: [
-			{
-				id: 1,
-				portType: Enums.ExternalPortType.HDMI,
-			},
-			{
-				id: 2,
-				portType: Enums.ExternalPortType.HDMI,
-			},
-			{
-				id: 3,
-				portType: Enums.ExternalPortType.HDMI,
-			},
-			{
-				id: 4,
-				portType: Enums.ExternalPortType.HDMI,
-			},
-			{
-				id: 5,
-				portType: Enums.ExternalPortType.HDMI,
-			},
-			{
-				id: 6,
-				portType: Enums.ExternalPortType.HDMI,
-			},
-			{
-				id: 7,
-				portType: Enums.ExternalPortType.HDMI,
-			},
-			{
-				id: 8,
-				portType: Enums.ExternalPortType.HDMI,
-			},
-			{
-				id: 1301,
-				portType: Enums.ExternalPortType.TSJack,
-				maxDelay: 8,
-			},
-			{
-				id: 1302,
-				portType: Enums.ExternalPortType.TSJack,
-				maxDelay: 8,
-			},
+			...generateFairlightInputsOfType(1, 8, Enums.ExternalPortType.SDI),
+			...AUDIO_FAIRLIGHT_INPUT_MINI_TS_JACKS,
 		],
 	},
 }

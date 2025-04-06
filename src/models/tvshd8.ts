@@ -20,6 +20,14 @@ import {
 	generateMediaPlayerRoutingSources,
 	generateTalkbackRoutingSources,
 } from './util/audioRouting.js'
+import {
+	AUDIO_FAIRLIGHT_INPUT_RCA,
+	AUDIO_FAIRLIGHT_INPUT_TS_JACK,
+	AUDIO_FAIRLIGHT_INPUT_XLR,
+	generateFairlightInputMadi,
+	generateFairlightInputMediaPlayer,
+	generateFairlightInputsOfType,
+} from './util/fairlight.js'
 
 const sourceAvailabilityAll =
 	Enums.SourceAvailability.Auxiliary |
@@ -247,122 +255,12 @@ export const ModelSpecTVSHD8: ModelSpec = {
 			],
 		},
 		inputs: [
-			{
-				id: 1,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 2,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 3,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 4,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 5,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 6,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 7,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 8,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 1001,
-				portType: Enums.ExternalPortType.XLR,
-			},
-			{
-				id: 1201,
-				portType: Enums.ExternalPortType.RCA,
-			},
-			{
-				id: 1301,
-				portType: Enums.ExternalPortType.TSJack,
-			},
-			{
-				id: 1501,
-				portType: Enums.ExternalPortType.MADI,
-			},
-			{
-				id: 1502,
-				portType: Enums.ExternalPortType.MADI,
-			},
-			{
-				id: 1503,
-				portType: Enums.ExternalPortType.MADI,
-			},
-			{
-				id: 1504,
-				portType: Enums.ExternalPortType.MADI,
-			},
-			{
-				id: 1505,
-				portType: Enums.ExternalPortType.MADI,
-			},
-			{
-				id: 1506,
-				portType: Enums.ExternalPortType.MADI,
-			},
-			{
-				id: 1507,
-				portType: Enums.ExternalPortType.MADI,
-			},
-			{
-				id: 1508,
-				portType: Enums.ExternalPortType.MADI,
-			},
-			{
-				id: 1509,
-				portType: Enums.ExternalPortType.MADI,
-			},
-			{
-				id: 1510,
-				portType: Enums.ExternalPortType.MADI,
-			},
-			{
-				id: 1511,
-				portType: Enums.ExternalPortType.MADI,
-			},
-			{
-				id: 1512,
-				portType: Enums.ExternalPortType.MADI,
-			},
-			{
-				id: 1513,
-				portType: Enums.ExternalPortType.MADI,
-			},
-			{
-				id: 1514,
-				portType: Enums.ExternalPortType.MADI,
-			},
-			{
-				id: 1515,
-				portType: Enums.ExternalPortType.MADI,
-			},
-			{
-				id: 1516,
-				portType: Enums.ExternalPortType.MADI,
-			},
-			{
-				id: 2001,
-				portType: Enums.ExternalPortType.Internal,
-			},
-			{
-				id: 2002,
-				portType: Enums.ExternalPortType.Internal,
-			},
+			...generateFairlightInputsOfType(1, 8, Enums.ExternalPortType.SDI),
+			AUDIO_FAIRLIGHT_INPUT_XLR,
+			AUDIO_FAIRLIGHT_INPUT_RCA,
+			AUDIO_FAIRLIGHT_INPUT_TS_JACK,
+			...generateFairlightInputMadi(16),
+			...generateFairlightInputMediaPlayer(2),
 		],
 	},
 }

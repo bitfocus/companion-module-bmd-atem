@@ -1,5 +1,11 @@
 import { generateOutputs, type ModelSpec } from './types.js'
 import { Enums } from 'atem-connection'
+import {
+	AUDIO_FAIRLIGHT_INPUT_TS_JACK,
+	AUDIO_FAIRLIGHT_INPUT_XLR,
+	generateFairlightInputMediaPlayer,
+	generateFairlightInputsOfType,
+} from './util/fairlight.js'
 
 export const ModelSpecTVSPro4K: ModelSpec = {
 	id: Enums.Model.TVSPro4K,
@@ -186,54 +192,10 @@ export const ModelSpecTVSPro4K: ModelSpec = {
 	fairlightAudio: {
 		monitor: 'combined',
 		inputs: [
-			{
-				id: 1,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 2,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 3,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 4,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 5,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 6,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 7,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 8,
-				portType: Enums.ExternalPortType.SDI,
-			},
-			{
-				id: 1001,
-				portType: Enums.ExternalPortType.XLR,
-			},
-			{
-				id: 1301,
-				portType: Enums.ExternalPortType.TSJack,
-			},
-			{
-				id: 2001,
-				portType: Enums.ExternalPortType.Internal,
-			},
-			{
-				id: 2002,
-				portType: Enums.ExternalPortType.Internal,
-			},
+			...generateFairlightInputsOfType(1, 8, Enums.ExternalPortType.SDI),
+			AUDIO_FAIRLIGHT_INPUT_XLR,
+			AUDIO_FAIRLIGHT_INPUT_TS_JACK,
+			...generateFairlightInputMediaPlayer(2),
 		],
 	},
 }
