@@ -20,12 +20,7 @@ export interface ModelSpec {
 	streaming: boolean
 	recording: boolean
 	recordISO: boolean
-	inputs: Array<{
-		id: number
-		portType: Enums.InternalPortType
-		sourceAvailability: Enums.SourceAvailability
-		meAvailability: Enums.MeAvailability
-	}>
+	inputs: VideoInputInfo[]
 	classicAudio?: {
 		inputs: Array<{
 			id: number
@@ -38,6 +33,13 @@ export interface ModelSpec {
 		audioRouting?: { sources: AudioRoutingSourceInfo[]; outputs: AudioRoutingOutputInfo[] }
 		inputs: AudioFairlightInputInfo[]
 	}
+}
+
+export interface VideoInputInfo {
+	id: number
+	portType: Enums.InternalPortType
+	sourceAvailability: Enums.SourceAvailability
+	meAvailability: Enums.MeAvailability
 }
 
 export interface AudioFairlightInputInfo {
