@@ -6902,6 +6902,4352 @@ exports[`Check 4 M/E Constellation 4K (30) 1`] = `
 }
 `;
 
+exports[`Check 4 M/E Constellation 4K Plus (31) 1`] = `
+{
+  "DSKs": 4,
+  "DVEs": 4,
+  "MEs": 4,
+  "MVs": 4,
+  "SSrc": 2,
+  "USKs": 4,
+  "displayClock": 1,
+  "fairlightAudio": {
+    "audioRouting": {
+      "outputs": [
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1001,
+          "outputName": "MADI 1",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1002,
+          "outputName": "MADI 2",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1003,
+          "outputName": "MADI 3",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1004,
+          "outputName": "MADI 4",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1005,
+          "outputName": "MADI 5",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1006,
+          "outputName": "MADI 6",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1007,
+          "outputName": "MADI 7",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1008,
+          "outputName": "MADI 8",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1009,
+          "outputName": "MADI 9",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1010,
+          "outputName": "MADI 10",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1011,
+          "outputName": "MADI 11",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1012,
+          "outputName": "MADI 12",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1013,
+          "outputName": "MADI 13",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1014,
+          "outputName": "MADI 14",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1015,
+          "outputName": "MADI 15",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1016,
+          "outputName": "MADI 16",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1017,
+          "outputName": "MADI 17",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1018,
+          "outputName": "MADI 18",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1019,
+          "outputName": "MADI 19",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1020,
+          "outputName": "MADI 20",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1021,
+          "outputName": "MADI 21",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1022,
+          "outputName": "MADI 22",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1023,
+          "outputName": "MADI 23",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1024,
+          "outputName": "MADI 24",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1025,
+          "outputName": "MADI 25",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1026,
+          "outputName": "MADI 26",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1027,
+          "outputName": "MADI 27",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1028,
+          "outputName": "MADI 28",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1029,
+          "outputName": "MADI 29",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1030,
+          "outputName": "MADI 30",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1031,
+          "outputName": "MADI 31",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1032,
+          "outputName": "MADI 32",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1033,
+          "outputName": "MADI 33",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1034,
+          "outputName": "MADI 34",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1035,
+          "outputName": "MADI 35",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1036,
+          "outputName": "MADI 36",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1037,
+          "outputName": "MADI 37",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1038,
+          "outputName": "MADI 38",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1039,
+          "outputName": "MADI 39",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1040,
+          "outputName": "MADI 40",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1041,
+          "outputName": "MADI 41",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1042,
+          "outputName": "MADI 42",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1043,
+          "outputName": "MADI 43",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1044,
+          "outputName": "MADI 44",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1045,
+          "outputName": "MADI 45",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1046,
+          "outputName": "MADI 46",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1047,
+          "outputName": "MADI 47",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1048,
+          "outputName": "MADI 48",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1049,
+          "outputName": "MADI 49",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1050,
+          "outputName": "MADI 50",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1051,
+          "outputName": "MADI 51",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1052,
+          "outputName": "MADI 52",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1053,
+          "outputName": "MADI 53",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1054,
+          "outputName": "MADI 54",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1055,
+          "outputName": "MADI 55",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1056,
+          "outputName": "MADI 56",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1057,
+          "outputName": "MADI 57",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1058,
+          "outputName": "MADI 58",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1059,
+          "outputName": "MADI 59",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1060,
+          "outputName": "MADI 60",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1061,
+          "outputName": "MADI 61",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1062,
+          "outputName": "MADI 62",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1063,
+          "outputName": "MADI 63",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "outputId": 1064,
+          "outputName": "MADI 64",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2001,
+          "outputName": "Aux 1",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2002,
+          "outputName": "Aux 2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2003,
+          "outputName": "Aux 3",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2004,
+          "outputName": "Aux 4",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2005,
+          "outputName": "Aux 5",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2006,
+          "outputName": "Aux 6",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2007,
+          "outputName": "Aux 7",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2008,
+          "outputName": "Aux 8",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2009,
+          "outputName": "Aux 9",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2010,
+          "outputName": "Aux 10",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2011,
+          "outputName": "Aux 11",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2012,
+          "outputName": "Aux 12",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2013,
+          "outputName": "Aux 13",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2014,
+          "outputName": "Aux 14",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2015,
+          "outputName": "Aux 15",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2016,
+          "outputName": "Aux 16",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2017,
+          "outputName": "Aux 17",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2018,
+          "outputName": "Aux 18",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2019,
+          "outputName": "Aux 19",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2020,
+          "outputName": "Aux 20",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2021,
+          "outputName": "Aux 21",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2022,
+          "outputName": "Aux 22",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2023,
+          "outputName": "Aux 23",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2024,
+          "outputName": "Aux 24",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2025,
+          "outputName": "Aux 25",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2026,
+          "outputName": "Aux 26",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2027,
+          "outputName": "Aux 27",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2028,
+          "outputName": "Aux 28",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2029,
+          "outputName": "Aux 29",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2030,
+          "outputName": "Aux 30",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2031,
+          "outputName": "Aux 31",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2032,
+          "outputName": "Aux 32",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2033,
+          "outputName": "Aux 33",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2034,
+          "outputName": "Aux 34",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2035,
+          "outputName": "Aux 35",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2036,
+          "outputName": "Aux 36",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2037,
+          "outputName": "Aux 37",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2038,
+          "outputName": "Aux 38",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2039,
+          "outputName": "Aux 39",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2040,
+          "outputName": "Aux 40",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2041,
+          "outputName": "Aux 41",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2042,
+          "outputName": "Aux 42",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2043,
+          "outputName": "Aux 43",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2044,
+          "outputName": "Aux 44",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2045,
+          "outputName": "Aux 45",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2046,
+          "outputName": "Aux 46",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2047,
+          "outputName": "Aux 47",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+          ],
+          "outputId": 2048,
+          "outputName": "Aux 48",
+        },
+      ],
+      "sources": [
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 0,
+          "sourceName": "No Audio",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 1,
+          "sourceName": "Input 1 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 2,
+          "sourceName": "Input 2 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 3,
+          "sourceName": "Input 3 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 4,
+          "sourceName": "Input 4 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 5,
+          "sourceName": "Input 5 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 6,
+          "sourceName": "Input 6 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 7,
+          "sourceName": "Input 7 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 8,
+          "sourceName": "Input 8 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 9,
+          "sourceName": "Input 9 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 10,
+          "sourceName": "Input 10 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 11,
+          "sourceName": "Input 11 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 12,
+          "sourceName": "Input 12 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 13,
+          "sourceName": "Input 13 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 14,
+          "sourceName": "Input 14 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 15,
+          "sourceName": "Input 15 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 16,
+          "sourceName": "Input 16 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 17,
+          "sourceName": "Input 17 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 18,
+          "sourceName": "Input 18 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 19,
+          "sourceName": "Input 19 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 20,
+          "sourceName": "Input 20 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 21,
+          "sourceName": "Input 21 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 22,
+          "sourceName": "Input 22 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 23,
+          "sourceName": "Input 23 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 24,
+          "sourceName": "Input 24 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 25,
+          "sourceName": "Input 25 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 26,
+          "sourceName": "Input 26 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 27,
+          "sourceName": "Input 27 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 28,
+          "sourceName": "Input 28 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 29,
+          "sourceName": "Input 29 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 30,
+          "sourceName": "Input 30 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 31,
+          "sourceName": "Input 31 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 32,
+          "sourceName": "Input 32 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 33,
+          "sourceName": "Input 33 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 34,
+          "sourceName": "Input 34 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 35,
+          "sourceName": "Input 35 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 36,
+          "sourceName": "Input 36 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 37,
+          "sourceName": "Input 37 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 38,
+          "sourceName": "Input 38 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 39,
+          "sourceName": "Input 39 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 40,
+          "sourceName": "Input 40 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 41,
+          "sourceName": "Input 41 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 42,
+          "sourceName": "Input 42 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 43,
+          "sourceName": "Input 43 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 44,
+          "sourceName": "Input 44 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 45,
+          "sourceName": "Input 45 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 46,
+          "sourceName": "Input 46 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 47,
+          "sourceName": "Input 47 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 48,
+          "sourceName": "Input 48 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 49,
+          "sourceName": "Input 49 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 50,
+          "sourceName": "Input 50 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 51,
+          "sourceName": "Input 51 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 52,
+          "sourceName": "Input 52 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 53,
+          "sourceName": "Input 53 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 54,
+          "sourceName": "Input 54 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 55,
+          "sourceName": "Input 55 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 56,
+          "sourceName": "Input 56 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 57,
+          "sourceName": "Input 57 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 58,
+          "sourceName": "Input 58 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 59,
+          "sourceName": "Input 59 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 60,
+          "sourceName": "Input 60 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 61,
+          "sourceName": "Input 61 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 62,
+          "sourceName": "Input 62 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 63,
+          "sourceName": "Input 63 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 64,
+          "sourceName": "Input 64 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 65,
+          "sourceName": "Input 65 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 66,
+          "sourceName": "Input 66 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 67,
+          "sourceName": "Input 67 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 68,
+          "sourceName": "Input 68 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 69,
+          "sourceName": "Input 69 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 70,
+          "sourceName": "Input 70 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 71,
+          "sourceName": "Input 71 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 72,
+          "sourceName": "Input 72 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 73,
+          "sourceName": "Input 73 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 74,
+          "sourceName": "Input 74 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 75,
+          "sourceName": "Input 75 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 76,
+          "sourceName": "Input 76 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 77,
+          "sourceName": "Input 77 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 78,
+          "sourceName": "Input 78 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 79,
+          "sourceName": "Input 79 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+            1,
+          ],
+          "inputId": 80,
+          "sourceName": "Input 80 1/2",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1301,
+          "sourceName": "Microphone",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1401,
+          "sourceName": "TRS",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1501,
+          "sourceName": "MADI 1",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1502,
+          "sourceName": "MADI 2",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1503,
+          "sourceName": "MADI 3",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1504,
+          "sourceName": "MADI 4",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1505,
+          "sourceName": "MADI 5",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1506,
+          "sourceName": "MADI 6",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1507,
+          "sourceName": "MADI 7",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1508,
+          "sourceName": "MADI 8",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1509,
+          "sourceName": "MADI 9",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1510,
+          "sourceName": "MADI 10",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1511,
+          "sourceName": "MADI 11",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1512,
+          "sourceName": "MADI 12",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1513,
+          "sourceName": "MADI 13",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1514,
+          "sourceName": "MADI 14",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1515,
+          "sourceName": "MADI 15",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1516,
+          "sourceName": "MADI 16",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1517,
+          "sourceName": "MADI 17",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1518,
+          "sourceName": "MADI 18",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1519,
+          "sourceName": "MADI 19",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1520,
+          "sourceName": "MADI 20",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1521,
+          "sourceName": "MADI 21",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1522,
+          "sourceName": "MADI 22",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1523,
+          "sourceName": "MADI 23",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1524,
+          "sourceName": "MADI 24",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1525,
+          "sourceName": "MADI 25",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1526,
+          "sourceName": "MADI 26",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1527,
+          "sourceName": "MADI 27",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1528,
+          "sourceName": "MADI 28",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1529,
+          "sourceName": "MADI 29",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1530,
+          "sourceName": "MADI 30",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1531,
+          "sourceName": "MADI 31",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1532,
+          "sourceName": "MADI 32",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1533,
+          "sourceName": "MADI 33",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1534,
+          "sourceName": "MADI 34",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1535,
+          "sourceName": "MADI 35",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1536,
+          "sourceName": "MADI 36",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1537,
+          "sourceName": "MADI 37",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1538,
+          "sourceName": "MADI 38",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1539,
+          "sourceName": "MADI 39",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1540,
+          "sourceName": "MADI 40",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1541,
+          "sourceName": "MADI 41",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1542,
+          "sourceName": "MADI 42",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1543,
+          "sourceName": "MADI 43",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1544,
+          "sourceName": "MADI 44",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1545,
+          "sourceName": "MADI 45",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1546,
+          "sourceName": "MADI 46",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1547,
+          "sourceName": "MADI 47",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1548,
+          "sourceName": "MADI 48",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1549,
+          "sourceName": "MADI 49",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1550,
+          "sourceName": "MADI 50",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1551,
+          "sourceName": "MADI 51",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1552,
+          "sourceName": "MADI 52",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1553,
+          "sourceName": "MADI 53",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1554,
+          "sourceName": "MADI 54",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1555,
+          "sourceName": "MADI 55",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1556,
+          "sourceName": "MADI 56",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1557,
+          "sourceName": "MADI 57",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1558,
+          "sourceName": "MADI 58",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1559,
+          "sourceName": "MADI 59",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1560,
+          "sourceName": "MADI 60",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1561,
+          "sourceName": "MADI 61",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1562,
+          "sourceName": "MADI 62",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1563,
+          "sourceName": "MADI 63",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 1564,
+          "sourceName": "MADI 64",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2001,
+          "sourceName": "Media Player 1",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2002,
+          "sourceName": "Media Player 2",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2003,
+          "sourceName": "Media Player 3",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2004,
+          "sourceName": "Media Player 4",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2101,
+          "sourceName": "Production Talkback",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2102,
+          "sourceName": "Engineering Talkback",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2301,
+          "sourceName": "Program",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2801,
+          "sourceName": "Mix Minus 1",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2802,
+          "sourceName": "Mix Minus 2",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2803,
+          "sourceName": "Mix Minus 3",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2804,
+          "sourceName": "Mix Minus 4",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2805,
+          "sourceName": "Mix Minus 5",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2806,
+          "sourceName": "Mix Minus 6",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2807,
+          "sourceName": "Mix Minus 7",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2808,
+          "sourceName": "Mix Minus 8",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2809,
+          "sourceName": "Mix Minus 9",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2810,
+          "sourceName": "Mix Minus 10",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2811,
+          "sourceName": "Mix Minus 11",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2812,
+          "sourceName": "Mix Minus 12",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2813,
+          "sourceName": "Mix Minus 13",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2814,
+          "sourceName": "Mix Minus 14",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2815,
+          "sourceName": "Mix Minus 15",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2816,
+          "sourceName": "Mix Minus 16",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2817,
+          "sourceName": "Mix Minus 17",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2818,
+          "sourceName": "Mix Minus 18",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2819,
+          "sourceName": "Mix Minus 19",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2820,
+          "sourceName": "Mix Minus 20",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2821,
+          "sourceName": "Mix Minus 21",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2822,
+          "sourceName": "Mix Minus 22",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2823,
+          "sourceName": "Mix Minus 23",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2824,
+          "sourceName": "Mix Minus 24",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2825,
+          "sourceName": "Mix Minus 25",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2826,
+          "sourceName": "Mix Minus 26",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2827,
+          "sourceName": "Mix Minus 27",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2828,
+          "sourceName": "Mix Minus 28",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2829,
+          "sourceName": "Mix Minus 29",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2830,
+          "sourceName": "Mix Minus 30",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2831,
+          "sourceName": "Mix Minus 31",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2832,
+          "sourceName": "Mix Minus 32",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2833,
+          "sourceName": "Mix Minus 33",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2834,
+          "sourceName": "Mix Minus 34",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2835,
+          "sourceName": "Mix Minus 35",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2836,
+          "sourceName": "Mix Minus 36",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2837,
+          "sourceName": "Mix Minus 37",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2838,
+          "sourceName": "Mix Minus 38",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2839,
+          "sourceName": "Mix Minus 39",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2840,
+          "sourceName": "Mix Minus 40",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2841,
+          "sourceName": "Mix Minus 41",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2842,
+          "sourceName": "Mix Minus 42",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2843,
+          "sourceName": "Mix Minus 43",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2844,
+          "sourceName": "Mix Minus 44",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2845,
+          "sourceName": "Mix Minus 45",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2846,
+          "sourceName": "Mix Minus 46",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2847,
+          "sourceName": "Mix Minus 47",
+        },
+        {
+          "channelPairs": [
+            0,
+          ],
+          "inputId": 2848,
+          "sourceName": "Mix Minus 48",
+        },
+      ],
+    },
+    "inputs": [
+      {
+        "id": 1,
+        "portType": 1,
+      },
+      {
+        "id": 2,
+        "portType": 1,
+      },
+      {
+        "id": 3,
+        "portType": 1,
+      },
+      {
+        "id": 4,
+        "portType": 1,
+      },
+      {
+        "id": 5,
+        "portType": 1,
+      },
+      {
+        "id": 6,
+        "portType": 1,
+      },
+      {
+        "id": 7,
+        "portType": 1,
+      },
+      {
+        "id": 8,
+        "portType": 1,
+      },
+      {
+        "id": 9,
+        "portType": 1,
+      },
+      {
+        "id": 10,
+        "portType": 1,
+      },
+      {
+        "id": 11,
+        "portType": 1,
+      },
+      {
+        "id": 12,
+        "portType": 1,
+      },
+      {
+        "id": 13,
+        "portType": 1,
+      },
+      {
+        "id": 14,
+        "portType": 1,
+      },
+      {
+        "id": 15,
+        "portType": 1,
+      },
+      {
+        "id": 16,
+        "portType": 1,
+      },
+      {
+        "id": 17,
+        "portType": 1,
+      },
+      {
+        "id": 18,
+        "portType": 1,
+      },
+      {
+        "id": 19,
+        "portType": 1,
+      },
+      {
+        "id": 20,
+        "portType": 1,
+      },
+      {
+        "id": 21,
+        "portType": 1,
+      },
+      {
+        "id": 22,
+        "portType": 1,
+      },
+      {
+        "id": 23,
+        "portType": 1,
+      },
+      {
+        "id": 24,
+        "portType": 1,
+      },
+      {
+        "id": 25,
+        "portType": 1,
+      },
+      {
+        "id": 26,
+        "portType": 1,
+      },
+      {
+        "id": 27,
+        "portType": 1,
+      },
+      {
+        "id": 28,
+        "portType": 1,
+      },
+      {
+        "id": 29,
+        "portType": 1,
+      },
+      {
+        "id": 30,
+        "portType": 1,
+      },
+      {
+        "id": 31,
+        "portType": 1,
+      },
+      {
+        "id": 32,
+        "portType": 1,
+      },
+      {
+        "id": 33,
+        "portType": 1,
+      },
+      {
+        "id": 34,
+        "portType": 1,
+      },
+      {
+        "id": 35,
+        "portType": 1,
+      },
+      {
+        "id": 36,
+        "portType": 1,
+      },
+      {
+        "id": 37,
+        "portType": 1,
+      },
+      {
+        "id": 38,
+        "portType": 1,
+      },
+      {
+        "id": 39,
+        "portType": 1,
+      },
+      {
+        "id": 40,
+        "portType": 1,
+      },
+      {
+        "id": 41,
+        "portType": 1,
+      },
+      {
+        "id": 42,
+        "portType": 1,
+      },
+      {
+        "id": 43,
+        "portType": 1,
+      },
+      {
+        "id": 44,
+        "portType": 1,
+      },
+      {
+        "id": 45,
+        "portType": 1,
+      },
+      {
+        "id": 46,
+        "portType": 1,
+      },
+      {
+        "id": 47,
+        "portType": 1,
+      },
+      {
+        "id": 48,
+        "portType": 1,
+      },
+      {
+        "id": 49,
+        "portType": 1,
+      },
+      {
+        "id": 50,
+        "portType": 1,
+      },
+      {
+        "id": 51,
+        "portType": 1,
+      },
+      {
+        "id": 52,
+        "portType": 1,
+      },
+      {
+        "id": 53,
+        "portType": 1,
+      },
+      {
+        "id": 54,
+        "portType": 1,
+      },
+      {
+        "id": 55,
+        "portType": 1,
+      },
+      {
+        "id": 56,
+        "portType": 1,
+      },
+      {
+        "id": 57,
+        "portType": 1,
+      },
+      {
+        "id": 58,
+        "portType": 1,
+      },
+      {
+        "id": 59,
+        "portType": 1,
+      },
+      {
+        "id": 60,
+        "portType": 1,
+      },
+      {
+        "id": 61,
+        "portType": 1,
+      },
+      {
+        "id": 62,
+        "portType": 1,
+      },
+      {
+        "id": 63,
+        "portType": 1,
+      },
+      {
+        "id": 64,
+        "portType": 1,
+      },
+      {
+        "id": 65,
+        "portType": 1,
+      },
+      {
+        "id": 66,
+        "portType": 1,
+      },
+      {
+        "id": 67,
+        "portType": 1,
+      },
+      {
+        "id": 68,
+        "portType": 1,
+      },
+      {
+        "id": 69,
+        "portType": 1,
+      },
+      {
+        "id": 70,
+        "portType": 1,
+      },
+      {
+        "id": 71,
+        "portType": 1,
+      },
+      {
+        "id": 72,
+        "portType": 1,
+      },
+      {
+        "id": 73,
+        "portType": 1,
+      },
+      {
+        "id": 74,
+        "portType": 1,
+      },
+      {
+        "id": 75,
+        "portType": 1,
+      },
+      {
+        "id": 76,
+        "portType": 1,
+      },
+      {
+        "id": 77,
+        "portType": 1,
+      },
+      {
+        "id": 78,
+        "portType": 1,
+      },
+      {
+        "id": 79,
+        "portType": 1,
+      },
+      {
+        "id": 80,
+        "portType": 1,
+      },
+      {
+        "id": 1301,
+        "portType": 512,
+      },
+      {
+        "id": 1401,
+        "portType": 2048,
+      },
+      {
+        "id": 1501,
+        "portType": 1024,
+      },
+      {
+        "id": 1502,
+        "portType": 1024,
+      },
+      {
+        "id": 1503,
+        "portType": 1024,
+      },
+      {
+        "id": 1504,
+        "portType": 1024,
+      },
+      {
+        "id": 1505,
+        "portType": 1024,
+      },
+      {
+        "id": 1506,
+        "portType": 1024,
+      },
+      {
+        "id": 1507,
+        "portType": 1024,
+      },
+      {
+        "id": 1508,
+        "portType": 1024,
+      },
+      {
+        "id": 1509,
+        "portType": 1024,
+      },
+      {
+        "id": 1510,
+        "portType": 1024,
+      },
+      {
+        "id": 1511,
+        "portType": 1024,
+      },
+      {
+        "id": 1512,
+        "portType": 1024,
+      },
+      {
+        "id": 1513,
+        "portType": 1024,
+      },
+      {
+        "id": 1514,
+        "portType": 1024,
+      },
+      {
+        "id": 1515,
+        "portType": 1024,
+      },
+      {
+        "id": 1516,
+        "portType": 1024,
+      },
+      {
+        "id": 1517,
+        "portType": 1024,
+      },
+      {
+        "id": 1518,
+        "portType": 1024,
+      },
+      {
+        "id": 1519,
+        "portType": 1024,
+      },
+      {
+        "id": 1520,
+        "portType": 1024,
+      },
+      {
+        "id": 1521,
+        "portType": 1024,
+      },
+      {
+        "id": 1522,
+        "portType": 1024,
+      },
+      {
+        "id": 1523,
+        "portType": 1024,
+      },
+      {
+        "id": 1524,
+        "portType": 1024,
+      },
+      {
+        "id": 1525,
+        "portType": 1024,
+      },
+      {
+        "id": 1526,
+        "portType": 1024,
+      },
+      {
+        "id": 1527,
+        "portType": 1024,
+      },
+      {
+        "id": 1528,
+        "portType": 1024,
+      },
+      {
+        "id": 1529,
+        "portType": 1024,
+      },
+      {
+        "id": 1530,
+        "portType": 1024,
+      },
+      {
+        "id": 1531,
+        "portType": 1024,
+      },
+      {
+        "id": 1532,
+        "portType": 1024,
+      },
+      {
+        "id": 1533,
+        "portType": 1024,
+      },
+      {
+        "id": 1534,
+        "portType": 1024,
+      },
+      {
+        "id": 1535,
+        "portType": 1024,
+      },
+      {
+        "id": 1536,
+        "portType": 1024,
+      },
+      {
+        "id": 1537,
+        "portType": 1024,
+      },
+      {
+        "id": 1538,
+        "portType": 1024,
+      },
+      {
+        "id": 1539,
+        "portType": 1024,
+      },
+      {
+        "id": 1540,
+        "portType": 1024,
+      },
+      {
+        "id": 1541,
+        "portType": 1024,
+      },
+      {
+        "id": 1542,
+        "portType": 1024,
+      },
+      {
+        "id": 1543,
+        "portType": 1024,
+      },
+      {
+        "id": 1544,
+        "portType": 1024,
+      },
+      {
+        "id": 1545,
+        "portType": 1024,
+      },
+      {
+        "id": 1546,
+        "portType": 1024,
+      },
+      {
+        "id": 1547,
+        "portType": 1024,
+      },
+      {
+        "id": 1548,
+        "portType": 1024,
+      },
+      {
+        "id": 1549,
+        "portType": 1024,
+      },
+      {
+        "id": 1550,
+        "portType": 1024,
+      },
+      {
+        "id": 1551,
+        "portType": 1024,
+      },
+      {
+        "id": 1552,
+        "portType": 1024,
+      },
+      {
+        "id": 1553,
+        "portType": 1024,
+      },
+      {
+        "id": 1554,
+        "portType": 1024,
+      },
+      {
+        "id": 1555,
+        "portType": 1024,
+      },
+      {
+        "id": 1556,
+        "portType": 1024,
+      },
+      {
+        "id": 1557,
+        "portType": 1024,
+      },
+      {
+        "id": 1558,
+        "portType": 1024,
+      },
+      {
+        "id": 1559,
+        "portType": 1024,
+      },
+      {
+        "id": 1560,
+        "portType": 1024,
+      },
+      {
+        "id": 1561,
+        "portType": 1024,
+      },
+      {
+        "id": 1562,
+        "portType": 1024,
+      },
+      {
+        "id": 1563,
+        "portType": 1024,
+      },
+      {
+        "id": 1564,
+        "portType": 1024,
+      },
+      {
+        "id": 2001,
+        "portType": 256,
+      },
+      {
+        "id": 2002,
+        "portType": 256,
+      },
+      {
+        "id": 2003,
+        "portType": 256,
+      },
+      {
+        "id": 2004,
+        "portType": 256,
+      },
+    ],
+    "monitor": "split",
+  },
+  "id": 31,
+  "inputs": [
+    {
+      "id": 0,
+      "meAvailability": 15,
+      "portType": 1,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 1,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 2,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 3,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 4,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 5,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 6,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 7,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 8,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 9,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 10,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 11,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 12,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 13,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 14,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 15,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 16,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 17,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 18,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 19,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 20,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 21,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 22,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 23,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 24,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 25,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 26,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 27,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 28,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 29,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 30,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 31,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 32,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 33,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 34,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 35,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 36,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 37,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 38,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 39,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 40,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 41,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 42,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 43,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 44,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 45,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 46,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 47,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 48,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 49,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 50,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 51,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 52,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 53,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 54,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 55,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 56,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 57,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 58,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 59,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 60,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 61,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 62,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 63,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 64,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 65,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 66,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 67,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 68,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 69,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 70,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 71,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 72,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 73,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 74,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 75,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 76,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 77,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 78,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 79,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 80,
+      "meAvailability": 15,
+      "portType": 0,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 1000,
+      "meAvailability": 15,
+      "portType": 2,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 2001,
+      "meAvailability": 15,
+      "portType": 3,
+      "sourceAvailability": 15,
+    },
+    {
+      "id": 2002,
+      "meAvailability": 15,
+      "portType": 3,
+      "sourceAvailability": 15,
+    },
+    {
+      "id": 3010,
+      "meAvailability": 15,
+      "portType": 4,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 3011,
+      "meAvailability": 15,
+      "portType": 5,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 3020,
+      "meAvailability": 15,
+      "portType": 4,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 3021,
+      "meAvailability": 15,
+      "portType": 5,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 3030,
+      "meAvailability": 15,
+      "portType": 4,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 3031,
+      "meAvailability": 15,
+      "portType": 5,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 3040,
+      "meAvailability": 15,
+      "portType": 4,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 3041,
+      "meAvailability": 15,
+      "portType": 5,
+      "sourceAvailability": 31,
+    },
+    {
+      "id": 4010,
+      "meAvailability": 0,
+      "portType": 130,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 4020,
+      "meAvailability": 0,
+      "portType": 130,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 4030,
+      "meAvailability": 0,
+      "portType": 130,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 4040,
+      "meAvailability": 0,
+      "portType": 130,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 4050,
+      "meAvailability": 0,
+      "portType": 130,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 4060,
+      "meAvailability": 0,
+      "portType": 130,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 4070,
+      "meAvailability": 0,
+      "portType": 130,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 4080,
+      "meAvailability": 0,
+      "portType": 130,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 4090,
+      "meAvailability": 0,
+      "portType": 130,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 4100,
+      "meAvailability": 0,
+      "portType": 130,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 4110,
+      "meAvailability": 0,
+      "portType": 130,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 4120,
+      "meAvailability": 0,
+      "portType": 130,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 4130,
+      "meAvailability": 0,
+      "portType": 130,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 4140,
+      "meAvailability": 0,
+      "portType": 130,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 4150,
+      "meAvailability": 0,
+      "portType": 130,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 4160,
+      "meAvailability": 0,
+      "portType": 130,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 5010,
+      "meAvailability": 0,
+      "portType": 130,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 5020,
+      "meAvailability": 0,
+      "portType": 130,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 5030,
+      "meAvailability": 0,
+      "portType": 130,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 5040,
+      "meAvailability": 0,
+      "portType": 130,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 6000,
+      "meAvailability": 15,
+      "portType": 6,
+      "sourceAvailability": 27,
+    },
+    {
+      "id": 6001,
+      "meAvailability": 15,
+      "portType": 6,
+      "sourceAvailability": 27,
+    },
+    {
+      "id": 7001,
+      "meAvailability": 0,
+      "portType": 128,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 7002,
+      "meAvailability": 0,
+      "portType": 128,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 7003,
+      "meAvailability": 0,
+      "portType": 128,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 7004,
+      "meAvailability": 0,
+      "portType": 128,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 8001,
+      "meAvailability": 0,
+      "portType": 129,
+      "sourceAvailability": 2,
+    },
+    {
+      "id": 8002,
+      "meAvailability": 0,
+      "portType": 129,
+      "sourceAvailability": 2,
+    },
+    {
+      "id": 8003,
+      "meAvailability": 0,
+      "portType": 129,
+      "sourceAvailability": 2,
+    },
+    {
+      "id": 8004,
+      "meAvailability": 0,
+      "portType": 129,
+      "sourceAvailability": 2,
+    },
+    {
+      "id": 8005,
+      "meAvailability": 0,
+      "portType": 129,
+      "sourceAvailability": 2,
+    },
+    {
+      "id": 8006,
+      "meAvailability": 0,
+      "portType": 129,
+      "sourceAvailability": 2,
+    },
+    {
+      "id": 8007,
+      "meAvailability": 0,
+      "portType": 129,
+      "sourceAvailability": 2,
+    },
+    {
+      "id": 8008,
+      "meAvailability": 0,
+      "portType": 129,
+      "sourceAvailability": 2,
+    },
+    {
+      "id": 8009,
+      "meAvailability": 0,
+      "portType": 129,
+      "sourceAvailability": 2,
+    },
+    {
+      "id": 8010,
+      "meAvailability": 0,
+      "portType": 129,
+      "sourceAvailability": 2,
+    },
+    {
+      "id": 8011,
+      "meAvailability": 0,
+      "portType": 129,
+      "sourceAvailability": 2,
+    },
+    {
+      "id": 8012,
+      "meAvailability": 0,
+      "portType": 129,
+      "sourceAvailability": 2,
+    },
+    {
+      "id": 8013,
+      "meAvailability": 0,
+      "portType": 129,
+      "sourceAvailability": 2,
+    },
+    {
+      "id": 8014,
+      "meAvailability": 0,
+      "portType": 129,
+      "sourceAvailability": 2,
+    },
+    {
+      "id": 8015,
+      "meAvailability": 0,
+      "portType": 129,
+      "sourceAvailability": 2,
+    },
+    {
+      "id": 8016,
+      "meAvailability": 0,
+      "portType": 129,
+      "sourceAvailability": 2,
+    },
+    {
+      "id": 8017,
+      "meAvailability": 0,
+      "portType": 129,
+      "sourceAvailability": 2,
+    },
+    {
+      "id": 8018,
+      "meAvailability": 0,
+      "portType": 129,
+      "sourceAvailability": 2,
+    },
+    {
+      "id": 8019,
+      "meAvailability": 0,
+      "portType": 129,
+      "sourceAvailability": 2,
+    },
+    {
+      "id": 8020,
+      "meAvailability": 0,
+      "portType": 129,
+      "sourceAvailability": 2,
+    },
+    {
+      "id": 8021,
+      "meAvailability": 0,
+      "portType": 129,
+      "sourceAvailability": 2,
+    },
+    {
+      "id": 8022,
+      "meAvailability": 0,
+      "portType": 129,
+      "sourceAvailability": 2,
+    },
+    {
+      "id": 8023,
+      "meAvailability": 0,
+      "portType": 129,
+      "sourceAvailability": 2,
+    },
+    {
+      "id": 8024,
+      "meAvailability": 0,
+      "portType": 129,
+      "sourceAvailability": 2,
+    },
+    {
+      "id": 10010,
+      "meAvailability": 0,
+      "portType": 128,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 10011,
+      "meAvailability": 0,
+      "portType": 128,
+      "sourceAvailability": 3,
+    },
+    {
+      "id": 10020,
+      "meAvailability": 1,
+      "portType": 128,
+      "sourceAvailability": 11,
+    },
+    {
+      "id": 10021,
+      "meAvailability": 1,
+      "portType": 128,
+      "sourceAvailability": 11,
+    },
+    {
+      "id": 10030,
+      "meAvailability": 3,
+      "portType": 128,
+      "sourceAvailability": 11,
+    },
+    {
+      "id": 10031,
+      "meAvailability": 3,
+      "portType": 128,
+      "sourceAvailability": 11,
+    },
+    {
+      "id": 10040,
+      "meAvailability": 7,
+      "portType": 128,
+      "sourceAvailability": 11,
+    },
+    {
+      "id": 10041,
+      "meAvailability": 7,
+      "portType": 128,
+      "sourceAvailability": 11,
+    },
+  ],
+  "label": "4 M/E Constellation 4K Plus",
+  "macros": 100,
+  "media": {
+    "captureStills": true,
+    "clips": 4,
+    "players": 4,
+    "stills": 64,
+  },
+  "multiviewerFullGrid": true,
+  "outputs": [
+    {
+      "id": 0,
+      "name": "Output 1",
+    },
+    {
+      "id": 1,
+      "name": "Output 2",
+    },
+    {
+      "id": 2,
+      "name": "Output 3",
+    },
+    {
+      "id": 3,
+      "name": "Output 4",
+    },
+    {
+      "id": 4,
+      "name": "Output 5",
+    },
+    {
+      "id": 5,
+      "name": "Output 6",
+    },
+    {
+      "id": 6,
+      "name": "Output 7",
+    },
+    {
+      "id": 7,
+      "name": "Output 8",
+    },
+    {
+      "id": 8,
+      "name": "Output 9",
+    },
+    {
+      "id": 9,
+      "name": "Output 10",
+    },
+    {
+      "id": 10,
+      "name": "Output 11",
+    },
+    {
+      "id": 11,
+      "name": "Output 12",
+    },
+    {
+      "id": 12,
+      "name": "Output 13",
+    },
+    {
+      "id": 13,
+      "name": "Output 14",
+    },
+    {
+      "id": 14,
+      "name": "Output 15",
+    },
+    {
+      "id": 15,
+      "name": "Output 16",
+    },
+    {
+      "id": 16,
+      "name": "Output 17",
+    },
+    {
+      "id": 17,
+      "name": "Output 18",
+    },
+    {
+      "id": 18,
+      "name": "Output 19",
+    },
+    {
+      "id": 19,
+      "name": "Output 20",
+    },
+    {
+      "id": 20,
+      "name": "Output 21",
+    },
+    {
+      "id": 21,
+      "name": "Output 22",
+    },
+    {
+      "id": 22,
+      "name": "Output 23",
+    },
+    {
+      "id": 23,
+      "name": "Output 24",
+    },
+    {
+      "id": 24,
+      "name": "Output 25",
+    },
+    {
+      "id": 25,
+      "name": "Output 26",
+    },
+    {
+      "id": 26,
+      "name": "Output 27",
+    },
+    {
+      "id": 27,
+      "name": "Output 28",
+    },
+    {
+      "id": 28,
+      "name": "Output 29",
+    },
+    {
+      "id": 29,
+      "name": "Output 30",
+    },
+    {
+      "id": 30,
+      "name": "Output 31",
+    },
+    {
+      "id": 31,
+      "name": "Output 32",
+    },
+    {
+      "id": 32,
+      "name": "Output 33",
+    },
+    {
+      "id": 33,
+      "name": "Output 34",
+    },
+    {
+      "id": 34,
+      "name": "Output 35",
+    },
+    {
+      "id": 35,
+      "name": "Output 36",
+    },
+    {
+      "id": 36,
+      "name": "Output 37",
+    },
+    {
+      "id": 37,
+      "name": "Output 38",
+    },
+    {
+      "id": 38,
+      "name": "Output 39",
+    },
+    {
+      "id": 39,
+      "name": "Output 40",
+    },
+    {
+      "id": 40,
+      "name": "Output 41",
+    },
+    {
+      "id": 41,
+      "name": "Output 42",
+    },
+    {
+      "id": 42,
+      "name": "Output 43",
+    },
+    {
+      "id": 43,
+      "name": "Output 44",
+    },
+    {
+      "id": 44,
+      "name": "Output 45",
+    },
+    {
+      "id": 45,
+      "name": "Output 46",
+    },
+    {
+      "id": 46,
+      "name": "Output 47",
+    },
+    {
+      "id": 47,
+      "name": "Output 48",
+    },
+  ],
+  "recordISO": false,
+  "recording": false,
+  "streaming": false,
+}
+`;
+
 exports[`Check 4 M/E Constellation HD (20) 1`] = `
 {
   "DSKs": 4,

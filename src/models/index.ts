@@ -42,6 +42,7 @@ import { ModelSpecConstellation4K2ME } from './constellation4K2Me.js'
 import { ModelSpecConstellation4K4ME } from './constellation4K4Me.js'
 import { ModelSpecTVS4K8 } from './tvs4k8.js'
 import type { FairlightAudioRouting } from 'atem-connection/dist/state/fairlight.js'
+import { ModelSpecConstellation4K4MEPlus } from './constellation4K4MePlus.js'
 
 export * from './types.js'
 
@@ -76,6 +77,7 @@ export const ALL_MODELS: ModelSpec[] = [
 	ModelSpecConstellation4K2ME,
 	ModelSpecConstellation4K4ME,
 	ModelSpecTVS4K8,
+	ModelSpecConstellation4K4MEPlus,
 ]
 
 export const ALL_MODEL_CHOICES: DropdownChoice[] = ALL_MODELS.map(({ id, label }) => ({ id, label }))
