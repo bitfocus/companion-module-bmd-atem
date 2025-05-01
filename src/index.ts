@@ -508,7 +508,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				}
 				const outputMatch = path.match(/fairlight.audioRouting.outputs.(\d+)/)
 				if (outputMatch) {
-					changedVariables.fairlightRoutingSources.add(Number(outputMatch[1]))
+					changedVariables.fairlightRoutingOutputs.add(Number(outputMatch[1]))
 					continue
 				}
 
