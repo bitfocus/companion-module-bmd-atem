@@ -152,6 +152,30 @@ export function GetUpstreamKeyerTypeChoices(): MyDropdownChoice<Enums.MixEffectK
 	return options
 }
 
+export function GetUpstreamKeyerPatternChoices(): MyDropdownChoice<Enums.Pattern>[] {
+	const options = [
+		{ id: Enums.Pattern.LeftToRightBar, label: 'Left To Right Bar' },
+		{ id: Enums.Pattern.TopToBottomBar, label: 'Top To Bottom Bar' },
+		{ id: Enums.Pattern.HorizontalBarnDoor, label: 'Horizontal Barn Door' },
+		{ id: Enums.Pattern.VerticalBarnDoor, label: 'Vertical Barn Door' },
+		{ id: Enums.Pattern.CornersInFourBox, label: 'Corners In Four Box' },
+		{ id: Enums.Pattern.RectangleIris, label: 'Rectangle Iris' },
+		{ id: Enums.Pattern.DiamondIris, label: 'Diamond Iris' },
+		{ id: Enums.Pattern.CircleIris, label: 'Circle Iris' },
+		{ id: Enums.Pattern.TopLeftBox, label: 'Top Left Box' },
+		{ id: Enums.Pattern.TopRightBox, label: 'Top Right Box' },
+		{ id: Enums.Pattern.BottomRightBox, label: 'Bottom Right Box' },
+		{ id: Enums.Pattern.BottomLeftBox, label: 'Bottom Left Box' },
+		{ id: Enums.Pattern.TopCentreBox, label: 'Top Centre Box' },
+		{ id: Enums.Pattern.RightCentreBox, label: 'Right Centre Box' },
+		{ id: Enums.Pattern.BottomCentreBox, label: 'Bottom Centre Box' },
+		{ id: Enums.Pattern.LeftCentreBox, label: 'Left Centre Box' },
+		{ id: Enums.Pattern.TopLeftDiagonal, label: 'Top Left Diagonal' },
+		{ id: Enums.Pattern.TopRightDiagonal, label: 'Top Right Diagonal' },
+	]
+	return options
+}
+
 export function GetMEIdChoices(model: ModelSpec): DropdownChoice[] {
 	return iterateTimes(model.MEs, (i) => ({
 		id: i,
