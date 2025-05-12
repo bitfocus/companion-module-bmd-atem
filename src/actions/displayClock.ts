@@ -1,5 +1,9 @@
 import { Enums, type Atem, type DisplayClock } from 'atem-connection'
-import { AtemDisplayClockPropertiesPickers, AtemDisplayClockTimePickers } from '../input.js'
+import {
+	AtemDisplayClockPropertiesPickers,
+	AtemDisplayClockTimeOffsetPickers,
+	AtemDisplayClockTimePickers,
+} from '../input.js'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
 import type { MyActionDefinitions } from './types.js'
@@ -25,6 +29,11 @@ export interface AtemDisplayClockActions {
 		minutes: number
 		seconds: number
 	}
+	[ActionId.DisplayClockOffsetStartTime]: {
+		hours: number
+		minutes: number
+		seconds: number
+	}
 }
 
 export function createDisplayClockActions(
@@ -37,6 +46,7 @@ export function createDisplayClockActions(
 			[ActionId.DisplayClockState]: undefined,
 			[ActionId.DisplayClockConfigure]: undefined,
 			[ActionId.DisplayClockStartTime]: undefined,
+			[ActionId.DisplayClockOffsetStartTime]: undefined,
 		}
 	}
 	return {
@@ -147,6 +157,47 @@ export function createDisplayClockActions(
 				} else {
 					return undefined
 				}
+			},
+		},
+		[ActionId.DisplayClockOffsetStartTime]: {
+			name: 'Display Clock: Offset Start Time',
+			options: { ...AtemDisplayClockTimeOffsetPickers() },
+			callback: async ({ options }) => {
+				const hoursOffset = options.getPlainNumber('hours')
+				const minuteOffset = options.getPlainNumber('minutes')
+				const secondOffset = options.getPlainNumber('seconds')
+
+				const timeOffsetInSeconds = hoursOffset * 3600 + minuteOffset * 60 + secondOffset
+
+				let currentTimeInSeconds = 0
+
+				const displayClockConfig = state.state.displayClock?.properties
+
+				if (displayClockConfig) {
+					currentTimeInSeconds =
+						displayClockConfig.startFrom.hours * 3600 +
+						displayClockConfig.startFrom.minutes * 60 +
+						displayClockConfig.startFrom.seconds
+				}
+
+				let newTimeInSeconds = currentTimeInSeconds + timeOffsetInSeconds
+
+				if (newTimeInSeconds < 0) newTimeInSeconds = 0
+
+				const hours = Math.floor(newTimeInSeconds / 3600)
+				const minutes = Math.floor((newTimeInSeconds % 3600) / 60)
+				const seconds = newTimeInSeconds % 60
+
+				const time: DisplayClock.DisplayClockTime = {
+					hours,
+					minutes,
+					seconds,
+					frames: 0,
+				}
+
+				await atem?.setDisplayClockProperties({
+					startFrom: time,
+				})
 			},
 		},
 	}

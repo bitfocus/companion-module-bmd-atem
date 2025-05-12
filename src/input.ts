@@ -2043,6 +2043,45 @@ export function AtemDisplayClockTimePickers(): {
 	}
 }
 
+export function AtemDisplayClockTimeOffsetPickers(): {
+	hours: CompanionInputFieldNumber
+	minutes: CompanionInputFieldNumber
+	seconds: CompanionInputFieldNumber
+} {
+	return {
+		hours: {
+			type: 'number',
+			id: 'hours',
+			label: 'Hours',
+			min: -23,
+			max: 23,
+			range: true,
+			default: 0,
+			step: 1,
+		},
+		minutes: {
+			type: 'number',
+			id: 'minutes',
+			label: 'Minutes',
+			min: -59,
+			max: 59,
+			range: true,
+			default: 0,
+			step: 1,
+		},
+		seconds: {
+			type: 'number',
+			id: 'seconds',
+			label: 'Seconds',
+			min: -59,
+			max: 59,
+			range: true,
+			default: 0,
+			step: 1,
+		},
+	}
+}
+
 export function AtemFairlightAudioRoutingSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
 	const sources = FairlightAudioRoutingSources(model, state)
 
