@@ -163,37 +163,24 @@ export function createDisplayClockActions(
 			name: 'Display Clock: Offset Start Time',
 			options: { ...AtemDisplayClockTimeOffsetPickers() },
 			callback: async ({ options }) => {
-				const hourOffset = options.getPlainNumber('hours')
-				const minuteOffset = options.getPlainNumber('minutes')
-				const secondOffset = options.getPlainNumber('seconds')
+				const clockState = state.state.displayClock?.properties?.startFrom
+				const currentTime = clockState ? clockState.hours * 3600 + clockState.minutes * 60 + clockState.seconds : 0
 
-				const offset = Number(hourOffset) * 3600 + Number(minuteOffset) * 60 + Number(secondOffset)
-
-				let currentTime = 0
-
-				const displayClockConfig = state.state.displayClock?.properties
-
-				if (displayClockConfig) {
-					currentTime =
-						displayClockConfig.startFrom.hours * 3600 +
-						displayClockConfig.startFrom.minutes * 60 +
-						displayClockConfig.startFrom.seconds
-				}
+				const offset =
+					options.getPlainNumber('hours') * 3600 +
+					options.getPlainNumber('minutes') * 60 +
+					options.getPlainNumber('seconds')
 
 				let newTime = currentTime + offset
 
-				const day = 24 * 3600
-				newTime = newTime % day
-				if (newTime < 0) newTime += day
-
-				const hours = Math.floor(newTime / 3600)
-				const minutes = Math.floor((newTime % 3600) / 60)
-				const seconds = newTime % 60
+				const oneDay = 24 * 3600
+				newTime = newTime % oneDay
+				if (newTime < 0) newTime += oneDay
 
 				const time: DisplayClock.DisplayClockTime = {
-					hours,
-					minutes,
-					seconds,
+					hours: Math.floor(newTime / 3600),
+					minutes: Math.floor((newTime % 3600) / 60),
+					seconds: newTime % 60,
 					frames: 0,
 				}
 
