@@ -180,10 +180,11 @@ export function createDisplayClockActions(
 						displayClockConfig.startFrom.seconds
 				}
 
-				const newTime = currentTime + offset
+				let newTime = currentTime + offset
 
-				const maxTime = 23 * 3600 + 59 * 60 + 59
-				if (newTime < 0 || newTime > maxTime) return
+				const day = 24 * 3600
+				newTime = newTime % day
+				if (newTime < 0) newTime += day
 
 				const hours = Math.floor(newTime / 3600)
 				const minutes = Math.floor((newTime % 3600) / 60)
