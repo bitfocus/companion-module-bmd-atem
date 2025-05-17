@@ -111,22 +111,24 @@ export function createMediaPlayerActions(
 			callback: async ({ options }) => {
 				const [mediaplayer, slot] = await Promise.all([
 					options.getParsedNumber('mediaplayer'),
-					options.getParsedNumber('slot'),
+					options.getParsedString('slot'),
 				])
 
 				if (model.media.clips > 0 && options.getPlainBoolean('isClip')) {
+					const position = state.state.media.clipPool.findIndex((clip) => (clip?.name == slot ? true : false))
 					await atem?.setMediaPlayerSource(
 						{
 							sourceType: Enums.MediaSourceType.Clip,
-							clipIndex: slot - 1,
+							clipIndex: position != -1 ? position : parseInt(slot) - 1,
 						},
 						mediaplayer - 1,
 					)
 				} else {
+					const position = state.state.media.stillPool.findIndex((still) => (still?.fileName == slot ? true : false))
 					await atem?.setMediaPlayerSource(
 						{
 							sourceType: Enums.MediaSourceType.Still,
-							stillIndex: slot - 1,
+							stillIndex: position != -1 ? position : parseInt(slot) - 1,
 						},
 						mediaplayer - 1,
 					)
