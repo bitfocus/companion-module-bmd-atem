@@ -115,7 +115,7 @@ export function createMediaPlayerActions(
 				])
 
 				if (model.media.clips > 0 && options.getPlainBoolean('isClip')) {
-					const position = state.state.media.clipPool.findIndex((clip) => (clip?.name == slot ? true : false))
+					const position = state.state.media.clipPool.findIndex((clip) => clip?.name == slot)
 					await atem?.setMediaPlayerSource(
 						{
 							sourceType: Enums.MediaSourceType.Clip,
@@ -124,7 +124,7 @@ export function createMediaPlayerActions(
 						mediaplayer - 1,
 					)
 				} else {
-					const position = state.state.media.stillPool.findIndex((still) => (still?.fileName == slot ? true : false))
+					const position = state.state.media.stillPool.findIndex((still) => still?.fileName == slot)
 					await atem?.setMediaPlayerSource(
 						{
 							sourceType: Enums.MediaSourceType.Still,
