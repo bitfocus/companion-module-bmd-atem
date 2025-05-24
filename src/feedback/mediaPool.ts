@@ -4,7 +4,7 @@ import type { MyFeedbackDefinitions } from './types.js'
 import { FeedbackId } from './FeedbackId.js'
 import type { StateWrapper } from '../state.js'
 import type { MediaPoolPreviewOptions, SourceDefinition } from '../mediaPoolPreviews.js'
-import type { CompanionAdvancedFeedbackResult } from '@companion-module/base/dist/index.js'
+import type { CompanionAdvancedFeedbackResult, CompanionInputFieldDropdown } from '@companion-module/base/dist/index.js'
 import { MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from '../util.js'
 
 export interface AtemMediaPoolFeedbacks {
@@ -21,6 +21,33 @@ export interface AtemMediaPoolFeedbacks {
 		position: 'top' | 'center' | 'bottom'
 		crop: 'none' | 'left' | 'center' | 'right'
 	}
+}
+
+const cropAndPositionOptions = {
+	crop: {
+		id: 'crop',
+		type: 'dropdown',
+		label: 'Crop',
+		default: 'none',
+		choices: [
+			{ id: 'none', label: 'None' },
+			{ id: 'left', label: 'Left' },
+			{ id: 'center', label: 'Center' },
+			{ id: 'right', label: 'Right' },
+		],
+	} satisfies CompanionInputFieldDropdown,
+	position: {
+		id: 'position',
+		type: 'dropdown',
+		label: 'Position',
+		default: 'center',
+		choices: [
+			{ id: 'top', label: 'Top' },
+			{ id: 'center', label: 'Center' },
+			{ id: 'bottom', label: 'Bottom' },
+		],
+		isVisible: (options) => options['crop'] === 'none',
+	} satisfies CompanionInputFieldDropdown,
 }
 
 export function createMediaPoolFeedbacks(
@@ -41,30 +68,7 @@ export function createMediaPoolFeedbacks(
 			options: {
 				source: AtemMediaPlayerSourcePicker(model, state.state, false),
 
-				crop: {
-					id: 'crop',
-					type: 'dropdown',
-					label: 'Crop',
-					default: 'none',
-					choices: [
-						{ id: 'none', label: 'None' },
-						{ id: 'left', label: 'Left' },
-						{ id: 'center', label: 'Center' },
-						{ id: 'right', label: 'Right' },
-					],
-				},
-				position: {
-					id: 'position',
-					type: 'dropdown',
-					label: 'Position',
-					default: 'center',
-					choices: [
-						{ id: 'top', label: 'Top' },
-						{ id: 'center', label: 'Center' },
-						{ id: 'bottom', label: 'Bottom' },
-					],
-					isVisible: (options) => options['crop'] === 'none',
-				},
+				...cropAndPositionOptions,
 			},
 			callback: async ({ options, image }) => {
 				const source = parseSource(options.getPlainNumber('source'))
@@ -112,30 +116,7 @@ export function createMediaPoolFeedbacks(
 					useVariables: { local: true },
 				},
 
-				crop: {
-					id: 'crop',
-					type: 'dropdown',
-					label: 'Crop',
-					default: 'none',
-					choices: [
-						{ id: 'none', label: 'None' },
-						{ id: 'left', label: 'Left' },
-						{ id: 'center', label: 'Center' },
-						{ id: 'right', label: 'Right' },
-					],
-				},
-				position: {
-					id: 'position',
-					type: 'dropdown',
-					label: 'Position',
-					default: 'center',
-					choices: [
-						{ id: 'top', label: 'Top' },
-						{ id: 'center', label: 'Center' },
-						{ id: 'bottom', label: 'Bottom' },
-					],
-					isVisible: (options) => options['crop'] === 'none',
-				},
+				...cropAndPositionOptions,
 			},
 			callback: async ({ options, image }) => {
 				if (!image) return {}
