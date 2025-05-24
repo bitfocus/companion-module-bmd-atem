@@ -946,6 +946,10 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 			name: `Timecode`,
 			variableId: `timecode`,
 		})
+		variables.push({
+			name: `Display Clock`,
+			variableId: `display_clock`,
+		})
 		updateTimecodeVariables(instance, state.state, values)
 	}
 

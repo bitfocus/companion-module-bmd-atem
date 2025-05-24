@@ -52,6 +52,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 
 	public config: AtemConfig = {}
 	public timecodeSeconds = 0
+	public displayClockSeconds = 0
 
 	/**
 	 * Create an instance of an ATEM module.
@@ -237,6 +238,10 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			} else if (this.config.pollTimecode && command instanceof Commands.TimeCommand) {
 				this.timecodeSeconds =
 					command.properties.hour * 3600 + command.properties.minute * 60 + command.properties.second
+				updateTimecodeVariables(this, this.wrappedState.state, values)
+			} else if (this.config.pollTimecode && command instanceof Commands.DisplayClockCurrentTimeCommand) {
+				this.displayClockSeconds =
+					command.properties.time.hours * 3600 + command.properties.time.minutes * 60 + command.properties.time.seconds
 				updateTimecodeVariables(this, this.wrappedState.state, values)
 			}
 		}
@@ -649,6 +654,9 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 						if (this.atem && this.config.pollTimecode) {
 							this.atem.requestTime().catch((e) => {
 								this.log('debug', 'Request time error: ' + e)
+							})
+							this.atem.requestDisplayClockTime().catch((e) => {
+								this.log('debug', 'Request display clock time error: ' + e)
 							})
 						}
 					}, 500)
