@@ -299,7 +299,19 @@ export class MediaPoolPreviewCache {
 
 	#getFrameAtemState(source: SourceDefinition): MediaState.StillFrame | undefined {
 		if (source.isClip) {
-			return this.#latestState.clipPool[source.slot]?.frames?.[source.frameIndex]
+			const clip = this.#latestState.clipPool[source.slot]
+			if (!clip || clip.frameCount < 1 || source.frameIndex < 0 || source.frameIndex >= clip.frameCount)
+				return undefined
+
+			const frame = clip.frames?.[source.frameIndex]
+			if (frame) return frame
+
+			// In case the clip frames are missing in the state, return a fake frame
+			return {
+				fileName: `${clip.name}-${source.frameIndex}`,
+				hash: `fake-${source.frameIndex}`,
+				isUsed: true,
+			}
 		} else {
 			return this.#latestState.stillPool[source.slot]
 		}
