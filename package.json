@@ -1,6 +1,6 @@
 {
 	"name": "bmd-atem",
-	"version": "3.16.1",
+	"version": "3.17.0",
 	"homepage": "https://github.com/bitfocus/companion-module-atem#readme",
 	"main": "dist/index.js",
 	"type": "module",
@@ -54,5 +54,5 @@
 		"typescript-eslint": "^8.32.1",
 		"vitest": "^3.1.4"
 	},
-	"packageManager": "yarn@4.8.1"
+	"packageManager": "yarn@4.9.1"
 }
