@@ -121,8 +121,8 @@ export function createMediaPoolFeedbacks(
 				if (!image) return {}
 
 				const source: SourceDefinition = {
-					slot: await options.getParsedNumber('slot'),
-					isClip: options.getPlainBoolean('isClip'),
+					slot: (await options.getParsedNumber('slot')) - 1,
+					isClip: model.media.clips > 0 && options.getPlainBoolean('isClip'),
 					frameIndex: 0, // Future
 				}
 
@@ -139,8 +139,8 @@ export function createMediaPoolFeedbacks(
 			subscribe: async ({ id, options }) => {
 				state.mediaPoolCache.subscribe(
 					{
-						slot: await options.getParsedNumber('slot'),
-						isClip: options.getPlainBoolean('isClip'),
+						slot: (await options.getParsedNumber('slot')) - 1,
+						isClip: model.media.clips > 0 && options.getPlainBoolean('isClip'),
 						frameIndex: 0, // Future
 					},
 					id,

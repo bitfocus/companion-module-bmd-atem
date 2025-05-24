@@ -27,12 +27,13 @@ import { isEqual } from 'lodash-es'
 import { UpgradeScripts } from './upgrades.js'
 import { calculateTallyForInputId, type IpAndPort } from './util.js'
 import { AtemCameraControlStateBuilder, createEmptyState } from '@atem-connection/camera-control'
+import { decodeImageFromAtem } from '@atem-connection/image-tools'
+import { updateCameraControlVariables } from './variables/cameraControl.js'
+import { updateTimecodeVariables } from './variables/timecode.js'
 
 const { Atem, AtemConnectionStatus, AtemStateUtil } = AtemPkg
 
 import { ThreadedClassManager, RegisterExitHandlers } from 'threadedclass'
-import { updateCameraControlVariables } from './variables/cameraControl.js'
-import { updateTimecodeVariables } from './variables/timecode.js'
 
 // HACK: This stops it from registering an unhandledException handler, as that causes companion to exit on error
 ThreadedClassManager.handleExit = RegisterExitHandlers.NO
@@ -72,13 +73,15 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				async (source) => {
 					if (!this.atem) throw new Error('Atem not initialised')
 
+					const videoMode = this.atem.videoMode
+					if (!videoMode) throw new Error('No video mode')
+
 					if (source.isClip) {
 						// TODO
 						throw new Error('Not implemented!')
 					} else {
-						const buffer = await this.atem.downloadStill(source.slot /* 'raw'*/) // TODO - perform optimised conversions
-						const videoMode = this.atem.videoMode
-						if (!videoMode) throw new Error('No video mode')
+						const rawBuffer = await this.atem.downloadStill(source.slot, 'yuv') // TODO - 'raw' once supported by @atem-connection/image-tools
+						const buffer = decodeImageFromAtem(videoMode.width, videoMode.height, rawBuffer)
 
 						return {
 							buffer,
