@@ -1,5 +1,5 @@
 import type { AtemState, MediaState } from 'atem-connection'
-import { assertNever, type CompanionImageBufferPosition } from '@companion-module/base'
+import { assertNever, type CompanionAdvancedFeedbackResult } from '@companion-module/base'
 import type { ReadonlyDeep } from 'type-fest'
 import { MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util.js'
 import { ImageTransformer, PixelFormat, type ComputedImage, ResizeMode } from '@julusian/image-rs'
@@ -30,11 +30,10 @@ interface MediaPoolPreviewCacheEntry {
 	scaledImages: Map<string, Promise<ComputedImage>>
 }
 
-export interface PreviewImageResult {
-	imageBuffer: Uint8Array
-	imageBufferEncoding: unknown // nocommit use the type
-	imageBufferPosition: CompanionImageBufferPosition
-}
+export type PreviewImageResult = Pick<
+	CompanionAdvancedFeedbackResult,
+	'imageBuffer' | 'imageBufferEncoding' | 'imageBufferPosition'
+>
 
 export type FetchStillFrameFunction = (isClip: boolean, slot: number) => Promise<ComputedImage>
 interface SubscriptionsEntry {
@@ -55,7 +54,7 @@ export class MediaPoolPreviewCache {
 	constructor(
 		initialState: AtemState,
 		fetchStillFrame: FetchStillFrameFunction,
-		invalidateFeedbacks: (feedbacks: string[]) => void
+		invalidateFeedbacks: (feedbacks: string[]) => void,
 	) {
 		this.#latestState = initialState.media
 		this.#fetchStillFrame = fetchStillFrame
@@ -158,7 +157,7 @@ export class MediaPoolPreviewCache {
 				cacheEntry.rawImage.buffer,
 				cacheEntry.rawImage.width,
 				cacheEntry.rawImage.height,
-				PixelFormat.Rgba
+				PixelFormat.Rgba,
 			)
 
 			const cropWidth = (cacheEntry.rawImage.height / options.buttonHeight) * options.buttonWidth
@@ -177,7 +176,7 @@ export class MediaPoolPreviewCache {
 						cacheEntry.rawImage.width - cropWidth,
 						0,
 						cropWidth,
-						cacheEntry.rawImage.height
+						cacheEntry.rawImage.height,
 					)
 					break
 
@@ -237,7 +236,7 @@ export class MediaPoolPreviewCache {
 		isClip: boolean,
 		slot: number,
 		cacheEntry: MediaPoolPreviewCacheEntry | undefined,
-		frameState: MediaState.StillFrame
+		frameState: MediaState.StillFrame,
 	): void {
 		if (cacheEntry && cacheEntry.isLoading) return // Image is already being loaded, need to wait for that to complete
 
@@ -286,7 +285,7 @@ export class MediaPoolPreviewCache {
 				console.log('failed image', e)
 				// TODO this should do a better failure, and should perform some kind of retry
 			})
-			.then(() => {
+			.finally(() => {
 				// Inform all feedbacks, to update
 				const allSubsForImage = this.#subscriptions.get(cacheEntryId)
 				if (allSubsForImage && allSubsForImage.subs.size > 0) {
