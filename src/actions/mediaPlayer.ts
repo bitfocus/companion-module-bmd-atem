@@ -103,7 +103,7 @@ export function createMediaPlayerActions(
 				slot: {
 					id: 'slot',
 					type: 'textinput',
-					label: 'Slot',
+					label: 'Slot number or item name',
 					default: '1',
 					useVariables: true,
 				},
@@ -115,20 +115,32 @@ export function createMediaPlayerActions(
 				])
 
 				if (model.media.clips > 0 && options.getPlainBoolean('isClip')) {
-					const position = state.state.media.clipPool.findIndex((clip) => clip?.name == slot)
+					let index = Number(slot) - 1
+					if (isNaN(index)) index = state.state.media.clipPool.findIndex((clip) => clip?.name == slot)
+					if (index == -1) {
+						console.warn(`Media player: Clip "${slot}" not found`)
+						return
+					}
+
 					await atem?.setMediaPlayerSource(
 						{
 							sourceType: Enums.MediaSourceType.Clip,
-							clipIndex: position != -1 ? position : parseInt(slot) - 1,
+							clipIndex: index,
 						},
 						mediaplayer - 1,
 					)
 				} else {
-					const position = state.state.media.stillPool.findIndex((still) => still?.fileName == slot)
+					let index = Number(slot) - 1
+					if (isNaN(index)) index = state.state.media.stillPool.findIndex((clip) => clip?.fileName == slot)
+					if (index == -1) {
+						console.warn(`Media player: Still "${slot}" not found`)
+						return
+					}
+
 					await atem?.setMediaPlayerSource(
 						{
 							sourceType: Enums.MediaSourceType.Still,
-							stillIndex: position != -1 ? position : parseInt(slot) - 1,
+							stillIndex: index,
 						},
 						mediaplayer - 1,
 					)
