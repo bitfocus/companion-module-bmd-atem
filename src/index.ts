@@ -30,7 +30,6 @@ import { AtemCameraControlStateBuilder, createEmptyState } from '@atem-connectio
 
 const { Atem, AtemConnectionStatus, AtemStateUtil } = AtemPkg
 
-// eslint-disable-next-line n/no-extraneous-import
 import { ThreadedClassManager, RegisterExitHandlers } from 'threadedclass'
 import { updateCameraControlVariables } from './variables/cameraControl.js'
 import { updateTimecodeVariables } from './variables/timecode.js'
@@ -70,14 +69,14 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			// mediaPoolSubscriptions: new MediaPoolPreviewSubscriptions(),
 			mediaPoolCache: new MediaPoolPreviewCache(
 				emptyState,
-				async (isClip, slot) => {
+				async (source) => {
 					if (!this.atem) throw new Error('Atem not initialised')
 
-					if (isClip) {
+					if (source.isClip) {
 						// TODO
 						throw new Error('Not implemented!')
 					} else {
-						const buffer = await this.atem.downloadStill(slot /* 'raw'*/) // TODO - perform optimised conversions
+						const buffer = await this.atem.downloadStill(source.slot /* 'raw'*/) // TODO - perform optimised conversions
 						const videoMode = this.atem.videoMode
 						if (!videoMode) throw new Error('No video mode')
 
@@ -88,7 +87,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 						}
 					}
 				},
-				(ids) => this.checkFeedbacksById(...ids)
+				(ids) => this.checkFeedbacksById(...ids),
 			),
 		}
 		this.atemTransitions = new AtemTransitions(this.config)
@@ -585,6 +584,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		this.atem.on('connected', () => {
 			if (this.atem?.state) {
 				this.wrappedState.state = this.atem.state
+				this.wrappedState.mediaPoolCache.checkUpdatedState(this.atem.state)
 				this.invalidateCachedTallyState()
 
 				const atemInfo = this.wrappedState.state.info

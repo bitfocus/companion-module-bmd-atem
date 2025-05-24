@@ -1,10 +1,11 @@
 import { AtemMediaPlayerSourcePicker } from '../input.js'
 import type { ModelSpec } from '../models/index.js'
-import type { MyAdvancedFeedbackEvent, MyFeedbackDefinitions } from './types.js'
+import type { MyFeedbackDefinitions } from './types.js'
 import { FeedbackId } from './FeedbackId.js'
 import type { StateWrapper } from '../state.js'
-import type { MediaPoolPreviewOptions } from '../mediaPoolPreviews.js'
-import type { MyOptionsHelper } from '../common.js'
+import type { MediaPoolPreviewOptions, SourceDefinition } from '../mediaPoolPreviews.js'
+import type { CompanionAdvancedFeedbackResult } from '@companion-module/base/dist/index.js'
+import { MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from '../util.js'
 
 export interface AtemMediaPoolFeedbacks {
 	[FeedbackId.MediaPoolPreview]: {
@@ -18,7 +19,7 @@ export interface AtemMediaPoolFeedbacks {
 
 export function createMediaPoolFeedbacks(
 	model: ModelSpec,
-	state: StateWrapper
+	state: StateWrapper,
 ): MyFeedbackDefinitions<AtemMediaPoolFeedbacks> {
 	if (!model.media.players) {
 		return {
@@ -31,7 +32,7 @@ export function createMediaPoolFeedbacks(
 			name: 'Media pool: Preview image',
 			description: 'Preview of the specified media pool slot',
 			options: {
-				source: AtemMediaPlayerSourcePicker(model, state.state),
+				source: AtemMediaPlayerSourcePicker(model, state.state, false),
 
 				crop: {
 					id: 'crop',
@@ -59,58 +60,66 @@ export function createMediaPoolFeedbacks(
 				},
 			},
 			callback: async ({ options, image }) => {
-				const source = options.getPlainNumber('source')
+				const source = parseSource(options.getPlainNumber('source'))
 
-				const previewOptions = parsePreviewOptions(options, image)
-				if (!previewOptions) return {}
+				if (!image) return {}
 
-				const imageBuffer = await state.mediaPoolCache.getPreviewImage(source, previewOptions)
-				if (imageBuffer) {
-					return imageBuffer
+				const previewOptions: MediaPoolPreviewOptions = {
+					crop: options.getPlainString('crop'),
+					position: options.getPlainString('position'),
+
+					buttonHeight: image.height,
+					buttonWidth: image.width,
 				}
 
-				// make sure the load was triggered
-				state.mediaPoolCache.ensureLoaded(source)
-
-				const isSlotOccupied = state.mediaPoolCache.isSlotOccupied(source)
-				if (!isSlotOccupied) {
-					return {
-						text: 'Empty',
-						size: 'auto',
-						bgcolor: 0,
-						fgcolor: 0xffffff,
-					}
-				}
-
-				// TODO
-				return {
-					text: 'Loading...',
-					size: 'auto',
-					bgcolor: 0,
-					fgcolor: 0xffffff,
-				}
+				return executePreviewFeedback(state, previewOptions, source)
 			},
 			subscribe: ({ id, options }) => {
-				state.mediaPoolCache.subscribe(options.getPlainNumber('source'), id)
+				const source = parseSource(options.getPlainNumber('source'))
+				state.mediaPoolCache.subscribe(source, id)
 			},
 			unsubscribe: ({ id, options }) => {
-				state.mediaPoolCache.unsubscribe(options.getPlainNumber('source'), id)
+				const source = parseSource(options.getPlainNumber('source'))
+				state.mediaPoolCache.unsubscribe(source, id)
 			},
 		},
 	}
 }
 
-function parsePreviewOptions(
-	options: MyOptionsHelper<AtemMediaPoolFeedbacks['mediaPoolPreview']>,
-	imageProps: MyAdvancedFeedbackEvent<unknown>['image']
-): MediaPoolPreviewOptions | null {
-	if (!imageProps) return null
+async function executePreviewFeedback(
+	state: StateWrapper,
+	previewOptions: MediaPoolPreviewOptions,
+	source: SourceDefinition,
+): Promise<CompanionAdvancedFeedbackResult> {
+	const imageBuffer = await state.mediaPoolCache.getPreviewImage(source, previewOptions)
+	if (imageBuffer) {
+		return imageBuffer
+	}
+
+	// make sure the load was triggered
+	state.mediaPoolCache.ensureLoaded(source)
+
+	const isSlotOccupied = state.mediaPoolCache.isSlotOccupied(source)
+	if (!isSlotOccupied) {
+		return {
+			text: 'Empty',
+			size: 'auto',
+			bgcolor: 0,
+			color: 0xffffff,
+		}
+	}
 
 	return {
-		crop: options.getPlainString('crop'),
-		position: options.getPlainString('position'),
-
-		buttonHeight: imageProps.height,
-		buttonWidth: imageProps.width,
+		text: 'Loading...',
+		size: 'auto',
+		bgcolor: 0,
+		color: 0xffffff,
 	}
+}
+
+function parseSource(source: number): SourceDefinition {
+	const isClip = source >= MEDIA_PLAYER_SOURCE_CLIP_OFFSET
+	const slot = isClip ? source - MEDIA_PLAYER_SOURCE_CLIP_OFFSET : source
+
+	return { slot, isClip, frameIndex: 0 }
 }

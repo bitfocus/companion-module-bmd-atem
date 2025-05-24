@@ -1,7 +1,6 @@
 import type { AtemState, MediaState } from 'atem-connection'
 import { assertNever, type CompanionAdvancedFeedbackResult } from '@companion-module/base'
 import type { ReadonlyDeep } from 'type-fest'
-import { MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from './util.js'
 import { ImageTransformer, PixelFormat, type ComputedImage, ResizeMode } from '@julusian/image-rs'
 
 export interface MediaPoolPreviewOptions {
@@ -17,8 +16,7 @@ function getPreviewOptionsKey(options: MediaPoolPreviewOptions): string {
 }
 
 interface MediaPoolPreviewCacheEntry {
-	readonly isClip: boolean
-	readonly slot: number
+	readonly source: SourceDefinition
 
 	readonly loadedHash: string
 	readonly loadedFilename: string
@@ -35,12 +33,17 @@ export type PreviewImageResult = Pick<
 	'imageBuffer' | 'imageBufferEncoding' | 'imageBufferPosition'
 >
 
-export type FetchStillFrameFunction = (isClip: boolean, slot: number) => Promise<ComputedImage>
+export type FetchStillFrameFunction = (source: SourceDefinition) => Promise<ComputedImage>
 interface SubscriptionsEntry {
-	readonly isClip: boolean
-	readonly slot: number
+	readonly source: SourceDefinition
 
 	subs: Set<string>
+}
+
+export interface SourceDefinition {
+	isClip: boolean
+	slot: number
+	frameIndex: number // Only used for clips
 }
 
 export class MediaPoolPreviewCache {
@@ -61,27 +64,24 @@ export class MediaPoolPreviewCache {
 		this.#invalidateFeedbacks = invalidateFeedbacks
 	}
 
-	public subscribe(source: number, feedbackId: string): void {
-		const [slot, isClip] = this.#parseSource(source)
-		const cacheEntryId = this.#getCacheEntryId(isClip, slot)
+	public subscribe(source: SourceDefinition, feedbackId: string): void {
+		const cacheEntryId = this.#getCacheEntryId(source)
 
 		let entries = this.#subscriptions.get(cacheEntryId)
 		if (!entries) {
 			entries = {
-				isClip,
-				slot,
+				source,
 				subs: new Set(),
 			}
 			this.#subscriptions.set(cacheEntryId, entries)
 		}
 		entries.subs.add(feedbackId)
 
-		this.ensureLoaded2(isClip, slot)
+		this.ensureLoaded(source)
 	}
 
-	public unsubscribe(source: number, feedbackId: string): void {
-		const [slot, isClip] = this.#parseSource(source)
-		const cacheEntryId = this.#getCacheEntryId(isClip, slot)
+	public unsubscribe(source: SourceDefinition, feedbackId: string): void {
+		const cacheEntryId = this.#getCacheEntryId(source)
 
 		// TODO - can this drop the source parameter?
 		const entries = this.#subscriptions.get(cacheEntryId)
@@ -95,7 +95,7 @@ export class MediaPoolPreviewCache {
 
 		// Ensure current subscriptions have up to date images
 		for (const subs of this.#subscriptions.values()) {
-			if (subs.subs.size > 0) this.ensureLoaded2(subs.isClip, subs.slot)
+			if (subs.subs.size > 0) this.ensureLoaded(subs.source)
 		}
 
 		// Purge any stale entries
@@ -111,26 +111,21 @@ export class MediaPoolPreviewCache {
 		}
 	}
 
-	public isSlotOccupied(source: number): boolean {
-		const [slot, isClip] = this.#parseSource(source)
-		const frame = this.#getFrameAtemState(isClip, slot)
+	public isSlotOccupied(source: SourceDefinition): boolean {
+		const frame = this.#getFrameAtemState(source)
+		console.log('frame', frame)
 		return !!frame?.isUsed
 	}
 
-	public ensureLoaded(source: number): void {
-		const [slot, isClip] = this.#parseSource(source)
-		this.ensureLoaded2(isClip, slot)
-	}
-
-	public ensureLoaded2(isClip: boolean, slot: number): void {
+	public ensureLoaded(source: SourceDefinition): void {
 		// TODO check if the source is needed
 		// TODO: should this 'blank' any existing feedbacks while loading?
-		const cacheEntryId = this.#getCacheEntryId(isClip, slot)
+		const cacheEntryId = this.#getCacheEntryId(source)
 		const cacheEntry = this.#cache.get(cacheEntryId)
 
-		const frameState = this.#getFrameAtemState(isClip, slot)
+		const frameState = this.#getFrameAtemState(source)
 		if ((!cacheEntry || this.#isCacheEntryStale(cacheEntry)) && frameState?.isUsed) {
-			this.#performLoadForCacheEntry(isClip, slot, cacheEntry, frameState)
+			this.#performLoadForCacheEntry(source, cacheEntry, frameState)
 		} else if (cacheEntry && this.#isCacheEntryStale(cacheEntry)) {
 			// Purge the cache, as the data is stale
 			this.#cache.delete(cacheEntryId)
@@ -139,9 +134,11 @@ export class MediaPoolPreviewCache {
 		}
 	}
 
-	public async getPreviewImage(source: number, options: MediaPoolPreviewOptions): Promise<PreviewImageResult | null> {
-		const [slot, isClip] = this.#parseSource(source)
-		const cacheEntryId = this.#getCacheEntryId(isClip, slot)
+	public async getPreviewImage(
+		source: SourceDefinition,
+		options: MediaPoolPreviewOptions,
+	): Promise<PreviewImageResult | null> {
+		const cacheEntryId = this.#getCacheEntryId(source)
 
 		const cacheEntry = this.#cache.get(cacheEntryId)
 		if (!cacheEntry || cacheEntry.isLoading || !cacheEntry.rawImage) return null
@@ -233,8 +230,7 @@ export class MediaPoolPreviewCache {
 	}
 
 	#performLoadForCacheEntry(
-		isClip: boolean,
-		slot: number,
+		source: SourceDefinition,
 		cacheEntry: MediaPoolPreviewCacheEntry | undefined,
 		frameState: MediaState.StillFrame,
 	): void {
@@ -242,8 +238,7 @@ export class MediaPoolPreviewCache {
 
 		// Update the cache
 		cacheEntry = {
-			isClip,
-			slot,
+			source,
 
 			loadedHash: frameState.hash,
 			loadedFilename: frameState.fileName,
@@ -254,11 +249,11 @@ export class MediaPoolPreviewCache {
 			rawImage: undefined,
 			scaledImages: new Map(),
 		}
-		const cacheEntryId = this.#getCacheEntryId(isClip, slot)
+		const cacheEntryId = this.#getCacheEntryId(source)
 		this.#cache.set(cacheEntryId, cacheEntry)
 
 		// load the image
-		this.#fetchStillFrame(isClip, slot)
+		this.#fetchStillFrame(source)
 			.then(async (image) => {
 				console.log('got image', image.buffer.length)
 
@@ -294,31 +289,25 @@ export class MediaPoolPreviewCache {
 			})
 	}
 
-	#getFrameAtemState(isClip: boolean, slot: number): MediaState.StillFrame | undefined {
-		if (isClip) {
-			return this.#latestState.clipPool[slot]?.frames?.[0]
+	#getFrameAtemState(source: SourceDefinition): MediaState.StillFrame | undefined {
+		if (source.isClip) {
+			return this.#latestState.clipPool[source.slot]?.frames?.[source.frameIndex]
 		} else {
-			return this.#latestState.stillPool[slot]
+			return this.#latestState.stillPool[source.slot]
 		}
 	}
 
 	#isCacheEntryStale(entry: MediaPoolPreviewCacheEntry): boolean {
 		if (entry.isStale) return true
 
-		const frame = this.#getFrameAtemState(entry.isClip, entry.slot)
+		const frame = this.#getFrameAtemState(entry.source)
 		return !frame || frame.fileName !== entry.loadedFilename || frame.hash !== entry.loadedHash
 	}
-	#getCacheEntryId(isClip: boolean, slot: number): string {
-		if (isClip) {
-			return `clip-${slot}` // TODO - frame
+	#getCacheEntryId(source: SourceDefinition): string {
+		if (source.isClip) {
+			return `clip-${source.slot}-${source.frameIndex}`
 		} else {
-			return `still-${slot}`
+			return `still-${source.slot}`
 		}
-	}
-	#parseSource(source: number): [number, boolean] {
-		const isClip = source >= MEDIA_PLAYER_SOURCE_CLIP_OFFSET
-		const slot = isClip ? source - MEDIA_PLAYER_SOURCE_CLIP_OFFSET : source
-
-		return [slot, isClip]
 	}
 }

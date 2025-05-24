@@ -1705,20 +1705,26 @@ export function AtemMediaPlayerPicker(model: ModelSpec): CompanionInputFieldDrop
 	}
 }
 
-export function AtemMediaPlayerSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
+export function AtemMediaPlayerSourcePicker(
+	model: ModelSpec,
+	state: AtemState,
+	includeClips = true,
+): CompanionInputFieldDropdown {
 	return {
 		type: 'dropdown',
 		id: 'source',
 		label: 'Source',
 		default: 0,
 		choices: [
-			...iterateTimes(model.media.clips, (i) => {
-				const clip = state.media.clipPool[i]
-				return {
-					id: i + MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
-					label: clip?.name ? `Clip #${i + 1}: ${clip.name}` : `Clip #${i + 1}`,
-				}
-			}),
+			...(includeClips
+				? iterateTimes(model.media.clips, (i) => {
+						const clip = state.media.clipPool[i]
+						return {
+							id: i + MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
+							label: clip?.name ? `Clip #${i + 1}: ${clip.name}` : `Clip #${i + 1}`,
+						}
+					})
+				: []),
 			...iterateTimes(model.media.stills, (i) => {
 				const still = state.media.stillPool[i]
 				return {
