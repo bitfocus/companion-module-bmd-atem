@@ -89,9 +89,8 @@ export function createMediaPoolFeedbacks(
 				const source = parseSource(options.getPlainNumber('source'))
 				state.mediaPoolCache.subscribe(source, id)
 			},
-			unsubscribe: ({ id, options }) => {
-				const source = parseSource(options.getPlainNumber('source'))
-				state.mediaPoolCache.unsubscribe(source, id)
+			unsubscribe: ({ id }) => {
+				state.mediaPoolCache.unsubscribe(id)
 			},
 		},
 		[FeedbackId.MediaPoolPreviewVariables]: {
@@ -147,15 +146,8 @@ export function createMediaPoolFeedbacks(
 					id,
 				)
 			},
-			unsubscribe: async ({ id, options }) => {
-				state.mediaPoolCache.unsubscribe(
-					{
-						slot: await options.getParsedNumber('slot'),
-						isClip: options.getPlainBoolean('isClip'),
-						frameIndex: 0, // Future
-					},
-					id,
-				)
+			unsubscribe: async ({ id }) => {
+				state.mediaPoolCache.unsubscribe(id)
 			},
 		},
 	}

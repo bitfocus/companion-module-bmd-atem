@@ -80,14 +80,13 @@ export class MediaPoolPreviewCache {
 		this.ensureLoaded(source)
 	}
 
-	public unsubscribe(source: SourceDefinition, feedbackId: string): void {
-		const cacheEntryId = this.#getCacheEntryId(source)
-
-		// TODO - can this drop the source parameter?
-		const entries = this.#subscriptions.get(cacheEntryId)
-		if (entries) {
-			entries.subs.delete(feedbackId)
+	public unsubscribe(feedbackId: string): void {
+		for (const sub of this.#subscriptions.values()) {
+			// Remove the feedback from the subscription
+			sub.subs.delete(feedbackId)
 		}
+
+		// Future - should this do any cleanup?
 	}
 
 	public checkUpdatedState(state: AtemState): void {
@@ -95,7 +94,7 @@ export class MediaPoolPreviewCache {
 
 		// Ensure current subscriptions have up to date images
 		for (const subs of this.#subscriptions.values()) {
-			if (subs.subs.size > 0) this.ensureLoaded(subs.source)
+			if (subs.subs.size > 0) this.ensureLoaded(subs.source, true)
 		}
 
 		// Purge any stale entries
@@ -117,9 +116,12 @@ export class MediaPoolPreviewCache {
 		return !!frame?.isUsed
 	}
 
-	public ensureLoaded(source: SourceDefinition): void {
-		// TODO check if the source is needed
-		// TODO: should this 'blank' any existing feedbacks while loading?
+	/**
+	 * Ensure the source is loaded, and if not, load it.
+	 * This should only be called if it has already been checked that there are subscribers
+	 */
+	public ensureLoaded(source: SourceDefinition, shouldInvalidateFeedbacksWhenPurging = false): void {
+		// Future: should this 'blank' any existing feedbacks while loading?
 		const cacheEntryId = this.#getCacheEntryId(source)
 		const cacheEntry = this.#cache.get(cacheEntryId)
 
@@ -130,7 +132,13 @@ export class MediaPoolPreviewCache {
 			// Purge the cache, as the data is stale
 			this.#cache.delete(cacheEntryId)
 
-			// TODO - invalidate any feedbacks using this
+			if (shouldInvalidateFeedbacksWhenPurging) {
+				const subs = this.#subscriptions.get(cacheEntryId)
+				if (subs && subs.subs.size > 0) {
+					// Invalidate the feedbacks that were using this
+					this.#invalidateFeedbacks(Array.from(subs.subs))
+				}
+			}
 		}
 	}
 
