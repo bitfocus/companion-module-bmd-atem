@@ -21,7 +21,6 @@ export interface StateWrapper {
 
 	readonly atemCameraState: AtemCameraControlStateBuilder
 
-	// readonly mediaPoolSubscriptions: MediaPoolPreviewSubscriptions
 	readonly mediaPoolCache: MediaPoolPreviewCache
 }
 

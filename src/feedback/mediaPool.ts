@@ -66,7 +66,7 @@ export function createMediaPoolFeedbacks(
 			name: 'Media pool: Preview image',
 			description: 'Preview of the specified media pool slot',
 			options: {
-				source: AtemMediaPlayerSourcePicker(model, state.state, false),
+				source: AtemMediaPlayerSourcePicker(model, state.state),
 
 				...cropAndPositionOptions,
 			},
@@ -98,15 +98,15 @@ export function createMediaPoolFeedbacks(
 			name: 'Media pool: Preview image from variables',
 			description: 'Preview of the specified media pool slot',
 			options: {
-				isClip: undefined, // Future
-				// 	model.media.clips > 0
-				// 		? {
-				// 				type: 'checkbox',
-				// 				id: 'isClip',
-				// 				label: 'Is clip',
-				// 				default: false,
-				// 			}
-				// 		: undefined,
+				isClip:
+					model.media.clips > 0
+						? {
+								type: 'checkbox',
+								id: 'isClip',
+								label: 'Is clip',
+								default: false,
+							}
+						: undefined,
 				slot: {
 					id: 'slot',
 					type: 'textinput',

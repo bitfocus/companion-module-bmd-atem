@@ -67,7 +67,6 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			tallyCache: new Map(),
 			atemCameraState: new AtemCameraControlStateBuilder(0), // TODO - when should this be emptied?
 
-			// mediaPoolSubscriptions: new MediaPoolPreviewSubscriptions(),
 			mediaPoolCache: new MediaPoolPreviewCache(
 				emptyState,
 				async (source) => {
@@ -76,18 +75,16 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 					const videoMode = this.atem.videoMode
 					if (!videoMode) throw new Error('No video mode')
 
-					if (source.isClip) {
-						// TODO
-						throw new Error('Not implemented!')
-					} else {
-						const rawBuffer = await this.atem.downloadStill(source.slot, 'raw')
-						const buffer = decodeImageFromAtem(videoMode.width, videoMode.height, rawBuffer)
+					const rawBuffer = source.isClip
+						? await this.atem.downloadClipFrame(source.slot, source.frameIndex, 'raw')
+						: await this.atem.downloadStill(source.slot, 'raw')
 
-						return {
-							buffer,
-							width: videoMode.width,
-							height: videoMode.height,
-						}
+					const buffer = decodeImageFromAtem(videoMode.width, videoMode.height, rawBuffer)
+
+					return {
+						buffer,
+						width: videoMode.width,
+						height: videoMode.height,
 					}
 				},
 				(ids) => this.checkFeedbacksById(...ids),

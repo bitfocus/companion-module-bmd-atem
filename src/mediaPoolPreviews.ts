@@ -112,7 +112,6 @@ export class MediaPoolPreviewCache {
 
 	public isSlotOccupied(source: SourceDefinition): boolean {
 		const frame = this.#getFrameAtemState(source)
-		console.log('frame', frame)
 		return !!frame?.isUsed
 	}
 
