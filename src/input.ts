@@ -1201,6 +1201,65 @@ export function AtemAuxSourcePicker(model: ModelSpec, state: AtemState): Compani
 		choices: SourcesToChoices(GetSourcesListForType(model, state, 'aux')),
 	}
 }
+export function AtemTransitionAnimationOptions(): {
+	transitionRate: CompanionInputFieldNumber
+	transitionEasing: CompanionInputFieldDropdown
+	transitionCurve: CompanionInputFieldDropdown
+} {
+	return {
+		transitionRate: {
+			type: 'number',
+			id: 'transitionRate',
+			label: 'Transition Rate',
+			default: 0,
+			min: 0,
+			max: 99999,
+			step: 1,
+			required: false,
+		},
+		transitionEasing: {
+			type: 'dropdown',
+			label: 'Transition Easing',
+			id: 'transitionEasing',
+			default: 'linear',
+			choices: [
+				{ id: 'linear', label: 'Linear' },
+				{ id: 'quadratic', label: 'Quadratic' },
+				{ id: 'cubic', label: 'Cubic' },
+				{ id: 'quartic', label: 'Quartic' },
+				{ id: 'quintic', label: 'Quintic' },
+				{ id: 'sinusoidal', label: 'Sinusoidal' },
+				{ id: 'exponential', label: 'Exponential' },
+				{ id: 'circular', label: 'Circular' },
+				{ id: 'elastic', label: 'Elastic' },
+				{ id: 'back', label: 'Back' },
+				{ id: 'bounce', label: 'Bounce' },
+			],
+			isVisible: (options: CompanionOptionValues): boolean => {
+				return options.transitionRate != null && (options.transitionRate as number) > 0
+			},
+		},
+		transitionCurve: {
+			type: 'dropdown',
+			label: 'Transition curve',
+			id: 'transitionCurve',
+			default: 'ease-in',
+			choices: [
+				{ id: 'ease-in', label: 'Ease-in' },
+				{ id: 'ease-out', label: 'Ease-out' },
+				{ id: 'ease-in-out', label: 'Ease-in-out' },
+			],
+			isVisible: (options: CompanionOptionValues): boolean => {
+				return (
+					options.transitionRate != null &&
+					options.transitionEasing != null &&
+					(options.transitionRate as number) > 0 &&
+					(options.transitionEasing as string) !== 'linear'
+				)
+			},
+		},
+	}
+}
 export function AtemSuperSourceBoxPicker(): CompanionInputFieldDropdown {
 	return {
 		type: 'dropdown',

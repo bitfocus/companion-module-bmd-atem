@@ -13,11 +13,14 @@ import {
 	type AtemSuperSourceProperties,
 	AtemSuperSourceArtPropertiesVariablesPickers,
 	type AtemSuperSourceArtPropertiesVariables,
+	AtemTransitionAnimationOptions,
 } from '../input.js'
 import type { SuperSource } from 'atem-connection/dist/state/video/index.js'
 import { CHOICES_KEYTRANS, type TrueFalseToggle } from '../choices.js'
 import { getSuperSourceBox, type StateWrapper } from '../state.js'
 import { clamp } from '../util.js'
+import type { AtemTransitions } from '../transitions.js'
+import type { algorithm, curve } from '../easings.js'
 
 export interface AtemSuperSourceActions {
 	[ActionId.SuperSourceArt]: {
@@ -44,6 +47,9 @@ export interface AtemSuperSourceActions {
 	[ActionId.SuperSourceBoxProperties]: {
 		ssrcId: number | undefined
 		boxIndex: number
+		transitionRate: number | undefined
+		transitionEasing: algorithm | undefined
+		transitionCurve: curve | undefined
 	} & AtemSuperSourceProperties
 	[ActionId.SuperSourceBoxPropertiesDelta]: {
 		ssrcId: number | undefined
@@ -63,6 +69,7 @@ export interface AtemSuperSourceActions {
 export function createSuperSourceActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
+	transitions: AtemTransitions,
 	state: StateWrapper,
 ): MyActionDefinitions<AtemSuperSourceActions> {
 	if (!model.SSrc) {
@@ -360,6 +367,7 @@ export function createSuperSourceActions(
 			options: {
 				ssrcId: AtemSuperSourceIdPicker(model),
 				boxIndex: AtemSuperSourceBoxPicker(),
+				...AtemTransitionAnimationOptions(),
 				...AtemSuperSourcePropertiesPickers(model, state.state),
 			},
 			callback: async ({ options }) => {
@@ -394,7 +402,16 @@ export function createSuperSourceActions(
 
 				if (Object.keys(newProps).length === 0) return
 
-				await atem?.setSuperSourceBoxSettings(newProps, boxIndex, ssrcId)
+				await transitions.runForProperties(
+					`superSource.${ssrcId}.box.${boxIndex}`,
+					async (props) => {
+						await atem?.setSuperSourceBoxSettings(props, boxIndex, ssrcId)
+					},
+					options,
+					['size', 'x', 'y', 'cropTop', 'cropBottom', 'cropLeft', 'cropRight'],
+					newProps,
+					state.state.video.superSources[ssrcId]?.boxes[boxIndex],
+				)
 			},
 			learn: ({ options }) => {
 				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
