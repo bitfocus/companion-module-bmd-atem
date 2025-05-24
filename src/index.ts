@@ -80,7 +80,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 						// TODO
 						throw new Error('Not implemented!')
 					} else {
-						const rawBuffer = await this.atem.downloadStill(source.slot, 'yuv') // TODO - 'raw' once supported by @atem-connection/image-tools
+						const rawBuffer = await this.atem.downloadStill(source.slot, 'raw')
 						const buffer = decodeImageFromAtem(videoMode.width, videoMode.height, rawBuffer)
 
 						return {

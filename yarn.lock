@@ -16,6 +16,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@atem-connection/image-tools@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@atem-connection/image-tools@npm:1.1.1"
+  checksum: 10c0/f9f88fbb4a00728a240b830730b4ff34dd57142d87c287b63b559b31c34d5e536749aca8057573fc1875226a10b5c4e57f87a24b5bb4b1731ec5da5657f76f81
+  languageName: node
+  linkType: hard
+
 "@companion-module/base@npm:~1.11.3":
   version: 1.11.3
   resolution: "@companion-module/base@npm:1.11.3"
@@ -1308,6 +1315,7 @@ __metadata:
   resolution: "bmd-atem@workspace:."
   dependencies:
     "@atem-connection/camera-control": "npm:^0.3.0"
+    "@atem-connection/image-tools": "npm:^1.1.1"
     "@companion-module/base": "npm:~1.11.3"
     "@companion-module/tools": "npm:^2.3.0"
     "@julusian/image-rs": "npm:^1.1.1"
