@@ -41,6 +41,7 @@ export enum FeedbackId {
 	MediaPlayerSource = 'mediaPlayerSource',
 	MediaPlayerSourceVariables = 'mediaPlayerSourceVariables',
 	MediaPoolPreview = 'mediaPoolPreview',
+	MediaPoolPreviewVariables = 'mediaPoolPreviewVariables',
 	FadeToBlackIsBlack = 'fadeToBlackIsBlack',
 	FadeToBlackRate = 'fadeToBlackRate',
 	ProgramTally = 'program_tally',
