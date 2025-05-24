@@ -5,7 +5,8 @@ import { GetFeedbacksList } from './feedback/index.js'
 import { FeedbackId } from './feedback/FeedbackId.js'
 import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, type ModelSpec } from './models/index.js'
 import { GetPresetsList } from './presets/index.js'
-import type { StateWrapper } from './state.js'
+import { type StateWrapper } from './state.js'
+import { MediaPoolPreviewCache } from './mediaPoolPreviews.js'
 import { MODEL_AUTO_DETECT } from './models/types.js'
 import {
 	InitVariables,
@@ -29,7 +30,6 @@ import { AtemCameraControlStateBuilder, createEmptyState } from '@atem-connectio
 
 const { Atem, AtemConnectionStatus, AtemStateUtil } = AtemPkg
 
-// eslint-disable-next-line n/no-extraneous-import
 import { ThreadedClassManager, RegisterExitHandlers } from 'threadedclass'
 import { updateCameraControlVariables } from './variables/cameraControl.js'
 import { updateTimecodeVariables } from './variables/timecode.js'
@@ -59,11 +59,36 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		super(internal)
 
 		this.commandBatching = new AtemCommandBatching()
+		const emptyState = AtemStateUtil.Create()
 		this.wrappedState = {
-			state: AtemStateUtil.Create(),
+			state: emptyState,
 			tally: {},
 			tallyCache: new Map(),
 			atemCameraState: new AtemCameraControlStateBuilder(0), // TODO - when should this be emptied?
+
+			// mediaPoolSubscriptions: new MediaPoolPreviewSubscriptions(),
+			mediaPoolCache: new MediaPoolPreviewCache(
+				emptyState,
+				async (source) => {
+					if (!this.atem) throw new Error('Atem not initialised')
+
+					if (source.isClip) {
+						// TODO
+						throw new Error('Not implemented!')
+					} else {
+						const buffer = await this.atem.downloadStill(source.slot /* 'raw'*/) // TODO - perform optimised conversions
+						const videoMode = this.atem.videoMode
+						if (!videoMode) throw new Error('No video mode')
+
+						return {
+							buffer,
+							width: videoMode.width,
+							height: videoMode.height,
+						}
+					}
+				},
+				(ids) => this.checkFeedbacksById(...ids),
+			),
 		}
 		this.atemTransitions = new AtemTransitions(this.config)
 
@@ -242,6 +267,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	private processStateChange(newState: AtemState, paths: string[]): void {
 		// TODO - do we need to clone this object?
 		this.wrappedState.state = newState
+		this.wrappedState.mediaPoolCache.checkUpdatedState(newState)
 
 		let reInit = false
 		const changedFeedbacks = new Set<FeedbackId>()
@@ -558,6 +584,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		this.atem.on('connected', () => {
 			if (this.atem?.state) {
 				this.wrappedState.state = this.atem.state
+				this.wrappedState.mediaPoolCache.checkUpdatedState(this.atem.state)
 				this.invalidateCachedTallyState()
 
 				const atemInfo = this.wrappedState.state.info
