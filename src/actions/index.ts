@@ -76,13 +76,13 @@ export function GetActionsList(
 		...createProgramPreviewActions(atem, model, transitions, state),
 		...createTransitionActions(instance, atem, model, commandBatching, state),
 		...createUpstreamKeyerCommonActions(atem, model, state),
-		...createUpstreamKeyerDVEActions(atem, model, state),
+		...createUpstreamKeyerDVEActions(atem, model, transitions, state),
 		...createUpstreamKeyerPatternActions(atem, model, state),
 		...createFadeToBlackActions(atem, model, state),
 
 		...createDownstreamKeyerActions(atem, model, state),
 		...createMacroActions(atem, model, state),
-		...createSuperSourceActions(atem, model, state),
+		...createSuperSourceActions(atem, model, transitions, state),
 		...createStreamingActions(atem, model, state),
 		...createRecordingActions(atem, model, state),
 
