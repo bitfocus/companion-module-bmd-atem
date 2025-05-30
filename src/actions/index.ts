@@ -24,6 +24,10 @@ import {
 } from './mixeffect/upstreamKeyerCommon.js'
 import { createFadeToBlackActions, type AtemFadeToBlackActions } from './mixeffect/fadeToBlack.js'
 import { createUpstreamKeyerDVEActions, type AtemUpstreamKeyerDVEActions } from './mixeffect/upstreamKeyerDVE.js'
+import {
+	createUpstreamKeyerPatternActions,
+	type AtemUpstreamKeyerPatternActions,
+} from './mixeffect/upstreamKeyerPattern.js'
 import { createClassicAudioActions, type AtemClassicAudioActions } from './classicAudio.js'
 import { createFairlightAudioActions, type AtemFairlightAudioActions } from './fairlightAudio.js'
 import type { MyActionDefinition } from './types.js'
@@ -40,6 +44,7 @@ export type ActionTypes = AtemProgramPreviewActions &
 	AtemTransitionActions &
 	AtemUpstreamKeyerCommonActions &
 	AtemUpstreamKeyerDVEActions &
+	AtemUpstreamKeyerPatternActions &
 	AtemFadeToBlackActions &
 	AtemDownstreamKeyerActions &
 	AtemMacroActions &
@@ -72,6 +77,7 @@ export function GetActionsList(
 		...createTransitionActions(instance, atem, model, commandBatching, state),
 		...createUpstreamKeyerCommonActions(atem, model, state),
 		...createUpstreamKeyerDVEActions(atem, model, transitions, state),
+		...createUpstreamKeyerPatternActions(atem, model, state),
 		...createFadeToBlackActions(atem, model, state),
 
 		...createDownstreamKeyerActions(atem, model, state),

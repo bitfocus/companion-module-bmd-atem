@@ -30,6 +30,7 @@ import {
 	type TrueFalseToggle,
 	type AudioInputSubset,
 	GetUpstreamKeyerTypeChoices,
+	GetUpstreamKeyerPatternChoices,
 	FairlightAudioRoutingDestinations,
 	FairlightAudioRoutingSources,
 } from './choices.js'
@@ -63,6 +64,15 @@ export function AtemUpstreamKeyerTypePicker(): CompanionInputFieldDropdown {
 		label: 'Key Type',
 		default: Enums.MixEffectKeyType.Luma,
 		choices: GetUpstreamKeyerTypeChoices(),
+	}
+}
+export function AtemUpstreamKeyerPatternPicker(): CompanionInputFieldDropdown {
+	return {
+		type: 'dropdown',
+		id: 'pattern',
+		label: 'Pattern',
+		default: Enums.Pattern.LeftToRightBar,
+		choices: GetUpstreamKeyerPatternChoices(),
 	}
 }
 export function AtemRatePicker(label: string): CompanionInputFieldNumber {
@@ -1754,20 +1764,26 @@ export function AtemMediaPlayerPicker(model: ModelSpec): CompanionInputFieldDrop
 	}
 }
 
-export function AtemMediaPlayerSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
+export function AtemMediaPlayerSourcePicker(
+	model: ModelSpec,
+	state: AtemState,
+	includeClips = true,
+): CompanionInputFieldDropdown {
 	return {
 		type: 'dropdown',
 		id: 'source',
 		label: 'Source',
 		default: 0,
 		choices: [
-			...iterateTimes(model.media.clips, (i) => {
-				const clip = state.media.clipPool[i]
-				return {
-					id: i + MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
-					label: clip?.name ? `Clip #${i + 1}: ${clip.name}` : `Clip #${i + 1}`,
-				}
-			}),
+			...(includeClips
+				? iterateTimes(model.media.clips, (i) => {
+						const clip = state.media.clipPool[i]
+						return {
+							id: i + MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
+							label: clip?.name ? `Clip #${i + 1}: ${clip.name}` : `Clip #${i + 1}`,
+						}
+					})
+				: []),
 			...iterateTimes(model.media.stills, (i) => {
 				const still = state.media.stillPool[i]
 				return {
@@ -2102,6 +2118,45 @@ export function AtemDisplayClockTimePickers(): {
 	}
 }
 
+export function AtemDisplayClockTimeOffsetPickers(): {
+	hours: CompanionInputFieldNumber
+	minutes: CompanionInputFieldNumber
+	seconds: CompanionInputFieldNumber
+} {
+	return {
+		hours: {
+			type: 'number',
+			id: 'hours',
+			label: 'Hours',
+			min: -23,
+			max: 23,
+			range: true,
+			default: 0,
+			step: 1,
+		},
+		minutes: {
+			type: 'number',
+			id: 'minutes',
+			label: 'Minutes',
+			min: -59,
+			max: 59,
+			range: true,
+			default: 0,
+			step: 1,
+		},
+		seconds: {
+			type: 'number',
+			id: 'seconds',
+			label: 'Seconds',
+			min: -59,
+			max: 59,
+			range: true,
+			default: 0,
+			step: 1,
+		},
+	}
+}
+
 export function AtemFairlightAudioRoutingSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
 	const sources = FairlightAudioRoutingSources(model, state)
 
@@ -2141,5 +2196,287 @@ export function AtemFairlightAudioRoutingDestinationPicker(
 		label: 'Destination',
 		default: sources[0].id,
 		choices: sources,
+	}
+}
+
+export function AtemUSKPatternPropertiesPickers(): {
+	properties: CompanionInputFieldMultiDropdown
+	style: CompanionInputFieldDropdown
+	invert: CompanionInputFieldCheckbox
+	size: CompanionInputFieldNumber
+	symmetry: CompanionInputFieldNumber
+	softness: CompanionInputFieldNumber
+	positionX: CompanionInputFieldNumber
+	positionY: CompanionInputFieldNumber
+} {
+	const allProps: Omit<ReturnType<typeof AtemUSKPatternPropertiesPickers>, 'properties'> = {
+		style: {
+			type: 'dropdown',
+			label: 'Style: ',
+			id: 'style',
+			default: Enums.Pattern.LeftToRightBar,
+			choices: GetUpstreamKeyerPatternChoices(),
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('style'),
+		},
+		invert: {
+			type: 'checkbox',
+			label: 'Invert Pattern',
+			id: 'invert',
+			default: false,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('invert'),
+		},
+		size: {
+			type: 'number',
+			label: 'Size',
+			id: 'size',
+			default: 50,
+			range: true,
+			min: 0.0,
+			step: 0.01,
+			max: 100.0,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('size'),
+		},
+		symmetry: {
+			type: 'number',
+			label: 'Symmetry',
+			id: 'symmetry',
+			default: 81.6,
+			range: true,
+			min: 0.0,
+			step: 0.01,
+			max: 100.0,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('symmetry'),
+		},
+		softness: {
+			type: 'number',
+			label: 'Softness',
+			id: 'softness',
+			default: 50,
+			range: true,
+			min: 0.0,
+			step: 0.01,
+			max: 100.0,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('softness'),
+		},
+		positionX: {
+			type: 'number',
+			label: 'Position: X',
+			id: 'positionX',
+			default: 0.5,
+			min: 0.0,
+			range: true,
+			step: 0.01,
+			max: 1.0,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionX'),
+		},
+		positionY: {
+			type: 'number',
+			label: 'Position: Y',
+			id: 'positionY',
+			default: 0.5,
+			range: true,
+			min: 0.0,
+			step: 0.01,
+			max: 1.0,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionY'),
+		},
+	}
+	return {
+		properties: DropdownPropertiesPicker(allProps),
+		...allProps,
+	}
+}
+
+export function AtemUSKPatternPropertiesVariablesPickers(): {
+	properties: CompanionInputFieldMultiDropdown
+	style: CompanionInputFieldTextInput
+	invert: CompanionInputFieldTextInput
+	size: CompanionInputFieldTextInput
+	symmetry: CompanionInputFieldTextInput
+	softness: CompanionInputFieldTextInput
+	positionX: CompanionInputFieldTextInput
+	positionY: CompanionInputFieldTextInput
+} {
+	const allProps: Omit<ReturnType<typeof AtemUSKPatternPropertiesVariablesPickers>, 'properties'> = {
+		style: {
+			type: 'textinput',
+			label: 'Style: ',
+			id: 'style',
+			default: '0',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('style'),
+		},
+		invert: {
+			type: 'textinput',
+			label: 'Invert Pattern',
+			id: 'invert',
+			default: 'false',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('invert'),
+		},
+		size: {
+			type: 'textinput',
+			label: 'Size',
+			id: 'size',
+			default: '50',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('size'),
+		},
+		symmetry: {
+			type: 'textinput',
+			label: 'Symmetry',
+			id: 'symmetry',
+			default: '81.6',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('symmetry'),
+		},
+		softness: {
+			type: 'textinput',
+			label: 'Softness',
+			id: 'softness',
+			default: '50',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('softness'),
+		},
+		positionX: {
+			type: 'textinput',
+			label: 'Position: X',
+			id: 'positionX',
+			default: '0.5',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionX'),
+		},
+		positionY: {
+			type: 'textinput',
+			label: 'Position: Y',
+			id: 'positionY',
+			default: '0.5',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionY'),
+		},
+	}
+
+	return {
+		properties: DropdownPropertiesPicker(allProps),
+		...allProps,
+	}
+}
+export function AtemUSKFlyKeyPropertiesPickers(): {
+	properties: CompanionInputFieldMultiDropdown
+	flyEnabled: CompanionInputFieldCheckbox
+	positionX: CompanionInputFieldNumber
+	positionY: CompanionInputFieldNumber
+	sizeX: CompanionInputFieldNumber
+	sizeY: CompanionInputFieldNumber
+} {
+	const allProps: Omit<ReturnType<typeof AtemUSKFlyKeyPropertiesPickers>, 'properties'> = {
+		flyEnabled: {
+			type: 'checkbox',
+			label: 'Enabled',
+			id: 'flyEnabled',
+			default: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('flyEnabled'),
+		},
+		positionX: {
+			type: 'number',
+			label: 'Position X',
+			id: 'positionX',
+			default: 0,
+			min: -32,
+			step: 0.01,
+			max: 32,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionX'),
+		},
+		positionY: {
+			type: 'number',
+			label: 'Position Y',
+			id: 'positionY',
+			default: 0,
+			min: -18,
+			step: 0.01,
+			max: 18,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionY'),
+		},
+		sizeX: {
+			type: 'number',
+			label: 'Size X',
+			id: 'sizeX',
+			default: 1.0,
+			min: 0.0,
+			step: 0.01,
+			max: 99.99,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('sizeX'),
+		},
+		sizeY: {
+			type: 'number',
+			label: 'Size Y',
+			id: 'sizeY',
+			default: 1.0,
+			min: 0.0,
+			step: 0.01,
+			max: 99.99,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('sizeY'),
+		},
+	}
+
+	return {
+		properties: DropdownPropertiesPicker(allProps),
+		...allProps,
+	}
+}
+export function AtemUSKFlyKeyPropertiesVariablesPickers(): {
+	properties: CompanionInputFieldMultiDropdown
+	flyEnabled: CompanionInputFieldTextInput
+	positionX: CompanionInputFieldTextInput
+	positionY: CompanionInputFieldTextInput
+	sizeX: CompanionInputFieldTextInput
+	sizeY: CompanionInputFieldTextInput
+} {
+	const allProps: Omit<ReturnType<typeof AtemUSKFlyKeyPropertiesVariablesPickers>, 'properties'> = {
+		flyEnabled: {
+			type: 'textinput',
+			label: 'Enabled',
+			id: 'flyEnabled',
+			default: 'true',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('flyEnabled'),
+		},
+		positionX: {
+			type: 'textinput',
+			label: 'Position X',
+			id: 'positionX',
+			default: '0',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionX'),
+		},
+		positionY: {
+			type: 'textinput',
+			label: 'Position Y',
+			id: 'positionY',
+			default: '0',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionY'),
+		},
+		sizeX: {
+			type: 'textinput',
+			label: 'Size X',
+			id: 'sizeX',
+			default: '1.0',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('sizeX'),
+		},
+		sizeY: {
+			type: 'textinput',
+			label: 'Size Y',
+			id: 'sizeY',
+			default: '1.0',
+			useVariables: true,
+			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('sizeY'),
+		},
+	}
+
+	return {
+		properties: DropdownPropertiesPicker(allProps),
+		...allProps,
 	}
 }

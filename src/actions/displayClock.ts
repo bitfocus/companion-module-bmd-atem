@@ -1,5 +1,9 @@
 import { Enums, type Atem, type DisplayClock } from 'atem-connection'
-import { AtemDisplayClockPropertiesPickers, AtemDisplayClockTimePickers } from '../input.js'
+import {
+	AtemDisplayClockPropertiesPickers,
+	AtemDisplayClockTimeOffsetPickers,
+	AtemDisplayClockTimePickers,
+} from '../input.js'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
 import type { MyActionDefinitions } from './types.js'
@@ -25,6 +29,11 @@ export interface AtemDisplayClockActions {
 		minutes: number
 		seconds: number
 	}
+	[ActionId.DisplayClockOffsetStartTime]: {
+		hours: number
+		minutes: number
+		seconds: number
+	}
 }
 
 export function createDisplayClockActions(
@@ -37,6 +46,7 @@ export function createDisplayClockActions(
 			[ActionId.DisplayClockState]: undefined,
 			[ActionId.DisplayClockConfigure]: undefined,
 			[ActionId.DisplayClockStartTime]: undefined,
+			[ActionId.DisplayClockOffsetStartTime]: undefined,
 		}
 	}
 	return {
@@ -147,6 +157,36 @@ export function createDisplayClockActions(
 				} else {
 					return undefined
 				}
+			},
+		},
+		[ActionId.DisplayClockOffsetStartTime]: {
+			name: 'Display Clock: Offset Start Time',
+			options: { ...AtemDisplayClockTimeOffsetPickers() },
+			callback: async ({ options }) => {
+				const clockState = state.state.displayClock?.properties?.startFrom
+				const currentTime = clockState ? clockState.hours * 3600 + clockState.minutes * 60 + clockState.seconds : 0
+
+				const offset =
+					options.getPlainNumber('hours') * 3600 +
+					options.getPlainNumber('minutes') * 60 +
+					options.getPlainNumber('seconds')
+
+				let newTime = currentTime + offset
+
+				const oneDay = 24 * 3600
+				newTime = newTime % oneDay
+				if (newTime < 0) newTime += oneDay
+
+				const time: DisplayClock.DisplayClockTime = {
+					hours: Math.floor(newTime / 3600),
+					minutes: Math.floor((newTime % 3600) / 60),
+					seconds: newTime % 60,
+					frames: 0,
+				}
+
+				await atem?.setDisplayClockProperties({
+					startFrom: time,
+				})
 			},
 		},
 	}

@@ -11,4 +11,5 @@ export function updateTimecodeVariables(
 ): void {
 	values['timecode'] = formatDurationSeconds(instance.timecodeSeconds).hms
 	// values['timecode_ms'] = formatDurationSeconds(instance.timecodeSeconds).hms
+	values['display_clock'] = formatDurationSeconds(instance.displayClockSeconds).hms
 }
