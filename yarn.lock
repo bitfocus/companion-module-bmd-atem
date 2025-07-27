@@ -23,9 +23,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@companion-module/base@npm:~1.12.0-2":
-  version: 1.12.0-2
-  resolution: "@companion-module/base@npm:1.12.0-2"
+"@companion-module/base@npm:~1.12.1":
+  version: 1.12.1
+  resolution: "@companion-module/base@npm:1.12.1"
   dependencies:
     ajv: "npm:^8.17.1"
     colord: "npm:^2.9.3"
@@ -36,7 +36,7 @@ __metadata:
     p-queue: "npm:^6.6.2"
     p-timeout: "npm:^4.1.0"
     tslib: "npm:^2.8.1"
-  checksum: 10c0/d0db97124ea182677ff9db215484eccc12be5f3667fb9a39b74b40d06a3d610c388b527fd1efff0400de13d4b59a884955bf324bdee7500e3dd28a2fe6b07112
+  checksum: 10c0/11e67f87ba7f1dff830247882638da7cbc07d70ae47c606f43876ed183657b81ac7264e771e79735486d93c9845b0f28cfc8283d5d24b1b9eeb13a8e5b82db9d
   languageName: node
   linkType: hard
 
@@ -1316,7 +1316,7 @@ __metadata:
   dependencies:
     "@atem-connection/camera-control": "npm:^0.3.0"
     "@atem-connection/image-tools": "npm:^1.1.1"
-    "@companion-module/base": "npm:~1.12.0-2"
+    "@companion-module/base": "npm:~1.12.1"
     "@companion-module/tools": "npm:^2.3.0"
     "@julusian/image-rs": "npm:^1.1.1"
     "@types/lodash-es": "npm:^4.17.12"
