@@ -5,7 +5,8 @@ import { GetFeedbacksList } from './feedback/index.js'
 import { FeedbackId } from './feedback/FeedbackId.js'
 import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, type ModelSpec } from './models/index.js'
 import { GetPresetsList } from './presets/index.js'
-import type { StateWrapper } from './state.js'
+import { type StateWrapper } from './state.js'
+import { MediaPoolPreviewCache } from './mediaPoolPreviews.js'
 import { MODEL_AUTO_DETECT } from './models/types.js'
 import {
 	InitVariables,
@@ -26,13 +27,13 @@ import { isEqual } from 'lodash-es'
 import { UpgradeScripts } from './upgrades.js'
 import { calculateTallyForInputId, type IpAndPort } from './util.js'
 import { AtemCameraControlStateBuilder, createEmptyState } from '@atem-connection/camera-control'
+import { decodeImageFromAtem } from '@atem-connection/image-tools'
+import { updateCameraControlVariables } from './variables/cameraControl.js'
+import { updateTimecodeVariables } from './variables/timecode.js'
 
 const { Atem, AtemConnectionStatus, AtemStateUtil } = AtemPkg
 
-// eslint-disable-next-line n/no-extraneous-import
 import { ThreadedClassManager, RegisterExitHandlers } from 'threadedclass'
-import { updateCameraControlVariables } from './variables/cameraControl.js'
-import { updateTimecodeVariables } from './variables/timecode.js'
 
 // HACK: This stops it from registering an unhandledException handler, as that causes companion to exit on error
 ThreadedClassManager.handleExit = RegisterExitHandlers.NO
@@ -51,6 +52,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 
 	public config: AtemConfig = {}
 	public timecodeSeconds = 0
+	public displayClockSeconds = 0
 
 	/**
 	 * Create an instance of an ATEM module.
@@ -59,11 +61,35 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		super(internal)
 
 		this.commandBatching = new AtemCommandBatching()
+		const emptyState = AtemStateUtil.Create()
 		this.wrappedState = {
-			state: AtemStateUtil.Create(),
+			state: emptyState,
 			tally: {},
 			tallyCache: new Map(),
 			atemCameraState: new AtemCameraControlStateBuilder(0), // TODO - when should this be emptied?
+
+			mediaPoolCache: new MediaPoolPreviewCache(
+				emptyState,
+				async (source) => {
+					if (!this.atem) throw new Error('Atem not initialised')
+
+					const videoMode = this.atem.videoMode
+					if (!videoMode) throw new Error('No video mode')
+
+					const rawBuffer = source.isClip
+						? await this.atem.downloadClipFrame(source.slot, source.frameIndex, 'raw')
+						: await this.atem.downloadStill(source.slot, 'raw')
+
+					const buffer = decodeImageFromAtem(videoMode.width, videoMode.height, rawBuffer)
+
+					return {
+						buffer,
+						width: videoMode.width,
+						height: videoMode.height,
+					}
+				},
+				(ids) => this.checkFeedbacksById(...ids),
+			),
 		}
 		this.atemTransitions = new AtemTransitions(this.config)
 
@@ -213,6 +239,10 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				this.timecodeSeconds =
 					command.properties.hour * 3600 + command.properties.minute * 60 + command.properties.second
 				updateTimecodeVariables(this, this.wrappedState.state, values)
+			} else if (this.config.pollTimecode && command instanceof Commands.DisplayClockCurrentTimeCommand) {
+				this.displayClockSeconds =
+					command.properties.time.hours * 3600 + command.properties.time.minutes * 60 + command.properties.time.seconds
+				updateTimecodeVariables(this, this.wrappedState.state, values)
 			}
 		}
 
@@ -242,6 +272,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	private processStateChange(newState: AtemState, paths: string[]): void {
 		// TODO - do we need to clone this object?
 		this.wrappedState.state = newState
+		this.wrappedState.mediaPoolCache.checkUpdatedState(newState)
 
 		let reInit = false
 		const changedFeedbacks = new Set<FeedbackId>()
@@ -508,7 +539,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				}
 				const outputMatch = path.match(/fairlight.audioRouting.outputs.(\d+)/)
 				if (outputMatch) {
-					changedVariables.fairlightRoutingSources.add(Number(outputMatch[1]))
+					changedVariables.fairlightRoutingOutputs.add(Number(outputMatch[1]))
 					continue
 				}
 
@@ -558,6 +589,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		this.atem.on('connected', () => {
 			if (this.atem?.state) {
 				this.wrappedState.state = this.atem.state
+				this.wrappedState.mediaPoolCache.checkUpdatedState(this.atem.state)
 				this.invalidateCachedTallyState()
 
 				const atemInfo = this.wrappedState.state.info
@@ -622,6 +654,9 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 						if (this.atem && this.config.pollTimecode) {
 							this.atem.requestTime().catch((e) => {
 								this.log('debug', 'Request time error: ' + e)
+							})
+							this.atem.requestDisplayClockTime().catch((e) => {
+								this.log('debug', 'Request display clock time error: ' + e)
 							})
 						}
 					}, 500)

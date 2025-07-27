@@ -23,6 +23,20 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.18.0
+
+- Tweened transitions for DVE and SuperSource boxes
+
+## v3.17.0
+
+- Media pool previews
+- Add display counter variable
+- Support media filename in actions
+- Actions to offset display clock
+- Display clock value variable
+- More upstream key control
+- Fix audio routing variables updating
+
 ## v3.16.1
 
 - Fix -infinite values with classic audio

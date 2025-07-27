@@ -5,6 +5,7 @@ import {
 	AtemUSKDVEPropertiesVariablesPickers,
 	AtemUSKPicker,
 	AtemUSKKeyframePropertiesPickers,
+	AtemTransitionAnimationOptions,
 } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
@@ -15,11 +16,17 @@ import type {
 	UpstreamKeyerDVESettings,
 	UpstreamKeyerFlyKeyframe,
 } from 'atem-connection/dist/state/video/upstreamKeyers.js'
+import type { algorithm, curve } from '../../easings.js'
+import type { AtemTransitions } from '../../transitions.js'
 
 export interface AtemUpstreamKeyerDVEActions {
 	[ActionId.USKDVEProperties]: {
 		mixeffect: number
 		key: number
+
+		transitionRate: number | undefined
+		transitionEasing: algorithm | undefined
+		transitionCurve: curve | undefined
 
 		properties: Array<
 			| 'positionX'
@@ -80,6 +87,10 @@ export interface AtemUpstreamKeyerDVEActions {
 	[ActionId.USKDVEPropertiesVariables]: {
 		mixeffect: string
 		key: string
+
+		transitionRate: number | undefined
+		transitionEasing: algorithm | undefined
+		transitionCurve: curve | undefined
 
 		properties: Array<
 			| 'positionX'
@@ -210,6 +221,7 @@ export interface AtemUpstreamKeyerDVEActions {
 export function createUpstreamKeyerDVEActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
+	transitions: AtemTransitions,
 	state: StateWrapper,
 ): MyActionDefinitions<AtemUpstreamKeyerDVEActions> {
 	if (!model.USKs || !model.DVEs) {
@@ -229,6 +241,7 @@ export function createUpstreamKeyerDVEActions(
 			options: {
 				mixeffect: AtemMEPicker(model, 0),
 				key: AtemUSKPicker(model),
+				...AtemTransitionAnimationOptions(),
 				...AtemUSKDVEPropertiesPickers(),
 			},
 			callback: async ({ options }) => {
@@ -320,7 +333,39 @@ export function createUpstreamKeyerDVEActions(
 
 				if (Object.keys(newProps).length === 0) return
 
-				await atem?.setUpstreamKeyerDVESettings(newProps, mixEffectId, keyId)
+				await transitions.runForProperties(
+					`me.${mixEffectId}.keyer.${keyId}.dveSettings`,
+					async (props) => {
+						await atem?.setUpstreamKeyerDVESettings(props, mixEffectId, keyId)
+					},
+					options,
+					[
+						'positionX',
+						'positionY',
+						'sizeX',
+						'sizeY',
+						'rotation',
+						'maskTop',
+						'maskBottom',
+						'maskLeft',
+						'maskRight',
+						'lightSourceDirection',
+						'lightSourceAltitude',
+						'borderHue',
+						'borderSaturation',
+						'borderLuma',
+						'borderBevel',
+						'borderOuterWidth',
+						'borderInnerWidth',
+						'borderOuterSoftness',
+						'borderInnerSoftness',
+						'borderOpacity',
+						'borderBevelPosition',
+						'borderBevelSoftness',
+					],
+					newProps,
+					state.state.video.mixEffects[mixEffectId]?.upstreamKeyers[keyId]?.dveSettings,
+				)
 			},
 			learn: ({ options }) => {
 				const usk = getUSK(state.state, options.getPlainNumber('mixeffect'), options.getPlainNumber('key'))
@@ -377,6 +422,7 @@ export function createUpstreamKeyerDVEActions(
 					default: '1',
 					useVariables: true,
 				},
+				...AtemTransitionAnimationOptions(),
 				...AtemUSKDVEPropertiesVariablesPickers(),
 			},
 			callback: async ({ options }) => {
@@ -469,7 +515,39 @@ export function createUpstreamKeyerDVEActions(
 				if (isNaN(mixEffectId) || isNaN(keyId)) return
 				if (Object.keys(newProps).length === 0) return
 
-				await atem?.setUpstreamKeyerDVESettings(newProps, mixEffectId, keyId)
+				await transitions.runForProperties(
+					`me.${mixEffectId}.keyer.${keyId}.dveSettings`,
+					async (props) => {
+						await atem?.setUpstreamKeyerDVESettings(props, mixEffectId, keyId)
+					},
+					options,
+					[
+						'positionX',
+						'positionY',
+						'sizeX',
+						'sizeY',
+						'rotation',
+						'maskTop',
+						'maskBottom',
+						'maskLeft',
+						'maskRight',
+						'lightSourceDirection',
+						'lightSourceAltitude',
+						'borderHue',
+						'borderSaturation',
+						'borderLuma',
+						'borderBevel',
+						'borderOuterWidth',
+						'borderInnerWidth',
+						'borderOuterSoftness',
+						'borderInnerSoftness',
+						'borderOpacity',
+						'borderBevelPosition',
+						'borderBevelSoftness',
+					],
+					newProps,
+					state.state.video.mixEffects[mixEffectId]?.upstreamKeyers[keyId]?.dveSettings,
+				)
 			},
 			learn: async ({ options }) => {
 				const mixeffect = (await options.getParsedNumber('mixeffect')) - 1
