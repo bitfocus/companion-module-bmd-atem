@@ -34,7 +34,7 @@
 	"dependencies": {
 		"@atem-connection/camera-control": "^0.3.0",
 		"@atem-connection/image-tools": "^1.1.1",
-		"@companion-module/base": "~1.11.3",
+		"@companion-module/base": "~1.12.1",
 		"@julusian/image-rs": "^1.1.1",
 		"atem-connection": "3.6.0",
 		"lodash-es": "^4.17.21",
