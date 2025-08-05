@@ -45,9 +45,9 @@ export function GetConfigFields(_self: InstanceBaseExt<AtemConfig>): SomeCompani
 		{
 			type: 'textinput',
 			id: 'host',
-			label: 'Target IP',
+			label: 'Target IP2',
 			width: 6,
-			isVisible: (options) => !options['bonjourHost'],
+			isVisibleExpression: `!$(options:bonjourHost)`,
 			default: '',
 			regex: Regex.IP,
 		},
@@ -56,7 +56,7 @@ export function GetConfigFields(_self: InstanceBaseExt<AtemConfig>): SomeCompani
 			id: 'host-filler',
 			width: 6,
 			label: '',
-			isVisible: (options) => !!options['bonjourHost'],
+			isVisibleExpression: `!!$(options:bonjourHost)`,
 			value: '',
 		},
 		{

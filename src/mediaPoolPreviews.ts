@@ -1,7 +1,7 @@
 import type { AtemState, MediaState } from 'atem-connection'
 import { assertNever, type CompanionAdvancedFeedbackResult } from '@companion-module/base'
 import type { ReadonlyDeep } from 'type-fest'
-import { ImageTransformer, PixelFormat, type ComputedImage, ResizeMode } from '@julusian/image-rs'
+import { ImageTransformer, type ComputedImage } from '@julusian/image-rs'
 
 export interface MediaPoolPreviewOptions {
 	position: 'top' | 'center' | 'bottom'
@@ -161,7 +161,7 @@ export class MediaPoolPreviewCache {
 				cacheEntry.rawImage.buffer,
 				cacheEntry.rawImage.width,
 				cacheEntry.rawImage.height,
-				PixelFormat.Rgba,
+				'rgba',
 			)
 
 			const cropWidth = (cacheEntry.rawImage.height / options.buttonHeight) * options.buttonWidth
@@ -190,8 +190,8 @@ export class MediaPoolPreviewCache {
 			}
 
 			existingScaleOp = transformChain
-				.scale(options.buttonWidth * oversampling, options.buttonHeight * oversampling, ResizeMode.Fit)
-				.toBuffer(PixelFormat.Rgba)
+				.scale(options.buttonWidth * oversampling, options.buttonHeight * oversampling, 'Fit')
+				.toBuffer('rgba')
 
 			cacheEntry.scaledImages.set(previewKey, existingScaleOp)
 		}
