@@ -72,7 +72,7 @@ export function GetConfigFields(_self: InstanceBaseExt<AtemConfig>): SomeCompani
 			id: 'autoModelName',
 			label: 'Detected Model',
 			width: 6,
-			isVisible: (options) => options['modelID'] + '' === '0',
+			isVisibleExpression: `$(options:modelID) == 0`, // Loose comparison
 			value: _self.config.autoModelName ?? 'Pending',
 		},
 		{
@@ -80,7 +80,7 @@ export function GetConfigFields(_self: InstanceBaseExt<AtemConfig>): SomeCompani
 			id: 'autoModelName-filler',
 			width: 6,
 			label: '',
-			isVisible: (options) => options['modelID'] + '' !== '0',
+			isVisibleExpression: `$(options:modelID) != 0`, // Loose comparison
 			value: '',
 		},
 		{

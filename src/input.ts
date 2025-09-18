@@ -4,7 +4,6 @@ import type {
 	CompanionInputFieldMultiDropdown,
 	CompanionInputFieldNumber,
 	CompanionInputFieldTextInput,
-	CompanionOptionValues,
 	DropdownChoice,
 } from '@companion-module/base'
 import { type AtemState, Enums } from 'atem-connection'
@@ -186,7 +185,7 @@ export function AtemDSKMaskPropertiesPickers(): {
 			label: 'Enabled',
 			id: 'maskEnabled',
 			default: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskEnabled'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskEnabled')`,
 		},
 		maskTop: {
 			type: 'number',
@@ -196,7 +195,7 @@ export function AtemDSKMaskPropertiesPickers(): {
 			min: -9,
 			step: 0.01,
 			max: 9,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskTop'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskTop')`,
 		},
 		maskBottom: {
 			type: 'number',
@@ -206,7 +205,7 @@ export function AtemDSKMaskPropertiesPickers(): {
 			min: -9,
 			step: 0.01,
 			max: 9,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskBottom'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskBottom')`,
 		},
 		maskLeft: {
 			type: 'number',
@@ -216,7 +215,7 @@ export function AtemDSKMaskPropertiesPickers(): {
 			min: -16,
 			step: 0.01,
 			max: 16,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskLeft'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskLeft')`,
 		},
 		maskRight: {
 			type: 'number',
@@ -226,7 +225,7 @@ export function AtemDSKMaskPropertiesPickers(): {
 			min: -16,
 			step: 0.01,
 			max: 16,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskRight'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskRight')`,
 		},
 	}
 
@@ -249,7 +248,7 @@ export function AtemDSKPreMultipliedKeyPropertiesPickers(): {
 			label: 'Enabled',
 			id: 'preMultiply',
 			default: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('preMultiply'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'preMultiply')`,
 		},
 		clip: {
 			type: 'number',
@@ -260,7 +259,7 @@ export function AtemDSKPreMultipliedKeyPropertiesPickers(): {
 			min: 0,
 			step: 0.1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('clip'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'clip')`,
 		},
 		gain: {
 			type: 'number',
@@ -271,14 +270,14 @@ export function AtemDSKPreMultipliedKeyPropertiesPickers(): {
 			min: 0,
 			step: 0.1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('gain'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'gain')`,
 		},
 		invert: {
 			type: 'checkbox',
 			label: 'Invert key',
 			id: 'invert',
 			default: false,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('invert'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'invert')`,
 		},
 	}
 
@@ -311,7 +310,7 @@ export function AtemUSKMaskPropertiesPickers(): {
 			label: 'Enabled',
 			id: 'maskEnabled',
 			default: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskEnabled'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskEnabled')`,
 		},
 		maskTop: {
 			type: 'number',
@@ -321,7 +320,7 @@ export function AtemUSKMaskPropertiesPickers(): {
 			min: -9,
 			step: 0.01,
 			max: 9,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskTop'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskTop')`,
 		},
 		maskBottom: {
 			type: 'number',
@@ -331,7 +330,7 @@ export function AtemUSKMaskPropertiesPickers(): {
 			min: -9,
 			step: 0.01,
 			max: 9,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskBottom'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskBottom')`,
 		},
 		maskLeft: {
 			type: 'number',
@@ -341,7 +340,7 @@ export function AtemUSKMaskPropertiesPickers(): {
 			min: -16,
 			step: 0.01,
 			max: 16,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskLeft'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskLeft')`,
 		},
 		maskRight: {
 			type: 'number',
@@ -351,7 +350,7 @@ export function AtemUSKMaskPropertiesPickers(): {
 			min: -16,
 			step: 0.01,
 			max: 16,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskRight'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskRight')`,
 		},
 	}
 
@@ -400,7 +399,7 @@ export function AtemUSKDVEPropertiesPickers(): {
 			range: true,
 			step: 0.01,
 			max: 1000,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionX'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'positionX')`,
 		},
 		positionY: {
 			type: 'number',
@@ -411,7 +410,7 @@ export function AtemUSKDVEPropertiesPickers(): {
 			min: -1000,
 			step: 0.01,
 			max: 1000,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionY'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'positionY')`,
 		},
 		sizeX: {
 			type: 'number',
@@ -422,7 +421,7 @@ export function AtemUSKDVEPropertiesPickers(): {
 			min: 0,
 			step: 0.01,
 			max: 99.99,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('sizeX'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'sizeX')`,
 		},
 		sizeY: {
 			type: 'number',
@@ -433,7 +432,7 @@ export function AtemUSKDVEPropertiesPickers(): {
 			min: 0,
 			step: 0.01,
 			max: 99.99,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('sizeY'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'sizeY')`,
 		},
 		rotation: {
 			type: 'number',
@@ -443,14 +442,14 @@ export function AtemUSKDVEPropertiesPickers(): {
 			default: 0,
 			min: 0,
 			max: 360,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('rotation'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'rotation')`,
 		},
 		maskEnabled: {
 			type: 'checkbox',
 			label: 'Mask: Enabled',
 			id: 'maskEnabled',
 			default: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskEnabled'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskEnabled')`,
 		},
 		maskTop: {
 			type: 'number',
@@ -461,7 +460,7 @@ export function AtemUSKDVEPropertiesPickers(): {
 			min: 0,
 			step: 0.01,
 			max: 38,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskTop'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskTop')`,
 		},
 		maskBottom: {
 			type: 'number',
@@ -472,7 +471,7 @@ export function AtemUSKDVEPropertiesPickers(): {
 			min: 0,
 			step: 0.01,
 			max: 38,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskBottom'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskBottom')`,
 		},
 		maskLeft: {
 			type: 'number',
@@ -483,7 +482,7 @@ export function AtemUSKDVEPropertiesPickers(): {
 			min: 0,
 			step: 0.01,
 			max: 52,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskLeft'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskLeft')`,
 		},
 		maskRight: {
 			type: 'number',
@@ -494,14 +493,14 @@ export function AtemUSKDVEPropertiesPickers(): {
 			min: 0,
 			step: 0.01,
 			max: 52,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskRight'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskRight')`,
 		},
 		shadowEnabled: {
 			type: 'checkbox',
 			label: 'Shadow: Enabled',
 			id: 'shadowEnabled',
 			default: false,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('shadowEnabled'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'shadowEnabled')`,
 		},
 		lightSourceDirection: {
 			type: 'number',
@@ -512,7 +511,7 @@ export function AtemUSKDVEPropertiesPickers(): {
 			range: true,
 			step: 1,
 			max: 359,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('lightSourceDirection'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'lightSourceDirection')`,
 		},
 		lightSourceAltitude: {
 			type: 'number',
@@ -523,14 +522,14 @@ export function AtemUSKDVEPropertiesPickers(): {
 			range: true,
 			step: 1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('lightSourceAltitude'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'lightSourceAltitude')`,
 		},
 		borderEnabled: {
 			type: 'checkbox',
 			label: 'Border: Enabled',
 			id: 'borderEnabled',
 			default: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderEnabled'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderEnabled')`,
 		},
 		borderHue: {
 			type: 'number',
@@ -541,7 +540,7 @@ export function AtemUSKDVEPropertiesPickers(): {
 			range: true,
 			step: 0.1,
 			max: 360,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderHue'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderHue')`,
 		},
 		borderSaturation: {
 			type: 'number',
@@ -552,7 +551,7 @@ export function AtemUSKDVEPropertiesPickers(): {
 			range: true,
 			step: 0.1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderSaturation'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderSaturation')`,
 		},
 		borderLuma: {
 			type: 'number',
@@ -563,7 +562,7 @@ export function AtemUSKDVEPropertiesPickers(): {
 			range: true,
 			step: 0.1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderLuma'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderLuma')`,
 		},
 		borderBevel: {
 			type: 'dropdown',
@@ -581,7 +580,7 @@ export function AtemUSKDVEPropertiesPickers(): {
 			range: true,
 			step: 0.01,
 			max: 16,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderOuterWidth'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderOuterWidth')`,
 		},
 		borderInnerWidth: {
 			type: 'number',
@@ -592,7 +591,7 @@ export function AtemUSKDVEPropertiesPickers(): {
 			range: true,
 			step: 0.01,
 			max: 16,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderInnerWidth'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderInnerWidth')`,
 		},
 		borderOuterSoftness: {
 			type: 'number',
@@ -603,7 +602,7 @@ export function AtemUSKDVEPropertiesPickers(): {
 			range: true,
 			step: 1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderOuterSoftness'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderOuterSoftness')`,
 		},
 		borderInnerSoftness: {
 			type: 'number',
@@ -614,7 +613,7 @@ export function AtemUSKDVEPropertiesPickers(): {
 			range: true,
 			step: 1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderInnerSoftness'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderInnerSoftness')`,
 		},
 		borderOpacity: {
 			type: 'number',
@@ -625,7 +624,7 @@ export function AtemUSKDVEPropertiesPickers(): {
 			range: true,
 			step: 1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderOpacity'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderOpacity')`,
 		},
 		borderBevelPosition: {
 			type: 'number',
@@ -636,7 +635,7 @@ export function AtemUSKDVEPropertiesPickers(): {
 			range: true,
 			step: 1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderBevelPosition'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderBevelPosition')`,
 		},
 		borderBevelSoftness: {
 			type: 'number',
@@ -647,7 +646,7 @@ export function AtemUSKDVEPropertiesPickers(): {
 			range: true,
 			step: 1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderBevelSoftness'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderBevelSoftness')`,
 		},
 		rate: AtemRatePicker('Rate'),
 	}
@@ -694,7 +693,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'positionX',
 			default: '0',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionX'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'positionX')`,
 		},
 		positionY: {
 			type: 'textinput',
@@ -702,7 +701,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'positionY',
 			default: '0',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionY'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'positionY')`,
 		},
 		sizeX: {
 			type: 'textinput',
@@ -710,7 +709,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'sizeX',
 			default: '0.5',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('sizeX'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'sizeX')`,
 		},
 		sizeY: {
 			type: 'textinput',
@@ -718,7 +717,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'sizeY',
 			default: '0.5',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('sizeY'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'sizeY')`,
 		},
 		rotation: {
 			type: 'textinput',
@@ -726,7 +725,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'rotation',
 			default: '0',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('rotation'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'rotation')`,
 		},
 		maskEnabled: {
 			type: 'textinput',
@@ -734,7 +733,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'maskEnabled',
 			default: 'true',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskEnabled'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskEnabled')`,
 		},
 		maskTop: {
 			type: 'textinput',
@@ -742,7 +741,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'maskTop',
 			default: '0',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskTop'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskTop')`,
 		},
 		maskBottom: {
 			type: 'textinput',
@@ -750,7 +749,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'maskBottom',
 			default: '0',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskBottom'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskBottom')`,
 		},
 		maskLeft: {
 			type: 'textinput',
@@ -758,7 +757,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'maskLeft',
 			default: '0',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskLeft'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskLeft')`,
 		},
 		maskRight: {
 			type: 'textinput',
@@ -766,7 +765,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'maskRight',
 			default: '0',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskRight'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskRight')`,
 		},
 		shadowEnabled: {
 			type: 'textinput',
@@ -774,7 +773,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'shadowEnabled',
 			default: 'false',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('shadowEnabled'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'shadowEnabled')`,
 		},
 		lightSourceDirection: {
 			type: 'textinput',
@@ -782,7 +781,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'lightSourceDirection',
 			default: '36',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('lightSourceDirection'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'lightSourceDirection')`,
 		},
 		lightSourceAltitude: {
 			type: 'textinput',
@@ -790,7 +789,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'lightSourceAltitude',
 			default: '25',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('lightSourceAltitude'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'lightSourceAltitude')`,
 		},
 		borderEnabled: {
 			type: 'textinput',
@@ -798,7 +797,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'borderEnabled',
 			default: 'true',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderEnabled'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderEnabled')`,
 		},
 		borderHue: {
 			type: 'textinput',
@@ -806,7 +805,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'borderHue',
 			default: '0',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderHue'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderHue')`,
 		},
 		borderSaturation: {
 			type: 'textinput',
@@ -814,7 +813,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'borderSaturation',
 			default: '0',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderSaturation'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderSaturation')`,
 		},
 		borderLuma: {
 			type: 'textinput',
@@ -822,7 +821,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'borderLuma',
 			default: '0',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderLuma'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderLuma')`,
 		},
 		borderBevel: {
 			type: 'textinput',
@@ -830,7 +829,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'borderBevel',
 			default: '0',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderStyle'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderStyle')`,
 		},
 		borderOuterWidth: {
 			type: 'textinput',
@@ -838,7 +837,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'borderOuterWidth',
 			default: '0',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderOuterWidth'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderOuterWidth')`,
 		},
 		borderInnerWidth: {
 			type: 'textinput',
@@ -846,7 +845,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'borderInnerWidth',
 			default: '0.2',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderInnerWidth'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderInnerWidth')`,
 		},
 		borderOuterSoftness: {
 			type: 'textinput',
@@ -854,7 +853,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'borderOuterSoftness',
 			default: '0',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderOuterSoftness'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderOuterSoftness')`,
 		},
 		borderInnerSoftness: {
 			type: 'textinput',
@@ -862,7 +861,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'borderInnerSoftness',
 			default: '0',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderInnerSoftness'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderInnerSoftness')`,
 		},
 		borderOpacity: {
 			type: 'textinput',
@@ -870,7 +869,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'borderOpacity',
 			default: '100',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderOpacity'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderOpacity')`,
 		},
 		borderBevelPosition: {
 			type: 'textinput',
@@ -878,7 +877,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'borderBevelPosition',
 			default: '0',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderBevelPosition'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderBevelPosition')`,
 		},
 		borderBevelSoftness: {
 			type: 'textinput',
@@ -886,7 +885,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			id: 'borderBevelSoftness',
 			default: '0',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderBevelSoftness'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderBevelSoftness')`,
 		},
 		rate: {
 			type: 'textinput',
@@ -894,7 +893,7 @@ export function AtemUSKDVEPropertiesVariablesPickers(): {
 			label: 'Rate',
 			default: '25',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('rate'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'rate')`,
 		},
 	}
 
@@ -938,7 +937,7 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			range: true,
 			step: 0.01,
 			max: 1000,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionX'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'positionX')`,
 		},
 		positionY: {
 			type: 'number',
@@ -949,7 +948,7 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			min: -1000,
 			step: 0.01,
 			max: 1000,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionY'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'positionY')`,
 		},
 		sizeX: {
 			type: 'number',
@@ -960,7 +959,7 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			min: 0,
 			step: 0.01,
 			max: 99.99,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('sizeX'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'sizeX')`,
 		},
 		sizeY: {
 			type: 'number',
@@ -971,7 +970,7 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			min: 0,
 			step: 0.01,
 			max: 99.99,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('sizeY'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'sizeY')`,
 		},
 		rotation: {
 			type: 'number',
@@ -981,7 +980,7 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			default: 0,
 			min: 0,
 			max: 360,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('rotation'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'rotation')`,
 		},
 		maskTop: {
 			type: 'number',
@@ -992,7 +991,7 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			min: 0,
 			step: 0.01,
 			max: 38,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskTop'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskTop')`,
 		},
 		maskBottom: {
 			type: 'number',
@@ -1003,7 +1002,7 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			min: 0,
 			step: 0.01,
 			max: 38,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskBottom'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskBottom')`,
 		},
 		maskLeft: {
 			type: 'number',
@@ -1014,7 +1013,7 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			min: 0,
 			step: 0.01,
 			max: 52,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskLeft'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskLeft')`,
 		},
 		maskRight: {
 			type: 'number',
@@ -1025,7 +1024,7 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			min: 0,
 			step: 0.01,
 			max: 52,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('maskRight'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskRight')`,
 		},
 		lightSourceDirection: {
 			type: 'number',
@@ -1036,7 +1035,7 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			range: true,
 			step: 1,
 			max: 359,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('lightSourceDirection'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'lightSourceDirection')`,
 		},
 		lightSourceAltitude: {
 			type: 'number',
@@ -1047,7 +1046,7 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			range: true,
 			step: 1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('lightSourceAltitude'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'lightSourceAltitude')`,
 		},
 		borderHue: {
 			type: 'number',
@@ -1058,7 +1057,7 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			range: true,
 			step: 0.1,
 			max: 360,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderHue'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderHue')`,
 		},
 		borderSaturation: {
 			type: 'number',
@@ -1069,7 +1068,7 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			range: true,
 			step: 0.1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderSaturation'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderSaturation')`,
 		},
 		borderLuma: {
 			type: 'number',
@@ -1080,7 +1079,7 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			range: true,
 			step: 0.1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderLuma'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderLuma')`,
 		},
 		borderOuterWidth: {
 			type: 'number',
@@ -1091,7 +1090,7 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			range: true,
 			step: 0.01,
 			max: 16,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderOuterWidth'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderOuterWidth')`,
 		},
 		borderInnerWidth: {
 			type: 'number',
@@ -1102,7 +1101,7 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			range: true,
 			step: 0.01,
 			max: 16,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderInnerWidth'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderInnerWidth')`,
 		},
 		borderOuterSoftness: {
 			type: 'number',
@@ -1113,7 +1112,7 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			range: true,
 			step: 1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderOuterSoftness'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderOuterSoftness')`,
 		},
 		borderInnerSoftness: {
 			type: 'number',
@@ -1124,7 +1123,7 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			range: true,
 			step: 1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderInnerSoftness'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderInnerSoftness')`,
 		},
 		borderOpacity: {
 			type: 'number',
@@ -1135,7 +1134,7 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			range: true,
 			step: 1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderOpacity'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderOpacity')`,
 		},
 		borderBevelPosition: {
 			type: 'number',
@@ -1146,7 +1145,7 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			range: true,
 			step: 1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderBevelPosition'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderBevelPosition')`,
 		},
 		borderBevelSoftness: {
 			type: 'number',
@@ -1157,7 +1156,7 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			range: true,
 			step: 1,
 			max: 100,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('borderBevelSoftness'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderBevelSoftness')`,
 		},
 	}
 
@@ -1245,9 +1244,7 @@ export function AtemTransitionAnimationOptions(): {
 				{ id: 'back', label: 'Back' },
 				{ id: 'bounce', label: 'Bounce' },
 			],
-			isVisible: (options: CompanionOptionValues): boolean => {
-				return options.transitionRate != null && (options.transitionRate as number) > 0
-			},
+			isVisibleExpression: `$(options:transitionRate) != null && $(options:transitionRate) > 0`,
 		},
 		transitionCurve: {
 			type: 'dropdown',
@@ -1259,14 +1256,7 @@ export function AtemTransitionAnimationOptions(): {
 				{ id: 'ease-out', label: 'Ease-out' },
 				{ id: 'ease-in-out', label: 'Ease-in-out' },
 			],
-			isVisible: (options: CompanionOptionValues): boolean => {
-				return (
-					options.transitionRate != null &&
-					options.transitionEasing != null &&
-					(options.transitionRate as number) > 0 &&
-					(options.transitionEasing as string) !== 'linear'
-				)
-			},
+			isVisibleExpression: `$(options:transitionRate) != null && $(options:transitionEasing) != null && $(options:transitionRate) > 0 && $(options:transitionEasing) != 'linear'`,
 		},
 	}
 }
@@ -1360,7 +1350,7 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0.5,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('size'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'size')`,
 		},
 
 		onair: {
@@ -1369,7 +1359,7 @@ export function AtemSuperSourcePropertiesPickers(
 			label: 'On Air',
 			default: 'true',
 			choices: CHOICES_KEYTRANS,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('onair'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'onair')`,
 		},
 		source: {
 			type: 'dropdown',
@@ -1377,7 +1367,7 @@ export function AtemSuperSourcePropertiesPickers(
 			label: 'Source',
 			default: 0,
 			choices: SourcesToChoices(GetSourcesListForType(model, state, 'ssrc-box')),
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('source'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'source')`,
 		},
 		x: {
 			type: 'number',
@@ -1388,7 +1378,7 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('x'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'x')`,
 		},
 		y: {
 			type: 'number',
@@ -1399,14 +1389,14 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('y'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'y')`,
 		},
 		cropEnable: {
 			type: 'checkbox',
 			id: 'cropEnable',
 			label: 'Crop Enable',
 			default: false,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropEnable'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'cropEnable')`,
 		},
 		cropTop: {
 			type: 'number',
@@ -1417,7 +1407,7 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropTop'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'cropTop')`,
 		},
 		cropBottom: {
 			type: 'number',
@@ -1428,7 +1418,7 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropBottom'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'cropBottom')`,
 		},
 		cropLeft: {
 			type: 'number',
@@ -1439,7 +1429,7 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropLeft'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'cropLeft')`,
 		},
 		cropRight: {
 			type: 'number',
@@ -1450,7 +1440,7 @@ export function AtemSuperSourcePropertiesPickers(
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropRight'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'cropRight')`,
 		},
 	}
 
@@ -1479,7 +1469,7 @@ export function AtemSuperSourcePropertiesPickersForOffset(): {
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('size'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'size')`,
 		},
 
 		x: {
@@ -1491,7 +1481,7 @@ export function AtemSuperSourcePropertiesPickersForOffset(): {
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('x'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'x')`,
 		},
 		y: {
 			type: 'number',
@@ -1502,7 +1492,7 @@ export function AtemSuperSourcePropertiesPickersForOffset(): {
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('y'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'y')`,
 		},
 
 		cropTop: {
@@ -1514,7 +1504,7 @@ export function AtemSuperSourcePropertiesPickersForOffset(): {
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropTop'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'cropTop')`,
 		},
 		cropBottom: {
 			type: 'number',
@@ -1525,7 +1515,7 @@ export function AtemSuperSourcePropertiesPickersForOffset(): {
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropBottom'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'cropBottom')`,
 		},
 		cropLeft: {
 			type: 'number',
@@ -1536,7 +1526,7 @@ export function AtemSuperSourcePropertiesPickersForOffset(): {
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropLeft'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'cropLeft')`,
 		},
 		cropRight: {
 			type: 'number',
@@ -1547,7 +1537,7 @@ export function AtemSuperSourcePropertiesPickersForOffset(): {
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('cropRight'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'cropRight')`,
 		},
 	}
 
@@ -1586,7 +1576,7 @@ export function AtemSuperSourceArtPropertiesPickers(
 			label: 'Fill Source',
 			default: 0,
 			choices: artSources,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('fill'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'fill')`,
 		},
 		key: {
 			type: 'dropdown',
@@ -1594,18 +1584,18 @@ export function AtemSuperSourceArtPropertiesPickers(
 			label: 'Key Source',
 			default: 0,
 			choices: artSources,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('key'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'key')`,
 		},
 		artOption: {
 			...AtemSuperSourceArtOption(action),
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('artOption'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'artOption')`,
 		},
 		artPreMultiplied: {
 			type: 'checkbox',
 			id: 'artPreMultiplied',
 			label: 'Pre-multiplied',
 			default: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('artPreMultiplied'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'artPreMultiplied')`,
 		},
 		artClip: {
 			type: 'number',
@@ -1616,7 +1606,7 @@ export function AtemSuperSourceArtPropertiesPickers(
 			range: true,
 			default: 50,
 			step: 1,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('artClip'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'artClip')`,
 		},
 		artGain: {
 			type: 'number',
@@ -1627,14 +1617,14 @@ export function AtemSuperSourceArtPropertiesPickers(
 			range: true,
 			default: 50,
 			step: 1,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('artGain'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'artGain')`,
 		},
 		artInvertKey: {
 			type: 'checkbox',
 			id: 'artInvertKey',
 			label: 'Invert Key',
 			default: false,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('artInvertKey'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'artInvertKey')`,
 		},
 	}
 
@@ -1665,7 +1655,7 @@ export function AtemSuperSourceArtPropertiesVariablesPickers(): MyOptionsObject<
 			label: 'Fill Source',
 			default: '1',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('fill'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'fill')`,
 		},
 		key: {
 			type: 'textinput',
@@ -1673,7 +1663,7 @@ export function AtemSuperSourceArtPropertiesVariablesPickers(): MyOptionsObject<
 			label: 'Key Source',
 			default: '1',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('key'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'key')`,
 		},
 	}
 
@@ -1936,9 +1926,7 @@ export const FadeDurationFields: MyOptionsObject<
 			{ id: 'back', label: 'Back' },
 			{ id: 'bounce', label: 'Bounce' },
 		],
-		isVisible: (options: CompanionOptionValues): boolean => {
-			return options.fadeDuration != null && (options.fadeDuration as number) > 0
-		},
+		isVisibleExpression: `$(options:fadeDuration) != null && $(options:fadeDuration) > 0`,
 	},
 	fadeCurve: {
 		type: 'dropdown',
@@ -1950,14 +1938,7 @@ export const FadeDurationFields: MyOptionsObject<
 			{ id: 'ease-out', label: 'Ease-out' },
 			{ id: 'ease-in-out', label: 'Ease-in-out' },
 		],
-		isVisible: (options: CompanionOptionValues): boolean => {
-			return (
-				options.fadeDuration != null &&
-				options.fadeAlgorithm != null &&
-				(options.fadeDuration as number) > 0 &&
-				(options.fadeAlgorithm as string) !== 'linear'
-			)
-		},
+		isVisibleExpression: `$(options:fadeDuration) != null && $(options:fadeAlgorithm) != null && $(options:fadeDuration) > 0 && $(options:fadeAlgorithm) != 'linear'`,
 	},
 }
 
@@ -2003,7 +1984,7 @@ export function AtemDisplayClockPropertiesPickers(): {
 			id: 'enabled',
 			label: 'Display',
 			default: false,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('enabled'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'enabled')`,
 		},
 		size: {
 			type: 'number',
@@ -2014,7 +1995,7 @@ export function AtemDisplayClockPropertiesPickers(): {
 			range: true,
 			default: offset ? 0 : 0.5,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('size'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'size')`,
 		},
 		opacity: {
 			type: 'number',
@@ -2025,7 +2006,7 @@ export function AtemDisplayClockPropertiesPickers(): {
 			range: true,
 			default: offset ? 0 : 1,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('opacity'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'opacity')`,
 		},
 		x: {
 			type: 'number',
@@ -2036,7 +2017,7 @@ export function AtemDisplayClockPropertiesPickers(): {
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('x'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'x')`,
 		},
 		y: {
 			type: 'number',
@@ -2047,7 +2028,7 @@ export function AtemDisplayClockPropertiesPickers(): {
 			range: true,
 			default: 0,
 			step: 0.01,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('y'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'y')`,
 		},
 		//!offset?
 		autoHide: {
@@ -2055,7 +2036,7 @@ export function AtemDisplayClockPropertiesPickers(): {
 			id: 'autoHide',
 			label: 'Auto Hide',
 			default: false,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('autoHide'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'autoHide')`,
 		},
 		// startFrom: 1 << 6,
 		//!offset?
@@ -2069,7 +2050,7 @@ export function AtemDisplayClockPropertiesPickers(): {
 				{ id: Enums.DisplayClockClockMode.Countup, label: 'Count up' },
 				{ id: Enums.DisplayClockClockMode.TimeOfDay, label: 'Time of Day' },
 			],
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('clockMode'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'clockMode')`,
 		},
 	}
 
@@ -2216,14 +2197,14 @@ export function AtemUSKPatternPropertiesPickers(): {
 			id: 'style',
 			default: Enums.Pattern.LeftToRightBar,
 			choices: GetUpstreamKeyerPatternChoices(),
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('style'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'style')`,
 		},
 		invert: {
 			type: 'checkbox',
 			label: 'Invert Pattern',
 			id: 'invert',
 			default: false,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('invert'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'invert')`,
 		},
 		size: {
 			type: 'number',
@@ -2234,7 +2215,7 @@ export function AtemUSKPatternPropertiesPickers(): {
 			min: 0.0,
 			step: 0.01,
 			max: 100.0,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('size'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'size')`,
 		},
 		symmetry: {
 			type: 'number',
@@ -2245,7 +2226,7 @@ export function AtemUSKPatternPropertiesPickers(): {
 			min: 0.0,
 			step: 0.01,
 			max: 100.0,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('symmetry'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'symmetry')`,
 		},
 		softness: {
 			type: 'number',
@@ -2256,7 +2237,7 @@ export function AtemUSKPatternPropertiesPickers(): {
 			min: 0.0,
 			step: 0.01,
 			max: 100.0,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('softness'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'softness')`,
 		},
 		positionX: {
 			type: 'number',
@@ -2267,7 +2248,7 @@ export function AtemUSKPatternPropertiesPickers(): {
 			range: true,
 			step: 0.01,
 			max: 1.0,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionX'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'positionX')`,
 		},
 		positionY: {
 			type: 'number',
@@ -2278,7 +2259,7 @@ export function AtemUSKPatternPropertiesPickers(): {
 			min: 0.0,
 			step: 0.01,
 			max: 1.0,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionY'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'positionY')`,
 		},
 	}
 	return {
@@ -2304,7 +2285,7 @@ export function AtemUSKPatternPropertiesVariablesPickers(): {
 			id: 'style',
 			default: '0',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('style'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'style')`,
 		},
 		invert: {
 			type: 'textinput',
@@ -2312,7 +2293,7 @@ export function AtemUSKPatternPropertiesVariablesPickers(): {
 			id: 'invert',
 			default: 'false',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('invert'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'invert')`,
 		},
 		size: {
 			type: 'textinput',
@@ -2320,7 +2301,7 @@ export function AtemUSKPatternPropertiesVariablesPickers(): {
 			id: 'size',
 			default: '50',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('size'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'size')`,
 		},
 		symmetry: {
 			type: 'textinput',
@@ -2328,7 +2309,7 @@ export function AtemUSKPatternPropertiesVariablesPickers(): {
 			id: 'symmetry',
 			default: '81.6',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('symmetry'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'symmetry')`,
 		},
 		softness: {
 			type: 'textinput',
@@ -2336,7 +2317,7 @@ export function AtemUSKPatternPropertiesVariablesPickers(): {
 			id: 'softness',
 			default: '50',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('softness'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'softness')`,
 		},
 		positionX: {
 			type: 'textinput',
@@ -2344,7 +2325,7 @@ export function AtemUSKPatternPropertiesVariablesPickers(): {
 			id: 'positionX',
 			default: '0.5',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionX'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'positionX')`,
 		},
 		positionY: {
 			type: 'textinput',
@@ -2352,7 +2333,7 @@ export function AtemUSKPatternPropertiesVariablesPickers(): {
 			id: 'positionY',
 			default: '0.5',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionY'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'positionY')`,
 		},
 	}
 
@@ -2375,7 +2356,7 @@ export function AtemUSKFlyKeyPropertiesPickers(): {
 			label: 'Enabled',
 			id: 'flyEnabled',
 			default: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('flyEnabled'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'flyEnabled')`,
 		},
 		positionX: {
 			type: 'number',
@@ -2385,7 +2366,7 @@ export function AtemUSKFlyKeyPropertiesPickers(): {
 			min: -32,
 			step: 0.01,
 			max: 32,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionX'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'positionX')`,
 		},
 		positionY: {
 			type: 'number',
@@ -2395,7 +2376,7 @@ export function AtemUSKFlyKeyPropertiesPickers(): {
 			min: -18,
 			step: 0.01,
 			max: 18,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionY'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'positionY')`,
 		},
 		sizeX: {
 			type: 'number',
@@ -2405,7 +2386,7 @@ export function AtemUSKFlyKeyPropertiesPickers(): {
 			min: 0.0,
 			step: 0.01,
 			max: 99.99,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('sizeX'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'sizeX')`,
 		},
 		sizeY: {
 			type: 'number',
@@ -2415,7 +2396,7 @@ export function AtemUSKFlyKeyPropertiesPickers(): {
 			min: 0.0,
 			step: 0.01,
 			max: 99.99,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('sizeY'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'sizeY')`,
 		},
 	}
 
@@ -2439,7 +2420,7 @@ export function AtemUSKFlyKeyPropertiesVariablesPickers(): {
 			id: 'flyEnabled',
 			default: 'true',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('flyEnabled'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'flyEnabled')`,
 		},
 		positionX: {
 			type: 'textinput',
@@ -2447,7 +2428,7 @@ export function AtemUSKFlyKeyPropertiesVariablesPickers(): {
 			id: 'positionX',
 			default: '0',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionX'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'positionX')`,
 		},
 		positionY: {
 			type: 'textinput',
@@ -2455,7 +2436,7 @@ export function AtemUSKFlyKeyPropertiesVariablesPickers(): {
 			id: 'positionY',
 			default: '0',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('positionY'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'positionY')`,
 		},
 		sizeX: {
 			type: 'textinput',
@@ -2463,7 +2444,7 @@ export function AtemUSKFlyKeyPropertiesVariablesPickers(): {
 			id: 'sizeX',
 			default: '1.0',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('sizeX'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'sizeX')`,
 		},
 		sizeY: {
 			type: 'textinput',
@@ -2471,7 +2452,7 @@ export function AtemUSKFlyKeyPropertiesVariablesPickers(): {
 			id: 'sizeY',
 			default: '1.0',
 			useVariables: true,
-			isVisible: (opts) => Array.isArray(opts.properties) && opts.properties.includes('sizeY'),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'sizeY')`,
 		},
 	}
 

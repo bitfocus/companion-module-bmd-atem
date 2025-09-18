@@ -107,7 +107,7 @@ export function createCameraControlLensActions(
 					default: '4',
 					tooltip: 'Max range -1.0 - 16.0',
 					useVariables: true,
-					isVisible: (opts) => !opts.isNormalised,
+					isVisibleExpression: `!$(options:isNormalised)`,
 				},
 				normalised: {
 					id: 'normalised',
@@ -116,7 +116,7 @@ export function createCameraControlLensActions(
 					default: '0.5',
 					tooltip: 'Range 0.0 - 1.0',
 					useVariables: true,
-					isVisible: (opts) => !!opts.isNormalised,
+					isVisibleExpression: `!$(options:isNormalised)`,
 				},
 			},
 			callback: async ({ options }) => {

@@ -293,8 +293,8 @@ export function createFairlightAudioFeedbacks(
 							label: 'No solo',
 							default: false,
 						},
-						input: { ...audioInputOption, isVisible: (options) => !options.nothing },
-						source: { ...audioSourceOption, isVisible: (options) => !options.nothing },
+						input: { ...audioInputOption, isVisibleExpression: `!$(options:nothing)` },
+						source: { ...audioSourceOption, isVisibleExpression: `!$(options:nothing)` },
 					},
 					defaultStyle: {
 						color: combineRgb(0, 0, 0),

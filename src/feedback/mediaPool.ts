@@ -46,7 +46,7 @@ const cropAndPositionOptions = {
 			{ id: 'center', label: 'Center' },
 			{ id: 'bottom', label: 'Bottom' },
 		],
-		isVisible: (options) => options['crop'] === 'none',
+		isVisibleExpression: `$(options:crop) === 'none'`,
 	} satisfies CompanionInputFieldDropdown,
 }
 
