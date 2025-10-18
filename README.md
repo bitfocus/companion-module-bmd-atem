@@ -23,6 +23,14 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.19.0
+
+- Update module api
+  - This should resolve the module crashing with large configs on lower powered machines
+  - It enables the permissions api, which shouldnt break anything (but could)
+- Convert isVisible fns to expressions
+- Allow S/C prefix in media pool preview feedbacks #381
+
 ## v3.18.0
 
 - Tweened transitions for DVE and SuperSource boxes
