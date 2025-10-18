@@ -105,6 +105,7 @@ export function createMediaPoolFeedbacks(
 								id: 'isClip',
 								label: 'Is clip',
 								default: false,
+								tooltip: 'If slot includes a S or C prefix, that will override this setting',
 							}
 						: undefined,
 				slot: {
@@ -120,9 +121,25 @@ export function createMediaPoolFeedbacks(
 			callback: async ({ options, image }) => {
 				if (!image) return {}
 
+				let isClip = model.media.clips > 0 && options.getPlainBoolean('isClip')
+
+				let slotStr = await options.getParsedString('slot')
+				if (slotStr.startsWith('S')) {
+					isClip = false
+					slotStr = slotStr.substring(1)
+				} else if (slotStr.startsWith('C')) {
+					if (model.media.clips > 0) {
+						// Can't support a clip, so abort here
+						return {}
+					}
+
+					isClip = true
+					slotStr = slotStr.substring(1)
+				}
+
 				const source: SourceDefinition = {
-					slot: (await options.getParsedNumber('slot')) - 1,
-					isClip: model.media.clips > 0 && options.getPlainBoolean('isClip'),
+					slot: Number(slotStr) - 1,
+					isClip,
 					frameIndex: 0, // Future
 				}
 
