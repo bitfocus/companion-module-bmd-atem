@@ -40,9 +40,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@companion-module/tools@npm:^2.4.1":
-  version: 2.4.1
-  resolution: "@companion-module/tools@npm:2.4.1"
+"@companion-module/tools@npm:2.4.2":
+  version: 2.4.2
+  resolution: "@companion-module/tools@npm:2.4.2"
   dependencies:
     "@eslint/js": "npm:^9.36.0"
     eslint-config-prettier: "npm:^10.1.8"
@@ -71,7 +71,42 @@ __metadata:
     companion-generate-manifest: scripts/generate-manifest.js
     companion-module-build: scripts/build.js
     companion-module-check: scripts/check.js
-  checksum: 10c0/dfb5698f82edb43c2a2787b5f8036fe08bbf8b9467cfe042b965af71b01695bba4c33df33932526d42508576d1dbd5f60ce21e35d7b862009c163e6f493612ff
+  checksum: 10c0/b4684c50dba38c12fc666e3b3f56b8723330dc8c21688b19d10bf1a5fb367a907dc7a02c8c14a7f3ae3a0fda902a7b09145c05daca771c8db61892e4c76cccee
+  languageName: node
+  linkType: hard
+
+"@companion-module/tools@patch:@companion-module/tools@npm%3A2.4.2#~/.yarn/patches/@companion-module-tools-npm-2.4.2-17b2d4310e.patch":
+  version: 2.4.2
+  resolution: "@companion-module/tools@patch:@companion-module/tools@npm%3A2.4.2#~/.yarn/patches/@companion-module-tools-npm-2.4.2-17b2d4310e.patch::version=2.4.2&hash=592c4d"
+  dependencies:
+    "@eslint/js": "npm:^9.36.0"
+    eslint-config-prettier: "npm:^10.1.8"
+    eslint-plugin-n: "npm:^17.23.1"
+    eslint-plugin-prettier: "npm:^5.5.4"
+    find-up: "npm:^7.0.0"
+    parse-author: "npm:^2.0.0"
+    semver: "npm:^7.7.2"
+    tar: "npm:^7.5.1"
+    webpack: "npm:^5.101.3"
+    webpack-cli: "npm:^6.0.1"
+    zx: "npm:^8.8.4"
+  peerDependencies:
+    "@companion-module/base": ^1.12.0
+    eslint: ^9.36.0
+    prettier: ^3.6.2
+    typescript-eslint: ^8.44.1
+  peerDependenciesMeta:
+    eslint:
+      optional: true
+    prettier:
+      optional: true
+    typescript-eslint:
+      optional: true
+  bin:
+    companion-generate-manifest: scripts/generate-manifest.js
+    companion-module-build: scripts/build.js
+    companion-module-check: scripts/check.js
+  checksum: 10c0/a3f61e3bcaa41537e761bafe1cb62bce7473d055c5fa9383122067661a4923364807e146dd1219b8147c45930dbd31bd2bb74935fdfa131ee03bcc4fd5d1b099
   languageName: node
   linkType: hard
 
@@ -1410,7 +1445,7 @@ __metadata:
     "@atem-connection/camera-control": "npm:^0.3.0"
     "@atem-connection/image-tools": "npm:^1.1.1"
     "@companion-module/base": "npm:~1.13.4"
-    "@companion-module/tools": "npm:^2.4.1"
+    "@companion-module/tools": "patch:@companion-module/tools@npm%3A2.4.2#~/.yarn/patches/@companion-module-tools-npm-2.4.2-17b2d4310e.patch"
     "@julusian/image-rs": "npm:^2.0.2"
     "@types/lodash-es": "npm:^4.17.12"
     "@types/node": "npm:^22.18.11"

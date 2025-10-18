@@ -23,6 +23,10 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.19.1
+
+- Fix broken package
+
 ## v3.19.0
 
 - Update module api

@@ -1,0 +1,17 @@
+diff --git a/scripts/build.js b/scripts/build.js
+index 51d385fb10cf2c70ddc69300c62dc5af0190cfcb..2a233f41b36c40eae0cfd91151ab56321d0c031c 100755
+--- a/scripts/build.js
++++ b/scripts/build.js
+@@ -231,6 +231,12 @@ if (fs.existsSync(prebuildDirName)) {
+ 	}
+ }
+ 
++// Some hacks that need formalizing..
++const freetypeVendorDir = path.join(packageBaseDir, 'node_modules', '@julusian', 'freetype2', 'vendor')
++if (fs.existsSync(freetypeVendorDir)) {
++	await fs.rm(freetypeVendorDir, { recursive: true, force: true })
++}
++
+ // Create tgz of the build
+ let tgzFile = toSanitizedDirname(`${manifestJson.id}-${manifestJson.version}`)
+ if (typeof argv['output'] === 'string') {

@@ -11,5 +11,10 @@ module.exports = {
 		// /^(atemSocketChild)$/i,
 	],
 	forceRemoveNodeGypFromPkg: true,
-	prebuilds: ['@julusian/image-rs', '@atem-connection/image-tools'],
+	prebuilds: [
+		'@julusian/image-rs',
+		'@atem-connection/image-tools',
+		// Some trickery is done to be able to optimise this:
+		// '@julusian/freetype2',
+	],
 }
