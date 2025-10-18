@@ -29,6 +29,15 @@ export interface MyActionDefinition<TOptions> {
 	description?: string
 	/** The input fields for the action */
 	options: MyOptionsObject<TOptions, SomeCompanionActionInputField>
+	/**
+	 * Ignore changes to certain options and don't allow them to trigger the subscribe/unsubscribe callbacks
+	 * This allows for ensuring that the subscribe callback is only called when values the action cares about change
+	 */
+	optionsToIgnoreForSubscribe?: string[]
+	/**
+	 * If true, the unsubscribe callback will not be called when the options change, only when the action is removed or disabled
+	 */
+	skipUnsubscribeOnOptionsChange?: boolean
 
 	/** Called to execute the action */
 	callback: (action: MyActionEvent2<TOptions>, context: CompanionActionContext) => Promise<void> | void

@@ -37,6 +37,8 @@ function convertMyActionToCompanionAction<TOptions>(
 				...(option as SomeCompanionActionInputField),
 				id,
 			})),
+		optionsToIgnoreForSubscribe: actionDef.optionsToIgnoreForSubscribe,
+		skipUnsubscribeOnOptionsChange: actionDef.skipUnsubscribeOnOptionsChange,
 		callback: async (action, context) => {
 			return actionDef.callback(
 				{

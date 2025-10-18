@@ -11,7 +11,7 @@ import type { MyOptionsHelper, MyOptionsObject } from '../common.js'
  */
 export interface MyFeedbackInfo<TOptions> {
 	/** The type of the feedback */
-	readonly type: 'boolean' | 'advanced'
+	readonly type: 'boolean' | 'advanced' | 'value'
 	/** The unique id for this feedback */
 	readonly id: string
 	/** The unique id for the location of this feedback */
