@@ -1219,7 +1219,7 @@ export function AtemTransitionAnimationOptions(): {
 		transitionRate: {
 			type: 'number',
 			id: 'transitionRate',
-			label: 'Transition Rate',
+			label: 'Transition Rate (ms)',
 			default: 0,
 			min: 0,
 			max: 99999,
