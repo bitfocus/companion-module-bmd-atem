@@ -253,7 +253,7 @@ export function createCameraControlVideoActions(
 					type: 'textinput',
 					label: 'Value',
 					default: '0',
-					tooltip: 'Range 0 - 128',
+					tooltip: 'Range -12 - 36',
 					useVariables: true,
 				},
 			},
@@ -273,8 +273,8 @@ export function createCameraControlVideoActions(
 					id: 'increment',
 					type: 'textinput',
 					label: 'Value',
-					default: '10',
-					tooltip: 'e.g 10 or -10',
+					default: '2',
+					tooltip: 'e.g 2 or -2',
 					useVariables: true,
 				},
 			},
@@ -284,10 +284,10 @@ export function createCameraControlVideoActions(
 
 				let gain = (_state.atemCameraState.get(cameraId)?.video.gain ?? 0) + increment
 
-				if (gain > 127) {
-					gain = 127
-				} else if (gain < 0) {
-					gain = 0
+				if (gain > 36) {
+					gain = 36
+				} else if (gain < -12) {
+					gain = -12
 				}
 
 				await commandSender?.videoGain(cameraId, gain)
