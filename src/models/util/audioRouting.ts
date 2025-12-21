@@ -123,6 +123,17 @@ export function generateMediaPlayerRoutingSources(inputCount: number): AudioRout
 	}
 	return sources
 }
+export function generateThunderboltRoutingSources(inputCount: number): AudioRoutingSourceInfo[] {
+	const sources: Array<AudioRoutingSourceInfo> = []
+	for (let i = 1; i <= inputCount; i++) {
+		sources.push({
+			inputId: 2050 + i,
+			sourceName: `Thunderbolt ${i}`,
+			channelPairs: [Enums.AudioChannelPair.Channel1_2],
+		})
+	}
+	return sources
+}
 
 export function generateTalkbackRoutingSources(hasExternal: boolean, hasGeneric: boolean): AudioRoutingSourceInfo[] {
 	const sources: Array<AudioRoutingSourceInfo> = [
@@ -196,13 +207,13 @@ export function generateMadiRoutingOutputs(inputCount: number): AudioRoutingOutp
 	}
 	return sources
 }
-export function generateAuxRoutingOutputs(auxCount: number): AudioRoutingOutputInfo[] {
+export function generateAuxRoutingOutputs(auxCount: number, stereoOnly = false): AudioRoutingOutputInfo[] {
 	const sources: Array<AudioRoutingOutputInfo> = []
 	for (let i = 1; i <= auxCount; i++) {
 		sources.push({
 			outputId: 2000 + i,
 			outputName: `Aux ${i}`,
-			channelPairs: ALL_CHANNEL_PAIRS,
+			channelPairs: stereoOnly ? [Enums.AudioChannelPair.Channel1_2] : ALL_CHANNEL_PAIRS,
 		})
 	}
 	return sources

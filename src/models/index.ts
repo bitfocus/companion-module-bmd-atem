@@ -43,6 +43,7 @@ import { ModelSpecConstellation4K4ME } from './constellation4K4Me.js'
 import { ModelSpecTVS4K8 } from './tvs4k8.js'
 import type { FairlightAudioRouting } from 'atem-connection/dist/state/fairlight.js'
 import { ModelSpecConstellation4K4MEPlus } from './constellation4K4MePlus.js'
+import { ModelSpecMiniExtremeISOG2 } from './miniextremeisog2.js'
 
 export * from './types.js'
 
@@ -65,6 +66,7 @@ export const ALL_MODELS: ModelSpec[] = [
 	ModelSpecMiniProISO,
 	ModelSpecMiniExtreme,
 	ModelSpecMiniExtremeISO,
+	ModelSpecMiniExtremeISOG2,
 	ModelSpecConstellationHD1ME,
 	ModelSpecConstellationHD2ME,
 	ModelSpecConstellationHD4ME,
@@ -76,8 +78,8 @@ export const ALL_MODELS: ModelSpec[] = [
 	ModelSpecConstellation4K1ME,
 	ModelSpecConstellation4K2ME,
 	ModelSpecConstellation4K4ME,
-	ModelSpecTVS4K8,
 	ModelSpecConstellation4K4MEPlus,
+	ModelSpecTVS4K8,
 ]
 
 export const ALL_MODEL_CHOICES: DropdownChoice[] = ALL_MODELS.map(({ id, label }) => ({ id, label }))

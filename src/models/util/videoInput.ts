@@ -1,6 +1,8 @@
 import { Enums } from 'atem-connection'
 import type { VideoInputInfo } from '../types'
 
+export const SourceAvailabilityWebcamOut = 128 as Enums.SourceAvailability
+
 interface VideoInputGeneratorOptions {
 	meCount: number
 	baseSourceAvailability: Enums.SourceAvailability
@@ -86,6 +88,25 @@ export class VideoInputGenerator {
 				},
 			)
 		}
+
+		return this
+	}
+
+	addThunderbolt(): VideoInputGenerator {
+		this.#inputs.push(
+			{
+				id: 3210,
+				portType: Enums.InternalPortType.MediaPlayerFill,
+				sourceAvailability: this.#defaultSourceAvailability,
+				meAvailability: this.#defaultMeAvailability,
+			},
+			{
+				id: 3211,
+				portType: Enums.InternalPortType.MediaPlayerKey,
+				sourceAvailability: this.#defaultSourceAvailability,
+				meAvailability: this.#defaultMeAvailability,
+			},
+		)
 
 		return this
 	}
@@ -190,12 +211,13 @@ export class VideoInputGenerator {
 			this.#defaultSourceAvailability &
 				(Enums.SourceAvailability.Auxiliary |
 					Enums.SourceAvailability.Auxiliary1 |
-					Enums.SourceAvailability.Auxiliary2),
+					Enums.SourceAvailability.Auxiliary2 |
+					SourceAvailabilityWebcamOut),
 			Enums.MeAvailability.None,
 		)
 	}
 
-	addMultiviewerStatusSources(): VideoInputGenerator {
+	addMultiviewerStatusSources(audioMonitor = false): VideoInputGenerator {
 		this.#inputs.push(
 			{
 				id: 9101,
@@ -216,6 +238,17 @@ export class VideoInputGenerator {
 				meAvailability: Enums.MeAvailability.None,
 			},
 		)
+
+		if (audioMonitor) {
+			this.#inputs.push({
+				id: 9200,
+				portType: 132 as any, // Define this
+				sourceAvailability:
+					SourceAvailabilityWebcamOut | Enums.SourceAvailability.Multiviewer | Enums.SourceAvailability.Auxiliary,
+				meAvailability: Enums.MeAvailability.None,
+			})
+		}
+
 		return this
 	}
 
