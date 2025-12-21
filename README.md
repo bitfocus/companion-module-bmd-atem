@@ -23,6 +23,11 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.20.0
+
+- Add definition for Mini Extreme ISO G2
+- Indicate unit of more input fields
+
 ## v3.19.1
 
 - Fix broken package
