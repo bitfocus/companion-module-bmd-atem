@@ -355,6 +355,9 @@ export function GetSourcesListForType(
 				sources.push(getSource(input.id, input.portType, `MV ${mvId}`, `MultiView ${mvId}`))
 				break
 			}
+			case Enums.InternalPortType.AudioMonitor:
+				sources.push(getSource(input.id, input.portType, 'Aud', 'Audio Monitor'))
+				break
 			case Enums.InternalPortType.Black:
 				sources.push(getSource(input.id, input.portType, 'Blk', 'Black'))
 				break
