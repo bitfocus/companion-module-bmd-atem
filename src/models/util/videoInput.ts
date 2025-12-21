@@ -1,8 +1,6 @@
 import { Enums } from 'atem-connection'
 import type { VideoInputInfo } from '../types'
 
-export const SourceAvailabilityWebcamOut = 128 as Enums.SourceAvailability
-
 interface VideoInputGeneratorOptions {
 	meCount: number
 	baseSourceAvailability: Enums.SourceAvailability
@@ -212,7 +210,7 @@ export class VideoInputGenerator {
 				(Enums.SourceAvailability.Auxiliary |
 					Enums.SourceAvailability.Auxiliary1 |
 					Enums.SourceAvailability.Auxiliary2 |
-					SourceAvailabilityWebcamOut),
+					Enums.SourceAvailability.WebcamOut),
 			Enums.MeAvailability.None,
 		)
 	}
@@ -242,9 +240,11 @@ export class VideoInputGenerator {
 		if (audioMonitor) {
 			this.#inputs.push({
 				id: 9200,
-				portType: 132 as any, // Define this
+				portType: Enums.InternalPortType.AudioMonitor,
 				sourceAvailability:
-					SourceAvailabilityWebcamOut | Enums.SourceAvailability.Multiviewer | Enums.SourceAvailability.Auxiliary,
+					Enums.SourceAvailability.WebcamOut |
+					Enums.SourceAvailability.Multiviewer |
+					Enums.SourceAvailability.Auxiliary,
 				meAvailability: Enums.MeAvailability.None,
 			})
 		}

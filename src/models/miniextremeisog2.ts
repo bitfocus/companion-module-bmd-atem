@@ -8,7 +8,7 @@ import {
 	generateFairlightInputsOfType,
 	generateFairlightInputThunderbolt,
 } from './util/fairlight.js'
-import { SourceAvailabilityWebcamOut, VideoInputGenerator } from './util/videoInput.js'
+import { VideoInputGenerator } from './util/videoInput.js'
 import {
 	AUDIO_ROUTING_SOURCE_MONITOR,
 	AUDIO_ROUTING_SOURCE_NO_AUDIO,
@@ -22,7 +22,7 @@ import {
 } from './util/audioRouting.js'
 
 export const ModelSpecMiniExtremeISOG2: ModelSpec = {
-	id: 33 as any,
+	id: Enums.Model.MiniExtremeISOG2,
 	label: 'Mini Extreme ISO G2',
 	inputs: VideoInputGenerator.begin({
 		meCount: 1,
@@ -31,7 +31,7 @@ export const ModelSpecMiniExtremeISOG2: ModelSpec = {
 			Enums.SourceAvailability.Multiviewer |
 			Enums.SourceAvailability.SuperSourceBox |
 			Enums.SourceAvailability.SuperSourceArt |
-			SourceAvailabilityWebcamOut,
+			Enums.SourceAvailability.WebcamOut,
 	})
 		.addInternalColorsAndBlack()
 		.addExternalInputs(8)

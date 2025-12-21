@@ -1374,9 +1374,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"atem-connection@npm:3.7.0":
-  version: 3.7.0
-  resolution: "atem-connection@npm:3.7.0"
+"atem-connection@npm:3.8.0":
+  version: 3.8.0
+  resolution: "atem-connection@npm:3.8.0"
   dependencies:
     "@julusian/freetype2": "npm:^1.1.2"
     debug: "npm:^4.3.4"
@@ -1388,7 +1388,7 @@ __metadata:
     threadedclass: "npm:^1.2.1"
     tslib: "npm:^2.6.2"
     wavefile: "npm:^8.4.6"
-  checksum: 10c0/7fbf2fe0e00331c3a3344a5a2fac44a558107249acdf3295518b93d9cbf18ac207571ebcb27f335c0210e90cd1473a3f47a2ca09c95baee833560595b2397659
+  checksum: 10c0/fa7342c6e692b13ad39bfd595241384789f833ec176abdc3c29442876d024612b021698397e15449e3fa2cc66512b4e95c0d0b47efcdfa14eee72b71e5e78339
   languageName: node
   linkType: hard
 
@@ -1440,7 +1440,7 @@ __metadata:
     "@julusian/image-rs": "npm:^2.1.1"
     "@types/lodash-es": "npm:^4.17.12"
     "@types/node": "npm:^22.19.3"
-    atem-connection: "npm:3.7.0"
+    atem-connection: "npm:3.8.0"
     eslint: "npm:^9.39.2"
     husky: "npm:^9.1.7"
     lint-staged: "npm:^16.2.7"

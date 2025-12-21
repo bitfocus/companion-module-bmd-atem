@@ -23,7 +23,7 @@ import {
 import { VideoInputGenerator } from './util/videoInput.js'
 
 export const ModelSpecConstellation4K4MEPlus: ModelSpec = {
-	id: 31 as any, // Enums.Model.Constellation4K4ME, TODO - this is a guess
+	id: Enums.Model.Constellation4K4MEPlus,
 	label: '4 M/E Constellation 4K Plus',
 	outputs: generateOutputs('Output', 48),
 	MEs: 4,

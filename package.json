@@ -36,7 +36,7 @@
 		"@atem-connection/image-tools": "^1.1.1",
 		"@companion-module/base": "~1.13.5",
 		"@julusian/image-rs": "^2.1.1",
-		"atem-connection": "3.7.0",
+		"atem-connection": "3.8.0",
 		"lodash-es": "^4.17.22",
 		"type-fest": "^5.3.1"
 	},
