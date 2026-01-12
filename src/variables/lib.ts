@@ -386,9 +386,19 @@ function updateSuperSourceVariables(
 	values: CompanionVariableValues,
 ): void {
 	for (let b = 0; b < 4; b++) {
-		const input = getSuperSourceBox(state, b, i)?.source ?? 0
+		const box = getSuperSourceBox(state, b, i)
+		const input = box?.source ?? 0
 		values[`ssrc${i + 1}_box${b + 1}_source`] = getSourcePresetName(instance, state, input)
 		values[`ssrc${i + 1}_box${b + 1}_source_id`] = input
+		values[`ssrc${i + 1}_box${b + 1}_onair`] = box?.enabled ?? false
+		values[`ssrc${i + 1}_box${b + 1}_size`] = (box?.size ?? 0) / 1000
+		values[`ssrc${i + 1}_box${b + 1}_x`] = (box?.x ?? 0) / 100
+		values[`ssrc${i + 1}_box${b + 1}_y`] = (box?.y ?? 0) / 100
+		values[`ssrc${i + 1}_box${b + 1}_cropEnable`] = box?.cropped ?? false
+		values[`ssrc${i + 1}_box${b + 1}_cropTop`] = (box?.cropTop ?? 0) / 1000
+		values[`ssrc${i + 1}_box${b + 1}_cropBottom`] = (box?.cropBottom ?? 0) / 1000
+		values[`ssrc${i + 1}_box${b + 1}_cropLeft`] = (box?.cropLeft ?? 0) / 1000
+		values[`ssrc${i + 1}_box${b + 1}_cropRight`] = (box?.cropRight ?? 0) / 1000
 	}
 }
 
@@ -747,6 +757,42 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 			variables.push({
 				name: `Supersource ${i + 1} Box ${b + 1} source id`,
 				variableId: `ssrc${i + 1}_box${b + 1}_source_id`,
+			})
+			variables.push({
+				name: `Supersource ${i + 1} Box ${b + 1} on air`,
+				variableId: `ssrc${i + 1}_box${b + 1}_onair`,
+			})
+			variables.push({
+				name: `Supersource ${i + 1} Box ${b + 1} size`,
+				variableId: `ssrc${i + 1}_box${b + 1}_size`,
+			})
+			variables.push({
+				name: `Supersource ${i + 1} Box ${b + 1} X position`,
+				variableId: `ssrc${i + 1}_box${b + 1}_x`,
+			})
+			variables.push({
+				name: `Supersource ${i + 1} Box ${b + 1} Y position`,
+				variableId: `ssrc${i + 1}_box${b + 1}_y`,
+			})
+			variables.push({
+				name: `Supersource ${i + 1} Box ${b + 1} crop enabled`,
+				variableId: `ssrc${i + 1}_box${b + 1}_cropEnable`,
+			})
+			variables.push({
+				name: `Supersource ${i + 1} Box ${b + 1} crop top`,
+				variableId: `ssrc${i + 1}_box${b + 1}_cropTop`,
+			})
+			variables.push({
+				name: `Supersource ${i + 1} Box ${b + 1} crop bottom`,
+				variableId: `ssrc${i + 1}_box${b + 1}_cropBottom`,
+			})
+			variables.push({
+				name: `Supersource ${i + 1} Box ${b + 1} crop left`,
+				variableId: `ssrc${i + 1}_box${b + 1}_cropLeft`,
+			})
+			variables.push({
+				name: `Supersource ${i + 1} Box ${b + 1} crop right`,
+				variableId: `ssrc${i + 1}_box${b + 1}_cropRight`,
 			})
 		}
 
