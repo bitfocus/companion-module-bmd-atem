@@ -1449,6 +1449,116 @@ export function AtemSuperSourcePropertiesPickers(
 		...allProps,
 	}
 }
+
+export interface AtemSuperSourcePropertiesVariables {
+	properties: Array<
+		'size' | 'onair' | 'source' | 'x' | 'y' | 'cropEnable' | 'cropTop' | 'cropBottom' | 'cropLeft' | 'cropRight'
+	>
+	size: string
+	onair: string
+	source: string
+	x: string
+	y: string
+	cropEnable: string
+	cropTop: string
+	cropBottom: string
+	cropLeft: string
+	cropRight: string
+}
+export function AtemSuperSourcePropertiesVariablesPickers(): MyOptionsObject<
+	AtemSuperSourcePropertiesVariables,
+	CompanionInputFieldTextInput | CompanionInputFieldMultiDropdown
+> {
+	const allProps: Omit<ReturnType<typeof AtemSuperSourcePropertiesVariablesPickers>, 'properties'> = {
+		size: {
+			type: 'textinput',
+			id: 'size',
+			label: 'Size',
+			default: '0.5',
+			useVariables: true,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'size')`,
+		},
+
+		onair: {
+			id: 'onair',
+			type: 'textinput',
+			label: 'On Air',
+			default: 'true',
+			useVariables: true,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'onair')`,
+		},
+		source: {
+			type: 'textinput',
+			id: 'source',
+			label: 'Source',
+			default: '0',
+			useVariables: true,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'source')`,
+		},
+		x: {
+			type: 'textinput',
+			id: 'x',
+			label: 'X',
+			default: '0',
+			useVariables: true,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'x')`,
+		},
+		y: {
+			type: 'textinput',
+			id: 'y',
+			label: 'Y',
+			default: '0',
+			useVariables: true,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'y')`,
+		},
+		cropEnable: {
+			type: 'textinput',
+			id: 'cropEnable',
+			label: 'Crop Enable',
+			default: 'false',
+			useVariables: true,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'cropEnable')`,
+		},
+		cropTop: {
+			type: 'textinput',
+			id: 'cropTop',
+			label: 'Crop Top',
+			default: '0',
+			useVariables: true,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'cropTop')`,
+		},
+		cropBottom: {
+			type: 'textinput',
+			id: 'cropBottom',
+			label: 'Crop Bottom',
+			default: '0',
+			useVariables: true,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'cropBottom')`,
+		},
+		cropLeft: {
+			type: 'textinput',
+			id: 'cropLeft',
+			label: 'Crop Left',
+			default: '0',
+			useVariables: true,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'cropLeft')`,
+		},
+		cropRight: {
+			type: 'textinput',
+			id: 'cropRight',
+			label: 'Crop Right',
+			default: '0',
+			useVariables: true,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'cropRight')`,
+		},
+	}
+
+	return {
+		properties: DropdownPropertiesPicker(allProps),
+		...allProps,
+	}
+}
+
 export function AtemSuperSourcePropertiesPickersForOffset(): {
 	properties: CompanionInputFieldMultiDropdown
 	size: CompanionInputFieldNumber
@@ -1664,6 +1774,85 @@ export function AtemSuperSourceArtPropertiesVariablesPickers(): MyOptionsObject<
 			default: '1',
 			useVariables: true,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'key')`,
+		},
+	}
+
+	return {
+		properties: DropdownPropertiesPicker(allProps),
+		...allProps,
+	}
+}
+
+export interface AtemSuperSourceArtPropertiesAllVariables {
+	properties: Array<'fill' | 'key' | 'artOption' | 'artPreMultiplied' | 'artClip' | 'artGain' | 'artInvertKey'>
+	fill: string
+	key: string
+	artOption: string
+	artPreMultiplied: string
+	artClip: string
+	artGain: string
+	artInvertKey: string
+}
+export function AtemSuperSourceArtPropertiesAllVariablesPickers(): MyOptionsObject<
+	AtemSuperSourceArtPropertiesAllVariables,
+	CompanionInputFieldTextInput | CompanionInputFieldMultiDropdown
+> {
+	const allProps: Omit<ReturnType<typeof AtemSuperSourceArtPropertiesAllVariablesPickers>, 'properties'> = {
+		fill: {
+			type: 'textinput',
+			id: 'fill',
+			label: 'Fill Source',
+			default: '1',
+			useVariables: true,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'fill')`,
+		},
+		key: {
+			type: 'textinput',
+			id: 'key',
+			label: 'Key Source',
+			default: '1',
+			useVariables: true,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'key')`,
+		},
+		artOption: {
+			type: 'textinput',
+			id: 'artOption',
+			label: 'Place in',
+			default: 'unchanged',
+			useVariables: true,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'artOption')`,
+		},
+		artPreMultiplied: {
+			type: 'textinput',
+			id: 'artPreMultiplied',
+			label: 'Pre-multiplied',
+			default: 'true',
+			useVariables: true,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'artPreMultiplied')`,
+		},
+		artClip: {
+			type: 'textinput',
+			id: 'artClip',
+			label: 'Clip',
+			default: '50',
+			useVariables: true,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'artClip')`,
+		},
+		artGain: {
+			type: 'textinput',
+			id: 'artGain',
+			label: 'Gain',
+			default: '50',
+			useVariables: true,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'artGain')`,
+		},
+		artInvertKey: {
+			type: 'textinput',
+			id: 'artInvertKey',
+			label: 'Invert Key',
+			default: 'false',
+			useVariables: true,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'artInvertKey')`,
 		},
 	}
 
