@@ -41,7 +41,7 @@
 		"type-fest": "^5.3.1"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "patch:@companion-module/tools@npm%3A2.4.2#~/.yarn/patches/@companion-module-tools-npm-2.4.2-17b2d4310e.patch",
+		"@companion-module/tools": "^2.6.0",
 		"@types/lodash-es": "^4.17.12",
 		"@types/node": "^22.19.3",
 		"eslint": "^9.39.2",
