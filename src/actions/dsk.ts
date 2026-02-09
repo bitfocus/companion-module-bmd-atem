@@ -50,6 +50,7 @@ export interface AtemDownstreamKeyerActions {
 	}
 	[ActionId.DSKAuto]: {
 		downstreamKeyerId: number
+		onair: TrueFalseToggle
 	}
 	[ActionId.DSKOnAir]: {
 		key: number
@@ -284,9 +285,18 @@ export function createDownstreamKeyerActions(
 					default: 0,
 					choices: GetDSKIdChoices(model),
 				},
+				onair: {
+					id: 'onair',
+					type: 'dropdown',
+					label: 'On Air',
+					default: 'toggle',
+					choices: CHOICES_KEYTRANS,
+				},
 			},
 			callback: async ({ options }) => {
-				await atem?.autoDownstreamKey(options.getPlainNumber('downstreamKeyerId'))
+				const onair = options.getPlainString('onair')
+				const towardOnAir = onair === 'toggle' ? undefined : onair === 'true'
+				await atem?.autoDownstreamKey(options.getPlainNumber('downstreamKeyerId'), towardOnAir)
 			},
 		},
 		[ActionId.DSKOnAir]: {
