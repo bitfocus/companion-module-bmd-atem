@@ -10,7 +10,16 @@ While developing the module, by using `yarn build:watch` the compiler will be ru
 
 ## Adding a new model
 
-Each model of ATEM has a definition file in src/models describing the functionality of the device. This allows us to know this information for offline programming. If the module is left on auto-detect, we match the definition to use based on the model the atem reports, and if one is not defined we can build the definition on the fly from the ATEM. This generally gives us good results, but there are a few things we don't know how to detect from the atem.
+Each model of ATEM has a definition file in src/models describing the functionality of the device. This allows us to know this information for offline programming. If the module is left on auto-detect, we match the definition to use based on the model the ATEM reports, and if one is not defined we can build the definition on the fly from the ATEM. This generally gives us good results, but there are a few things we don't know how to detect from the ATEM.
+
+### If you are a user
+
+To gather the information to help add a new model:
+
+- Run the tool from https://builds.julusian.dev/atem for the name of the case put the ATEM model and version
+- Create a new issue (or comment on an existing one) and attach the file the tool generated to it
+
+### If you are a developer
 
 To add a new model to the list:
 
