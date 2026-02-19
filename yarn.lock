@@ -486,14 +486,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@julusian/freetype2@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "@julusian/freetype2@npm:1.1.2"
+"@julusian/freetype2@npm:^1.3.1":
+  version: 1.3.1
+  resolution: "@julusian/freetype2@npm:1.3.1"
   dependencies:
-    node-addon-api: "npm:^5.0.0"
+    node-addon-api: "npm:^6.1.0"
     node-gyp: "npm:latest"
-    pkg-prebuilds: "npm:^0.2.1"
-  checksum: 10c0/5e949a09846f9d9d926138defd3f5aeea4852279fa3e0c332c6596e3f8dcc49596a4e91f8c1c34a4afe4c73769edef7f6ae6a5b6f41136401e757f441d5c64f0
+    pkg-prebuilds: "npm:^1.0.0"
+  checksum: 10c0/487416fe7eb558875610764e91d120243a92c0ffd76ecee2a1a02164fe67799e468fa83f6aac31aec17dd66cad30a70a714a714e43451d71aee95c6e0e5ab87a
   languageName: node
   linkType: hard
 
@@ -1325,21 +1325,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"atem-connection@npm:3.8.0":
-  version: 3.8.0
-  resolution: "atem-connection@npm:3.8.0"
+"atem-connection@npm:3.9.0":
+  version: 3.9.0
+  resolution: "atem-connection@npm:3.9.0"
   dependencies:
-    "@julusian/freetype2": "npm:^1.1.2"
+    "@julusian/freetype2": "npm:^1.3.1"
     debug: "npm:^4.3.4"
     eventemitter3: "npm:^4.0.7"
     exit-hook: "npm:^2.2.1"
-    nanotimer: "npm:^0.3.15"
     p-lazy: "npm:^3.1.0"
     p-queue: "npm:^6.6.2"
     threadedclass: "npm:^1.2.1"
     tslib: "npm:^2.6.2"
     wavefile: "npm:^8.4.6"
-  checksum: 10c0/fa7342c6e692b13ad39bfd595241384789f833ec176abdc3c29442876d024612b021698397e15449e3fa2cc66512b4e95c0d0b47efcdfa14eee72b71e5e78339
+  checksum: 10c0/18b2d1a2acca8444bc35b625eb721707c332999d8f910e47639377f24d42829dae762aa1e61cc824174a5b4875fed159e598d22f5b891435bdbb5f9a46ababe6
   languageName: node
   linkType: hard
 
@@ -1398,7 +1397,7 @@ __metadata:
     "@julusian/image-rs": "npm:^2.1.1"
     "@types/lodash-es": "npm:^4.17.12"
     "@types/node": "npm:^22.19.11"
-    atem-connection: "npm:3.8.0"
+    atem-connection: "npm:3.9.0"
     eslint: "npm:^9.39.2"
     husky: "npm:^9.1.7"
     lint-staged: "npm:^16.2.7"
@@ -2986,13 +2985,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanotimer@npm:^0.3.15":
-  version: 0.3.15
-  resolution: "nanotimer@npm:0.3.15"
-  checksum: 10c0/b774d0e6ae72b4a7a0277136c58884ce1e0f47f109b177a9b24a4cc77500f063e4b05642b465f733bb4d5594005aec5ef3a54ff7a85d15d7de9b24bd3074cc2e
-  languageName: node
-  linkType: hard
-
 "natural-compare@npm:^1.4.0":
   version: 1.4.0
   resolution: "natural-compare@npm:1.4.0"
@@ -3014,12 +3006,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-addon-api@npm:^5.0.0":
-  version: 5.1.0
-  resolution: "node-addon-api@npm:5.1.0"
+"node-addon-api@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "node-addon-api@npm:6.1.0"
   dependencies:
     node-gyp: "npm:latest"
-  checksum: 10c0/0eb269786124ba6fad9df8007a149e03c199b3e5a3038125dfb3e747c2d5113d406a4e33f4de1ea600aa2339be1f137d55eba1a73ee34e5fff06c52a5c296d1d
+  checksum: 10c0/d2699c4ad15740fd31482a3b6fca789af7723ab9d393adc6ac45250faaee72edad8f0b10b2b9d087df0de93f1bdc16d97afdd179b26b9ebc9ed68b569faa4bac
   languageName: node
   linkType: hard
 
@@ -3308,15 +3300,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pkg-prebuilds@npm:^0.2.1":
-  version: 0.2.1
-  resolution: "pkg-prebuilds@npm:0.2.1"
+"pkg-prebuilds@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "pkg-prebuilds@npm:1.0.0"
   dependencies:
-    yargs: "npm:^17.5.1"
+    yargs: "npm:^17.7.2"
   bin:
     pkg-prebuilds-copy: bin/copy.mjs
     pkg-prebuilds-verify: bin/verify.mjs
-  checksum: 10c0/68177a2756246adf64e47dd9e89f3233dfe241ac5f28ba2f9f541ccbae896e060fc9dd1114528039b5380d2d84a1f8864176152e9921f3f1192ac44451dc27ba
+  checksum: 10c0/a955b097d3693216c06015fe03ae5866da5f1d2ec6a75971194e3cf5c342e1fdde27786bf0cce85814183cd98aecaf732ae1373fc2389a576daca2f3375661ae
   languageName: node
   linkType: hard
 
@@ -4479,7 +4471,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs@npm:^17.5.1":
+"yargs@npm:^17.7.2":
   version: 17.7.2
   resolution: "yargs@npm:17.7.2"
   dependencies:
