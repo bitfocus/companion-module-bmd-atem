@@ -1,7 +1,9 @@
 import { Enums, type AtemState, listVisibleInputs } from 'atem-connection'
-import { InstanceBase } from '@companion-module/base'
+import type { InstanceBase } from '@companion-module/base'
 import { AudioRoutingChannelsNames } from './choices.js'
 import { combineInputId } from './models/util/audioRouting.js'
+import type { AtemSchema } from './schema.js'
+import type { AtemConfig } from './config.js'
 
 export const CLASSIC_AUDIO_MIN_GAIN = -60 // The minimum value to consider as valid for classic audio gain
 
@@ -90,8 +92,8 @@ export interface IpAndPort {
 	port: number | undefined
 }
 
-export interface InstanceBaseExt<TConfig> extends InstanceBase<TConfig> {
-	config: TConfig
+export interface InstanceBaseExt extends InstanceBase<AtemSchema> {
+	config: AtemConfig
 	timecodeSeconds: number
 	displayClockSeconds: number
 

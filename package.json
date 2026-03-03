@@ -2,7 +2,7 @@
 	"name": "bmd-atem",
 	"version": "4.0.0-0",
 	"homepage": "https://github.com/bitfocus/companion-module-atem#readme",
-	"main": "dist/index.js",
+	"main": "dist/main.js",
 	"type": "module",
 	"scripts": {
 		"postinstall": "husky",

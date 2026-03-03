@@ -9,7 +9,7 @@ export enum PresetStyleName {
 	Long = 1,
 }
 
-export interface AtemConfig {
+export type AtemConfig = {
 	bonjourHost?: string
 	host?: string
 	modelID?: string
@@ -22,7 +22,7 @@ export interface AtemConfig {
 	pollTimecode?: boolean
 }
 
-export function GetConfigFields(_self: InstanceBaseExt<AtemConfig>): SomeCompanionConfigField[] {
+export function GetConfigFields(_self: InstanceBaseExt): SomeCompanionConfigField[] {
 	return [
 		{
 			type: 'static-text',

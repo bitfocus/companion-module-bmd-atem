@@ -16,7 +16,7 @@ export interface AtemTimecodeActions {
 }
 
 export function createTimecodeActions(
-	instance: InstanceBaseExt<AtemConfig>,
+	instance: InstanceBaseExt,
 	atem: Atem | undefined,
 	state: StateWrapper,
 ): MyActionDefinitions<AtemTimecodeActions> {

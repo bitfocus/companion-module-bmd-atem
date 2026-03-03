@@ -3,16 +3,16 @@ import {
 	type CompanionStaticUpgradeProps,
 	type CompanionStaticUpgradeResult,
 	type CompanionUpgradeContext,
-	type InputValue,
 	type CompanionStaticUpgradeScript,
 	CreateUseBuiltinInvertForFeedbacksUpgradeScript,
 	type CompanionOptionValues,
+	type JsonValue,
 } from '@companion-module/base'
 import { ActionId } from './actions/ActionId.js'
 import type { AtemConfig } from './config.js'
 import { FeedbackId } from './feedback/FeedbackId.js'
 
-function scaleValue(obj: { [key: string]: InputValue | undefined }, key: string, scale: number): void {
+function scaleValue(obj: { [key: string]: JsonValue | undefined }, key: string, scale: number): void {
 	if (obj[key] !== undefined) {
 		obj[key] = parseFloat(obj[key] as string) * scale
 	}
@@ -204,9 +204,9 @@ function combineTransitionSelectionToDropdown(
 
 function ChangeMediaPlayerSourceVariablesDropdownToText(
 	_context: CompanionUpgradeContext<AtemConfig>,
-	props: CompanionStaticUpgradeProps<AtemConfig>,
-): CompanionStaticUpgradeResult<AtemConfig> {
-	const result: CompanionStaticUpgradeResult<AtemConfig> = {
+	props: CompanionStaticUpgradeProps<AtemConfig, undefined>,
+): CompanionStaticUpgradeResult<AtemConfig, undefined> {
+	const result: CompanionStaticUpgradeResult<AtemConfig, undefined> = {
 		updatedActions: [],
 		updatedConfig: null,
 		updatedFeedbacks: [],

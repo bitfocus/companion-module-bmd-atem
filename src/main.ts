@@ -19,7 +19,6 @@ import { AtemTransitions } from './transitions.js'
 import {
 	InstanceBase,
 	type SomeCompanionConfigField,
-	runEntrypoint,
 	InstanceStatus,
 	type CompanionVariableValues,
 } from '@companion-module/base'
@@ -30,18 +29,22 @@ import { AtemCameraControlStateBuilder, createEmptyState } from '@atem-connectio
 import { decodeImageFromAtem } from '@atem-connection/image-tools'
 import { updateCameraControlVariables } from './variables/cameraControl.js'
 import { updateTimecodeVariables } from './variables/timecode.js'
+import { AtemSchema } from './schema.js'
 
 const { Atem, AtemConnectionStatus, AtemStateUtil } = AtemPkg
 
 import { ThreadedClassManager, RegisterExitHandlers } from 'threadedclass'
+import { VariablesSchema } from './variables/schema.js'
 
 // HACK: This stops it from registering an unhandledException handler, as that causes companion to exit on error
 ThreadedClassManager.handleExit = RegisterExitHandlers.NO
 
+export { UpgradeScripts }
+
 /**
  * Companion instance class for the Blackmagic ATEM Switchers.
  */
-class AtemInstance extends InstanceBase<AtemConfig> {
+export default class AtemInstance extends InstanceBase<AtemSchema> {
 	private model: ModelSpec
 	private atem: IAtem | undefined
 	private readonly wrappedState: StateWrapper
@@ -214,11 +217,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.wrappedState),
 		)
 
-		this.checkFeedbacks()
-	}
-
-	public checkFeedbacks(...feedbackTypes: FeedbackId[]): void {
-		super.checkFeedbacks(...feedbackTypes)
+		this.checkAllFeedbacks()
 	}
 
 	/**
@@ -227,7 +226,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	private processReceivedCommands(commands: Commands.IDeserializedCommand[]): void {
 		const cameraCommands: Commands.CameraControlUpdateCommand[] = []
 
-		const values: CompanionVariableValues = {}
+		const values: Partial<VariablesSchema> = {}
 
 		for (const command of commands) {
 			if (command instanceof Commands.TallyBySourceCommand) {
@@ -558,7 +557,11 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			this.updateCompanionBits()
 		} else {
 			updateChangedVariables(this, this.wrappedState.state, changedVariables)
-			if (changedFeedbacks.size > 0) this.checkFeedbacks(...Array.from(changedFeedbacks))
+			if (changedFeedbacks.size > 0) {
+				// Weird split because of types
+				const feedbackTypes = Array.from(changedFeedbacks)
+				this.checkFeedbacks(feedbackTypes[0], ...feedbackTypes.slice(1))
+			}
 			if (changedFeedbackIds.size > 0) this.checkFeedbacksById(...Array.from(changedFeedbackIds))
 		}
 	}
@@ -717,5 +720,3 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		return null
 	}
 }
-
-runEntrypoint(AtemInstance, UpgradeScripts)

@@ -55,7 +55,7 @@ export interface AtemTransitionActions {
 }
 
 export function createTransitionActions(
-	instance: InstanceBaseExt<AtemConfig>,
+	instance: InstanceBaseExt,
 	atem: Atem | undefined,
 	model: ModelSpec,
 	commandBatching: AtemCommandBatching,

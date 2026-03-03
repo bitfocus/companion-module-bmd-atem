@@ -23,7 +23,7 @@ import { createDownstreamKeyerPresets } from './downstreamKeyer.js'
 const rateOptions = [12, 15, 25, 30, 37, 45, 50, 60]
 
 export function GetPresetsList(
-	instance: InstanceBaseExt<AtemConfig>,
+	instance: InstanceBaseExt,
 	model: ModelSpec,
 	state: AtemState,
 ): CompanionPresetDefinitions {

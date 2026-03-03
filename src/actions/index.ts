@@ -65,7 +65,7 @@ export type ActionTypes = AtemProgramPreviewActions &
 	AtemTimecodeActions
 
 export function GetActionsList(
-	instance: InstanceBaseExt<AtemConfig>,
+	instance: InstanceBaseExt,
 	atem: Atem | undefined,
 	model: ModelSpec,
 	commandBatching: AtemCommandBatching,
