@@ -1,14 +1,12 @@
 {
-	"extends": "@companion-module/tools/tsconfig/node18/recommended",
+	"extends": "@companion-module/tools/tsconfig/node22/recommended.json",
 	"include": ["src/**/*.ts"],
 	"exclude": ["node_modules/**", "src/**/*spec.ts", "src/**/__tests__/*", "src/**/__mocks__/*"],
 	"compilerOptions": {
+		"rootDir": "./src",
 		"outDir": "./dist",
 		"baseUrl": "./",
-		"paths": {
-			"*": ["./node_modules/*"]
-		},
-		"module": "es2020",
-		"verbatimModuleSyntax": true
+		"module": "node20",
+		"moduleResolution": "node16"
 	}
 }
