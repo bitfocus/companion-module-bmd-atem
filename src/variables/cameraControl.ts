@@ -25,6 +25,10 @@ export function updateCameraControlVariables(
 	values[`camera_${state.cameraId}_nd_filter`] = state.video.ndFilterStop
 
 	values[`camera_${state.cameraId}_show_color_bars`] = state.display.colorBarEnable ? 1 : 0
+	values[`camera_${state.cameraId}_focus_assist`] = state.display.exposureAndFocusTools.focusAssist ? 1 : 0
+	values[`camera_${state.cameraId}_false_color`] = state.display.exposureAndFocusTools.falseColor ? 1 : 0
+	values[`camera_${state.cameraId}_zebra`] = state.display.exposureAndFocusTools.zebra ? 1 : 0
+	values[`camera_${state.cameraId}_status_overlay`] = state.output.overlayEnables ? 1 : 0
 
 	const defineRGBY = (key: string, vals: ColorAdjust) => {
 		values[`camera_${state.cameraId}_color_${key}_red`] = roundToFactor(vals.red, 1000)
@@ -97,6 +101,22 @@ export function initCameraControlVariables(
 	variables.push({
 		variableId: `camera_${cameraId}_show_color_bars`,
 		name: `Camera ${cameraId}: Show Color Bars`,
+	})
+	variables.push({
+		variableId: `camera_${cameraId}_focus_assist`,
+		name: `Camera ${cameraId}: Focus Assist`,
+	})
+	variables.push({
+		variableId: `camera_${cameraId}_false_color`,
+		name: `Camera ${cameraId}: False Color`,
+	})
+	variables.push({
+		variableId: `camera_${cameraId}_zebra`,
+		name: `Camera ${cameraId}: Zebra`,
+	})
+	variables.push({
+		variableId: `camera_${cameraId}_status_overlay`,
+		name: `Camera ${cameraId}: Status Overlay`,
 	})
 
 	const defineRGBY = (key: string, name: string) => {
