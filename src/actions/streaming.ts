@@ -5,6 +5,7 @@ import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
 import { CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../choices.js'
 import type { StateWrapper } from '../state.js'
+import { resolveTrueFalseToggle } from '../input.js'
 
 export type AtemStreamingActions = {
 	[ActionId.StreamStartStop]: {
@@ -45,10 +46,10 @@ export function createStreamingActions(
 				},
 			}),
 			callback: async ({ options }) => {
-				let newState = options.stream === 'true'
-				if (options.stream === 'toggle') {
-					newState = state.state.streaming?.status?.state === Enums.StreamingStatus.Idle
-				}
+				const newState = resolveTrueFalseToggle(
+					options.stream,
+					state.state.streaming?.status?.state !== Enums.StreamingStatus.Idle,
+				)
 
 				if (newState) {
 					await atem?.startStreaming()

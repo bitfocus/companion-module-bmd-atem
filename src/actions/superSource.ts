@@ -1,6 +1,6 @@
 import { Enums, VideoState, type Atem } from 'atem-connection'
 import { convertOptionsFields } from '../common.js'
-import type { CompanionActionDefinitions } from '@companion-module/base'
+import { assertNever, type CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
 import {
@@ -12,9 +12,8 @@ import {
 	AtemSuperSourcePropertiesPickersForOffset,
 	type AtemSuperSourceArtProperties,
 	type AtemSuperSourceProperties,
-	AtemSuperSourceArtPropertiesVariablesPickers,
-	type AtemSuperSourceArtPropertiesVariables,
 	AtemTransitionAnimationOptions,
+	resolveTrueFalseToggle,
 } from '../input.js'
 import type { SuperSource } from 'atem-connection/dist/state/video/index.js'
 import { CHOICES_KEYTRANS, type TrueFalseToggle } from '../choices.js'
@@ -29,23 +28,11 @@ export type AtemSuperSourceActions = {
 			ssrcId: number | undefined
 		} & AtemSuperSourceArtProperties
 	}
-	[ActionId.SuperSourceArtVariables]: {
-		options: {
-			ssrcId: number | undefined
-		} & AtemSuperSourceArtPropertiesVariables
-	}
 	[ActionId.SuperSourceBoxSource]: {
 		options: {
 			ssrcId: number | undefined
 			boxIndex: number
 			source: number
-		}
-	}
-	[ActionId.SuperSourceBoxSourceVaraibles]: {
-		options: {
-			ssrcId: string | undefined
-			boxIndex: string
-			source: string
 		}
 	}
 	[ActionId.SuperSourceBoxOnAir]: {
@@ -90,9 +77,7 @@ export function createSuperSourceActions(
 	if (!model.SSrc) {
 		return {
 			[ActionId.SuperSourceArt]: undefined,
-			[ActionId.SuperSourceArtVariables]: undefined,
 			[ActionId.SuperSourceBoxSource]: undefined,
-			[ActionId.SuperSourceBoxSourceVaraibles]: undefined,
 			[ActionId.SuperSourceBoxOnAir]: undefined,
 			[ActionId.SuperSourceBoxProperties]: undefined,
 			[ActionId.SuperSourceBoxPropertiesDelta]: undefined,
@@ -106,25 +91,37 @@ export function createSuperSourceActions(
 				...AtemSuperSourceArtPropertiesPickers(model, state.state, true),
 			}),
 			callback: async ({ options }) => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
+				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
 				const newProps: Partial<VideoState.SuperSource.SuperSourceProperties> = {}
 
-				const props = options.getRaw('properties')
+				const props = options.properties
 				if (props && Array.isArray(props)) {
 					if (props.includes('fill')) newProps.artFillSource = options.fill
 					if (props.includes('key')) newProps.artCutSource = options.key
 
 					if (props.includes('artOption')) {
-						const rawArtOption = options.getRaw('artOption')
-						if (rawArtOption === 'toggle') {
-							const ssrc = state.state.video.superSources[ssrcId]
+						const rawArtOption = options.artOption
+						switch (rawArtOption) {
+							case 'toggle': {
+								const ssrc = state.state.video.superSources[ssrcId]
 
-							newProps.artOption =
-								ssrc?.properties?.artOption === Enums.SuperSourceArtOption.Background
-									? Enums.SuperSourceArtOption.Foreground
-									: Enums.SuperSourceArtOption.Background
-						} else if (rawArtOption !== 'unchanged') {
-							newProps.artOption = Number(options.getRaw('artOption'))
+								newProps.artOption =
+									ssrc?.properties?.artOption === Enums.SuperSourceArtOption.Background
+										? Enums.SuperSourceArtOption.Foreground
+										: Enums.SuperSourceArtOption.Background
+								break
+							}
+							case 'background':
+								newProps.artOption = Enums.SuperSourceArtOption.Background
+								break
+							case 'foreground':
+								newProps.artOption = Enums.SuperSourceArtOption.Foreground
+								break
+							case 'unchanged':
+								break
+							default:
+								assertNever(rawArtOption)
+								break
 						}
 					}
 
@@ -139,7 +136,7 @@ export function createSuperSourceActions(
 				await atem?.setSuperSourceProperties(newProps, ssrcId)
 			},
 			learn: ({ options }) => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
+				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
 
 				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.properties
 				if (ssrcConfig) {
@@ -147,7 +144,12 @@ export function createSuperSourceActions(
 						fill: ssrcConfig.artFillSource,
 						key: ssrcConfig.artCutSource,
 
-						artOption: ssrcConfig.artOption,
+						artOption:
+							ssrcConfig.artOption === Enums.SuperSourceArtOption.Foreground
+								? 'foreground'
+								: ssrcConfig.artOption === Enums.SuperSourceArtOption.Background
+									? 'background'
+									: 'unchanged',
 						artPreMultiplied: ssrcConfig.artPreMultiplied,
 						artClip: ssrcConfig.artClip / 10,
 						artGain: ssrcConfig.artGain / 10,
@@ -158,77 +160,6 @@ export function createSuperSourceActions(
 				}
 			},
 		},
-		[ActionId.SuperSourceArtVariables]: {
-			name: 'SuperSource: Set art sources from variables',
-			options: convertOptionsFields({
-				ssrcId: AtemSuperSourceIdPicker(model),
-				...AtemSuperSourceArtPropertiesVariablesPickers(),
-			}),
-			callback: async ({ options }) => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-				const newProps: Partial<VideoState.SuperSource.SuperSourceProperties> = {}
-
-				const ps: Promise<any>[] = []
-				const setPropAsync = <T extends keyof typeof newProps>(key: T, value: Promise<(typeof newProps)[T]>) =>
-					ps.push(
-						value.then((v) => {
-							newProps[key] = v
-						}),
-					)
-
-				const props = options.getRaw('properties')
-				if (props && Array.isArray(props)) {
-					if (props.includes('fill')) setPropAsync('artFillSource', options.fill)
-					if (props.includes('key')) setPropAsync('artCutSource', options.key)
-
-					// if (props.includes('artOption')) {
-					// 	const rawArtOption = options.getRaw('artOption')
-					// 	if (rawArtOption === 'toggle') {
-					// 		const ssrc = state.state.video.superSources[ssrcId]
-
-					// 		newProps.artOption =
-					// 			ssrc?.properties?.artOption === Enums.SuperSourceArtOption.Background
-					// 				? Enums.SuperSourceArtOption.Foreground
-					// 				: Enums.SuperSourceArtOption.Background
-					// 	} else if (rawArtOption !== 'unchanged') {
-					// 		newProps.artOption = Number(options.getRaw('artOption'))
-					// 	}
-					// }
-
-					// if (props.includes('artPreMultiplied'))
-					// 	newProps.artPreMultiplied = options.artPreMultiplied
-					// if (props.includes('artClip')) newProps.artClip = options.artClip * 10
-					// if (props.includes('artGain')) newProps.artGain = options.artGain * 10
-					// if (props.includes('artInvertKey')) newProps.artInvertKey = options.artInvertKey
-				}
-
-				await Promise.all(ps)
-
-				if (Object.keys(newProps).length === 0) return
-
-				await atem?.setSuperSourceProperties(newProps, ssrcId)
-			},
-			learn: ({ options }) => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-
-				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.properties
-				if (ssrcConfig) {
-					return {
-						fill: ssrcConfig.artFillSource + '',
-						key: ssrcConfig.artCutSource + '',
-
-						// artOption: ssrcConfig.artOption,
-						// artPreMultiplied: ssrcConfig.artPreMultiplied,
-						// artClip: ssrcConfig.artClip / 10,
-						// artGain: ssrcConfig.artGain / 10,
-						// artInvertKey: ssrcConfig.artInvertKey,
-					}
-				} else {
-					return undefined
-				}
-			},
-		},
-
 		[ActionId.SuperSourceBoxSource]: {
 			// TODO - combine into ActionId.SuperSourceBoxProperties
 			name: 'SuperSource: Set box source',
@@ -242,76 +173,18 @@ export function createSuperSourceActions(
 					{
 						source: options.source,
 					},
-					options.boxIndex,
-					options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0,
+					options.boxIndex - 1,
+					options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0,
 				)
 			},
 			learn: ({ options }) => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-				const boxId = options.boxIndex
+				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
+				const boxId = options.boxIndex - 1
 
 				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.boxes[boxId]
 				if (ssrcConfig) {
 					return {
 						source: ssrcConfig.source,
-					}
-				} else {
-					return undefined
-				}
-			},
-		},
-		[ActionId.SuperSourceBoxSourceVaraibles]: {
-			// TODO - combine into ActionId.SuperSourceBoxProperties
-			name: 'SuperSource: Set box source from variables',
-			options: convertOptionsFields({
-				ssrcId:
-					model.SSrc > 1
-						? {
-								type: 'textinput',
-								id: 'ssrcId',
-								label: 'Super Source',
-								default: '1',
-								useVariables: true,
-							}
-						: undefined,
-				boxIndex: {
-					type: 'textinput',
-					id: 'boxIndex',
-					label: 'Box #',
-					default: '1',
-					useVariables: true,
-				},
-				source: {
-					type: 'textinput',
-					id: 'source',
-					label: 'Source',
-					default: '1',
-					useVariables: true,
-				},
-			}),
-			callback: async ({ options }) => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(await options.ssrcId) - 1 : 0
-				const boxIndex = (await options.boxIndex) - 1
-				const source = await options.source
-
-				if (isNaN(ssrcId) || isNaN(boxIndex) || isNaN(source)) return
-
-				await atem?.setSuperSourceBoxSettings(
-					{
-						source: source,
-					},
-					boxIndex,
-					ssrcId,
-				)
-			},
-			learn: async ({ options }) => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(await options.ssrcId) - 1 : 0
-				const boxId = (await options.boxIndex) - 1
-
-				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.boxes[boxId]
-				if (ssrcConfig) {
-					return {
-						source: ssrcConfig.source + '',
 					}
 				} else {
 					return undefined
@@ -333,31 +206,23 @@ export function createSuperSourceActions(
 				},
 			}),
 			callback: async ({ options }) => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-				const boxIndex = options.boxIndex
+				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
+				const boxIndex = options.boxIndex - 1
 
-				if (options.getRaw('onair') === 'toggle') {
-					const box = getSuperSourceBox(state.state, boxIndex, ssrcId)
-					await atem?.setSuperSourceBoxSettings(
-						{
-							enabled: !box?.enabled,
-						},
-						boxIndex,
-						ssrcId,
-					)
-				} else {
-					await atem?.setSuperSourceBoxSettings(
-						{
-							enabled: options.getRaw('onair') === 'true',
-						},
-						boxIndex,
-						ssrcId,
-					)
-				}
+				const box = getSuperSourceBox(state.state, boxIndex, ssrcId)
+				const newState = resolveTrueFalseToggle(options.onair, box?.enabled)
+
+				await atem?.setSuperSourceBoxSettings(
+					{
+						enabled: newState,
+					},
+					boxIndex,
+					ssrcId,
+				)
 			},
 			learn: ({ options }) => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-				const boxId = options.boxIndex
+				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
+				const boxId = options.boxIndex - 1
 
 				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.boxes[boxId]
 				if (ssrcConfig) {
@@ -378,12 +243,12 @@ export function createSuperSourceActions(
 				...AtemSuperSourcePropertiesPickers(model, state.state),
 			}),
 			callback: async ({ options }) => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-				const boxIndex = options.boxIndex
+				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
+				const boxIndex = options.boxIndex - 1
 
 				const newProps: Partial<SuperSource.SuperSourceBox> = {}
 
-				const props = options.getRaw('properties')
+				const props = options.properties
 				if (props && Array.isArray(props)) {
 					if (props.includes('onair')) {
 						if (options.onair === 'toggle') {
@@ -421,8 +286,8 @@ export function createSuperSourceActions(
 				)
 			},
 			learn: ({ options }) => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-				const boxId = options.boxIndex
+				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
+				const boxId = options.boxIndex - 1
 
 				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.boxes[boxId]
 				if (ssrcConfig) {
@@ -451,14 +316,14 @@ export function createSuperSourceActions(
 				...AtemSuperSourcePropertiesPickersForOffset(),
 			}),
 			callback: async ({ options }) => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-				const boxIndex = options.boxIndex
+				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
+				const boxIndex = options.boxIndex - 1
 
 				const newProps: Partial<SuperSource.SuperSourceBox> = {}
 
 				const box = getSuperSourceBox(state.state, boxIndex, ssrcId)
 
-				const props = options.getRaw('properties')
+				const props = options.properties
 				if (box && props && Array.isArray(props)) {
 					if (props.includes('size')) newProps.size = clamp(0, 1000, box.size + options.size * 1000)
 					if (props.includes('x')) newProps.x = clamp(-4800, 4800, box.x + options.x * 100)

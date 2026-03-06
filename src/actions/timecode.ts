@@ -1,10 +1,12 @@
 import { type Atem, Enums } from 'atem-connection'
 import { convertOptionsFields } from '../common.js'
-import type { CompanionActionDefinitions } from '@companion-module/base'
+import { assertNever, CompanionInputFieldDropdown, type CompanionActionDefinitions } from '@companion-module/base'
 import { ActionId } from './ActionId.js'
 import type { StateWrapper } from '../state.js'
 import type { InstanceBaseExt } from '../util.js'
 import { formatDurationSeconds } from '../variables/util.js'
+
+type TimecodeMode = 'freerun' | 'timeofday'
 
 export type AtemTimecodeActions = {
 	[ActionId.Timecode]: {
@@ -14,7 +16,7 @@ export type AtemTimecodeActions = {
 	}
 	[ActionId.TimecodeMode]: {
 		options: {
-			mode: Enums.TimeMode
+			mode: TimecodeMode
 		}
 	}
 }
@@ -66,20 +68,47 @@ export function createTimecodeActions(
 					type: 'dropdown',
 					label: 'Mode',
 					choices: [
-						{ id: Enums.TimeMode.FreeRun, label: 'Free run' },
-						{ id: Enums.TimeMode.TimeOfDay, label: 'Time of Day' },
+						{ id: 'freerun', label: 'Free run' },
+						{ id: 'timeofday', label: 'Time of Day' },
 					],
-					default: Enums.TimeMode.FreeRun,
-				},
+					default: 'freerun',
+					expressionDescription: "Set to 'freerun' or 'timeofday'",
+					allowInvalidValues: true,
+				} satisfies CompanionInputFieldDropdown<'mode', TimecodeMode>,
 			}),
 			callback: async ({ options }) => {
-				const mode = options.mode
+				let newMode: Enums.TimeMode | undefined
 
-				await atem?.setTimeMode(mode)
+				const rawMode = String(options.mode).toLowerCase()
+				if (rawMode.includes('free') || rawMode.includes('run')) {
+					newMode = Enums.TimeMode.FreeRun
+				} else if (rawMode.includes('time') || rawMode.includes('day')) {
+					newMode = Enums.TimeMode.TimeOfDay
+				} else {
+					throw new Error("Invalid mode, must be 'freerun' or 'timeofday'")
+				}
+
+				await atem?.setTimeMode(newMode)
 			},
 			learn: () => {
+				const rawMode = state.state.settings.timeMode
+				if (rawMode === undefined) return undefined
+
+				let newMode: TimecodeMode | undefined
+				switch (rawMode) {
+					case Enums.TimeMode.FreeRun:
+						newMode = 'freerun'
+						break
+					case Enums.TimeMode.TimeOfDay:
+						newMode = 'timeofday'
+						break
+					default:
+						assertNever(rawMode)
+						return undefined
+				}
+
 				return {
-					mode: state.state.settings.timeMode ?? Enums.TimeMode.FreeRun,
+					mode: newMode,
 				}
 			},
 		},

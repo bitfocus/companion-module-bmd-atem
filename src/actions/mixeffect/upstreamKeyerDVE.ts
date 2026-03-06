@@ -262,7 +262,7 @@ export function createUpstreamKeyerDVEActions(
 				const mixEffectId = options.mixeffect
 				const newProps: Partial<UpstreamKeyerDVESettings> = {}
 
-				const props = options.getRaw('properties')
+				const props = options.properties
 				if (props && Array.isArray(props)) {
 					if (props.includes('maskEnabled')) {
 						newProps.maskEnabled = options.maskEnabled
@@ -442,7 +442,7 @@ export function createUpstreamKeyerDVEActions(
 				const keyId = (await options.key) - 1
 				const newProps: Partial<UpstreamKeyerDVESettings> = {}
 
-				const props = options.getRaw('properties')
+				const props = options.properties
 				if (props && Array.isArray(props)) {
 					if (props.includes('maskEnabled')) {
 						newProps.maskEnabled = await options.maskEnabled
@@ -620,7 +620,7 @@ export function createUpstreamKeyerDVEActions(
 				const keyframeId = options.keyframe
 				const properties: Partial<UpstreamKeyerFlyKeyframe> = {}
 
-				const props = options.getRaw('properties')
+				const props = options.properties
 				if (props && Array.isArray(props)) {
 					if (props.includes('maskTop')) {
 						properties.maskTop = options.maskTop * 1000

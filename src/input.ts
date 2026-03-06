@@ -1,10 +1,11 @@
-import type {
-	CompanionInputFieldCheckbox,
-	CompanionInputFieldDropdown,
-	CompanionInputFieldMultiDropdown,
-	CompanionInputFieldNumber,
-	CompanionInputFieldTextInput,
-	DropdownChoice,
+import {
+	assertNever,
+	type CompanionInputFieldCheckbox,
+	type CompanionInputFieldDropdown,
+	type CompanionInputFieldMultiDropdown,
+	type CompanionInputFieldNumber,
+	type CompanionInputFieldTextInput,
+	type DropdownChoice,
 } from '@companion-module/base'
 import { type AtemState, Enums } from 'atem-connection'
 import {
@@ -37,6 +38,10 @@ import type { ModelSpec } from './models/index.js'
 import { iterateTimes, MEDIA_PLAYER_SOURCE_CLIP_OFFSET, compact, NumberComparitor } from './util.js'
 import type { MyOptionsObject } from './common.js'
 import * as Easing from './easings.js'
+
+export type WithProperties<T> = T & {
+	properties: Array<keyof T>
+}
 
 export function AtemMESourcePicker(model: ModelSpec, state: AtemState, id: number): CompanionInputFieldDropdown {
 	return {
@@ -1211,9 +1216,9 @@ export function AtemAuxSourcePicker(model: ModelSpec, state: AtemState): Compani
 	}
 }
 export function AtemTransitionAnimationOptions(): {
-	transitionRate: CompanionInputFieldNumber
-	transitionEasing: CompanionInputFieldDropdown
-	transitionCurve: CompanionInputFieldDropdown
+	transitionRate: CompanionInputFieldNumber<'transitionRate'>
+	transitionEasing: CompanionInputFieldDropdown<'transitionEasing'>
+	transitionCurve: CompanionInputFieldDropdown<'transitionCurve'>
 } {
 	return {
 		transitionRate: {
@@ -1243,7 +1248,7 @@ export function AtemTransitionAnimationOptions(): {
 				{ id: 'back', label: 'Back' },
 				{ id: 'bounce', label: 'Bounce' },
 			],
-			isVisibleExpression: `$(options:transitionRate) != null && $(options:transitionRate) > 0`,
+			disableAutoExpression: true,
 		},
 		transitionCurve: {
 			type: 'dropdown',
@@ -1255,20 +1260,21 @@ export function AtemTransitionAnimationOptions(): {
 				{ id: 'ease-out', label: 'Ease-out' },
 				{ id: 'ease-in-out', label: 'Ease-in-out' },
 			],
-			isVisibleExpression: `$(options:transitionRate) != null && $(options:transitionEasing) != null && $(options:transitionRate) > 0 && $(options:transitionEasing) != 'linear'`,
+			isVisibleExpression: `$(options:transitionEasing) != null && $(options:transitionEasing) != 'linear'`,
+			disableAutoExpression: true,
 		},
 	}
 }
-export function AtemSuperSourceBoxPicker(): CompanionInputFieldDropdown {
+export function AtemSuperSourceBoxPicker(): CompanionInputFieldDropdown<'boxIndex'> {
 	return {
 		type: 'dropdown',
 		id: 'boxIndex',
 		label: 'Box #',
-		default: 0,
+		default: 1,
 		choices: CHOICES_SSRCBOXES,
 	}
 }
-export function AtemSuperSourceIdPicker(model: ModelSpec): CompanionInputFieldDropdown | undefined {
+export function AtemSuperSourceIdPicker(model: ModelSpec): CompanionInputFieldDropdown<'ssrcId'> | undefined {
 	const choices = GetSuperSourceIdChoices(model)
 	if (choices.length > 1) {
 		return {
@@ -1282,8 +1288,11 @@ export function AtemSuperSourceIdPicker(model: ModelSpec): CompanionInputFieldDr
 		return undefined
 	}
 }
-export function AtemSuperSourceArtOption(action: boolean): CompanionInputFieldDropdown {
-	const options = compact([
+
+export type SSrcArtOption = 'unchanged' | 'toggle' | 'foreground' | 'background'
+
+export function AtemSuperSourceArtOption(action: boolean): CompanionInputFieldDropdown<'artOption', SSrcArtOption> {
+	const options: DropdownChoice<SSrcArtOption>[] = compact([
 		action
 			? {
 					id: 'unchanged',
@@ -1291,11 +1300,11 @@ export function AtemSuperSourceArtOption(action: boolean): CompanionInputFieldDr
 				}
 			: undefined,
 		{
-			id: Enums.SuperSourceArtOption.Foreground,
+			id: 'foreground',
 			label: 'Foreground',
 		},
 		{
-			id: Enums.SuperSourceArtOption.Background,
+			id: 'background',
 			label: 'Background',
 		},
 		action
@@ -1314,10 +1323,7 @@ export function AtemSuperSourceArtOption(action: boolean): CompanionInputFieldDr
 	}
 }
 
-export type AtemSuperSourceProperties = {
-	properties: Array<
-		'size' | 'onair' | 'source' | 'x' | 'y' | 'cropEnable' | 'cropTop' | 'cropBottom' | 'cropLeft' | 'cropRight'
-	>
+export type AtemSuperSourcePropertiesBase = {
 	size: number
 	onair: TrueFalseToggle
 	source: number
@@ -1329,16 +1335,24 @@ export type AtemSuperSourceProperties = {
 	cropLeft: number
 	cropRight: number
 }
+export type AtemSuperSourceProperties = WithProperties<AtemSuperSourcePropertiesBase>
+
 export function AtemSuperSourcePropertiesPickers(
 	model: ModelSpec,
 	state: AtemState,
-): MyOptionsObject<
-	AtemSuperSourceProperties,
-	| CompanionInputFieldMultiDropdown
-	| CompanionInputFieldDropdown
-	| CompanionInputFieldNumber
-	| CompanionInputFieldCheckbox
-> {
+): {
+	properties: CompanionInputFieldMultiDropdown<'properties'>
+	size: CompanionInputFieldNumber<'size'>
+	onair: CompanionInputFieldDropdown<'onair', TrueFalseToggle>
+	source: CompanionInputFieldDropdown<'source'>
+	x: CompanionInputFieldNumber<'x'>
+	y: CompanionInputFieldNumber<'y'>
+	cropEnable: CompanionInputFieldCheckbox<'cropEnable'>
+	cropTop: CompanionInputFieldNumber<'cropTop'>
+	cropBottom: CompanionInputFieldNumber<'cropBottom'>
+	cropLeft: CompanionInputFieldNumber<'cropLeft'>
+	cropRight: CompanionInputFieldNumber<'cropRight'>
+} {
 	const allProps: Omit<ReturnType<typeof AtemSuperSourcePropertiesPickers>, 'properties'> = {
 		size: {
 			type: 'number',
@@ -1449,14 +1463,14 @@ export function AtemSuperSourcePropertiesPickers(
 	}
 }
 export function AtemSuperSourcePropertiesPickersForOffset(): {
-	properties: CompanionInputFieldMultiDropdown
-	size: CompanionInputFieldNumber
-	x: CompanionInputFieldNumber
-	y: CompanionInputFieldNumber
-	cropTop: CompanionInputFieldNumber
-	cropBottom: CompanionInputFieldNumber
-	cropLeft: CompanionInputFieldNumber
-	cropRight: CompanionInputFieldNumber
+	properties: CompanionInputFieldMultiDropdown<'properties'>
+	size: CompanionInputFieldNumber<'size'>
+	x: CompanionInputFieldNumber<'x'>
+	y: CompanionInputFieldNumber<'y'>
+	cropTop: CompanionInputFieldNumber<'cropTop'>
+	cropBottom: CompanionInputFieldNumber<'cropBottom'>
+	cropLeft: CompanionInputFieldNumber<'cropLeft'>
+	cropRight: CompanionInputFieldNumber<'cropRight'>
 } {
 	const allProps: Omit<ReturnType<typeof AtemSuperSourcePropertiesPickersForOffset>, 'properties'> = {
 		size: {
@@ -1545,27 +1559,32 @@ export function AtemSuperSourcePropertiesPickersForOffset(): {
 		...allProps,
 	}
 }
-export type AtemSuperSourceArtProperties = {
-	properties: Array<'fill' | 'key' | 'artOption' | 'artPreMultiplied' | 'artClip' | 'artGain' | 'artInvertKey'>
+
+export type AtemSuperSourceArtPropertiesBase = {
 	fill: number
 	key: number
-	artOption: 'unchanged' | Enums.SuperSourceArtOption | 'toggle'
+	artOption: SSrcArtOption
 	artPreMultiplied: boolean
 	artClip: number
 	artGain: number
 	artInvertKey: boolean
 }
+export type AtemSuperSourceArtProperties = WithProperties<AtemSuperSourceArtPropertiesBase>
+
 export function AtemSuperSourceArtPropertiesPickers(
 	model: ModelSpec,
 	state: AtemState,
 	action: boolean,
-): MyOptionsObject<
-	AtemSuperSourceArtProperties,
-	| CompanionInputFieldCheckbox
-	| CompanionInputFieldDropdown
-	| CompanionInputFieldNumber
-	| CompanionInputFieldMultiDropdown
-> {
+): {
+	properties: CompanionInputFieldMultiDropdown<'properties'>
+	fill: CompanionInputFieldDropdown<'fill'>
+	key: CompanionInputFieldDropdown<'key'>
+	artOption: CompanionInputFieldDropdown<'artOption', SSrcArtOption>
+	artPreMultiplied: CompanionInputFieldCheckbox<'artPreMultiplied'>
+	artClip: CompanionInputFieldNumber<'artClip'>
+	artGain: CompanionInputFieldNumber<'artGain'>
+	artInvertKey: CompanionInputFieldCheckbox<'artInvertKey'>
+} {
 	const artSources = SourcesToChoices(GetSourcesListForType(model, state, 'ssrc-art'))
 
 	const allProps: Omit<ReturnType<typeof AtemSuperSourceArtPropertiesPickers>, 'properties'> = {
@@ -1633,6 +1652,7 @@ export function AtemSuperSourceArtPropertiesPickers(
 	}
 }
 
+/** @deprecated */
 export type AtemSuperSourceArtPropertiesVariables = {
 	properties: Array<'fill' | 'key'> // | 'artOption' | 'artPreMultiplied' | 'artClip' | 'artGain' | 'artInvertKey'>
 	fill: string
@@ -1643,6 +1663,8 @@ export type AtemSuperSourceArtPropertiesVariables = {
 	// artGain: number
 	// artInvertKey: boolean
 }
+
+/** @deprecated */
 export function AtemSuperSourceArtPropertiesVariablesPickers(): MyOptionsObject<
 	AtemSuperSourceArtPropertiesVariables,
 	CompanionInputFieldTextInput | CompanionInputFieldMultiDropdown
@@ -2462,5 +2484,21 @@ export function AtemUSKFlyKeyPropertiesVariablesPickers(): {
 	return {
 		properties: DropdownPropertiesPicker(allProps),
 		...allProps,
+	}
+}
+
+export function resolveTrueFalseToggle(value: TrueFalseToggle | boolean, current: boolean | undefined): boolean {
+	switch (value) {
+		case 'false':
+		case false:
+			return false
+		case 'true':
+		case true:
+			return true
+		case 'toggle':
+			return !current
+		default:
+			assertNever(value)
+			return false
 	}
 }

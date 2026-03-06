@@ -202,7 +202,7 @@ export function createDownstreamKeyerActions(
 				const keyId = options.key
 				const newProps: Partial<DownstreamKeyerMask> = {}
 
-				const props = options.getRaw('properties')
+				const props = options.properties
 				if (props && Array.isArray(props)) {
 					if (props.includes('maskEnabled')) {
 						newProps.enabled = options.maskEnabled
@@ -251,7 +251,7 @@ export function createDownstreamKeyerActions(
 				const keyId = options.key
 				const newProps: Partial<DownstreamKeyerGeneral> = {}
 
-				const props = options.getRaw('properties')
+				const props = options.properties
 				if (props && Array.isArray(props)) {
 					if (props.includes('preMultiply')) {
 						newProps.preMultiply = options.preMultiply

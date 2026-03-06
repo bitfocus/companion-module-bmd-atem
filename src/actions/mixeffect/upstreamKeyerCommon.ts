@@ -274,7 +274,7 @@ export function createUpstreamKeyerCommonActions(
 				const mixEffectId = options.mixeffect
 				const newProps: Partial<UpstreamKeyerMaskSettings> = {}
 
-				const props = options.getRaw('properties')
+				const props = options.properties
 				if (props && Array.isArray(props)) {
 					if (props.includes('maskEnabled')) {
 						newProps.maskEnabled = options.maskEnabled
@@ -326,7 +326,7 @@ export function createUpstreamKeyerCommonActions(
 				const newUSKTypeProps: Partial<UpstreamKeyerTypeSettings> = {}
 				const newProps: Partial<UpstreamKeyerDVEBase> = {}
 
-				const props = options.getRaw('properties')
+				const props = options.properties
 				if (props && Array.isArray(props)) {
 					if (props.includes('flyEnabled')) {
 						newUSKTypeProps.flyEnabled = options.flyEnabled
@@ -391,7 +391,7 @@ export function createUpstreamKeyerCommonActions(
 				const newUSKTypeProps: Partial<UpstreamKeyerTypeSettings> = {}
 				const newProps: Partial<UpstreamKeyerDVEBase> = {}
 
-				const props = options.getRaw('properties')
+				const props = options.properties
 				if (props && Array.isArray(props)) {
 					if (props.includes('flyEnabled')) {
 						newUSKTypeProps.flyEnabled = await options.flyEnabled

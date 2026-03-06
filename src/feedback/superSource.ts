@@ -120,7 +120,7 @@ export function createSuperSourceFeedbacks(
 				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
 				const ssrc = getSuperSource(state.state, ssrcId).properties
 
-				const props = options.getRaw('properties')
+				const props = options.properties
 				if (!ssrc || !props || !Array.isArray(props)) return false
 
 				if (props.includes('fill') && ssrc.artFillSource !== options.fill) return false
@@ -170,7 +170,7 @@ export function createSuperSourceFeedbacks(
 				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
 				const ssrc = getSuperSource(state.state, ssrcId).properties
 
-				const props = options.getRaw('properties')
+				const props = options.properties
 				if (!ssrc || !props || !Array.isArray(props)) return false
 
 				const ps: Promise<boolean>[] = []
@@ -408,7 +408,7 @@ export function createSuperSourceFeedbacks(
 				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
 				const box = getSuperSourceBox(state.state, options.boxIndex, ssrcId)
 
-				const props = options.getRaw('properties')
+				const props = options.properties
 				if (!box || !props || !Array.isArray(props)) return false
 
 				if (props.includes('source') && box.source !== options.source) return false

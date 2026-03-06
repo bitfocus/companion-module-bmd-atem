@@ -72,7 +72,7 @@ export function createUpstreamKeyerPatternActions(
 				const mixEffectId = options.mixeffect
 				const newProps: Partial<UpstreamKeyerPatternSettings> = {}
 
-				const props = options.getRaw('properties')
+				const props = options.properties
 				if (props && Array.isArray(props)) {
 					if (props.includes('style')) {
 						newProps.style = options.style
@@ -145,7 +145,7 @@ export function createUpstreamKeyerPatternActions(
 				const keyId = (await options.key) - 1
 				const newProps: Partial<UpstreamKeyerPatternSettings> = {}
 
-				const props = options.getRaw('properties')
+				const props = options.properties
 				if (props && Array.isArray(props)) {
 					if (props.includes('style')) {
 						newProps.style = await options.style

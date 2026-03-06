@@ -105,7 +105,7 @@ export function createDisplayClockActions(
 			callback: async ({ options }) => {
 				const newProps: Partial<DisplayClock.DisplayClockProperties> = {}
 
-				const props = options.getRaw('properties')
+				const props = options.properties
 				if (props && Array.isArray(props)) {
 					if (props.includes('enabled')) newProps.enabled = options.enabled
 

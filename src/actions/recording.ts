@@ -5,6 +5,7 @@ import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
 import { CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../choices.js'
 import type { StateWrapper } from '../state.js'
+import { resolveTrueFalseToggle } from '../input.js'
 
 export type AtemRecordingActions = {
 	[ActionId.RecordStartStop]: {
@@ -53,10 +54,10 @@ export function createRecordingActions(
 				},
 			}),
 			callback: async ({ options }) => {
-				let newState = options.record === 'true'
-				if (options.record === 'toggle') {
-					newState = state.state.recording?.status?.state === Enums.RecordingStatus.Idle
-				}
+				const newState = resolveTrueFalseToggle(
+					options.record,
+					state.state.recording?.status?.state !== Enums.RecordingStatus.Idle,
+				)
 
 				if (newState) {
 					await atem?.startRecording()
@@ -110,10 +111,7 @@ export function createRecordingActions(
 				},
 			}),
 			callback: async ({ options }) => {
-				let newState = options.recordISO === 'true'
-				if (options.recordISO === 'toggle') {
-					newState = !state.state.recording?.recordAllInputs
-				}
+				const newState = resolveTrueFalseToggle(options.recordISO, state.state.recording?.recordAllInputs)
 
 				await atem?.setEnableISORecording(newState)
 			},
