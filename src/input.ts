@@ -1184,7 +1184,7 @@ export function AtemMultiviewerPicker(model: ModelSpec): CompanionInputFieldDrop
 		type: 'dropdown',
 		id: 'multiViewerId',
 		label: 'MV',
-		default: 0,
+		default: 1,
 		choices: GetMultiviewerIdChoices(model),
 	}
 }
@@ -1281,7 +1281,7 @@ export function AtemSuperSourceIdPicker(model: ModelSpec): CompanionInputFieldDr
 			type: 'dropdown',
 			id: 'ssrcId',
 			label: 'Super Source',
-			default: 0,
+			default: 1,
 			choices,
 		}
 	} else {
@@ -1753,11 +1753,11 @@ export function AtemMultiviewSourcePicker(model: ModelSpec, state: AtemState): C
 export function AtemMultiviewWindowPicker(model: ModelSpec): CompanionInputFieldDropdown<'windowIndex'> {
 	const choices = model.multiviewerFullGrid
 		? iterateTimes(16, (i) => ({
-				id: i,
+				id: i + 1,
 				label: `Window ${i + 1}`,
 			}))
 		: iterateTimes(8, (i) => ({
-				id: i + 2,
+				id: i + 3,
 				label: `Window ${i + 3}`,
 			}))
 
@@ -1765,7 +1765,7 @@ export function AtemMultiviewWindowPicker(model: ModelSpec): CompanionInputField
 		type: 'dropdown',
 		id: 'windowIndex',
 		label: 'Window #',
-		default: 2,
+		default: model.multiviewerFullGrid ? 1 : 3,
 		choices,
 	}
 }
@@ -1774,7 +1774,7 @@ export function AtemMediaPlayerPicker(model: ModelSpec): CompanionInputFieldDrop
 		type: 'dropdown',
 		id: 'mediaplayer',
 		label: 'Media Player',
-		default: 0,
+		default: 1,
 		choices: GetMediaPlayerChoices(model),
 	}
 }
@@ -1807,6 +1807,7 @@ export function AtemMediaPlayerSourcePicker(
 				}
 			}),
 		],
+		disableAutoExpression: true, // TODO: allow this to be dynamic!
 	}
 }
 
@@ -1893,6 +1894,7 @@ export function AtemFairlightAudioSourcePicker(): CompanionInputFieldDropdown<'s
 		label: 'Source',
 		default: sources[0].id,
 		choices: sources,
+		disableAutoExpression: true, // This is a pretty messy value currently
 	}
 }
 
@@ -1948,7 +1950,7 @@ export const FadeDurationFields = {
 			{ id: 'back', label: 'Back' },
 			{ id: 'bounce', label: 'Bounce' },
 		],
-		isVisibleExpression: `$(options:fadeDuration) != null && $(options:fadeDuration) > 0`,
+		disableAutoExpression: true,
 	},
 	fadeCurve: {
 		type: 'dropdown',
@@ -1960,7 +1962,8 @@ export const FadeDurationFields = {
 			{ id: 'ease-out', label: 'Ease-out' },
 			{ id: 'ease-in-out', label: 'Ease-in-out' },
 		],
-		isVisibleExpression: `$(options:fadeDuration) != null && $(options:fadeAlgorithm) != null && $(options:fadeDuration) > 0 && $(options:fadeAlgorithm) != 'linear'`,
+		isVisibleExpression: `$(options:fadeAlgorithm) != null && $(options:fadeAlgorithm) != 'linear'`,
+		disableAutoExpression: true,
 	},
 } as const satisfies MyOptionsObject<FadeDurationFieldsType, CompanionInputFieldNumber | CompanionInputFieldDropdown>
 

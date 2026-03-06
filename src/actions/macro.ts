@@ -5,6 +5,7 @@ import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
 import { GetMacroChoices, CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../choices.js'
 import type { StateWrapper } from '../state.js'
+import { resolveTrueFalseToggle } from '../input.js'
 
 export type AtemMacroActions = {
 	[ActionId.MacroRun]: {
@@ -59,6 +60,7 @@ export function createMacroActions(
 						{ id: 'run', label: 'Run' },
 						{ id: 'runContinue', label: 'Run/Continue' },
 					],
+					disableAutoExpression: true,
 				},
 			}),
 			callback: async ({ options }) => {
@@ -99,10 +101,7 @@ export function createMacroActions(
 				},
 			}),
 			callback: async ({ options }) => {
-				let newState = options.loop === 'true'
-				if (options.loop === 'toggle') {
-					newState = !state.state.macro.macroPlayer.loop
-				}
+				const newState = resolveTrueFalseToggle(options.loop, state.state.macro.macroPlayer.loop)
 
 				await atem?.macroSetLoop(newState)
 			},

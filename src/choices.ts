@@ -114,17 +114,18 @@ export const CHOICES_CLASSIC_AUDIO_MIX_OPTION: DropdownChoice<Enums.AudioMixOpti
 	},
 ]
 
-export const CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION: DropdownChoice<Enums.FairlightAudioMixOption>[] = [
+export type FairlightMixOption2 = 'on' | 'off' | 'afv'
+export const CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION: DropdownChoice<FairlightMixOption2>[] = [
 	{
-		id: Enums.FairlightAudioMixOption.On,
+		id: 'on',
 		label: 'On',
 	},
 	{
-		id: Enums.FairlightAudioMixOption.Off,
+		id: 'off',
 		label: 'Off',
 	},
 	{
-		id: Enums.FairlightAudioMixOption.AudioFollowVideo,
+		id: 'afv',
 		label: 'AFV',
 	},
 ]
@@ -205,14 +206,14 @@ export function GetDSKIdChoices(model: ModelSpec): DropdownChoice[] {
 
 export function GetMultiviewerIdChoices(model: ModelSpec): DropdownChoice[] {
 	return iterateTimes(model.MVs, (i) => ({
-		id: i,
+		id: i + 1,
 		label: `MV ${i + 1}`,
 	}))
 }
 
 export function GetSuperSourceIdChoices(model: ModelSpec): DropdownChoice[] {
 	return iterateTimes(model.SSrc, (i) => ({
-		id: i,
+		id: i + 1,
 		label: `Super Source ${i + 1}`,
 	}))
 }
@@ -229,7 +230,7 @@ export function GetMacroChoices(model: ModelSpec, state: AtemState): DropdownCho
 export function GetMediaPlayerChoices(model: ModelSpec): DropdownChoice[] {
 	return iterateTimes(model.media.players, (i) => {
 		return {
-			id: i,
+			id: i + 1,
 			label: `Media Player ${i + 1}`,
 		}
 	})

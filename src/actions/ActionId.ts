@@ -38,7 +38,6 @@ export enum ActionId {
 	MacroStop = 'macrostop',
 	MacroLoop = 'macroloop',
 	MultiviewerWindowSource = 'setMvSource',
-	MultiviewerWindowSourceVariables = 'setMvSourceVariables',
 	MultiviewerLayout = 'multiviewerLayout',
 	SuperSourceArt = 'ssrcArt',
 	SuperSourceBoxSource = 'setSsrcBoxSource',

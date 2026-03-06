@@ -1,6 +1,6 @@
 import { Enums, type Atem, Commands } from 'atem-connection'
 import { convertOptionsFields } from '../common.js'
-import type { CompanionActionDefinitions } from '@companion-module/base'
+import { assertNever, type CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
 import {
@@ -10,10 +10,16 @@ import {
 	AtemFairlightAudioSourcePicker,
 	FadeDurationFields,
 	FaderLevelDeltaChoice,
+	resolveTrueFalseToggle,
 	type FadeDurationFieldsType,
 } from '../input.js'
 import type { AtemTransitions } from '../transitions.js'
-import { CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION, CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../choices.js'
+import {
+	CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION,
+	CHOICES_ON_OFF_TOGGLE,
+	FairlightMixOption2,
+	type TrueFalseToggle,
+} from '../choices.js'
 import type { StateWrapper } from '../state.js'
 import { parseAudioRoutingString, parseAudioRoutingStringSingle } from '../util.js'
 
@@ -64,7 +70,7 @@ export type AtemFairlightAudioActions = {
 		options: {
 			input: number
 			source: string
-			option: 'toggle' | Enums.FairlightAudioMixOption
+			option: 'toggle' | FairlightMixOption2
 		}
 	}
 	[ActionId.FairlightAudioResetPeaks]: {
@@ -470,14 +476,33 @@ export function createFairlightAudioActions(
 			callback: async ({ options }) => {
 				const inputId = options.input
 				const sourceId = options.source
-				const audioChannels = state.state.fairlight?.inputs ?? {}
-				const audioSources = audioChannels[inputId]?.sources ?? {}
-				const toggleVal =
-					audioSources[sourceId]?.properties?.mixOption === Enums.FairlightAudioMixOption.On
-						? Enums.FairlightAudioMixOption.Off
-						: Enums.FairlightAudioMixOption.On
-				const rawVal = options.getRaw('option')
-				const newVal = rawVal === 'toggle' ? toggleVal : rawVal
+
+				let newVal: Enums.FairlightAudioMixOption
+				switch (options.option) {
+					case 'on':
+						newVal = Enums.FairlightAudioMixOption.On
+						break
+					case 'off':
+						newVal = Enums.FairlightAudioMixOption.Off
+						break
+					case 'afv':
+						newVal = Enums.FairlightAudioMixOption.AudioFollowVideo
+						break
+					case 'toggle': {
+						const audioChannels = state.state.fairlight?.inputs ?? {}
+						const audioSources = audioChannels[inputId]?.sources ?? {}
+
+						newVal =
+							audioSources[sourceId]?.properties?.mixOption === Enums.FairlightAudioMixOption.On
+								? Enums.FairlightAudioMixOption.Off
+								: Enums.FairlightAudioMixOption.On
+						break
+					}
+					default:
+						assertNever(options.option)
+						return
+				}
+
 				await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, { mixOption: newVal })
 			},
 			learn: ({ options }) => {
@@ -486,8 +511,25 @@ export function createFairlightAudioActions(
 				const source = audioSources[options.source]
 
 				if (source?.properties) {
+					let newMixOption: FairlightMixOption2
+					switch (source.properties.mixOption) {
+						case Enums.FairlightAudioMixOption.On:
+							newMixOption = 'on'
+							break
+						case Enums.FairlightAudioMixOption.Off:
+							newMixOption = 'off'
+							break
+						case Enums.FairlightAudioMixOption.AudioFollowVideo:
+							newMixOption = 'afv'
+							break
+						default:
+							assertNever(source.properties.mixOption)
+							newMixOption = 'on'
+							break
+					}
+
 					return {
-						option: source.properties.mixOption,
+						option: newMixOption,
 					}
 				} else {
 					return undefined
@@ -512,6 +554,7 @@ export function createFairlightAudioActions(
 							label: 'Master',
 						},
 					],
+					disableAutoExpression: true,
 				},
 			}),
 			callback: async ({ options }) => {
@@ -747,12 +790,7 @@ function HeadphoneMasterActions(
 						},
 					}),
 					callback: async ({ options }) => {
-						let target: boolean
-						if (options.state === 'toggle') {
-							target = !state.state.fairlight?.monitor?.inputMasterMuted
-						} else {
-							target = options.state === 'true'
-						}
+						const target = resolveTrueFalseToggle(options.state, state.state.fairlight?.monitor?.inputMasterMuted)
 
 						await atem?.setFairlightAudioMixerMonitorProps({
 							inputMasterMuted: target,
@@ -870,12 +908,7 @@ function HeadphoneTalkbackActions(
 						},
 					}),
 					callback: async ({ options }) => {
-						let target: boolean
-						if (options.state === 'toggle') {
-							target = !state.state.fairlight?.monitor?.inputTalkbackMuted
-						} else {
-							target = options.state === 'true'
-						}
+						const target = resolveTrueFalseToggle(options.state, state.state.fairlight?.monitor?.inputTalkbackMuted)
 
 						await atem?.setFairlightAudioMixerMonitorProps({
 							inputTalkbackMuted: target, //
@@ -1112,7 +1145,7 @@ function AudioRoutingActions(
 			}),
 			callback: async ({ options }) => {
 				const sourceId = options.source
-				const destinations = options.getRaw('destinations')
+				const destinations = options.destinations
 				if (!destinations || destinations.length === 0) return
 
 				// TODO - simpler batching
@@ -1127,6 +1160,7 @@ function AudioRoutingActions(
 			},
 		},
 		[ActionId.FairlightAudioRoutingVariables]: {
+			// TODO - merge this into the non-variables one
 			name: 'Fairlight Audio: Audio Routing from variables',
 			description: 'Requires firmware 9.4+',
 			options: convertOptionsFields({
@@ -1150,11 +1184,10 @@ function AudioRoutingActions(
 				},
 			}),
 			callback: async ({ options }) => {
-				const [sourceStr, destinationsStr] = await Promise.all([options.source, options.destinations])
-				if (!destinationsStr || !sourceStr) return
+				if (!options.destinations || !options.source) return
 
-				const source = parseAudioRoutingStringSingle(sourceStr) ?? 0
-				const destinations = parseAudioRoutingString(destinationsStr)
+				const source = parseAudioRoutingStringSingle(options.source) ?? 0
+				const destinations = parseAudioRoutingString(options.destinations)
 
 				if (destinations.length === 0) return
 

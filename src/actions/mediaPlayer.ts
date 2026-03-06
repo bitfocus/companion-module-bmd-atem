@@ -28,10 +28,12 @@ export type AtemMediaPlayerActions = {
 			direction: 'next' | 'previous'
 		}
 	}
-	[ActionId.MediaCaptureStill]: { options: Record<string, never> }
+	[ActionId.MediaCaptureStill]: {
+		options: Record<string, never>
+	}
 	[ActionId.MediaDeleteStill]: {
 		options: {
-			slot: string
+			slot: number
 		}
 	}
 }
@@ -65,7 +67,7 @@ export function createMediaPlayerActions(
 							sourceType: Enums.MediaSourceType.Clip,
 							clipIndex: source - MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
 						},
-						options.mediaplayer,
+						options.mediaplayer - 1,
 					)
 				} else {
 					await atem?.setMediaPlayerSource(
@@ -73,12 +75,12 @@ export function createMediaPlayerActions(
 							sourceType: Enums.MediaSourceType.Still,
 							stillIndex: source,
 						},
-						options.mediaplayer,
+						options.mediaplayer - 1,
 					)
 				}
 			},
 			learn: ({ options }) => {
-				const player = state.state.media.players[options.mediaplayer]
+				const player = state.state.media.players[options.mediaplayer - 1]
 
 				if (player) {
 					return {
@@ -189,7 +191,7 @@ export function createMediaPlayerActions(
 				// AtemMediaPlayerSourcePicker(model, state)
 			}),
 			callback: async ({ options }) => {
-				const playerId = options.mediaplayer
+				const playerId = options.mediaplayer - 1
 				const direction = options.direction
 				const offset = direction === 'next' ? 1 : -1
 
@@ -222,16 +224,15 @@ export function createMediaPlayerActions(
 			options: convertOptionsFields({
 				slot: {
 					id: 'slot',
-					type: 'textinput',
+					type: 'number',
 					label: 'Slot',
-					default: '1',
-					useVariables: true,
+					default: 1,
+					min: 1,
+					max: 99,
 				},
 			}),
 			callback: async ({ options }) => {
-				const slot = await options.slot
-
-				await atem?.clearMediaPoolStill(slot - 1)
+				await atem?.clearMediaPoolStill(options.slot - 1)
 			},
 		},
 	}

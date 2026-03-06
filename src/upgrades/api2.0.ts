@@ -6,6 +6,7 @@ import {
 import type { AtemConfig } from '../config.js'
 import { Enums } from 'atem-connection'
 import type { SSrcArtOption } from '../input.js'
+import type { FairlightMixOption2 } from '../choices.js'
 
 type ActionFixupRule = {
 	newType?: string
@@ -38,6 +39,11 @@ const ssrcArtOptionValueMap: Record<any, SSrcArtOption> = {
 	[undefined as any]: 'unchanged',
 	[Enums.SuperSourceArtOption.Foreground]: 'foreground',
 	[Enums.SuperSourceArtOption.Background]: 'background',
+}
+const fairlightMixOptionValueMap: Record<any, FairlightMixOption2> = {
+	[Enums.FairlightAudioMixOption.On]: 'on',
+	[Enums.FairlightAudioMixOption.Off]: 'off',
+	[Enums.FairlightAudioMixOption.AudioFollowVideo]: 'afv',
 }
 
 const actionFixupRules: Record<string, ActionFixupRule> = {
@@ -98,7 +104,47 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 		options: {
 			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false } },
 			boxIndex: { transform: { type: 'number', zeroBased: true, variables: false } },
-			//
+		},
+	},
+	setMvSource: {
+		options: {
+			multiViewerId: { transform: { type: 'number', zeroBased: true, variables: false } },
+			windowIndex: { transform: { type: 'number', zeroBased: true, variables: false } },
+			source: { transform: { type: 'number', zeroBased: false, variables: false } },
+		},
+	},
+	setMvSourceVariables: {
+		newType: 'setMvSource',
+		options: {
+			multiViewerId: { transform: { type: 'number', zeroBased: true, variables: true } },
+			windowIndex: { transform: { type: 'number', zeroBased: true, variables: true } },
+			source: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	multiviewerLayout: {
+		options: {
+			multiViewerId: { transform: { type: 'number', zeroBased: true, variables: true } },
+		},
+	},
+	mediaPlayerSource: {
+		options: {
+			mediaplayer: { transform: { type: 'number', zeroBased: true, variables: false } },
+			// TODO: translate source!!
+		},
+	},
+	mediaPlayerSourceVariables2: {
+		options: {
+			// TODO - me!
+		},
+	},
+	mediaDeleteStill: {
+		options: {
+			slot: { transform: { type: 'number', zeroBased: true, variables: true } },
+		},
+	},
+	fairlightAudioMixOption: {
+		options: {
+			option: { transform: { type: 'lookup', lookup: fairlightMixOptionValueMap } },
 		},
 	},
 }
