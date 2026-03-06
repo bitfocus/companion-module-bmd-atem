@@ -47,7 +47,7 @@ export function createRecordingFeedbacks(
 			},
 			callback: ({ options }): boolean => {
 				const recording = state.state.recording?.status?.state
-				return recording === options.getPlainNumber('state')
+				return recording === options.state
 			},
 			learn: ({ options }) => {
 				if (state.state.recording?.status) {

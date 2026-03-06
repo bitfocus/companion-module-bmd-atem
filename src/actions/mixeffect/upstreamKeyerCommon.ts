@@ -106,20 +106,12 @@ export function createUpstreamKeyerCommonActions(
 			},
 			callback: async ({ options }) => {
 				await Promise.all([
-					atem?.setUpstreamKeyerFillSource(
-						options.getPlainNumber('fill'),
-						options.getPlainNumber('mixeffect'),
-						options.getPlainNumber('key'),
-					),
-					atem?.setUpstreamKeyerCutSource(
-						options.getPlainNumber('cut'),
-						options.getPlainNumber('mixeffect'),
-						options.getPlainNumber('key'),
-					),
+					atem?.setUpstreamKeyerFillSource(options.fill, options.mixeffect, options.key),
+					atem?.setUpstreamKeyerCutSource(options.cut, options.mixeffect, options.key),
 				])
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.getPlainNumber('mixeffect'), options.getPlainNumber('key'))
+				const usk = getUSK(state.state, options.mixeffect, options.key)
 
 				if (usk) {
 					return {
@@ -142,14 +134,14 @@ export function createUpstreamKeyerCommonActions(
 			callback: async ({ options }) => {
 				await atem?.setUpstreamKeyerType(
 					{
-						mixEffectKeyType: options.getPlainNumber('type'),
+						mixEffectKeyType: options.type,
 					},
-					options.getPlainNumber('mixeffect'),
-					options.getPlainNumber('key'),
+					options.mixeffect,
+					options.key,
 				)
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.getPlainNumber('mixeffect'), options.getPlainNumber('key'))
+				const usk = getUSK(state.state, options.mixeffect, options.key)
 
 				if (usk) {
 					return {
@@ -194,10 +186,10 @@ export function createUpstreamKeyerCommonActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const mixeffect = (await options.getParsedNumber('mixeffect')) - 1
-				const key = (await options.getParsedNumber('key')) - 1
-				const fill = await options.getParsedNumber('fill')
-				const cut = await options.getParsedNumber('cut')
+				const mixeffect = (await options.mixeffect) - 1
+				const key = (await options.key) - 1
+				const fill = await options.fill
+				const cut = await options.cut
 
 				if (isNaN(mixeffect) || isNaN(key) || isNaN(fill) || isNaN(cut)) return
 
@@ -207,8 +199,8 @@ export function createUpstreamKeyerCommonActions(
 				])
 			},
 			learn: async ({ options }) => {
-				const mixeffect = (await options.getParsedNumber('mixeffect')) - 1
-				const key = (await options.getParsedNumber('key')) - 1
+				const mixeffect = (await options.mixeffect) - 1
+				const key = (await options.key) - 1
 
 				const usk = getUSK(state.state, mixeffect, key)
 
@@ -237,17 +229,17 @@ export function createUpstreamKeyerCommonActions(
 				key: AtemUSKPicker(model),
 			},
 			callback: async ({ options }) => {
-				const meIndex = options.getPlainNumber('mixeffect')
-				const keyIndex = options.getPlainNumber('key')
-				if (options.getPlainString('onair') === 'toggle') {
+				const meIndex = options.mixeffect
+				const keyIndex = options.key
+				if (options.onair === 'toggle') {
 					const usk = getUSK(state.state, meIndex, keyIndex)
 					await atem?.setUpstreamKeyerOnAir(!usk?.onAir, meIndex, keyIndex)
 				} else {
-					await atem?.setUpstreamKeyerOnAir(options.getPlainString('onair') === 'true', meIndex, keyIndex)
+					await atem?.setUpstreamKeyerOnAir(options.onair === 'true', meIndex, keyIndex)
 				}
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.getPlainNumber('mixeffect'), options.getPlainNumber('key'))
+				const usk = getUSK(state.state, options.mixeffect, options.key)
 
 				if (usk) {
 					return {
@@ -267,26 +259,26 @@ export function createUpstreamKeyerCommonActions(
 				...AtemUSKMaskPropertiesPickers(),
 			},
 			callback: async ({ options }) => {
-				const keyId = options.getPlainNumber('key')
-				const mixEffectId = options.getPlainNumber('mixeffect')
+				const keyId = options.key
+				const mixEffectId = options.mixeffect
 				const newProps: Partial<UpstreamKeyerMaskSettings> = {}
 
 				const props = options.getRaw('properties')
 				if (props && Array.isArray(props)) {
 					if (props.includes('maskEnabled')) {
-						newProps.maskEnabled = options.getPlainBoolean('maskEnabled')
+						newProps.maskEnabled = options.maskEnabled
 					}
 					if (props.includes('maskTop')) {
-						newProps.maskTop = options.getPlainNumber('maskTop') * 1000
+						newProps.maskTop = options.maskTop * 1000
 					}
 					if (props.includes('maskBottom')) {
-						newProps.maskBottom = options.getPlainNumber('maskBottom') * 1000
+						newProps.maskBottom = options.maskBottom * 1000
 					}
 					if (props.includes('maskLeft')) {
-						newProps.maskLeft = options.getPlainNumber('maskLeft') * 1000
+						newProps.maskLeft = options.maskLeft * 1000
 					}
 					if (props.includes('maskRight')) {
-						newProps.maskRight = options.getPlainNumber('maskRight') * 1000
+						newProps.maskRight = options.maskRight * 1000
 					}
 				}
 
@@ -295,7 +287,7 @@ export function createUpstreamKeyerCommonActions(
 				await atem?.setUpstreamKeyerMaskSettings(newProps, mixEffectId, keyId)
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.getPlainNumber('mixeffect'), options.getPlainNumber('key'))
+				const usk = getUSK(state.state, options.mixeffect, options.key)
 
 				if (usk?.maskSettings) {
 					return {
@@ -319,27 +311,27 @@ export function createUpstreamKeyerCommonActions(
 				...AtemUSKFlyKeyPropertiesPickers(),
 			},
 			callback: async ({ options }) => {
-				const keyId = options.getPlainNumber('key')
-				const mixEffectId = options.getPlainNumber('mixeffect')
+				const keyId = options.key
+				const mixEffectId = options.mixeffect
 				const newUSKTypeProps: Partial<UpstreamKeyerTypeSettings> = {}
 				const newProps: Partial<UpstreamKeyerDVEBase> = {}
 
 				const props = options.getRaw('properties')
 				if (props && Array.isArray(props)) {
 					if (props.includes('flyEnabled')) {
-						newUSKTypeProps.flyEnabled = options.getPlainBoolean('flyEnabled')
+						newUSKTypeProps.flyEnabled = options.flyEnabled
 					}
 					if (props.includes('positionX')) {
-						newProps.positionX = options.getPlainNumber('positionX') * 1000
+						newProps.positionX = options.positionX * 1000
 					}
 					if (props.includes('positionY')) {
-						newProps.positionY = options.getPlainNumber('positionY') * 1000
+						newProps.positionY = options.positionY * 1000
 					}
 					if (props.includes('sizeX')) {
-						newProps.sizeX = options.getPlainNumber('sizeX') * 1000
+						newProps.sizeX = options.sizeX * 1000
 					}
 					if (props.includes('sizeY')) {
-						newProps.sizeY = options.getPlainNumber('sizeY') * 1000
+						newProps.sizeY = options.sizeY * 1000
 					}
 				}
 
@@ -349,7 +341,7 @@ export function createUpstreamKeyerCommonActions(
 				await atem?.setUpstreamKeyerType(newUSKTypeProps, mixEffectId, keyId)
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.getPlainNumber('mixeffect'), options.getPlainNumber('key'))
+				const usk = getUSK(state.state, options.mixeffect, options.key)
 
 				if (usk?.dveSettings) {
 					return {
@@ -385,27 +377,27 @@ export function createUpstreamKeyerCommonActions(
 				...AtemUSKFlyKeyPropertiesVariablesPickers(),
 			},
 			callback: async ({ options }) => {
-				const mixEffectId = (await options.getParsedNumber('mixeffect')) - 1
-				const keyId = (await options.getParsedNumber('key')) - 1
+				const mixEffectId = (await options.mixeffect) - 1
+				const keyId = (await options.key) - 1
 				const newUSKTypeProps: Partial<UpstreamKeyerTypeSettings> = {}
 				const newProps: Partial<UpstreamKeyerDVEBase> = {}
 
 				const props = options.getRaw('properties')
 				if (props && Array.isArray(props)) {
 					if (props.includes('flyEnabled')) {
-						newUSKTypeProps.flyEnabled = await options.getParsedBoolean('flyEnabled')
+						newUSKTypeProps.flyEnabled = await options.flyEnabled
 					}
 					if (props.includes('positionX')) {
-						newProps.positionX = (await options.getParsedNumber('positionX')) * 1000
+						newProps.positionX = (await options.positionX) * 1000
 					}
 					if (props.includes('positionY')) {
-						newProps.positionY = (await options.getParsedNumber('positionY')) * 1000
+						newProps.positionY = (await options.positionY) * 1000
 					}
 					if (props.includes('sizeX')) {
-						newProps.sizeX = (await options.getParsedNumber('sizeX')) * 1000
+						newProps.sizeX = (await options.sizeX) * 1000
 					}
 					if (props.includes('sizeY')) {
-						newProps.sizeY = (await options.getParsedNumber('sizeY')) * 1000
+						newProps.sizeY = (await options.sizeY) * 1000
 					}
 				}
 
@@ -419,8 +411,8 @@ export function createUpstreamKeyerCommonActions(
 				}
 			},
 			learn: async ({ options }) => {
-				const mixEffectId = (await options.getParsedNumber('mixeffect')) - 1
-				const keyId = (await options.getParsedNumber('key')) - 1
+				const mixEffectId = (await options.mixeffect) - 1
+				const keyId = (await options.key) - 1
 				const usk = getUSK(state.state, mixEffectId, keyId)
 
 				if (usk?.dveSettings) {

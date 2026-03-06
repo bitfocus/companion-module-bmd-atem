@@ -5,13 +5,17 @@ import { ActionId } from '../ActionId.js'
 import type { MyActionDefinitions } from './../types.js'
 import { getMixEffect, type StateWrapper } from '../../state.js'
 
-export interface AtemFadeToBlackActions {
+export type AtemFadeToBlackActions = {
 	[ActionId.FadeToBlackAuto]: {
-		mixeffect: number
+		options: {
+			mixeffect: number
+		}
 	}
 	[ActionId.FadeToBlackRate]: {
-		mixeffect: number
-		rate: number
+		options: {
+			mixeffect: number
+			rate: number
+		}
 	}
 }
 
@@ -27,7 +31,7 @@ export function createFadeToBlackActions(
 				mixeffect: AtemMEPicker(model, 0),
 			},
 			callback: async ({ options }) => {
-				await atem?.fadeToBlack(options.getPlainNumber('mixeffect'))
+				await atem?.fadeToBlack(options.mixeffect)
 			},
 		},
 		[ActionId.FadeToBlackRate]: {
@@ -37,14 +41,13 @@ export function createFadeToBlackActions(
 				rate: AtemRatePicker('Rate'),
 			},
 			callback: async ({ options }) => {
-				await atem?.setFadeToBlackRate(options.getPlainNumber('rate'), options.getPlainNumber('mixeffect'))
+				await atem?.setFadeToBlackRate(options.rate, options.mixeffect)
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
+				const me = getMixEffect(state.state, options.mixeffect)
 
 				if (me?.fadeToBlack) {
 					return {
-						...options.getJson(),
 						rate: me.fadeToBlack.rate,
 					}
 				} else {

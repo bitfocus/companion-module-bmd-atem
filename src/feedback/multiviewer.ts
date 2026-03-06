@@ -61,19 +61,11 @@ export function createMultiviewerFeedbacks(
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: ({ options }): boolean => {
-				const window = getMultiviewerWindow(
-					state.state,
-					options.getPlainNumber('multiViewerId'),
-					options.getPlainNumber('windowIndex'),
-				)
-				return window?.source === options.getPlainNumber('source')
+				const window = getMultiviewerWindow(state.state, options.multiViewerId, options.windowIndex)
+				return window?.source === options.source
 			},
 			learn: ({ options }) => {
-				const window = getMultiviewerWindow(
-					state.state,
-					options.getPlainNumber('multiViewerId'),
-					options.getPlainNumber('windowIndex'),
-				)
+				const window = getMultiviewerWindow(state.state, options.multiViewerId, options.windowIndex)
 
 				if (window) {
 					return {
@@ -117,16 +109,16 @@ export function createMultiviewerFeedbacks(
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: async ({ options }) => {
-				const multiViewerId = (await options.getParsedNumber('multiViewerId')) - 1
-				const windowIndex = (await options.getParsedNumber('windowIndex')) - 1
-				const source = await options.getParsedNumber('source')
+				const multiViewerId = (await options.multiViewerId) - 1
+				const windowIndex = (await options.windowIndex) - 1
+				const source = await options.source
 
 				const window = getMultiviewerWindow(state.state, multiViewerId, windowIndex)
 				return window?.source === source
 			},
 			learn: async ({ options }) => {
-				const multiViewerId = (await options.getParsedNumber('multiViewerId')) - 1
-				const windowIndex = (await options.getParsedNumber('windowIndex')) - 1
+				const multiViewerId = (await options.multiViewerId) - 1
+				const windowIndex = (await options.windowIndex) - 1
 
 				const window = getMultiviewerWindow(state.state, multiViewerId, windowIndex)
 
@@ -185,7 +177,7 @@ export function createMultiviewerFeedbacks(
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: async ({ options }) => {
-				const multiViewerId = (await options.getParsedNumber('multiViewerId')) - 1
+				const multiViewerId = (await options.multiViewerId) - 1
 
 				const mv = getMultiviewer(state.state, multiViewerId)
 				const layout = mv?.properties?.layout ?? Enums.MultiViewerLayout.Default
@@ -205,14 +197,14 @@ export function createMultiviewerFeedbacks(
 				}
 
 				return (
-					checkMatches(options.getPlainString('topLeft'), Enums.MultiViewerLayout.TopLeftSmall) &&
-					checkMatches(options.getPlainString('topRight'), Enums.MultiViewerLayout.TopRightSmall) &&
-					checkMatches(options.getPlainString('bottomLeft'), Enums.MultiViewerLayout.BottomLeftSmall) &&
-					checkMatches(options.getPlainString('bottomRight'), Enums.MultiViewerLayout.BottomRightSmall)
+					checkMatches(options.topLeft, Enums.MultiViewerLayout.TopLeftSmall) &&
+					checkMatches(options.topRight, Enums.MultiViewerLayout.TopRightSmall) &&
+					checkMatches(options.bottomLeft, Enums.MultiViewerLayout.BottomLeftSmall) &&
+					checkMatches(options.bottomRight, Enums.MultiViewerLayout.BottomRightSmall)
 				)
 			},
 			learn: async ({ options }) => {
-				const multiViewerId = (await options.getParsedNumber('multiViewerId')) - 1
+				const multiViewerId = (await options.multiViewerId) - 1
 
 				const mv = getMultiviewer(state.state, multiViewerId)
 

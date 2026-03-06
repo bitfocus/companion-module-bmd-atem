@@ -71,13 +71,13 @@ export function createMediaPoolFeedbacks(
 				...cropAndPositionOptions,
 			},
 			callback: async ({ options, image }) => {
-				const source = parseSource(options.getPlainNumber('source'))
+				const source = parseSource(options.source)
 
 				if (!image) return {}
 
 				const previewOptions: MediaPoolPreviewOptions = {
-					crop: options.getPlainString('crop'),
-					position: options.getPlainString('position'),
+					crop: options.crop,
+					position: options.position,
 
 					buttonHeight: image.height,
 					buttonWidth: image.width,
@@ -86,7 +86,7 @@ export function createMediaPoolFeedbacks(
 				return executePreviewFeedback(state, previewOptions, source)
 			},
 			subscribe: ({ id, options }) => {
-				const source = parseSource(options.getPlainNumber('source'))
+				const source = parseSource(options.source)
 				state.mediaPoolCache.subscribe(source, id)
 			},
 			unsubscribe: ({ id }) => {
@@ -121,9 +121,9 @@ export function createMediaPoolFeedbacks(
 			callback: async ({ options, image }) => {
 				if (!image) return {}
 
-				let isClip = model.media.clips > 0 && options.getPlainBoolean('isClip')
+				let isClip = model.media.clips > 0 && options.isClip
 
-				let slotStr = await options.getParsedString('slot')
+				let slotStr = await options.slot
 				if (slotStr.startsWith('S')) {
 					isClip = false
 					slotStr = slotStr.substring(1)
@@ -144,8 +144,8 @@ export function createMediaPoolFeedbacks(
 				}
 
 				const previewOptions: MediaPoolPreviewOptions = {
-					crop: options.getPlainString('crop'),
-					position: options.getPlainString('position'),
+					crop: options.crop,
+					position: options.position,
 
 					buttonHeight: image.height,
 					buttonWidth: image.width,
@@ -156,8 +156,8 @@ export function createMediaPoolFeedbacks(
 			subscribe: async ({ id, options }) => {
 				state.mediaPoolCache.subscribe(
 					{
-						slot: (await options.getParsedNumber('slot')) - 1,
-						isClip: model.media.clips > 0 && options.getPlainBoolean('isClip'),
+						slot: (await options.slot) - 1,
+						isClip: model.media.clips > 0 && options.isClip,
 						frameIndex: 0, // Future
 					},
 					id,

@@ -89,9 +89,9 @@ export function createCameraControlVideoActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
-				const colorTemperature = await options.getParsedNumber('colorTemperature')
-				const tint = await options.getParsedNumber('tint')
+				const cameraId = await options.cameraId
+				const colorTemperature = await options.colorTemperature
+				const tint = await options.tint
 
 				await commandSender?.videoManualWhiteBalance(cameraId, colorTemperature, tint)
 			},
@@ -119,9 +119,9 @@ export function createCameraControlVideoActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
-				const colorTemperatureIncrement = await options.getParsedNumber('colorTemperatureIncrement')
-				const tintIncrement = await options.getParsedNumber('tintIncrement')
+				const cameraId = await options.cameraId
+				const colorTemperatureIncrement = await options.colorTemperatureIncrement
+				const tintIncrement = await options.tintIncrement
 
 				const colorTemperature =
 					(_state.atemCameraState.get(cameraId)?.video.whiteBalance[0] ?? 0) + colorTemperatureIncrement
@@ -143,7 +143,7 @@ export function createCameraControlVideoActions(
 				cameraId: CameraControlSourcePicker(),
 			},
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
+				const cameraId = await options.cameraId
 
 				await commandSender?.videoTriggerAutoWhiteBalance(cameraId)
 			},
@@ -163,8 +163,8 @@ export function createCameraControlVideoActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
-				const framerate = await options.getParsedNumber('framerate')
+				const cameraId = await options.cameraId
+				const framerate = await options.framerate
 
 				await commandSender?.videoExposureUs(cameraId, Math.round(1000000 / framerate))
 			},
@@ -192,8 +192,8 @@ export function createCameraControlVideoActions(
 					690, 500,
 				]
 
-				const cameraId = await options.getParsedNumber('cameraId')
-				const increment = options.getPlainString('direction') == 'up' ? 1 : -1
+				const cameraId = await options.cameraId
+				const increment = options.direction == 'up' ? 1 : -1
 
 				const currentExposreIndex = exposureUs.indexOf(_state.atemCameraState.get(cameraId)?.video.exposure ?? 41667)
 
@@ -237,8 +237,8 @@ export function createCameraControlVideoActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
-				const level = options.getPlainNumber('level')
+				const cameraId = await options.cameraId
+				const level = options.level
 
 				await commandSender?.videoSharpeningLevel(cameraId, level)
 			},
@@ -258,8 +258,8 @@ export function createCameraControlVideoActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
-				const gain = await options.getParsedNumber('gain')
+				const cameraId = await options.cameraId
+				const gain = await options.gain
 
 				await commandSender?.videoGain(cameraId, gain)
 			},
@@ -279,8 +279,8 @@ export function createCameraControlVideoActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
-				const increment = await options.getParsedNumber('increment')
+				const cameraId = await options.cameraId
+				const increment = await options.increment
 
 				let gain = (_state.atemCameraState.get(cameraId)?.video.gain ?? 0) + increment
 
@@ -308,8 +308,8 @@ export function createCameraControlVideoActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
-				const stop = await options.getParsedNumber('stop')
+				const cameraId = await options.cameraId
+				const stop = await options.stop
 
 				await commandSender?.videoNdFilterStop(cameraId, stop)
 			},

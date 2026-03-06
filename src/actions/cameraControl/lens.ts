@@ -71,8 +71,8 @@ export function createCameraControlLensActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
-				const value = await options.getParsedNumber('delta')
+				const cameraId = await options.cameraId
+				const value = await options.delta
 
 				await commandSender?.lensFocus(cameraId, value, true)
 			},
@@ -84,7 +84,7 @@ export function createCameraControlLensActions(
 				cameraId: CameraControlSourcePicker(),
 			},
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
+				const cameraId = await options.cameraId
 
 				await commandSender?.lensTriggerAutoFocus(cameraId)
 			},
@@ -120,14 +120,14 @@ export function createCameraControlLensActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
+				const cameraId = await options.cameraId
 
-				const isNormalised = options.getPlainBoolean('isNormalised')
+				const isNormalised = options.isNormalised
 				if (isNormalised) {
-					const value = await options.getParsedNumber('normalised')
+					const value = await options.normalised
 					await commandSender?.lensIrisNormalised(cameraId, value)
 				} else {
-					const value = await options.getParsedNumber('fStop')
+					const value = await options.fStop
 					await commandSender?.lensIrisFStop(cameraId, value)
 				}
 			},
@@ -147,8 +147,8 @@ export function createCameraControlLensActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
-				const increment = await options.getParsedNumber('fStopIncrement')
+				const cameraId = await options.cameraId
+				const increment = await options.fStopIncrement
 
 				let iris = (state.atemCameraState.get(cameraId)?.lens.iris ?? 0) + increment
 
@@ -168,7 +168,7 @@ export function createCameraControlLensActions(
 				cameraId: CameraControlSourcePicker(),
 			},
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
+				const cameraId = await options.cameraId
 
 				await commandSender?.lensTriggerAutoIris(cameraId)
 			},
@@ -187,14 +187,14 @@ export function createCameraControlLensActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
+				const cameraId = await options.cameraId
 
 				let target: boolean
-				if (options.getPlainString('state') === 'toggle') {
+				if (options.state === 'toggle') {
 					const cameraState = state.atemCameraState.get(cameraId)
 					target = !cameraState?.lens?.opticalImageStabilisation
 				} else {
-					target = options.getPlainString('state') === 'true'
+					target = options.state === 'true'
 				}
 
 				await commandSender?.lensEnableOpticalImageStabilisation(cameraId, target)
@@ -215,8 +215,8 @@ export function createCameraControlLensActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
-				const value = await options.getParsedNumber('zoom')
+				const cameraId = await options.cameraId
+				const value = await options.zoom
 				await commandSender?.lensSetContinuousZoomSpeed(cameraId, value)
 			},
 		},

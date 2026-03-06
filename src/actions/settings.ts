@@ -80,13 +80,13 @@ export function createSettingsActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const source = options.getPlainNumber('source')
-				const setShort = options.getPlainBoolean('short_enable')
-				const setLong = options.getPlainBoolean('long_enable')
+				const source = options.source
+				const setShort = options.short_enable
+				const setLong = options.long_enable
 
 				const newProps: Partial<Pick<InputState.InputChannel, 'longName' | 'shortName'>> = {}
-				if (setShort) newProps.shortName = await options.getParsedString('short_value')
-				if (setLong) newProps.longName = await options.getParsedString('long_value')
+				if (setShort) newProps.shortName = await options.short_value
+				if (setLong) newProps.longName = await options.long_value
 
 				await Promise.all([
 					typeof newProps.longName === 'string' && !atem?.hasInternalMultiviewerLabelGeneration()
@@ -96,7 +96,7 @@ export function createSettingsActions(
 				])
 			},
 			learn: ({ options }) => {
-				const source = options.getPlainNumber('source')
+				const source = options.source
 				const props = state.state.inputs[source]
 
 				if (props) {

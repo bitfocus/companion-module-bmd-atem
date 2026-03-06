@@ -99,18 +99,14 @@ export function createSuperSourceFeedbacks(
 				const props = options.getRaw('properties')
 				if (!ssrc || !props || !Array.isArray(props)) return false
 
-				if (props.includes('fill') && ssrc.artFillSource !== options.getPlainNumber('fill')) return false
-				if (props.includes('key') && ssrc.artCutSource !== options.getPlainNumber('key')) return false
+				if (props.includes('fill') && ssrc.artFillSource !== options.fill) return false
+				if (props.includes('key') && ssrc.artCutSource !== options.key) return false
 
 				if (props.includes('artOption') && ssrc.artOption !== options.getRaw('artOption')) return false
-				if (props.includes('artPreMultiplied') && ssrc.artPreMultiplied !== options.getPlainBoolean('artPreMultiplied'))
-					return false
-				if (props.includes('artClip') && !compareAsInt(options.getPlainNumber('artClip'), ssrc.artClip, 10))
-					return false
-				if (props.includes('artGain') && !compareAsInt(options.getPlainNumber('artGain'), ssrc.artGain, 10))
-					return false
-				if (props.includes('artInvertKey') && ssrc.artInvertKey !== options.getPlainBoolean('artInvertKey'))
-					return false
+				if (props.includes('artPreMultiplied') && ssrc.artPreMultiplied !== options.artPreMultiplied) return false
+				if (props.includes('artClip') && !compareAsInt(options.artClip, ssrc.artClip, 10)) return false
+				if (props.includes('artGain') && !compareAsInt(options.artGain, ssrc.artGain, 10)) return false
+				if (props.includes('artInvertKey') && ssrc.artInvertKey !== options.artInvertKey) return false
 
 				return true
 			},
@@ -160,17 +156,17 @@ export function createSuperSourceFeedbacks(
 					value: Promise<SuperSourceProperties[T]>,
 				) => ps.push(value.then((v) => ssrc[key] == v))
 
-				if (props.includes('fill')) pushComparison('artFillSource', options.getParsedNumber('fill'))
-				if (props.includes('key')) pushComparison('artCutSource', options.getParsedNumber('key'))
+				if (props.includes('fill')) pushComparison('artFillSource', options.fill)
+				if (props.includes('key')) pushComparison('artCutSource', options.key)
 
 				// if (props.includes('artOption') && ssrc.artOption !== options.getRaw('artOption')) return false
-				// if (props.includes('artPreMultiplied') && ssrc.artPreMultiplied !== options.getPlainBoolean('artPreMultiplied'))
+				// if (props.includes('artPreMultiplied') && ssrc.artPreMultiplied !== options.artPreMultiplied)
 				// 	return false
-				// if (props.includes('artClip') && !compareAsInt(options.getPlainNumber('artClip'), ssrc.artClip, 10))
+				// if (props.includes('artClip') && !compareAsInt(options.artClip, ssrc.artClip, 10))
 				// 	return false
-				// if (props.includes('artGain') && !compareAsInt(options.getPlainNumber('artGain'), ssrc.artGain, 10))
+				// if (props.includes('artGain') && !compareAsInt(options.artGain, ssrc.artGain, 10))
 				// 	return false
-				// if (props.includes('artInvertKey') && ssrc.artInvertKey !== options.getPlainBoolean('artInvertKey'))
+				// if (props.includes('artInvertKey') && ssrc.artInvertKey !== options.artInvertKey)
 				// 	return false
 
 				// Check each value
@@ -218,7 +214,7 @@ export function createSuperSourceFeedbacks(
 			callback: ({ options }): boolean => {
 				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
 				const ssrc = getSuperSource(state.state, ssrcId)
-				return ssrc.properties?.artFillSource === options.getPlainNumber('source')
+				return ssrc.properties?.artFillSource === options.source
 			},
 			learn: ({ options }) => {
 				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
@@ -282,12 +278,12 @@ export function createSuperSourceFeedbacks(
 			},
 			callback: ({ options }): boolean => {
 				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-				const box = getSuperSourceBox(state.state, options.getPlainNumber('boxIndex'), ssrcId)
-				return box?.source === options.getPlainNumber('source')
+				const box = getSuperSourceBox(state.state, options.boxIndex, ssrcId)
+				return box?.source === options.source
 			},
 			learn: ({ options }) => {
 				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-				const box = getSuperSourceBox(state.state, options.getPlainNumber('boxIndex'), ssrcId)
+				const box = getSuperSourceBox(state.state, options.boxIndex, ssrcId)
 
 				if (box) {
 					return {
@@ -335,18 +331,16 @@ export function createSuperSourceFeedbacks(
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: async ({ options }) => {
-				const ssrcId =
-					options.getRaw('ssrcId') && model.SSrc > 1 ? Number(await options.getParsedNumber('ssrcId')) - 1 : 0
-				const boxIndex = (await options.getParsedNumber('boxIndex')) - 1
-				const source = await options.getParsedNumber('source')
+				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(await options.ssrcId) - 1 : 0
+				const boxIndex = (await options.boxIndex) - 1
+				const source = await options.source
 
 				const box = getSuperSourceBox(state.state, boxIndex, ssrcId)
 				return box?.source === source
 			},
 			learn: async ({ options }) => {
-				const ssrcId =
-					options.getRaw('ssrcId') && model.SSrc > 1 ? Number(await options.getParsedNumber('ssrcId')) - 1 : 0
-				const boxIndex = (await options.getParsedNumber('boxIndex')) - 1
+				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(await options.ssrcId) - 1 : 0
+				const boxIndex = (await options.boxIndex) - 1
 
 				const box = getSuperSourceBox(state.state, boxIndex, ssrcId)
 
@@ -375,7 +369,7 @@ export function createSuperSourceFeedbacks(
 			},
 			callback: ({ options }): boolean => {
 				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-				const box = getSuperSourceBox(state.state, options.getPlainNumber('boxIndex'), ssrcId)
+				const box = getSuperSourceBox(state.state, options.boxIndex, ssrcId)
 				return !!(box && box.enabled)
 			},
 		},
@@ -394,41 +388,31 @@ export function createSuperSourceFeedbacks(
 			},
 			callback: ({ options }): boolean => {
 				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-				const box = getSuperSourceBox(state.state, options.getPlainNumber('boxIndex'), ssrcId)
+				const box = getSuperSourceBox(state.state, options.boxIndex, ssrcId)
 
 				const props = options.getRaw('properties')
 				if (!box || !props || !Array.isArray(props)) return false
 
-				if (props.includes('source') && box.source !== options.getPlainNumber('source')) return false
+				if (props.includes('source') && box.source !== options.source) return false
 
-				if (props.includes('size') && !compareAsInt(options.getPlainNumber('size'), box.size, 1000, 10)) return false
-				if (props.includes('x') && !compareAsInt(options.getPlainNumber('x'), box.x, 100)) return false
-				if (props.includes('y') && !compareAsInt(options.getPlainNumber('y'), box.y, 100)) return false
+				if (props.includes('size') && !compareAsInt(options.size, box.size, 1000, 10)) return false
+				if (props.includes('x') && !compareAsInt(options.x, box.x, 100)) return false
+				if (props.includes('y') && !compareAsInt(options.y, box.y, 100)) return false
 
-				if (props.includes('cropEnable') && box.cropped !== options.getPlainBoolean('cropEnable')) return false
+				if (props.includes('cropEnable') && box.cropped !== options.cropEnable) return false
 
 				if (box.cropped) {
-					if (props.includes('cropTop') && !compareAsInt(options.getPlainNumber('cropTop'), box.cropTop, 1000, 10))
-						return false
-					if (
-						props.includes('cropBottom') &&
-						!compareAsInt(options.getPlainNumber('cropBottom'), box.cropBottom, 1000, 10)
-					)
-						return false
-					if (props.includes('cropLeft') && !compareAsInt(options.getPlainNumber('cropLeft'), box.cropLeft, 1000, 10))
-						return false
-					if (
-						props.includes('cropRight') &&
-						!compareAsInt(options.getPlainNumber('cropRight'), box.cropRight, 1000, 10)
-					)
-						return false
+					if (props.includes('cropTop') && !compareAsInt(options.cropTop, box.cropTop, 1000, 10)) return false
+					if (props.includes('cropBottom') && !compareAsInt(options.cropBottom, box.cropBottom, 1000, 10)) return false
+					if (props.includes('cropLeft') && !compareAsInt(options.cropLeft, box.cropLeft, 1000, 10)) return false
+					if (props.includes('cropRight') && !compareAsInt(options.cropRight, box.cropRight, 1000, 10)) return false
 				}
 
 				return true
 			},
 			learn: ({ options }) => {
 				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-				const boxId = options.getPlainNumber('boxIndex')
+				const boxId = options.boxIndex
 				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.boxes[boxId]
 				if (ssrcConfig) {
 					return {

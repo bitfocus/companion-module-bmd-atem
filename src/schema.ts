@@ -1,15 +1,12 @@
-import type {
-	CompanionActionSchema,
-	CompanionOptionValues,
-	CompanionFeedbackSchema,
-	CompanionVariableValues,
-} from '@companion-module/base'
 import type { AtemConfig } from './config.js'
+import type { ActionTypes } from './actions/index.js'
+import type { FeedbackTypes } from './feedback/index.js'
+import type { VariablesSchema } from './variables/schema.js'
 
 export interface AtemSchema {
 	config: AtemConfig
 	secrets: undefined
-	actions: Record<string, CompanionActionSchema<CompanionOptionValues>>
-	feedbacks: Record<string, CompanionFeedbackSchema<CompanionOptionValues>>
-	variables: CompanionVariableValues
+	actions: ActionTypes
+	feedbacks: FeedbackTypes
+	variables: VariablesSchema
 }

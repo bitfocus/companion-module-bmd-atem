@@ -61,7 +61,7 @@ export function createUpstreamKeyerFeedbacks(
 				bgcolor: combineRgb(255, 0, 0),
 			},
 			callback: ({ options }): boolean => {
-				const usk = getUSK(state.state, options.getPlainNumber('mixeffect'), options.getPlainNumber('key'))
+				const usk = getUSK(state.state, options.mixeffect, options.key)
 				return !!usk?.onAir
 			},
 		},
@@ -79,8 +79,8 @@ export function createUpstreamKeyerFeedbacks(
 				bgcolor: combineRgb(255, 0, 0),
 			},
 			callback: ({ options }): boolean => {
-				const usk = getUSK(state.state, options.getPlainNumber('mixeffect'), options.getPlainNumber('key'))
-				return usk?.mixEffectKeyType === options.getPlainNumber('type')
+				const usk = getUSK(state.state, options.mixeffect, options.key)
+				return usk?.mixEffectKeyType === options.type
 			},
 		},
 		[FeedbackId.USKSource]: {
@@ -97,11 +97,11 @@ export function createUpstreamKeyerFeedbacks(
 				bgcolor: combineRgb(238, 238, 0),
 			},
 			callback: ({ options }): boolean => {
-				const usk = getUSK(state.state, options.getPlainNumber('mixeffect'), options.getPlainNumber('key'))
-				return usk?.fillSource === options.getPlainNumber('fill')
+				const usk = getUSK(state.state, options.mixeffect, options.key)
+				return usk?.fillSource === options.fill
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.getPlainNumber('mixeffect'), options.getPlainNumber('key'))
+				const usk = getUSK(state.state, options.mixeffect, options.key)
 
 				if (usk) {
 					return {
@@ -145,16 +145,16 @@ export function createUpstreamKeyerFeedbacks(
 				bgcolor: combineRgb(238, 238, 0),
 			},
 			callback: async ({ options }) => {
-				const mixeffect = (await options.getParsedNumber('mixeffect')) - 1
-				const key = (await options.getParsedNumber('key')) - 1
-				const fill = await options.getParsedNumber('fill')
+				const mixeffect = (await options.mixeffect) - 1
+				const key = (await options.key) - 1
+				const fill = await options.fill
 
 				const usk = getUSK(state.state, mixeffect, key)
 				return usk?.fillSource === fill
 			},
 			learn: async ({ options }) => {
-				const mixeffect = (await options.getParsedNumber('mixeffect')) - 1
-				const key = (await options.getParsedNumber('key')) - 1
+				const mixeffect = (await options.mixeffect) - 1
+				const key = (await options.key) - 1
 
 				const usk = getUSK(state.state, mixeffect, key)
 
@@ -189,11 +189,11 @@ export function createUpstreamKeyerFeedbacks(
 						bgcolor: combineRgb(238, 238, 0),
 					},
 					callback: ({ options }): boolean => {
-						const usk = getUSK(state.state, options.getPlainNumber('mixeffect'), options.getPlainNumber('key'))
-						return usk?.flyProperties?.isAtKeyFrame === Number(options.getPlainNumber('keyframe'))
+						const usk = getUSK(state.state, options.mixeffect, options.key)
+						return usk?.flyProperties?.isAtKeyFrame === Number(options.keyframe)
 					},
 					learn: ({ options }) => {
-						const usk = getUSK(state.state, options.getPlainNumber('mixeffect'), options.getPlainNumber('key'))
+						const usk = getUSK(state.state, options.mixeffect, options.key)
 
 						if (usk?.flyProperties) {
 							return {

@@ -35,10 +35,10 @@ export function createAuxOutputActions(
 				input: AtemAuxSourcePicker(model, state.state),
 			},
 			callback: async ({ options }) => {
-				await atem?.setAuxSource(options.getPlainNumber('input'), options.getPlainNumber('aux'))
+				await atem?.setAuxSource(options.input, optionsaux)
 			},
 			learn: ({ options }) => {
-				const auxSource = state.state.video.auxilliaries[options.getPlainNumber('aux')]
+				const auxSource = state.state.video.auxilliaries[options.aux]
 
 				if (auxSource !== undefined) {
 					return {
@@ -69,8 +69,8 @@ export function createAuxOutputActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const output = await options.getParsedNumber('aux')
-				const input = await options.getParsedNumber('input')
+				const output = await options.aux
+				const input = await options.input
 
 				if (!isNaN(output) && !isNaN(input)) {
 					await atem?.setAuxSource(input, output - 1)

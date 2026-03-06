@@ -83,7 +83,7 @@ export function createClassicAudioActions(
 				...FadeDurationFields,
 			},
 			callback: async ({ options }) => {
-				const inputId = options.getPlainNumber('input')
+				const inputId = options.input
 				const audioChannels = state.state.audio?.channels ?? {}
 				const channel = audioChannels[inputId]
 
@@ -93,13 +93,13 @@ export function createClassicAudioActions(
 						await atem?.setClassicAudioMixerInputProps(inputId, { gain: value })
 					},
 					channel?.gain,
-					options.getPlainNumber('gain'),
+					options.gain,
 					options,
 				)
 			},
 			learn: ({ options }) => {
 				const audioChannels = state.state.audio?.channels ?? {}
-				const channel = audioChannels[options.getPlainNumber('input')]
+				const channel = audioChannels[options.input]
 
 				if (channel) {
 					return {
@@ -119,7 +119,7 @@ export function createClassicAudioActions(
 				...FadeDurationFields,
 			},
 			callback: async ({ options }) => {
-				const inputId = options.getPlainNumber('input')
+				const inputId = options.input
 				const audioChannels = state.state.audio?.channels ?? {}
 				const channel = audioChannels[inputId]
 
@@ -131,7 +131,7 @@ export function createClassicAudioActions(
 							await atem?.setClassicAudioMixerInputProps(inputId, { gain: value })
 						},
 						currentGain,
-						currentGain + options.getPlainNumber('delta'),
+						currentGain + options.delta,
 						options,
 					)
 				}
@@ -156,7 +156,7 @@ export function createClassicAudioActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const inputId = options.getPlainNumber('input')
+				const inputId = options.input
 				const audioChannels = state.state.audio?.channels ?? {}
 				const toggleVal =
 					audioChannels[inputId]?.mixOption === Enums.AudioMixOption.On
@@ -168,7 +168,7 @@ export function createClassicAudioActions(
 			},
 			learn: ({ options }) => {
 				const audioChannels = state.state.audio?.channels ?? {}
-				const channel = audioChannels[options.getPlainNumber('input')]
+				const channel = audioChannels[options.input]
 
 				if (channel) {
 					return {
@@ -242,7 +242,7 @@ export function createClassicAudioActions(
 						await atem?.setClassicAudioMixerMasterProps({ gain: value })
 					},
 					state.state.audio?.master?.gain,
-					options.getPlainNumber('gain'),
+					options.gain,
 					options,
 				)
 			},
@@ -275,7 +275,7 @@ export function createClassicAudioActions(
 							await atem?.setClassicAudioMixerMasterProps({ gain: value })
 						},
 						currentGain,
-						currentGain + options.getPlainNumber('delta'),
+						currentGain + options.delta,
 						options,
 					)
 				}
@@ -304,7 +304,7 @@ export function createClassicAudioActions(
 						await atem?.setClassicAudioMixerMasterProps({ balance: value })
 					},
 					state.state.audio?.master?.balance,
-					options.getPlainNumber('balance'),
+					options.balance,
 					options,
 				)
 			},
@@ -344,7 +344,7 @@ export function createClassicAudioActions(
 							await atem?.setClassicAudioMixerMasterProps({ balance: value })
 						},
 						currentBalance,
-						currentBalance + options.getPlainNumber('delta'),
+						currentBalance + options.delta,
 						options,
 					)
 				}

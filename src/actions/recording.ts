@@ -44,8 +44,8 @@ export function createRecordingActions(
 				},
 			},
 			callback: async ({ options }) => {
-				let newState = options.getPlainString('record') === 'true'
-				if (options.getPlainString('record') === 'toggle') {
+				let newState = options.record === 'true'
+				if (options.record === 'toggle') {
 					newState = state.state.recording?.status?.state === Enums.RecordingStatus.Idle
 				}
 
@@ -85,7 +85,7 @@ export function createRecordingActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const filename = await options.getParsedString('filename')
+				const filename = await options.filename
 				await atem?.setRecordingSettings({ filename })
 			},
 			learn: ({ options }) => {
@@ -111,8 +111,8 @@ export function createRecordingActions(
 				},
 			},
 			callback: async ({ options }) => {
-				let newState = options.getPlainString('recordISO') === 'true'
-				if (options.getPlainString('recordISO') === 'toggle') {
+				let newState = options.recordISO === 'true'
+				if (options.recordISO === 'toggle') {
 					newState = !state.state.recording?.recordAllInputs
 				}
 

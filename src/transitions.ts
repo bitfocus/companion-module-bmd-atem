@@ -60,12 +60,12 @@ export class AtemTransitions {
 		sendFcn: (value: number) => Promise<void>,
 		from: number | undefined,
 		to: number,
-		options: MyOptionsHelper<FadeDurationFieldsType>,
+		options: FadeDurationFieldsType,
 	): Promise<void> {
-		const duration = options.getPlainNumber('fadeDuration')
+		const duration = options.fadeDuration
 
-		const algorithm = options.getPlainString('fadeAlgorithm')
-		const curve = options.getPlainString('fadeCurve')
+		const algorithm = options.fadeAlgorithm
+		const curve = options.fadeCurve
 
 		return this.run(id, async ([value]) => sendFcn(value), [from], [to], duration, algorithm, curve)
 	}

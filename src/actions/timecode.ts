@@ -40,7 +40,7 @@ export function createTimecodeActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const timecodeStr = await options.getParsedString('time')
+				const timecodeStr = await options.time
 				const [hour, minute, seconds, frames] = timecodeStr.split(/:|;/).map((v) => parseInt(v, 10))
 
 				if (isNaN(hour) || isNaN(minute) || isNaN(seconds)) throw new Error('Invalid timecode')
@@ -71,7 +71,7 @@ export function createTimecodeActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const mode = options.getPlainNumber('mode')
+				const mode = options.mode
 
 				await atem?.setTimeMode(mode)
 			},

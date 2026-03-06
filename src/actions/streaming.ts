@@ -40,8 +40,8 @@ export function createStreamingActions(
 				},
 			},
 			callback: async ({ options }) => {
-				let newState = options.getPlainString('stream') === 'true'
-				if (options.getPlainString('stream') === 'toggle') {
+				let newState = options.stream === 'true'
+				if (options.stream === 'toggle') {
 					newState = state.state.streaming?.status?.state === Enums.StreamingStatus.Idle
 				}
 
@@ -88,11 +88,7 @@ export function createStreamingActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const [serviceName, url, key] = await Promise.all([
-					options.getParsedString('service'),
-					options.getParsedString('url'),
-					options.getParsedString('key'),
-				])
+				const [serviceName, url, key] = await Promise.all([options.service, options.url, options.key])
 
 				await atem?.setStreamingService({ serviceName, url, key })
 			},

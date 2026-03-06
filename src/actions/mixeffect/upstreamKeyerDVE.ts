@@ -245,89 +245,89 @@ export function createUpstreamKeyerDVEActions(
 				...AtemUSKDVEPropertiesPickers(),
 			},
 			callback: async ({ options }) => {
-				const keyId = options.getPlainNumber('key')
-				const mixEffectId = options.getPlainNumber('mixeffect')
+				const keyId = options.key
+				const mixEffectId = options.mixeffect
 				const newProps: Partial<UpstreamKeyerDVESettings> = {}
 
 				const props = options.getRaw('properties')
 				if (props && Array.isArray(props)) {
 					if (props.includes('maskEnabled')) {
-						newProps.maskEnabled = options.getPlainBoolean('maskEnabled')
+						newProps.maskEnabled = options.maskEnabled
 					}
 					if (props.includes('maskTop')) {
-						newProps.maskTop = options.getPlainNumber('maskTop') * 1000
+						newProps.maskTop = options.maskTop * 1000
 					}
 					if (props.includes('maskBottom')) {
-						newProps.maskBottom = options.getPlainNumber('maskBottom') * 1000
+						newProps.maskBottom = options.maskBottom * 1000
 					}
 					if (props.includes('maskLeft')) {
-						newProps.maskLeft = options.getPlainNumber('maskLeft') * 1000
+						newProps.maskLeft = options.maskLeft * 1000
 					}
 					if (props.includes('maskRight')) {
-						newProps.maskRight = options.getPlainNumber('maskRight') * 1000
+						newProps.maskRight = options.maskRight * 1000
 					}
 					if (props.includes('sizeX')) {
-						newProps.sizeX = options.getPlainNumber('sizeX') * 1000
+						newProps.sizeX = options.sizeX * 1000
 					}
 					if (props.includes('sizeY')) {
-						newProps.sizeY = options.getPlainNumber('sizeY') * 1000
+						newProps.sizeY = options.sizeY * 1000
 					}
 					if (props.includes('positionX')) {
-						newProps.positionX = options.getPlainNumber('positionX') * 1000
+						newProps.positionX = options.positionX * 1000
 					}
 					if (props.includes('positionY')) {
-						newProps.positionY = options.getPlainNumber('positionY') * 1000
+						newProps.positionY = options.positionY * 1000
 					}
 					if (props.includes('rotation')) {
-						newProps.rotation = options.getPlainNumber('rotation')
+						newProps.rotation = options.rotation
 					}
 					if (props.includes('borderOuterWidth')) {
-						newProps.borderOuterWidth = options.getPlainNumber('borderOuterWidth') * 100
+						newProps.borderOuterWidth = options.borderOuterWidth * 100
 					}
 					if (props.includes('borderInnerWidth')) {
-						newProps.borderInnerWidth = options.getPlainNumber('borderInnerWidth') * 100
+						newProps.borderInnerWidth = options.borderInnerWidth * 100
 					}
 					if (props.includes('borderOuterSoftness')) {
-						newProps.borderOuterSoftness = options.getPlainNumber('borderOuterSoftness')
+						newProps.borderOuterSoftness = options.borderOuterSoftness
 					}
 					if (props.includes('borderInnerSoftness')) {
-						newProps.borderInnerSoftness = options.getPlainNumber('borderInnerSoftness')
+						newProps.borderInnerSoftness = options.borderInnerSoftness
 					}
 					if (props.includes('borderBevelSoftness')) {
-						newProps.borderBevelSoftness = options.getPlainNumber('borderBevelSoftness')
+						newProps.borderBevelSoftness = options.borderBevelSoftness
 					}
 					if (props.includes('borderBevelPosition')) {
-						newProps.borderBevelPosition = options.getPlainNumber('borderBevelPosition')
+						newProps.borderBevelPosition = options.borderBevelPosition
 					}
 					if (props.includes('borderOpacity')) {
-						newProps.borderOpacity = options.getPlainNumber('borderOpacity')
+						newProps.borderOpacity = options.borderOpacity
 					}
 					if (props.includes('borderHue')) {
-						newProps.borderHue = options.getPlainNumber('borderHue') * 10
+						newProps.borderHue = options.borderHue * 10
 					}
 					if (props.includes('borderSaturation')) {
-						newProps.borderSaturation = options.getPlainNumber('borderSaturation') * 10
+						newProps.borderSaturation = options.borderSaturation * 10
 					}
 					if (props.includes('borderLuma')) {
-						newProps.borderLuma = options.getPlainNumber('borderLuma') * 10
+						newProps.borderLuma = options.borderLuma * 10
 					}
 					if (props.includes('lightSourceDirection')) {
-						newProps.lightSourceDirection = options.getPlainNumber('lightSourceDirection') * 10
+						newProps.lightSourceDirection = options.lightSourceDirection * 10
 					}
 					if (props.includes('lightSourceAltitude')) {
-						newProps.lightSourceAltitude = options.getPlainNumber('lightSourceAltitude')
+						newProps.lightSourceAltitude = options.lightSourceAltitude
 					}
 					if (props.includes('borderEnabled')) {
-						newProps.borderEnabled = options.getPlainBoolean('borderEnabled')
+						newProps.borderEnabled = options.borderEnabled
 					}
 					if (props.includes('shadowEnabled')) {
-						newProps.shadowEnabled = options.getPlainBoolean('shadowEnabled')
+						newProps.shadowEnabled = options.shadowEnabled
 					}
 					if (props.includes('borderBevel')) {
-						newProps.borderBevel = options.getPlainNumber('borderBevel')
+						newProps.borderBevel = options.borderBevel
 					}
 					if (props.includes('rate')) {
-						newProps.rate = options.getPlainNumber('rate')
+						newProps.rate = options.rate
 					}
 				}
 
@@ -368,7 +368,7 @@ export function createUpstreamKeyerDVEActions(
 				)
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.getPlainNumber('mixeffect'), options.getPlainNumber('key'))
+				const usk = getUSK(state.state, options.mixeffect, options.key)
 
 				if (usk?.dveSettings) {
 					return {
@@ -426,89 +426,89 @@ export function createUpstreamKeyerDVEActions(
 				...AtemUSKDVEPropertiesVariablesPickers(),
 			},
 			callback: async ({ options }) => {
-				const mixEffectId = (await options.getParsedNumber('mixeffect')) - 1
-				const keyId = (await options.getParsedNumber('key')) - 1
+				const mixEffectId = (await options.mixeffect) - 1
+				const keyId = (await options.key) - 1
 				const newProps: Partial<UpstreamKeyerDVESettings> = {}
 
 				const props = options.getRaw('properties')
 				if (props && Array.isArray(props)) {
 					if (props.includes('maskEnabled')) {
-						newProps.maskEnabled = await options.getParsedBoolean('maskEnabled')
+						newProps.maskEnabled = await options.maskEnabled
 					}
 					if (props.includes('maskTop')) {
-						newProps.maskTop = (await options.getParsedNumber('maskTop')) * 1000
+						newProps.maskTop = (await options.maskTop) * 1000
 					}
 					if (props.includes('maskBottom')) {
-						newProps.maskBottom = (await options.getParsedNumber('maskBottom')) * 1000
+						newProps.maskBottom = (await options.maskBottom) * 1000
 					}
 					if (props.includes('maskLeft')) {
-						newProps.maskLeft = (await options.getParsedNumber('maskLeft')) * 1000
+						newProps.maskLeft = (await options.maskLeft) * 1000
 					}
 					if (props.includes('maskRight')) {
-						newProps.maskRight = (await options.getParsedNumber('maskRight')) * 1000
+						newProps.maskRight = (await options.maskRight) * 1000
 					}
 					if (props.includes('sizeX')) {
-						newProps.sizeX = (await options.getParsedNumber('sizeX')) * 1000
+						newProps.sizeX = (await options.sizeX) * 1000
 					}
 					if (props.includes('sizeY')) {
-						newProps.sizeY = (await options.getParsedNumber('sizeY')) * 1000
+						newProps.sizeY = (await options.sizeY) * 1000
 					}
 					if (props.includes('positionX')) {
-						newProps.positionX = (await options.getParsedNumber('positionX')) * 1000
+						newProps.positionX = (await options.positionX) * 1000
 					}
 					if (props.includes('positionY')) {
-						newProps.positionY = (await options.getParsedNumber('positionY')) * 1000
+						newProps.positionY = (await options.positionY) * 1000
 					}
 					if (props.includes('rotation')) {
-						newProps.rotation = await options.getParsedNumber('rotation')
+						newProps.rotation = await options.rotation
 					}
 					if (props.includes('borderOuterWidth')) {
-						newProps.borderOuterWidth = (await options.getParsedNumber('borderOuterWidth')) * 100
+						newProps.borderOuterWidth = (await options.borderOuterWidth) * 100
 					}
 					if (props.includes('borderInnerWidth')) {
-						newProps.borderInnerWidth = (await options.getParsedNumber('borderInnerWidth')) * 100
+						newProps.borderInnerWidth = (await options.borderInnerWidth) * 100
 					}
 					if (props.includes('borderOuterSoftness')) {
-						newProps.borderOuterSoftness = await options.getParsedNumber('borderOuterSoftness')
+						newProps.borderOuterSoftness = await options.borderOuterSoftness
 					}
 					if (props.includes('borderInnerSoftness')) {
-						newProps.borderInnerSoftness = await options.getParsedNumber('borderInnerSoftness')
+						newProps.borderInnerSoftness = await options.borderInnerSoftness
 					}
 					if (props.includes('borderBevelSoftness')) {
-						newProps.borderBevelSoftness = await options.getParsedNumber('borderBevelSoftness')
+						newProps.borderBevelSoftness = await options.borderBevelSoftness
 					}
 					if (props.includes('borderBevelPosition')) {
-						newProps.borderBevelPosition = await options.getParsedNumber('borderBevelPosition')
+						newProps.borderBevelPosition = await options.borderBevelPosition
 					}
 					if (props.includes('borderOpacity')) {
-						newProps.borderOpacity = await options.getParsedNumber('borderOpacity')
+						newProps.borderOpacity = await options.borderOpacity
 					}
 					if (props.includes('borderHue')) {
-						newProps.borderHue = (await options.getParsedNumber('borderHue')) * 10
+						newProps.borderHue = (await options.borderHue) * 10
 					}
 					if (props.includes('borderSaturation')) {
-						newProps.borderSaturation = (await options.getParsedNumber('borderSaturation')) * 10
+						newProps.borderSaturation = (await options.borderSaturation) * 10
 					}
 					if (props.includes('borderLuma')) {
-						newProps.borderLuma = (await options.getParsedNumber('borderLuma')) * 10
+						newProps.borderLuma = (await options.borderLuma) * 10
 					}
 					if (props.includes('lightSourceDirection')) {
-						newProps.lightSourceDirection = (await options.getParsedNumber('lightSourceDirection')) * 10
+						newProps.lightSourceDirection = (await options.lightSourceDirection) * 10
 					}
 					if (props.includes('lightSourceAltitude')) {
-						newProps.lightSourceAltitude = await options.getParsedNumber('lightSourceAltitude')
+						newProps.lightSourceAltitude = await options.lightSourceAltitude
 					}
 					if (props.includes('borderEnabled')) {
-						newProps.borderEnabled = await options.getParsedBoolean('borderEnabled')
+						newProps.borderEnabled = await options.borderEnabled
 					}
 					if (props.includes('shadowEnabled')) {
-						newProps.shadowEnabled = await options.getParsedBoolean('shadowEnabled')
+						newProps.shadowEnabled = await options.shadowEnabled
 					}
 					if (props.includes('borderBevel')) {
-						newProps.borderBevel = await options.getParsedNumber('borderBevel')
+						newProps.borderBevel = await options.borderBevel
 					}
 					if (props.includes('rate')) {
-						newProps.rate = await options.getParsedNumber('rate')
+						newProps.rate = await options.rate
 					}
 				}
 
@@ -550,8 +550,8 @@ export function createUpstreamKeyerDVEActions(
 				)
 			},
 			learn: async ({ options }) => {
-				const mixeffect = (await options.getParsedNumber('mixeffect')) - 1
-				const key = (await options.getParsedNumber('key')) - 1
+				const mixeffect = (await options.mixeffect) - 1
+				const key = (await options.key) - 1
 				const usk = getUSK(state.state, mixeffect, key)
 
 				if (usk?.dveSettings) {
@@ -604,75 +604,75 @@ export function createUpstreamKeyerDVEActions(
 				...AtemUSKKeyframePropertiesPickers(),
 			},
 			callback: async ({ options }) => {
-				const mixEffectId = options.getPlainNumber('mixeffect')
-				const keyId = options.getPlainNumber('key')
-				const keyframeId = options.getPlainNumber('keyframe')
+				const mixEffectId = options.mixeffect
+				const keyId = options.key
+				const keyframeId = options.keyframe
 				const properties: Partial<UpstreamKeyerFlyKeyframe> = {}
 
 				const props = options.getRaw('properties')
 				if (props && Array.isArray(props)) {
 					if (props.includes('maskTop')) {
-						properties.maskTop = options.getPlainNumber('maskTop') * 1000
+						properties.maskTop = options.maskTop * 1000
 					}
 					if (props.includes('maskBottom')) {
-						properties.maskBottom = options.getPlainNumber('maskBottom') * 1000
+						properties.maskBottom = options.maskBottom * 1000
 					}
 					if (props.includes('maskLeft')) {
-						properties.maskLeft = options.getPlainNumber('maskLeft') * 1000
+						properties.maskLeft = options.maskLeft * 1000
 					}
 					if (props.includes('maskRight')) {
-						properties.maskRight = options.getPlainNumber('maskRight') * 1000
+						properties.maskRight = options.maskRight * 1000
 					}
 					if (props.includes('sizeX')) {
-						properties.sizeX = options.getPlainNumber('sizeX') * 1000
+						properties.sizeX = options.sizeX * 1000
 					}
 					if (props.includes('sizeY')) {
-						properties.sizeY = options.getPlainNumber('sizeY') * 1000
+						properties.sizeY = options.sizeY * 1000
 					}
 					if (props.includes('positionX')) {
-						properties.positionX = options.getPlainNumber('positionX') * 1000
+						properties.positionX = options.positionX * 1000
 					}
 					if (props.includes('positionY')) {
-						properties.positionY = options.getPlainNumber('positionY') * 1000
+						properties.positionY = options.positionY * 1000
 					}
 					if (props.includes('rotation')) {
-						properties.rotation = options.getPlainNumber('rotation')
+						properties.rotation = options.rotation
 					}
 					if (props.includes('borderOuterWidth')) {
-						properties.borderOuterWidth = options.getPlainNumber('borderOuterWidth') * 100
+						properties.borderOuterWidth = options.borderOuterWidth * 100
 					}
 					if (props.includes('borderInnerWidth')) {
-						properties.borderInnerWidth = options.getPlainNumber('borderInnerWidth') * 100
+						properties.borderInnerWidth = options.borderInnerWidth * 100
 					}
 					if (props.includes('borderOuterSoftness')) {
-						properties.borderOuterSoftness = options.getPlainNumber('borderOuterSoftness')
+						properties.borderOuterSoftness = options.borderOuterSoftness
 					}
 					if (props.includes('borderInnerSoftness')) {
-						properties.borderInnerSoftness = options.getPlainNumber('borderInnerSoftness')
+						properties.borderInnerSoftness = options.borderInnerSoftness
 					}
 					if (props.includes('borderBevelSoftness')) {
-						properties.borderBevelSoftness = options.getPlainNumber('borderBevelSoftness')
+						properties.borderBevelSoftness = options.borderBevelSoftness
 					}
 					if (props.includes('borderBevelPosition')) {
-						properties.borderBevelPosition = options.getPlainNumber('borderBevelPosition')
+						properties.borderBevelPosition = options.borderBevelPosition
 					}
 					if (props.includes('borderOpacity')) {
-						properties.borderOpacity = options.getPlainNumber('borderOpacity')
+						properties.borderOpacity = options.borderOpacity
 					}
 					if (props.includes('borderHue')) {
-						properties.borderHue = options.getPlainNumber('borderHue') * 10
+						properties.borderHue = options.borderHue * 10
 					}
 					if (props.includes('borderSaturation')) {
-						properties.borderSaturation = options.getPlainNumber('borderSaturation') * 10
+						properties.borderSaturation = options.borderSaturation * 10
 					}
 					if (props.includes('borderLuma')) {
-						properties.borderLuma = options.getPlainNumber('borderLuma') * 10
+						properties.borderLuma = options.borderLuma * 10
 					}
 					if (props.includes('lightSourceDirection')) {
-						properties.lightSourceDirection = options.getPlainNumber('lightSourceDirection') * 10
+						properties.lightSourceDirection = options.lightSourceDirection * 10
 					}
 					if (props.includes('lightSourceAltitude')) {
-						properties.lightSourceAltitude = options.getPlainNumber('lightSourceAltitude')
+						properties.lightSourceAltitude = options.lightSourceAltitude
 					}
 				}
 
@@ -681,7 +681,7 @@ export function createUpstreamKeyerDVEActions(
 				await atem?.setUpstreamKeyerFlyKeyKeyframe(mixEffectId, keyId, keyframeId, properties)
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.getPlainNumber('mixeffect'), options.getPlainNumber('key'))
+				const usk = getUSK(state.state, options.mixeffect, options.key)
 
 				if (usk?.dveSettings) {
 					return {
@@ -727,11 +727,7 @@ export function createUpstreamKeyerDVEActions(
 				},
 			},
 			callback: async ({ options }) => {
-				await atem?.storeUpstreamKeyerFlyKeyKeyframe(
-					options.getPlainNumber('mixeffect'),
-					options.getPlainNumber('key'),
-					options.getPlainNumber('keyframe'),
-				)
+				await atem?.storeUpstreamKeyerFlyKeyKeyframe(options.mixeffect, options.key, options.keyframe)
 			},
 		},
 		[ActionId.USKFly]: {
@@ -748,14 +744,10 @@ export function createUpstreamKeyerDVEActions(
 				},
 			},
 			callback: async ({ options }) => {
-				await atem?.runUpstreamKeyerFlyKeyTo(
-					options.getPlainNumber('mixeffect'),
-					options.getPlainNumber('key'),
-					options.getPlainNumber('keyframe'),
-				)
+				await atem?.runUpstreamKeyerFlyKeyTo(options.mixeffect, options.key, options.keyframe)
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.getPlainNumber('mixeffect'), options.getPlainNumber('key'))
+				const usk = getUSK(state.state, options.mixeffect, options.key)
 
 				if (usk?.flyProperties) {
 					return {
@@ -781,14 +773,10 @@ export function createUpstreamKeyerDVEActions(
 				},
 			},
 			callback: async ({ options }) => {
-				await atem?.runUpstreamKeyerFlyKeyToInfinite(
-					options.getPlainNumber('mixeffect'),
-					options.getPlainNumber('key'),
-					options.getPlainNumber('flydirection'),
-				)
+				await atem?.runUpstreamKeyerFlyKeyToInfinite(options.mixeffect, options.key, options.flydirection)
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.getPlainNumber('mixeffect'), options.getPlainNumber('key'))
+				const usk = getUSK(state.state, options.mixeffect, options.key)
 
 				if (usk?.flyProperties) {
 					return {

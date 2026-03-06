@@ -45,7 +45,7 @@ export function createStreamingFeedbacks(
 			},
 			callback: ({ options }): boolean => {
 				const streaming = state.state.streaming?.status?.state
-				return streaming === options.getPlainNumber('state')
+				return streaming === options.state
 			},
 			learn: ({ options }) => {
 				if (state.state.streaming?.status) {

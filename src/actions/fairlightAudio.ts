@@ -176,8 +176,8 @@ export function createFairlightAudioActions(
 				...FadeDurationFields,
 			},
 			callback: async ({ options }) => {
-				const inputId = options.getPlainNumber('input')
-				const sourceId = options.getPlainString('source')
+				const inputId = options.input
+				const sourceId = options.source
 
 				const audioChannels = state.state.fairlight?.inputs ?? {}
 				const audioSources = audioChannels[inputId]?.sources ?? {}
@@ -191,14 +191,14 @@ export function createFairlightAudioActions(
 						})
 					},
 					source?.properties?.gain,
-					options.getPlainNumber('gain') * 100,
+					options.gain * 100,
 					options,
 				)
 			},
 			learn: ({ options }) => {
 				const audioChannels = state.state.fairlight?.inputs ?? {}
-				const audioSources = audioChannels[options.getPlainNumber('input')]?.sources ?? {}
-				const source = audioSources[options.getPlainString('source')]
+				const audioSources = audioChannels[options.input]?.sources ?? {}
+				const source = audioSources[options.source]
 
 				if (source?.properties) {
 					return {
@@ -219,8 +219,8 @@ export function createFairlightAudioActions(
 				...FadeDurationFields,
 			},
 			callback: async ({ options }) => {
-				const inputId = options.getPlainNumber('input')
-				const sourceId = options.getPlainString('source')
+				const inputId = options.input
+				const sourceId = options.source
 
 				const audioChannels = state.state.fairlight?.inputs ?? {}
 				const audioSources = audioChannels[inputId]?.sources ?? {}
@@ -235,7 +235,7 @@ export function createFairlightAudioActions(
 							})
 						},
 						source.properties.gain,
-						source.properties.gain + options.getPlainNumber('delta') * 100,
+						source.properties.gain + options.delta * 100,
 						options,
 					)
 				}
@@ -260,17 +260,17 @@ export function createFairlightAudioActions(
 						},
 					},
 					callback: async ({ options }) => {
-						const inputId = options.getPlainNumber('input')
-						const sourceId = options.getPlainString('source')
+						const inputId = options.input
+						const sourceId = options.source
 
 						await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
-							framesDelay: options.getPlainNumber('delay'),
+							framesDelay: options.delay,
 						})
 					},
 					learn: ({ options }) => {
 						const audioChannels = state.state.fairlight?.inputs ?? {}
-						const audioSources = audioChannels[options.getPlainNumber('input')]?.sources ?? {}
-						const source = audioSources[options.getPlainString('source')]
+						const audioSources = audioChannels[options.input]?.sources ?? {}
+						const source = audioSources[options.source]
 
 						if (source?.properties) {
 							return {
@@ -302,14 +302,14 @@ export function createFairlightAudioActions(
 						},
 					},
 					callback: async ({ options }) => {
-						const inputId = options.getPlainNumber('input')
-						const sourceId = options.getPlainString('source')
+						const inputId = options.input
+						const sourceId = options.source
 
-						const delta = options.getPlainNumber('delay')
+						const delta = options.delay
 
 						const audioChannels = state.state.fairlight?.inputs ?? {}
-						const audioSources = audioChannels[options.getPlainNumber('input')]?.sources ?? {}
-						const source = audioSources[options.getPlainString('source')]
+						const audioSources = audioChannels[options.input]?.sources ?? {}
+						const source = audioSources[options.source]
 
 						const existingDelay = source?.properties?.framesDelay
 						if (existingDelay === undefined) return
@@ -339,8 +339,8 @@ export function createFairlightAudioActions(
 				...FadeDurationFields,
 			},
 			callback: async ({ options }) => {
-				const inputId = options.getPlainNumber('input')
-				const sourceId = options.getPlainString('source')
+				const inputId = options.input
+				const sourceId = options.source
 
 				const audioChannels = state.state.fairlight?.inputs ?? {}
 				const audioSources = audioChannels[inputId]?.sources ?? {}
@@ -354,14 +354,14 @@ export function createFairlightAudioActions(
 						})
 					},
 					source?.properties?.faderGain,
-					options.getPlainNumber('gain') * 100,
+					options.gain * 100,
 					options,
 				)
 			},
 			learn: ({ options }) => {
 				const audioChannels = state.state.fairlight?.inputs ?? {}
-				const audioSources = audioChannels[options.getPlainNumber('input')]?.sources ?? {}
-				const source = audioSources[options.getPlainString('source')]
+				const audioSources = audioChannels[options.input]?.sources ?? {}
+				const source = audioSources[options.source]
 
 				if (source?.properties) {
 					return {
@@ -382,8 +382,8 @@ export function createFairlightAudioActions(
 				...FadeDurationFields,
 			},
 			callback: async ({ options }) => {
-				const inputId = options.getPlainNumber('input')
-				const sourceId = options.getPlainString('source')
+				const inputId = options.input
+				const sourceId = options.source
 
 				const audioChannels = state.state.fairlight?.inputs ?? {}
 				const audioSources = audioChannels[inputId]?.sources ?? {}
@@ -398,7 +398,7 @@ export function createFairlightAudioActions(
 							})
 						},
 						source.properties.faderGain,
-						source.properties.faderGain + options.getPlainNumber('delta') * 100,
+						source.properties.faderGain + options.delta * 100,
 						options,
 					)
 				}
@@ -424,8 +424,8 @@ export function createFairlightAudioActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const inputId = options.getPlainNumber('input')
-				const sourceId = options.getPlainString('source')
+				const inputId = options.input
+				const sourceId = options.source
 				const audioChannels = state.state.fairlight?.inputs ?? {}
 				const audioSources = audioChannels[inputId]?.sources ?? {}
 				const toggleVal =
@@ -438,8 +438,8 @@ export function createFairlightAudioActions(
 			},
 			learn: ({ options }) => {
 				const audioChannels = state.state.fairlight?.inputs ?? {}
-				const audioSources = audioChannels[options.getPlainNumber('input')]?.sources ?? {}
-				const source = audioSources[options.getPlainString('source')]
+				const audioSources = audioChannels[options.input]?.sources ?? {}
+				const source = audioSources[options.source]
 
 				if (source?.properties) {
 					return {
@@ -472,7 +472,7 @@ export function createFairlightAudioActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const rawVal = options.getPlainString('reset')
+				const rawVal = options.reset
 				if (rawVal === 'all') {
 					await atem?.setFairlightAudioMixerResetPeaks({ all: true, master: false })
 				} else if (rawVal === 'master') {
@@ -487,8 +487,8 @@ export function createFairlightAudioActions(
 				source: audioSourceOption,
 			},
 			callback: async ({ options }) => {
-				const inputId = options.getPlainNumber('input')
-				const sourceId = options.getPlainString('source')
+				const inputId = options.input
+				const sourceId = options.source
 				await atem?.setFairlightAudioMixerSourceResetPeaks(inputId, sourceId, {
 					output: true,
 					dynamicsInput: false,
@@ -521,7 +521,7 @@ export function createFairlightAudioActions(
 						})
 					},
 					state.state.fairlight?.master?.properties?.faderGain,
-					options.getPlainNumber('gain') * 100,
+					options.gain * 100,
 					options,
 				)
 			},
@@ -556,7 +556,7 @@ export function createFairlightAudioActions(
 							})
 						},
 						currentGain,
-						currentGain + options.getPlainNumber('delta') * 100,
+						currentGain + options.delta * 100,
 						options,
 					)
 				}
@@ -578,11 +578,11 @@ export function createFairlightAudioActions(
 						source: audioSourceOption,
 					},
 					callback: async ({ options }) => {
-						const inputId = options.getPlainNumber('input')
-						const sourceId = options.getPlainString('source')
+						const inputId = options.input
+						const sourceId = options.source
 
 						let target: boolean
-						if (options.getPlainString('solo') === 'toggle') {
+						if (options.solo === 'toggle') {
 							const soloProps = state.state.fairlight?.solo
 							if (soloProps) {
 								const isSourceSelectedForSolo = soloProps.index === inputId && soloProps.source === sourceId
@@ -592,7 +592,7 @@ export function createFairlightAudioActions(
 								target = true
 							}
 						} else {
-							target = options.getPlainString('solo') === 'true'
+							target = options.solo === 'true'
 						}
 
 						await atem?.setFairlightAudioMixerMonitorSolo({
@@ -630,7 +630,7 @@ export function createFairlightAudioActions(
 								})
 							},
 							state.state.fairlight?.monitor?.gain,
-							options.getPlainNumber('gain') * 100,
+							options.gain * 100,
 							options,
 						)
 					},
@@ -666,7 +666,7 @@ export function createFairlightAudioActions(
 									})
 								},
 								currentGain,
-								currentGain + options.getPlainNumber('delta') * 100,
+								currentGain + options.delta * 100,
 								options,
 							)
 						}
@@ -709,10 +709,10 @@ function HeadphoneMasterActions(
 					},
 					callback: async ({ options }) => {
 						let target: boolean
-						if (options.getPlainString('state') === 'toggle') {
+						if (options.state === 'toggle') {
 							target = !state.state.fairlight?.monitor?.inputMasterMuted
 						} else {
-							target = options.getPlainString('state') === 'true'
+							target = options.state === 'true'
 						}
 
 						await atem?.setFairlightAudioMixerMonitorProps({
@@ -760,7 +760,7 @@ function HeadphoneMasterActions(
 									})
 								},
 								state.state.fairlight?.monitor?.inputMasterGain,
-								options.getPlainNumber('gain') * 100,
+								options.gain * 100,
 								options,
 							)
 						},
@@ -797,7 +797,7 @@ function HeadphoneMasterActions(
 										})
 									},
 									currentGain,
-									currentGain + options.getPlainNumber('delta') * 100,
+									currentGain + options.delta * 100,
 									options,
 								)
 							}
@@ -835,10 +835,10 @@ function HeadphoneTalkbackActions(
 					},
 					callback: async ({ options }) => {
 						let target: boolean
-						if (options.getPlainString('state') === 'toggle') {
+						if (options.state === 'toggle') {
 							target = !state.state.fairlight?.monitor?.inputTalkbackMuted
 						} else {
-							target = options.getPlainString('state') === 'true'
+							target = options.state === 'true'
 						}
 
 						await atem?.setFairlightAudioMixerMonitorProps({
@@ -886,7 +886,7 @@ function HeadphoneTalkbackActions(
 									})
 								},
 								state.state.fairlight?.monitor?.inputTalkbackGain,
-								options.getPlainNumber('gain') * 100,
+								options.gain * 100,
 								options,
 							)
 						},
@@ -923,7 +923,7 @@ function HeadphoneTalkbackActions(
 										})
 									},
 									currentGain,
-									currentGain + options.getPlainNumber('delta') * 100,
+									currentGain + options.delta * 100,
 									options,
 								)
 							}
@@ -960,10 +960,10 @@ function HeadphoneSidetoneActions(
 					},
 					callback: async ({ options }) => {
 						let target: boolean
-						if (options.getPlainString('state') === 'toggle') {
+						if (options.state === 'toggle') {
 							target = !state.state.fairlight?.monitor?.inputSidetoneMuted
 						} else {
-							target = options.getPlainString('state') === 'true'
+							target = options.state === 'true'
 						}
 
 						await atem?.setFairlightAudioMixerMonitorProps({
@@ -1011,7 +1011,7 @@ function HeadphoneSidetoneActions(
 									})
 								},
 								state.state.fairlight?.monitor?.inputSidetoneGain,
-								options.getPlainNumber('gain') * 100,
+								options.gain * 100,
 								options,
 							)
 						},
@@ -1048,7 +1048,7 @@ function HeadphoneSidetoneActions(
 										})
 									},
 									currentGain,
-									currentGain + options.getPlainNumber('delta') * 100,
+									currentGain + options.delta * 100,
 									options,
 								)
 							}
@@ -1080,7 +1080,7 @@ function AudioRoutingActions(
 				source: AtemFairlightAudioRoutingSourcePicker(model, state.state),
 			},
 			callback: async ({ options }) => {
-				const sourceId = options.getPlainNumber('source')
+				const sourceId = options.source
 				const destinations = options.getRaw('destinations')
 				if (!destinations || destinations.length === 0) return
 
@@ -1119,10 +1119,7 @@ function AudioRoutingActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const [sourceStr, destinationsStr] = await Promise.all([
-					options.getParsedString('source'),
-					options.getParsedString('destinations'),
-				])
+				const [sourceStr, destinationsStr] = await Promise.all([options.source, options.destinations])
 				if (!destinationsStr || !sourceStr) return
 
 				const source = parseAudioRoutingStringSingle(sourceStr) ?? 0

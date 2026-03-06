@@ -40,11 +40,11 @@ export function createAuxOutputFeedbacks(
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: ({ options }): boolean => {
-				const auxSource = state.state.video.auxilliaries[options.getPlainNumber('aux')]
-				return auxSource === options.getPlainNumber('input')
+				const auxSource = state.state.video.auxilliaries[options.aux]
+				return auxSource === options.input
 			},
 			learn: ({ options }) => {
-				const auxSource = state.state.video.auxilliaries[options.getPlainNumber('aux')]
+				const auxSource = state.state.video.auxilliaries[options.aux]
 
 				if (auxSource !== undefined) {
 					return {
@@ -81,14 +81,14 @@ export function createAuxOutputFeedbacks(
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: async ({ options }) => {
-				const output = (await options.getParsedNumber('aux')) - 1
-				const input = await options.getParsedNumber('input')
+				const output = (await options.aux) - 1
+				const input = await options.input
 
 				const auxSource = state.state.video.auxilliaries[output]
 				return auxSource === input
 			},
 			learn: async ({ options }) => {
-				const output = (await options.getParsedNumber('aux')) - 1
+				const output = (await options.aux) - 1
 
 				const auxSource = state.state.video.auxilliaries[output]
 

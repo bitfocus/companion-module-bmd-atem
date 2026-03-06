@@ -121,21 +121,14 @@ export function createFairlightAudioFeedbacks(
 			},
 			callback: ({ options }): boolean => {
 				const audioChannels = state.state.fairlight?.inputs ?? {}
-				const audioSources = audioChannels[options.getPlainNumber('input')]?.sources ?? {}
-				const source = audioSources[options.getPlainString('source')]
-				return !!(
-					source?.properties &&
-					compareNumber(
-						options.getPlainNumber('gain'),
-						options.getPlainString('comparitor'),
-						source.properties.gain / 100,
-					)
-				)
+				const audioSources = audioChannels[options.input]?.sources ?? {}
+				const source = audioSources[options.source]
+				return !!(source?.properties && compareNumber(options.gain, options.comparitor, source.properties.gain / 100))
 			},
 			learn: ({ options }) => {
 				const audioChannels = state.state.fairlight?.inputs ?? {}
-				const audioSources = audioChannels[options.getPlainNumber('input')]?.sources ?? {}
-				const source = audioSources[options.getPlainString('source')]
+				const audioSources = audioChannels[options.input]?.sources ?? {}
+				const source = audioSources[options.source]
 
 				if (source?.properties) {
 					return {
@@ -173,21 +166,16 @@ export function createFairlightAudioFeedbacks(
 			},
 			callback: ({ options }): boolean => {
 				const audioChannels = state.state.fairlight?.inputs ?? {}
-				const audioSources = audioChannels[options.getPlainNumber('input')]?.sources ?? {}
-				const source = audioSources[options.getPlainString('source')]
+				const audioSources = audioChannels[options.input]?.sources ?? {}
+				const source = audioSources[options.source]
 				return !!(
-					source?.properties &&
-					compareNumber(
-						options.getPlainNumber('gain'),
-						options.getPlainString('comparitor'),
-						source.properties.faderGain / 100,
-					)
+					source?.properties && compareNumber(options.gain, options.comparitor, source.properties.faderGain / 100)
 				)
 			},
 			learn: ({ options }) => {
 				const audioChannels = state.state.fairlight?.inputs ?? {}
-				const audioSources = audioChannels[options.getPlainNumber('input')]?.sources ?? {}
-				const source = audioSources[options.getPlainString('source')]
+				const audioSources = audioChannels[options.input]?.sources ?? {}
+				const source = audioSources[options.source]
 
 				if (source?.properties) {
 					return {
@@ -220,14 +208,14 @@ export function createFairlightAudioFeedbacks(
 			},
 			callback: ({ options }): boolean => {
 				const audioChannels = state.state.fairlight?.inputs ?? {}
-				const audioSources = audioChannels[options.getPlainNumber('input')]?.sources ?? {}
-				const source = audioSources[options.getPlainString('source')]
-				return source?.properties?.mixOption === options.getPlainNumber('option')
+				const audioSources = audioChannels[options.input]?.sources ?? {}
+				const source = audioSources[options.source]
+				return source?.properties?.mixOption === options.option
 			},
 			learn: ({ options }) => {
 				const audioChannels = state.state.fairlight?.inputs ?? {}
-				const audioSources = audioChannels[options.getPlainNumber('input')]?.sources ?? {}
-				const source = audioSources[options.getPlainString('source')]
+				const audioSources = audioChannels[options.input]?.sources ?? {}
+				const source = audioSources[options.source]
 
 				if (source?.properties) {
 					return {
@@ -263,10 +251,7 @@ export function createFairlightAudioFeedbacks(
 			},
 			callback: ({ options }): boolean => {
 				const props = state.state.fairlight?.master?.properties
-				return !!(
-					props &&
-					compareNumber(options.getPlainNumber('gain'), options.getPlainString('comparitor'), props.faderGain / 100)
-				)
+				return !!(props && compareNumber(options.gain, options.comparitor, props.faderGain / 100))
 			},
 			learn: ({ options }) => {
 				const props = state.state.fairlight?.master?.properties
@@ -302,20 +287,16 @@ export function createFairlightAudioFeedbacks(
 					},
 					callback: ({ options }): boolean => {
 						const soloState = state.state.fairlight?.solo
-						if (options.getPlainBoolean('nothing')) {
+						if (options.nothing) {
 							return !soloState?.solo
 						} else {
-							return (
-								!!soloState?.solo &&
-								soloState?.index === options.getPlainNumber('input') &&
-								soloState?.source === options.getPlainString('source')
-							)
+							return !!soloState?.solo && soloState?.index === options.input && soloState?.source === options.source
 						}
 					},
 					learn: ({ options }) => {
 						const audioChannels = state.state.fairlight?.inputs ?? {}
-						const audioSources = audioChannels[options.getPlainNumber('input')]?.sources ?? {}
-						const source = audioSources[options.getPlainString('source')]
+						const audioSources = audioChannels[options.input]?.sources ?? {}
+						const source = audioSources[options.source]
 
 						if (source?.properties) {
 							return {
@@ -353,10 +334,7 @@ export function createFairlightAudioFeedbacks(
 					},
 					callback: ({ options }): boolean => {
 						const gain = state.state.fairlight?.monitor?.gain
-						return !!(
-							typeof gain === 'number' &&
-							compareNumber(options.getPlainNumber('gain'), options.getPlainString('comparitor'), gain / 100)
-						)
+						return !!(typeof gain === 'number' && compareNumber(options.gain, options.comparitor, gain / 100))
 					},
 					learn: ({ options }) => {
 						const props = state.state.fairlight?.monitor
@@ -415,10 +393,7 @@ export function createFairlightAudioFeedbacks(
 						},
 						callback: ({ options }): boolean => {
 							const gain = state.state.fairlight?.monitor?.inputMasterGain
-							return !!(
-								typeof gain === 'number' &&
-								compareNumber(options.getPlainNumber('gain'), options.getPlainString('comparitor'), gain / 100)
-							)
+							return !!(typeof gain === 'number' && compareNumber(options.gain, options.comparitor, gain / 100))
 						},
 						learn: ({ options }) => {
 							const props = state.state.fairlight?.monitor
@@ -477,10 +452,7 @@ export function createFairlightAudioFeedbacks(
 						},
 						callback: ({ options }): boolean => {
 							const gain = state.state.fairlight?.monitor?.inputTalkbackGain
-							return !!(
-								typeof gain === 'number' &&
-								compareNumber(options.getPlainNumber('gain'), options.getPlainString('comparitor'), gain / 100)
-							)
+							return !!(typeof gain === 'number' && compareNumber(options.gain, options.comparitor, gain / 100))
 						},
 						learn: ({ options }) => {
 							const props = state.state.fairlight?.monitor
@@ -522,10 +494,7 @@ export function createFairlightAudioFeedbacks(
 						},
 						callback: ({ options }): boolean => {
 							const gain = state.state.fairlight?.monitor?.inputSidetoneGain
-							return !!(
-								typeof gain === 'number' &&
-								compareNumber(options.getPlainNumber('gain'), options.getPlainString('comparitor'), gain / 100)
-							)
+							return !!(typeof gain === 'number' && compareNumber(options.gain, options.comparitor, gain / 100))
 						},
 						learn: ({ options }) => {
 							const props = state.state.fairlight?.monitor
@@ -575,8 +544,8 @@ function AudioRoutingFeedbacks(
 				const outputsState = state.state.fairlight?.audioRouting?.outputs
 				if (!outputsState) return false
 
-				const sourceId = options.getPlainNumber('source')
-				const destinationId = options.getPlainNumber('destination')
+				const sourceId = options.source
+				const destinationId = options.destination
 
 				const output = outputsState[destinationId]
 				return output && output.sourceId === sourceId
@@ -614,10 +583,7 @@ function AudioRoutingFeedbacks(
 				const outputsState = state.state.fairlight?.audioRouting?.outputs
 				if (!outputsState) return false
 
-				const [sourceStr, destinationStr] = await Promise.all([
-					options.getParsedString('source'),
-					options.getParsedString('destination'),
-				])
+				const [sourceStr, destinationStr] = await Promise.all([options.source, options.destination])
 				if (!destinationStr || !sourceStr) return false
 
 				const source = parseAudioRoutingStringSingle(sourceStr) ?? 0

@@ -96,16 +96,16 @@ export function createDisplayClockActions(
 
 				const props = options.getRaw('properties')
 				if (props && Array.isArray(props)) {
-					if (props.includes('enabled')) newProps.enabled = options.getPlainBoolean('enabled')
+					if (props.includes('enabled')) newProps.enabled = options.enabled
 
-					if (props.includes('size')) newProps.size = options.getPlainNumber('size') * 100
-					if (props.includes('opacity')) newProps.opacity = options.getPlainNumber('opacity') * 100
-					if (props.includes('x')) newProps.positionX = options.getPlainNumber('x') * 1000
-					if (props.includes('y')) newProps.positionY = options.getPlainNumber('y') * 1000
+					if (props.includes('size')) newProps.size = options.size * 100
+					if (props.includes('opacity')) newProps.opacity = options.opacity * 100
+					if (props.includes('x')) newProps.positionX = options.x * 1000
+					if (props.includes('y')) newProps.positionY = options.y * 1000
 
-					if (props.includes('autoHide')) newProps.autoHide = options.getPlainBoolean('autoHide')
+					if (props.includes('autoHide')) newProps.autoHide = options.autoHide
 
-					if (props.includes('clockMode')) newProps.clockMode = options.getPlainNumber('clockMode')
+					if (props.includes('clockMode')) newProps.clockMode = options.clockMode
 				}
 
 				if (Object.keys(newProps).length === 0) return
@@ -135,9 +135,9 @@ export function createDisplayClockActions(
 			options: { ...AtemDisplayClockTimePickers() },
 			callback: async ({ options }) => {
 				const time: DisplayClock.DisplayClockTime = {
-					hours: options.getPlainNumber('hours'),
-					minutes: options.getPlainNumber('minutes'),
-					seconds: options.getPlainNumber('seconds'),
+					hours: options.hours,
+					minutes: options.minutes,
+					seconds: options.seconds,
 					frames: 0,
 				}
 
@@ -166,10 +166,7 @@ export function createDisplayClockActions(
 				const clockState = state.state.displayClock?.properties?.startFrom
 				const currentTime = clockState ? clockState.hours * 3600 + clockState.minutes * 60 + clockState.seconds : 0
 
-				const offset =
-					options.getPlainNumber('hours') * 3600 +
-					options.getPlainNumber('minutes') * 60 +
-					options.getPlainNumber('seconds')
+				const offset = options.hours * 3600 + options.minutes * 60 + options.seconds
 
 				let newTime = currentTime + offset
 

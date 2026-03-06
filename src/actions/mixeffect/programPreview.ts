@@ -7,33 +7,47 @@ import type { MyActionDefinitions } from '../types.js'
 import type { StateWrapper } from '../../state.js'
 import type { AtemTransitions } from '../../transitions.js'
 
-export interface AtemProgramPreviewActions {
+export type AtemProgramPreviewActions = {
 	[ActionId.Program]: {
-		mixeffect: number
-		input: number
+		options: {
+			mixeffect: number
+			input: number
+		}
 	}
 	[ActionId.ProgramVariables]: {
-		mixeffect: string
-		input: string
+		options: {
+			mixeffect: string
+			input: string
+		}
 	}
 	[ActionId.Preview]: {
-		mixeffect: number
-		input: number
+		options: {
+			mixeffect: number
+			input: number
+		}
 	}
 	[ActionId.PreviewVariables]: {
-		mixeffect: string
-		input: string
+		options: {
+			mixeffect: string
+			input: string
+		}
 	}
 	[ActionId.Cut]: {
-		mixeffect: number
+		options: {
+			mixeffect: number
+		}
 	}
 	[ActionId.Auto]: {
-		mixeffect: number
+		options: {
+			mixeffect: number
+		}
 	}
 	[ActionId.TBar]: {
-		mixeffect: number
-		position: string
-	} & FadeDurationFieldsType
+		options: {
+			mixeffect: number
+			position: string
+		} & FadeDurationFieldsType
+	}
 }
 
 export function createProgramPreviewActions(
@@ -50,14 +64,13 @@ export function createProgramPreviewActions(
 				input: AtemMESourcePicker(model, state.state, 0),
 			},
 			callback: async ({ options }) => {
-				await atem?.changeProgramInput(options.getPlainNumber('input'), options.getPlainNumber('mixeffect'))
+				await atem?.changeProgramInput(options.input, options.mixeffect)
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
+				const me = getMixEffect(state.state, options.mixeffect)
 
 				if (me) {
 					return {
-						...options.getJson(),
 						input: me.programInput,
 					}
 				} else {
@@ -84,8 +97,8 @@ export function createProgramPreviewActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const mixeffect = await options.getParsedNumber('mixeffect')
-				const input = await options.getParsedNumber('input')
+				const mixeffect = options.mixeffect
+				const input = options.input
 
 				if (!isNaN(mixeffect) && !isNaN(input)) {
 					await atem?.changeProgramInput(input, mixeffect - 1)
@@ -100,14 +113,13 @@ export function createProgramPreviewActions(
 				input: AtemMESourcePicker(model, state.state, 0),
 			},
 			callback: async ({ options }) => {
-				await atem?.changePreviewInput(options.getPlainNumber('input'), options.getPlainNumber('mixeffect'))
+				await atem?.changePreviewInput(options.input, options.mixeffect)
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
+				const me = getMixEffect(state.state, options.mixeffect)
 
 				if (me) {
 					return {
-						...options.getJson(),
 						input: me.previewInput,
 					}
 				} else {
@@ -134,8 +146,8 @@ export function createProgramPreviewActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const mixeffect = await options.getParsedNumber('mixeffect')
-				const input = await options.getParsedNumber('input')
+				const mixeffect = options.mixeffect
+				const input = options.input
 
 				if (!isNaN(mixeffect) && !isNaN(input)) {
 					await atem?.changePreviewInput(input, mixeffect - 1)
@@ -149,7 +161,7 @@ export function createProgramPreviewActions(
 				mixeffect: AtemMEPicker(model, 0),
 			},
 			callback: async ({ options }) => {
-				await atem?.cut(options.getPlainNumber('mixeffect'))
+				await atem?.cut(options.mixeffect)
 			},
 		},
 		[ActionId.Auto]: {
@@ -158,7 +170,7 @@ export function createProgramPreviewActions(
 				mixeffect: AtemMEPicker(model, 0),
 			},
 			callback: async ({ options }) => {
-				await atem?.autoTransition(options.getPlainNumber('mixeffect'))
+				await atem?.autoTransition(options.mixeffect)
 			},
 		},
 
@@ -178,10 +190,10 @@ export function createProgramPreviewActions(
 				...FadeDurationFields,
 			},
 			callback: async ({ options }) => {
-				const position = await options.getParsedNumber('position')
+				const position = await options.position
 				if (isNaN(position)) return
 
-				const meIndex = options.getPlainNumber('mixeffect')
+				const meIndex = options.mixeffect
 				const meState = getMixEffect(state.state, meIndex)
 
 				await transitions.runForFadeOptions(

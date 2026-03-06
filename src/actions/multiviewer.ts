@@ -57,18 +57,10 @@ export function createMultiviewerActions(
 				source: AtemMultiviewSourcePicker(model, state.state),
 			},
 			callback: async ({ options }) => {
-				await atem?.setMultiViewerWindowSource(
-					options.getPlainNumber('source'),
-					options.getPlainNumber('multiViewerId'),
-					options.getPlainNumber('windowIndex'),
-				)
+				await atem?.setMultiViewerWindowSource(options.source, options.multiViewerId, options.windowIndex)
 			},
 			learn: ({ options }) => {
-				const window = getMultiviewerWindow(
-					state.state,
-					options.getPlainNumber('multiViewerId'),
-					options.getPlainNumber('windowIndex'),
-				)
+				const window = getMultiviewerWindow(state.state, options.multiViewerId, options.windowIndex)
 
 				if (window) {
 					return {
@@ -106,17 +98,17 @@ export function createMultiviewerActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const multiViewerId = (await options.getParsedNumber('multiViewerId')) - 1
-				const windowIndex = (await options.getParsedNumber('windowIndex')) - 1
-				const source = await options.getParsedNumber('source')
+				const multiViewerId = (await options.multiViewerId) - 1
+				const windowIndex = (await options.windowIndex) - 1
+				const source = await options.source
 
 				if (isNaN(multiViewerId) || isNaN(windowIndex) || isNaN(source)) return
 
 				await atem?.setMultiViewerWindowSource(source, multiViewerId, windowIndex)
 			},
 			learn: async ({ options }) => {
-				const multiViewerId = (await options.getParsedNumber('multiViewerId')) - 1
-				const windowIndex = (await options.getParsedNumber('windowIndex')) - 1
+				const multiViewerId = (await options.multiViewerId) - 1
+				const windowIndex = (await options.windowIndex) - 1
 
 				const window = getMultiviewerWindow(state.state, multiViewerId, windowIndex)
 
@@ -170,7 +162,7 @@ export function createMultiviewerActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const multiViewerId = (await options.getParsedNumber('multiViewerId')) - 1
+				const multiViewerId = (await options.multiViewerId) - 1
 
 				const mv = getMultiviewer(state.state, multiViewerId)
 				let layout: Enums.MultiViewerLayout = mv?.properties?.layout ?? Enums.MultiViewerLayout.Default
@@ -193,17 +185,17 @@ export function createMultiviewerActions(
 					}
 				}
 
-				updateLayout(options.getPlainString('topLeft'), Enums.MultiViewerLayout.TopLeftSmall)
-				updateLayout(options.getPlainString('topRight'), Enums.MultiViewerLayout.TopRightSmall)
-				updateLayout(options.getPlainString('bottomLeft'), Enums.MultiViewerLayout.BottomLeftSmall)
-				updateLayout(options.getPlainString('bottomRight'), Enums.MultiViewerLayout.BottomRightSmall)
+				updateLayout(options.topLeft, Enums.MultiViewerLayout.TopLeftSmall)
+				updateLayout(options.topRight, Enums.MultiViewerLayout.TopRightSmall)
+				updateLayout(options.bottomLeft, Enums.MultiViewerLayout.BottomLeftSmall)
+				updateLayout(options.bottomRight, Enums.MultiViewerLayout.BottomRightSmall)
 
 				if (isNaN(multiViewerId) || isNaN(layout)) return
 
 				await atem?.setMultiViewerProperties({ layout }, multiViewerId)
 			},
 			learn: async ({ options }) => {
-				const multiViewerId = (await options.getParsedNumber('multiViewerId')) - 1
+				const multiViewerId = (await options.multiViewerId) - 1
 
 				const mv = getMultiviewer(state.state, multiViewerId)
 

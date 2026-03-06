@@ -55,14 +55,14 @@ export function createCameraControlMediaActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
+				const cameraId = await options.cameraId
 
 				let target: boolean
-				if (options.getPlainString('state') === 'toggle') {
+				if (options.state === 'toggle') {
 					const cameraState = state.atemCameraState.get(cameraId)
 					target = !cameraState?.display?.colorBarEnable
 				} else {
-					target = options.getPlainString('state') === 'true'
+					target = options.state === 'true'
 				}
 
 				if (target) {
@@ -108,7 +108,7 @@ export function createCameraControlMediaActions(
 
 				if (!cameraIds || !Array.isArray(cameraIds) || cameraIds.length === 0) return
 
-				const target = options.getPlainString('state') === 'true'
+				const target = options.state === 'true'
 
 				if (!atem) return
 

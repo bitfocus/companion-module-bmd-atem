@@ -1889,7 +1889,7 @@ export function NumberComparitorPicker(): CompanionInputFieldDropdown {
 	}
 }
 
-export interface FadeDurationFieldsType {
+export type FadeDurationFieldsType = {
 	fadeDuration: number
 	fadeAlgorithm: Easing.algorithm
 	fadeCurve: Easing.curve

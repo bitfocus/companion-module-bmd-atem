@@ -96,8 +96,8 @@ export function createSuperSourceActions(
 
 				const props = options.getRaw('properties')
 				if (props && Array.isArray(props)) {
-					if (props.includes('fill')) newProps.artFillSource = options.getPlainNumber('fill')
-					if (props.includes('key')) newProps.artCutSource = options.getPlainNumber('key')
+					if (props.includes('fill')) newProps.artFillSource = options.fill
+					if (props.includes('key')) newProps.artCutSource = options.key
 
 					if (props.includes('artOption')) {
 						const rawArtOption = options.getRaw('artOption')
@@ -113,11 +113,10 @@ export function createSuperSourceActions(
 						}
 					}
 
-					if (props.includes('artPreMultiplied'))
-						newProps.artPreMultiplied = options.getPlainBoolean('artPreMultiplied')
-					if (props.includes('artClip')) newProps.artClip = options.getPlainNumber('artClip') * 10
-					if (props.includes('artGain')) newProps.artGain = options.getPlainNumber('artGain') * 10
-					if (props.includes('artInvertKey')) newProps.artInvertKey = options.getPlainBoolean('artInvertKey')
+					if (props.includes('artPreMultiplied')) newProps.artPreMultiplied = options.artPreMultiplied
+					if (props.includes('artClip')) newProps.artClip = options.artClip * 10
+					if (props.includes('artGain')) newProps.artGain = options.artGain * 10
+					if (props.includes('artInvertKey')) newProps.artInvertKey = options.artInvertKey
 				}
 
 				if (Object.keys(newProps).length === 0) return
@@ -165,8 +164,8 @@ export function createSuperSourceActions(
 
 				const props = options.getRaw('properties')
 				if (props && Array.isArray(props)) {
-					if (props.includes('fill')) setPropAsync('artFillSource', options.getParsedNumber('fill'))
-					if (props.includes('key')) setPropAsync('artCutSource', options.getParsedNumber('key'))
+					if (props.includes('fill')) setPropAsync('artFillSource', options.fill)
+					if (props.includes('key')) setPropAsync('artCutSource', options.key)
 
 					// if (props.includes('artOption')) {
 					// 	const rawArtOption = options.getRaw('artOption')
@@ -183,10 +182,10 @@ export function createSuperSourceActions(
 					// }
 
 					// if (props.includes('artPreMultiplied'))
-					// 	newProps.artPreMultiplied = options.getPlainBoolean('artPreMultiplied')
-					// if (props.includes('artClip')) newProps.artClip = options.getPlainNumber('artClip') * 10
-					// if (props.includes('artGain')) newProps.artGain = options.getPlainNumber('artGain') * 10
-					// if (props.includes('artInvertKey')) newProps.artInvertKey = options.getPlainBoolean('artInvertKey')
+					// 	newProps.artPreMultiplied = options.artPreMultiplied
+					// if (props.includes('artClip')) newProps.artClip = options.artClip * 10
+					// if (props.includes('artGain')) newProps.artGain = options.artGain * 10
+					// if (props.includes('artInvertKey')) newProps.artInvertKey = options.artInvertKey
 				}
 
 				await Promise.all(ps)
@@ -228,15 +227,15 @@ export function createSuperSourceActions(
 			callback: async ({ options }) => {
 				await atem?.setSuperSourceBoxSettings(
 					{
-						source: options.getPlainNumber('source'),
+						source: options.source,
 					},
-					options.getPlainNumber('boxIndex'),
+					options.boxIndex,
 					options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0,
 				)
 			},
 			learn: ({ options }) => {
 				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-				const boxId = options.getPlainNumber('boxIndex')
+				const boxId = options.boxIndex
 
 				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.boxes[boxId]
 				if (ssrcConfig) {
@@ -279,10 +278,9 @@ export function createSuperSourceActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const ssrcId =
-					options.getRaw('ssrcId') && model.SSrc > 1 ? Number(await options.getParsedNumber('ssrcId')) - 1 : 0
-				const boxIndex = (await options.getParsedNumber('boxIndex')) - 1
-				const source = await options.getParsedNumber('source')
+				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(await options.ssrcId) - 1 : 0
+				const boxIndex = (await options.boxIndex) - 1
+				const source = await options.source
 
 				if (isNaN(ssrcId) || isNaN(boxIndex) || isNaN(source)) return
 
@@ -295,9 +293,8 @@ export function createSuperSourceActions(
 				)
 			},
 			learn: async ({ options }) => {
-				const ssrcId =
-					options.getRaw('ssrcId') && model.SSrc > 1 ? Number(await options.getParsedNumber('ssrcId')) - 1 : 0
-				const boxId = (await options.getParsedNumber('boxIndex')) - 1
+				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(await options.ssrcId) - 1 : 0
+				const boxId = (await options.boxIndex) - 1
 
 				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.boxes[boxId]
 				if (ssrcConfig) {
@@ -326,7 +323,7 @@ export function createSuperSourceActions(
 			},
 			callback: async ({ options }) => {
 				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-				const boxIndex = options.getPlainNumber('boxIndex')
+				const boxIndex = options.boxIndex
 
 				if (options.getRaw('onair') === 'toggle') {
 					const box = getSuperSourceBox(state.state, boxIndex, ssrcId)
@@ -349,7 +346,7 @@ export function createSuperSourceActions(
 			},
 			learn: ({ options }) => {
 				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-				const boxId = options.getPlainNumber('boxIndex')
+				const boxId = options.boxIndex
 
 				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.boxes[boxId]
 				if (ssrcConfig) {
@@ -372,32 +369,32 @@ export function createSuperSourceActions(
 			},
 			callback: async ({ options }) => {
 				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-				const boxIndex = options.getPlainNumber('boxIndex')
+				const boxIndex = options.boxIndex
 
 				const newProps: Partial<SuperSource.SuperSourceBox> = {}
 
 				const props = options.getRaw('properties')
 				if (props && Array.isArray(props)) {
 					if (props.includes('onair')) {
-						if (options.getPlainString('onair') === 'toggle') {
+						if (options.onair === 'toggle') {
 							const box = getSuperSourceBox(state.state, boxIndex, ssrcId)
 							newProps.enabled = !box?.enabled
 						} else {
-							newProps.enabled = options.getPlainString('onair') === 'true'
+							newProps.enabled = options.onair === 'true'
 						}
 					}
 
-					if (props.includes('source')) newProps.source = options.getPlainNumber('source')
+					if (props.includes('source')) newProps.source = options.source
 
-					if (props.includes('size')) newProps.size = options.getPlainNumber('size') * 1000
-					if (props.includes('x')) newProps.x = options.getPlainNumber('x') * 100
-					if (props.includes('y')) newProps.y = options.getPlainNumber('y') * 100
+					if (props.includes('size')) newProps.size = options.size * 1000
+					if (props.includes('x')) newProps.x = options.x * 100
+					if (props.includes('y')) newProps.y = options.y * 100
 
-					if (props.includes('cropEnable')) newProps.cropped = options.getPlainBoolean('cropEnable')
-					if (props.includes('cropTop')) newProps.cropTop = options.getPlainNumber('cropTop') * 1000
-					if (props.includes('cropBottom')) newProps.cropBottom = options.getPlainNumber('cropBottom') * 1000
-					if (props.includes('cropLeft')) newProps.cropLeft = options.getPlainNumber('cropLeft') * 1000
-					if (props.includes('cropRight')) newProps.cropRight = options.getPlainNumber('cropRight') * 1000
+					if (props.includes('cropEnable')) newProps.cropped = options.cropEnable
+					if (props.includes('cropTop')) newProps.cropTop = options.cropTop * 1000
+					if (props.includes('cropBottom')) newProps.cropBottom = options.cropBottom * 1000
+					if (props.includes('cropLeft')) newProps.cropLeft = options.cropLeft * 1000
+					if (props.includes('cropRight')) newProps.cropRight = options.cropRight * 1000
 				}
 
 				if (Object.keys(newProps).length === 0) return
@@ -415,7 +412,7 @@ export function createSuperSourceActions(
 			},
 			learn: ({ options }) => {
 				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-				const boxId = options.getPlainNumber('boxIndex')
+				const boxId = options.boxIndex
 
 				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.boxes[boxId]
 				if (ssrcConfig) {
@@ -446,7 +443,7 @@ export function createSuperSourceActions(
 			},
 			callback: async ({ options }) => {
 				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-				const boxIndex = options.getPlainNumber('boxIndex')
+				const boxIndex = options.boxIndex
 
 				const newProps: Partial<SuperSource.SuperSourceBox> = {}
 
@@ -454,18 +451,16 @@ export function createSuperSourceActions(
 
 				const props = options.getRaw('properties')
 				if (box && props && Array.isArray(props)) {
-					if (props.includes('size')) newProps.size = clamp(0, 1000, box.size + options.getPlainNumber('size') * 1000)
-					if (props.includes('x')) newProps.x = clamp(-4800, 4800, box.x + options.getPlainNumber('x') * 100)
-					if (props.includes('y')) newProps.y = clamp(-2700, 2700, box.y + options.getPlainNumber('y') * 100)
+					if (props.includes('size')) newProps.size = clamp(0, 1000, box.size + options.size * 1000)
+					if (props.includes('x')) newProps.x = clamp(-4800, 4800, box.x + options.x * 100)
+					if (props.includes('y')) newProps.y = clamp(-2700, 2700, box.y + options.y * 100)
 
-					if (props.includes('cropTop'))
-						newProps.cropTop = clamp(0, 18000, box.cropTop + options.getPlainNumber('cropTop') * 1000)
+					if (props.includes('cropTop')) newProps.cropTop = clamp(0, 18000, box.cropTop + options.cropTop * 1000)
 					if (props.includes('cropBottom'))
-						newProps.cropBottom = clamp(0, 18000, box.cropBottom + options.getPlainNumber('cropBottom') * 1000)
-					if (props.includes('cropLeft'))
-						newProps.cropLeft = clamp(0, 32000, box.cropLeft + options.getPlainNumber('cropLeft') * 1000)
+						newProps.cropBottom = clamp(0, 18000, box.cropBottom + options.cropBottom * 1000)
+					if (props.includes('cropLeft')) newProps.cropLeft = clamp(0, 32000, box.cropLeft + options.cropLeft * 1000)
 					if (props.includes('cropRight'))
-						newProps.cropRight = clamp(0, 32000, box.cropRight + options.getPlainNumber('cropRight') * 1000)
+						newProps.cropRight = clamp(0, 32000, box.cropRight + options.cropRight * 1000)
 				}
 
 				if (Object.keys(newProps).length === 0) return

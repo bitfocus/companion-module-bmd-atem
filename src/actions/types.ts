@@ -1,4 +1,9 @@
-import type { CompanionActionContext, SomeCompanionActionInputField } from '@companion-module/base'
+import type {
+	CompanionActionDefinition,
+	CompanionActionSchema,
+	CompanionOptionValues,
+	SomeCompanionActionInputField,
+} from '@companion-module/base'
 import type { MyOptionsHelper, MyOptionsObject } from '../common.js'
 
 /**
@@ -22,44 +27,52 @@ export interface MyActionEvent2<TOptions> extends MyActionInfo2<TOptions> {
 	readonly surfaceId: string | undefined
 }
 
-export interface MyActionDefinition<TOptions> {
-	/** Name to show in the actions list */
-	name: string
-	/** Additional description of the action */
-	description?: string
+export interface MyActionDefinition<TOptions extends CompanionOptionValues> extends Omit<
+	CompanionActionDefinition<TOptions>,
+	'options'
+> {
+	// /** Name to show in the actions list */
+	// name: string
+	// /** Additional description of the action */
+	// description?: string
 	/** The input fields for the action */
 	options: MyOptionsObject<TOptions, SomeCompanionActionInputField>
-	/**
-	 * Ignore changes to certain options and don't allow them to trigger the subscribe/unsubscribe callbacks
-	 * This allows for ensuring that the subscribe callback is only called when values the action cares about change
-	 */
-	optionsToIgnoreForSubscribe?: string[]
-	/**
-	 * If true, the unsubscribe callback will not be called when the options change, only when the action is removed or disabled
-	 */
-	skipUnsubscribeOnOptionsChange?: boolean
+	// /**
+	//  * Ignore changes to certain options and don't allow them to trigger the subscribe/unsubscribe callbacks
+	//  * This allows for ensuring that the subscribe callback is only called when values the action cares about change
+	//  */
+	// optionsToIgnoreForSubscribe?: string[]
+	// /**
+	//  * If true, the unsubscribe callback will not be called when the options change, only when the action is removed or disabled
+	//  */
+	// skipUnsubscribeOnOptionsChange?: boolean
 
-	/** Called to execute the action */
-	callback: (action: MyActionEvent2<TOptions>, context: CompanionActionContext) => Promise<void> | void
-	/**
-	 * Called to report the existence of an action
-	 * Useful to ensure necessary data is loaded
-	 */
-	subscribe?: (action: MyActionInfo2<TOptions>, context: CompanionActionContext) => Promise<void> | void
-	/**
-	 * Called to report an action has been edited/removed
-	 * Useful to cleanup subscriptions setup in subscribe
-	 */
-	unsubscribe?: (action: MyActionInfo2<TOptions>, context: CompanionActionContext) => Promise<void> | void
-	/**
-	 * The user requested to 'learn' the values for this action.
-	 */
-	learn?: (
-		action: MyActionEvent2<TOptions>,
-		context: CompanionActionContext,
-	) => TOptions | undefined | Promise<TOptions | undefined>
+	// /** Called to execute the action */
+	// callback: (action: MyActionEvent2<TOptions>, context: CompanionActionContext) => Promise<void> | void
+	// /**
+	//  * Called to report the existence of an action
+	//  * Useful to ensure necessary data is loaded
+	//  */
+	// subscribe?: (action: MyActionInfo2<TOptions>, context: CompanionActionContext) => Promise<void> | void
+	// /**
+	//  * Called to report an action has been edited/removed
+	//  * Useful to cleanup subscriptions setup in subscribe
+	//  */
+	// unsubscribe?: (action: MyActionInfo2<TOptions>, context: CompanionActionContext) => Promise<void> | void
+	// /**
+	//  * The user requested to 'learn' the values for this action.
+	//  */
+	// learn?: (
+	// 	action: MyActionEvent2<TOptions>,
+	// 	context: CompanionActionContext,
+	// ) => TOptions | undefined | Promise<TOptions | undefined>
 }
 
-export type MyActionDefinitions<TTypes> = {
-	[Key in keyof TTypes]: MyActionDefinition<TTypes[Key]> | undefined
+export type MyActionDefinitions<
+	Tschemas extends Record<string, CompanionActionSchema<CompanionOptionValues>> = Record<
+		string,
+		CompanionActionSchema<CompanionOptionValues>
+	>,
+> = {
+	[K in keyof Tschemas]: MyActionDefinition<Tschemas[K]['options']> | false | undefined
 }

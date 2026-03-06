@@ -58,11 +58,11 @@ export function createProgramFeedbacks(
 				bgcolor: combineRgb(0, 255, 0),
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
-				return me?.programInput === options.getPlainNumber('input')
+				const me = getMixEffect(state.state, options.mixeffect)
+				return me?.programInput === options.input
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
+				const me = getMixEffect(state.state, options.mixeffect)
 
 				if (me) {
 					return {
@@ -99,14 +99,14 @@ export function createProgramFeedbacks(
 				bgcolor: combineRgb(0, 255, 0),
 			},
 			callback: async ({ options }) => {
-				const mixeffect = (await options.getParsedNumber('mixeffect')) - 1
-				const input = await options.getParsedNumber('input')
+				const mixeffect = (await options.mixeffect) - 1
+				const input = await options.input
 
 				const me = getMixEffect(state.state, mixeffect)
 				return me?.programInput === input
 			},
 			learn: async ({ options }) => {
-				const mixeffect = (await options.getParsedNumber('mixeffect')) - 1
+				const mixeffect = (await options.mixeffect) - 1
 
 				const me = getMixEffect(state.state, mixeffect)
 
@@ -138,16 +138,13 @@ export function createProgramFeedbacks(
 							bgcolor: combineRgb(0, 255, 0),
 						},
 						callback: ({ options }): boolean => {
-							const me1 = getMixEffect(state.state, options.getPlainNumber('mixeffect1'))
-							const me2 = getMixEffect(state.state, options.getPlainNumber('mixeffect2'))
-							return (
-								me1?.programInput === options.getPlainNumber('input1') &&
-								me2?.programInput === options.getPlainNumber('input2')
-							)
+							const me1 = getMixEffect(state.state, options.mixeffect1)
+							const me2 = getMixEffect(state.state, options.mixeffect2)
+							return me1?.programInput === options.input1 && me2?.programInput === options.input2
 						},
 						learn: ({ options }) => {
-							const me1 = getMixEffect(state.state, options.getPlainNumber('mixeffect1'))
-							const me2 = getMixEffect(state.state, options.getPlainNumber('mixeffect2'))
+							const me1 = getMixEffect(state.state, options.mixeffect1)
+							const me2 = getMixEffect(state.state, options.mixeffect2)
 
 							if (me1 && me2) {
 								return {
@@ -181,19 +178,19 @@ export function createProgramFeedbacks(
 							bgcolor: combineRgb(0, 255, 0),
 						},
 						callback: ({ options }): boolean => {
-							const me1 = getMixEffect(state.state, options.getPlainNumber('mixeffect1'))
-							const me2 = getMixEffect(state.state, options.getPlainNumber('mixeffect2'))
-							const me3 = getMixEffect(state.state, options.getPlainNumber('mixeffect3'))
+							const me1 = getMixEffect(state.state, options.mixeffect1)
+							const me2 = getMixEffect(state.state, options.mixeffect2)
+							const me3 = getMixEffect(state.state, options.mixeffect3)
 							return (
-								me1?.programInput === options.getPlainNumber('input1') &&
-								me2?.programInput === options.getPlainNumber('input2') &&
-								me3?.programInput === options.getPlainNumber('input3')
+								me1?.programInput === options.input1 &&
+								me2?.programInput === options.input2 &&
+								me3?.programInput === options.input3
 							)
 						},
 						learn: ({ options }) => {
-							const me1 = getMixEffect(state.state, options.getPlainNumber('mixeffect1'))
-							const me2 = getMixEffect(state.state, options.getPlainNumber('mixeffect2'))
-							const me3 = getMixEffect(state.state, options.getPlainNumber('mixeffect3'))
+							const me1 = getMixEffect(state.state, options.mixeffect1)
+							const me2 = getMixEffect(state.state, options.mixeffect2)
+							const me3 = getMixEffect(state.state, options.mixeffect3)
 
 							if (me1 && me2 && me3) {
 								return {
@@ -230,22 +227,22 @@ export function createProgramFeedbacks(
 							bgcolor: combineRgb(0, 255, 0),
 						},
 						callback: ({ options }): boolean => {
-							const me1 = getMixEffect(state.state, options.getPlainNumber('mixeffect1'))
-							const me2 = getMixEffect(state.state, options.getPlainNumber('mixeffect2'))
-							const me3 = getMixEffect(state.state, options.getPlainNumber('mixeffect3'))
-							const me4 = getMixEffect(state.state, options.getPlainNumber('mixeffect4'))
+							const me1 = getMixEffect(state.state, options.mixeffect1)
+							const me2 = getMixEffect(state.state, options.mixeffect2)
+							const me3 = getMixEffect(state.state, options.mixeffect3)
+							const me4 = getMixEffect(state.state, options.mixeffect4)
 							return (
-								me1?.programInput === options.getPlainNumber('input1') &&
-								me2?.programInput === options.getPlainNumber('input2') &&
-								me3?.programInput === options.getPlainNumber('input3') &&
-								me4?.programInput === options.getPlainNumber('input4')
+								me1?.programInput === options.input1 &&
+								me2?.programInput === options.input2 &&
+								me3?.programInput === options.input3 &&
+								me4?.programInput === options.input4
 							)
 						},
 						learn: ({ options }) => {
-							const me1 = getMixEffect(state.state, options.getPlainNumber('mixeffect1'))
-							const me2 = getMixEffect(state.state, options.getPlainNumber('mixeffect2'))
-							const me3 = getMixEffect(state.state, options.getPlainNumber('mixeffect3'))
-							const me4 = getMixEffect(state.state, options.getPlainNumber('mixeffect4'))
+							const me1 = getMixEffect(state.state, options.mixeffect1)
+							const me2 = getMixEffect(state.state, options.mixeffect2)
+							const me3 = getMixEffect(state.state, options.mixeffect3)
+							const me4 = getMixEffect(state.state, options.mixeffect4)
 
 							if (me1 && me2 && me3 && me4) {
 								return {

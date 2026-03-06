@@ -34,7 +34,7 @@ export function createTallyFeedbacks(model: ModelSpec, state: StateWrapper): MyF
 				bgcolor: combineRgb(255, 0, 0),
 			},
 			callback: ({ options }): boolean => {
-				const source = state.tally[options.getPlainNumber('input')]
+				const source = state.tally[options.input]
 				return !!source?.program
 			},
 		},
@@ -50,7 +50,7 @@ export function createTallyFeedbacks(model: ModelSpec, state: StateWrapper): MyF
 				bgcolor: combineRgb(0, 255, 0),
 			},
 			callback: ({ options }): boolean => {
-				const source = state.tally[options.getPlainNumber('input')]
+				const source = state.tally[options.input]
 				return !!source?.preview
 			},
 		},
@@ -76,7 +76,7 @@ export function createTallyFeedbacks(model: ModelSpec, state: StateWrapper): MyF
 				const selectedInputIds = options.getRaw('inputIds') ?? []
 				if (!Array.isArray(selectedInputIds)) return false
 
-				const matchInputId = options.getPlainNumber('input')
+				const matchInputId = options.input
 
 				for (const inputId of selectedInputIds) {
 					const cacheEntry = state.tallyCache.get(Number(inputId))

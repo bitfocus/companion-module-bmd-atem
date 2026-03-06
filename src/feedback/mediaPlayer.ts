@@ -43,15 +43,12 @@ export function createMediaPlayerFeedbacks(
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: ({ options }): boolean => {
-				const player = state.state.media.players[options.getPlainNumber('mediaplayer')]
-				if (
-					player?.sourceType === Enums.MediaSourceType.Still &&
-					player?.stillIndex === options.getPlainNumber('source')
-				) {
+				const player = state.state.media.players[options.mediaplayer]
+				if (player?.sourceType === Enums.MediaSourceType.Still && player?.stillIndex === options.source) {
 					return true
 				} else if (
 					player?.sourceType === Enums.MediaSourceType.Clip &&
-					player?.clipIndex === options.getPlainNumber('source') - MEDIA_PLAYER_SOURCE_CLIP_OFFSET
+					player?.clipIndex === options.source - MEDIA_PLAYER_SOURCE_CLIP_OFFSET
 				) {
 					return true
 				} else {
@@ -59,7 +56,7 @@ export function createMediaPlayerFeedbacks(
 				}
 			},
 			learn: ({ options }) => {
-				const player = state.state.media.players[options.getPlainNumber('mediaplayer')]
+				const player = state.state.media.players[options.mediaplayer]
 
 				if (player) {
 					return {
@@ -105,12 +102,9 @@ export function createMediaPlayerFeedbacks(
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: async ({ options }): Promise<boolean> => {
-				const [mediaplayer, slot] = await Promise.all([
-					options.getParsedNumber('mediaplayer'),
-					options.getParsedNumber('slot'),
-				])
+				const [mediaplayer, slot] = await Promise.all([options.mediaplayer, options.slot])
 
-				const optionIsClip = options.getPlainBoolean('isClip')
+				const optionIsClip = options.isClip
 
 				const player = state.state.media.players[mediaplayer - 1]
 				if (!optionIsClip && player?.sourceType === Enums.MediaSourceType.Still && player?.stillIndex === slot - 1) {
@@ -126,7 +120,7 @@ export function createMediaPlayerFeedbacks(
 				}
 			},
 			learn: async ({ options }) => {
-				const mediaplayer = await options.getParsedNumber('mediaplayer')
+				const mediaplayer = await options.mediaplayer
 				const player = state.state.media.players[mediaplayer - 1]
 
 				if (player) {

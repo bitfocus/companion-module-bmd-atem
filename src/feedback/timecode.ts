@@ -44,7 +44,7 @@ export function createTimecodeFeedbacks(
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: ({ options }): boolean => {
-				return state.state.settings.timeMode === options.getPlainNumber('mode')
+				return state.state.settings.timeMode === options.mode
 			},
 			learn: ({ options }) => {
 				return {

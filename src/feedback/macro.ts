@@ -61,11 +61,11 @@ export function createMacroFeedbacks(model: ModelSpec, state: StateWrapper): MyF
 				bgcolor: combineRgb(238, 238, 0),
 			},
 			callback: ({ options }): boolean => {
-				let macroIndex = options.getPlainNumber('macroIndex')
+				let macroIndex = options.macroIndex
 				if (!isNaN(macroIndex)) {
 					macroIndex -= 1
 					const { macroPlayer, macroRecorder } = state.state.macro
-					const type = options.getPlainString('state')
+					const type = options.state
 
 					switch (type) {
 						case MacroFeedbackType.IsUsed: {
@@ -102,7 +102,7 @@ export function createMacroFeedbacks(model: ModelSpec, state: StateWrapper): MyF
 				bgcolor: combineRgb(238, 238, 0),
 			},
 			callback: ({ options }): boolean => {
-				return options.getPlainBoolean('loop') === !!state.state.macro.macroPlayer.loop
+				return options.loop === !!state.state.macro.macroPlayer.loop
 			},
 		},
 	}

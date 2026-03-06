@@ -1,5 +1,4 @@
 import { type Atem } from 'atem-connection'
-import type { AtemConfig } from '../config.js'
 import type { ModelSpec } from '../models/index.js'
 import { type InstanceBaseExt } from '../util.js'
 import { AtemCommandBatching } from '../batching.js'

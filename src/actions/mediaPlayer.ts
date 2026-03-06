@@ -49,14 +49,14 @@ export function createMediaPlayerActions(
 				source: AtemMediaPlayerSourcePicker(model, state.state),
 			},
 			callback: async ({ options }) => {
-				const source = options.getPlainNumber('source')
+				const source = options.source
 				if (source >= MEDIA_PLAYER_SOURCE_CLIP_OFFSET) {
 					await atem?.setMediaPlayerSource(
 						{
 							sourceType: Enums.MediaSourceType.Clip,
 							clipIndex: source - MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
 						},
-						options.getPlainNumber('mediaplayer'),
+						options.mediaplayer,
 					)
 				} else {
 					await atem?.setMediaPlayerSource(
@@ -64,12 +64,12 @@ export function createMediaPlayerActions(
 							sourceType: Enums.MediaSourceType.Still,
 							stillIndex: source,
 						},
-						options.getPlainNumber('mediaplayer'),
+						options.mediaplayer,
 					)
 				}
 			},
 			learn: ({ options }) => {
-				const player = state.state.media.players[options.getPlainNumber('mediaplayer')]
+				const player = state.state.media.players[options.mediaplayer]
 
 				if (player) {
 					return {
@@ -109,12 +109,9 @@ export function createMediaPlayerActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const [mediaplayer, slot] = await Promise.all([
-					options.getParsedNumber('mediaplayer'),
-					options.getParsedString('slot'),
-				])
+				const [mediaplayer, slot] = await Promise.all([options.mediaplayer, options.slot])
 
-				if (model.media.clips > 0 && options.getPlainBoolean('isClip')) {
+				if (model.media.clips > 0 && options.isClip) {
 					let index = Number(slot) - 1
 					if (isNaN(index)) index = state.state.media.clipPool.findIndex((clip) => clip?.name == slot)
 					if (index == -1) {
@@ -147,7 +144,7 @@ export function createMediaPlayerActions(
 				}
 			},
 			learn: async ({ options }) => {
-				const mediaplayer = await options.getParsedNumber('mediaplayer')
+				const mediaplayer = await options.mediaplayer
 				const player = state.state.media.players[mediaplayer - 1]
 
 				if (player) {
@@ -185,8 +182,8 @@ export function createMediaPlayerActions(
 				// AtemMediaPlayerSourcePicker(model, state)
 			},
 			callback: async ({ options }) => {
-				const playerId = options.getPlainNumber('mediaplayer')
-				const direction = options.getPlainString('direction')
+				const playerId = options.mediaplayer
+				const direction = options.direction
 				const offset = direction === 'next' ? 1 : -1
 
 				const player = getMediaPlayer(state.state, playerId)
@@ -225,7 +222,7 @@ export function createMediaPlayerActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const slot = await options.getParsedNumber('slot')
+				const slot = await options.slot
 
 				await atem?.clearMediaPoolStill(slot - 1)
 			},

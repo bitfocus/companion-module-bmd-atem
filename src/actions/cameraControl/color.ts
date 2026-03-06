@@ -95,11 +95,11 @@ export function createCameraControlColorActions(
 			},
 		},
 		callback: async ({ options }) => {
-			const cameraId = await options.getParsedNumber('cameraId')
-			const red = await options.getParsedNumber('red')
-			const green = await options.getParsedNumber('green')
-			const blue = await options.getParsedNumber('blue')
-			const luma = await options.getParsedNumber('luma')
+			const cameraId = await options.cameraId
+			const red = await options.red
+			const green = await options.green
+			const blue = await options.blue
+			const luma = await options.luma
 
 			await doSend(cameraId, red, green, blue, luma)
 		},
@@ -145,9 +145,9 @@ export function createCameraControlColorActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
-				const contrast = await options.getParsedNumber('contrast')
-				const pivot = await options.getParsedNumber('pivot')
+				const cameraId = await options.cameraId
+				const contrast = await options.contrast
+				const pivot = await options.pivot
 
 				await commandSender?.colorContrastAdjust(cameraId, contrast, pivot)
 			},
@@ -167,8 +167,8 @@ export function createCameraControlColorActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
-				const lumaMix = await options.getParsedNumber('lumaMix')
+				const cameraId = await options.cameraId
+				const lumaMix = await options.lumaMix
 
 				await commandSender?.colorLumaMix(cameraId, lumaMix)
 			},
@@ -195,9 +195,9 @@ export function createCameraControlColorActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
-				const hue = await options.getParsedNumber('hue')
-				const saturation = await options.getParsedNumber('saturation')
+				const cameraId = await options.cameraId
+				const hue = await options.hue
+				const saturation = await options.saturation
 
 				await commandSender?.colorHueSaturationAdjust(cameraId, hue, saturation)
 			},

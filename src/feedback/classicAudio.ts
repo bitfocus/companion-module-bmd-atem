@@ -64,14 +64,12 @@ export function createClassicAudioFeedbacks(
 			},
 			callback: ({ options }): boolean => {
 				const audioChannels = state.state.audio?.channels ?? {}
-				const channel = audioChannels[options.getPlainNumber('input')]
-				return !!(
-					channel && compareNumber(options.getPlainNumber('gain'), options.getPlainString('comparitor'), channel.gain)
-				)
+				const channel = audioChannels[options.input]
+				return !!(channel && compareNumber(options.gain, options.comparitor, channel.gain))
 			},
 			learn: ({ options }) => {
 				const audioChannels = state.state.audio?.channels ?? {}
-				const channel = audioChannels[options.getPlainNumber('input')]
+				const channel = audioChannels[options.input]
 
 				if (channel) {
 					return {
@@ -103,12 +101,12 @@ export function createClassicAudioFeedbacks(
 			},
 			callback: ({ options }): boolean => {
 				const audioChannels = state.state.audio?.channels ?? {}
-				const channel = audioChannels[options.getPlainNumber('input')]
-				return channel?.mixOption === options.getPlainNumber('option')
+				const channel = audioChannels[options.input]
+				return channel?.mixOption === options.option
 			},
 			learn: ({ options }) => {
 				const audioChannels = state.state.audio?.channels ?? {}
-				const channel = audioChannels[options.getPlainNumber('input')]
+				const channel = audioChannels[options.input]
 
 				if (channel) {
 					return {
@@ -144,9 +142,7 @@ export function createClassicAudioFeedbacks(
 			},
 			callback: ({ options }): boolean => {
 				const props = state.state.audio?.master
-				return !!(
-					props && compareNumber(options.getPlainNumber('gain'), options.getPlainString('comparitor'), props.gain)
-				)
+				return !!(props && compareNumber(options.gain, options.comparitor, props.gain))
 			},
 			learn: ({ options }) => {
 				const props = state.state.audio?.master

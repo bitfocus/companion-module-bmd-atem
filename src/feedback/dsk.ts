@@ -47,7 +47,7 @@ export function createDownstreamKeyerFeedbacks(
 				bgcolor: combineRgb(255, 0, 0),
 			},
 			callback: ({ options }): boolean => {
-				const dsk = getDSK(state.state, options.getPlainNumber('key'))
+				const dsk = getDSK(state.state, options.key)
 				return !!dsk?.onAir
 			},
 		},
@@ -63,7 +63,7 @@ export function createDownstreamKeyerFeedbacks(
 				bgcolor: combineRgb(255, 0, 0),
 			},
 			callback: ({ options }): boolean => {
-				const dsk = getDSK(state.state, options.getPlainNumber('key'))
+				const dsk = getDSK(state.state, options.key)
 				return !!dsk?.properties?.tie
 			},
 		},
@@ -80,11 +80,11 @@ export function createDownstreamKeyerFeedbacks(
 				bgcolor: combineRgb(238, 238, 0),
 			},
 			callback: ({ options }): boolean => {
-				const dsk = getDSK(state.state, options.getPlainNumber('key'))
-				return dsk?.sources?.fillSource === options.getPlainNumber('fill')
+				const dsk = getDSK(state.state, options.key)
+				return dsk?.sources?.fillSource === options.fill
 			},
 			learn: ({ options }) => {
-				const dsk = getDSK(state.state, options.getPlainNumber('key'))
+				const dsk = getDSK(state.state, options.key)
 
 				if (dsk?.sources) {
 					return {
@@ -121,14 +121,14 @@ export function createDownstreamKeyerFeedbacks(
 				bgcolor: combineRgb(238, 238, 0),
 			},
 			callback: async ({ options }) => {
-				const key = (await options.getParsedNumber('key')) - 1
-				const fill = await options.getParsedNumber('fill')
+				const key = (await options.key) - 1
+				const fill = await options.fill
 
 				const dsk = getDSK(state.state, key)
 				return dsk?.sources?.fillSource === fill
 			},
 			learn: async ({ options }) => {
-				const key = (await options.getParsedNumber('key')) - 1
+				const key = (await options.key) - 1
 
 				const dsk = getDSK(state.state, key)
 

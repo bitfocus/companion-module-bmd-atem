@@ -53,11 +53,11 @@ export function createTransitionFeedbacks(
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
+				const me = getMixEffect(state.state, options.mixeffect)
 				return !!me?.transitionPreview
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
+				const me = getMixEffect(state.state, options.mixeffect)
 
 				if (me) {
 					return {
@@ -82,11 +82,11 @@ export function createTransitionFeedbacks(
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
-				return me?.transitionProperties.nextStyle === options.getPlainNumber('style')
+				const me = getMixEffect(state.state, options.mixeffect)
+				return me?.transitionProperties.nextStyle === options.style
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
+				const me = getMixEffect(state.state, options.mixeffect)
 
 				if (me) {
 					return {
@@ -112,10 +112,10 @@ export function createTransitionFeedbacks(
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
+				const me = getMixEffect(state.state, options.mixeffect)
 				const expectedSelection = calculateTransitionSelection(model.USKs, options.getRaw('selection'))
 				if (me) {
-					switch (options.getPlainString('matchmethod')) {
+					switch (options.matchmethod) {
 						case 'exact':
 							return me.transitionProperties.nextSelection.join(',') === expectedSelection.join(',')
 						case 'contains':
@@ -141,10 +141,10 @@ export function createTransitionFeedbacks(
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
+				const me = getMixEffect(state.state, options.mixeffect)
 				if (me?.transitionSettings) {
-					const style = options.getPlainNumber('style')
-					const rate = options.getPlainNumber('rate')
+					const style = options.style
+					const rate = options.rate
 					switch (style) {
 						case Enums.TransitionStyle.MIX:
 							return me.transitionSettings.mix?.rate === rate
@@ -163,10 +163,10 @@ export function createTransitionFeedbacks(
 				return false
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
+				const me = getMixEffect(state.state, options.mixeffect)
 
 				if (me?.transitionSettings) {
-					const style = options.getPlainNumber('style')
+					const style = options.style
 					switch (style) {
 						case Enums.TransitionStyle.MIX:
 							return {
@@ -211,7 +211,7 @@ export function createTransitionFeedbacks(
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
+				const me = getMixEffect(state.state, options.mixeffect)
 				return !!me?.transitionPosition?.inTransition
 			},
 		},

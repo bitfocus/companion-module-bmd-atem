@@ -53,13 +53,9 @@ export function createMacroActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const macroIndex = options.getPlainNumber('macro') - 1
+				const macroIndex = options.macro - 1
 				const { macroPlayer, macroRecorder } = state.state.macro
-				if (
-					options.getPlainString('action') === 'runContinue' &&
-					macroPlayer.isWaiting &&
-					macroPlayer.macroIndex === macroIndex
-				) {
+				if (options.action === 'runContinue' && macroPlayer.isWaiting && macroPlayer.macroIndex === macroIndex) {
 					await atem?.macroContinue()
 				} else if (macroRecorder.isRecording && macroRecorder.macroIndex === macroIndex) {
 					await atem?.macroStopRecord()
@@ -94,8 +90,8 @@ export function createMacroActions(
 				},
 			},
 			callback: async ({ options }) => {
-				let newState = options.getPlainString('loop') === 'true'
-				if (options.getPlainString('loop') === 'toggle') {
+				let newState = options.loop === 'true'
+				if (options.loop === 'toggle') {
 					newState = !state.state.macro.macroPlayer.loop
 				}
 

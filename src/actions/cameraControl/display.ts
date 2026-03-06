@@ -40,15 +40,15 @@ export function createCameraControlDisplayActions(
 				},
 			},
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
+				const cameraId = await options.cameraId
 
 				let target: boolean
-				if (options.getPlainString('state') === 'toggle') {
+				if (options.state === 'toggle') {
 					const cameraState = state.atemCameraState.get(cameraId)
 					target = !cameraState?.display?.colorBarEnable
 					console.log('camera', cameraState, target)
 				} else {
-					target = options.getPlainString('state') === 'true'
+					target = options.state === 'true'
 				}
 
 				await commandSender?.displayColorBars(cameraId, target)
