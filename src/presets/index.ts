@@ -38,15 +38,15 @@ export function GetPresetsList(
 	const meSources = GetSourcesListForType(model, state, 'me')
 
 	createProgramPreviewPresets(context, pstSize, pstText, meSources)
-	// createTransitionPresets(context, pstSize, rateOptions)
+	createTransitionPresets(context, pstSize, rateOptions)
 	createAuxOutputPresets(context, state, pstSize, pstText)
-	// 	...createUpstreamKeyerPresets(model, pstSize, pstText, meSources),
+	createUpstreamKeyerPresets(context, pstSize, pstText, meSources)
 	createDownstreamKeyerPresets(context, pstSize, pstText, meSources)
 	createMacroPresets(context)
 	createMultiviewerWindowPresets(context, state, pstSize, pstText)
-	// 	...createSuperSourcePresets(model, pstSize, pstText, meSources),
-	// 	...createMediaPlayerPresets(model, pstSize),
-	// 	...createFadeToBlackPresets(model, pstSize, rateOptions),
+	createSuperSourcePresets(context, pstSize, pstText, meSources)
+	createMediaPlayerPresets(context, pstSize)
+	createFadeToBlackPresets(context, pstSize, rateOptions)
 	createStreamingPresets(context)
 	createRecordingPresets(context)
 
