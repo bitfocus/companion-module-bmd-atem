@@ -96,6 +96,6 @@ export declare type MyFeedbackDefinition<TOption> =
 	| MyBooleanFeedbackDefinition<TOption>
 	| MyAdvancedFeedbackDefinition<TOption>
 
-export type MyFeedbackDefinitions<TTypes> = {
-	[Key in keyof TTypes]: MyFeedbackDefinition<TTypes[Key]> | undefined
+export type MyFeedbackDefinitions<TTypes extends Record<string, { options: unknown }>> = {
+	[Key in keyof TTypes]: MyFeedbackDefinition<TTypes[Key]['options']> | undefined
 }

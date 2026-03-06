@@ -6,10 +6,12 @@ import { AtemCameraControlDirectCommandSender } from '@atem-connection/camera-co
 import { CHOICES_ON_OFF_TOGGLE, CameraControlSourcePicker, type TrueFalseToggle } from '../../choices.js'
 import type { AtemConfig } from '../../config.js'
 
-export interface AtemCameraControlDisplayActions {
+export type AtemCameraControlDisplayActions = {
 	[ActionId.CameraControlDisplayColorBars]: {
-		cameraId: string
-		state: TrueFalseToggle
+		options: {
+			cameraId: string
+			state: TrueFalseToggle
+		}
 	}
 }
 

@@ -5,14 +5,18 @@ import type { MyActionDefinitions } from './types.js'
 import { CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../choices.js'
 import type { StateWrapper } from '../state.js'
 
-export interface AtemStreamingActions {
+export type AtemStreamingActions = {
 	[ActionId.StreamStartStop]: {
-		stream: TrueFalseToggle
+		options: {
+			stream: TrueFalseToggle
+		}
 	}
 	[ActionId.StreamService]: {
-		service: string
-		url: string
-		key: string
+		options: {
+			service: string
+			url: string
+			key: string
+		}
 	}
 }
 
@@ -54,7 +58,6 @@ export function createStreamingActions(
 			learn: ({ options }) => {
 				if (state.state.streaming?.status) {
 					return {
-						...options.getJson(),
 						state: state.state.streaming.status.state,
 					}
 				} else {
@@ -95,7 +98,6 @@ export function createStreamingActions(
 			learn: ({ options }) => {
 				if (state.state.streaming?.service) {
 					return {
-						...options.getJson(),
 						service: state.state.streaming.service.serviceName,
 						url: state.state.streaming.service.url,
 						key: state.state.streaming.service.key,

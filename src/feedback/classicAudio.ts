@@ -8,19 +8,28 @@ import { compareNumber, NumberComparitor } from '../util.js'
 import { AtemAudioInputPicker, NumberComparitorPicker } from '../input.js'
 import type { StateWrapper } from '../state.js'
 
-export interface AtemClassicAudioFeedbacks {
+export type AtemClassicAudioFeedbacks = {
 	[FeedbackId.ClassicAudioGain]: {
-		input: number
-		comparitor: NumberComparitor
-		gain: number
+		type: 'boolean'
+		options: {
+			input: number
+			comparitor: NumberComparitor
+			gain: number
+		}
 	}
 	[FeedbackId.ClassicAudioMixOption]: {
-		input: number
-		option: Enums.AudioMixOption
+		type: 'boolean'
+		options: {
+			input: number
+			option: Enums.AudioMixOption
+		}
 	}
 	[FeedbackId.ClassicAudioMasterGain]: {
-		comparitor: NumberComparitor
-		gain: number
+		type: 'boolean'
+		options: {
+			comparitor: NumberComparitor
+			gain: number
+		}
 	}
 }
 
@@ -51,7 +60,6 @@ export function createClassicAudioFeedbacks(
 					label: 'Fader Level (-60 = -inf)',
 					id: 'gain',
 					range: true,
-					required: true,
 					default: 0,
 					step: 0.1,
 					min: -60,
@@ -73,7 +81,6 @@ export function createClassicAudioFeedbacks(
 
 				if (channel) {
 					return {
-						...options.getJson(),
 						gain: channel.gain,
 					}
 				} else {
@@ -110,7 +117,6 @@ export function createClassicAudioFeedbacks(
 
 				if (channel) {
 					return {
-						...options.getJson(),
 						option: channel.mixOption,
 					}
 				} else {
@@ -129,7 +135,6 @@ export function createClassicAudioFeedbacks(
 					label: 'Fader Level (-60 = -inf)',
 					id: 'gain',
 					range: true,
-					required: true,
 					default: 0,
 					step: 0.1,
 					min: -60,
@@ -149,7 +154,6 @@ export function createClassicAudioFeedbacks(
 
 				if (props) {
 					return {
-						...options.getJson(),
 						gain: props.gain,
 					}
 				} else {

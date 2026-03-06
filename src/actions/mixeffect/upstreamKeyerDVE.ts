@@ -372,7 +372,6 @@ export function createUpstreamKeyerDVEActions(
 
 				if (usk?.dveSettings) {
 					return {
-						...options.getJson(),
 						maskEnabled: usk.dveSettings.maskEnabled,
 						maskTop: usk.dveSettings.maskTop / 1000,
 						maskBottom: usk.dveSettings.maskBottom / 1000,
@@ -556,7 +555,6 @@ export function createUpstreamKeyerDVEActions(
 
 				if (usk?.dveSettings) {
 					return {
-						...options.getJson(),
 						maskEnabled: usk.dveSettings.maskEnabled + '',
 						maskTop: usk.dveSettings.maskTop / 1000 + '',
 						maskBottom: usk.dveSettings.maskBottom / 1000 + '',
@@ -685,7 +683,6 @@ export function createUpstreamKeyerDVEActions(
 
 				if (usk?.dveSettings) {
 					return {
-						...options.getJson(),
 						maskTop: usk.dveSettings.maskTop / 1000,
 						maskBottom: usk.dveSettings.maskBottom / 1000,
 						maskLeft: usk.dveSettings.maskLeft / 1000,
@@ -751,7 +748,6 @@ export function createUpstreamKeyerDVEActions(
 
 				if (usk?.flyProperties) {
 					return {
-						...options.getJson(),
 						keyframe: usk.flyProperties.isAtKeyFrame as any,
 					}
 				} else {
@@ -780,7 +776,6 @@ export function createUpstreamKeyerDVEActions(
 
 				if (usk?.flyProperties) {
 					return {
-						...options.getJson(),
 						flydirection: usk.flyProperties.runToInfiniteIndex,
 					}
 				} else {

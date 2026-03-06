@@ -5,17 +5,19 @@ import type { MyActionDefinitions } from './types.js'
 import { AtemAllSourcePicker } from '../input.js'
 import type { StateWrapper } from '../state.js'
 
-export interface AtemSettingsActions {
-	[ActionId.SaveStartupState]: Record<string, never>
-	[ActionId.ClearStartupState]: Record<string, never>
+export type AtemSettingsActions = {
+	[ActionId.SaveStartupState]: { options: Record<string, never> }
+	[ActionId.ClearStartupState]: { options: Record<string, never> }
 	[ActionId.InputName]: {
-		source: number
+		options: {
+			source: number
 
-		short_enable: boolean
-		short_value: string
+			short_enable: boolean
+			short_value: string
 
-		long_enable: boolean
-		long_value: string
+			long_enable: boolean
+			long_value: string
+		}
 	}
 }
 
@@ -101,7 +103,6 @@ export function createSettingsActions(
 
 				if (props) {
 					return {
-						...options.getJson(),
 						long_value: props.longName,
 						short_value: props.shortName,
 					}

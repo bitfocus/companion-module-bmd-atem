@@ -29,8 +29,7 @@ import {
 } from './mixeffect/upstreamKeyerPattern.js'
 import { createClassicAudioActions, type AtemClassicAudioActions } from './classicAudio.js'
 import { createFairlightAudioActions, type AtemFairlightAudioActions } from './fairlightAudio.js'
-import type { MyActionDefinition } from './types.js'
-import { ActionId } from './ActionId.js'
+import type { MyActionDefinitions } from './types.js'
 import type { StateWrapper } from '../state.js'
 import { createCameraControlLensActions, type AtemCameraControlLensActions } from './cameraControl/lens.js'
 import { createCameraControlDisplayActions, type AtemCameraControlDisplayActions } from './cameraControl/display.js'
@@ -71,7 +70,7 @@ export function GetActionsList(
 	transitions: AtemTransitions,
 	state: StateWrapper,
 ): CompanionActionDefinitions {
-	const actions: { [id in ActionId]: MyActionDefinition<any> | undefined } = {
+	const actions: MyActionDefinitions<ActionTypes> = {
 		...createProgramPreviewActions(atem, model, transitions, state),
 		...createTransitionActions(instance, atem, model, commandBatching, state),
 		...createUpstreamKeyerCommonActions(atem, model, state),

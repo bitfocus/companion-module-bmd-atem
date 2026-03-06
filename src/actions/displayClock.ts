@@ -9,30 +9,38 @@ import { ActionId } from './ActionId.js'
 import type { MyActionDefinitions } from './types.js'
 import type { StateWrapper } from '../state.js'
 
-export interface AtemDisplayClockActions {
+export type AtemDisplayClockActions = {
 	[ActionId.DisplayClockState]: {
-		state: 'toggle' | Enums.DisplayClockClockState
+		options: {
+			state: 'toggle' | Enums.DisplayClockClockState
+		}
 	}
 	[ActionId.DisplayClockConfigure]: {
-		properties: Array<'enabled' | 'size' | 'opacity' | 'x' | 'y' | 'autoHide' | 'clockMode'>
+		options: {
+			properties: Array<'enabled' | 'size' | 'opacity' | 'x' | 'y' | 'autoHide' | 'clockMode'>
 
-		enabled: boolean
-		size: number
-		opacity: number
-		x: number
-		y: number
-		autoHide: boolean
-		clockMode: Enums.DisplayClockClockMode
+			enabled: boolean
+			size: number
+			opacity: number
+			x: number
+			y: number
+			autoHide: boolean
+			clockMode: Enums.DisplayClockClockMode
+		}
 	}
 	[ActionId.DisplayClockStartTime]: {
-		hours: number
-		minutes: number
-		seconds: number
+		options: {
+			hours: number
+			minutes: number
+			seconds: number
+		}
 	}
 	[ActionId.DisplayClockOffsetStartTime]: {
-		hours: number
-		minutes: number
-		seconds: number
+		options: {
+			hours: number
+			minutes: number
+			seconds: number
+		}
 	}
 }
 
@@ -116,7 +124,6 @@ export function createDisplayClockActions(
 				const displayClockConfig = state.state.displayClock?.properties
 				if (displayClockConfig) {
 					return {
-						...options.getJson(),
 						enabled: displayClockConfig.enabled,
 						size: displayClockConfig.size / 100,
 						opacity: displayClockConfig.opacity / 100,
@@ -149,7 +156,6 @@ export function createDisplayClockActions(
 				const displayClockConfig = state.state.displayClock?.properties
 				if (displayClockConfig) {
 					return {
-						...options.getJson(),
 						hours: displayClockConfig.startFrom.hours,
 						minutes: displayClockConfig.startFrom.minutes,
 						seconds: displayClockConfig.startFrom.seconds,

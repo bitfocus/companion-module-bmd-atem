@@ -13,13 +13,19 @@ export enum MacroFeedbackType {
 	IsUsed = 'isUsed',
 }
 
-export interface AtemMacroFeedbacks {
+export type AtemMacroFeedbacks = {
 	[FeedbackId.Macro]: {
-		macroIndex: number
-		state: MacroFeedbackType
+		type: 'boolean'
+		options: {
+			macroIndex: number
+			state: MacroFeedbackType
+		}
 	}
 	[FeedbackId.MacroLoop]: {
-		loop: boolean
+		type: 'boolean'
+		options: {
+			loop: boolean
+		}
 	}
 }
 

@@ -5,38 +5,53 @@ import { FeedbackId } from '../FeedbackId.js'
 import { combineRgb } from '@companion-module/base'
 import { getMixEffect, type StateWrapper } from '../../state.js'
 
-export interface AtemPreviewFeedbacks {
+export type AtemPreviewFeedbacks = {
 	[FeedbackId.PreviewBG]: {
-		mixeffect: number
-		input: number
+		type: 'boolean'
+		options: {
+			mixeffect: number
+			input: number
+		}
 	}
 	[FeedbackId.PreviewVariables]: {
-		mixeffect: string
-		input: string
+		type: 'boolean'
+		options: {
+			mixeffect: string
+			input: string
+		}
 	}
 	[FeedbackId.PreviewBG2]: {
-		mixeffect1: number
-		input1: number
-		mixeffect2: number
-		input2: number
+		type: 'boolean'
+		options: {
+			mixeffect1: number
+			input1: number
+			mixeffect2: number
+			input2: number
+		}
 	}
 	[FeedbackId.PreviewBG3]: {
-		mixeffect1: number
-		input1: number
-		mixeffect2: number
-		input2: number
-		mixeffect3: number
-		input3: number
+		type: 'boolean'
+		options: {
+			mixeffect1: number
+			input1: number
+			mixeffect2: number
+			input2: number
+			mixeffect3: number
+			input3: number
+		}
 	}
 	[FeedbackId.PreviewBG4]: {
-		mixeffect1: number
-		input1: number
-		mixeffect2: number
-		input2: number
-		mixeffect3: number
-		input3: number
-		mixeffect4: number
-		input4: number
+		type: 'boolean'
+		options: {
+			mixeffect1: number
+			input1: number
+			mixeffect2: number
+			input2: number
+			mixeffect3: number
+			input3: number
+			mixeffect4: number
+			input4: number
+		}
 	}
 }
 
@@ -66,7 +81,6 @@ export function createPreviewFeedbacks(
 
 				if (me) {
 					return {
-						...options.getJson(),
 						input: me.previewInput,
 					}
 				} else {
@@ -112,7 +126,6 @@ export function createPreviewFeedbacks(
 
 				if (me) {
 					return {
-						...options.getJson(),
 						input: me.previewInput + '',
 					}
 				} else {
@@ -148,7 +161,6 @@ export function createPreviewFeedbacks(
 
 							if (me1 && me2) {
 								return {
-									...options.getJson(),
 									input1: me1.previewInput,
 									input2: me2.previewInput,
 								}
@@ -194,7 +206,6 @@ export function createPreviewFeedbacks(
 
 							if (me1 && me2 && me3) {
 								return {
-									...options.getJson(),
 									input1: me1.previewInput,
 									input2: me2.previewInput,
 									input3: me3.previewInput,
@@ -246,7 +257,6 @@ export function createPreviewFeedbacks(
 
 							if (me1 && me2 && me3 && me4) {
 								return {
-									...options.getJson(),
 									input1: me1.previewInput,
 									input2: me2.previewInput,
 									input3: me3.previewInput,

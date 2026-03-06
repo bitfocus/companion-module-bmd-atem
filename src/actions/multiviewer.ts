@@ -16,23 +16,29 @@ const ChoicesMultiviewerQuadrantState: MyDropdownChoice<MultiviewerQuadrantState
 	{ id: 'quad', label: 'Quad' },
 ]
 
-export interface AtemMultiviewerActions {
+export type AtemMultiviewerActions = {
 	[ActionId.MultiviewerWindowSource]: {
-		multiViewerId: number
-		windowIndex: number
-		source: number
+		options: {
+			multiViewerId: number
+			windowIndex: number
+			source: number
+		}
 	}
 	[ActionId.MultiviewerWindowSourceVariables]: {
-		multiViewerId: string
-		windowIndex: string
-		source: string
+		options: {
+			multiViewerId: string
+			windowIndex: string
+			source: string
+		}
 	}
 	[ActionId.MultiviewerLayout]: {
-		multiViewerId: string
-		topLeft: MultiviewerQuadrantState
-		topRight: MultiviewerQuadrantState
-		bottomLeft: MultiviewerQuadrantState
-		bottomRight: MultiviewerQuadrantState
+		options: {
+			multiViewerId: string
+			topLeft: MultiviewerQuadrantState
+			topRight: MultiviewerQuadrantState
+			bottomLeft: MultiviewerQuadrantState
+			bottomRight: MultiviewerQuadrantState
+		}
 	}
 }
 
@@ -64,7 +70,6 @@ export function createMultiviewerActions(
 
 				if (window) {
 					return {
-						...options.getJson(),
 						source: window.source,
 					}
 				} else {
@@ -114,7 +119,6 @@ export function createMultiviewerActions(
 
 				if (window) {
 					return {
-						...options.getJson(),
 						source: window.source + '',
 					}
 				} else {
@@ -205,7 +209,6 @@ export function createMultiviewerActions(
 					const getState = (value: Enums.MultiViewerLayout) => (layout & value ? 'quad' : 'single')
 
 					return {
-						...options.getJson(),
 						topLeft: getState(Enums.MultiViewerLayout.TopLeftSmall),
 						topRight: getState(Enums.MultiViewerLayout.TopRightSmall),
 						bottomLeft: getState(Enums.MultiViewerLayout.BottomLeftSmall),

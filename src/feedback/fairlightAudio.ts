@@ -14,58 +14,97 @@ import {
 } from '../input.js'
 import type { StateWrapper } from '../state.js'
 
-export interface AtemFairlightAudioFeedbacks {
+export type AtemFairlightAudioFeedbacks = {
 	[FeedbackId.FairlightAudioInputGain]: {
-		input: number
-		source: string
-		comparitor: NumberComparitor
-		gain: number
+		type: 'boolean'
+		options: {
+			input: number
+			source: string
+			comparitor: NumberComparitor
+			gain: number
+		}
 	}
 	[FeedbackId.FairlightAudioFaderGain]: {
-		input: number
-		source: string
-		comparitor: NumberComparitor
-		gain: number
+		type: 'boolean'
+		options: {
+			input: number
+			source: string
+			comparitor: NumberComparitor
+			gain: number
+		}
 	}
 	[FeedbackId.FairlightAudioMixOption]: {
-		input: number
-		source: string
-		option: Enums.FairlightAudioMixOption
+		type: 'boolean'
+		options: {
+			input: number
+			source: string
+			option: Enums.FairlightAudioMixOption
+		}
 	}
 	[FeedbackId.FairlightAudioMasterGain]: {
-		comparitor: NumberComparitor
-		gain: number
+		type: 'boolean'
+		options: {
+			comparitor: NumberComparitor
+			gain: number
+		}
 	}
 	[FeedbackId.FairlightAudioMonitorSolo]: {
-		nothing: boolean
-		input: number
-		source: string
+		type: 'boolean'
+		options: {
+			nothing: boolean
+			input: number
+			source: string
+		}
 	}
 	[FeedbackId.FairlightAudioMonitorOutputFaderGain]: {
-		comparitor: NumberComparitor
-		gain: number
+		type: 'boolean'
+		options: {
+			comparitor: NumberComparitor
+			gain: number
+		}
 	}
-	[FeedbackId.FairlightAudioMonitorMasterMuted]: Record<string, never>
+	[FeedbackId.FairlightAudioMonitorMasterMuted]: {
+		type: 'boolean'
+		options: Record<string, never>
+	}
 	[FeedbackId.FairlightAudioMonitorMasterGain]: {
-		comparitor: NumberComparitor
-		gain: number
+		type: 'boolean'
+		options: {
+			comparitor: NumberComparitor
+			gain: number
+		}
 	}
-	[FeedbackId.FairlightAudioMonitorTalkbackMuted]: Record<string, never>
+	[FeedbackId.FairlightAudioMonitorTalkbackMuted]: {
+		type: 'boolean'
+		options: Record<string, never>
+	}
 	[FeedbackId.FairlightAudioMonitorTalkbackGain]: {
-		comparitor: NumberComparitor
-		gain: number
+		type: 'boolean'
+		options: {
+			comparitor: NumberComparitor
+			gain: number
+		}
 	}
 	[FeedbackId.FairlightAudioMonitorSidetoneGain]: {
-		comparitor: NumberComparitor
-		gain: number
+		type: 'boolean'
+		options: {
+			comparitor: NumberComparitor
+			gain: number
+		}
 	}
 	[FeedbackId.FairlightAudioRouting]: {
-		destination: number
-		source: number
+		type: 'boolean'
+		options: {
+			destination: number
+			source: number
+		}
 	}
 	[FeedbackId.FairlightAudioRoutingVariables]: {
-		destination: string
-		source: string
+		type: 'boolean'
+		options: {
+			destination: string
+			source: string
+		}
 	}
 }
 
@@ -108,7 +147,6 @@ export function createFairlightAudioFeedbacks(
 					label: 'Input Level (-100 = -inf)',
 					id: 'gain',
 					range: true,
-					required: true,
 					default: 0,
 					step: 0.1,
 					min: -100,
@@ -132,7 +170,6 @@ export function createFairlightAudioFeedbacks(
 
 				if (source?.properties) {
 					return {
-						...options.getJson(),
 						gain: source.properties.gain / 100,
 					}
 				} else {
@@ -153,7 +190,6 @@ export function createFairlightAudioFeedbacks(
 					label: 'Fader Level (-100 = -inf)',
 					id: 'gain',
 					range: true,
-					required: true,
 					default: 0,
 					step: 0.1,
 					min: -100,
@@ -179,7 +215,6 @@ export function createFairlightAudioFeedbacks(
 
 				if (source?.properties) {
 					return {
-						...options.getJson(),
 						gain: source.properties.faderGain / 100,
 					}
 				} else {
@@ -219,7 +254,6 @@ export function createFairlightAudioFeedbacks(
 
 				if (source?.properties) {
 					return {
-						...options.getJson(),
 						option: source.properties.mixOption,
 					}
 				} else {
@@ -238,7 +272,6 @@ export function createFairlightAudioFeedbacks(
 					label: 'Fader Level (-100 = -inf)',
 					id: 'gain',
 					range: true,
-					required: true,
 					default: 0,
 					step: 0.1,
 					min: -100,
@@ -258,7 +291,6 @@ export function createFairlightAudioFeedbacks(
 
 				if (props) {
 					return {
-						...options.getJson(),
 						gain: props.faderGain / 100,
 					}
 				} else {
@@ -300,7 +332,6 @@ export function createFairlightAudioFeedbacks(
 
 						if (source?.properties) {
 							return {
-								...options.getJson(),
 								gain: source.properties.faderGain / 100,
 							}
 						} else {
@@ -321,7 +352,6 @@ export function createFairlightAudioFeedbacks(
 							label: 'Fader Level (-60 = Min)',
 							id: 'gain',
 							range: true,
-							required: true,
 							default: 0,
 							step: 0.1,
 							min: -60,
@@ -341,7 +371,6 @@ export function createFairlightAudioFeedbacks(
 
 						if (props) {
 							return {
-								...options.getJson(),
 								gain: props.gain / 100,
 							}
 						} else {
@@ -380,7 +409,6 @@ export function createFairlightAudioFeedbacks(
 								label: 'Fader Level (-60 = Min)',
 								id: 'gain',
 								range: true,
-								required: true,
 								default: 0,
 								step: 0.1,
 								min: -60,
@@ -400,7 +428,6 @@ export function createFairlightAudioFeedbacks(
 
 							if (props) {
 								return {
-									...options.getJson(),
 									gain: props.inputMasterGain / 100,
 								}
 							} else {
@@ -439,7 +466,6 @@ export function createFairlightAudioFeedbacks(
 								label: 'Fader Level (-60 = Min)',
 								id: 'gain',
 								range: true,
-								required: true,
 								default: 0,
 								step: 0.1,
 								min: -60,
@@ -459,7 +485,6 @@ export function createFairlightAudioFeedbacks(
 
 							if (props) {
 								return {
-									...options.getJson(),
 									gain: props.inputTalkbackGain / 100,
 								}
 							} else {
@@ -481,7 +506,6 @@ export function createFairlightAudioFeedbacks(
 								label: 'Fader Level (-60 = Min)',
 								id: 'gain',
 								range: true,
-								required: true,
 								default: 0,
 								step: 0.1,
 								min: -60,
@@ -501,7 +525,6 @@ export function createFairlightAudioFeedbacks(
 
 							if (props) {
 								return {
-									...options.getJson(),
 									gain: props.inputSidetoneGain / 100,
 								}
 							} else {

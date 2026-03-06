@@ -7,16 +7,25 @@ import type { StateWrapper } from '../../state.js'
 import { calculateTallyForInputId } from '../../util.js'
 import { GetSourcesListForType, SourcesToChoices } from '../../choices.js'
 
-export interface AtemTallyFeedbacks {
+export type AtemTallyFeedbacks = {
 	[FeedbackId.ProgramTally]: {
-		input: number
+		type: 'boolean'
+		options: {
+			input: number
+		}
 	}
 	[FeedbackId.PreviewTally]: {
-		input: number
+		type: 'boolean'
+		options: {
+			input: number
+		}
 	}
 	[FeedbackId.AdvancedTally]: {
-		inputIds: number[]
-		input: number
+		type: 'boolean'
+		options: {
+			inputIds: number[]
+			input: number
+		}
 	}
 }
 

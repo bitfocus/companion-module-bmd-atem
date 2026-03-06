@@ -6,34 +6,48 @@ import { AtemCameraControlDirectCommandSender } from '@atem-connection/camera-co
 import { CHOICES_ON_OFF_TOGGLE, CameraControlSourcePicker, type TrueFalseToggle } from '../../choices.js'
 import type { AtemConfig } from '../../config.js'
 
-export interface AtemCameraControlLensActions {
+export type AtemCameraControlLensActions = {
 	[ActionId.CameraControlLensFocus]: {
-		cameraId: string
-		delta: string
+		options: {
+			cameraId: string
+			delta: string
+		}
 	}
 	[ActionId.CameraControlLensAutoFocus]: {
-		cameraId: string
+		options: {
+			cameraId: string
+		}
 	}
 	[ActionId.CameraControlLensIris]: {
-		cameraId: string
-		isNormalised: boolean
-		fStop: string
-		normalised: string
+		options: {
+			cameraId: string
+			isNormalised: boolean
+			fStop: string
+			normalised: string
+		}
 	}
 	[ActionId.CameraControlIncrementLensIris]: {
-		cameraId: string
-		fStopIncrement: string
+		options: {
+			cameraId: string
+			fStopIncrement: string
+		}
 	}
 	[ActionId.CameraControlLensAutoIris]: {
-		cameraId: string
+		options: {
+			cameraId: string
+		}
 	}
 	[ActionId.CameraControlLensOpticalImageStabilisation]: {
-		cameraId: string
-		state: TrueFalseToggle
+		options: {
+			cameraId: string
+			state: TrueFalseToggle
+		}
 	}
 	[ActionId.CameraControlLensZoom]: {
-		cameraId: string
-		zoom: string
+		options: {
+			cameraId: string
+			zoom: string
+		}
 	}
 }
 

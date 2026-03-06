@@ -5,11 +5,17 @@ import { FeedbackId } from './FeedbackId.js'
 import { combineRgb, type CompanionInputFieldDropdown } from '@companion-module/base'
 import type { StateWrapper } from '../state.js'
 
-export interface AtemRecordingFeedbacks {
+export type AtemRecordingFeedbacks = {
 	[FeedbackId.RecordStatus]: {
-		state: Enums.RecordingStatus
+		type: 'boolean'
+		options: {
+			state: Enums.RecordingStatus
+		}
 	}
-	[FeedbackId.RecordISO]: Record<never, never>
+	[FeedbackId.RecordISO]: {
+		type: 'boolean'
+		options: Record<never, never>
+	}
 }
 
 export function createRecordingFeedbacks(
@@ -52,7 +58,6 @@ export function createRecordingFeedbacks(
 			learn: ({ options }) => {
 				if (state.state.recording?.status) {
 					return {
-						...options.getJson(),
 						state: state.state.recording.status.state,
 					}
 				} else {

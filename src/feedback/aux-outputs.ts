@@ -5,14 +5,20 @@ import { combineRgb } from '@companion-module/base'
 import { AtemAuxPicker, AtemAuxSourcePicker } from '../input.js'
 import type { StateWrapper } from '../state.js'
 
-export interface AtemAuxOutputFeedbacks {
+export type AtemAuxOutputFeedbacks = {
 	[FeedbackId.AuxBG]: {
-		aux: number
-		input: number
+		type: 'boolean'
+		options: {
+			aux: number
+			input: number
+		}
 	}
 	[FeedbackId.AuxVariables]: {
-		aux: string
-		input: string
+		type: 'boolean'
+		options: {
+			aux: string
+			input: string
+		}
 	}
 }
 
@@ -48,7 +54,6 @@ export function createAuxOutputFeedbacks(
 
 				if (auxSource !== undefined) {
 					return {
-						...options.getJson(),
 						input: auxSource,
 					}
 				} else {
@@ -94,7 +99,6 @@ export function createAuxOutputFeedbacks(
 
 				if (auxSource !== undefined) {
 					return {
-						...options.getJson(),
 						input: auxSource + '',
 					}
 				} else {

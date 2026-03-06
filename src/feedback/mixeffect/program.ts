@@ -5,38 +5,53 @@ import { FeedbackId } from '../FeedbackId.js'
 import { combineRgb } from '@companion-module/base'
 import { getMixEffect, type StateWrapper } from '../../state.js'
 
-export interface AtemProgramFeedbacks {
+export type AtemProgramFeedbacks = {
 	[FeedbackId.ProgramBG]: {
-		mixeffect: number
-		input: number
+		type: 'boolean'
+		options: {
+			mixeffect: number
+			input: number
+		}
 	}
 	[FeedbackId.ProgramVariables]: {
-		mixeffect: string
-		input: string
+		type: 'boolean'
+		options: {
+			mixeffect: string
+			input: string
+		}
 	}
 	[FeedbackId.ProgramBG2]: {
-		mixeffect1: number
-		input1: number
-		mixeffect2: number
-		input2: number
+		type: 'boolean'
+		options: {
+			mixeffect1: number
+			input1: number
+			mixeffect2: number
+			input2: number
+		}
 	}
 	[FeedbackId.ProgramBG3]: {
-		mixeffect1: number
-		input1: number
-		mixeffect2: number
-		input2: number
-		mixeffect3: number
-		input3: number
+		type: 'boolean'
+		options: {
+			mixeffect1: number
+			input1: number
+			mixeffect2: number
+			input2: number
+			mixeffect3: number
+			input3: number
+		}
 	}
 	[FeedbackId.ProgramBG4]: {
-		mixeffect1: number
-		input1: number
-		mixeffect2: number
-		input2: number
-		mixeffect3: number
-		input3: number
-		mixeffect4: number
-		input4: number
+		type: 'boolean'
+		options: {
+			mixeffect1: number
+			input1: number
+			mixeffect2: number
+			input2: number
+			mixeffect3: number
+			input3: number
+			mixeffect4: number
+			input4: number
+		}
 	}
 }
 
@@ -66,7 +81,6 @@ export function createProgramFeedbacks(
 
 				if (me) {
 					return {
-						...options.getJson(),
 						input: me.programInput,
 					}
 				} else {
@@ -112,7 +126,6 @@ export function createProgramFeedbacks(
 
 				if (me) {
 					return {
-						...options.getJson(),
 						input: me.programInput + '',
 					}
 				} else {
@@ -148,7 +161,6 @@ export function createProgramFeedbacks(
 
 							if (me1 && me2) {
 								return {
-									...options.getJson(),
 									input1: me1.programInput,
 									input2: me2.programInput,
 								}
@@ -194,7 +206,6 @@ export function createProgramFeedbacks(
 
 							if (me1 && me2 && me3) {
 								return {
-									...options.getJson(),
 									input1: me1.programInput,
 									input2: me2.programInput,
 									input3: me3.programInput,
@@ -246,7 +257,6 @@ export function createProgramFeedbacks(
 
 							if (me1 && me2 && me3 && me4) {
 								return {
-									...options.getJson(),
 									input1: me1.programInput,
 									input2: me2.programInput,
 									input3: me3.programInput,

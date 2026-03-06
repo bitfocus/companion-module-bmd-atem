@@ -16,102 +16,152 @@ import { CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION, CHOICES_ON_OFF_TOGGLE, type TrueFal
 import type { StateWrapper } from '../state.js'
 import { parseAudioRoutingString, parseAudioRoutingStringSingle } from '../util.js'
 
-export interface AtemFairlightAudioActions {
+export type AtemFairlightAudioActions = {
 	[ActionId.FairlightAudioInputGain]: {
-		input: number
-		source: string
-		gain: number
-	} & FadeDurationFieldsType
+		options: {
+			input: number
+			source: string
+			gain: number
+		} & FadeDurationFieldsType
+	}
 	[ActionId.FairlightAudioInputGainDelta]: {
-		input: number
-		source: string
-		delta: number
-	} & FadeDurationFieldsType
+		options: {
+			input: number
+			source: string
+			delta: number
+		} & FadeDurationFieldsType
+	}
 	[ActionId.FairlightAudioInputDelay]: {
-		input: number
-		source: string
-		delay: number
+		options: {
+			input: number
+			source: string
+			delay: number
+		}
 	}
 	[ActionId.FairlightAudioInputDelayDelta]: {
-		input: number
-		source: string
-		delay: number
+		options: {
+			input: number
+			source: string
+			delay: number
+		}
 	}
 	[ActionId.FairlightAudioFaderGain]: {
-		input: number
-		source: string
-		gain: number
-	} & FadeDurationFieldsType
+		options: {
+			input: number
+			source: string
+			gain: number
+		} & FadeDurationFieldsType
+	}
 	[ActionId.FairlightAudioFaderGainDelta]: {
-		input: number
-		source: string
-		delta: number
-	} & FadeDurationFieldsType
+		options: {
+			input: number
+			source: string
+			delta: number
+		} & FadeDurationFieldsType
+	}
 	[ActionId.FairlightAudioMixOption]: {
-		input: number
-		source: string
-		option: 'toggle' | Enums.FairlightAudioMixOption
+		options: {
+			input: number
+			source: string
+			option: 'toggle' | Enums.FairlightAudioMixOption
+		}
 	}
 	[ActionId.FairlightAudioResetPeaks]: {
-		reset: 'all' | 'master'
+		options: {
+			reset: 'all' | 'master'
+		}
 	}
 	[ActionId.FairlightAudioResetSourcePeaks]: {
-		input: number
-		source: string
+		options: {
+			input: number
+			source: string
+		}
 	}
 	[ActionId.FairlightAudioMasterGain]: {
-		gain: number
-	} & FadeDurationFieldsType
+		options: {
+			gain: number
+		} & FadeDurationFieldsType
+	}
 	[ActionId.FairlightAudioMasterGainDelta]: {
-		delta: number
-	} & FadeDurationFieldsType
+		options: {
+			delta: number
+		} & FadeDurationFieldsType
+	}
 	[ActionId.FairlightAudioMonitorSolo]: {
-		solo: TrueFalseToggle
-		input: number
-		source: string
+		options: {
+			solo: TrueFalseToggle
+			input: number
+			source: string
+		}
 	}
 	[ActionId.FairlightAudioMonitorOutputGain]: {
-		gain: number
-	} & FadeDurationFieldsType
+		options: {
+			gain: number
+		} & FadeDurationFieldsType
+	}
 	[ActionId.FairlightAudioMonitorOutputGainDelta]: {
-		delta: number
-	} & FadeDurationFieldsType
+		options: {
+			delta: number
+		} & FadeDurationFieldsType
+	}
 
 	[ActionId.FairlightAudioMonitorMasterMuted]: {
-		state: TrueFalseToggle
+		options: {
+			state: TrueFalseToggle
+		}
 	}
 	[ActionId.FairlightAudioMonitorMasterGain]: {
-		gain: number
-	} & FadeDurationFieldsType
+		options: {
+			gain: number
+		} & FadeDurationFieldsType
+	}
 	[ActionId.FairlightAudioMonitorMasterGainDelta]: {
-		delta: number
-	} & FadeDurationFieldsType
+		options: {
+			delta: number
+		} & FadeDurationFieldsType
+	}
 	[ActionId.FairlightAudioMonitorTalkbackMuted]: {
-		state: TrueFalseToggle
+		options: {
+			state: TrueFalseToggle
+		}
 	}
 	[ActionId.FairlightAudioMonitorTalkbackGain]: {
-		gain: number
-	} & FadeDurationFieldsType
+		options: {
+			gain: number
+		} & FadeDurationFieldsType
+	}
 	[ActionId.FairlightAudioMonitorTalkbackGainDelta]: {
-		delta: number
-	} & FadeDurationFieldsType
+		options: {
+			delta: number
+		} & FadeDurationFieldsType
+	}
 	// [ActionId.FairlightAudioMonitorSidetoneMuted]: {
-	// 	state: TrueFalseToggle
+	// 	options: {
+	// 		state: TrueFalseToggle
+	// 	}
 	// }
 	[ActionId.FairlightAudioMonitorSidetoneGain]: {
-		gain: number
-	} & FadeDurationFieldsType
+		options: {
+			gain: number
+		} & FadeDurationFieldsType
+	}
 	[ActionId.FairlightAudioMonitorSidetoneGainDelta]: {
-		delta: number
-	} & FadeDurationFieldsType
+		options: {
+			delta: number
+		} & FadeDurationFieldsType
+	}
 
 	[ActionId.FairlightAudioRouting]: {
-		destinations: number[]
-		source: number
+		options: {
+			destinations: number[]
+			source: number
+		}
 	}
 	[ActionId.FairlightAudioRoutingVariables]: {
-		destinations: string
-		source: string
+		options: {
+			destinations: string
+			source: string
+		}
 	}
 }
 
@@ -167,7 +217,6 @@ export function createFairlightAudioActions(
 					label: 'Input Level (-100 = -inf)',
 					id: 'gain',
 					range: true,
-					required: true,
 					default: 0,
 					step: 0.1,
 					min: -100,
@@ -202,7 +251,6 @@ export function createFairlightAudioActions(
 
 				if (source?.properties) {
 					return {
-						...options.getJson(),
 						gain: source.properties.gain / 100,
 					}
 				} else {
@@ -252,7 +300,6 @@ export function createFairlightAudioActions(
 							label: 'Delay (frames)',
 							id: 'gain',
 							range: true,
-							required: true,
 							default: 0,
 							step: 1,
 							min: 0,
@@ -274,7 +321,6 @@ export function createFairlightAudioActions(
 
 						if (source?.properties) {
 							return {
-								...options.getJson(),
 								delay: source.properties.framesDelay,
 							}
 						} else {
@@ -294,7 +340,6 @@ export function createFairlightAudioActions(
 							label: 'Adjustment (frames)',
 							id: 'gain',
 							range: true,
-							required: true,
 							default: 0,
 							step: 1,
 							min: -8,
@@ -330,7 +375,6 @@ export function createFairlightAudioActions(
 					label: 'Fader Level (-100 = -inf)',
 					id: 'gain',
 					range: true,
-					required: true,
 					default: 0,
 					step: 0.1,
 					min: -100,
@@ -365,7 +409,6 @@ export function createFairlightAudioActions(
 
 				if (source?.properties) {
 					return {
-						...options.getJson(),
 						gain: source.properties.faderGain / 100,
 					}
 				} else {
@@ -443,7 +486,6 @@ export function createFairlightAudioActions(
 
 				if (source?.properties) {
 					return {
-						...options.getJson(),
 						option: source.properties.mixOption,
 					}
 				} else {
@@ -504,7 +546,6 @@ export function createFairlightAudioActions(
 					label: 'Input Level (-100 = -inf)',
 					id: 'gain',
 					range: true,
-					required: true,
 					default: 0,
 					step: 0.1,
 					min: -100,
@@ -530,7 +571,6 @@ export function createFairlightAudioActions(
 
 				if (props) {
 					return {
-						...options.getJson(),
 						gain: props.faderGain / 100,
 					}
 				} else {
@@ -613,7 +653,6 @@ export function createFairlightAudioActions(
 							label: 'Fader Level (-60 = Min)',
 							id: 'gain',
 							range: true,
-							required: true,
 							default: 0,
 							step: 0.1,
 							min: -60,
@@ -639,7 +678,6 @@ export function createFairlightAudioActions(
 
 						if (props) {
 							return {
-								...options.getJson(),
 								gain: props.gain / 100,
 							}
 						} else {
@@ -724,7 +762,6 @@ function HeadphoneMasterActions(
 
 						if (props) {
 							return {
-								...options.getJson(),
 								state: props.inputMasterMuted ? 'true' : 'false',
 							}
 						} else {
@@ -743,7 +780,6 @@ function HeadphoneMasterActions(
 								label: 'Fader Level (-60 = Min)',
 								id: 'gain',
 								range: true,
-								required: true,
 								default: 0,
 								step: 0.1,
 								min: -60,
@@ -769,7 +805,6 @@ function HeadphoneMasterActions(
 
 							if (props) {
 								return {
-									...options.getJson(),
 									gain: props.inputMasterGain / 100,
 								}
 							} else {
@@ -850,7 +885,6 @@ function HeadphoneTalkbackActions(
 
 						if (props) {
 							return {
-								...options.getJson(),
 								state: props.inputTalkbackMuted ? 'true' : 'false',
 							}
 						} else {
@@ -869,7 +903,6 @@ function HeadphoneTalkbackActions(
 								label: 'Fader Level (-60 = Min)',
 								id: 'gain',
 								range: true,
-								required: true,
 								default: 0,
 								step: 0.1,
 								min: -60,
@@ -895,7 +928,6 @@ function HeadphoneTalkbackActions(
 
 							if (props) {
 								return {
-									...options.getJson(),
 									gain: props.inputTalkbackGain / 100,
 								}
 							} else {
@@ -975,7 +1007,7 @@ function HeadphoneSidetoneActions(
 
 						if (props) {
 							return {
-								...options.getJson(),
+								
 								state: props.inputSidetoneMuted ? 'true' : 'false',
 							}
 						} else {
@@ -994,7 +1026,6 @@ function HeadphoneSidetoneActions(
 								label: 'Fader Level (-60 = Min)',
 								id: 'gain',
 								range: true,
-								required: true,
 								default: 0,
 								step: 0.1,
 								min: -60,
@@ -1020,7 +1051,6 @@ function HeadphoneSidetoneActions(
 
 							if (props) {
 								return {
-									...options.getJson(),
 									gain: props.inputSidetoneGain / 100,
 								}
 							} else {

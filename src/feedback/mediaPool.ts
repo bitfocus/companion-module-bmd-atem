@@ -7,19 +7,25 @@ import type { MediaPoolPreviewOptions, SourceDefinition } from '../mediaPoolPrev
 import type { CompanionAdvancedFeedbackResult, CompanionInputFieldDropdown } from '@companion-module/base/dist/index.js'
 import { MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from '../util.js'
 
-export interface AtemMediaPoolFeedbacks {
+export type AtemMediaPoolFeedbacks = {
 	[FeedbackId.MediaPoolPreview]: {
-		source: number // The combined still/clip index numbers
+		type: 'advanced'
+		options: {
+			source: number // The combined still/clip index numbers
 
-		position: 'top' | 'center' | 'bottom'
-		crop: 'none' | 'left' | 'center' | 'right'
+			position: 'top' | 'center' | 'bottom'
+			crop: 'none' | 'left' | 'center' | 'right'
+		}
 	}
 	[FeedbackId.MediaPoolPreviewVariables]: {
-		isClip?: boolean
-		slot: string
+		type: 'advanced'
+		options: {
+			isClip?: boolean
+			slot: string
 
-		position: 'top' | 'center' | 'bottom'
-		crop: 'none' | 'left' | 'center' | 'right'
+			position: 'top' | 'center' | 'bottom'
+			crop: 'none' | 'left' | 'center' | 'right'
+		}
 	}
 }
 

@@ -13,34 +13,50 @@ import type { AtemTransitions } from '../transitions.js'
 import type { StateWrapper } from '../state.js'
 import { CLASSIC_AUDIO_MIN_GAIN } from '../util.js'
 
-export interface AtemClassicAudioActions {
+export type AtemClassicAudioActions = {
 	[ActionId.ClassicAudioGain]: {
-		input: number
-		gain: number
-	} & FadeDurationFieldsType
+		options: {
+			input: number
+			gain: number
+		} & FadeDurationFieldsType
+	}
 	[ActionId.ClassicAudioGainDelta]: {
-		input: number
-		delta: number
-	} & FadeDurationFieldsType
+		options: {
+			input: number
+			delta: number
+		} & FadeDurationFieldsType
+	}
 	[ActionId.ClassicAudioMixOption]: {
-		input: number
-		option: 'toggle' | Enums.AudioMixOption
+		options: {
+			input: number
+			option: 'toggle' | Enums.AudioMixOption
+		}
 	}
 	[ActionId.ClassicAudioResetPeaks]: {
-		reset: 'all' | 'master' | 'monitor' | number
+		options: {
+			reset: 'all' | 'master' | 'monitor' | number
+		}
 	}
 	[ActionId.ClassicAudioMasterGain]: {
-		gain: number
-	} & FadeDurationFieldsType
+		options: {
+			gain: number
+		} & FadeDurationFieldsType
+	}
 	[ActionId.ClassicAudioMasterGainDelta]: {
-		delta: number
-	} & FadeDurationFieldsType
+		options: {
+			delta: number
+		} & FadeDurationFieldsType
+	}
 	[ActionId.ClassicAudioMasterPan]: {
-		balance: number
-	} & FadeDurationFieldsType
+		options: {
+			balance: number
+		} & FadeDurationFieldsType
+	}
 	[ActionId.ClassicAudioMasterPanDelta]: {
-		delta: number
-	} & FadeDurationFieldsType
+		options: {
+			delta: number
+		} & FadeDurationFieldsType
+	}
 }
 
 export function createClassicAudioActions(
@@ -74,7 +90,6 @@ export function createClassicAudioActions(
 					label: 'Fader Level (-60 = -inf)',
 					id: 'gain',
 					range: true,
-					required: true,
 					default: 0,
 					step: 0.1,
 					min: -60,
@@ -103,7 +118,6 @@ export function createClassicAudioActions(
 
 				if (channel) {
 					return {
-						...options.getJson(),
 						gain: channel.gain,
 					}
 				} else {
@@ -172,7 +186,6 @@ export function createClassicAudioActions(
 
 				if (channel) {
 					return {
-						...options.getJson(),
 						option: channel.mixOption,
 					}
 				} else {
@@ -227,7 +240,6 @@ export function createClassicAudioActions(
 					label: 'Fader Level (-60 = -inf)',
 					id: 'gain',
 					range: true,
-					required: true,
 					default: 0,
 					step: 0.1,
 					min: -60,
@@ -251,7 +263,6 @@ export function createClassicAudioActions(
 
 				if (props) {
 					return {
-						...options.getJson(),
 						gain: props.gain,
 					}
 				} else {
@@ -289,7 +300,6 @@ export function createClassicAudioActions(
 					label: 'Pan',
 					id: 'balance',
 					range: true,
-					required: true,
 					default: 0,
 					step: 1,
 					min: -50,
@@ -313,7 +323,6 @@ export function createClassicAudioActions(
 
 				if (props) {
 					return {
-						...options.getJson(),
 						balance: props.balance,
 					}
 				} else {

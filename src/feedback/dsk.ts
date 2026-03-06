@@ -5,20 +5,32 @@ import { combineRgb } from '@companion-module/base'
 import { AtemDSKPicker, AtemKeyFillSourcePicker } from '../input.js'
 import { getDSK, type StateWrapper } from '../state.js'
 
-export interface AtemDownstreamKeyerFeedbacks {
+export type AtemDownstreamKeyerFeedbacks = {
 	[FeedbackId.DSKOnAir]: {
-		key: number
+		type: 'boolean'
+		options: {
+			key: number
+		}
 	}
 	[FeedbackId.DSKTie]: {
-		key: number
+		type: 'boolean'
+		options: {
+			key: number
+		}
 	}
 	[FeedbackId.DSKSource]: {
-		key: number
-		fill: number
+		type: 'boolean'
+		options: {
+			key: number
+			fill: number
+		}
 	}
 	[FeedbackId.DSKSourceVariables]: {
-		key: string
-		fill: string
+		type: 'boolean'
+		options: {
+			key: string
+			fill: string
+		}
 	}
 }
 
@@ -88,7 +100,6 @@ export function createDownstreamKeyerFeedbacks(
 
 				if (dsk?.sources) {
 					return {
-						...options.getJson(),
 						fill: dsk.sources.fillSource,
 					}
 				} else {
@@ -134,7 +145,6 @@ export function createDownstreamKeyerFeedbacks(
 
 				if (dsk?.sources) {
 					return {
-						...options.getJson(),
 						fill: dsk.sources.fillSource + '',
 					}
 				} else {

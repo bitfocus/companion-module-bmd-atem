@@ -14,24 +14,30 @@ interface RgbyAdjustmentProps {
 	luma: string
 }
 
-export interface AtemCameraControlColorActions {
-	[ActionId.CameraControlColorLiftAdjust]: RgbyAdjustmentProps
-	[ActionId.CameraControlColorGammaAdjust]: RgbyAdjustmentProps
-	[ActionId.CameraControlColorGainAdjust]: RgbyAdjustmentProps
-	[ActionId.CameraControlColorOffsetAdjust]: RgbyAdjustmentProps
+export type AtemCameraControlColorActions = {
+	[ActionId.CameraControlColorLiftAdjust]: { options: RgbyAdjustmentProps }
+	[ActionId.CameraControlColorGammaAdjust]: { options: RgbyAdjustmentProps }
+	[ActionId.CameraControlColorGainAdjust]: { options: RgbyAdjustmentProps }
+	[ActionId.CameraControlColorOffsetAdjust]: { options: RgbyAdjustmentProps }
 	[ActionId.CameraControlColorContrastAdjust]: {
-		cameraId: string
-		contrast: string
-		pivot: string
+		options: {
+			cameraId: string
+			contrast: string
+			pivot: string
+		}
 	}
 	[ActionId.CameraControlColorLumaMix]: {
-		cameraId: string
-		lumaMix: string
+		options: {
+			cameraId: string
+			lumaMix: string
+		}
 	}
 	[ActionId.CameraControlColorHueSaturationAdjust]: {
-		cameraId: string
-		hue: string
-		saturation: string
+		options: {
+			cameraId: string
+			hue: string
+			saturation: string
+		}
 	}
 }
 

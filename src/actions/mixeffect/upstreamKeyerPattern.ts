@@ -103,7 +103,6 @@ export function createUpstreamKeyerPatternActions(
 
 				if (usk?.patternSettings) {
 					return {
-						...options.getJson(),
 						style: usk.patternSettings.style,
 						size: usk.patternSettings.size / 100,
 						symmetry: usk.patternSettings.symmetry / 100,
@@ -178,7 +177,6 @@ export function createUpstreamKeyerPatternActions(
 
 				if (usk?.patternSettings) {
 					return {
-						...options.getJson(),
 						style: usk.patternSettings.style + '',
 						size: usk.patternSettings.size / 100 + '',
 						symmetry: usk.patternSettings.symmetry / 100 + '',

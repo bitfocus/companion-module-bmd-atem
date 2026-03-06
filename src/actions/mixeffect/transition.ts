@@ -36,23 +36,31 @@ export type AtemTransitionActions = {
 		}
 	}
 	[ActionId.TransitionRate]: {
-		mixeffect: number
-		style: Enums.TransitionStyle
-		rate: number
+		options: {
+			mixeffect: number
+			style: Enums.TransitionStyle
+			rate: number
+		}
 	}
 	[ActionId.TransitionSelection]: {
-		mixeffect: number
-		selection: ('background' | string)[]
+		options: {
+			mixeffect: number
+			selection: ('background' | string)[]
+		}
 	}
 	[ActionId.TransitionSelectComponents]: {
-		mixeffect: number
-		background: NextTransBackgroundChoices
-		[id: `key${string}`]: NextTransKeyChoices
+		options: {
+			mixeffect: number
+			background: NextTransBackgroundChoices
+			[id: `key${string}`]: NextTransKeyChoices
+		}
 	}
 	[ActionId.TransitionSelectionComponent]: {
-		mixeffect: number
-		component: number
-		mode: TrueFalseToggle
+		options: {
+			mixeffect: number
+			component: number
+			mode: TrueFalseToggle
+		}
 	}
 }
 
@@ -119,7 +127,6 @@ export function createTransitionActions(
 
 				if (me) {
 					return {
-						...options.getJson(),
 						style: me.transitionProperties.nextStyle,
 					}
 				} else {
@@ -188,25 +195,21 @@ export function createTransitionActions(
 						case Enums.TransitionStyle.MIX:
 							if (!me.transitionSettings.mix) return undefined
 							return {
-								...options.getJson(),
 								rate: me.transitionSettings.mix.rate,
 							}
 						case Enums.TransitionStyle.DIP:
 							if (!me.transitionSettings.dip) return undefined
 							return {
-								...options.getJson(),
 								rate: me.transitionSettings.dip.rate,
 							}
 						case Enums.TransitionStyle.WIPE:
 							if (!me.transitionSettings.wipe) return undefined
 							return {
-								...options.getJson(),
 								rate: me.transitionSettings.wipe.rate,
 							}
 						case Enums.TransitionStyle.DVE:
 							if (!me.transitionSettings.DVE) return undefined
 							return {
-								...options.getJson(),
 								rate: me.transitionSettings.DVE.rate,
 							}
 						case Enums.TransitionStyle.STING:
@@ -349,7 +352,6 @@ export function createTransitionActions(
 					}
 
 					return {
-						...options.getJson(),
 						background,
 						...keys,
 					}

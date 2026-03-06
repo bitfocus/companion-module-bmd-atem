@@ -7,15 +7,21 @@ import { combineRgb } from '@companion-module/base'
 import { MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from '../util.js'
 import type { StateWrapper } from '../state.js'
 
-export interface AtemMediaPlayerFeedbacks {
+export type AtemMediaPlayerFeedbacks = {
 	[FeedbackId.MediaPlayerSource]: {
-		mediaplayer: number
-		source: number
+		type: 'boolean'
+		options: {
+			mediaplayer: number
+			source: number
+		}
 	}
 	[FeedbackId.MediaPlayerSourceVariables]: {
-		mediaplayer: string
-		isClip?: boolean
-		slot: string
+		type: 'boolean'
+		options: {
+			mediaplayer: string
+			isClip?: boolean
+			slot: string
+		}
 	}
 }
 
@@ -60,7 +66,6 @@ export function createMediaPlayerFeedbacks(
 
 				if (player) {
 					return {
-						...options.getJson(),
 						source: player.sourceType ? player.stillIndex : player.clipIndex + MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
 					}
 				} else {
@@ -125,7 +130,6 @@ export function createMediaPlayerFeedbacks(
 
 				if (player) {
 					return {
-						...options.getJson(),
 						source: player.sourceType ? player.stillIndex : player.clipIndex + MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
 					}
 				} else {

@@ -13,26 +13,41 @@ import { combineRgb } from '@companion-module/base'
 import { getMixEffect, type StateWrapper } from '../../state.js'
 import { calculateTransitionSelection, assertUnreachable } from '../../util.js'
 
-export interface AtemTransitionFeedbacks {
+export type AtemTransitionFeedbacks = {
 	[FeedbackId.PreviewTransition]: {
-		mixeffect: number
+		type: 'boolean'
+		options: {
+			mixeffect: number
+		}
 	}
 	[FeedbackId.TransitionStyle]: {
-		mixeffect: number
-		style: Enums.TransitionStyle
+		type: 'boolean'
+		options: {
+			mixeffect: number
+			style: Enums.TransitionStyle
+		}
 	}
 	[FeedbackId.TransitionSelection]: {
-		mixeffect: number
-		matchmethod: 'exact' | 'contains' | 'not-contain'
-		selection: ('background' | string)[]
+		type: 'boolean'
+		options: {
+			mixeffect: number
+			matchmethod: 'exact' | 'contains' | 'not-contain'
+			selection: ('background' | string)[]
+		}
 	}
 	[FeedbackId.TransitionRate]: {
-		mixeffect: number
-		style: Enums.TransitionStyle
-		rate: number
+		type: 'boolean'
+		options: {
+			mixeffect: number
+			style: Enums.TransitionStyle
+			rate: number
+		}
 	}
 	[FeedbackId.InTransition]: {
-		mixeffect: number
+		type: 'boolean'
+		options: {
+			mixeffect: number
+		}
 	}
 }
 
@@ -61,7 +76,6 @@ export function createTransitionFeedbacks(
 
 				if (me) {
 					return {
-						...options.getJson(),
 						state: me.transitionPreview + '',
 					}
 				} else {
@@ -90,7 +104,6 @@ export function createTransitionFeedbacks(
 
 				if (me) {
 					return {
-						...options.getJson(),
 						style: me.transitionProperties.nextStyle,
 					}
 				} else {
@@ -170,22 +183,18 @@ export function createTransitionFeedbacks(
 					switch (style) {
 						case Enums.TransitionStyle.MIX:
 							return {
-								...options.getJson(),
 								rate: me.transitionSettings.mix?.rate ?? 1,
 							}
 						case Enums.TransitionStyle.DIP:
 							return {
-								...options.getJson(),
 								rate: me.transitionSettings.dip?.rate ?? 1,
 							}
 						case Enums.TransitionStyle.WIPE:
 							return {
-								...options.getJson(),
 								rate: me.transitionSettings.wipe?.rate ?? 1,
 							}
 						case Enums.TransitionStyle.DVE:
 							return {
-								...options.getJson(),
 								rate: me.transitionSettings.DVE?.rate ?? 1,
 							}
 						case Enums.TransitionStyle.STING:

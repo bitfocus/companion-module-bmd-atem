@@ -7,30 +7,45 @@ import { combineRgb, type CompanionInputFieldDropdown } from '@companion-module/
 import { getUSK, type StateWrapper } from '../../state.js'
 import { CHOICES_CURRENTKEYFRAMES } from '../../choices.js'
 
-export interface AtemUpstreamKeyerFeedbacks {
+export type AtemUpstreamKeyerFeedbacks = {
 	[FeedbackId.USKOnAir]: {
-		mixeffect: number
-		key: number
+		type: 'boolean'
+		options: {
+			mixeffect: number
+			key: number
+		}
 	}
 	[FeedbackId.USKType]: {
-		mixeffect: number
-		key: number
-		type: Enums.MixEffectKeyType
+		type: 'boolean'
+		options: {
+			mixeffect: number
+			key: number
+			type: Enums.MixEffectKeyType
+		}
 	}
 	[FeedbackId.USKSource]: {
-		mixeffect: number
-		key: number
-		fill: number
+		type: 'boolean'
+		options: {
+			mixeffect: number
+			key: number
+			fill: number
+		}
 	}
 	[FeedbackId.USKSourceVariables]: {
-		mixeffect: string
-		key: string
-		fill: string
+		type: 'boolean'
+		options: {
+			mixeffect: string
+			key: string
+			fill: string
+		}
 	}
 	[FeedbackId.USKKeyFrame]: {
-		mixeffect: number
-		key: number
-		keyframe: Enums.IsAtKeyFrame
+		type: 'boolean'
+		options: {
+			mixeffect: number
+			key: number
+			keyframe: Enums.IsAtKeyFrame
+		}
 	}
 }
 
@@ -105,7 +120,6 @@ export function createUpstreamKeyerFeedbacks(
 
 				if (usk) {
 					return {
-						...options.getJson(),
 						fill: usk.fillSource,
 					}
 				} else {
@@ -160,7 +174,6 @@ export function createUpstreamKeyerFeedbacks(
 
 				if (usk) {
 					return {
-						...options.getJson(),
 						fill: usk.fillSource + '',
 					}
 				} else {
@@ -197,7 +210,6 @@ export function createUpstreamKeyerFeedbacks(
 
 						if (usk?.flyProperties) {
 							return {
-								...options.getJson(),
 								keyframe: usk.flyProperties.isAtKeyFrame,
 							}
 						} else {

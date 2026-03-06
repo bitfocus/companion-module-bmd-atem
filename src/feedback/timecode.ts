@@ -6,9 +6,12 @@ import type { StateWrapper } from '../state.js'
 import type { AtemConfig } from '../config.js'
 import { Enums } from 'atem-connection'
 
-export interface AtemTimecodeFeedbacks {
+export type AtemTimecodeFeedbacks = {
 	[FeedbackId.TimecodeMode]: {
-		mode: Enums.TimeMode
+		type: 'boolean'
+		options: {
+			mode: Enums.TimeMode
+		}
 	}
 }
 
@@ -48,7 +51,6 @@ export function createTimecodeFeedbacks(
 			},
 			learn: ({ options }) => {
 				return {
-					...options.getJson(),
 					mode: state.state.settings.timeMode ?? Enums.TimeMode.FreeRun,
 				}
 			},

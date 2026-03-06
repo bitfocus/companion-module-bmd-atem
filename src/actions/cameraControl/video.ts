@@ -6,43 +6,61 @@ import { AtemCameraControlDirectCommandSender, VideoSharpeningLevel } from '@ate
 import { CameraControlSourcePicker } from '../../choices.js'
 import type { AtemConfig } from '../../config.js'
 
-export interface AtemCameraControlVideoActions {
+export type AtemCameraControlVideoActions = {
 	[ActionId.CameraControlVideoManualWhiteBalance]: {
-		cameraId: string
-		colorTemperature: string
-		tint: string
+		options: {
+			cameraId: string
+			colorTemperature: string
+			tint: string
+		}
 	}
 	[ActionId.CameraControlVideoIncrementManualWhiteBalance]: {
-		cameraId: string
-		colorTemperatureIncrement: string
-		tintIncrement: string
+		options: {
+			cameraId: string
+			colorTemperatureIncrement: string
+			tintIncrement: string
+		}
 	}
 	[ActionId.CameraControlVideoAutoWhiteBalance]: {
-		cameraId: string
+		options: {
+			cameraId: string
+		}
 	}
 	[ActionId.CameraControlVideoExposure]: {
-		cameraId: string
-		framerate: string
+		options: {
+			cameraId: string
+			framerate: string
+		}
 	}
 	[ActionId.CameraControlIncrementVideoExposure]: {
-		cameraId: string
-		direction: string
+		options: {
+			cameraId: string
+			direction: string
+		}
 	}
 	[ActionId.CameraControlVideoSharpeningLevel]: {
-		cameraId: string
-		level: VideoSharpeningLevel
+		options: {
+			cameraId: string
+			level: VideoSharpeningLevel
+		}
 	}
 	[ActionId.CameraControlVideoGain]: {
-		cameraId: string
-		gain: string
+		options: {
+			cameraId: string
+			gain: string
+		}
 	}
 	[ActionId.CameraControlIncrementVideoGain]: {
-		cameraId: string
-		increment: string
+		options: {
+			cameraId: string
+			increment: string
+		}
 	}
 	[ActionId.CameraControlVideoNdFilterStop]: {
-		cameraId: string
-		stop: string
+		options: {
+			cameraId: string
+			stop: string
+		}
 	}
 }
 

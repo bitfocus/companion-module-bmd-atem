@@ -5,15 +5,19 @@ import type { MyActionDefinitions } from './types.js'
 import { GetMacroChoices, CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../choices.js'
 import type { StateWrapper } from '../state.js'
 
-export interface AtemMacroActions {
+export type AtemMacroActions = {
 	[ActionId.MacroRun]: {
-		macro: number
-		action: 'run' | 'runContinue'
+		options: {
+			macro: number
+			action: 'run' | 'runContinue'
+		}
 	}
-	[ActionId.MacroContinue]: Record<string, never>
-	[ActionId.MacroStop]: Record<string, never>
+	[ActionId.MacroContinue]: { options: Record<string, never> }
+	[ActionId.MacroStop]: { options: Record<string, never> }
 	[ActionId.MacroLoop]: {
-		loop: TrueFalseToggle
+		options: {
+			loop: TrueFalseToggle
+		}
 	}
 }
 

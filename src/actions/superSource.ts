@@ -22,47 +22,61 @@ import { clamp } from '../util.js'
 import type { AtemTransitions } from '../transitions.js'
 import type { algorithm, curve } from '../easings.js'
 
-export interface AtemSuperSourceActions {
+export type AtemSuperSourceActions = {
 	[ActionId.SuperSourceArt]: {
-		ssrcId: number | undefined
-	} & AtemSuperSourceArtProperties
+		options: {
+			ssrcId: number | undefined
+		} & AtemSuperSourceArtProperties
+	}
 	[ActionId.SuperSourceArtVariables]: {
-		ssrcId: number | undefined
-	} & AtemSuperSourceArtPropertiesVariables
+		options: {
+			ssrcId: number | undefined
+		} & AtemSuperSourceArtPropertiesVariables
+	}
 	[ActionId.SuperSourceBoxSource]: {
-		ssrcId: number | undefined
-		boxIndex: number
-		source: number
+		options: {
+			ssrcId: number | undefined
+			boxIndex: number
+			source: number
+		}
 	}
 	[ActionId.SuperSourceBoxSourceVaraibles]: {
-		ssrcId: string | undefined
-		boxIndex: string
-		source: string
+		options: {
+			ssrcId: string | undefined
+			boxIndex: string
+			source: string
+		}
 	}
 	[ActionId.SuperSourceBoxOnAir]: {
-		ssrcId: number | undefined
-		boxIndex: number
-		onair: TrueFalseToggle
+		options: {
+			ssrcId: number | undefined
+			boxIndex: number
+			onair: TrueFalseToggle
+		}
 	}
 	[ActionId.SuperSourceBoxProperties]: {
-		ssrcId: number | undefined
-		boxIndex: number
-		transitionRate: number | undefined
-		transitionEasing: algorithm | undefined
-		transitionCurve: curve | undefined
-	} & AtemSuperSourceProperties
+		options: {
+			ssrcId: number | undefined
+			boxIndex: number
+			transitionRate: number | undefined
+			transitionEasing: algorithm | undefined
+			transitionCurve: curve | undefined
+		} & AtemSuperSourceProperties
+	}
 	[ActionId.SuperSourceBoxPropertiesDelta]: {
-		ssrcId: number | undefined
-		boxIndex: number
+		options: {
+			ssrcId: number | undefined
+			boxIndex: number
 
-		properties: Array<'size' | 'x' | 'y' | 'cropTop' | 'cropBottom' | 'cropLeft' | 'cropRight'>
-		size: number
-		x: number
-		y: number
-		cropTop: number
-		cropBottom: number
-		cropLeft: number
-		cropRight: number
+			properties: Array<'size' | 'x' | 'y' | 'cropTop' | 'cropBottom' | 'cropLeft' | 'cropRight'>
+			size: number
+			x: number
+			y: number
+			cropTop: number
+			cropBottom: number
+			cropLeft: number
+			cropRight: number
+		}
 	}
 }
 
@@ -129,7 +143,6 @@ export function createSuperSourceActions(
 				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.properties
 				if (ssrcConfig) {
 					return {
-						...options.getJson(),
 						fill: ssrcConfig.artFillSource,
 						key: ssrcConfig.artCutSource,
 
@@ -200,7 +213,6 @@ export function createSuperSourceActions(
 				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.properties
 				if (ssrcConfig) {
 					return {
-						...options.getJson(),
 						fill: ssrcConfig.artFillSource + '',
 						key: ssrcConfig.artCutSource + '',
 
@@ -240,7 +252,6 @@ export function createSuperSourceActions(
 				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.boxes[boxId]
 				if (ssrcConfig) {
 					return {
-						...options.getJson(),
 						source: ssrcConfig.source,
 					}
 				} else {
@@ -299,7 +310,6 @@ export function createSuperSourceActions(
 				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.boxes[boxId]
 				if (ssrcConfig) {
 					return {
-						...options.getJson(),
 						source: ssrcConfig.source + '',
 					}
 				} else {
@@ -351,7 +361,6 @@ export function createSuperSourceActions(
 				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.boxes[boxId]
 				if (ssrcConfig) {
 					return {
-						...options.getJson(),
 						onair: ssrcConfig.enabled ? 'true' : 'false',
 					}
 				} else {
@@ -417,7 +426,6 @@ export function createSuperSourceActions(
 				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.boxes[boxId]
 				if (ssrcConfig) {
 					return {
-						...options.getJson(),
 						onair: ssrcConfig.enabled ? 'true' : 'false',
 						source: ssrcConfig.source,
 						size: ssrcConfig.size / 1000,

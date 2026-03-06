@@ -115,7 +115,6 @@ export function createUpstreamKeyerCommonActions(
 
 				if (usk) {
 					return {
-						...options.getJson(),
 						cut: usk.cutSource,
 						fill: usk.fillSource,
 					}
@@ -145,7 +144,6 @@ export function createUpstreamKeyerCommonActions(
 
 				if (usk) {
 					return {
-						...options.getJson(),
 						type: usk.mixEffectKeyType,
 					}
 				} else {
@@ -206,7 +204,6 @@ export function createUpstreamKeyerCommonActions(
 
 				if (usk) {
 					return {
-						...options.getJson(),
 						cut: usk.cutSource + '',
 						fill: usk.fillSource + '',
 					}
@@ -243,7 +240,6 @@ export function createUpstreamKeyerCommonActions(
 
 				if (usk) {
 					return {
-						...options.getJson(),
 						onair: usk.onAir ? 'true' : 'false',
 					}
 				} else {
@@ -291,7 +287,6 @@ export function createUpstreamKeyerCommonActions(
 
 				if (usk?.maskSettings) {
 					return {
-						...options.getJson(),
 						maskEnabled: usk.maskSettings.maskEnabled,
 						maskTop: usk.maskSettings.maskTop / 1000,
 						maskBottom: usk.maskSettings.maskBottom / 1000,
@@ -345,7 +340,6 @@ export function createUpstreamKeyerCommonActions(
 
 				if (usk?.dveSettings) {
 					return {
-						...options.getJson(),
 						flyEnabled: usk.flyEnabled,
 						positionX: usk.dveSettings.positionX / 1000,
 						positionY: usk.dveSettings.positionY / 1000,
@@ -417,7 +411,6 @@ export function createUpstreamKeyerCommonActions(
 
 				if (usk?.dveSettings) {
 					return {
-						...options.getJson(),
 						flyEnabled: usk.flyEnabled + '',
 						positionX: usk.dveSettings.positionX / 1000 + '',
 						positionY: usk.dveSettings.positionY / 1000 + '',

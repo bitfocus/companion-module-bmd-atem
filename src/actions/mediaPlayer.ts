@@ -7,23 +7,31 @@ import { AtemMediaPlayerPicker, AtemMediaPlayerSourcePicker } from '../input.js'
 import { MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from '../util.js'
 import type { StateWrapper } from '../state.js'
 
-export interface AtemMediaPlayerActions {
+export type AtemMediaPlayerActions = {
 	[ActionId.MediaPlayerSource]: {
-		mediaplayer: number
-		source: number
+		options: {
+			mediaplayer: number
+			source: number
+		}
 	}
 	[ActionId.MediaPlayerSourceVariables]: {
-		mediaplayer: string
-		isClip?: boolean
-		slot: string
+		options: {
+			mediaplayer: string
+			isClip?: boolean
+			slot: string
+		}
 	}
 	[ActionId.MediaPlayerCycle]: {
-		mediaplayer: number
-		direction: 'next' | 'previous'
+		options: {
+			mediaplayer: number
+			direction: 'next' | 'previous'
+		}
 	}
-	[ActionId.MediaCaptureStill]: Record<string, never>
+	[ActionId.MediaCaptureStill]: { options: Record<string, never> }
 	[ActionId.MediaDeleteStill]: {
-		slot: string
+		options: {
+			slot: string
+		}
 	}
 }
 
@@ -73,7 +81,6 @@ export function createMediaPlayerActions(
 
 				if (player) {
 					return {
-						...options.getJson(),
 						source: player.sourceType ? player.stillIndex : player.clipIndex + MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
 					}
 				} else {
@@ -150,7 +157,6 @@ export function createMediaPlayerActions(
 				if (player) {
 					const isClip = player.sourceType === Enums.MediaSourceType.Clip
 					return {
-						...options.getJson(),
 						isClip,
 						source: isClip ? player.clipIndex : player.stillIndex,
 					}

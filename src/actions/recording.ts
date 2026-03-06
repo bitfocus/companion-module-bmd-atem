@@ -5,16 +5,22 @@ import type { MyActionDefinitions } from './types.js'
 import { CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../choices.js'
 import type { StateWrapper } from '../state.js'
 
-export interface AtemRecordingActions {
+export type AtemRecordingActions = {
 	[ActionId.RecordStartStop]: {
-		record: TrueFalseToggle
+		options: {
+			record: TrueFalseToggle
+		}
 	}
-	[ActionId.RecordSwitchDisk]: Record<string, never>
+	[ActionId.RecordSwitchDisk]: { options: Record<string, never> }
 	[ActionId.RecordFilename]: {
-		filename: string
+		options: {
+			filename: string
+		}
 	}
 	[ActionId.RecordISO]: {
-		recordISO: TrueFalseToggle
+		options: {
+			recordISO: TrueFalseToggle
+		}
 	}
 }
 
@@ -58,7 +64,6 @@ export function createRecordingActions(
 			learn: ({ options }) => {
 				if (state.state.recording?.status) {
 					return {
-						...options.getJson(),
 						state: state.state.recording.status.state,
 					}
 				} else {
@@ -91,7 +96,6 @@ export function createRecordingActions(
 			learn: ({ options }) => {
 				if (state.state.recording?.properties) {
 					return {
-						...options.getJson(),
 						filename: state.state.recording?.properties.filename,
 					}
 				} else {
@@ -121,7 +125,6 @@ export function createRecordingActions(
 			learn: ({ options }) => {
 				if (state.state.recording?.recordAllInputs != undefined) {
 					return {
-						...options.getJson(),
 						state: state.state.recording.recordAllInputs,
 					}
 				} else {

@@ -6,12 +6,16 @@ import type { AtemConfig } from '../config.js'
 import type { InstanceBaseExt } from '../util.js'
 import { formatDurationSeconds } from '../variables/util.js'
 
-export interface AtemTimecodeActions {
+export type AtemTimecodeActions = {
 	[ActionId.Timecode]: {
-		time: string
+		options: {
+			time: string
+		}
 	}
 	[ActionId.TimecodeMode]: {
-		mode: Enums.TimeMode
+		options: {
+			mode: Enums.TimeMode
+		}
 	}
 }
 
@@ -51,7 +55,6 @@ export function createTimecodeActions(
 				const timecode = formatDurationSeconds(instance.timecodeSeconds).hms
 
 				return {
-					...options.getJson(),
 					time: timecode,
 				}
 			},
@@ -77,7 +80,6 @@ export function createTimecodeActions(
 			},
 			learn: ({ options }) => {
 				return {
-					...options.getJson(),
 					mode: state.state.settings.timeMode ?? Enums.TimeMode.FreeRun,
 				}
 			},

@@ -14,50 +14,66 @@ import {
 } from '../input.js'
 import { getDSK, type StateWrapper } from '../state.js'
 
-export interface AtemDownstreamKeyerActions {
+export type AtemDownstreamKeyerActions = {
 	[ActionId.DSKSource]: {
-		key: number
-		fill: number
-		cut: number
+		options: {
+			key: number
+			fill: number
+			cut: number
+		}
 	}
 	[ActionId.DSKSourceVariables]: {
-		key: string
-		fill: string
-		cut: string
+		options: {
+			key: string
+			fill: string
+			cut: string
+		}
 	}
 	[ActionId.DSKRate]: {
-		key: number
-		rate: number
+		options: {
+			key: number
+			rate: number
+		}
 	}
 	[ActionId.DSKMask]: {
-		key: number
+		options: {
+			key: number
 
-		properties: Array<'maskEnabled' | 'maskTop' | 'maskBottom' | 'maskLeft' | 'maskRight'>
-		maskEnabled: boolean
-		maskTop: number
-		maskBottom: number
-		maskLeft: number
-		maskRight: number
+			properties: Array<'maskEnabled' | 'maskTop' | 'maskBottom' | 'maskLeft' | 'maskRight'>
+			maskEnabled: boolean
+			maskTop: number
+			maskBottom: number
+			maskLeft: number
+			maskRight: number
+		}
 	}
 	[ActionId.DSKPreMultipliedKey]: {
-		key: number
+		options: {
+			key: number
 
-		properties: Array<'preMultiply' | 'clip' | 'gain' | 'invert'>
-		preMultiply: boolean
-		clip: number
-		gain: number
-		invert: boolean
+			properties: Array<'preMultiply' | 'clip' | 'gain' | 'invert'>
+			preMultiply: boolean
+			clip: number
+			gain: number
+			invert: boolean
+		}
 	}
 	[ActionId.DSKAuto]: {
-		downstreamKeyerId: number
+		options: {
+			downstreamKeyerId: number
+		}
 	}
 	[ActionId.DSKOnAir]: {
-		key: number
-		onair: TrueFalseToggle
+		options: {
+			key: number
+			onair: TrueFalseToggle
+		}
 	}
 	[ActionId.DSKTie]: {
-		key: number
-		state: TrueFalseToggle
+		options: {
+			key: number
+			state: TrueFalseToggle
+		}
 	}
 }
 
@@ -97,7 +113,6 @@ export function createDownstreamKeyerActions(
 
 				if (dsk?.sources) {
 					return {
-						...options.getJson(),
 						fill: dsk.sources.fillSource,
 						cut: dsk.sources.cutSource,
 					}
@@ -147,7 +162,6 @@ export function createDownstreamKeyerActions(
 
 				if (dsk?.sources) {
 					return {
-						...options.getJson(),
 						fill: dsk.sources.fillSource + '',
 						cut: dsk.sources.cutSource + '',
 					}
@@ -170,7 +184,6 @@ export function createDownstreamKeyerActions(
 
 				if (dsk?.properties) {
 					return {
-						...options.getJson(),
 						rate: dsk.properties.rate,
 					}
 				} else {
@@ -216,7 +229,6 @@ export function createDownstreamKeyerActions(
 
 				if (dsk?.properties?.mask) {
 					return {
-						...options.getJson(),
 						maskEnabled: dsk.properties.mask.enabled,
 						maskTop: dsk.properties.mask.top / 1000,
 						maskBottom: dsk.properties.mask.bottom / 1000,
@@ -263,7 +275,6 @@ export function createDownstreamKeyerActions(
 
 				if (dsk?.properties) {
 					return {
-						...options.getJson(),
 						preMultiply: dsk.properties.preMultiply,
 						clip: dsk.properties.clip / 10,
 						gain: dsk.properties.gain / 10,
@@ -315,7 +326,6 @@ export function createDownstreamKeyerActions(
 
 				if (dsk) {
 					return {
-						...options.getJson(),
 						onair: dsk.onAir ? 'true' : 'false',
 					}
 				} else {
@@ -349,7 +359,6 @@ export function createDownstreamKeyerActions(
 
 				if (dsk?.properties) {
 					return {
-						...options.getJson(),
 						state: dsk.properties.tie ? 'true' : 'false',
 					}
 				} else {

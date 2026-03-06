@@ -5,9 +5,12 @@ import { FeedbackId } from './FeedbackId.js'
 import { combineRgb, type CompanionInputFieldDropdown } from '@companion-module/base'
 import type { StateWrapper } from '../state.js'
 
-export interface AtemStreamingFeedbacks {
+export type AtemStreamingFeedbacks = {
 	[FeedbackId.StreamStatus]: {
-		state: Enums.StreamingStatus
+		type: 'boolean'
+		options: {
+			state: Enums.StreamingStatus
+		}
 	}
 }
 
@@ -50,7 +53,6 @@ export function createStreamingFeedbacks(
 			learn: ({ options }) => {
 				if (state.state.streaming?.status) {
 					return {
-						...options.getJson(),
 						state: state.state.streaming.status.state,
 					}
 				} else {

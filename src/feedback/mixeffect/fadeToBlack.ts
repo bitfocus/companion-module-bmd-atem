@@ -5,14 +5,20 @@ import { FeedbackId } from '../FeedbackId.js'
 import { combineRgb } from '@companion-module/base'
 import { getMixEffect, type StateWrapper } from '../../state.js'
 
-export interface AtemFadeToBlackFeedbacks {
+export type AtemFadeToBlackFeedbacks = {
 	[FeedbackId.FadeToBlackIsBlack]: {
-		mixeffect: number
-		state: 'on' | 'off' | 'fading'
+		type: 'boolean'
+		options: {
+			mixeffect: number
+			state: 'on' | 'off' | 'fading'
+		}
 	}
 	[FeedbackId.FadeToBlackRate]: {
-		mixeffect: number
-		rate: number
+		type: 'boolean'
+		options: {
+			mixeffect: number
+			rate: number
+		}
 	}
 }
 
@@ -71,7 +77,6 @@ export function createFadeToBlackFeedbacks(
 
 				if (me?.fadeToBlack) {
 					return {
-						...options.getJson(),
 						rate: me.fadeToBlack.rate,
 					}
 				} else {

@@ -5,14 +5,18 @@ import type { MyActionDefinitions } from './types.js'
 import { AtemAuxPicker, AtemAuxSourcePicker } from '../input.js'
 import type { StateWrapper } from '../state.js'
 
-export interface AtemAuxOutputActions {
+export type AtemAuxOutputActions = {
 	[ActionId.Aux]: {
-		aux: number
-		input: number
+		options: {
+			aux: number
+			input: number
+		}
 	}
 	[ActionId.AuxVariables]: {
-		aux: string
-		input: string
+		options: {
+			aux: string
+			input: string
+		}
 	}
 }
 
@@ -42,7 +46,6 @@ export function createAuxOutputActions(
 
 				if (auxSource !== undefined) {
 					return {
-						...options.getJson(),
 						input: auxSource,
 					}
 				} else {

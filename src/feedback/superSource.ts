@@ -20,39 +20,63 @@ import {
 import { getSuperSourceBox, type StateWrapper } from '../state.js'
 import type { SuperSourceProperties } from 'atem-connection/dist/state/video/superSource.js'
 
-export interface AtemSuperSourceFeedbacks {
+export type AtemSuperSourceFeedbacks = {
 	[FeedbackId.SSrcArtProperties]: {
-		ssrcId: number | undefined
-	} & AtemSuperSourceArtProperties
+		type: 'boolean'
+		options: {
+			ssrcId: number | undefined
+		} & AtemSuperSourceArtProperties
+	}
 	[FeedbackId.SSrcArtPropertiesVariables]: {
-		ssrcId: number | undefined
-	} & AtemSuperSourceArtPropertiesVariables
+		type: 'boolean'
+		options: {
+			ssrcId: number | undefined
+		} & AtemSuperSourceArtPropertiesVariables
+	}
 	[FeedbackId.SSrcArtSource]: {
-		ssrcId: number | undefined
-		source: number
+		type: 'boolean'
+		options: {
+			ssrcId: number | undefined
+			source: number
+		}
 	}
 	[FeedbackId.SSrcArtOption]: {
-		ssrcId: number | undefined
-		artOption: Enums.SuperSourceArtOption
+		type: 'boolean'
+		options: {
+			ssrcId: number | undefined
+			artOption: Enums.SuperSourceArtOption
+		}
 	}
 	[FeedbackId.SSrcBoxSource]: {
-		ssrcId: number | undefined
-		boxIndex: number
-		source: number
+		type: 'boolean'
+		options: {
+			ssrcId: number | undefined
+			boxIndex: number
+			source: number
+		}
 	}
 	[FeedbackId.SSrcBoxSourceVariables]: {
-		ssrcId: string | undefined
-		boxIndex: string
-		source: string
+		type: 'boolean'
+		options: {
+			ssrcId: string | undefined
+			boxIndex: string
+			source: string
+		}
 	}
 	[FeedbackId.SSrcBoxOnAir]: {
-		ssrcId: number | undefined
-		boxIndex: number
+		type: 'boolean'
+		options: {
+			ssrcId: number | undefined
+			boxIndex: number
+		}
 	}
 	[FeedbackId.SSrcBoxProperties]: {
-		ssrcId: number | undefined
-		boxIndex: number
-	} & AtemSuperSourceProperties
+		type: 'boolean'
+		options: {
+			ssrcId: number | undefined
+			boxIndex: number
+		} & AtemSuperSourceProperties
+	}
 }
 
 function compareAsInt(value: number, actual: number, targetScale: number, actualRounding = 1): boolean {
@@ -116,7 +140,6 @@ export function createSuperSourceFeedbacks(
 				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.properties
 				if (ssrcConfig) {
 					return {
-						...options.getJson(),
 						fill: ssrcConfig.artFillSource,
 						key: ssrcConfig.artCutSource,
 
@@ -183,7 +206,6 @@ export function createSuperSourceFeedbacks(
 				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.properties
 				if (ssrcConfig) {
 					return {
-						...options.getJson(),
 						fill: ssrcConfig.artFillSource + '',
 						key: ssrcConfig.artCutSource + '',
 
@@ -222,7 +244,6 @@ export function createSuperSourceFeedbacks(
 
 				if (ssrc.properties) {
 					return {
-						...options.getJson(),
 						source: ssrc.properties.artFillSource,
 					}
 				} else {
@@ -254,7 +275,6 @@ export function createSuperSourceFeedbacks(
 
 				if (ssrc.properties) {
 					return {
-						...options.getJson(),
 						artOption: ssrc.properties.artOption,
 					}
 				} else {
@@ -287,7 +307,6 @@ export function createSuperSourceFeedbacks(
 
 				if (box) {
 					return {
-						...options.getJson(),
 						source: box.source,
 					}
 				} else {
@@ -346,7 +365,6 @@ export function createSuperSourceFeedbacks(
 
 				if (box) {
 					return {
-						...options.getJson(),
 						source: box.source + '',
 					}
 				} else {
@@ -416,7 +434,6 @@ export function createSuperSourceFeedbacks(
 				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.boxes[boxId]
 				if (ssrcConfig) {
 					return {
-						...options.getJson(),
 						source: ssrcConfig.source,
 						size: ssrcConfig.size / 1000,
 						x: ssrcConfig.x / 100,

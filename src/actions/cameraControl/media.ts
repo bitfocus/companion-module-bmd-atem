@@ -11,14 +11,18 @@ import type { AtemConfig } from '../../config.js'
 import type { ModelSpec } from '../../models/types.js'
 import { InternalPortType } from 'atem-connection/dist/enums/index.js'
 
-export interface AtemCameraControlDisplayActions {
+export type AtemCameraControlDisplayActions = {
 	[ActionId.CameraControlMediaRecordSingle]: {
-		cameraId: string
-		state: TrueFalseToggle
+		options: {
+			cameraId: string
+			state: TrueFalseToggle
+		}
 	}
 	[ActionId.CameraControlMediaRecordMultiple]: {
-		cameraIds: number[]
-		state: TrueFalseToggle
+		options: {
+			cameraIds: number[]
+			state: TrueFalseToggle
+		}
 	}
 }
 
