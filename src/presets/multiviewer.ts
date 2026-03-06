@@ -1,74 +1,102 @@
-import { combineRgb, type CompanionButtonStyleProps } from '@companion-module/base'
+import { combineRgb, CompanionPresetGroup, type CompanionButtonStyleProps } from '@companion-module/base'
 import { ActionId } from '../actions/ActionId.js'
 import { FeedbackId } from '../feedback/FeedbackId.js'
-import type { MyPresetDefinitionCategory } from './types.js'
-import type { ActionTypes } from '../actions/index.js'
-import type { FeedbackTypes } from '../feedback/index.js'
-import type { ModelSpec } from '../models/types.js'
 import { GetSourcesListForType } from '../choices.js'
 import type { AtemState } from 'atem-connection'
+import type { PresetsBuilderContext } from './context.js'
+import type { AtemSchema } from '../schema.js'
 
-export function createMultiviewerPresets(
-	model: ModelSpec,
+export function createMultiviewerWindowPresets(
+	context: PresetsBuilderContext,
 	state: AtemState,
 	pstSize: CompanionButtonStyleProps['size'],
 	pstText: string,
-): MyPresetDefinitionCategory<ActionTypes, FeedbackTypes>[] {
-	const result: MyPresetDefinitionCategory<ActionTypes, FeedbackTypes>[] = []
+): void {
+	const groups: CompanionPresetGroup<AtemSchema>[] = []
+	context.sections.push({
+		id: 'multiviewer_window',
+		name: `Multiviewer Windows`,
+		definitions: groups,
+	})
 
-	for (let mv = 0; mv < model.MVs; mv++) {
-		const firstWindow = model.multiviewerFullGrid ? 0 : 2
-		const windowCount = model.multiviewerFullGrid ? 16 : 10
-		for (let window = firstWindow; window < windowCount; window++) {
-			const category: MyPresetDefinitionCategory<ActionTypes, FeedbackTypes> = {
-				name: `MV ${mv + 1} Window ${window + 1}`,
-				presets: {},
-			}
-			result.push(category)
-
-			for (const src of GetSourcesListForType(model, state, 'mv')) {
-				category.presets[`mv_win_src_${mv}_${window}_${src.id}`] = {
-					name: `Set MV ${mv + 1} Window ${window + 1} to source ${src.shortName}`,
-					type: 'button',
-					style: {
-						text: `$(atem:${pstText}${src.id})`,
-						size: pstSize,
-						color: combineRgb(255, 255, 255),
-						bgcolor: combineRgb(0, 0, 0),
+	context.definitions[`multiviewer_window`] = {
+		name: `Set MV X Window X to source X`,
+		type: 'simple',
+		style: {
+			text: `$(atem:${pstText}$(local:input))`,
+			size: pstSize,
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.MVSource,
+				options: {
+					multiViewerId: { isExpression: true, value: '$(local:multiviewer)' },
+					source: { isExpression: true, value: '$(local:input)' },
+					windowIndex: { isExpression: true, value: '$(local:window)' },
+				},
+				style: {
+					bgcolor: combineRgb(255, 255, 0),
+					color: combineRgb(0, 0, 0),
+				},
+			},
+		],
+		steps: [
+			{
+				down: [
+					{
+						actionId: ActionId.MultiviewerWindowSource,
+						options: {
+							multiViewerId: { isExpression: true, value: '$(local:multiviewer)' },
+							source: { isExpression: true, value: '$(local:input)' },
+							windowIndex: { isExpression: true, value: '$(local:window)' },
+						},
 					},
-					feedbacks: [
-						{
-							feedbackId: FeedbackId.MVSource,
-							options: {
-								multiViewerId: mv,
-								source: src.id,
-								windowIndex: window,
-							},
-							style: {
-								bgcolor: combineRgb(255, 255, 0),
-								color: combineRgb(0, 0, 0),
-							},
-						},
-					],
-					steps: [
-						{
-							down: [
-								{
-									actionId: ActionId.MultiviewerWindowSource,
-									options: {
-										multiViewerId: mv,
-										source: src.id,
-										windowIndex: window,
-									},
-								},
-							],
-							up: [],
-						},
-					],
-				}
-			}
-		}
+				],
+				up: [],
+			},
+		],
+		localVariables: [
+			{
+				variableType: 'simple',
+				variableName: 'multiviewer',
+				startupValue: 0,
+			},
+			{
+				variableType: 'simple',
+				variableName: 'window',
+				startupValue: 0,
+			},
+			{
+				variableType: 'simple',
+				variableName: 'input',
+				startupValue: 0,
+			},
+		],
 	}
 
-	return result
+	const mvWindowSources = GetSourcesListForType(context.model, state, 'mv')
+
+	for (let mv = 0; mv < context.model.MVs; mv++) {
+		const firstWindow = context.model.multiviewerFullGrid ? 0 : 2
+		const windowCount = context.model.multiviewerFullGrid ? 16 : 10
+		for (let window = firstWindow; window < windowCount; window++) {
+			groups.push({
+				id: `mv_${mv}_w_${window}`,
+				name: `MV ${mv + 1} Window ${window + 1}`,
+				type: 'template',
+				presetId: 'multiviewer_window',
+				templateVariableName: 'input',
+				templateValues: mvWindowSources.map((src) => ({
+					name: `Set MV ${mv + 1} Window ${window + 1} to source ${src.shortName}`,
+					value: src.id,
+				})),
+				commonVariableValues: {
+					multiviewer: mv + 1,
+					window: window + 1,
+				},
+			})
+		}
+	}
 }

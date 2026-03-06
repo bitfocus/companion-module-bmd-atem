@@ -1,109 +1,152 @@
-import { combineRgb, type CompanionButtonStyleProps } from '@companion-module/base'
+import { combineRgb, CompanionPresetGroup, type CompanionButtonStyleProps } from '@companion-module/base'
 import { ActionId } from '../../actions/ActionId.js'
 import { FeedbackId } from '../../feedback/FeedbackId.js'
-import type { MyPresetDefinitionCategory } from '../types.js'
-import type { ActionTypes } from '../../actions/index.js'
-import type { FeedbackTypes } from '../../feedback/index.js'
-import type { ModelSpec } from '../../models/types.js'
 import type { SourceInfo } from '../../choices.js'
+import type { PresetsBuilderContext } from '../context.js'
+import type { AtemSchema } from '../../schema.js'
 
 export function createProgramPreviewPresets(
-	model: ModelSpec,
+	context: PresetsBuilderContext,
 	pstSize: CompanionButtonStyleProps['size'],
 	pstText: string,
 	meSources: SourceInfo[],
-): MyPresetDefinitionCategory<ActionTypes, FeedbackTypes>[] {
-	const result: MyPresetDefinitionCategory<ActionTypes, FeedbackTypes>[] = []
+): void {
+	const groups: CompanionPresetGroup<AtemSchema>[] = []
+	context.sections.push({
+		id: 'programPreview',
+		name: `MixEffect Program/Preview`,
+		definitions: groups,
+	})
 
-	for (let me = 0; me < model.MEs; ++me) {
-		const previewCategory: MyPresetDefinitionCategory<ActionTypes, FeedbackTypes> = {
-			name: `Preview (M/E ${me + 1})`,
-			presets: {},
-		}
-		const programCategory: MyPresetDefinitionCategory<ActionTypes, FeedbackTypes> = {
-			name: `Program (M/E ${me + 1})`,
-			presets: {},
-		}
-		result.push(previewCategory, programCategory)
-
-		for (const src of meSources) {
-			previewCategory.presets[`preview_me_${me}_${src.id}`] = {
-				name: `Preview button for ${src.shortName}`,
-				type: 'button',
-				style: {
-					text: `$(atem:${pstText}${src.id})`,
-					size: pstSize,
-					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 0),
+	context.definitions[`preview_me`] = {
+		name: `Preview button for X`,
+		type: 'simple',
+		style: {
+			text: `$(atem:${pstText}$(local:input))`,
+			size: pstSize,
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.PreviewBG,
+				options: {
+					mixeffect: { isExpression: true, value: '$(local:me)' },
+					input: { isExpression: true, value: '$(local:input)' },
 				},
-				feedbacks: [
-					{
-						feedbackId: FeedbackId.PreviewBG,
-						options: {
-							input: src.id,
-							mixeffect: me,
-						},
-						style: {
-							bgcolor: combineRgb(0, 255, 0),
-							color: combineRgb(255, 255, 255),
-						},
-					},
-				],
-				steps: [
-					{
-						down: [
-							{
-								actionId: ActionId.Preview,
-								options: {
-									mixeffect: me,
-									input: src.id,
-								},
-							},
-						],
-						up: [],
-					},
-				],
-			}
-
-			programCategory.presets[`program_me_${me}_${src.id}`] = {
-				name: `Program button for ${src.shortName}`,
-				type: 'button',
 				style: {
-					text: `$(atem:${pstText}${src.id})`,
-					size: pstSize,
+					bgcolor: combineRgb(0, 255, 0),
 					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 0),
 				},
-				feedbacks: [
+			},
+		],
+		steps: [
+			{
+				down: [
 					{
-						feedbackId: FeedbackId.ProgramBG,
-						style: {
-							bgcolor: combineRgb(255, 0, 0),
-							color: combineRgb(255, 255, 255),
-						},
+						actionId: ActionId.Preview,
 						options: {
-							input: src.id,
-							mixeffect: me,
+							mixeffect: { isExpression: true, value: '$(local:me)' },
+							input: { isExpression: true, value: '$(local:input)' },
 						},
 					},
 				],
-				steps: [
+				up: [],
+			},
+		],
+		localVariables: [
+			{
+				variableType: 'simple',
+				variableName: 'me',
+				startupValue: 0,
+			},
+			{
+				variableType: 'simple',
+				variableName: 'input',
+				startupValue: 0,
+			},
+		],
+	}
+	context.definitions[`program_me`] = {
+		name: `Program button for X`,
+		type: 'simple',
+		style: {
+			text: `$(atem:${pstText}$(local:input))`,
+			size: pstSize,
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+		},
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.ProgramBG,
+				options: {
+					mixeffect: { isExpression: true, value: '$(local:me)' },
+					input: { isExpression: true, value: '$(local:input)' },
+				},
+				style: {
+					bgcolor: combineRgb(0, 255, 0),
+					color: combineRgb(255, 255, 255),
+				},
+			},
+		],
+		steps: [
+			{
+				down: [
 					{
-						down: [
-							{
-								actionId: ActionId.Program,
-								options: {
-									mixeffect: me,
-									input: src.id,
-								},
-							},
-						],
-						up: [],
+						actionId: ActionId.Program,
+						options: {
+							mixeffect: { isExpression: true, value: '$(local:me)' },
+							input: { isExpression: true, value: '$(local:input)' },
+						},
 					},
 				],
-			}
-		}
+				up: [],
+			},
+		],
+		localVariables: [
+			{
+				variableType: 'simple',
+				variableName: 'me',
+				startupValue: 0,
+			},
+			{
+				variableType: 'simple',
+				variableName: 'input',
+				startupValue: 0,
+			},
+		],
 	}
 
-	return result
+	for (let me = 0; me < context.model.MEs; ++me) {
+		groups.push(
+			{
+				id: `program_me_${me}`,
+				name: `Program (M/E ${me + 1})`,
+				type: 'template',
+				presetId: 'program_me',
+				templateVariableName: 'input',
+				templateValues: meSources.map((src) => ({
+					name: `Program button for ${src.shortName}`,
+					value: src.id,
+				})),
+				commonVariableValues: {
+					me: me + 1,
+				},
+			},
+			{
+				id: `preview_me_${me}`,
+				name: `Preview (M/E ${me + 1})`,
+				type: 'template',
+				presetId: 'preview_me',
+				templateVariableName: 'input',
+				templateValues: meSources.map((src) => ({
+					name: `Preview button for ${src.shortName}`,
+					value: src.id,
+				})),
+				commonVariableValues: {
+					me: me + 1,
+				},
+			},
+		)
+	}
 }

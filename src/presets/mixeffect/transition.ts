@@ -4,9 +4,9 @@ import { FeedbackId } from '../../feedback/FeedbackId.js'
 import type { MyPresetDefinitionCategory } from '../types.js'
 import type { ActionTypes } from '../../actions/index.js'
 import type { FeedbackTypes } from '../../feedback/index.js'
-import type { ModelSpec } from '../../models/types.js'
 import { GetTransitionStyleChoices } from '../../choices.js'
 import { calculateTransitionSelection } from '../../util.js'
+import type { PresetsBuilderContext } from '../context.js'
 
 function getTransitionSelectionOptions(keyCount: number): boolean[][] {
 	let res: boolean[][] = []
@@ -26,10 +26,10 @@ function getTransitionSelectionOptions(keyCount: number): boolean[][] {
 }
 
 export function createTransitionPresets(
-	model: ModelSpec,
+	context: PresetsBuilderContext,
 	pstSize: CompanionButtonStyleProps['size'],
 	rateOptions: number[],
-): MyPresetDefinitionCategory<ActionTypes, FeedbackTypes>[] {
+): void {
 	const result: MyPresetDefinitionCategory<ActionTypes, FeedbackTypes>[] = []
 
 	for (let me = 0; me < model.MEs; ++me) {
@@ -288,6 +288,4 @@ export function createTransitionPresets(
 			}
 		}
 	}
-
-	return result
 }
