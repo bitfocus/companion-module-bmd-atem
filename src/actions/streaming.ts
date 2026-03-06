@@ -56,15 +56,6 @@ export function createStreamingActions(
 					await atem?.stopStreaming()
 				}
 			},
-			learn: ({ options }) => {
-				if (state.state.streaming?.status) {
-					return {
-						state: state.state.streaming.status.state,
-					}
-				} else {
-					return undefined
-				}
-			},
 		},
 		[ActionId.StreamService]: {
 			name: 'Stream: Set service',
@@ -92,11 +83,13 @@ export function createStreamingActions(
 				},
 			}),
 			callback: async ({ options }) => {
-				const [serviceName, url, key] = await Promise.all([options.service, options.url, options.key])
-
-				await atem?.setStreamingService({ serviceName, url, key })
+				await atem?.setStreamingService({
+					serviceName: options.service,
+					url: options.url,
+					key: options.key,
+				})
 			},
-			learn: ({ options }) => {
+			learn: () => {
 				if (state.state.streaming?.service) {
 					return {
 						service: state.state.streaming.service.serviceName,

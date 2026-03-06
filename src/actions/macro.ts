@@ -13,8 +13,12 @@ export type AtemMacroActions = {
 			action: 'run' | 'runContinue'
 		}
 	}
-	[ActionId.MacroContinue]: { options: Record<string, never> }
-	[ActionId.MacroStop]: { options: Record<string, never> }
+	[ActionId.MacroContinue]: {
+		options: Record<string, never>
+	}
+	[ActionId.MacroStop]: {
+		options: Record<string, never>
+	}
 	[ActionId.MacroLoop]: {
 		options: {
 			loop: TrueFalseToggle

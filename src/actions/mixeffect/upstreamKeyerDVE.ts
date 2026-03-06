@@ -20,202 +20,214 @@ import type {
 import type { algorithm, curve } from '../../easings.js'
 import type { AtemTransitions } from '../../transitions.js'
 
-export interface AtemUpstreamKeyerDVEActions {
+export type AtemUpstreamKeyerDVEActions = {
 	[ActionId.USKDVEProperties]: {
-		mixeffect: number
-		key: number
+		options: {
+			mixeffect: number
+			key: number
 
-		transitionRate: number | undefined
-		transitionEasing: algorithm | undefined
-		transitionCurve: curve | undefined
+			transitionRate: number | undefined
+			transitionEasing: algorithm | undefined
+			transitionCurve: curve | undefined
 
-		properties: Array<
-			| 'positionX'
-			| 'positionY'
-			| 'sizeX'
-			| 'sizeY'
-			| 'rotation'
-			| 'maskEnabled'
-			| 'maskTop'
-			| 'maskBottom'
-			| 'maskLeft'
-			| 'maskRight'
-			| 'shadowEnabled'
-			| 'lightSourceDirection'
-			| 'lightSourceAltitude'
-			| 'borderEnabled'
-			| 'borderHue'
-			| 'borderSaturation'
-			| 'borderLuma'
-			| 'borderBevel'
-			| 'borderOuterWidth'
-			| 'borderInnerWidth'
-			| 'borderOuterSoftness'
-			| 'borderInnerSoftness'
-			| 'borderOpacity'
-			| 'borderBevelPosition'
-			| 'borderBevelSoftness'
-			| 'rate'
-		>
+			properties: Array<
+				| 'positionX'
+				| 'positionY'
+				| 'sizeX'
+				| 'sizeY'
+				| 'rotation'
+				| 'maskEnabled'
+				| 'maskTop'
+				| 'maskBottom'
+				| 'maskLeft'
+				| 'maskRight'
+				| 'shadowEnabled'
+				| 'lightSourceDirection'
+				| 'lightSourceAltitude'
+				| 'borderEnabled'
+				| 'borderHue'
+				| 'borderSaturation'
+				| 'borderLuma'
+				| 'borderBevel'
+				| 'borderOuterWidth'
+				| 'borderInnerWidth'
+				| 'borderOuterSoftness'
+				| 'borderInnerSoftness'
+				| 'borderOpacity'
+				| 'borderBevelPosition'
+				| 'borderBevelSoftness'
+				| 'rate'
+			>
 
-		positionX: number
-		positionY: number
-		sizeX: number
-		sizeY: number
-		rotation: number
-		maskEnabled: boolean
-		maskTop: number
-		maskBottom: number
-		maskLeft: number
-		maskRight: number
-		shadowEnabled: boolean
-		lightSourceDirection: number
-		lightSourceAltitude: number
-		borderEnabled: boolean
-		borderHue: number
-		borderSaturation: number
-		borderLuma: number
-		borderBevel: Enums.BorderBevel
-		borderOuterWidth: number
-		borderInnerWidth: number
-		borderOuterSoftness: number
-		borderInnerSoftness: number
-		borderOpacity: number
-		borderBevelPosition: number
-		borderBevelSoftness: number
-		rate: number
+			positionX: number
+			positionY: number
+			sizeX: number
+			sizeY: number
+			rotation: number
+			maskEnabled: boolean
+			maskTop: number
+			maskBottom: number
+			maskLeft: number
+			maskRight: number
+			shadowEnabled: boolean
+			lightSourceDirection: number
+			lightSourceAltitude: number
+			borderEnabled: boolean
+			borderHue: number
+			borderSaturation: number
+			borderLuma: number
+			borderBevel: Enums.BorderBevel
+			borderOuterWidth: number
+			borderInnerWidth: number
+			borderOuterSoftness: number
+			borderInnerSoftness: number
+			borderOpacity: number
+			borderBevelPosition: number
+			borderBevelSoftness: number
+			rate: number
+		}
 	}
 	[ActionId.USKDVEPropertiesVariables]: {
-		mixeffect: string
-		key: string
+		options: {
+			mixeffect: string
+			key: string
 
-		transitionRate: number | undefined
-		transitionEasing: algorithm | undefined
-		transitionCurve: curve | undefined
+			transitionRate: number | undefined
+			transitionEasing: algorithm | undefined
+			transitionCurve: curve | undefined
 
-		properties: Array<
-			| 'positionX'
-			| 'positionY'
-			| 'sizeX'
-			| 'sizeY'
-			| 'rotation'
-			| 'maskEnabled'
-			| 'maskTop'
-			| 'maskBottom'
-			| 'maskLeft'
-			| 'maskRight'
-			| 'shadowEnabled'
-			| 'lightSourceDirection'
-			| 'lightSourceAltitude'
-			| 'borderEnabled'
-			| 'borderHue'
-			| 'borderSaturation'
-			| 'borderLuma'
-			| 'borderBevel'
-			| 'borderOuterWidth'
-			| 'borderInnerWidth'
-			| 'borderOuterSoftness'
-			| 'borderInnerSoftness'
-			| 'borderOpacity'
-			| 'borderBevelPosition'
-			| 'borderBevelSoftness'
-			| 'rate'
-		>
+			properties: Array<
+				| 'positionX'
+				| 'positionY'
+				| 'sizeX'
+				| 'sizeY'
+				| 'rotation'
+				| 'maskEnabled'
+				| 'maskTop'
+				| 'maskBottom'
+				| 'maskLeft'
+				| 'maskRight'
+				| 'shadowEnabled'
+				| 'lightSourceDirection'
+				| 'lightSourceAltitude'
+				| 'borderEnabled'
+				| 'borderHue'
+				| 'borderSaturation'
+				| 'borderLuma'
+				| 'borderBevel'
+				| 'borderOuterWidth'
+				| 'borderInnerWidth'
+				| 'borderOuterSoftness'
+				| 'borderInnerSoftness'
+				| 'borderOpacity'
+				| 'borderBevelPosition'
+				| 'borderBevelSoftness'
+				| 'rate'
+			>
 
-		positionX: string
-		positionY: string
-		sizeX: string
-		sizeY: string
-		rotation: string
-		maskEnabled: string
-		maskTop: string
-		maskBottom: string
-		maskLeft: string
-		maskRight: string
-		shadowEnabled: string
-		lightSourceDirection: string
-		lightSourceAltitude: string
-		borderEnabled: string
-		borderHue: string
-		borderSaturation: string
-		borderLuma: string
-		borderBevel: string
-		borderOuterWidth: string
-		borderInnerWidth: string
-		borderOuterSoftness: string
-		borderInnerSoftness: string
-		borderOpacity: string
-		borderBevelPosition: string
-		borderBevelSoftness: string
-		rate: string
+			positionX: string
+			positionY: string
+			sizeX: string
+			sizeY: string
+			rotation: string
+			maskEnabled: string
+			maskTop: string
+			maskBottom: string
+			maskLeft: string
+			maskRight: string
+			shadowEnabled: string
+			lightSourceDirection: string
+			lightSourceAltitude: string
+			borderEnabled: string
+			borderHue: string
+			borderSaturation: string
+			borderLuma: string
+			borderBevel: string
+			borderOuterWidth: string
+			borderInnerWidth: string
+			borderOuterSoftness: string
+			borderInnerSoftness: string
+			borderOpacity: string
+			borderBevelPosition: string
+			borderBevelSoftness: string
+			rate: string
+		}
 	}
 	[ActionId.USKSetKeyframe]: {
-		mixeffect: number
-		key: number
-		keyframe: Enums.FlyKeyKeyFrame.A | Enums.FlyKeyKeyFrame.B
+		options: {
+			mixeffect: number
+			key: number
+			keyframe: Enums.FlyKeyKeyFrame.A | Enums.FlyKeyKeyFrame.B
 
-		properties: Array<
-			| 'positionX'
-			| 'positionY'
-			| 'sizeX'
-			| 'sizeY'
-			| 'rotation'
-			| 'maskTop'
-			| 'maskBottom'
-			| 'maskLeft'
-			| 'maskRight'
-			| 'shadowEnabled'
-			| 'lightSourceDirection'
-			| 'lightSourceAltitude'
-			| 'borderEnabled'
-			| 'borderHue'
-			| 'borderSaturation'
-			| 'borderLuma'
-			| 'borderOuterWidth'
-			| 'borderInnerWidth'
-			| 'borderOuterSoftness'
-			| 'borderInnerSoftness'
-			| 'borderOpacity'
-			| 'borderBevelPosition'
-			| 'borderBevelSoftness'
-		>
+			properties: Array<
+				| 'positionX'
+				| 'positionY'
+				| 'sizeX'
+				| 'sizeY'
+				| 'rotation'
+				| 'maskTop'
+				| 'maskBottom'
+				| 'maskLeft'
+				| 'maskRight'
+				| 'shadowEnabled'
+				| 'lightSourceDirection'
+				| 'lightSourceAltitude'
+				| 'borderEnabled'
+				| 'borderHue'
+				| 'borderSaturation'
+				| 'borderLuma'
+				| 'borderOuterWidth'
+				| 'borderInnerWidth'
+				| 'borderOuterSoftness'
+				| 'borderInnerSoftness'
+				| 'borderOpacity'
+				| 'borderBevelPosition'
+				| 'borderBevelSoftness'
+			>
 
-		positionX: number
-		positionY: number
-		sizeX: number
-		sizeY: number
-		rotation: number
-		maskTop: number
-		maskBottom: number
-		maskLeft: number
-		maskRight: number
-		lightSourceDirection: number
-		lightSourceAltitude: number
-		borderHue: number
-		borderSaturation: number
-		borderLuma: number
-		borderOuterWidth: number
-		borderInnerWidth: number
-		borderOuterSoftness: number
-		borderInnerSoftness: number
-		borderOpacity: number
-		borderBevelPosition: number
-		borderBevelSoftness: number
+			positionX: number
+			positionY: number
+			sizeX: number
+			sizeY: number
+			rotation: number
+			maskTop: number
+			maskBottom: number
+			maskLeft: number
+			maskRight: number
+			lightSourceDirection: number
+			lightSourceAltitude: number
+			borderHue: number
+			borderSaturation: number
+			borderLuma: number
+			borderOuterWidth: number
+			borderInnerWidth: number
+			borderOuterSoftness: number
+			borderInnerSoftness: number
+			borderOpacity: number
+			borderBevelPosition: number
+			borderBevelSoftness: number
+		}
 	}
 	[ActionId.USKStoreKeyframe]: {
-		mixeffect: number
-		key: number
-		keyframe: Enums.FlyKeyKeyFrame.A | Enums.FlyKeyKeyFrame.B
+		options: {
+			mixeffect: number
+			key: number
+			keyframe: Enums.FlyKeyKeyFrame.A | Enums.FlyKeyKeyFrame.B
+		}
 	}
 	[ActionId.USKFly]: {
-		mixeffect: number
-		key: number
-		keyframe: Enums.FlyKeyKeyFrame.A | Enums.FlyKeyKeyFrame.B | Enums.FlyKeyKeyFrame.Full
+		options: {
+			mixeffect: number
+			key: number
+			keyframe: Enums.FlyKeyKeyFrame.A | Enums.FlyKeyKeyFrame.B | Enums.FlyKeyKeyFrame.Full
+		}
 	}
 	[ActionId.USKFlyInfinite]: {
-		mixeffect: number
-		key: number
-		flydirection: Enums.FlyKeyDirection
+		options: {
+			mixeffect: number
+			key: number
+			flydirection: Enums.FlyKeyDirection
+		}
 	}
 }
 

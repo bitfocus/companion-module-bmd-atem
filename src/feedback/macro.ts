@@ -29,7 +29,10 @@ export type AtemMacroFeedbacks = {
 	}
 }
 
-export function createMacroFeedbacks(model: ModelSpec, state: StateWrapper): CompanionFeedbackDefinitions<AtemMacroFeedbacks> {
+export function createMacroFeedbacks(
+	model: ModelSpec,
+	state: StateWrapper,
+): CompanionFeedbackDefinitions<AtemMacroFeedbacks> {
 	if (!model.macros) {
 		return {
 			[FeedbackId.Macro]: undefined,
@@ -48,7 +51,7 @@ export function createMacroFeedbacks(model: ModelSpec, state: StateWrapper): Com
 					id: 'macroIndex',
 					default: 1,
 					choices: GetMacroChoices(model, state.state),
-				} satisfies CompanionInputFieldDropdown,
+				},
 				state: {
 					type: 'dropdown',
 					label: 'State',
@@ -60,7 +63,7 @@ export function createMacroFeedbacks(model: ModelSpec, state: StateWrapper): Com
 						{ id: MacroFeedbackType.IsRecording, label: 'Is Recording' },
 						{ id: MacroFeedbackType.IsUsed, label: 'Is Used' },
 					],
-				} satisfies CompanionInputFieldDropdown,
+				},
 			}),
 			defaultStyle: {
 				color: combineRgb(255, 255, 255),

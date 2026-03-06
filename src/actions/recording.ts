@@ -12,7 +12,9 @@ export type AtemRecordingActions = {
 			record: TrueFalseToggle
 		}
 	}
-	[ActionId.RecordSwitchDisk]: { options: Record<string, never> }
+	[ActionId.RecordSwitchDisk]: {
+		options: Record<string, never>
+	}
 	[ActionId.RecordFilename]: {
 		options: {
 			filename: string
@@ -62,15 +64,6 @@ export function createRecordingActions(
 					await atem?.stopRecording()
 				}
 			},
-			learn: ({ options }) => {
-				if (state.state.recording?.status) {
-					return {
-						state: state.state.recording.status.state,
-					}
-				} else {
-					return undefined
-				}
-			},
 		},
 		[ActionId.RecordSwitchDisk]: {
 			name: 'Recording: Switch disk',
@@ -91,10 +84,11 @@ export function createRecordingActions(
 				},
 			}),
 			callback: async ({ options }) => {
-				const filename = await options.filename
-				await atem?.setRecordingSettings({ filename })
+				await atem?.setRecordingSettings({
+					filename: options.filename,
+				})
 			},
-			learn: ({ options }) => {
+			learn: () => {
 				if (state.state.recording?.properties) {
 					return {
 						filename: state.state.recording?.properties.filename,
@@ -123,10 +117,10 @@ export function createRecordingActions(
 
 				await atem?.setEnableISORecording(newState)
 			},
-			learn: ({ options }) => {
+			learn: () => {
 				if (state.state.recording?.recordAllInputs != undefined) {
 					return {
-						state: state.state.recording.recordAllInputs,
+						recordISO: state.state.recording.recordAllInputs ? 'true' : 'false',
 					}
 				} else {
 					return undefined

@@ -12,34 +12,38 @@ import { ActionId } from '../ActionId.js'
 import { getUSK, type StateWrapper } from '../../state.js'
 import type { UpstreamKeyerPatternSettings } from 'atem-connection/dist/state/video/upstreamKeyers.js'
 
-export interface AtemUpstreamKeyerPatternActions {
+export type AtemUpstreamKeyerPatternActions = {
 	[ActionId.USKPatternProperties]: {
-		mixeffect: number
-		key: number
+		options: {
+			mixeffect: number
+			key: number
 
-		properties: Array<'style' | 'size' | 'symmetry' | 'softness' | 'positionX' | 'positionY' | 'invert'>
+			properties: Array<'style' | 'size' | 'symmetry' | 'softness' | 'positionX' | 'positionY' | 'invert'>
 
-		style: Enums.Pattern
-		size: number
-		symmetry: number
-		softness: number
-		positionX: number
-		positionY: number
-		invert: boolean
+			style: Enums.Pattern
+			size: number
+			symmetry: number
+			softness: number
+			positionX: number
+			positionY: number
+			invert: boolean
+		}
 	}
 	[ActionId.USKPatternPropertiesVariables]: {
-		mixeffect: string
-		key: string
+		options: {
+			mixeffect: string
+			key: string
 
-		properties: Array<'style' | 'size' | 'symmetry' | 'softness' | 'positionX' | 'positionY' | 'invert'>
+			properties: Array<'style' | 'size' | 'symmetry' | 'softness' | 'positionX' | 'positionY' | 'invert'>
 
-		style: string
-		size: string
-		symmetry: string
-		softness: string
-		positionX: string
-		positionY: string
-		invert: string
+			style: string
+			size: string
+			symmetry: string
+			softness: string
+			positionX: string
+			positionY: string
+			invert: string
+		}
 	}
 }
 

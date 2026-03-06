@@ -117,7 +117,7 @@ export function createMediaPlayerActions(
 				},
 			}),
 			callback: async ({ options }) => {
-				const [mediaplayer, slot] = await Promise.all([options.mediaplayer, options.slot])
+				const { mediaplayer, slot } = options
 
 				if (model.media.clips > 0 && options.isClip) {
 					let index = Number(slot) - 1

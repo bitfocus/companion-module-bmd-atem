@@ -5,7 +5,7 @@ import type { ModelSpec } from '../models/index.js'
 import { FeedbackId } from './FeedbackId.js'
 import type { StateWrapper } from '../state.js'
 import type { MediaPoolPreviewOptions, SourceDefinition } from '../mediaPoolPreviews.js'
-import type { CompanionAdvancedFeedbackResult, CompanionInputFieldDropdown } from '@companion-module/base/dist/index.js'
+import type { CompanionAdvancedFeedbackResult, CompanionInputFieldDropdown } from '@companion-module/base'
 import { MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from '../util.js'
 
 export type AtemMediaPoolFeedbacks = {
@@ -120,7 +120,7 @@ export function createMediaPoolFeedbacks(
 					type: 'textinput',
 					label: 'Slot',
 					default: '1',
-					useVariables: { local: true },
+					useVariables: true,
 				},
 
 				...cropAndPositionOptions,

@@ -156,7 +156,7 @@ export function createFairlightAudioFeedbacks(
 					step: 0.1,
 					min: -100,
 					max: 6,
-				} satisfies CompanionInputFieldNumber,
+				},
 			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -199,7 +199,7 @@ export function createFairlightAudioFeedbacks(
 					step: 0.1,
 					min: -100,
 					max: 10,
-				} satisfies CompanionInputFieldNumber,
+				},
 			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -240,7 +240,7 @@ export function createFairlightAudioFeedbacks(
 					type: 'dropdown',
 					default: CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION[0].id,
 					choices: CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION,
-				} satisfies CompanionInputFieldDropdown,
+				},
 			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -281,7 +281,7 @@ export function createFairlightAudioFeedbacks(
 					step: 0.1,
 					min: -100,
 					max: 10,
-				} satisfies CompanionInputFieldNumber,
+				},
 			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -291,7 +291,7 @@ export function createFairlightAudioFeedbacks(
 				const props = state.state.fairlight?.master?.properties
 				return !!(props && compareNumber(options.gain, options.comparitor, props.faderGain / 100))
 			},
-			learn: ({ options }) => {
+			learn: () => {
 				const props = state.state.fairlight?.master?.properties
 
 				if (props) {
@@ -361,7 +361,7 @@ export function createFairlightAudioFeedbacks(
 							step: 0.1,
 							min: -60,
 							max: 10,
-						} satisfies CompanionInputFieldNumber,
+						},
 					}),
 					defaultStyle: {
 						color: combineRgb(0, 0, 0),
@@ -371,7 +371,7 @@ export function createFairlightAudioFeedbacks(
 						const gain = state.state.fairlight?.monitor?.gain
 						return !!(typeof gain === 'number' && compareNumber(options.gain, options.comparitor, gain / 100))
 					},
-					learn: ({ options }) => {
+					learn: () => {
 						const props = state.state.fairlight?.monitor
 
 						if (props) {
@@ -418,7 +418,7 @@ export function createFairlightAudioFeedbacks(
 								step: 0.1,
 								min: -60,
 								max: 10,
-							} satisfies CompanionInputFieldNumber,
+							},
 						}),
 						defaultStyle: {
 							color: combineRgb(0, 0, 0),
@@ -428,7 +428,7 @@ export function createFairlightAudioFeedbacks(
 							const gain = state.state.fairlight?.monitor?.inputMasterGain
 							return !!(typeof gain === 'number' && compareNumber(options.gain, options.comparitor, gain / 100))
 						},
-						learn: ({ options }) => {
+						learn: () => {
 							const props = state.state.fairlight?.monitor
 
 							if (props) {
@@ -475,7 +475,7 @@ export function createFairlightAudioFeedbacks(
 								step: 0.1,
 								min: -60,
 								max: 10,
-							} satisfies CompanionInputFieldNumber,
+							},
 						}),
 						defaultStyle: {
 							color: combineRgb(0, 0, 0),
@@ -485,7 +485,7 @@ export function createFairlightAudioFeedbacks(
 							const gain = state.state.fairlight?.monitor?.inputTalkbackGain
 							return !!(typeof gain === 'number' && compareNumber(options.gain, options.comparitor, gain / 100))
 						},
-						learn: ({ options }) => {
+						learn: () => {
 							const props = state.state.fairlight?.monitor
 
 							if (props) {
@@ -515,7 +515,7 @@ export function createFairlightAudioFeedbacks(
 								step: 0.1,
 								min: -60,
 								max: 10,
-							} satisfies CompanionInputFieldNumber,
+							},
 						}),
 						defaultStyle: {
 							color: combineRgb(0, 0, 0),
@@ -525,7 +525,7 @@ export function createFairlightAudioFeedbacks(
 							const gain = state.state.fairlight?.monitor?.inputSidetoneGain
 							return !!(typeof gain === 'number' && compareNumber(options.gain, options.comparitor, gain / 100))
 						},
-						learn: ({ options }) => {
+						learn: () => {
 							const props = state.state.fairlight?.monitor
 
 							if (props) {

@@ -3,7 +3,7 @@ import { convertOptionsFields } from '../../common.js'
 import { AtemKeyFillSourcePicker, AtemMEPicker, AtemUSKPicker, AtemUpstreamKeyerTypePicker } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { FeedbackId } from '../FeedbackId.js'
-import { combineRgb, type CompanionInputFieldDropdown, CompanionFeedbackDefinitions } from '@companion-module/base'
+import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
 import { getUSK, type StateWrapper } from '../../state.js'
 import { CHOICES_CURRENTKEYFRAMES } from '../../choices.js'
 
@@ -195,7 +195,7 @@ export function createUpstreamKeyerFeedbacks(
 							label: 'Key Frame',
 							choices: CHOICES_CURRENTKEYFRAMES,
 							default: CHOICES_CURRENTKEYFRAMES[0].id,
-						} satisfies CompanionInputFieldDropdown,
+						},
 					}),
 					defaultStyle: {
 						color: combineRgb(0, 0, 0),

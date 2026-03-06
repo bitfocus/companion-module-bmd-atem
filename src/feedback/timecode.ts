@@ -49,7 +49,7 @@ export function createTimecodeFeedbacks(
 			callback: ({ options }): boolean => {
 				return state.state.settings.timeMode === options.mode
 			},
-			learn: ({ options }) => {
+			learn: () => {
 				return {
 					mode: state.state.settings.timeMode ?? Enums.TimeMode.FreeRun,
 				}

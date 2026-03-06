@@ -299,7 +299,7 @@ export function createFairlightAudioActions(
 						delay: {
 							type: 'number',
 							label: 'Delay (frames)',
-							id: 'gain',
+							id: 'delay',
 							range: true,
 							default: 0,
 							step: 1,
@@ -339,7 +339,7 @@ export function createFairlightAudioActions(
 						delay: {
 							type: 'number',
 							label: 'Adjustment (frames)',
-							id: 'gain',
+							id: 'delay',
 							range: true,
 							default: 0,
 							step: 1,
@@ -567,7 +567,7 @@ export function createFairlightAudioActions(
 					options,
 				)
 			},
-			learn: ({ options }) => {
+			learn: () => {
 				const props = state.state.fairlight?.master?.properties
 
 				if (props) {
@@ -674,7 +674,7 @@ export function createFairlightAudioActions(
 							options,
 						)
 					},
-					learn: ({ options }) => {
+					learn: () => {
 						const props = state.state.fairlight?.monitor
 
 						if (props) {
@@ -758,7 +758,7 @@ function HeadphoneMasterActions(
 							inputMasterMuted: target,
 						})
 					},
-					learn: ({ options }) => {
+					learn: () => {
 						const props = state.state.fairlight?.monitor
 
 						if (props) {
@@ -801,7 +801,7 @@ function HeadphoneMasterActions(
 								options,
 							)
 						},
-						learn: ({ options }) => {
+						learn: () => {
 							const props = state.state.fairlight?.monitor
 
 							if (props) {
@@ -881,7 +881,7 @@ function HeadphoneTalkbackActions(
 							inputTalkbackMuted: target, //
 						})
 					},
-					learn: ({ options }) => {
+					learn: () => {
 						const props = state.state.fairlight?.monitor
 
 						if (props) {
@@ -924,7 +924,7 @@ function HeadphoneTalkbackActions(
 								options,
 							)
 						},
-						learn: ({ options }) => {
+						learn: () => {
 							const props = state.state.fairlight?.monitor
 
 							if (props) {
@@ -1047,7 +1047,7 @@ function HeadphoneSidetoneActions(
 								options,
 							)
 						},
-						learn: ({ options }) => {
+						learn: () => {
 							const props = state.state.fairlight?.monitor
 
 							if (props) {

@@ -123,7 +123,7 @@ export function createDisplayClockActions(
 
 				await atem?.setDisplayClockProperties(newProps)
 			},
-			learn: ({ options }) => {
+			learn: () => {
 				const displayClockConfig = state.state.displayClock?.properties
 				if (displayClockConfig) {
 					return {
@@ -155,7 +155,7 @@ export function createDisplayClockActions(
 					startFrom: time,
 				})
 			},
-			learn: ({ options }) => {
+			learn: () => {
 				const displayClockConfig = state.state.displayClock?.properties
 				if (displayClockConfig) {
 					return {

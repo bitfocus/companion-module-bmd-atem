@@ -21,61 +21,75 @@ import type {
 	UpstreamKeyerMaskSettings,
 } from 'atem-connection/dist/state/video/upstreamKeyers.js'
 
-export interface AtemUpstreamKeyerCommonActions {
+export type AtemUpstreamKeyerCommonActions = {
 	[ActionId.USKType]: {
-		mixeffect: number
-		key: number
-		type: Enums.MixEffectKeyType
+		options: {
+			mixeffect: number
+			key: number
+			type: Enums.MixEffectKeyType
+		}
 	}
 	[ActionId.USKSource]: {
-		mixeffect: number
-		key: number
-		fill: number
-		cut: number
+		options: {
+			mixeffect: number
+			key: number
+			fill: number
+			cut: number
+		}
 	}
 	[ActionId.USKSourceVariables]: {
-		mixeffect: string
-		key: string
-		fill: string
-		cut: string
+		options: {
+			mixeffect: string
+			key: string
+			fill: string
+			cut: string
+		}
 	}
 	[ActionId.USKOnAir]: {
-		mixeffect: number
-		key: number
-		onair: TrueFalseToggle
+		options: {
+			mixeffect: number
+			key: number
+			onair: TrueFalseToggle
+		}
 	}
 	[ActionId.USKMaskLumaChromaPattern]: {
-		mixeffect: number
-		key: number
+		options: {
+			mixeffect: number
+			key: number
 
-		properties: Array<'maskEnabled' | 'maskTop' | 'maskBottom' | 'maskLeft' | 'maskRight'>
-		maskEnabled: boolean
-		maskTop: number
-		maskBottom: number
-		maskLeft: number
-		maskRight: number
+			properties: Array<'maskEnabled' | 'maskTop' | 'maskBottom' | 'maskLeft' | 'maskRight'>
+			maskEnabled: boolean
+			maskTop: number
+			maskBottom: number
+			maskLeft: number
+			maskRight: number
+		}
 	}
 	[ActionId.USKFlyKeyLumaChromaPattern]: {
-		mixeffect: number
-		key: number
+		options: {
+			mixeffect: number
+			key: number
 
-		properties: Array<'flyEnabled' | 'positionX' | 'positionY' | 'sizeX' | 'sizeY'>
-		flyEnabled: boolean
-		positionX: number
-		positionY: number
-		sizeX: number
-		sizeY: number
+			properties: Array<'flyEnabled' | 'positionX' | 'positionY' | 'sizeX' | 'sizeY'>
+			flyEnabled: boolean
+			positionX: number
+			positionY: number
+			sizeX: number
+			sizeY: number
+		}
 	}
 	[ActionId.USKFlyKeyLumaChromaPatternVariables]: {
-		mixeffect: string
-		key: string
+		options: {
+			mixeffect: string
+			key: string
 
-		properties: Array<'flyEnabled' | 'positionX' | 'positionY' | 'sizeX' | 'sizeY'>
-		flyEnabled: string
-		positionX: string
-		positionY: string
-		sizeX: string
-		sizeY: string
+			properties: Array<'flyEnabled' | 'positionX' | 'positionY' | 'sizeX' | 'sizeY'>
+			flyEnabled: string
+			positionX: string
+			positionY: string
+			sizeX: string
+			sizeY: string
+		}
 	}
 }
 

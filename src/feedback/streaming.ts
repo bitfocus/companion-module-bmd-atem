@@ -2,7 +2,7 @@ import { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../common.js'
 import type { ModelSpec } from '../models/index.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb, type CompanionInputFieldDropdown, CompanionFeedbackDefinitions } from '@companion-module/base'
+import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { StateWrapper } from '../state.js'
 
 export type AtemStreamingFeedbacks = {
@@ -40,7 +40,7 @@ export function createStreamingFeedbacks(
 							label: k,
 						})),
 					default: Enums.StreamingStatus.Streaming,
-				} satisfies CompanionInputFieldDropdown,
+				},
 			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -50,7 +50,7 @@ export function createStreamingFeedbacks(
 				const streaming = state.state.streaming?.status?.state
 				return streaming === options.state
 			},
-			learn: ({ options }) => {
+			learn: () => {
 				if (state.state.streaming?.status) {
 					return {
 						state: state.state.streaming.status.state,

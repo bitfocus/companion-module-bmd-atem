@@ -29,7 +29,10 @@ export type AtemTallyFeedbacks = {
 	}
 }
 
-export function createTallyFeedbacks(model: ModelSpec, state: StateWrapper): CompanionFeedbackDefinitions<AtemTallyFeedbacks> {
+export function createTallyFeedbacks(
+	model: ModelSpec,
+	state: StateWrapper,
+): CompanionFeedbackDefinitions<AtemTallyFeedbacks> {
 	return {
 		[FeedbackId.ProgramTally]: {
 			type: 'boolean',

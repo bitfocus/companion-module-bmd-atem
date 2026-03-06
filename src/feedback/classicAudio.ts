@@ -2,7 +2,7 @@ import { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../common.js'
 import type { ModelSpec } from '../models/index.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb, type CompanionInputFieldDropdown, type CompanionInputFieldNumber, CompanionFeedbackDefinitions } from '@companion-module/base'
+import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
 import { CHOICES_CLASSIC_AUDIO_MIX_OPTION } from '../choices.js'
 import { compareNumber, NumberComparitor } from '../util.js'
 import { AtemAudioInputPicker, NumberComparitorPicker } from '../input.js'
@@ -64,7 +64,7 @@ export function createClassicAudioFeedbacks(
 					step: 0.1,
 					min: -60,
 					max: 6,
-				} satisfies CompanionInputFieldNumber,
+				},
 			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -100,7 +100,7 @@ export function createClassicAudioFeedbacks(
 					type: 'dropdown',
 					default: CHOICES_CLASSIC_AUDIO_MIX_OPTION[0].id,
 					choices: CHOICES_CLASSIC_AUDIO_MIX_OPTION,
-				} satisfies CompanionInputFieldDropdown,
+				},
 			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -139,7 +139,7 @@ export function createClassicAudioFeedbacks(
 					step: 0.1,
 					min: -60,
 					max: 6,
-				} satisfies CompanionInputFieldNumber,
+				},
 			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -149,7 +149,7 @@ export function createClassicAudioFeedbacks(
 				const props = state.state.audio?.master
 				return !!(props && compareNumber(options.gain, options.comparitor, props.gain))
 			},
-			learn: ({ options }) => {
+			learn: () => {
 				const props = state.state.audio?.master
 
 				if (props) {

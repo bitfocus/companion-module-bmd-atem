@@ -45,7 +45,7 @@ export function createRecordingFeedbacks(
 							label: k,
 						})),
 					default: Enums.RecordingStatus.Recording,
-				} satisfies CompanionInputFieldDropdown,
+				},
 			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -55,7 +55,7 @@ export function createRecordingFeedbacks(
 				const recording = state.state.recording?.status?.state
 				return recording === options.state
 			},
-			learn: ({ options }) => {
+			learn: () => {
 				if (state.state.recording?.status) {
 					return {
 						state: state.state.recording.status.state,

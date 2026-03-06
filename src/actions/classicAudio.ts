@@ -259,7 +259,7 @@ export function createClassicAudioActions(
 					options,
 				)
 			},
-			learn: ({ options }) => {
+			learn: () => {
 				const props = state.state.audio?.master
 
 				if (props) {
@@ -319,7 +319,7 @@ export function createClassicAudioActions(
 					options,
 				)
 			},
-			learn: ({ options }) => {
+			learn: () => {
 				const props = state.state.audio?.master
 
 				if (props) {

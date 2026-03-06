@@ -7,8 +7,12 @@ import { AtemAllSourcePicker } from '../input.js'
 import type { StateWrapper } from '../state.js'
 
 export type AtemSettingsActions = {
-	[ActionId.SaveStartupState]: { options: Record<string, never> }
-	[ActionId.ClearStartupState]: { options: Record<string, never> }
+	[ActionId.SaveStartupState]: {
+		options: Record<string, never>
+	}
+	[ActionId.ClearStartupState]: {
+		options: Record<string, never>
+	}
 	[ActionId.InputName]: {
 		options: {
 			source: number
@@ -88,8 +92,8 @@ export function createSettingsActions(
 				const setLong = options.long_enable
 
 				const newProps: Partial<Pick<InputState.InputChannel, 'longName' | 'shortName'>> = {}
-				if (setShort) newProps.shortName = await options.short_value
-				if (setLong) newProps.longName = await options.long_value
+				if (setShort) newProps.shortName = options.short_value
+				if (setLong) newProps.longName = options.long_value
 
 				await Promise.all([
 					typeof newProps.longName === 'string' && !atem?.hasInternalMultiviewerLabelGeneration()

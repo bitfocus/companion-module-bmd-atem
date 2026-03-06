@@ -74,7 +74,7 @@ export function AtemUpstreamKeyerPatternPicker(): CompanionInputFieldDropdown {
 		choices: GetUpstreamKeyerPatternChoices(),
 	}
 }
-export function AtemRatePicker(label: string): CompanionInputFieldNumber {
+export function AtemRatePicker(label: string): CompanionInputFieldNumber<'rate'> {
 	return {
 		type: 'number',
 		id: 'rate',
@@ -162,7 +162,7 @@ export function AtemMEPicker(model: ModelSpec, id: number): CompanionInputFieldD
 		choices: GetMEIdChoices(model),
 	}
 }
-export function AtemDSKPicker(model: ModelSpec): CompanionInputFieldDropdown {
+export function AtemDSKPicker(model: ModelSpec): CompanionInputFieldDropdown<'key'> {
 	return {
 		type: 'dropdown',
 		label: 'Key',
@@ -287,7 +287,7 @@ export function AtemDSKPreMultipliedKeyPropertiesPickers(): {
 	}
 }
 
-export function AtemUSKPicker(model: ModelSpec): CompanionInputFieldDropdown {
+export function AtemUSKPicker(model: ModelSpec): CompanionInputFieldDropdown<'key'> {
 	return {
 		type: 'dropdown',
 		label: 'Key',
@@ -1174,7 +1174,7 @@ export function AtemAuxPicker(model: ModelSpec): CompanionInputFieldDropdown<'au
 		choices: GetAuxIdChoices(model),
 	}
 }
-export function AtemMultiviewerPicker(model: ModelSpec): CompanionInputFieldDropdown {
+export function AtemMultiviewerPicker(model: ModelSpec): CompanionInputFieldDropdown<'multiViewerId'> {
 	return {
 		type: 'dropdown',
 		id: 'multiViewerId',
@@ -1183,7 +1183,7 @@ export function AtemMultiviewerPicker(model: ModelSpec): CompanionInputFieldDrop
 		choices: GetMultiviewerIdChoices(model),
 	}
 }
-export function AtemKeyFillSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
+export function AtemKeyFillSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown<'fill'> {
 	return {
 		type: 'dropdown',
 		label: 'Fill Source',
@@ -1192,7 +1192,7 @@ export function AtemKeyFillSourcePicker(model: ModelSpec, state: AtemState): Com
 		choices: SourcesToChoices(GetSourcesListForType(model, state, 'me')),
 	}
 }
-export function AtemKeyCutSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
+export function AtemKeyCutSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown<'cut'> {
 	return {
 		type: 'dropdown',
 		label: 'Key Source',
@@ -1224,7 +1224,6 @@ export function AtemTransitionAnimationOptions(): {
 			min: 0,
 			max: 99999,
 			step: 1,
-			required: false,
 		},
 		transitionEasing: {
 			type: 'dropdown',
@@ -1682,7 +1681,7 @@ export function DropdownPropertiesPicker(
 		| CompanionInputFieldNumber
 		| CompanionInputFieldMultiDropdown
 	>,
-): CompanionInputFieldMultiDropdown {
+): CompanionInputFieldMultiDropdown<'properties'> {
 	return {
 		type: 'multidropdown',
 		id: 'properties',
@@ -1690,6 +1689,7 @@ export function DropdownPropertiesPicker(
 		minSelection: 1,
 		default: Object.values(allProps).map((p) => p.id),
 		choices: Object.values(allProps).map((p) => ({ id: p.id, label: p.label })),
+		disableAutoExpression: true,
 	}
 }
 
@@ -1707,7 +1707,10 @@ export function AtemSuperSourceArtSourcePicker(
 		choices: SourcesToChoices(GetSourcesListForType(model, state, 'ssrc-art')),
 	}
 }
-export function AtemSuperSourceBoxSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
+export function AtemSuperSourceBoxSourcePicker(
+	model: ModelSpec,
+	state: AtemState,
+): CompanionInputFieldDropdown<'source'> {
 	return {
 		type: 'dropdown',
 		id: 'source',
@@ -1716,7 +1719,7 @@ export function AtemSuperSourceBoxSourcePicker(model: ModelSpec, state: AtemStat
 		choices: SourcesToChoices(GetSourcesListForType(model, state, 'ssrc-box')),
 	}
 }
-export function AtemMultiviewSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
+export function AtemMultiviewSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown<'source'> {
 	return {
 		type: 'dropdown',
 		id: 'source',
@@ -1725,7 +1728,7 @@ export function AtemMultiviewSourcePicker(model: ModelSpec, state: AtemState): C
 		choices: SourcesToChoices(GetSourcesListForType(model, state, 'mv')),
 	}
 }
-export function AtemMultiviewWindowPicker(model: ModelSpec): CompanionInputFieldDropdown {
+export function AtemMultiviewWindowPicker(model: ModelSpec): CompanionInputFieldDropdown<'windowIndex'> {
 	const choices = model.multiviewerFullGrid
 		? iterateTimes(16, (i) => ({
 				id: i,
@@ -1744,7 +1747,7 @@ export function AtemMultiviewWindowPicker(model: ModelSpec): CompanionInputField
 		choices,
 	}
 }
-export function AtemMediaPlayerPicker(model: ModelSpec): CompanionInputFieldDropdown {
+export function AtemMediaPlayerPicker(model: ModelSpec): CompanionInputFieldDropdown<'mediaplayer'> {
 	return {
 		type: 'dropdown',
 		id: 'mediaplayer',
@@ -1758,7 +1761,7 @@ export function AtemMediaPlayerSourcePicker(
 	model: ModelSpec,
 	state: AtemState,
 	includeClips = true,
-): CompanionInputFieldDropdown {
+): CompanionInputFieldDropdown<'source'> {
 	return {
 		type: 'dropdown',
 		id: 'source',
@@ -1835,7 +1838,7 @@ export function AtemAudioInputPicker(
 	model: ModelSpec,
 	state: AtemState,
 	subset?: AudioInputSubset,
-): CompanionInputFieldDropdown {
+): CompanionInputFieldDropdown<'input'> {
 	const inputs = SourcesToChoices(GetAudioInputsList(model, state, subset))
 	return {
 		type: 'dropdown',
@@ -1846,7 +1849,7 @@ export function AtemAudioInputPicker(
 	}
 }
 
-export function AtemFairlightAudioSourcePicker(): CompanionInputFieldDropdown {
+export function AtemFairlightAudioSourcePicker(): CompanionInputFieldDropdown<'source'> {
 	const sources: DropdownChoice[] = [
 		{
 			id: '-65280',
@@ -1871,7 +1874,7 @@ export function AtemFairlightAudioSourcePicker(): CompanionInputFieldDropdown {
 	}
 }
 
-export function NumberComparitorPicker(): CompanionInputFieldDropdown {
+export function NumberComparitorPicker(): CompanionInputFieldDropdown<'comparitor'> {
 	const options = [
 		{ id: NumberComparitor.Equal, label: 'Equal' },
 		{ id: NumberComparitor.NotEqual, label: 'Not Equal' },
@@ -1895,10 +1898,7 @@ export type FadeDurationFieldsType = {
 	fadeCurve: Easing.curve
 }
 
-export const FadeDurationFields: MyOptionsObject<
-	FadeDurationFieldsType,
-	CompanionInputFieldNumber | CompanionInputFieldDropdown
-> = {
+export const FadeDurationFields = {
 	fadeDuration: {
 		type: 'number',
 		label: 'Fade Duration (ms)',
@@ -1940,9 +1940,9 @@ export const FadeDurationFields: MyOptionsObject<
 		],
 		isVisibleExpression: `$(options:fadeDuration) != null && $(options:fadeAlgorithm) != null && $(options:fadeDuration) > 0 && $(options:fadeAlgorithm) != 'linear'`,
 	},
-}
+} as const satisfies MyOptionsObject<FadeDurationFieldsType, CompanionInputFieldNumber | CompanionInputFieldDropdown>
 
-export const FaderLevelDeltaChoice: CompanionInputFieldNumber = {
+export const FaderLevelDeltaChoice: CompanionInputFieldNumber<'delta'> = {
 	type: 'number',
 	label: 'Delta',
 	id: 'delta',
@@ -1951,7 +1951,7 @@ export const FaderLevelDeltaChoice: CompanionInputFieldNumber = {
 	min: -100,
 }
 
-export function AtemAllSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
+export function AtemAllSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown<'source'> {
 	return {
 		type: 'dropdown',
 		id: 'source',
@@ -1962,14 +1962,14 @@ export function AtemAllSourcePicker(model: ModelSpec, state: AtemState): Compani
 }
 
 export function AtemDisplayClockPropertiesPickers(): {
-	enabled: CompanionInputFieldCheckbox
-	size: CompanionInputFieldNumber
-	opacity: CompanionInputFieldNumber
-	x: CompanionInputFieldNumber
-	y: CompanionInputFieldNumber
-	autoHide: CompanionInputFieldCheckbox
-	clockMode: CompanionInputFieldDropdown
-	properties: CompanionInputFieldMultiDropdown
+	enabled: CompanionInputFieldCheckbox<'enabled'>
+	size: CompanionInputFieldNumber<'size'>
+	opacity: CompanionInputFieldNumber<'opacity'>
+	x: CompanionInputFieldNumber<'x'>
+	y: CompanionInputFieldNumber<'y'>
+	autoHide: CompanionInputFieldCheckbox<'autoHide'>
+	clockMode: CompanionInputFieldDropdown<'clockMode'>
+	properties: CompanionInputFieldMultiDropdown<'properties'>
 } {
 	// Array <
 	// 	| CompanionInputFieldNumber
@@ -2061,9 +2061,9 @@ export function AtemDisplayClockPropertiesPickers(): {
 }
 
 export function AtemDisplayClockTimePickers(): {
-	hours: CompanionInputFieldNumber
-	minutes: CompanionInputFieldNumber
-	seconds: CompanionInputFieldNumber
+	hours: CompanionInputFieldNumber<'hours'>
+	minutes: CompanionInputFieldNumber<'minutes'>
+	seconds: CompanionInputFieldNumber<'seconds'>
 } {
 	return {
 		hours: {
@@ -2100,9 +2100,9 @@ export function AtemDisplayClockTimePickers(): {
 }
 
 export function AtemDisplayClockTimeOffsetPickers(): {
-	hours: CompanionInputFieldNumber
-	minutes: CompanionInputFieldNumber
-	seconds: CompanionInputFieldNumber
+	hours: CompanionInputFieldNumber<'hours'>
+	minutes: CompanionInputFieldNumber<'minutes'>
+	seconds: CompanionInputFieldNumber<'seconds'>
 } {
 	return {
 		hours: {
@@ -2138,7 +2138,10 @@ export function AtemDisplayClockTimeOffsetPickers(): {
 	}
 }
 
-export function AtemFairlightAudioRoutingSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
+export function AtemFairlightAudioRoutingSourcePicker(
+	model: ModelSpec,
+	state: AtemState,
+): CompanionInputFieldDropdown<'source'> {
 	const sources = FairlightAudioRoutingSources(model, state)
 
 	return {
@@ -2153,7 +2156,7 @@ export function AtemFairlightAudioRoutingSourcePicker(model: ModelSpec, state: A
 export function AtemFairlightAudioRoutingDestinationsPicker(
 	model: ModelSpec,
 	state: AtemState,
-): CompanionInputFieldMultiDropdown {
+): CompanionInputFieldMultiDropdown<'destinations'> {
 	const sources = FairlightAudioRoutingDestinations(model, state)
 
 	return {
@@ -2168,7 +2171,7 @@ export function AtemFairlightAudioRoutingDestinationsPicker(
 export function AtemFairlightAudioRoutingDestinationPicker(
 	model: ModelSpec,
 	state: AtemState,
-): CompanionInputFieldDropdown {
+): CompanionInputFieldDropdown<'destination'> {
 	const sources = FairlightAudioRoutingDestinations(model, state)
 
 	return {
@@ -2181,14 +2184,14 @@ export function AtemFairlightAudioRoutingDestinationPicker(
 }
 
 export function AtemUSKPatternPropertiesPickers(): {
-	properties: CompanionInputFieldMultiDropdown
-	style: CompanionInputFieldDropdown
-	invert: CompanionInputFieldCheckbox
-	size: CompanionInputFieldNumber
-	symmetry: CompanionInputFieldNumber
-	softness: CompanionInputFieldNumber
-	positionX: CompanionInputFieldNumber
-	positionY: CompanionInputFieldNumber
+	properties: CompanionInputFieldMultiDropdown<'properties'>
+	style: CompanionInputFieldDropdown<'style'>
+	invert: CompanionInputFieldCheckbox<'invert'>
+	size: CompanionInputFieldNumber<'size'>
+	symmetry: CompanionInputFieldNumber<'symmetry'>
+	softness: CompanionInputFieldNumber<'softness'>
+	positionX: CompanionInputFieldNumber<'positionX'>
+	positionY: CompanionInputFieldNumber<'positionY'>
 } {
 	const allProps: Omit<ReturnType<typeof AtemUSKPatternPropertiesPickers>, 'properties'> = {
 		style: {
