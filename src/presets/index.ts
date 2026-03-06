@@ -41,7 +41,7 @@ export function GetPresetsList(
 	// createTransitionPresets(context, pstSize, rateOptions)
 	createAuxOutputPresets(context, state, pstSize, pstText)
 	// 	...createUpstreamKeyerPresets(model, pstSize, pstText, meSources),
-	// 	...createDownstreamKeyerPresets(model, pstSize, pstText, meSources),
+	createDownstreamKeyerPresets(context, pstSize, pstText, meSources)
 	createMacroPresets(context)
 	createMultiviewerWindowPresets(context, state, pstSize, pstText)
 	// 	...createSuperSourcePresets(model, pstSize, pstText, meSources),
