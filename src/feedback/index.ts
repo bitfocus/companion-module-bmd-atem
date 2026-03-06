@@ -64,5 +64,5 @@ export function GetFeedbacksList(
 		...createMediaPlayerFeedbacks(model, state),
 		...createMediaPoolFeedbacks(model, state),
 		...createTimecodeFeedbacks(config, model, state),
-	} as CompanionFeedbackDefinitions<FeedbackTypes>
+	}
 }

@@ -1,7 +1,7 @@
 import { type CompanionPresetDefinitions } from '@companion-module/base'
 import { type AtemState } from 'atem-connection'
 import { GetSourcesListForType } from '../choices.js'
-import { type AtemConfig, PresetStyleName } from '../config.js'
+import { PresetStyleName } from '../config.js'
 import type { ModelSpec } from '../models/index.js'
 import { type InstanceBaseExt } from '../util.js'
 import { createStreamingPresets } from './streaming.js'

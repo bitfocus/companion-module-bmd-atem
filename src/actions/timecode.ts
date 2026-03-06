@@ -44,8 +44,7 @@ export function createTimecodeActions(
 				},
 			}),
 			callback: async ({ options }) => {
-				const timecodeStr = await options.time
-				const [hour, minute, seconds, frames] = timecodeStr.split(/:|;/).map((v) => parseInt(v, 10))
+				const [hour, minute, seconds, frames] = options.time.split(/:|;/).map((v) => parseInt(v, 10))
 
 				if (isNaN(hour) || isNaN(minute) || isNaN(seconds)) throw new Error('Invalid timecode')
 

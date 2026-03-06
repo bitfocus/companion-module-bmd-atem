@@ -68,7 +68,7 @@ export function GetActionsList(
 	transitions: AtemTransitions,
 	state: StateWrapper,
 ): CompanionActionDefinitions<ActionTypes> {
-	const actions: CompanionActionDefinitions<ActionTypes> = {
+	return {
 		...createProgramPreviewActions(atem, model, transitions, state),
 		...createTransitionActions(instance, atem, model, commandBatching, state),
 		...createUpstreamKeyerCommonActions(atem, model, state),
@@ -100,6 +100,4 @@ export function GetActionsList(
 
 		...createTimecodeActions(instance, atem, state),
 	}
-
-	return actions
 }

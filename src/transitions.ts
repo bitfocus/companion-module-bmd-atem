@@ -1,4 +1,3 @@
-import type { MyOptionsHelper } from './common.js'
 import { fadeFpsDefault, type AtemConfig } from './config.js'
 import type { algorithm, curve } from './easings.js'
 import * as Easing from './easings.js'
@@ -73,16 +72,16 @@ export class AtemTransitions {
 	public async runForProperties<T extends object>(
 		id: string,
 		sendFcn: (properties: T) => Promise<void>,
-		options: MyOptionsHelper<{
+		options: {
 			transitionRate: number | undefined
 			transitionEasing: algorithm | undefined
 			transitionCurve: curve | undefined
-		}>,
+		},
 		animatedKeys: string[],
 		newProps: T,
 		oldProps: T | undefined,
 	): Promise<void> {
-		const transitionRate = options.getRaw('transitionRate')
+		const transitionRate = options.transitionRate
 
 		if (transitionRate && oldProps) {
 			// filter out the keys that we can animate
@@ -105,8 +104,8 @@ export class AtemTransitions {
 					from,
 					to,
 					transitionRate,
-					options.getRaw('transitionEasing'),
-					options.getRaw('transitionCurve'),
+					options.transitionEasing,
+					options.transitionCurve,
 				)
 			}
 		}
