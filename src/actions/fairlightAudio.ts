@@ -1,7 +1,8 @@
 import { Enums, type Atem, Commands } from 'atem-connection'
+import { convertOptionsFields } from '../common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
-import type { MyActionDefinitions } from './types.js'
 import {
 	AtemAudioInputPicker,
 	AtemFairlightAudioRoutingDestinationsPicker,
@@ -170,7 +171,7 @@ export function createFairlightAudioActions(
 	model: ModelSpec,
 	transitions: AtemTransitions,
 	state: StateWrapper,
-): MyActionDefinitions<AtemFairlightAudioActions> {
+): CompanionActionDefinitions<AtemFairlightAudioActions> {
 	if (!model.fairlightAudio) {
 		return {
 			[ActionId.FairlightAudioInputGain]: undefined,
@@ -209,7 +210,7 @@ export function createFairlightAudioActions(
 	return {
 		[ActionId.FairlightAudioInputGain]: {
 			name: 'Fairlight Audio: Set input gain',
-			options: {
+			options: convertOptionsFields({
 				input: audioInputOption,
 				source: audioSourceOption,
 				gain: {
@@ -223,7 +224,7 @@ export function createFairlightAudioActions(
 					max: 6,
 				},
 				...FadeDurationFields,
-			},
+			}),
 			callback: async ({ options }) => {
 				const inputId = options.input
 				const sourceId = options.source
@@ -260,12 +261,12 @@ export function createFairlightAudioActions(
 		},
 		[ActionId.FairlightAudioInputGainDelta]: {
 			name: 'Fairlight Audio: Adjust input gain',
-			options: {
+			options: convertOptionsFields({
 				input: audioInputOption,
 				source: audioSourceOption,
 				delta: FaderLevelDeltaChoice,
 				...FadeDurationFields,
-			},
+			}),
 			callback: async ({ options }) => {
 				const inputId = options.input
 				const sourceId = options.source
@@ -292,7 +293,7 @@ export function createFairlightAudioActions(
 		[ActionId.FairlightAudioInputDelay]: audioInputFrameDelayOption
 			? {
 					name: 'Fairlight Audio: Set delay',
-					options: {
+					options: convertOptionsFields({
 						input: audioInputFrameDelayOption,
 						source: audioSourceOption,
 						delay: {
@@ -305,7 +306,7 @@ export function createFairlightAudioActions(
 							min: 0,
 							max: 8,
 						},
-					},
+					}),
 					callback: async ({ options }) => {
 						const inputId = options.input
 						const sourceId = options.source
@@ -332,7 +333,7 @@ export function createFairlightAudioActions(
 		[ActionId.FairlightAudioInputDelayDelta]: audioInputFrameDelayOption
 			? {
 					name: 'Fairlight Audio: Adjust delay',
-					options: {
+					options: convertOptionsFields({
 						input: audioInputFrameDelayOption,
 						source: audioSourceOption,
 						delay: {
@@ -345,7 +346,7 @@ export function createFairlightAudioActions(
 							min: -8,
 							max: 8,
 						},
-					},
+					}),
 					callback: async ({ options }) => {
 						const inputId = options.input
 						const sourceId = options.source
@@ -367,7 +368,7 @@ export function createFairlightAudioActions(
 			: undefined,
 		[ActionId.FairlightAudioFaderGain]: {
 			name: 'Fairlight Audio: Set fader gain',
-			options: {
+			options: convertOptionsFields({
 				input: audioInputOption,
 				source: audioSourceOption,
 				gain: {
@@ -381,7 +382,7 @@ export function createFairlightAudioActions(
 					max: 10,
 				},
 				...FadeDurationFields,
-			},
+			}),
 			callback: async ({ options }) => {
 				const inputId = options.input
 				const sourceId = options.source
@@ -418,12 +419,12 @@ export function createFairlightAudioActions(
 		},
 		[ActionId.FairlightAudioFaderGainDelta]: {
 			name: 'Fairlight Audio: Adjust fader gain',
-			options: {
+			options: convertOptionsFields({
 				input: audioInputOption,
 				source: audioSourceOption,
 				delta: FaderLevelDeltaChoice,
 				...FadeDurationFields,
-			},
+			}),
 			callback: async ({ options }) => {
 				const inputId = options.input
 				const sourceId = options.source
@@ -449,7 +450,7 @@ export function createFairlightAudioActions(
 		},
 		[ActionId.FairlightAudioMixOption]: {
 			name: 'Fairlight Audio: Set input mix option',
-			options: {
+			options: convertOptionsFields({
 				input: audioInputOption,
 				source: audioSourceOption,
 				option: {
@@ -465,7 +466,7 @@ export function createFairlightAudioActions(
 						...CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION,
 					],
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const inputId = options.input
 				const sourceId = options.source
@@ -495,7 +496,7 @@ export function createFairlightAudioActions(
 		},
 		[ActionId.FairlightAudioResetPeaks]: {
 			name: 'Fairlight Audio: Reset peaks',
-			options: {
+			options: convertOptionsFields({
 				reset: {
 					type: 'dropdown',
 					id: 'reset',
@@ -512,7 +513,7 @@ export function createFairlightAudioActions(
 						},
 					],
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const rawVal = options.reset
 				if (rawVal === 'all') {
@@ -524,10 +525,10 @@ export function createFairlightAudioActions(
 		},
 		[ActionId.FairlightAudioResetSourcePeaks]: {
 			name: 'Fairlight Audio: Reset Source peaks',
-			options: {
+			options: convertOptionsFields({
 				input: audioInputOption,
 				source: audioSourceOption,
-			},
+			}),
 			callback: async ({ options }) => {
 				const inputId = options.input
 				const sourceId = options.source
@@ -540,7 +541,7 @@ export function createFairlightAudioActions(
 		},
 		[ActionId.FairlightAudioMasterGain]: {
 			name: 'Fairlight Audio: Set master gain',
-			options: {
+			options: convertOptionsFields({
 				gain: {
 					type: 'number',
 					label: 'Input Level (-100 = -inf)',
@@ -552,7 +553,7 @@ export function createFairlightAudioActions(
 					max: 6,
 				},
 				...FadeDurationFields,
-			},
+			}),
 			callback: async ({ options }) => {
 				await transitions.runForFadeOptions(
 					`audio.master.gain`,
@@ -580,10 +581,10 @@ export function createFairlightAudioActions(
 		},
 		[ActionId.FairlightAudioMasterGainDelta]: {
 			name: 'Fairlight Audio: Adjust master gain',
-			options: {
+			options: convertOptionsFields({
 				delta: FaderLevelDeltaChoice,
 				...FadeDurationFields,
-			},
+			}),
 			callback: async ({ options }) => {
 				const currentGain = state.state.fairlight?.master?.properties?.faderGain
 
@@ -606,7 +607,7 @@ export function createFairlightAudioActions(
 		[ActionId.FairlightAudioMonitorSolo]: model.fairlightAudio.monitor
 			? {
 					name: 'Fairlight Audio: Solo source',
-					options: {
+					options: convertOptionsFields({
 						solo: {
 							id: 'solo',
 							type: 'dropdown',
@@ -616,7 +617,7 @@ export function createFairlightAudioActions(
 						},
 						input: audioInputOption,
 						source: audioSourceOption,
-					},
+					}),
 					callback: async ({ options }) => {
 						const inputId = options.input
 						const sourceId = options.source
@@ -647,7 +648,7 @@ export function createFairlightAudioActions(
 		[ActionId.FairlightAudioMonitorOutputGain]: model.fairlightAudio.monitor
 			? {
 					name: 'Fairlight Audio: Set Monitor/Headphone fader gain',
-					options: {
+					options: convertOptionsFields({
 						gain: {
 							type: 'number',
 							label: 'Fader Level (-60 = Min)',
@@ -659,7 +660,7 @@ export function createFairlightAudioActions(
 							max: 10,
 						},
 						...FadeDurationFields,
-					},
+					}),
 					callback: async ({ options }) => {
 						await transitions.runForFadeOptions(
 							`audio.monitor.faderGain`,
@@ -689,10 +690,10 @@ export function createFairlightAudioActions(
 		[ActionId.FairlightAudioMonitorOutputGainDelta]: model.fairlightAudio.monitor
 			? {
 					name: 'Fairlight Audio: Adjust Monitor/Headphone fader gain',
-					options: {
+					options: convertOptionsFields({
 						delta: FaderLevelDeltaChoice,
 						...FadeDurationFields,
-					},
+					}),
 					callback: async ({ options }) => {
 						const currentGain = state.state.fairlight?.monitor?.gain
 						if (typeof currentGain === 'number') {
@@ -724,7 +725,7 @@ function HeadphoneMasterActions(
 	model: ModelSpec,
 	transitions: AtemTransitions,
 	state: StateWrapper,
-): MyActionDefinitions<
+): CompanionActionDefinitions<
 	Pick<
 		AtemFairlightAudioActions,
 		| ActionId.FairlightAudioMonitorMasterMuted
@@ -736,7 +737,7 @@ function HeadphoneMasterActions(
 		[ActionId.FairlightAudioMonitorMasterMuted]: model.fairlightAudio?.monitor
 			? {
 					name: 'Fairlight Audio: Monitor/Headphone master muted',
-					options: {
+					options: convertOptionsFields({
 						state: {
 							id: 'state',
 							type: 'dropdown',
@@ -744,7 +745,7 @@ function HeadphoneMasterActions(
 							default: 'toggle',
 							choices: CHOICES_ON_OFF_TOGGLE,
 						},
-					},
+					}),
 					callback: async ({ options }) => {
 						let target: boolean
 						if (options.state === 'toggle') {
@@ -774,7 +775,7 @@ function HeadphoneMasterActions(
 			model.fairlightAudio?.monitor === 'split'
 				? {
 						name: 'Fairlight Audio: Set Monitor/Headphone master gain',
-						options: {
+						options: convertOptionsFields({
 							gain: {
 								type: 'number',
 								label: 'Fader Level (-60 = Min)',
@@ -786,7 +787,7 @@ function HeadphoneMasterActions(
 								max: 10,
 							},
 							...FadeDurationFields,
-						},
+						}),
 						callback: async ({ options }) => {
 							await transitions.runForFadeOptions(
 								`audio.monitor.inputMasterGain`,
@@ -817,10 +818,10 @@ function HeadphoneMasterActions(
 			model.fairlightAudio?.monitor === 'split'
 				? {
 						name: 'Fairlight Audio: Adjust Monitor/Headphone master gain',
-						options: {
+						options: convertOptionsFields({
 							delta: FaderLevelDeltaChoice,
 							...FadeDurationFields,
-						},
+						}),
 						callback: async ({ options }) => {
 							const currentGain = state.state.fairlight?.monitor?.inputMasterGain
 							if (typeof currentGain === 'number') {
@@ -847,7 +848,7 @@ function HeadphoneTalkbackActions(
 	model: ModelSpec,
 	transitions: AtemTransitions,
 	state: StateWrapper,
-): MyActionDefinitions<
+): CompanionActionDefinitions<
 	Pick<
 		AtemFairlightAudioActions,
 		| ActionId.FairlightAudioMonitorTalkbackMuted
@@ -859,7 +860,7 @@ function HeadphoneTalkbackActions(
 		[ActionId.FairlightAudioMonitorTalkbackMuted]: model.fairlightAudio?.monitor
 			? {
 					name: 'Fairlight Audio: Monitor/Headphone talkback muted',
-					options: {
+					options: convertOptionsFields({
 						state: {
 							id: 'state',
 							type: 'dropdown',
@@ -867,7 +868,7 @@ function HeadphoneTalkbackActions(
 							default: 'toggle',
 							choices: CHOICES_ON_OFF_TOGGLE,
 						},
-					},
+					}),
 					callback: async ({ options }) => {
 						let target: boolean
 						if (options.state === 'toggle') {
@@ -897,7 +898,7 @@ function HeadphoneTalkbackActions(
 			model.fairlightAudio?.monitor === 'split'
 				? {
 						name: 'Fairlight Audio: Set Monitor/Headphone talkback gain',
-						options: {
+						options: convertOptionsFields({
 							gain: {
 								type: 'number',
 								label: 'Fader Level (-60 = Min)',
@@ -909,7 +910,7 @@ function HeadphoneTalkbackActions(
 								max: 10,
 							},
 							...FadeDurationFields,
-						},
+						}),
 						callback: async ({ options }) => {
 							await transitions.runForFadeOptions(
 								`audio.monitor.inputTalkbackGain`,
@@ -940,10 +941,10 @@ function HeadphoneTalkbackActions(
 			model.fairlightAudio?.monitor === 'split'
 				? {
 						name: 'Fairlight Audio: Adjust Monitor/Headphone talkback gain',
-						options: {
+						options: convertOptionsFields({
 							delta: FaderLevelDeltaChoice,
 							...FadeDurationFields,
-						},
+						}),
 						callback: async ({ options }) => {
 							const currentGain = state.state.fairlight?.monitor?.inputTalkbackGain
 							if (typeof currentGain === 'number') {
@@ -970,7 +971,7 @@ function HeadphoneSidetoneActions(
 	model: ModelSpec,
 	transitions: AtemTransitions,
 	state: StateWrapper,
-): MyActionDefinitions<
+): CompanionActionDefinitions<
 	Pick<
 		AtemFairlightAudioActions,
 		// | ActionId.FairlightAudioMonitorSidetoneMuted
@@ -981,7 +982,7 @@ function HeadphoneSidetoneActions(
 		/*[ActionId.FairlightAudioMonitorSidetoneMuted]: model.fairlightAudio?.monitor
 			? {
 					name: 'Fairlight Audio: Monitor/Headphone sidetone muted',
-					options: {
+					options: convertOptionsFields({
 						state: {
 							id: 'state',
 							type: 'dropdown',
@@ -989,7 +990,7 @@ function HeadphoneSidetoneActions(
 							default: 'toggle',
 							choices: CHOICES_ON_OFF_TOGGLE,
 						},
-					},
+					}),
 					callback: async ({ options }) => {
 						let target: boolean
 						if (options.state === 'toggle') {
@@ -1020,7 +1021,7 @@ function HeadphoneSidetoneActions(
 			model.fairlightAudio?.monitor === 'split'
 				? {
 						name: 'Fairlight Audio: Set Monitor/Headphone sidetone gain',
-						options: {
+						options: convertOptionsFields({
 							gain: {
 								type: 'number',
 								label: 'Fader Level (-60 = Min)',
@@ -1032,7 +1033,7 @@ function HeadphoneSidetoneActions(
 								max: 10,
 							},
 							...FadeDurationFields,
-						},
+						}),
 						callback: async ({ options }) => {
 							await transitions.runForFadeOptions(
 								`audio.monitor.inputSidetoneGain`,
@@ -1063,10 +1064,10 @@ function HeadphoneSidetoneActions(
 			model.fairlightAudio?.monitor === 'split'
 				? {
 						name: 'Fairlight Audio: Adjust Monitor/Headphone sidetone gain',
-						options: {
+						options: convertOptionsFields({
 							delta: FaderLevelDeltaChoice,
 							...FadeDurationFields,
-						},
+						}),
 						callback: async ({ options }) => {
 							const currentGain = state.state.fairlight?.monitor?.inputSidetoneGain
 							if (typeof currentGain === 'number') {
@@ -1092,7 +1093,7 @@ function AudioRoutingActions(
 	model: ModelSpec,
 	_transitions: AtemTransitions,
 	state: StateWrapper,
-): MyActionDefinitions<
+): CompanionActionDefinitions<
 	Pick<AtemFairlightAudioActions, ActionId.FairlightAudioRouting | ActionId.FairlightAudioRoutingVariables>
 > {
 	if (!model.fairlightAudio?.audioRouting)
@@ -1105,10 +1106,10 @@ function AudioRoutingActions(
 		[ActionId.FairlightAudioRouting]: {
 			name: 'Fairlight Audio: Audio Routing',
 			description: 'Requires firmware 9.4+',
-			options: {
+			options: convertOptionsFields({
 				destinations: AtemFairlightAudioRoutingDestinationsPicker(model, state.state),
 				source: AtemFairlightAudioRoutingSourcePicker(model, state.state),
-			},
+			}),
 			callback: async ({ options }) => {
 				const sourceId = options.source
 				const destinations = options.getRaw('destinations')
@@ -1128,7 +1129,7 @@ function AudioRoutingActions(
 		[ActionId.FairlightAudioRoutingVariables]: {
 			name: 'Fairlight Audio: Audio Routing from variables',
 			description: 'Requires firmware 9.4+',
-			options: {
+			options: convertOptionsFields({
 				destinations: {
 					type: 'textinput',
 					id: 'destinations',
@@ -1147,7 +1148,7 @@ function AudioRoutingActions(
 						'IDs are formed as "output-channel". channel can be omitted when wanting "1/2" eg 1503-3_4 for "MADI 3 3/4"',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const [sourceStr, destinationsStr] = await Promise.all([options.source, options.destinations])
 				if (!destinationsStr || !sourceStr) return

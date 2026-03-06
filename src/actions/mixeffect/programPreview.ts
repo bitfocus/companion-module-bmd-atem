@@ -1,9 +1,10 @@
 import type { Atem } from 'atem-connection'
+import { convertOptionsFields } from '../../common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import { getMixEffect } from 'atem-connection/dist/state/util.js'
 import { AtemMEPicker, AtemMESourcePicker, FadeDurationFields, type FadeDurationFieldsType } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
-import type { MyActionDefinitions } from '../types.js'
 import type { StateWrapper } from '../../state.js'
 import type { AtemTransitions } from '../../transitions.js'
 
@@ -55,14 +56,14 @@ export function createProgramPreviewActions(
 	model: ModelSpec,
 	transitions: AtemTransitions,
 	state: StateWrapper,
-): MyActionDefinitions<AtemProgramPreviewActions> {
+): CompanionActionDefinitions<AtemProgramPreviewActions> {
 	return {
 		[ActionId.Program]: {
 			name: 'ME: Set Program input',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				input: AtemMESourcePicker(model, state.state, 0),
-			},
+			}),
 			callback: async ({ options }) => {
 				await atem?.changeProgramInput(options.input, options.mixeffect)
 			},
@@ -80,7 +81,7 @@ export function createProgramPreviewActions(
 		},
 		[ActionId.ProgramVariables]: {
 			name: 'ME: Set Program input from variables',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: {
 					type: 'textinput',
 					id: 'mixeffect',
@@ -95,7 +96,7 @@ export function createProgramPreviewActions(
 					default: '0',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const mixeffect = options.mixeffect
 				const input = options.input
@@ -108,10 +109,10 @@ export function createProgramPreviewActions(
 
 		[ActionId.Preview]: {
 			name: 'ME: Set Preview input',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				input: AtemMESourcePicker(model, state.state, 0),
-			},
+			}),
 			callback: async ({ options }) => {
 				await atem?.changePreviewInput(options.input, options.mixeffect)
 			},
@@ -129,7 +130,7 @@ export function createProgramPreviewActions(
 		},
 		[ActionId.PreviewVariables]: {
 			name: 'ME: Set Preview input from variables',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: {
 					type: 'textinput',
 					id: 'mixeffect',
@@ -144,7 +145,7 @@ export function createProgramPreviewActions(
 					default: '0',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const mixeffect = options.mixeffect
 				const input = options.input
@@ -157,18 +158,18 @@ export function createProgramPreviewActions(
 
 		[ActionId.Cut]: {
 			name: 'ME: Perform CUT transition',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
-			},
+			}),
 			callback: async ({ options }) => {
 				await atem?.cut(options.mixeffect)
 			},
 		},
 		[ActionId.Auto]: {
 			name: 'ME: Perform AUTO transition',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
-			},
+			}),
 			callback: async ({ options }) => {
 				await atem?.autoTransition(options.mixeffect)
 			},
@@ -176,7 +177,7 @@ export function createProgramPreviewActions(
 
 		[ActionId.TBar]: {
 			name: 'ME: Set TBar position',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 
 				position: {
@@ -188,7 +189,7 @@ export function createProgramPreviewActions(
 				},
 
 				...FadeDurationFields,
-			},
+			}),
 			callback: async ({ options }) => {
 				const position = await options.position
 				if (isNaN(position)) return

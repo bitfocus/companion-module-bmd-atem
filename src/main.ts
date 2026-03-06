@@ -16,12 +16,7 @@ import {
 } from './variables/lib.js'
 import { AtemCommandBatching } from './batching.js'
 import { AtemTransitions } from './transitions.js'
-import {
-	InstanceBase,
-	type SomeCompanionConfigField,
-	InstanceStatus,
-	type CompanionVariableValues,
-} from '@companion-module/base'
+import { InstanceBase, type SomeCompanionConfigField, InstanceStatus } from '@companion-module/base'
 import { isEqual } from 'lodash-es'
 import { UpgradeScripts } from './upgrades.js'
 import { calculateTallyForInputId, type IpAndPort } from './util.js'
@@ -132,7 +127,7 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 	public async configUpdated(config: AtemConfig): Promise<void> {
 		this.config = config
 
-		const variables: CompanionVariableValues = {}
+		const variables: Partial<VariablesSchema> = {}
 		updateDeviceIpVariable(this, variables)
 		this.setVariableValues(variables)
 

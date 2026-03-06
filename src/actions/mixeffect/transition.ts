@@ -1,4 +1,6 @@
 import { Enums, type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../../common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import { getMixEffect } from 'atem-connection/dist/state/util.js'
 import {
 	AtemMEPicker,
@@ -10,7 +12,6 @@ import {
 } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
-import type { MyActionDefinitions } from './../types.js'
 import { AtemCommandBatching, CommandBatching } from '../../batching.js'
 import {
 	CHOICES_KEYTRANS,
@@ -70,11 +71,11 @@ export function createTransitionActions(
 	model: ModelSpec,
 	commandBatching: AtemCommandBatching,
 	state: StateWrapper,
-): MyActionDefinitions<AtemTransitionActions> {
+): CompanionActionDefinitions<AtemTransitionActions> {
 	return {
 		[ActionId.PreviewTransition]: {
 			name: 'Transition: Preview',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: {
 					type: 'textinput',
 					id: 'mixeffect',
@@ -89,7 +90,7 @@ export function createTransitionActions(
 					default: 'toggle',
 					choices: CHOICES_ON_OFF_TOGGLE,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const mixeffect = await options.mixeffect
 
@@ -110,10 +111,10 @@ export function createTransitionActions(
 		},
 		[ActionId.TransitionStyle]: {
 			name: 'Transition: Set style/pattern',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				style: AtemTransitionStylePicker(model.media.clips === 0),
-			},
+			}),
 			callback: async ({ options }) => {
 				await atem?.setTransitionStyle(
 					{
@@ -136,11 +137,11 @@ export function createTransitionActions(
 		},
 		[ActionId.TransitionRate]: {
 			name: 'Transition: Change rate',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				style: AtemTransitionStylePicker(true),
 				rate: AtemRatePicker('Transition Rate'),
-			},
+			}),
 			callback: async ({ options }) => {
 				const style = options.style
 				switch (style) {
@@ -225,10 +226,10 @@ export function createTransitionActions(
 		},
 		[ActionId.TransitionSelection]: {
 			name: 'Transition: Change selection',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				selection: AtemTransitionSelectionPicker(model),
-			},
+			}),
 			callback: async ({ options }) => {
 				await atem?.setTransitionStyle(
 					{
@@ -240,10 +241,10 @@ export function createTransitionActions(
 		},
 		[ActionId.TransitionSelectComponents]: {
 			name: 'Transition: Select components in transition',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				...AtemTransitionSelectComponentsPickers(model),
-			},
+			}),
 			callback: async ({ options }) => {
 				const mixeffect = options.mixeffect
 				const tp = getTransitionProperties(state.state, mixeffect)
@@ -362,7 +363,7 @@ export function createTransitionActions(
 		},
 		[ActionId.TransitionSelectionComponent]: {
 			name: 'Transition: Change selection component',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				component: AtemTransitionSelectionComponentPicker(model),
 				mode: {
@@ -372,7 +373,7 @@ export function createTransitionActions(
 					choices: CHOICES_KEYTRANS,
 					default: CHOICES_KEYTRANS[0].id,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const me = options.mixeffect
 				const tp = getTransitionProperties(state.state, me)

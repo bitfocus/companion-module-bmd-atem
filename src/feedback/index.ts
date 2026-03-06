@@ -47,7 +47,7 @@ export function GetFeedbacksList(
 	config: AtemConfig,
 	model: ModelSpec,
 	state: StateWrapper,
-): CompanionFeedbackDefinitions {
+): CompanionFeedbackDefinitions<FeedbackTypes> {
 	const feedbacks: { [id in FeedbackId]: MyFeedbackDefinition<any> | undefined } = {
 		...createTallyFeedbacks(model, state),
 		...createPreviewFeedbacks(model, state),

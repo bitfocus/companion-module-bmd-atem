@@ -1,6 +1,7 @@
 import { type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../../common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import { ActionId } from '../ActionId.js'
-import type { MyActionDefinitions } from '../types.js'
 import type { StateWrapper } from '../../state.js'
 import { AtemCameraControlDirectCommandSender } from '@atem-connection/camera-control'
 import { CHOICES_ON_OFF_TOGGLE, CameraControlSourcePicker, type TrueFalseToggle } from '../../choices.js'
@@ -19,7 +20,7 @@ export function createCameraControlDisplayActions(
 	config: AtemConfig,
 	atem: Atem | undefined,
 	state: StateWrapper,
-): MyActionDefinitions<AtemCameraControlDisplayActions> {
+): CompanionActionDefinitions<AtemCameraControlDisplayActions> {
 	if (!config.enableCameraControl) {
 		return {
 			[ActionId.CameraControlDisplayColorBars]: undefined,
@@ -31,7 +32,7 @@ export function createCameraControlDisplayActions(
 	return {
 		[ActionId.CameraControlDisplayColorBars]: {
 			name: 'Camera Control: Show Color Bars',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				state: {
 					id: 'state',
@@ -40,7 +41,7 @@ export function createCameraControlDisplayActions(
 					default: 'toggle',
 					choices: CHOICES_ON_OFF_TOGGLE,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const cameraId = await options.cameraId
 

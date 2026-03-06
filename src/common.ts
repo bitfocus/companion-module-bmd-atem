@@ -109,3 +109,14 @@ export class MyOptionsHelperImpl<TOptions> implements MyOptionsHelper<TOptions> 
 		return true
 	}
 }
+
+export function convertOptionsFields<TOptions extends CompanionOptionValues, TField extends CompanionInputFieldBase>(
+	options: MyOptionsObject<TOptions, TField>,
+): TField[] {
+	return Object.entries(options)
+		.filter((o) => !!o[1])
+		.map(([id, option]) => ({
+			...(option as TField),
+			id,
+		}))
+}

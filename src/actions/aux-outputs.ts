@@ -1,9 +1,10 @@
 import { type Atem } from 'atem-connection'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
-import type { MyActionDefinitions } from './types.js'
 import { AtemAuxPicker, AtemAuxSourcePicker } from '../input.js'
 import type { StateWrapper } from '../state.js'
+import { convertOptionsFields } from '../common.js'
+import { CompanionActionDefinitions } from '@companion-module/base'
 
 export type AtemAuxOutputActions = {
 	[ActionId.Aux]: {
@@ -24,7 +25,7 @@ export function createAuxOutputActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	state: StateWrapper,
-): MyActionDefinitions<AtemAuxOutputActions> {
+): CompanionActionDefinitions<AtemAuxOutputActions> {
 	if (model.outputs.length === 0) {
 		return {
 			[ActionId.Aux]: undefined,
@@ -34,12 +35,12 @@ export function createAuxOutputActions(
 	return {
 		[ActionId.Aux]: {
 			name: 'Aux/Output: Set source',
-			options: {
+			options: convertOptionsFields({
 				aux: AtemAuxPicker(model),
 				input: AtemAuxSourcePicker(model, state.state),
-			},
+			}),
 			callback: async ({ options }) => {
-				await atem?.setAuxSource(options.input, optionsaux)
+				await atem?.setAuxSource(options.input, options.aux)
 			},
 			learn: ({ options }) => {
 				const auxSource = state.state.video.auxilliaries[options.aux]
@@ -55,7 +56,7 @@ export function createAuxOutputActions(
 		},
 		[ActionId.AuxVariables]: {
 			name: 'Aux/Output: Set source from variables',
-			options: {
+			options: convertOptionsFields({
 				aux: {
 					type: 'textinput',
 					id: 'aux',
@@ -70,7 +71,7 @@ export function createAuxOutputActions(
 					default: '0',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const output = await options.aux
 				const input = await options.input

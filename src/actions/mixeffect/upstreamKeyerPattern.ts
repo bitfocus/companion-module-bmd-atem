@@ -1,4 +1,6 @@
 import { Enums, type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../../common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import {
 	AtemMEPicker,
 	AtemUSKPatternPropertiesPickers,
@@ -7,7 +9,6 @@ import {
 } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
-import type { MyActionDefinitions } from '../types.js'
 import { getUSK, type StateWrapper } from '../../state.js'
 import type { UpstreamKeyerPatternSettings } from 'atem-connection/dist/state/video/upstreamKeyers.js'
 
@@ -46,7 +47,7 @@ export function createUpstreamKeyerPatternActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	state: StateWrapper,
-): MyActionDefinitions<AtemUpstreamKeyerPatternActions> {
+): CompanionActionDefinitions<AtemUpstreamKeyerPatternActions> {
 	if (!model.USKs || !model.DVEs) {
 		return {
 			[ActionId.USKPatternProperties]: undefined,
@@ -57,11 +58,11 @@ export function createUpstreamKeyerPatternActions(
 	return {
 		[ActionId.USKPatternProperties]: {
 			name: 'Upstream key: Change Pattern properties',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				key: AtemUSKPicker(model),
 				...AtemUSKPatternPropertiesPickers(),
-			},
+			}),
 			callback: async ({ options }) => {
 				const keyId = options.key
 				const mixEffectId = options.mixeffect
@@ -118,7 +119,7 @@ export function createUpstreamKeyerPatternActions(
 		},
 		[ActionId.USKPatternPropertiesVariables]: {
 			name: 'Upstream key: Change Pattern properties from variables',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: {
 					type: 'textinput',
 					id: 'mixeffect',
@@ -134,7 +135,7 @@ export function createUpstreamKeyerPatternActions(
 					useVariables: true,
 				},
 				...AtemUSKPatternPropertiesVariablesPickers(),
-			},
+			}),
 			callback: async ({ options }) => {
 				const mixEffectId = (await options.mixeffect) - 1
 				const keyId = (await options.key) - 1

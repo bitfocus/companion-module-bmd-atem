@@ -1,6 +1,7 @@
 import { type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../../common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import { ActionId } from '../ActionId.js'
-import type { MyActionDefinitions } from '../types.js'
 import type { StateWrapper } from '../../state.js'
 import { AtemCameraControlDirectCommandSender, VideoSharpeningLevel } from '@atem-connection/camera-control'
 import { CameraControlSourcePicker } from '../../choices.js'
@@ -68,7 +69,7 @@ export function createCameraControlVideoActions(
 	config: AtemConfig,
 	atem: Atem | undefined,
 	_state: StateWrapper,
-): MyActionDefinitions<AtemCameraControlVideoActions> {
+): CompanionActionDefinitions<AtemCameraControlVideoActions> {
 	if (!config.enableCameraControl) {
 		return {
 			[ActionId.CameraControlVideoManualWhiteBalance]: undefined,
@@ -88,7 +89,7 @@ export function createCameraControlVideoActions(
 	return {
 		[ActionId.CameraControlVideoManualWhiteBalance]: {
 			name: 'Camera Control: White Balance',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				colorTemperature: {
 					id: 'colorTemperature',
@@ -105,7 +106,7 @@ export function createCameraControlVideoActions(
 					tooltip: 'Range -50 to 50',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const cameraId = await options.cameraId
 				const colorTemperature = await options.colorTemperature
@@ -117,7 +118,7 @@ export function createCameraControlVideoActions(
 
 		[ActionId.CameraControlVideoIncrementManualWhiteBalance]: {
 			name: 'Camera Control: Increment White Balance',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				colorTemperatureIncrement: {
 					id: 'colorTemperatureIncrement',
@@ -135,7 +136,7 @@ export function createCameraControlVideoActions(
 					tooltip: 'e.g 10 or -10',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const cameraId = await options.cameraId
 				const colorTemperatureIncrement = await options.colorTemperatureIncrement
@@ -157,9 +158,9 @@ export function createCameraControlVideoActions(
 
 		[ActionId.CameraControlVideoAutoWhiteBalance]: {
 			name: 'Camera Control: Trigger Auto White Balance',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
-			},
+			}),
 			callback: async ({ options }) => {
 				const cameraId = await options.cameraId
 
@@ -169,7 +170,7 @@ export function createCameraControlVideoActions(
 
 		[ActionId.CameraControlVideoExposure]: {
 			name: 'Camera Control: Video Exposure',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				framerate: {
 					id: 'framerate',
@@ -179,7 +180,7 @@ export function createCameraControlVideoActions(
 					tooltip: 'eg for 1/60 use 50',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const cameraId = await options.cameraId
 				const framerate = await options.framerate
@@ -190,7 +191,7 @@ export function createCameraControlVideoActions(
 
 		[ActionId.CameraControlIncrementVideoExposure]: {
 			name: 'Camera Control: Increment Video Exposure',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				direction: {
 					id: 'direction',
@@ -203,7 +204,7 @@ export function createCameraControlVideoActions(
 					default: 'up',
 					tooltip: 'Up for faster shutter speeds, down for slower.',
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const exposureUs = [
 					41667, 40000, 33333, 20833, 20000, 16667, 13333, 11111, 10000, 8333, 6667, 5556, 4000, 2778, 2000, 1379, 1000,
@@ -227,7 +228,7 @@ export function createCameraControlVideoActions(
 
 		[ActionId.CameraControlVideoSharpeningLevel]: {
 			name: 'Camera Control: Video Sharpening Level',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				level: {
 					id: 'level',
@@ -253,7 +254,7 @@ export function createCameraControlVideoActions(
 						},
 					],
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const cameraId = await options.cameraId
 				const level = options.level
@@ -264,7 +265,7 @@ export function createCameraControlVideoActions(
 
 		[ActionId.CameraControlVideoGain]: {
 			name: 'Camera Control: Video Gain',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				gain: {
 					id: 'gain',
@@ -274,7 +275,7 @@ export function createCameraControlVideoActions(
 					tooltip: 'Range 0 - 128',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const cameraId = await options.cameraId
 				const gain = await options.gain
@@ -285,7 +286,7 @@ export function createCameraControlVideoActions(
 
 		[ActionId.CameraControlIncrementVideoGain]: {
 			name: 'Camera Control: Increment Video Gain',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				increment: {
 					id: 'increment',
@@ -295,7 +296,7 @@ export function createCameraControlVideoActions(
 					tooltip: 'e.g 10 or -10',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const cameraId = await options.cameraId
 				const increment = await options.increment
@@ -314,7 +315,7 @@ export function createCameraControlVideoActions(
 
 		[ActionId.CameraControlVideoNdFilterStop]: {
 			name: 'Camera Control: ND Filter Stop',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				stop: {
 					id: 'stop',
@@ -324,7 +325,7 @@ export function createCameraControlVideoActions(
 					tooltip: 'Range 0.0 - 15.0',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const cameraId = await options.cameraId
 				const stop = await options.stop

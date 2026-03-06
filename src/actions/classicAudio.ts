@@ -1,7 +1,8 @@
 import { Enums, type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
-import type { MyActionDefinitions } from './types.js'
 import { CHOICES_CLASSIC_AUDIO_MIX_OPTION } from '../choices.js'
 import {
 	AtemAudioInputPicker,
@@ -64,7 +65,7 @@ export function createClassicAudioActions(
 	model: ModelSpec,
 	transitions: AtemTransitions,
 	state: StateWrapper,
-): MyActionDefinitions<AtemClassicAudioActions> {
+): CompanionActionDefinitions<AtemClassicAudioActions> {
 	if (!model.classicAudio) {
 		return {
 			[ActionId.ClassicAudioGain]: undefined,
@@ -83,7 +84,7 @@ export function createClassicAudioActions(
 	return {
 		[ActionId.ClassicAudioGain]: {
 			name: 'Classic Audio: Set input gain',
-			options: {
+			options: convertOptionsFields({
 				input: audioInputOption,
 				gain: {
 					type: 'number',
@@ -96,7 +97,7 @@ export function createClassicAudioActions(
 					max: 6,
 				},
 				...FadeDurationFields,
-			},
+			}),
 			callback: async ({ options }) => {
 				const inputId = options.input
 				const audioChannels = state.state.audio?.channels ?? {}
@@ -127,11 +128,11 @@ export function createClassicAudioActions(
 		},
 		[ActionId.ClassicAudioGainDelta]: {
 			name: 'Classic Audio: Adjust input gain',
-			options: {
+			options: convertOptionsFields({
 				input: audioInputOption,
 				delta: FaderLevelDeltaChoice,
 				...FadeDurationFields,
-			},
+			}),
 			callback: async ({ options }) => {
 				const inputId = options.input
 				const audioChannels = state.state.audio?.channels ?? {}
@@ -153,7 +154,7 @@ export function createClassicAudioActions(
 		},
 		[ActionId.ClassicAudioMixOption]: {
 			name: 'Classic Audio: Set input mix option',
-			options: {
+			options: convertOptionsFields({
 				input: audioInputOption,
 				option: {
 					id: 'option',
@@ -168,7 +169,7 @@ export function createClassicAudioActions(
 						...CHOICES_CLASSIC_AUDIO_MIX_OPTION,
 					],
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const inputId = options.input
 				const audioChannels = state.state.audio?.channels ?? {}
@@ -176,7 +177,7 @@ export function createClassicAudioActions(
 					audioChannels[inputId]?.mixOption === Enums.AudioMixOption.On
 						? Enums.AudioMixOption.Off
 						: Enums.AudioMixOption.On
-				const rawVal = options.getRaw('option')
+				const rawVal = options.option
 				const newVal = rawVal === 'toggle' ? toggleVal : rawVal
 				await atem?.setClassicAudioMixerInputProps(inputId, { mixOption: newVal })
 			},
@@ -195,7 +196,7 @@ export function createClassicAudioActions(
 		},
 		[ActionId.ClassicAudioResetPeaks]: {
 			name: 'Classic Audio: Reset peaks',
-			options: {
+			options: convertOptionsFields({
 				reset: {
 					type: 'dropdown',
 					id: 'reset',
@@ -217,9 +218,9 @@ export function createClassicAudioActions(
 						...audioInputOption.choices,
 					],
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const rawVal = options.getRaw('reset')
+				const rawVal = options.reset
 				if (rawVal === 'all') {
 					await atem?.setClassicAudioResetPeaks({ all: true })
 				} else if (rawVal === 'master') {
@@ -234,7 +235,7 @@ export function createClassicAudioActions(
 		},
 		[ActionId.ClassicAudioMasterGain]: {
 			name: 'Classic Audio: Set master gain',
-			options: {
+			options: convertOptionsFields({
 				gain: {
 					type: 'number',
 					label: 'Fader Level (-60 = -inf)',
@@ -246,7 +247,7 @@ export function createClassicAudioActions(
 					max: 6,
 				},
 				...FadeDurationFields,
-			},
+			}),
 			callback: async ({ options }) => {
 				await transitions.runForFadeOptions(
 					`audio.master.gain`,
@@ -272,10 +273,10 @@ export function createClassicAudioActions(
 		},
 		[ActionId.ClassicAudioMasterGainDelta]: {
 			name: 'Classic Audio: Adjust master gain',
-			options: {
+			options: convertOptionsFields({
 				delta: FaderLevelDeltaChoice,
 				...FadeDurationFields,
-			},
+			}),
 			callback: async ({ options }) => {
 				const currentGain = Math.max(CLASSIC_AUDIO_MIN_GAIN, state.state.audio?.master?.gain ?? -Infinity)
 
@@ -294,7 +295,7 @@ export function createClassicAudioActions(
 		},
 		[ActionId.ClassicAudioMasterPan]: {
 			name: 'Classic Audio: Set master pan',
-			options: {
+			options: convertOptionsFields({
 				balance: {
 					type: 'number',
 					label: 'Pan',
@@ -306,7 +307,7 @@ export function createClassicAudioActions(
 					max: 50,
 				},
 				...FadeDurationFields,
-			},
+			}),
 			callback: async ({ options }) => {
 				await transitions.runForFadeOptions(
 					`audio.master.pan`,
@@ -332,7 +333,7 @@ export function createClassicAudioActions(
 		},
 		[ActionId.ClassicAudioMasterPanDelta]: {
 			name: 'Classic Audio: Adjust master pan',
-			options: {
+			options: convertOptionsFields({
 				delta: {
 					type: 'number',
 					label: 'Delta',
@@ -342,7 +343,7 @@ export function createClassicAudioActions(
 					min: -50,
 				},
 				...FadeDurationFields,
-			},
+			}),
 			callback: async ({ options }) => {
 				const currentBalance = state.state.audio?.master?.balance
 

@@ -1,8 +1,9 @@
 import { type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../../common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import { AtemMEPicker, AtemRatePicker } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
-import type { MyActionDefinitions } from './../types.js'
 import { getMixEffect, type StateWrapper } from '../../state.js'
 
 export type AtemFadeToBlackActions = {
@@ -23,23 +24,23 @@ export function createFadeToBlackActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	state: StateWrapper,
-): MyActionDefinitions<AtemFadeToBlackActions> {
+): CompanionActionDefinitions<AtemFadeToBlackActions> {
 	return {
 		[ActionId.FadeToBlackAuto]: {
 			name: 'Fade to black: Run AUTO Transition',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
-			},
+			}),
 			callback: async ({ options }) => {
 				await atem?.fadeToBlack(options.mixeffect)
 			},
 		},
 		[ActionId.FadeToBlackRate]: {
 			name: 'Fade to black: Change rate',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				rate: AtemRatePicker('Rate'),
-			},
+			}),
 			callback: async ({ options }) => {
 				await atem?.setFadeToBlackRate(options.rate, options.mixeffect)
 			},

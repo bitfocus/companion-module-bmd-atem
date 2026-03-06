@@ -1,11 +1,10 @@
 import { Enums, type Atem } from 'atem-connection'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
-import type { MyActionDefinitions } from './types.js'
 import { getMultiviewer, getMultiviewerWindow, type StateWrapper } from '../state.js'
 import { AtemMultiviewerPicker, AtemMultiviewWindowPicker, AtemMultiviewSourcePicker } from '../input.js'
-import type { MyDropdownChoice } from '../common.js'
-import { assertNever } from '@companion-module/base'
+import { convertOptionsFields, MyDropdownChoice } from '../common.js'
+import { assertNever, CompanionActionDefinitions } from '@companion-module/base'
 
 type MultiviewerQuadrantState = 'single' | 'quad' | 'ignore' | 'toggle'
 
@@ -46,7 +45,7 @@ export function createMultiviewerActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	state: StateWrapper,
-): MyActionDefinitions<AtemMultiviewerActions> {
+): CompanionActionDefinitions<AtemMultiviewerActions> {
 	if (!model.MVs) {
 		return {
 			[ActionId.MultiviewerWindowSource]: undefined,
@@ -57,11 +56,11 @@ export function createMultiviewerActions(
 	return {
 		[ActionId.MultiviewerWindowSource]: {
 			name: 'Multiviewer: Change window source',
-			options: {
+			options: convertOptionsFields({
 				multiViewerId: AtemMultiviewerPicker(model),
 				windowIndex: AtemMultiviewWindowPicker(model),
 				source: AtemMultiviewSourcePicker(model, state.state),
-			},
+			}),
 			callback: async ({ options }) => {
 				await atem?.setMultiViewerWindowSource(options.source, options.multiViewerId, options.windowIndex)
 			},
@@ -79,7 +78,7 @@ export function createMultiviewerActions(
 		},
 		[ActionId.MultiviewerWindowSourceVariables]: {
 			name: 'Multiviewer: Change window source from variables',
-			options: {
+			options: convertOptionsFields({
 				multiViewerId: {
 					type: 'textinput',
 					id: 'multiViewerId',
@@ -101,7 +100,7 @@ export function createMultiviewerActions(
 					default: '1',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const multiViewerId = (await options.multiViewerId) - 1
 				const windowIndex = (await options.windowIndex) - 1
@@ -128,7 +127,7 @@ export function createMultiviewerActions(
 		},
 		[ActionId.MultiviewerLayout]: {
 			name: 'Multiviewer: Change layout',
-			options: {
+			options: convertOptionsFields({
 				multiViewerId: {
 					type: 'textinput',
 					id: 'multiViewerId',
@@ -164,7 +163,7 @@ export function createMultiviewerActions(
 					choices: ChoicesMultiviewerQuadrantState,
 					default: 'ignore',
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const multiViewerId = (await options.multiViewerId) - 1
 

@@ -1,4 +1,6 @@
 import { Enums, type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../../common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import {
 	AtemKeyCutSourcePicker,
 	AtemKeyFillSourcePicker,
@@ -11,7 +13,6 @@ import {
 } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
-import type { MyActionDefinitions } from '../types.js'
 import { CHOICES_KEYTRANS, type TrueFalseToggle } from '../../choices.js'
 import { getUSK, type StateWrapper } from '../../state.js'
 import type {
@@ -82,7 +83,7 @@ export function createUpstreamKeyerCommonActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	state: StateWrapper,
-): MyActionDefinitions<AtemUpstreamKeyerCommonActions> {
+): CompanionActionDefinitions<AtemUpstreamKeyerCommonActions> {
 	if (!model.USKs) {
 		return {
 			[ActionId.USKSource]: undefined,
@@ -98,12 +99,12 @@ export function createUpstreamKeyerCommonActions(
 	return {
 		[ActionId.USKSource]: {
 			name: 'Upstream key: Set inputs',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				key: AtemUSKPicker(model),
 				fill: AtemKeyFillSourcePicker(model, state.state),
 				cut: AtemKeyCutSourcePicker(model, state.state),
-			},
+			}),
 			callback: async ({ options }) => {
 				await Promise.all([
 					atem?.setUpstreamKeyerFillSource(options.fill, options.mixeffect, options.key),
@@ -125,11 +126,11 @@ export function createUpstreamKeyerCommonActions(
 		},
 		[ActionId.USKType]: {
 			name: 'Upstream key: Set type',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				key: AtemUSKPicker(model),
 				type: AtemUpstreamKeyerTypePicker(),
-			},
+			}),
 			callback: async ({ options }) => {
 				await atem?.setUpstreamKeyerType(
 					{
@@ -153,7 +154,7 @@ export function createUpstreamKeyerCommonActions(
 		},
 		[ActionId.USKSourceVariables]: {
 			name: 'Upstream key: Set inputs from variables',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: {
 					type: 'textinput',
 					id: 'mixeffect',
@@ -182,7 +183,7 @@ export function createUpstreamKeyerCommonActions(
 					default: '0',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const mixeffect = (await options.mixeffect) - 1
 				const key = (await options.key) - 1
@@ -214,7 +215,7 @@ export function createUpstreamKeyerCommonActions(
 		},
 		[ActionId.USKOnAir]: {
 			name: 'Upstream key: Set OnAir',
-			options: {
+			options: convertOptionsFields({
 				onair: {
 					id: 'onair',
 					type: 'dropdown',
@@ -224,7 +225,7 @@ export function createUpstreamKeyerCommonActions(
 				},
 				mixeffect: AtemMEPicker(model, 0),
 				key: AtemUSKPicker(model),
-			},
+			}),
 			callback: async ({ options }) => {
 				const meIndex = options.mixeffect
 				const keyIndex = options.key
@@ -249,11 +250,11 @@ export function createUpstreamKeyerCommonActions(
 		},
 		[ActionId.USKMaskLumaChromaPattern]: {
 			name: 'Upstream key: Set Mask (Luma, Chroma, Pattern)',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				key: AtemUSKPicker(model),
 				...AtemUSKMaskPropertiesPickers(),
-			},
+			}),
 			callback: async ({ options }) => {
 				const keyId = options.key
 				const mixEffectId = options.mixeffect
@@ -300,11 +301,11 @@ export function createUpstreamKeyerCommonActions(
 		},
 		[ActionId.USKFlyKeyLumaChromaPattern]: {
 			name: 'Upstream key: Set Flying Key (Luma, Chroma, Pattern)',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				key: AtemUSKPicker(model),
 				...AtemUSKFlyKeyPropertiesPickers(),
-			},
+			}),
 			callback: async ({ options }) => {
 				const keyId = options.key
 				const mixEffectId = options.mixeffect
@@ -353,7 +354,7 @@ export function createUpstreamKeyerCommonActions(
 		},
 		[ActionId.USKFlyKeyLumaChromaPatternVariables]: {
 			name: 'Upstream key: Set Flying Key (Luma, Chroma, Pattern) from variables',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: {
 					type: 'textinput',
 					id: 'mixeffect',
@@ -369,7 +370,7 @@ export function createUpstreamKeyerCommonActions(
 					useVariables: true,
 				},
 				...AtemUSKFlyKeyPropertiesVariablesPickers(),
-			},
+			}),
 			callback: async ({ options }) => {
 				const mixEffectId = (await options.mixeffect) - 1
 				const keyId = (await options.key) - 1

@@ -5,7 +5,6 @@ import { AtemCommandBatching } from '../batching.js'
 import { AtemTransitions } from '../transitions.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import { createProgramPreviewActions, type AtemProgramPreviewActions } from './mixeffect/programPreview.js'
-import { convertMyActionDefinitions } from './wrapper.js'
 import { createTransitionActions, type AtemTransitionActions } from './mixeffect/transition.js'
 import { createDisplayClockActions, type AtemDisplayClockActions } from './displayClock.js'
 import { createMacroActions, type AtemMacroActions } from './macro.js'
@@ -29,7 +28,6 @@ import {
 } from './mixeffect/upstreamKeyerPattern.js'
 import { createClassicAudioActions, type AtemClassicAudioActions } from './classicAudio.js'
 import { createFairlightAudioActions, type AtemFairlightAudioActions } from './fairlightAudio.js'
-import type { MyActionDefinitions } from './types.js'
 import type { StateWrapper } from '../state.js'
 import { createCameraControlLensActions, type AtemCameraControlLensActions } from './cameraControl/lens.js'
 import { createCameraControlDisplayActions, type AtemCameraControlDisplayActions } from './cameraControl/display.js'
@@ -70,7 +68,7 @@ export function GetActionsList(
 	transitions: AtemTransitions,
 	state: StateWrapper,
 ): CompanionActionDefinitions {
-	const actions: MyActionDefinitions<ActionTypes> = {
+	const actions: CompanionActionDefinitions<ActionTypes> = {
 		...createProgramPreviewActions(atem, model, transitions, state),
 		...createTransitionActions(instance, atem, model, commandBatching, state),
 		...createUpstreamKeyerCommonActions(atem, model, state),
@@ -103,5 +101,5 @@ export function GetActionsList(
 		...createTimecodeActions(instance, atem, state),
 	}
 
-	return convertMyActionDefinitions(actions)
+	return actions
 }

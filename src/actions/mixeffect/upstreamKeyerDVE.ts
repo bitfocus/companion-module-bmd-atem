@@ -1,4 +1,6 @@
 import { Enums, type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../../common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import {
 	AtemMEPicker,
 	AtemUSKDVEPropertiesPickers,
@@ -9,7 +11,6 @@ import {
 } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
-import type { MyActionDefinitions } from '../types.js'
 import { CHOICES_FLYDIRECTIONS, CHOICES_KEYFRAMES, CHOICES_KEYFRAMES_CONFIGURABLE } from '../../choices.js'
 import { getUSK, type StateWrapper } from '../../state.js'
 import type {
@@ -223,7 +224,7 @@ export function createUpstreamKeyerDVEActions(
 	model: ModelSpec,
 	transitions: AtemTransitions,
 	state: StateWrapper,
-): MyActionDefinitions<AtemUpstreamKeyerDVEActions> {
+): CompanionActionDefinitions<AtemUpstreamKeyerDVEActions> {
 	if (!model.USKs || !model.DVEs) {
 		return {
 			[ActionId.USKDVEProperties]: undefined,
@@ -238,12 +239,12 @@ export function createUpstreamKeyerDVEActions(
 	return {
 		[ActionId.USKDVEProperties]: {
 			name: 'Upstream key: Change DVE properties',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				key: AtemUSKPicker(model),
 				...AtemTransitionAnimationOptions(),
 				...AtemUSKDVEPropertiesPickers(),
-			},
+			}),
 			callback: async ({ options }) => {
 				const keyId = options.key
 				const mixEffectId = options.mixeffect
@@ -406,7 +407,7 @@ export function createUpstreamKeyerDVEActions(
 		},
 		[ActionId.USKDVEPropertiesVariables]: {
 			name: 'Upstream key: Change DVE properties from variables',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: {
 					type: 'textinput',
 					id: 'mixeffect',
@@ -423,7 +424,7 @@ export function createUpstreamKeyerDVEActions(
 				},
 				...AtemTransitionAnimationOptions(),
 				...AtemUSKDVEPropertiesVariablesPickers(),
-			},
+			}),
 			callback: async ({ options }) => {
 				const mixEffectId = (await options.mixeffect) - 1
 				const keyId = (await options.key) - 1
@@ -589,7 +590,7 @@ export function createUpstreamKeyerDVEActions(
 		},
 		[ActionId.USKSetKeyframe]: {
 			name: 'Upstream key: Set Keyframe from values',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				key: AtemUSKPicker(model),
 				keyframe: {
@@ -600,7 +601,7 @@ export function createUpstreamKeyerDVEActions(
 					default: CHOICES_KEYFRAMES_CONFIGURABLE[0].id,
 				},
 				...AtemUSKKeyframePropertiesPickers(),
-			},
+			}),
 			callback: async ({ options }) => {
 				const mixEffectId = options.mixeffect
 				const keyId = options.key
@@ -712,7 +713,7 @@ export function createUpstreamKeyerDVEActions(
 		},
 		[ActionId.USKStoreKeyframe]: {
 			name: 'Upstream key: Set keyframe from current key state',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				key: AtemUSKPicker(model),
 				keyframe: {
@@ -722,14 +723,14 @@ export function createUpstreamKeyerDVEActions(
 					choices: CHOICES_KEYFRAMES_CONFIGURABLE,
 					default: CHOICES_KEYFRAMES_CONFIGURABLE[0].id,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				await atem?.storeUpstreamKeyerFlyKeyKeyframe(options.mixeffect, options.key, options.keyframe)
 			},
 		},
 		[ActionId.USKFly]: {
 			name: 'Upstream key: fly to keyframe',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				key: AtemUSKPicker(model),
 				keyframe: {
@@ -739,7 +740,7 @@ export function createUpstreamKeyerDVEActions(
 					choices: CHOICES_KEYFRAMES,
 					default: CHOICES_KEYFRAMES[0].id,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				await atem?.runUpstreamKeyerFlyKeyTo(options.mixeffect, options.key, options.keyframe)
 			},
@@ -757,7 +758,7 @@ export function createUpstreamKeyerDVEActions(
 		},
 		[ActionId.USKFlyInfinite]: {
 			name: 'Upstream key: fly to infinite',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				key: AtemUSKPicker(model),
 				flydirection: {
@@ -767,7 +768,7 @@ export function createUpstreamKeyerDVEActions(
 					choices: CHOICES_FLYDIRECTIONS,
 					default: CHOICES_FLYDIRECTIONS[0].id,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				await atem?.runUpstreamKeyerFlyKeyToInfinite(options.mixeffect, options.key, options.flydirection)
 			},

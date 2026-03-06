@@ -1,7 +1,8 @@
 import { type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
-import type { MyActionDefinitions } from './types.js'
 import { GetMacroChoices, CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../choices.js'
 import type { StateWrapper } from '../state.js'
 
@@ -25,7 +26,7 @@ export function createMacroActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	state: StateWrapper,
-): MyActionDefinitions<AtemMacroActions> {
+): CompanionActionDefinitions<AtemMacroActions> {
 	if (!model.macros) {
 		return {
 			[ActionId.MacroRun]: undefined,
@@ -37,7 +38,7 @@ export function createMacroActions(
 	return {
 		[ActionId.MacroRun]: {
 			name: 'Macro: Run',
-			options: {
+			options: convertOptionsFields({
 				macro: {
 					type: 'dropdown',
 					id: 'macro',
@@ -55,7 +56,7 @@ export function createMacroActions(
 						{ id: 'runContinue', label: 'Run/Continue' },
 					],
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const macroIndex = options.macro - 1
 				const { macroPlayer, macroRecorder } = state.state.macro
@@ -70,21 +71,21 @@ export function createMacroActions(
 		},
 		[ActionId.MacroContinue]: {
 			name: 'Macro: Continue',
-			options: {},
+			options: convertOptionsFields({}),
 			callback: async () => {
 				await atem?.macroContinue()
 			},
 		},
 		[ActionId.MacroStop]: {
 			name: 'Macro: Stop',
-			options: {},
+			options: convertOptionsFields({}),
 			callback: async () => {
 				await atem?.macroStop()
 			},
 		},
 		[ActionId.MacroLoop]: {
 			name: 'Macro: Loop',
-			options: {
+			options: convertOptionsFields({
 				loop: {
 					id: 'loop',
 					type: 'dropdown',
@@ -92,7 +93,7 @@ export function createMacroActions(
 					default: 'toggle',
 					choices: CHOICES_ON_OFF_TOGGLE,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				let newState = options.loop === 'true'
 				if (options.loop === 'toggle') {

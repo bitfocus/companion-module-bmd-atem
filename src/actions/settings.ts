@@ -1,7 +1,8 @@
 import { type Atem, type InputState } from 'atem-connection'
+import { convertOptionsFields } from '../common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
-import type { MyActionDefinitions } from './types.js'
 import { AtemAllSourcePicker } from '../input.js'
 import type { StateWrapper } from '../state.js'
 
@@ -25,7 +26,7 @@ export function createSettingsActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	state: StateWrapper,
-): MyActionDefinitions<AtemSettingsActions> {
+): CompanionActionDefinitions<AtemSettingsActions> {
 	if (!model.media.players) {
 		return {
 			[ActionId.SaveStartupState]: undefined,
@@ -36,21 +37,21 @@ export function createSettingsActions(
 	return {
 		[ActionId.SaveStartupState]: {
 			name: 'Startup State: Save',
-			options: {},
+			options: convertOptionsFields({}),
 			callback: async () => {
 				await atem?.saveStartupState()
 			},
 		},
 		[ActionId.ClearStartupState]: {
 			name: 'Startup State: Clear',
-			options: {},
+			options: convertOptionsFields({}),
 			callback: async () => {
 				await atem?.clearStartupState()
 			},
 		},
 		[ActionId.InputName]: {
 			name: 'Input: Set name',
-			options: {
+			options: convertOptionsFields({
 				source: AtemAllSourcePicker(model, state.state),
 				short_enable: {
 					id: 'short_enable',
@@ -80,7 +81,7 @@ export function createSettingsActions(
 					tooltip: 'Max 24 characters. Supports variables',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const source = options.source
 				const setShort = options.short_enable

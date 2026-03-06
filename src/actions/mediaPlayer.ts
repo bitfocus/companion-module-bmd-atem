@@ -1,7 +1,8 @@
 import { Enums, type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
-import type { MyActionDefinitions } from './types.js'
 import { getMediaPlayer } from 'atem-connection/dist/state/util.js'
 import { AtemMediaPlayerPicker, AtemMediaPlayerSourcePicker } from '../input.js'
 import { MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from '../util.js'
@@ -39,7 +40,7 @@ export function createMediaPlayerActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	state: StateWrapper,
-): MyActionDefinitions<AtemMediaPlayerActions> {
+): CompanionActionDefinitions<AtemMediaPlayerActions> {
 	if (!model.media.players) {
 		return {
 			[ActionId.MediaPlayerSource]: undefined,
@@ -52,10 +53,10 @@ export function createMediaPlayerActions(
 	return {
 		[ActionId.MediaPlayerSource]: {
 			name: 'Media player: Set source',
-			options: {
+			options: convertOptionsFields({
 				mediaplayer: AtemMediaPlayerPicker(model),
 				source: AtemMediaPlayerSourcePicker(model, state.state),
-			},
+			}),
 			callback: async ({ options }) => {
 				const source = options.source
 				if (source >= MEDIA_PLAYER_SOURCE_CLIP_OFFSET) {
@@ -90,7 +91,7 @@ export function createMediaPlayerActions(
 		},
 		[ActionId.MediaPlayerSourceVariables]: {
 			name: 'Media player: Set source from variables',
-			options: {
+			options: convertOptionsFields({
 				mediaplayer: {
 					id: 'mediaplayer',
 					type: 'textinput',
@@ -114,7 +115,7 @@ export function createMediaPlayerActions(
 					default: '1',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const [mediaplayer, slot] = await Promise.all([options.mediaplayer, options.slot])
 
@@ -167,7 +168,7 @@ export function createMediaPlayerActions(
 		},
 		[ActionId.MediaPlayerCycle]: {
 			name: 'Media player: Cycle source',
-			options: {
+			options: convertOptionsFields({
 				mediaplayer: AtemMediaPlayerPicker(model),
 				direction: {
 					type: 'dropdown',
@@ -186,7 +187,7 @@ export function createMediaPlayerActions(
 					],
 				},
 				// AtemMediaPlayerSourcePicker(model, state)
-			},
+			}),
 			callback: async ({ options }) => {
 				const playerId = options.mediaplayer
 				const direction = options.direction
@@ -211,14 +212,14 @@ export function createMediaPlayerActions(
 		},
 		[ActionId.MediaCaptureStill]: {
 			name: 'Media player: Capture still',
-			options: {},
+			options: convertOptionsFields({}),
 			callback: async () => {
 				await atem?.captureMediaPoolStill()
 			},
 		},
 		[ActionId.MediaDeleteStill]: {
 			name: 'Media player: Delete still',
-			options: {
+			options: convertOptionsFields({
 				slot: {
 					id: 'slot',
 					type: 'textinput',
@@ -226,7 +227,7 @@ export function createMediaPlayerActions(
 					default: '1',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const slot = await options.slot
 

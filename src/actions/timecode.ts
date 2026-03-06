@@ -1,8 +1,8 @@
 import { type Atem, Enums } from 'atem-connection'
+import { convertOptionsFields } from '../common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import { ActionId } from './ActionId.js'
-import type { MyActionDefinitions } from './types.js'
 import type { StateWrapper } from '../state.js'
-import type { AtemConfig } from '../config.js'
 import type { InstanceBaseExt } from '../util.js'
 import { formatDurationSeconds } from '../variables/util.js'
 
@@ -23,7 +23,7 @@ export function createTimecodeActions(
 	instance: InstanceBaseExt,
 	atem: Atem | undefined,
 	state: StateWrapper,
-): MyActionDefinitions<AtemTimecodeActions> {
+): CompanionActionDefinitions<AtemTimecodeActions> {
 	if (!instance.config.pollTimecode) {
 		return {
 			[ActionId.Timecode]: undefined,
@@ -33,7 +33,7 @@ export function createTimecodeActions(
 	return {
 		[ActionId.Timecode]: {
 			name: 'Timecode: Set time',
-			options: {
+			options: convertOptionsFields({
 				time: {
 					id: 'time',
 					type: 'textinput',
@@ -42,7 +42,7 @@ export function createTimecodeActions(
 					tooltip: 'HH:MM:SS',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const timecodeStr = await options.time
 				const [hour, minute, seconds, frames] = timecodeStr.split(/:|;/).map((v) => parseInt(v, 10))
@@ -61,7 +61,7 @@ export function createTimecodeActions(
 		},
 		[ActionId.TimecodeMode]: {
 			name: 'Timecode: Set mode',
-			options: {
+			options: convertOptionsFields({
 				mode: {
 					id: 'mode',
 					type: 'dropdown',
@@ -72,7 +72,7 @@ export function createTimecodeActions(
 					],
 					default: Enums.TimeMode.FreeRun,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const mode = options.mode
 

@@ -1,7 +1,8 @@
 import { Enums, type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
-import type { MyActionDefinitions } from './types.js'
 import { CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../choices.js'
 import type { StateWrapper } from '../state.js'
 
@@ -28,7 +29,7 @@ export function createRecordingActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	state: StateWrapper,
-): MyActionDefinitions<AtemRecordingActions> {
+): CompanionActionDefinitions<AtemRecordingActions> {
 	if (!model.recording) {
 		return {
 			[ActionId.RecordStartStop]: undefined,
@@ -40,7 +41,7 @@ export function createRecordingActions(
 	return {
 		[ActionId.RecordStartStop]: {
 			name: 'Recording: Start or Stop',
-			options: {
+			options: convertOptionsFields({
 				record: {
 					id: 'record',
 					type: 'dropdown',
@@ -48,7 +49,7 @@ export function createRecordingActions(
 					default: 'toggle',
 					choices: CHOICES_ON_OFF_TOGGLE,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				let newState = options.record === 'true'
 				if (options.record === 'toggle') {
@@ -73,14 +74,14 @@ export function createRecordingActions(
 		},
 		[ActionId.RecordSwitchDisk]: {
 			name: 'Recording: Switch disk',
-			options: {},
+			options: convertOptionsFields({}),
 			callback: async () => {
 				await atem?.switchRecordingDisk()
 			},
 		},
 		[ActionId.RecordFilename]: {
 			name: 'Recording: Set filename',
-			options: {
+			options: convertOptionsFields({
 				filename: {
 					id: 'filename',
 					label: 'Filename',
@@ -88,7 +89,7 @@ export function createRecordingActions(
 					default: '',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const filename = await options.filename
 				await atem?.setRecordingSettings({ filename })
@@ -105,7 +106,7 @@ export function createRecordingActions(
 		},
 		[ActionId.RecordISO]: {
 			name: 'Recording: Enable/Disable ISO',
-			options: {
+			options: convertOptionsFields({
 				recordISO: {
 					id: 'recordISO',
 					type: 'dropdown',
@@ -113,7 +114,7 @@ export function createRecordingActions(
 					default: 'toggle',
 					choices: CHOICES_ON_OFF_TOGGLE,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				let newState = options.recordISO === 'true'
 				if (options.recordISO === 'toggle') {

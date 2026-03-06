@@ -1165,7 +1165,7 @@ export function AtemUSKKeyframePropertiesPickers(): {
 		...allProps,
 	}
 }
-export function AtemAuxPicker(model: ModelSpec): CompanionInputFieldDropdown {
+export function AtemAuxPicker(model: ModelSpec): CompanionInputFieldDropdown<'aux'> {
 	return {
 		type: 'dropdown',
 		id: 'aux',
@@ -1201,7 +1201,7 @@ export function AtemKeyCutSourcePicker(model: ModelSpec, state: AtemState): Comp
 		choices: SourcesToChoices(GetSourcesListForType(model, state, 'key')),
 	}
 }
-export function AtemAuxSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown {
+export function AtemAuxSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown<'input'> {
 	return {
 		type: 'dropdown',
 		label: 'Input',

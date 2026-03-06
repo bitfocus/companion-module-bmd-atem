@@ -1,6 +1,7 @@
 import { type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../../common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import { ActionId } from '../ActionId.js'
-import type { MyActionDefinitions } from '../types.js'
 import type { StateWrapper } from '../../state.js'
 import { AtemCameraControlDirectCommandSender } from '@atem-connection/camera-control'
 import { CHOICES_ON_OFF_TOGGLE, CameraControlSourcePicker, type TrueFalseToggle } from '../../choices.js'
@@ -55,7 +56,7 @@ export function createCameraControlLensActions(
 	config: AtemConfig,
 	atem: Atem | undefined,
 	state: StateWrapper,
-): MyActionDefinitions<AtemCameraControlLensActions> {
+): CompanionActionDefinitions<AtemCameraControlLensActions> {
 	if (!config.enableCameraControl) {
 		return {
 			[ActionId.CameraControlLensFocus]: undefined,
@@ -73,7 +74,7 @@ export function createCameraControlLensActions(
 	return {
 		[ActionId.CameraControlLensFocus]: {
 			name: 'Camera Control: Focus adjust',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				delta: {
 					id: 'delta',
@@ -83,7 +84,7 @@ export function createCameraControlLensActions(
 					tooltip: 'Max range -1.0 - 1.0',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const cameraId = await options.cameraId
 				const value = await options.delta
@@ -94,9 +95,9 @@ export function createCameraControlLensActions(
 
 		[ActionId.CameraControlLensAutoFocus]: {
 			name: 'Camera Control: Trigger Auto Focus',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
-			},
+			}),
 			callback: async ({ options }) => {
 				const cameraId = await options.cameraId
 
@@ -106,7 +107,7 @@ export function createCameraControlLensActions(
 
 		[ActionId.CameraControlLensIris]: {
 			name: 'Camera Control: Iris',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				isNormalised: {
 					id: 'isNormalised',
@@ -132,7 +133,7 @@ export function createCameraControlLensActions(
 					useVariables: true,
 					isVisibleExpression: `!$(options:isNormalised)`,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const cameraId = await options.cameraId
 
@@ -149,7 +150,7 @@ export function createCameraControlLensActions(
 
 		[ActionId.CameraControlIncrementLensIris]: {
 			name: 'Camera Control: Increment Iris',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				fStopIncrement: {
 					id: 'fStopIncrement',
@@ -159,7 +160,7 @@ export function createCameraControlLensActions(
 					tooltip: 'e.g. 1 or -1',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const cameraId = await options.cameraId
 				const increment = await options.fStopIncrement
@@ -178,9 +179,9 @@ export function createCameraControlLensActions(
 
 		[ActionId.CameraControlLensAutoIris]: {
 			name: 'Camera Control: Trigger Auto Iris',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
-			},
+			}),
 			callback: async ({ options }) => {
 				const cameraId = await options.cameraId
 
@@ -190,7 +191,7 @@ export function createCameraControlLensActions(
 
 		[ActionId.CameraControlLensOpticalImageStabilisation]: {
 			name: 'Camera Control: Set Optical Image Stabilisation enabled',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				state: {
 					id: 'state',
@@ -199,7 +200,7 @@ export function createCameraControlLensActions(
 					default: 'toggle',
 					choices: CHOICES_ON_OFF_TOGGLE,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const cameraId = await options.cameraId
 
@@ -217,7 +218,7 @@ export function createCameraControlLensActions(
 
 		[ActionId.CameraControlLensZoom]: {
 			name: 'Camera Control: Zoom (Continuous)',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				zoom: {
 					id: 'zoom',
@@ -227,7 +228,7 @@ export function createCameraControlLensActions(
 					tooltip: 'Max range -1.0 - 1.0',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const cameraId = await options.cameraId
 				const value = await options.zoom

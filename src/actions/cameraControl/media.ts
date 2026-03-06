@@ -1,6 +1,7 @@
 import { type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../../common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import { ActionId } from '../ActionId.js'
-import type { MyActionDefinitions } from '../types.js'
 import type { StateWrapper } from '../../state.js'
 import {
 	AtemCameraControlBatchCommandSender,
@@ -31,7 +32,7 @@ export function createCameraControlMediaActions(
 	model: ModelSpec,
 	atem: Atem | undefined,
 	state: StateWrapper,
-): MyActionDefinitions<AtemCameraControlDisplayActions> {
+): CompanionActionDefinitions<AtemCameraControlDisplayActions> {
 	if (!config.enableCameraControl) {
 		return {
 			[ActionId.CameraControlMediaRecordSingle]: undefined,
@@ -44,7 +45,7 @@ export function createCameraControlMediaActions(
 	return {
 		[ActionId.CameraControlMediaRecordSingle]: {
 			name: 'Camera Control: Set Camera Recording',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				state: {
 					id: 'state',
@@ -57,7 +58,7 @@ export function createCameraControlMediaActions(
 						{ id: 'toggle', label: 'Toggle' },
 					],
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const cameraId = await options.cameraId
 
@@ -78,7 +79,7 @@ export function createCameraControlMediaActions(
 		},
 		[ActionId.CameraControlMediaRecordMultiple]: {
 			name: 'Camera Control: Set Multiple Camera Recording',
-			options: {
+			options: convertOptionsFields({
 				cameraIds: {
 					id: 'cameraIds',
 					type: 'multidropdown',
@@ -106,7 +107,7 @@ export function createCameraControlMediaActions(
 						{ id: 'false', label: 'Stopped' },
 					],
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const cameraIds = options.getRaw('cameraIds')
 

@@ -1,7 +1,8 @@
 import { Enums, type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
-import type { MyActionDefinitions } from './types.js'
 import { CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../choices.js'
 import type { StateWrapper } from '../state.js'
 
@@ -24,7 +25,7 @@ export function createStreamingActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	state: StateWrapper,
-): MyActionDefinitions<AtemStreamingActions> {
+): CompanionActionDefinitions<AtemStreamingActions> {
 	if (!model.streaming) {
 		return {
 			[ActionId.StreamStartStop]: undefined,
@@ -34,7 +35,7 @@ export function createStreamingActions(
 	return {
 		[ActionId.StreamStartStop]: {
 			name: 'Stream: Start or Stop',
-			options: {
+			options: convertOptionsFields({
 				stream: {
 					id: 'stream',
 					type: 'dropdown',
@@ -42,7 +43,7 @@ export function createStreamingActions(
 					default: 'toggle',
 					choices: CHOICES_ON_OFF_TOGGLE,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				let newState = options.stream === 'true'
 				if (options.stream === 'toggle') {
@@ -67,7 +68,7 @@ export function createStreamingActions(
 		},
 		[ActionId.StreamService]: {
 			name: 'Stream: Set service',
-			options: {
+			options: convertOptionsFields({
 				service: {
 					id: 'service',
 					label: 'Service',
@@ -89,7 +90,7 @@ export function createStreamingActions(
 					default: '',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const [serviceName, url, key] = await Promise.all([options.service, options.url, options.key])
 

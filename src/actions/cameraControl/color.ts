@@ -1,12 +1,13 @@
 import { type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../../common.js'
+import type { CompanionActionDefinition, CompanionActionDefinitions } from '@companion-module/base'
 import { ActionId } from '../ActionId.js'
-import type { MyActionDefinition, MyActionDefinitions } from '../types.js'
 import type { StateWrapper } from '../../state.js'
 import { AtemCameraControlDirectCommandSender } from '@atem-connection/camera-control'
 import { CameraControlSourcePicker } from '../../choices.js'
 import type { AtemConfig } from '../../config.js'
 
-interface RgbyAdjustmentProps {
+type RgbyAdjustmentProps = {
 	cameraId: string
 	red: string
 	green: string
@@ -45,7 +46,7 @@ export function createCameraControlColorActions(
 	config: AtemConfig,
 	atem: Atem | undefined,
 	_state: StateWrapper,
-): MyActionDefinitions<AtemCameraControlColorActions> {
+): CompanionActionDefinitions<AtemCameraControlColorActions> {
 	if (!config.enableCameraControl) {
 		return {
 			[ActionId.CameraControlColorLiftAdjust]: undefined,
@@ -63,9 +64,9 @@ export function createCameraControlColorActions(
 	const createRgbaAction = (
 		name: string,
 		doSend: (cameraId: number, red: number, green: number, blue: number, luma: number) => Promise<void>,
-	): MyActionDefinition<RgbyAdjustmentProps> => ({
+	): CompanionActionDefinition<RgbyAdjustmentProps> => ({
 		name: name,
-		options: {
+		options: convertOptionsFields({
 			cameraId: CameraControlSourcePicker(),
 			red: {
 				id: 'red',
@@ -99,7 +100,7 @@ export function createCameraControlColorActions(
 				tooltip: 'eg for -2.0 to 2.0',
 				useVariables: true,
 			},
-		},
+		}),
 		callback: async ({ options }) => {
 			const cameraId = await options.cameraId
 			const red = await options.red
@@ -131,7 +132,7 @@ export function createCameraControlColorActions(
 
 		[ActionId.CameraControlColorContrastAdjust]: {
 			name: 'Camera Control: Contrast Adjust',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				contrast: {
 					id: 'contrast',
@@ -149,7 +150,7 @@ export function createCameraControlColorActions(
 					tooltip: 'eg for 0.0 to 1.0',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const cameraId = await options.cameraId
 				const contrast = await options.contrast
@@ -161,7 +162,7 @@ export function createCameraControlColorActions(
 
 		[ActionId.CameraControlColorLumaMix]: {
 			name: 'Camera Control: Color LumaMix',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				lumaMix: {
 					id: 'lumaMix',
@@ -171,7 +172,7 @@ export function createCameraControlColorActions(
 					tooltip: 'eg for 0.0 to 1.0',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const cameraId = await options.cameraId
 				const lumaMix = await options.lumaMix
@@ -181,7 +182,7 @@ export function createCameraControlColorActions(
 		},
 		[ActionId.CameraControlColorHueSaturationAdjust]: {
 			name: 'Camera Control: Color Hue & Saturation',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				hue: {
 					id: 'hue',
@@ -199,7 +200,7 @@ export function createCameraControlColorActions(
 					tooltip: 'eg for 0.0 to 2.0',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const cameraId = await options.cameraId
 				const hue = await options.hue

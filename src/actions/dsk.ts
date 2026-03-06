@@ -1,7 +1,8 @@
 import { type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
-import type { MyActionDefinitions } from './types.js'
 import { CHOICES_KEYTRANS, CHOICES_ON_OFF_TOGGLE, GetDSKIdChoices, type TrueFalseToggle } from '../choices.js'
 import type { DownstreamKeyerMask, DownstreamKeyerGeneral } from 'atem-connection/dist/state/video/downstreamKeyers.js'
 import {
@@ -81,7 +82,7 @@ export function createDownstreamKeyerActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	state: StateWrapper,
-): MyActionDefinitions<AtemDownstreamKeyerActions> {
+): CompanionActionDefinitions<AtemDownstreamKeyerActions> {
 	if (!model.DSKs) {
 		return {
 			[ActionId.DSKSource]: undefined,
@@ -97,11 +98,11 @@ export function createDownstreamKeyerActions(
 	return {
 		[ActionId.DSKSource]: {
 			name: 'Downstream key: Set inputs',
-			options: {
+			options: convertOptionsFields({
 				key: AtemDSKPicker(model),
 				fill: AtemKeyFillSourcePicker(model, state.state),
 				cut: AtemKeyCutSourcePicker(model, state.state),
-			},
+			}),
 			callback: async ({ options }) => {
 				await Promise.all([
 					atem?.setDownstreamKeyFillSource(options.fill, optionskey),
@@ -123,7 +124,7 @@ export function createDownstreamKeyerActions(
 		},
 		[ActionId.DSKSourceVariables]: {
 			name: 'Downstream key: Set inputs from variables',
-			options: {
+			options: convertOptionsFields({
 				key: {
 					type: 'textinput',
 					label: 'Key',
@@ -145,7 +146,7 @@ export function createDownstreamKeyerActions(
 					default: '0',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const key = (await options.key) - 1
 				const fill = await options.fill
@@ -172,10 +173,10 @@ export function createDownstreamKeyerActions(
 		},
 		[ActionId.DSKRate]: {
 			name: 'Downstream key: Set Rate',
-			options: {
+			options: convertOptionsFields({
 				key: AtemDSKPicker(model),
 				rate: AtemRatePicker('Rate'),
-			},
+			}),
 			callback: async ({ options }) => {
 				await atem?.setDownstreamKeyRate(options.rate, options.key)
 			},
@@ -193,10 +194,10 @@ export function createDownstreamKeyerActions(
 		},
 		[ActionId.DSKMask]: {
 			name: 'Downstream key: Set Mask',
-			options: {
+			options: convertOptionsFields({
 				key: AtemDSKPicker(model),
 				...AtemDSKMaskPropertiesPickers(),
-			},
+			}),
 			callback: async ({ options }) => {
 				const keyId = options.key
 				const newProps: Partial<DownstreamKeyerMask> = {}
@@ -242,10 +243,10 @@ export function createDownstreamKeyerActions(
 		},
 		[ActionId.DSKPreMultipliedKey]: {
 			name: 'Downstream key: Set Pre Multiplied Key',
-			options: {
+			options: convertOptionsFields({
 				key: AtemDSKPicker(model),
 				...AtemDSKPreMultipliedKeyPropertiesPickers(),
-			},
+			}),
 			callback: async ({ options }) => {
 				const keyId = options.key
 				const newProps: Partial<DownstreamKeyerGeneral> = {}
@@ -287,7 +288,7 @@ export function createDownstreamKeyerActions(
 		},
 		[ActionId.DSKAuto]: {
 			name: 'Downstream key: Run AUTO Transition',
-			options: {
+			options: convertOptionsFields({
 				downstreamKeyerId: {
 					type: 'dropdown',
 					id: 'downstreamKeyerId',
@@ -295,14 +296,14 @@ export function createDownstreamKeyerActions(
 					default: 0,
 					choices: GetDSKIdChoices(model),
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				await atem?.autoDownstreamKey(options.downstreamKeyerId)
 			},
 		},
 		[ActionId.DSKOnAir]: {
 			name: 'Downstream key: Set OnAir',
-			options: {
+			options: convertOptionsFields({
 				onair: {
 					id: 'onair',
 					type: 'dropdown',
@@ -311,7 +312,7 @@ export function createDownstreamKeyerActions(
 					choices: CHOICES_KEYTRANS,
 				},
 				key: AtemDSKPicker(model),
-			},
+			}),
 			callback: async ({ options }) => {
 				const keyIndex = options.key
 				if (options.onair === 'toggle') {
@@ -335,7 +336,7 @@ export function createDownstreamKeyerActions(
 		},
 		[ActionId.DSKTie]: {
 			name: 'Downstream key: Set Tied',
-			options: {
+			options: convertOptionsFields({
 				state: {
 					id: 'state',
 					type: 'dropdown',
@@ -344,7 +345,7 @@ export function createDownstreamKeyerActions(
 					choices: CHOICES_ON_OFF_TOGGLE,
 				},
 				key: AtemDSKPicker(model),
-			},
+			}),
 			callback: async ({ options }) => {
 				const keyIndex = options.key
 				if (options.state === 'toggle') {

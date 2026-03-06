@@ -1,7 +1,8 @@
 import { Enums, VideoState, type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
-import type { MyActionDefinitions } from './types.js'
 import {
 	AtemSuperSourceArtPropertiesPickers,
 	AtemSuperSourceBoxPicker,
@@ -85,7 +86,7 @@ export function createSuperSourceActions(
 	model: ModelSpec,
 	transitions: AtemTransitions,
 	state: StateWrapper,
-): MyActionDefinitions<AtemSuperSourceActions> {
+): CompanionActionDefinitions<AtemSuperSourceActions> {
 	if (!model.SSrc) {
 		return {
 			[ActionId.SuperSourceArt]: undefined,
@@ -100,10 +101,10 @@ export function createSuperSourceActions(
 	return {
 		[ActionId.SuperSourceArt]: {
 			name: 'SuperSource: Set art properties',
-			options: {
+			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				...AtemSuperSourceArtPropertiesPickers(model, state.state, true),
-			},
+			}),
 			callback: async ({ options }) => {
 				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
 				const newProps: Partial<VideoState.SuperSource.SuperSourceProperties> = {}
@@ -159,10 +160,10 @@ export function createSuperSourceActions(
 		},
 		[ActionId.SuperSourceArtVariables]: {
 			name: 'SuperSource: Set art sources from variables',
-			options: {
+			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				...AtemSuperSourceArtPropertiesVariablesPickers(),
-			},
+			}),
 			callback: async ({ options }) => {
 				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
 				const newProps: Partial<VideoState.SuperSource.SuperSourceProperties> = {}
@@ -231,11 +232,11 @@ export function createSuperSourceActions(
 		[ActionId.SuperSourceBoxSource]: {
 			// TODO - combine into ActionId.SuperSourceBoxProperties
 			name: 'SuperSource: Set box source',
-			options: {
+			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				boxIndex: AtemSuperSourceBoxPicker(),
 				source: AtemSuperSourceBoxSourcePicker(model, state.state),
-			},
+			}),
 			callback: async ({ options }) => {
 				await atem?.setSuperSourceBoxSettings(
 					{
@@ -262,7 +263,7 @@ export function createSuperSourceActions(
 		[ActionId.SuperSourceBoxSourceVaraibles]: {
 			// TODO - combine into ActionId.SuperSourceBoxProperties
 			name: 'SuperSource: Set box source from variables',
-			options: {
+			options: convertOptionsFields({
 				ssrcId:
 					model.SSrc > 1
 						? {
@@ -287,7 +288,7 @@ export function createSuperSourceActions(
 					default: '1',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(await options.ssrcId) - 1 : 0
 				const boxIndex = (await options.boxIndex) - 1
@@ -320,7 +321,7 @@ export function createSuperSourceActions(
 		[ActionId.SuperSourceBoxOnAir]: {
 			// TODO - combine into ActionId.SuperSourceBoxProperties
 			name: 'SuperSource: Set box enabled',
-			options: {
+			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				boxIndex: AtemSuperSourceBoxPicker(),
 				onair: {
@@ -330,7 +331,7 @@ export function createSuperSourceActions(
 					default: 'true',
 					choices: CHOICES_KEYTRANS,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
 				const boxIndex = options.boxIndex
@@ -370,12 +371,12 @@ export function createSuperSourceActions(
 		},
 		[ActionId.SuperSourceBoxProperties]: {
 			name: 'SuperSource: Change box properties',
-			options: {
+			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				boxIndex: AtemSuperSourceBoxPicker(),
 				...AtemTransitionAnimationOptions(),
 				...AtemSuperSourcePropertiesPickers(model, state.state),
-			},
+			}),
 			callback: async ({ options }) => {
 				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
 				const boxIndex = options.boxIndex
@@ -444,11 +445,11 @@ export function createSuperSourceActions(
 		},
 		[ActionId.SuperSourceBoxPropertiesDelta]: {
 			name: 'SuperSource: Offset box properties',
-			options: {
+			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				boxIndex: AtemSuperSourceBoxPicker(),
 				...AtemSuperSourcePropertiesPickersForOffset(),
-			},
+			}),
 			callback: async ({ options }) => {
 				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
 				const boxIndex = options.boxIndex
