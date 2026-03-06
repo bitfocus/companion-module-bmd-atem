@@ -13,12 +13,6 @@ export type AtemAuxOutputActions = {
 			input: number
 		}
 	}
-	[ActionId.AuxVariables]: {
-		options: {
-			aux: string
-			input: string
-		}
-	}
 }
 
 export function createAuxOutputActions(
@@ -29,7 +23,6 @@ export function createAuxOutputActions(
 	if (model.outputs.length === 0) {
 		return {
 			[ActionId.Aux]: undefined,
-			[ActionId.AuxVariables]: undefined,
 		}
 	}
 	return {
@@ -40,10 +33,10 @@ export function createAuxOutputActions(
 				input: AtemAuxSourcePicker(model, state.state),
 			}),
 			callback: async ({ options }) => {
-				await atem?.setAuxSource(options.input, options.aux)
+				await atem?.setAuxSource(options.input, options.aux - 1)
 			},
 			learn: ({ options }) => {
-				const auxSource = state.state.video.auxilliaries[options.aux]
+				const auxSource = state.state.video.auxilliaries[options.aux - 1]
 
 				if (auxSource !== undefined) {
 					return {
@@ -51,33 +44,6 @@ export function createAuxOutputActions(
 					}
 				} else {
 					return undefined
-				}
-			},
-		},
-		[ActionId.AuxVariables]: {
-			name: 'Aux/Output: Set source from variables',
-			options: convertOptionsFields({
-				aux: {
-					type: 'textinput',
-					id: 'aux',
-					label: 'AUX',
-					default: '1',
-					useVariables: true,
-				},
-				input: {
-					type: 'textinput',
-					id: 'input',
-					label: 'Input ID',
-					default: '0',
-					useVariables: true,
-				},
-			}),
-			callback: async ({ options }) => {
-				const output = await options.aux
-				const input = await options.input
-
-				if (!isNaN(output) && !isNaN(input)) {
-					await atem?.setAuxSource(input, output - 1)
 				}
 			},
 		},

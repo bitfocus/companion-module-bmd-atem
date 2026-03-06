@@ -73,11 +73,12 @@ export function createDisplayClockActions(
 						{ id: Enums.DisplayClockClockState.Stopped, label: 'Stop' },
 						{ id: Enums.DisplayClockClockState.Reset, label: 'Reset' },
 					],
+					disableAutoExpression: true,
 				},
 			}),
 			callback: async ({ options }) => {
 				let newState: Enums.DisplayClockClockState | undefined
-				const rawState = options.getRaw('state')
+				const rawState = options.state
 				switch (rawState) {
 					case 'toggle':
 						newState =

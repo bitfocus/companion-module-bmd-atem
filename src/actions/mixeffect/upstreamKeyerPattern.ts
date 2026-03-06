@@ -1,12 +1,7 @@
 import { Enums, type Atem } from 'atem-connection'
 import { convertOptionsFields } from '../../common.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-import {
-	AtemMEPicker,
-	AtemUSKPatternPropertiesPickers,
-	AtemUSKPatternPropertiesVariablesPickers,
-	AtemUSKPicker,
-} from '../../input.js'
+import { AtemMEPicker, AtemUSKPatternPropertiesPickers, AtemUSKPicker } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
 import { getUSK, type StateWrapper } from '../../state.js'
@@ -29,22 +24,6 @@ export type AtemUpstreamKeyerPatternActions = {
 			invert: boolean
 		}
 	}
-	[ActionId.USKPatternPropertiesVariables]: {
-		options: {
-			mixeffect: string
-			key: string
-
-			properties: Array<'style' | 'size' | 'symmetry' | 'softness' | 'positionX' | 'positionY' | 'invert'>
-
-			style: string
-			size: string
-			symmetry: string
-			softness: string
-			positionX: string
-			positionY: string
-			invert: string
-		}
-	}
 }
 
 export function createUpstreamKeyerPatternActions(
@@ -55,7 +34,6 @@ export function createUpstreamKeyerPatternActions(
 	if (!model.USKs || !model.DVEs) {
 		return {
 			[ActionId.USKPatternProperties]: undefined,
-			[ActionId.USKPatternPropertiesVariables]: undefined,
 		}
 	}
 
@@ -68,8 +46,8 @@ export function createUpstreamKeyerPatternActions(
 				...AtemUSKPatternPropertiesPickers(),
 			}),
 			callback: async ({ options }) => {
-				const keyId = options.key
-				const mixEffectId = options.mixeffect
+				const keyId = options.key - 1
+				const mixEffectId = options.mixeffect - 1
 				const newProps: Partial<UpstreamKeyerPatternSettings> = {}
 
 				const props = options.properties
@@ -102,8 +80,8 @@ export function createUpstreamKeyerPatternActions(
 				await atem?.setUpstreamKeyerPatternSettings(newProps, mixEffectId, keyId)
 			},
 			learn: async ({ options }) => {
-				const keyId = options.key
-				const mixeffectId = options.mixeffect
+				const keyId = options.key - 1
+				const mixeffectId = options.mixeffect - 1
 				const usk = getUSK(state.state, mixeffectId, keyId)
 
 				if (usk?.patternSettings) {
@@ -115,80 +93,6 @@ export function createUpstreamKeyerPatternActions(
 						positionX: usk.patternSettings.positionX / 10000,
 						positionY: usk.patternSettings.positionY / 10000,
 						invert: usk.patternSettings.invert,
-					}
-				} else {
-					return undefined
-				}
-			},
-		},
-		[ActionId.USKPatternPropertiesVariables]: {
-			name: 'Upstream key: Change Pattern properties from variables',
-			options: convertOptionsFields({
-				mixeffect: {
-					type: 'textinput',
-					id: 'mixeffect',
-					label: 'M/E',
-					default: '1',
-					useVariables: true,
-				},
-				key: {
-					type: 'textinput',
-					label: 'Key',
-					id: 'key',
-					default: '1',
-					useVariables: true,
-				},
-				...AtemUSKPatternPropertiesVariablesPickers(),
-			}),
-			callback: async ({ options }) => {
-				const mixEffectId = (await options.mixeffect) - 1
-				const keyId = (await options.key) - 1
-				const newProps: Partial<UpstreamKeyerPatternSettings> = {}
-
-				const props = options.properties
-				if (props && Array.isArray(props)) {
-					if (props.includes('style')) {
-						newProps.style = await options.style
-					}
-					if (props.includes('size')) {
-						newProps.size = (await options.size) * 100
-					}
-					if (props.includes('symmetry')) {
-						newProps.symmetry = (await options.symmetry) * 100
-					}
-					if (props.includes('softness')) {
-						newProps.softness = (await options.softness) * 100
-					}
-					if (props.includes('positionX')) {
-						newProps.positionX = (await options.positionX) * 10000
-					}
-					if (props.includes('positionY')) {
-						newProps.positionY = (await options.positionY) * 10000
-					}
-					if (props.includes('invert')) {
-						newProps.invert = await options.invert
-					}
-				}
-
-				if (isNaN(mixEffectId) || isNaN(keyId)) return
-				if (Object.keys(newProps).length === 0) return
-
-				await atem?.setUpstreamKeyerPatternSettings(newProps, mixEffectId, keyId)
-			},
-			learn: async ({ options }) => {
-				const mixeffect = (await options.mixeffect) - 1
-				const key = (await options.key) - 1
-				const usk = getUSK(state.state, mixeffect, key)
-
-				if (usk?.patternSettings) {
-					return {
-						style: usk.patternSettings.style + '',
-						size: usk.patternSettings.size / 100 + '',
-						symmetry: usk.patternSettings.symmetry / 100 + '',
-						softness: usk.patternSettings.softness / 100 + '',
-						positionX: usk.patternSettings.positionX / 10000 + '',
-						positionY: usk.patternSettings.positionY / 10000 + '',
-						invert: usk.patternSettings.invert + '',
 					}
 				} else {
 					return undefined

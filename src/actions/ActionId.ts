@@ -7,7 +7,6 @@ export enum ActionId {
 	Auto = 'auto',
 	TBar = 'tBar',
 	Aux = 'aux',
-	AuxVariables = 'auxVariables',
 	USKType = 'uskType',
 	USKSource = 'uskSource',
 	USKSourceVariables = 'uskSourceVariables',
@@ -20,13 +19,11 @@ export enum ActionId {
 	USKDVEPropertiesVariables = 'uskDvePropertiesVariables',
 
 	USKPatternProperties = 'uskPatternProperties',
-	USKPatternPropertiesVariables = 'uskPatternPropertiesVariables',
 
 	USKSetKeyframe = 'uskSetKeyframe',
 	USKStoreKeyframe = 'uskStoreKeyframe',
 	USKFlyInfinite = 'uskFlyInfinite',
 	DSKSource = 'dskSource',
-	DSKSourceVariables = 'dskSourceVariables',
 	DSKRate = 'dskRate',
 	DSKMask = 'dskMask',
 	DSKPreMultipliedKey = 'dskPreMultipliedKey',

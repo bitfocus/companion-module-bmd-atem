@@ -185,7 +185,7 @@ export function GetMEIdChoices(model: ModelSpec): DropdownChoice[] {
 
 export function GetAuxIdChoices(model: ModelSpec): DropdownChoice[] {
 	return model.outputs.map((output) => ({
-		id: output.id,
+		id: output.id + 1,
 		label: output.name,
 	}))
 }
@@ -199,7 +199,7 @@ export function GetUSKIdChoices(model: ModelSpec): DropdownChoice[] {
 
 export function GetDSKIdChoices(model: ModelSpec): DropdownChoice[] {
 	return iterateTimes(model.DSKs, (i) => ({
-		id: i,
+		id: i + 1,
 		label: `${i + 1}`,
 	}))
 }

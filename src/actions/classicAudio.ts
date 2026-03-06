@@ -168,6 +168,7 @@ export function createClassicAudioActions(
 						},
 						...CHOICES_CLASSIC_AUDIO_MIX_OPTION,
 					],
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
 			}),
 			callback: async ({ options }) => {

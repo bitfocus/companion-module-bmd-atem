@@ -158,9 +158,10 @@ export function AtemTransitionSelectionComponentPicker(model: ModelSpec): Compan
 		default: 0,
 	}
 }
-export function AtemMEPicker(model: ModelSpec, id: number): CompanionInputFieldDropdown {
+export type MeKey<T extends number> = T extends 0 ? 'mixeffect' : `mixeffect${T}`
+export function AtemMEPicker<T extends number>(model: ModelSpec, id: T): CompanionInputFieldDropdown<MeKey<T>> {
 	return {
-		id: `mixeffect${id ? id : ''}`,
+		id: (id === 0 ? 'mixeffect' : `mixeffect${id}`) as MeKey<T>,
 		label: `M/E${id ? ` Option ${id}` : ''}`,
 		type: 'dropdown',
 		default: id > 0 ? id - 1 : 0,
@@ -172,17 +173,17 @@ export function AtemDSKPicker(model: ModelSpec): CompanionInputFieldDropdown<'ke
 		type: 'dropdown',
 		label: 'Key',
 		id: 'key',
-		default: 0,
+		default: 1,
 		choices: GetDSKIdChoices(model),
 	}
 }
 export function AtemDSKMaskPropertiesPickers(): {
-	properties: CompanionInputFieldMultiDropdown
-	maskEnabled: CompanionInputFieldCheckbox
-	maskTop: CompanionInputFieldNumber
-	maskBottom: CompanionInputFieldNumber
-	maskLeft: CompanionInputFieldNumber
-	maskRight: CompanionInputFieldNumber
+	properties: CompanionInputFieldMultiDropdown<'properties'>
+	maskEnabled: CompanionInputFieldCheckbox<'maskEnabled'>
+	maskTop: CompanionInputFieldNumber<'maskTop'>
+	maskBottom: CompanionInputFieldNumber<'maskBottom'>
+	maskLeft: CompanionInputFieldNumber<'maskLeft'>
+	maskRight: CompanionInputFieldNumber<'maskRight'>
 } {
 	const allProps: Omit<ReturnType<typeof AtemDSKMaskPropertiesPickers>, 'properties'> = {
 		maskEnabled: {
@@ -241,11 +242,11 @@ export function AtemDSKMaskPropertiesPickers(): {
 }
 
 export function AtemDSKPreMultipliedKeyPropertiesPickers(): {
-	properties: CompanionInputFieldMultiDropdown
-	preMultiply: CompanionInputFieldCheckbox
-	clip: CompanionInputFieldNumber
-	gain: CompanionInputFieldNumber
-	invert: CompanionInputFieldCheckbox
+	properties: CompanionInputFieldMultiDropdown<'properties'>
+	preMultiply: CompanionInputFieldCheckbox<'preMultiply'>
+	clip: CompanionInputFieldNumber<'clip'>
+	gain: CompanionInputFieldNumber<'gain'>
+	invert: CompanionInputFieldCheckbox<'invert'>
 } {
 	const allProps: Omit<ReturnType<typeof AtemDSKPreMultipliedKeyPropertiesPickers>, 'properties'> = {
 		preMultiply: {
@@ -1175,7 +1176,7 @@ export function AtemAuxPicker(model: ModelSpec): CompanionInputFieldDropdown<'au
 		type: 'dropdown',
 		id: 'aux',
 		label: 'Aux/Output',
-		default: 0,
+		default: 1,
 		choices: GetAuxIdChoices(model),
 	}
 }
@@ -2076,6 +2077,7 @@ export function AtemDisplayClockPropertiesPickers(): {
 				{ id: Enums.DisplayClockClockMode.TimeOfDay, label: 'Time of Day' },
 			],
 			isVisibleExpression: `arrayIncludes($(options:properties), 'clockMode')`,
+			disableAutoExpression: true,
 		},
 	}
 
@@ -2296,80 +2298,6 @@ export function AtemUSKPatternPropertiesPickers(): {
 	}
 }
 
-export function AtemUSKPatternPropertiesVariablesPickers(): {
-	properties: CompanionInputFieldMultiDropdown
-	style: CompanionInputFieldTextInput
-	invert: CompanionInputFieldTextInput
-	size: CompanionInputFieldTextInput
-	symmetry: CompanionInputFieldTextInput
-	softness: CompanionInputFieldTextInput
-	positionX: CompanionInputFieldTextInput
-	positionY: CompanionInputFieldTextInput
-} {
-	const allProps: Omit<ReturnType<typeof AtemUSKPatternPropertiesVariablesPickers>, 'properties'> = {
-		style: {
-			type: 'textinput',
-			label: 'Style: ',
-			id: 'style',
-			default: '0',
-			useVariables: true,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'style')`,
-		},
-		invert: {
-			type: 'textinput',
-			label: 'Invert Pattern',
-			id: 'invert',
-			default: 'false',
-			useVariables: true,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'invert')`,
-		},
-		size: {
-			type: 'textinput',
-			label: 'Size',
-			id: 'size',
-			default: '50',
-			useVariables: true,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'size')`,
-		},
-		symmetry: {
-			type: 'textinput',
-			label: 'Symmetry',
-			id: 'symmetry',
-			default: '81.6',
-			useVariables: true,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'symmetry')`,
-		},
-		softness: {
-			type: 'textinput',
-			label: 'Softness',
-			id: 'softness',
-			default: '50',
-			useVariables: true,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'softness')`,
-		},
-		positionX: {
-			type: 'textinput',
-			label: 'Position: X',
-			id: 'positionX',
-			default: '0.5',
-			useVariables: true,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'positionX')`,
-		},
-		positionY: {
-			type: 'textinput',
-			label: 'Position: Y',
-			id: 'positionY',
-			default: '0.5',
-			useVariables: true,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'positionY')`,
-		},
-	}
-
-	return {
-		properties: DropdownPropertiesPicker(allProps),
-		...allProps,
-	}
-}
 export function AtemUSKFlyKeyPropertiesPickers(): {
 	properties: CompanionInputFieldMultiDropdown
 	flyEnabled: CompanionInputFieldCheckbox

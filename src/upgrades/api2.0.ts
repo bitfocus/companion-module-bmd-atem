@@ -147,6 +147,83 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 			option: { transform: { type: 'lookup', lookup: fairlightMixOptionValueMap } },
 		},
 	},
+	dskSource: {
+		options: {
+			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+			fill: { transform: { type: 'number', zeroBased: false, variables: false } },
+			cut: { transform: { type: 'number', zeroBased: false, variables: false } },
+		},
+	},
+	dskSourceVariables: {
+		newType: 'dskSource',
+		options: {
+			key: { transform: { type: 'number', zeroBased: true, variables: true } },
+			fill: { transform: { type: 'number', zeroBased: false, variables: true } },
+			cut: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	dskRate: {
+		options: {
+			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	dskMask: {
+		options: {
+			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	dskPreMultipliedKey: {
+		options: {
+			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	dsk: {
+		options: {
+			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	dskTie: {
+		options: {
+			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	dskAuto: {
+		options: {
+			downstreamKeyerId: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	aux: {
+		options: {
+			aux: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	auxVariables: {
+		newType: 'aux',
+		options: {
+			aux: { transform: { type: 'number', zeroBased: true, variables: true } },
+			input: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	uskPatternProperties: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	uskPatternPropertiesVariables: {
+		newType: 'uskPatternProperties',
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: true } },
+			key: { transform: { type: 'number', zeroBased: true, variables: true } },
+			style: { transform: { type: 'number', zeroBased: false, variables: true } },
+			size: { transform: { type: 'number', zeroBased: false, variables: true } },
+			symmetry: { transform: { type: 'number', zeroBased: false, variables: true } },
+			softness: { transform: { type: 'number', zeroBased: false, variables: true } },
+			positionX: { transform: { type: 'number', zeroBased: false, variables: true } },
+			positionY: { transform: { type: 'number', zeroBased: false, variables: true } },
+			invert: { transform: { type: 'lookup', lookup: { true: true, false: false } } },
+		},
+	},
 }
 
 export const UpgradeToExpressions: CompanionStaticUpgradeScript<AtemConfig, undefined> = (_context, props) => {
