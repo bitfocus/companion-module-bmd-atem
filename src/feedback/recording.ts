@@ -1,8 +1,8 @@
 import { Enums } from 'atem-connection'
+import { convertOptionsFields } from '../common.js'
 import type { ModelSpec } from '../models/index.js'
-import type { MyFeedbackDefinitions } from './types.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb, type CompanionInputFieldDropdown } from '@companion-module/base'
+import { combineRgb, type CompanionInputFieldDropdown, CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { StateWrapper } from '../state.js'
 
 export type AtemRecordingFeedbacks = {
@@ -21,7 +21,7 @@ export type AtemRecordingFeedbacks = {
 export function createRecordingFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemRecordingFeedbacks> {
+): CompanionFeedbackDefinitions<AtemRecordingFeedbacks> {
 	if (!model.recording) {
 		return {
 			[FeedbackId.RecordStatus]: undefined,
@@ -33,7 +33,7 @@ export function createRecordingFeedbacks(
 			type: 'boolean',
 			name: 'Recording: Active/Running',
 			description: 'If the record has the specified status, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				state: {
 					id: 'state',
 					label: 'State',
@@ -46,7 +46,7 @@ export function createRecordingFeedbacks(
 						})),
 					default: Enums.RecordingStatus.Recording,
 				} satisfies CompanionInputFieldDropdown,
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(0, 255, 0),
@@ -69,7 +69,7 @@ export function createRecordingFeedbacks(
 			type: 'boolean',
 			name: 'Recording: ISO enabled',
 			description: 'If ISO recording is enabled',
-			options: {},
+			options: convertOptionsFields({}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(0, 255, 0),

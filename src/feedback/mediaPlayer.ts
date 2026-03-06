@@ -1,9 +1,9 @@
 import { Enums } from 'atem-connection'
+import { convertOptionsFields } from '../common.js'
 import { AtemMediaPlayerPicker, AtemMediaPlayerSourcePicker } from '../input.js'
 import type { ModelSpec } from '../models/index.js'
-import type { MyFeedbackDefinitions } from './types.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb } from '@companion-module/base'
+import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
 import { MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from '../util.js'
 import type { StateWrapper } from '../state.js'
 
@@ -28,7 +28,7 @@ export type AtemMediaPlayerFeedbacks = {
 export function createMediaPlayerFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemMediaPlayerFeedbacks> {
+): CompanionFeedbackDefinitions<AtemMediaPlayerFeedbacks> {
 	if (!model.media.players) {
 		return {
 			[FeedbackId.MediaPlayerSource]: undefined,
@@ -40,10 +40,10 @@ export function createMediaPlayerFeedbacks(
 			type: 'boolean',
 			name: 'Media player: Source',
 			description: 'If the specified media player has the specified source, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				mediaplayer: AtemMediaPlayerPicker(model),
 				source: AtemMediaPlayerSourcePicker(model, state.state),
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),
@@ -77,7 +77,7 @@ export function createMediaPlayerFeedbacks(
 			type: 'boolean',
 			name: 'Media player: Source from variables',
 			description: 'If the specified media player has the specified source, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				mediaplayer: {
 					id: 'mediaplayer',
 					type: 'textinput',
@@ -101,7 +101,7 @@ export function createMediaPlayerFeedbacks(
 					default: '1',
 					useVariables: true,
 				},
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),

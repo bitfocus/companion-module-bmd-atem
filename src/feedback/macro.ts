@@ -1,7 +1,7 @@
 import type { ModelSpec } from '../models/index.js'
-import type { MyFeedbackDefinitions } from './types.js'
+import { convertOptionsFields } from '../common.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb, type CompanionInputFieldDropdown } from '@companion-module/base'
+import { combineRgb, type CompanionInputFieldDropdown, CompanionFeedbackDefinitions } from '@companion-module/base'
 import { GetMacroChoices } from '../choices.js'
 import { assertUnreachable } from '../util.js'
 import type { StateWrapper } from '../state.js'
@@ -29,7 +29,7 @@ export type AtemMacroFeedbacks = {
 	}
 }
 
-export function createMacroFeedbacks(model: ModelSpec, state: StateWrapper): MyFeedbackDefinitions<AtemMacroFeedbacks> {
+export function createMacroFeedbacks(model: ModelSpec, state: StateWrapper): CompanionFeedbackDefinitions<AtemMacroFeedbacks> {
 	if (!model.macros) {
 		return {
 			[FeedbackId.Macro]: undefined,
@@ -41,7 +41,7 @@ export function createMacroFeedbacks(model: ModelSpec, state: StateWrapper): MyF
 			type: 'boolean',
 			name: 'Macro: State',
 			description: 'If the specified macro is running or waiting, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				macroIndex: {
 					type: 'dropdown',
 					label: 'Macro Number (1-100)',
@@ -61,7 +61,7 @@ export function createMacroFeedbacks(model: ModelSpec, state: StateWrapper): MyF
 						{ id: MacroFeedbackType.IsUsed, label: 'Is Used' },
 					],
 				} satisfies CompanionInputFieldDropdown,
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(255, 255, 255),
 				bgcolor: combineRgb(238, 238, 0),
@@ -95,14 +95,14 @@ export function createMacroFeedbacks(model: ModelSpec, state: StateWrapper): MyF
 			type: 'boolean',
 			name: 'Macro: Looping',
 			description: 'If the specified macro is looping, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				loop: {
 					type: 'checkbox',
 					label: 'Looping',
 					id: 'loop',
 					default: true,
 				},
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(255, 255, 255),
 				bgcolor: combineRgb(238, 238, 0),

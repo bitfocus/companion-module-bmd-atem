@@ -1,8 +1,8 @@
 import { Enums } from 'atem-connection'
+import { convertOptionsFields } from '../common.js'
 import type { ModelSpec } from '../models/index.js'
-import type { MyFeedbackDefinitions } from './types.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb, type CompanionInputFieldDropdown, type CompanionInputFieldNumber } from '@companion-module/base'
+import { combineRgb, type CompanionInputFieldDropdown, type CompanionInputFieldNumber, CompanionFeedbackDefinitions } from '@companion-module/base'
 import { CHOICES_CLASSIC_AUDIO_MIX_OPTION } from '../choices.js'
 import { compareNumber, NumberComparitor } from '../util.js'
 import { AtemAudioInputPicker, NumberComparitorPicker } from '../input.js'
@@ -36,7 +36,7 @@ export type AtemClassicAudioFeedbacks = {
 export function createClassicAudioFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemClassicAudioFeedbacks> {
+): CompanionFeedbackDefinitions<AtemClassicAudioFeedbacks> {
 	if (!model.classicAudio) {
 		return {
 			[FeedbackId.ClassicAudioGain]: undefined,
@@ -52,7 +52,7 @@ export function createClassicAudioFeedbacks(
 			type: 'boolean',
 			name: 'Classic Audio: Audio gain',
 			description: 'If the audio input has the specified gain, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				input: audioInputOption,
 				comparitor: NumberComparitorPicker(),
 				gain: {
@@ -65,7 +65,7 @@ export function createClassicAudioFeedbacks(
 					min: -60,
 					max: 6,
 				} satisfies CompanionInputFieldNumber,
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(0, 255, 0),
@@ -92,7 +92,7 @@ export function createClassicAudioFeedbacks(
 			type: 'boolean',
 			name: 'Classic Audio: Mix option',
 			description: 'If the audio input has the specified mix option, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				input: audioInputOption,
 				option: {
 					id: 'option',
@@ -101,7 +101,7 @@ export function createClassicAudioFeedbacks(
 					default: CHOICES_CLASSIC_AUDIO_MIX_OPTION[0].id,
 					choices: CHOICES_CLASSIC_AUDIO_MIX_OPTION,
 				} satisfies CompanionInputFieldDropdown,
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(0, 255, 0),
@@ -128,7 +128,7 @@ export function createClassicAudioFeedbacks(
 			type: 'boolean',
 			name: 'Classic Audio: Master gain',
 			description: 'If the audio master has the specified gain, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				comparitor: NumberComparitorPicker(),
 				gain: {
 					type: 'number',
@@ -140,7 +140,7 @@ export function createClassicAudioFeedbacks(
 					min: -60,
 					max: 6,
 				} satisfies CompanionInputFieldNumber,
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(0, 255, 0),

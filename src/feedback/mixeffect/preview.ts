@@ -1,8 +1,8 @@
 import { AtemMEPicker, AtemMESourcePicker } from '../../input.js'
+import { convertOptionsFields } from '../../common.js'
 import type { ModelSpec } from '../../models/index.js'
-import type { MyFeedbackDefinitions } from '../types.js'
 import { FeedbackId } from '../FeedbackId.js'
-import { combineRgb } from '@companion-module/base'
+import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
 import { getMixEffect, type StateWrapper } from '../../state.js'
 
 export type AtemPreviewFeedbacks = {
@@ -58,16 +58,16 @@ export type AtemPreviewFeedbacks = {
 export function createPreviewFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemPreviewFeedbacks> {
+): CompanionFeedbackDefinitions<AtemPreviewFeedbacks> {
 	return {
 		[FeedbackId.PreviewBG]: {
 			type: 'boolean',
 			name: 'ME: One ME preview source',
 			description: 'If the input specified is selected in preview on the M/E stage specified, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				input: AtemMESourcePicker(model, state.state, 0),
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(0, 255, 0),
@@ -92,7 +92,7 @@ export function createPreviewFeedbacks(
 			type: 'boolean',
 			name: 'ME: One ME preview source from variables',
 			description: 'If the input specified is selected in preview on the M/E stage specified, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: {
 					type: 'textinput',
 					id: 'mixeffect',
@@ -107,7 +107,7 @@ export function createPreviewFeedbacks(
 					default: '0',
 					useVariables: true,
 				},
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(0, 255, 0),
@@ -140,12 +140,12 @@ export function createPreviewFeedbacks(
 						name: 'ME: Two ME preview sources',
 						description:
 							'If the inputs specified are in use by program on the M/E stage specified, change style of the bank',
-						options: {
+						options: convertOptionsFields({
 							mixeffect1: AtemMEPicker(model, 1),
 							input1: AtemMESourcePicker(model, state.state, 1),
 							mixeffect2: AtemMEPicker(model, 2),
 							input2: AtemMESourcePicker(model, state.state, 2),
-						},
+						}),
 						defaultStyle: {
 							color: combineRgb(0, 0, 0),
 							bgcolor: combineRgb(0, 255, 0),
@@ -177,14 +177,14 @@ export function createPreviewFeedbacks(
 						name: 'ME: Three ME preview sources',
 						description:
 							'If the inputs specified are in use by program on the M/E stage specified, change style of the bank',
-						options: {
+						options: convertOptionsFields({
 							mixeffect1: AtemMEPicker(model, 1),
 							input1: AtemMESourcePicker(model, state.state, 1),
 							mixeffect2: AtemMEPicker(model, 2),
 							input2: AtemMESourcePicker(model, state.state, 2),
 							mixeffect3: AtemMEPicker(model, 3),
 							input3: AtemMESourcePicker(model, state.state, 3),
-						},
+						}),
 						defaultStyle: {
 							color: combineRgb(0, 0, 0),
 							bgcolor: combineRgb(0, 255, 0),
@@ -223,7 +223,7 @@ export function createPreviewFeedbacks(
 						name: 'ME: Four ME preview sources',
 						description:
 							'If the inputs specified are in use by program on the M/E stage specified, change style of the bank',
-						options: {
+						options: convertOptionsFields({
 							mixeffect1: AtemMEPicker(model, 1),
 							input1: AtemMESourcePicker(model, state.state, 1),
 							mixeffect2: AtemMEPicker(model, 2),
@@ -232,7 +232,7 @@ export function createPreviewFeedbacks(
 							input3: AtemMESourcePicker(model, state.state, 3),
 							mixeffect4: AtemMEPicker(model, 4),
 							input4: AtemMESourcePicker(model, state.state, 4),
-						},
+						}),
 						defaultStyle: {
 							color: combineRgb(0, 0, 0),
 							bgcolor: combineRgb(0, 255, 0),

@@ -51,7 +51,7 @@ export function createTimecodeActions(
 
 				await atem?.setTime(hour, minute, seconds, isNaN(frames) ? 0 : frames)
 			},
-			learn: ({ options }) => {
+			learn: () => {
 				const timecode = formatDurationSeconds(instance.timecodeSeconds).hms
 
 				return {
@@ -78,7 +78,7 @@ export function createTimecodeActions(
 
 				await atem?.setTimeMode(mode)
 			},
-			learn: ({ options }) => {
+			learn: () => {
 				return {
 					mode: state.state.settings.timeMode ?? Enums.TimeMode.FreeRun,
 				}

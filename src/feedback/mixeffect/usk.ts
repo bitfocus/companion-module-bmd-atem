@@ -1,9 +1,9 @@
 import type { Enums } from 'atem-connection'
+import { convertOptionsFields } from '../../common.js'
 import { AtemKeyFillSourcePicker, AtemMEPicker, AtemUSKPicker, AtemUpstreamKeyerTypePicker } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
-import type { MyFeedbackDefinitions } from '../types.js'
 import { FeedbackId } from '../FeedbackId.js'
-import { combineRgb, type CompanionInputFieldDropdown } from '@companion-module/base'
+import { combineRgb, type CompanionInputFieldDropdown, CompanionFeedbackDefinitions } from '@companion-module/base'
 import { getUSK, type StateWrapper } from '../../state.js'
 import { CHOICES_CURRENTKEYFRAMES } from '../../choices.js'
 
@@ -52,7 +52,7 @@ export type AtemUpstreamKeyerFeedbacks = {
 export function createUpstreamKeyerFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemUpstreamKeyerFeedbacks> {
+): CompanionFeedbackDefinitions<AtemUpstreamKeyerFeedbacks> {
 	if (!model.USKs) {
 		return {
 			[FeedbackId.USKOnAir]: undefined,
@@ -67,10 +67,10 @@ export function createUpstreamKeyerFeedbacks(
 			type: 'boolean',
 			name: 'Upstream key: OnAir state',
 			description: 'If the specified upstream keyer is active, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				key: AtemUSKPicker(model),
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(255, 255, 255),
 				bgcolor: combineRgb(255, 0, 0),
@@ -84,11 +84,11 @@ export function createUpstreamKeyerFeedbacks(
 			type: 'boolean',
 			name: 'Upstream key: Key type',
 			description: 'If the specified upstream keyer has the specified type, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				key: AtemUSKPicker(model),
 				type: AtemUpstreamKeyerTypePicker(),
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(255, 255, 255),
 				bgcolor: combineRgb(255, 0, 0),
@@ -102,11 +102,11 @@ export function createUpstreamKeyerFeedbacks(
 			type: 'boolean',
 			name: 'Upstream key: Fill source',
 			description: 'If the input specified is selected in the USK specified, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				key: AtemUSKPicker(model),
 				fill: AtemKeyFillSourcePicker(model, state.state),
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(238, 238, 0),
@@ -131,7 +131,7 @@ export function createUpstreamKeyerFeedbacks(
 			type: 'boolean',
 			name: 'Upstream key: Fill source from variables',
 			description: 'If the input specified is selected in the USK specified, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: {
 					type: 'textinput',
 					id: 'mixeffect',
@@ -153,7 +153,7 @@ export function createUpstreamKeyerFeedbacks(
 					default: '0',
 					useVariables: true,
 				},
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(238, 238, 0),
@@ -186,7 +186,7 @@ export function createUpstreamKeyerFeedbacks(
 					type: 'boolean',
 					name: 'Upstream key: Key frame',
 					description: 'If the USK specified is at the Key Frame specified, change style of the bank',
-					options: {
+					options: convertOptionsFields({
 						mixeffect: AtemMEPicker(model, 0),
 						key: AtemUSKPicker(model),
 						keyframe: {
@@ -196,7 +196,7 @@ export function createUpstreamKeyerFeedbacks(
 							choices: CHOICES_CURRENTKEYFRAMES,
 							default: CHOICES_CURRENTKEYFRAMES[0].id,
 						} satisfies CompanionInputFieldDropdown,
-					},
+					}),
 					defaultStyle: {
 						color: combineRgb(0, 0, 0),
 						bgcolor: combineRgb(238, 238, 0),

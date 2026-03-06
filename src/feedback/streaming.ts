@@ -1,8 +1,8 @@
 import { Enums } from 'atem-connection'
+import { convertOptionsFields } from '../common.js'
 import type { ModelSpec } from '../models/index.js'
-import type { MyFeedbackDefinitions } from './types.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb, type CompanionInputFieldDropdown } from '@companion-module/base'
+import { combineRgb, type CompanionInputFieldDropdown, CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { StateWrapper } from '../state.js'
 
 export type AtemStreamingFeedbacks = {
@@ -17,7 +17,7 @@ export type AtemStreamingFeedbacks = {
 export function createStreamingFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemStreamingFeedbacks> {
+): CompanionFeedbackDefinitions<AtemStreamingFeedbacks> {
 	if (!model.streaming) {
 		return {
 			[FeedbackId.StreamStatus]: undefined,
@@ -28,7 +28,7 @@ export function createStreamingFeedbacks(
 			type: 'boolean',
 			name: 'Streaming: Active/Running',
 			description: 'If the stream has the specified status, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				state: {
 					id: 'state',
 					label: 'State',
@@ -41,7 +41,7 @@ export function createStreamingFeedbacks(
 						})),
 					default: Enums.StreamingStatus.Streaming,
 				} satisfies CompanionInputFieldDropdown,
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(0, 255, 0),

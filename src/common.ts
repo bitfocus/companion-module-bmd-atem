@@ -16,13 +16,6 @@ export type MyOptionsObject<TOptions, TFields extends CompanionInputFieldBase> =
 	[K in keyof TOptions]: undefined extends TOptions[K] ? TFields | undefined : TFields
 }
 
-export interface MyDropdownChoice<T extends DropdownChoiceId = DropdownChoiceId> {
-	/** Value of the option */
-	id: T
-	/** Label to show to users */
-	label: string
-}
-
 export interface MyOptionsHelper<TOptions> {
 	getJson(): TOptions
 	getRaw<Key extends keyof TOptions>(fieldName: Key): TOptions[Key] | undefined

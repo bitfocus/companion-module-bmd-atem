@@ -1,8 +1,8 @@
 import { AtemFadeToBlackStatePicker, AtemMEPicker, AtemRatePicker } from '../../input.js'
+import { convertOptionsFields } from '../../common.js'
 import type { ModelSpec } from '../../models/index.js'
-import type { MyFeedbackDefinitions } from '../types.js'
 import { FeedbackId } from '../FeedbackId.js'
-import { combineRgb } from '@companion-module/base'
+import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
 import { getMixEffect, type StateWrapper } from '../../state.js'
 
 export type AtemFadeToBlackFeedbacks = {
@@ -25,16 +25,16 @@ export type AtemFadeToBlackFeedbacks = {
 export function createFadeToBlackFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemFadeToBlackFeedbacks> {
+): CompanionFeedbackDefinitions<AtemFadeToBlackFeedbacks> {
 	return {
 		[FeedbackId.FadeToBlackIsBlack]: {
 			type: 'boolean',
 			name: 'Fade to black: Active',
 			description: 'If the specified fade to black is active, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				state: AtemFadeToBlackStatePicker(),
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),
@@ -59,10 +59,10 @@ export function createFadeToBlackFeedbacks(
 			type: 'boolean',
 			name: 'Fade to black: Rate',
 			description: 'If the specified fade to black rate matches, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				rate: AtemRatePicker('Rate'),
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),

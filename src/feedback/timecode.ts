@@ -1,7 +1,7 @@
 import type { ModelSpec } from '../models/index.js'
-import type { MyFeedbackDefinitions } from './types.js'
+import { convertOptionsFields } from '../common.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb } from '@companion-module/base'
+import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { StateWrapper } from '../state.js'
 import type { AtemConfig } from '../config.js'
 import { Enums } from 'atem-connection'
@@ -19,7 +19,7 @@ export function createTimecodeFeedbacks(
 	config: AtemConfig,
 	_model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemTimecodeFeedbacks> {
+): CompanionFeedbackDefinitions<AtemTimecodeFeedbacks> {
 	if (!config.pollTimecode) {
 		return {
 			[FeedbackId.TimecodeMode]: undefined,
@@ -30,7 +30,7 @@ export function createTimecodeFeedbacks(
 			type: 'boolean',
 			name: 'Timecode: Mode',
 			description: 'If the timecode mode is as specified',
-			options: {
+			options: convertOptionsFields({
 				mode: {
 					id: 'mode',
 					type: 'dropdown',
@@ -41,7 +41,7 @@ export function createTimecodeFeedbacks(
 					],
 					default: Enums.TimeMode.FreeRun,
 				},
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),

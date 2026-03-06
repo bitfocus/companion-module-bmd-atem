@@ -2,12 +2,10 @@ import { type CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { type StateWrapper } from '../state.js'
 import { createTallyFeedbacks, type AtemTallyFeedbacks } from './mixeffect/tally.js'
-import { convertMyFeedbackDefinitions } from './wrapper.js'
 import { createPreviewFeedbacks, type AtemPreviewFeedbacks } from './mixeffect/preview.js'
 import { createProgramFeedbacks, type AtemProgramFeedbacks } from './mixeffect/program.js'
 import { createFadeToBlackFeedbacks, type AtemFadeToBlackFeedbacks } from './mixeffect/fadeToBlack.js'
 import { createMediaPlayerFeedbacks, type AtemMediaPlayerFeedbacks } from './mediaPlayer.js'
-import type { MyFeedbackDefinition } from './types.js'
 import { createMultiviewerFeedbacks, type AtemMultiviewerFeedbacks } from './multiviewer.js'
 import { createMacroFeedbacks, type AtemMacroFeedbacks } from './macro.js'
 import { createAuxOutputFeedbacks, type AtemAuxOutputFeedbacks } from './aux-outputs.js'
@@ -19,7 +17,6 @@ import { createTransitionFeedbacks, type AtemTransitionFeedbacks } from './mixef
 import { createSuperSourceFeedbacks, type AtemSuperSourceFeedbacks } from './superSource.js'
 import { createClassicAudioFeedbacks, type AtemClassicAudioFeedbacks } from './classicAudio.js'
 import { createFairlightAudioFeedbacks, type AtemFairlightAudioFeedbacks } from './fairlightAudio.js'
-import { FeedbackId } from './FeedbackId.js'
 import { createTimecodeFeedbacks, type AtemTimecodeFeedbacks } from './timecode.js'
 import type { AtemConfig } from '../config.js'
 import { createMediaPoolFeedbacks, type AtemMediaPoolFeedbacks } from './mediaPool.js'
@@ -48,7 +45,7 @@ export function GetFeedbacksList(
 	model: ModelSpec,
 	state: StateWrapper,
 ): CompanionFeedbackDefinitions<FeedbackTypes> {
-	const feedbacks: { [id in FeedbackId]: MyFeedbackDefinition<any> | undefined } = {
+	return {
 		...createTallyFeedbacks(model, state),
 		...createPreviewFeedbacks(model, state),
 		...createProgramFeedbacks(model, state),
@@ -67,7 +64,5 @@ export function GetFeedbacksList(
 		...createMediaPlayerFeedbacks(model, state),
 		...createMediaPoolFeedbacks(model, state),
 		...createTimecodeFeedbacks(config, model, state),
-	}
-
-	return convertMyFeedbackDefinitions(feedbacks)
+	} as CompanionFeedbackDefinitions<FeedbackTypes>
 }

@@ -1,7 +1,7 @@
 import type { ModelSpec } from '../models/index.js'
-import type { MyFeedbackDefinitions } from './types.js'
+import { convertOptionsFields } from '../common.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb } from '@companion-module/base'
+import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
 import { AtemDSKPicker, AtemKeyFillSourcePicker } from '../input.js'
 import { getDSK, type StateWrapper } from '../state.js'
 
@@ -37,7 +37,7 @@ export type AtemDownstreamKeyerFeedbacks = {
 export function createDownstreamKeyerFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemDownstreamKeyerFeedbacks> {
+): CompanionFeedbackDefinitions<AtemDownstreamKeyerFeedbacks> {
 	if (!model.DSKs) {
 		return {
 			[FeedbackId.DSKOnAir]: undefined,
@@ -51,9 +51,9 @@ export function createDownstreamKeyerFeedbacks(
 			type: 'boolean',
 			name: 'Downstream key: OnAir',
 			description: 'If the specified downstream keyer is onair, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				key: AtemDSKPicker(model),
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(255, 255, 255),
 				bgcolor: combineRgb(255, 0, 0),
@@ -67,9 +67,9 @@ export function createDownstreamKeyerFeedbacks(
 			type: 'boolean',
 			name: 'Downstream key: Tied',
 			description: 'If the specified downstream keyer is tied, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				key: AtemDSKPicker(model),
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(255, 255, 255),
 				bgcolor: combineRgb(255, 0, 0),
@@ -83,10 +83,10 @@ export function createDownstreamKeyerFeedbacks(
 			type: 'boolean',
 			name: 'Downstream key: Fill source',
 			description: 'If the input specified is selected in the DSK specified, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				key: AtemDSKPicker(model),
 				fill: AtemKeyFillSourcePicker(model, state.state),
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(238, 238, 0),
@@ -111,7 +111,7 @@ export function createDownstreamKeyerFeedbacks(
 			type: 'boolean',
 			name: 'Downstream key: Fill source from variables',
 			description: 'If the input specified is selected in the DSK specified, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				key: {
 					type: 'textinput',
 					label: 'Key',
@@ -126,7 +126,7 @@ export function createDownstreamKeyerFeedbacks(
 					default: '0',
 					useVariables: true,
 				},
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(238, 238, 0),

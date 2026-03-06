@@ -1,15 +1,14 @@
 import { AtemMultiviewSourcePicker, AtemMultiviewWindowPicker, AtemMultiviewerPicker } from '../input.js'
 import type { ModelSpec } from '../models/index.js'
-import type { MyFeedbackDefinitions } from './types.js'
 import { FeedbackId } from './FeedbackId.js'
-import { assertNever, combineRgb } from '@companion-module/base'
+import { assertNever, combineRgb, CompanionFeedbackDefinitions, DropdownChoice } from '@companion-module/base'
 import { getMultiviewer, getMultiviewerWindow, type StateWrapper } from '../state.js'
 import { Enums } from 'atem-connection'
-import type { MyDropdownChoice } from '../common.js'
+import { convertOptionsFields } from '../common.js'
 
 type MultiviewerQuadrantState = 'single' | 'quad' | 'ignore'
 
-const ChoicesMultiviewerQuadrantState: MyDropdownChoice<MultiviewerQuadrantState>[] = [
+const ChoicesMultiviewerQuadrantState: DropdownChoice<MultiviewerQuadrantState>[] = [
 	{ id: 'ignore', label: 'Ignored' },
 	{ id: 'single', label: 'Single' },
 	{ id: 'quad', label: 'Quad' },
@@ -47,7 +46,7 @@ export type AtemMultiviewerFeedbacks = {
 export function createMultiviewerFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemMultiviewerFeedbacks> {
+): CompanionFeedbackDefinitions<AtemMultiviewerFeedbacks> {
 	if (!model.MVs) {
 		return {
 			[FeedbackId.MVSource]: undefined,
@@ -60,11 +59,11 @@ export function createMultiviewerFeedbacks(
 			type: 'boolean',
 			name: 'Multiviewer: Window source',
 			description: 'If the specified MV window is set to the specified source, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				multiViewerId: AtemMultiviewerPicker(model),
 				windowIndex: AtemMultiviewWindowPicker(model),
 				source: AtemMultiviewSourcePicker(model, state.state),
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),
@@ -89,7 +88,7 @@ export function createMultiviewerFeedbacks(
 			type: 'boolean',
 			name: 'Multiviewer: Window source from variables',
 			description: 'If the specified MV window is set to the specified source, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				multiViewerId: {
 					type: 'textinput',
 					id: 'multiViewerId',
@@ -111,7 +110,7 @@ export function createMultiviewerFeedbacks(
 					default: '1',
 					useVariables: true,
 				},
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),
@@ -142,7 +141,7 @@ export function createMultiviewerFeedbacks(
 		[FeedbackId.MultiviewerLayout]: {
 			type: 'boolean',
 			name: 'Multiviewer: Layout',
-			options: {
+			options: convertOptionsFields({
 				multiViewerId: {
 					type: 'textinput',
 					id: 'multiViewerId',
@@ -178,7 +177,7 @@ export function createMultiviewerFeedbacks(
 					choices: ChoicesMultiviewerQuadrantState,
 					default: 'ignore',
 				},
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),

@@ -1,4 +1,5 @@
 import { Enums } from 'atem-connection'
+import { convertOptionsFields } from '../../common.js'
 import {
 	AtemMEPicker,
 	AtemMatchMethod,
@@ -7,9 +8,8 @@ import {
 	AtemTransitionStylePicker,
 } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
-import type { MyFeedbackDefinitions } from '../types.js'
 import { FeedbackId } from '../FeedbackId.js'
-import { combineRgb } from '@companion-module/base'
+import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
 import { getMixEffect, type StateWrapper } from '../../state.js'
 import { calculateTransitionSelection, assertUnreachable } from '../../util.js'
 
@@ -54,15 +54,15 @@ export type AtemTransitionFeedbacks = {
 export function createTransitionFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemTransitionFeedbacks> {
+): CompanionFeedbackDefinitions<AtemTransitionFeedbacks> {
 	return {
 		[FeedbackId.PreviewTransition]: {
 			type: 'boolean',
 			name: 'Transition: Preview',
 			description: 'If the specified transition is being previewed, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),
@@ -87,10 +87,10 @@ export function createTransitionFeedbacks(
 			type: 'boolean',
 			name: 'Transition: Style',
 			description: 'If the specified transition style is active, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				style: AtemTransitionStylePicker(model.media.clips === 0),
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),
@@ -115,11 +115,11 @@ export function createTransitionFeedbacks(
 			type: 'boolean',
 			name: 'Transition: Selection',
 			description: 'If the specified transition selection is active, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				matchmethod: AtemMatchMethod(),
 				selection: AtemTransitionSelectionPicker(model),
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),
@@ -144,11 +144,11 @@ export function createTransitionFeedbacks(
 			type: 'boolean',
 			name: 'Transition: Rate',
 			description: 'If the specified transition rate is active, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
 				style: AtemTransitionStylePicker(true),
 				rate: AtemRatePicker('Transition Rate'),
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),
@@ -212,9 +212,9 @@ export function createTransitionFeedbacks(
 			type: 'boolean',
 			name: 'Transition: Active/Running',
 			description: 'If the specified transition is active, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model, 0),
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),

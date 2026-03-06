@@ -67,7 +67,7 @@ export function GetActionsList(
 	commandBatching: AtemCommandBatching,
 	transitions: AtemTransitions,
 	state: StateWrapper,
-): CompanionActionDefinitions {
+): CompanionActionDefinitions<ActionTypes> {
 	const actions: CompanionActionDefinitions<ActionTypes> = {
 		...createProgramPreviewActions(atem, model, transitions, state),
 		...createTransitionActions(instance, atem, model, commandBatching, state),

@@ -1,7 +1,7 @@
 import type { ModelSpec } from '../models/index.js'
-import type { MyFeedbackDefinitions } from './types.js'
+import { convertOptionsFields } from '../common.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb } from '@companion-module/base'
+import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
 import { AtemAuxPicker, AtemAuxSourcePicker } from '../input.js'
 import type { StateWrapper } from '../state.js'
 
@@ -25,7 +25,7 @@ export type AtemAuxOutputFeedbacks = {
 export function createAuxOutputFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemAuxOutputFeedbacks> {
+): CompanionFeedbackDefinitions<AtemAuxOutputFeedbacks> {
 	if (model.outputs.length === 0) {
 		return {
 			[FeedbackId.AuxBG]: undefined,
@@ -37,10 +37,10 @@ export function createAuxOutputFeedbacks(
 			type: 'boolean',
 			name: 'Aux/Output: Source',
 			description: 'If the input specified is selected in the aux bus specified, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				aux: AtemAuxPicker(model),
 				input: AtemAuxSourcePicker(model, state.state),
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),
@@ -65,7 +65,7 @@ export function createAuxOutputFeedbacks(
 			type: 'boolean',
 			name: 'Aux/Output: Source from variables',
 			description: 'If the input specified is selected in the aux bus specified, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				aux: {
 					type: 'textinput',
 					id: 'aux',
@@ -80,7 +80,7 @@ export function createAuxOutputFeedbacks(
 					default: '0',
 					useVariables: true,
 				},
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),

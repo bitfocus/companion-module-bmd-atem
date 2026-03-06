@@ -1,8 +1,8 @@
 import { Enums } from 'atem-connection'
+import { convertOptionsFields } from '../common.js'
 import type { ModelSpec } from '../models/index.js'
-import type { MyFeedbackDefinitions } from './types.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb } from '@companion-module/base'
+import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
 import { getSuperSource } from 'atem-connection/dist/state/util.js'
 import {
 	AtemSuperSourceIdPicker,
@@ -90,7 +90,7 @@ function compareAsInt(value: number, actual: number, targetScale: number, actual
 export function createSuperSourceFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemSuperSourceFeedbacks> {
+): CompanionFeedbackDefinitions<AtemSuperSourceFeedbacks> {
 	if (!model.SSrc) {
 		return {
 			[FeedbackId.SSrcArtProperties]: undefined,
@@ -108,10 +108,10 @@ export function createSuperSourceFeedbacks(
 			type: 'boolean',
 			name: 'Supersource: Art properties',
 			description: 'If the specified SuperSource art properties match, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				...AtemSuperSourceArtPropertiesPickers(model, state.state, false),
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),
@@ -158,10 +158,10 @@ export function createSuperSourceFeedbacks(
 			type: 'boolean',
 			name: 'Supersource: Art sources from variables',
 			description: 'If the specified SuperSource art properties match, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				...AtemSuperSourceArtPropertiesVariablesPickers(),
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),
@@ -225,10 +225,10 @@ export function createSuperSourceFeedbacks(
 			type: 'boolean',
 			name: 'Supersource: Art fill source',
 			description: 'If the specified SuperSource art fill is set to the specified source, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				source: AtemSuperSourceArtSourcePicker(model, state.state, 'source', 'Fill Source'),
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),
@@ -256,10 +256,10 @@ export function createSuperSourceFeedbacks(
 			type: 'boolean',
 			name: 'Supersource: Art placement',
 			description: 'If the specified SuperSource art is placed in the foreground/background, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				artOption: AtemSuperSourceArtOption(false),
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),
@@ -287,11 +287,11 @@ export function createSuperSourceFeedbacks(
 			type: 'boolean',
 			name: 'Supersource: Box source',
 			description: 'If the specified SuperSource box is set to the specified source, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				boxIndex: AtemSuperSourceBoxPicker(),
 				source: AtemSuperSourceBoxSourcePicker(model, state.state),
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),
@@ -319,7 +319,7 @@ export function createSuperSourceFeedbacks(
 			type: 'boolean',
 			name: 'Supersource: Box source from variables',
 			description: 'If the specified SuperSource box is set to the specified source, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				ssrcId:
 					model.SSrc > 1
 						? {
@@ -344,7 +344,7 @@ export function createSuperSourceFeedbacks(
 					default: '1',
 					useVariables: true,
 				},
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),
@@ -377,10 +377,10 @@ export function createSuperSourceFeedbacks(
 			type: 'boolean',
 			name: 'Supersource: Box state',
 			description: 'If the specified SuperSource box is enabled, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				boxIndex: AtemSuperSourceBoxPicker(),
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),
@@ -395,11 +395,11 @@ export function createSuperSourceFeedbacks(
 			type: 'boolean',
 			name: 'Supersource: Box properties',
 			description: 'If the specified SuperSource box properties match, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				boxIndex: AtemSuperSourceBoxPicker(),
 				...AtemSuperSourcePropertiesPickers(model, state.state),
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(255, 255, 0),

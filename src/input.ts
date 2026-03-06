@@ -1315,7 +1315,7 @@ export function AtemSuperSourceArtOption(action: boolean): CompanionInputFieldDr
 	}
 }
 
-export interface AtemSuperSourceProperties {
+export type AtemSuperSourceProperties = {
 	properties: Array<
 		'size' | 'onair' | 'source' | 'x' | 'y' | 'cropEnable' | 'cropTop' | 'cropBottom' | 'cropLeft' | 'cropRight'
 	>
@@ -1546,7 +1546,7 @@ export function AtemSuperSourcePropertiesPickersForOffset(): {
 		...allProps,
 	}
 }
-export interface AtemSuperSourceArtProperties {
+export type AtemSuperSourceArtProperties = {
 	properties: Array<'fill' | 'key' | 'artOption' | 'artPreMultiplied' | 'artClip' | 'artGain' | 'artInvertKey'>
 	fill: number
 	key: number
@@ -1634,7 +1634,7 @@ export function AtemSuperSourceArtPropertiesPickers(
 	}
 }
 
-export interface AtemSuperSourceArtPropertiesVariables {
+export type AtemSuperSourceArtPropertiesVariables = {
 	properties: Array<'fill' | 'key'> // | 'artOption' | 'artPreMultiplied' | 'artClip' | 'artGain' | 'artInvertKey'>
 	fill: string
 	key: string

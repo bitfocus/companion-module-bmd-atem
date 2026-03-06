@@ -1,8 +1,13 @@
 import { Enums } from 'atem-connection'
+import { convertOptionsFields } from '../common.js'
 import type { ModelSpec } from '../models/index.js'
-import type { MyFeedbackDefinitions } from './types.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb, type CompanionInputFieldDropdown, type CompanionInputFieldNumber } from '@companion-module/base'
+import {
+	combineRgb,
+	type CompanionInputFieldDropdown,
+	type CompanionInputFieldNumber,
+	CompanionFeedbackDefinitions,
+} from '@companion-module/base'
 import { CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION } from '../choices.js'
 import { compareNumber, NumberComparitor, parseAudioRoutingStringSingle } from '../util.js'
 import {
@@ -111,7 +116,7 @@ export type AtemFairlightAudioFeedbacks = {
 export function createFairlightAudioFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemFairlightAudioFeedbacks> {
+): CompanionFeedbackDefinitions<AtemFairlightAudioFeedbacks> {
 	if (!model.fairlightAudio) {
 		return {
 			[FeedbackId.FairlightAudioInputGain]: undefined,
@@ -138,7 +143,7 @@ export function createFairlightAudioFeedbacks(
 			type: 'boolean',
 			name: 'Fairlight Audio: Audio input gain',
 			description: 'If the audio input has the specified input gain, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				input: audioInputOption,
 				source: audioSourceOption,
 				comparitor: NumberComparitorPicker(),
@@ -152,7 +157,7 @@ export function createFairlightAudioFeedbacks(
 					min: -100,
 					max: 6,
 				} satisfies CompanionInputFieldNumber,
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(0, 255, 0),
@@ -181,7 +186,7 @@ export function createFairlightAudioFeedbacks(
 			type: 'boolean',
 			name: 'Fairlight Audio: Audio fader gain',
 			description: 'If the audio input has the specified fader gain, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				input: audioInputOption,
 				source: audioSourceOption,
 				comparitor: NumberComparitorPicker(),
@@ -195,7 +200,7 @@ export function createFairlightAudioFeedbacks(
 					min: -100,
 					max: 10,
 				} satisfies CompanionInputFieldNumber,
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(0, 255, 0),
@@ -226,7 +231,7 @@ export function createFairlightAudioFeedbacks(
 			type: 'boolean',
 			name: 'Fairlight Audio: Audio mix option',
 			description: 'If the audio input has the specified mix option, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				input: audioInputOption,
 				source: audioSourceOption,
 				option: {
@@ -236,7 +241,7 @@ export function createFairlightAudioFeedbacks(
 					default: CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION[0].id,
 					choices: CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION,
 				} satisfies CompanionInputFieldDropdown,
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(0, 255, 0),
@@ -265,7 +270,7 @@ export function createFairlightAudioFeedbacks(
 			type: 'boolean',
 			name: 'Fairlight Audio: Master fader gain',
 			description: 'If the master has the specified fader gain, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				comparitor: NumberComparitorPicker(),
 				gain: {
 					type: 'number',
@@ -277,7 +282,7 @@ export function createFairlightAudioFeedbacks(
 					min: -100,
 					max: 10,
 				} satisfies CompanionInputFieldNumber,
-			},
+			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
 				bgcolor: combineRgb(0, 255, 0),
@@ -303,7 +308,7 @@ export function createFairlightAudioFeedbacks(
 					type: 'boolean',
 					name: 'Fairlight Audio: Solo source',
 					description: 'If the specified source is soloed, change style of the bank',
-					options: {
+					options: convertOptionsFields({
 						nothing: {
 							id: 'nothing',
 							type: 'checkbox',
@@ -312,7 +317,7 @@ export function createFairlightAudioFeedbacks(
 						},
 						input: { ...audioInputOption, isVisibleExpression: `!$(options:nothing)` },
 						source: { ...audioSourceOption, isVisibleExpression: `!$(options:nothing)` },
-					},
+					}),
 					defaultStyle: {
 						color: combineRgb(0, 0, 0),
 						bgcolor: combineRgb(0, 255, 0),
@@ -345,7 +350,7 @@ export function createFairlightAudioFeedbacks(
 					type: 'boolean',
 					name: 'Fairlight Audio: Monitor/Headphone Gain',
 					description: 'If the headphone/monitor has the specified fader gain, change style of the bank',
-					options: {
+					options: convertOptionsFields({
 						comparitor: NumberComparitorPicker(),
 						gain: {
 							type: 'number',
@@ -357,7 +362,7 @@ export function createFairlightAudioFeedbacks(
 							min: -60,
 							max: 10,
 						} satisfies CompanionInputFieldNumber,
-					},
+					}),
 					defaultStyle: {
 						color: combineRgb(0, 0, 0),
 						bgcolor: combineRgb(0, 255, 0),
@@ -384,9 +389,9 @@ export function createFairlightAudioFeedbacks(
 					type: 'boolean',
 					name: 'Fairlight Audio: Monitor/Headphone Master muted',
 					description: 'If the headphone master is muted, change style of the bank',
-					options: {
+					options: convertOptionsFields({
 						// audioInputOption,
-					},
+					}),
 					defaultStyle: {
 						color: combineRgb(0, 0, 0),
 						bgcolor: combineRgb(0, 255, 0),
@@ -402,7 +407,7 @@ export function createFairlightAudioFeedbacks(
 						type: 'boolean',
 						name: 'Fairlight Audio: Monitor/Headphone master Gain',
 						description: 'If the headphone/monitor has the specified master gain, change style of the bank',
-						options: {
+						options: convertOptionsFields({
 							comparitor: NumberComparitorPicker(),
 							gain: {
 								type: 'number',
@@ -414,7 +419,7 @@ export function createFairlightAudioFeedbacks(
 								min: -60,
 								max: 10,
 							} satisfies CompanionInputFieldNumber,
-						},
+						}),
 						defaultStyle: {
 							color: combineRgb(0, 0, 0),
 							bgcolor: combineRgb(0, 255, 0),
@@ -441,9 +446,9 @@ export function createFairlightAudioFeedbacks(
 					type: 'boolean',
 					name: 'Fairlight Audio: Monitor/Headphone Talkback muted',
 					description: 'If the headphone talkback is muted, change style of the bank',
-					options: {
+					options: convertOptionsFields({
 						// audioInputOption,
-					},
+					}),
 					defaultStyle: {
 						color: combineRgb(0, 0, 0),
 						bgcolor: combineRgb(0, 255, 0),
@@ -459,7 +464,7 @@ export function createFairlightAudioFeedbacks(
 						type: 'boolean',
 						name: 'Fairlight Audio: Monitor/Headphone talkback Gain',
 						description: 'If the headphone/monitor has the specified talkback gain, change style of the bank',
-						options: {
+						options: convertOptionsFields({
 							comparitor: NumberComparitorPicker(),
 							gain: {
 								type: 'number',
@@ -471,7 +476,7 @@ export function createFairlightAudioFeedbacks(
 								min: -60,
 								max: 10,
 							} satisfies CompanionInputFieldNumber,
-						},
+						}),
 						defaultStyle: {
 							color: combineRgb(0, 0, 0),
 							bgcolor: combineRgb(0, 255, 0),
@@ -499,7 +504,7 @@ export function createFairlightAudioFeedbacks(
 						type: 'boolean',
 						name: 'Fairlight Audio: Monitor/Headphone sidetone Gain',
 						description: 'If the headphone/monitor has the specified sidetone gain, change style of the bank',
-						options: {
+						options: convertOptionsFields({
 							comparitor: NumberComparitorPicker(),
 							gain: {
 								type: 'number',
@@ -511,7 +516,7 @@ export function createFairlightAudioFeedbacks(
 								min: -60,
 								max: 10,
 							} satisfies CompanionInputFieldNumber,
-						},
+						}),
 						defaultStyle: {
 							color: combineRgb(0, 0, 0),
 							bgcolor: combineRgb(0, 255, 0),
@@ -541,7 +546,7 @@ export function createFairlightAudioFeedbacks(
 function AudioRoutingFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<
+): CompanionFeedbackDefinitions<
 	Pick<AtemFairlightAudioFeedbacks, FeedbackId.FairlightAudioRouting | FeedbackId.FairlightAudioRoutingVariables>
 > {
 	if (!model.fairlightAudio?.audioRouting)
@@ -555,10 +560,10 @@ function AudioRoutingFeedbacks(
 			type: 'boolean',
 			name: 'Fairlight Audio: Audio Routing',
 			description: 'Requires firmware 9.4+',
-			options: {
+			options: convertOptionsFields({
 				destination: AtemFairlightAudioRoutingDestinationPicker(model, state.state),
 				source: AtemFairlightAudioRoutingSourcePicker(model, state.state),
-			},
+			}),
 			defaultStyle: {
 				color: 0x000000,
 				bgcolor: 0x00ff00,
@@ -578,7 +583,7 @@ function AudioRoutingFeedbacks(
 			type: 'boolean',
 			name: 'Fairlight Audio: Audio Routing from variables',
 			description: 'Requires firmware 9.4+',
-			options: {
+			options: convertOptionsFields({
 				destination: {
 					type: 'textinput',
 					id: 'destination',
@@ -597,7 +602,7 @@ function AudioRoutingFeedbacks(
 						'IDs are formed as "output-channel". channel can be omitted when wanting "1/2" eg 1503-3_4 for "MADI 3 3/4"',
 					useVariables: true,
 				},
-			},
+			}),
 			defaultStyle: {
 				color: 0x000000,
 				bgcolor: 0x00ff00,

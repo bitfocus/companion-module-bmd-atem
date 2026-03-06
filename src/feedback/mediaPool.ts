@@ -1,6 +1,7 @@
 import { AtemMediaPlayerSourcePicker } from '../input.js'
+import { convertOptionsFields } from '../common.js'
+import { CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
-import type { MyFeedbackDefinitions } from './types.js'
 import { FeedbackId } from './FeedbackId.js'
 import type { StateWrapper } from '../state.js'
 import type { MediaPoolPreviewOptions, SourceDefinition } from '../mediaPoolPreviews.js'
@@ -59,7 +60,7 @@ const cropAndPositionOptions = {
 export function createMediaPoolFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemMediaPoolFeedbacks> {
+): CompanionFeedbackDefinitions<AtemMediaPoolFeedbacks> {
 	if (!model.media.players) {
 		return {
 			[FeedbackId.MediaPoolPreview]: undefined,
@@ -71,11 +72,11 @@ export function createMediaPoolFeedbacks(
 			type: 'advanced',
 			name: 'Media pool: Preview image',
 			description: 'Preview of the specified media pool slot',
-			options: {
+			options: convertOptionsFields({
 				source: AtemMediaPlayerSourcePicker(model, state.state),
 
 				...cropAndPositionOptions,
-			},
+			}),
 			callback: async ({ options, image }) => {
 				const source = parseSource(options.source)
 
@@ -103,7 +104,7 @@ export function createMediaPoolFeedbacks(
 			type: 'advanced',
 			name: 'Media pool: Preview image from variables',
 			description: 'Preview of the specified media pool slot',
-			options: {
+			options: convertOptionsFields({
 				isClip:
 					model.media.clips > 0
 						? {
@@ -123,7 +124,7 @@ export function createMediaPoolFeedbacks(
 				},
 
 				...cropAndPositionOptions,
-			},
+			}),
 			callback: async ({ options, image }) => {
 				if (!image) return {}
 

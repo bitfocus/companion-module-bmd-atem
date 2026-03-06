@@ -3,12 +3,12 @@ import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
 import { getMultiviewer, getMultiviewerWindow, type StateWrapper } from '../state.js'
 import { AtemMultiviewerPicker, AtemMultiviewWindowPicker, AtemMultiviewSourcePicker } from '../input.js'
-import { convertOptionsFields, MyDropdownChoice } from '../common.js'
-import { assertNever, CompanionActionDefinitions } from '@companion-module/base'
+import { convertOptionsFields } from '../common.js'
+import { assertNever, CompanionActionDefinitions, DropdownChoice } from '@companion-module/base'
 
 type MultiviewerQuadrantState = 'single' | 'quad' | 'ignore' | 'toggle'
 
-const ChoicesMultiviewerQuadrantState: MyDropdownChoice<MultiviewerQuadrantState>[] = [
+const ChoicesMultiviewerQuadrantState: DropdownChoice<MultiviewerQuadrantState>[] = [
 	{ id: 'ignore', label: 'Unchanged' },
 	{ id: 'toggle', label: 'Toggle' },
 	{ id: 'single', label: 'Single' },
