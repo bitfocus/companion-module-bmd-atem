@@ -36,7 +36,7 @@ import {
 } from './choices.js'
 import type { ModelSpec } from './models/index.js'
 import { iterateTimes, compact, NumberComparitor } from './util.js'
-import type { MyOptionsObject } from './common.js'
+import type { MyOptionsObject } from './options/common.js'
 import * as Easing from './easings.js'
 
 export type WithProperties<T> = T & {
@@ -173,7 +173,7 @@ export function AtemMEPicker(model: ModelSpec): CompanionInputFieldDropdown<'mix
 		id: 'mixeffect',
 		label: `M/E`,
 		type: 'dropdown',
-		default: 0,
+		default: 1,
 		choices: GetMEIdChoices(model),
 	}
 }

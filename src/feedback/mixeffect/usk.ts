@@ -1,5 +1,5 @@
 import type { Enums } from 'atem-connection'
-import { convertOptionsFields } from '../../common.js'
+import { convertOptionsFields } from '../../options/common.js'
 import { AtemKeyFillSourcePicker, AtemMEPicker, AtemUSKPicker, AtemUpstreamKeyerTypePicker } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { FeedbackId } from '../FeedbackId.js'

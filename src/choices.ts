@@ -178,7 +178,7 @@ export function GetUpstreamKeyerPatternChoices(): DropdownChoice<Enums.Pattern>[
 
 export function GetMEIdChoices(model: ModelSpec): DropdownChoice[] {
 	return iterateTimes(model.MEs, (i) => ({
-		id: i,
+		id: i + 1,
 		label: `M/E ${i + 1}`,
 	}))
 }
@@ -192,7 +192,7 @@ export function GetAuxIdChoices(model: ModelSpec): DropdownChoice[] {
 
 export function GetUSKIdChoices(model: ModelSpec): DropdownChoice[] {
 	return iterateTimes(model.USKs, (i) => ({
-		id: i,
+		id: i + 1,
 		label: `${i + 1}`,
 	}))
 }

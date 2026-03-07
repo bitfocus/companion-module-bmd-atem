@@ -3,7 +3,7 @@ import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
 import { getMultiviewer, getMultiviewerWindow, type StateWrapper } from '../state.js'
 import { AtemMultiviewerPicker, AtemMultiviewWindowPicker, AtemMultiviewSourcePicker } from '../input.js'
-import { convertOptionsFields } from '../common.js'
+import { convertOptionsFields } from '../options/common.js'
 import { assertNever, CompanionActionDefinitions, DropdownChoice } from '@companion-module/base'
 
 type MultiviewerQuadrantState = 'single' | 'quad' | 'ignore' | 'toggle'

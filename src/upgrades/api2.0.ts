@@ -91,7 +91,7 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 	ssrcArtVariables: {
 		newType: 'ssrcArt',
 		options: {
-			ssrcId: { transform: { type: 'number', zeroBased: true, variables: true, defaultValue: 1 } },
+			ssrcId: { transform: { type: 'number', zeroBased: false, variables: true, defaultValue: 1 } },
 			fill: { transform: { type: 'number', zeroBased: false, variables: true } },
 			key: { transform: { type: 'number', zeroBased: false, variables: true } },
 			// Fill in the missing ones:
@@ -111,8 +111,8 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 	setSsrcBoxSourceVariables: {
 		newType: 'setSsrcBoxSource',
 		options: {
-			ssrcId: { transform: { type: 'number', zeroBased: true, variables: true, defaultValue: 1 } },
-			boxIndex: { transform: { type: 'number', zeroBased: true, variables: true } },
+			ssrcId: { transform: { type: 'number', zeroBased: false, variables: true, defaultValue: 1 } },
+			boxIndex: { transform: { type: 'number', zeroBased: false, variables: true } },
 			source: { transform: { type: 'number', zeroBased: false, variables: true } },
 		},
 	},
@@ -144,14 +144,14 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 	setMvSourceVariables: {
 		newType: 'setMvSource',
 		options: {
-			multiViewerId: { transform: { type: 'number', zeroBased: true, variables: true } },
-			windowIndex: { transform: { type: 'number', zeroBased: true, variables: true } },
+			multiViewerId: { transform: { type: 'number', zeroBased: false, variables: true } },
+			windowIndex: { transform: { type: 'number', zeroBased: false, variables: true } },
 			source: { transform: { type: 'number', zeroBased: false, variables: true } },
 		},
 	},
 	multiviewerLayout: {
 		options: {
-			multiViewerId: { transform: { type: 'number', zeroBased: true, variables: true } },
+			multiViewerId: { transform: { type: 'number', zeroBased: false, variables: true } },
 		},
 	},
 
@@ -172,7 +172,7 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 	},
 	mediaDeleteStill: {
 		options: {
-			slot: { transform: { type: 'number', zeroBased: true, variables: true } },
+			slot: { transform: { type: 'number', zeroBased: false, variables: true } },
 		},
 	},
 	fairlightAudioMixOption: {
@@ -190,7 +190,7 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 	dskSourceVariables: {
 		newType: 'dskSource',
 		options: {
-			key: { transform: { type: 'number', zeroBased: true, variables: true } },
+			key: { transform: { type: 'number', zeroBased: false, variables: true } },
 			fill: { transform: { type: 'number', zeroBased: false, variables: true } },
 			cut: { transform: { type: 'number', zeroBased: false, variables: true } },
 		},
@@ -234,7 +234,7 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 	auxVariables: {
 		newType: 'aux',
 		options: {
-			aux: { transform: { type: 'number', zeroBased: true, variables: true } },
+			aux: { transform: { type: 'number', zeroBased: false, variables: true } },
 			input: { transform: { type: 'number', zeroBased: false, variables: true } },
 		},
 	},
@@ -247,8 +247,8 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 	uskPatternPropertiesVariables: {
 		newType: 'uskPatternProperties',
 		options: {
-			mixeffect: { transform: { type: 'number', zeroBased: true, variables: true } },
-			key: { transform: { type: 'number', zeroBased: true, variables: true } },
+			mixeffect: { transform: { type: 'number', zeroBased: false, variables: true } },
+			key: { transform: { type: 'number', zeroBased: false, variables: true } },
 			style: { transform: { type: 'number', zeroBased: false, variables: true } },
 			size: { transform: { type: 'number', zeroBased: false, variables: true } },
 			symmetry: { transform: { type: 'number', zeroBased: false, variables: true } },
@@ -292,7 +292,7 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 	previewVariables: {
 		newType: 'preview',
 		options: {
-			mixeffect: { transform: { type: 'number', zeroBased: true, variables: true } },
+			mixeffect: { transform: { type: 'number', zeroBased: false, variables: true } },
 			input: { transform: { type: 'number', zeroBased: false, variables: true } },
 		},
 	},
@@ -304,13 +304,13 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 	programVariables: {
 		newType: 'program',
 		options: {
-			mixeffect: { transform: { type: 'number', zeroBased: true, variables: true } },
+			mixeffect: { transform: { type: 'number', zeroBased: false, variables: true } },
 			input: { transform: { type: 'number', zeroBased: false, variables: true } },
 		},
 	},
 	previewTransition: {
 		options: {
-			mixeffect: { transform: { type: 'number', zeroBased: true, variables: true } },
+			mixeffect: { transform: { type: 'number', zeroBased: false, variables: true } },
 		},
 	},
 	transitionStyle: {
@@ -353,8 +353,8 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 	uskSourceVariables: {
 		newType: 'uskSource',
 		options: {
-			mixeffect: { transform: { type: 'number', zeroBased: true, variables: true } },
-			key: { transform: { type: 'number', zeroBased: true, variables: true } },
+			mixeffect: { transform: { type: 'number', zeroBased: false, variables: true } },
+			key: { transform: { type: 'number', zeroBased: false, variables: true } },
 			fill: { transform: { type: 'number', zeroBased: false, variables: true } },
 			cut: { transform: { type: 'number', zeroBased: false, variables: true } },
 		},
@@ -381,8 +381,8 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 	uskFlyKeyLumaChromaPatternVariables: {
 		newType: 'uskFlyKeyLumaChromaPattern',
 		options: {
-			mixeffect: { transform: { type: 'number', zeroBased: true, variables: true } },
-			key: { transform: { type: 'number', zeroBased: true, variables: true } },
+			mixeffect: { transform: { type: 'number', zeroBased: false, variables: true } },
+			key: { transform: { type: 'number', zeroBased: false, variables: true } },
 			flyEnabled: { transform: { type: 'boolean', variables: true } },
 			positionX: { transform: { type: 'number', zeroBased: false, variables: true } },
 			positionY: { transform: { type: 'number', zeroBased: false, variables: true } },
@@ -399,8 +399,8 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 	uskDvePropertiesVariables: {
 		newType: 'uskDveProperties',
 		options: {
-			mixeffect: { transform: { type: 'number', zeroBased: true, variables: true } },
-			key: { transform: { type: 'number', zeroBased: true, variables: true } },
+			mixeffect: { transform: { type: 'number', zeroBased: false, variables: true } },
+			key: { transform: { type: 'number', zeroBased: false, variables: true } },
 			positionX: { transform: { type: 'number', zeroBased: false, variables: true } },
 			positionY: { transform: { type: 'number', zeroBased: false, variables: true } },
 			sizeX: { transform: { type: 'number', zeroBased: false, variables: true } },
@@ -648,7 +648,7 @@ const feedbackFixupRules: Record<string, FeedbackFixupRule> = {
 	previewVariables: {
 		newType: 'preview',
 		options: {
-			mixeffect: { transform: { type: 'number', zeroBased: true, variables: true } },
+			mixeffect: { transform: { type: 'number', zeroBased: false, variables: true } },
 			input: { transform: { type: 'number', zeroBased: false, variables: true } },
 		},
 	},
@@ -661,7 +661,7 @@ const feedbackFixupRules: Record<string, FeedbackFixupRule> = {
 	programVariables: {
 		newType: 'program',
 		options: {
-			mixeffect: { transform: { type: 'number', zeroBased: true, variables: true } },
+			mixeffect: { transform: { type: 'number', zeroBased: false, variables: true } },
 			input: { transform: { type: 'number', zeroBased: false, variables: true } },
 		},
 	},
@@ -712,8 +712,8 @@ const feedbackFixupRules: Record<string, FeedbackFixupRule> = {
 	usk_source_variables: {
 		newType: 'usk_source',
 		options: {
-			mixeffect: { transform: { type: 'number', zeroBased: true, variables: true } },
-			key: { transform: { type: 'number', zeroBased: true, variables: true } },
+			mixeffect: { transform: { type: 'number', zeroBased: false, variables: true } },
+			key: { transform: { type: 'number', zeroBased: false, variables: true } },
 			fill: { transform: { type: 'number', zeroBased: false, variables: true } },
 		},
 	},
@@ -732,7 +732,7 @@ const feedbackFixupRules: Record<string, FeedbackFixupRule> = {
 	auxVariables: {
 		newType: 'aux',
 		options: {
-			aux: { transform: { type: 'number', zeroBased: true, variables: true } },
+			aux: { transform: { type: 'number', zeroBased: false, variables: true } },
 			input: { transform: { type: 'number', zeroBased: false, variables: true } },
 		},
 	},
@@ -755,7 +755,7 @@ const feedbackFixupRules: Record<string, FeedbackFixupRule> = {
 	dsk_source_variables: {
 		newType: 'dsk_source',
 		options: {
-			key: { transform: { type: 'number', zeroBased: true, variables: true } },
+			key: { transform: { type: 'number', zeroBased: false, variables: true } },
 			input: { transform: { type: 'number', zeroBased: false, variables: true } },
 		},
 	},
@@ -768,14 +768,14 @@ const feedbackFixupRules: Record<string, FeedbackFixupRule> = {
 	mv_source_variables: {
 		newType: 'mv_source',
 		options: {
-			multiViewerId: { transform: { type: 'number', zeroBased: true, variables: true } },
-			windowIndex: { transform: { type: 'number', zeroBased: true, variables: true } },
+			multiViewerId: { transform: { type: 'number', zeroBased: false, variables: true } },
+			windowIndex: { transform: { type: 'number', zeroBased: false, variables: true } },
 			source: { transform: { type: 'number', zeroBased: false, variables: true } },
 		},
 	},
 	multiviewerLayout: {
 		options: {
-			multiViewerId: { transform: { type: 'number', zeroBased: true, variables: true } },
+			multiViewerId: { transform: { type: 'number', zeroBased: false, variables: true } },
 		},
 	},
 	ssrc_art_properties: {
@@ -822,8 +822,8 @@ const feedbackFixupRules: Record<string, FeedbackFixupRule> = {
 	ssrc_box_source_variables: {
 		newType: 'ssrc_box_source',
 		options: {
-			ssrcId: { transform: { type: 'number', zeroBased: true, variables: true, defaultValue: 1 } },
-			boxIndex: { transform: { type: 'number', zeroBased: true, variables: true } },
+			ssrcId: { transform: { type: 'number', zeroBased: false, variables: true, defaultValue: 1 } },
+			boxIndex: { transform: { type: 'number', zeroBased: false, variables: true } },
 			source: { transform: { type: 'number', zeroBased: false, variables: true } },
 		},
 	},
@@ -881,7 +881,7 @@ function applyTransform(
 		}
 
 		// Convert number from 0-based (e.g. for indexes), optionally considering if there are variables
-		const newValue = FixupNumericOrVariablesValueToExpressions(oldValue)
+		const newValue = FixupNumericOrVariablesValueToExpressions(valueObj)
 		if (optionTransform.zeroBased) {
 			// Attempt to offset by 1
 			return OffsetNumericExpressionOrValueByX(newValue, 1)
@@ -895,7 +895,7 @@ function applyTransform(
 		return valueObj
 	} else if (optionTransform.type === 'boolean') {
 		// Convert boolean, optionally considering if there are variables
-		return FixupBooleanOrVariablesValueToExpressions(oldValue)
+		return FixupBooleanOrVariablesValueToExpressions(valueObj)
 	}
 
 	return valueObj
@@ -906,8 +906,6 @@ function applyOptionsFixupRules(
 	entityOptions: Record<string, any>,
 ): void {
 	for (const [optionKey, optionRule] of Object.entries(optionRules)) {
-		if (!entityOptions[optionKey]) continue
-
 		if (optionRule.transform) {
 			entityOptions[optionKey] = applyTransform(optionRule.transform, entityOptions[optionKey])
 		}

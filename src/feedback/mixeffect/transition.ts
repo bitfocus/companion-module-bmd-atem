@@ -1,5 +1,5 @@
 import { Enums } from 'atem-connection'
-import { convertOptionsFields } from '../../common.js'
+import { convertOptionsFields } from '../../options/common.js'
 import {
 	AtemMEPicker,
 	AtemMatchMethod,

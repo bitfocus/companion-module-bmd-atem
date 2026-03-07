@@ -1,4 +1,4 @@
-import { convertOptionsFields } from '../common.js'
+import { convertOptionsFields } from '../options/common.js'
 import { CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { FeedbackId } from './FeedbackId.js'

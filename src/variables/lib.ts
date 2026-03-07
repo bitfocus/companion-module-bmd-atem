@@ -413,7 +413,7 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 	const values: Partial<VariablesSchema> = {}
 	const variables: CompanionVariableDefinitions<VariablesSchema> = {
 		device_ip: {
-			name: 'IP address of ATEM',
+			name: 'IP address of the ATEM',
 		},
 	}
 

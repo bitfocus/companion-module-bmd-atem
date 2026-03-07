@@ -1,5 +1,5 @@
 import { Enums, type Atem } from 'atem-connection'
-import { convertOptionsFields } from '../../common.js'
+import { convertOptionsFields } from '../../options/common.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import { getMixEffect } from 'atem-connection/dist/state/util.js'
 import {

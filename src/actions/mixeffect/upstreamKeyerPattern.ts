@@ -1,5 +1,5 @@
 import { Enums, type Atem } from 'atem-connection'
-import { convertOptionsFields } from '../../common.js'
+import { convertOptionsFields } from '../../options/common.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import { AtemMEPicker, AtemUSKPatternPropertiesPickers, AtemUSKPicker } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'

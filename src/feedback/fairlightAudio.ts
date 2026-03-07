@@ -1,5 +1,5 @@
 import { Enums } from 'atem-connection'
-import { convertOptionsFields } from '../common.js'
+import { convertOptionsFields } from '../options/common.js'
 import type { ModelSpec } from '../models/index.js'
 import { FeedbackId } from './FeedbackId.js'
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
@@ -635,11 +635,10 @@ function AudioRoutingFeedbacks(
 				const outputsState = state.state.fairlight?.audioRouting?.outputs
 				if (!outputsState) return false
 
-				const [sourceStr, destinationStr] = await Promise.all([options.source, options.destination])
-				if (!destinationStr || !sourceStr) return false
+				if (!options.destination || !options.source) return false
 
-				const source = parseAudioRoutingStringSingle(sourceStr) ?? 0
-				const destination = parseAudioRoutingStringSingle(destinationStr)
+				const source = parseAudioRoutingStringSingle(options.source) ?? 0
+				const destination = parseAudioRoutingStringSingle(options.destination)
 				if (!destination) return false
 
 				const output = outputsState[destination]
