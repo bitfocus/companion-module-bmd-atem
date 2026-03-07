@@ -11,9 +11,8 @@ import {
 	FadeDurationFields,
 	FaderLevelDeltaChoice,
 	resolveTrueFalseToggle,
-	type FadeDurationFieldsType,
 } from '../input.js'
-import type { AtemTransitions } from '../transitions.js'
+import type { AtemTransitions, FadeDurationFieldsType } from '../transitions.js'
 import {
 	CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION,
 	CHOICES_ON_OFF_TOGGLE,

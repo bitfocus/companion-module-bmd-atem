@@ -8,10 +8,8 @@ import {
 	AtemSuperSourceBoxPicker,
 	AtemSuperSourceBoxSourcePicker,
 	AtemSuperSourceIdPicker,
-	AtemSuperSourcePropertiesPickers,
 	AtemSuperSourcePropertiesPickersForOffset,
 	type AtemSuperSourceArtProperties,
-	type AtemSuperSourceProperties,
 	AtemTransitionAnimationOptions,
 	resolveTrueFalseToggle,
 	AtemSSrcArtOptionToProtocolEnum,
@@ -21,8 +19,8 @@ import type { SuperSource } from 'atem-connection/dist/state/video/index.js'
 import { CHOICES_KEYTRANS, type TrueFalseToggle } from '../choices.js'
 import { getSuperSourceBox, type StateWrapper } from '../state.js'
 import { clamp } from '../util.js'
-import type { AtemTransitions } from '../transitions.js'
-import type { algorithm, curve } from '../easings.js'
+import type { AtemTransitions, TransitionOptions } from '../transitions.js'
+import { AtemSuperSourceProperties, AtemSuperSourcePropertiesPickers } from '../options/superSource.js'
 
 export type AtemSuperSourceActions = {
 	[ActionId.SuperSourceArt]: {
@@ -48,10 +46,8 @@ export type AtemSuperSourceActions = {
 		options: {
 			ssrcId: number
 			boxIndex: number
-			transitionRate: number | undefined
-			transitionEasing: algorithm | undefined
-			transitionCurve: curve | undefined
-		} & AtemSuperSourceProperties
+		} & TransitionOptions &
+			AtemSuperSourceProperties
 	}
 	[ActionId.SuperSourceBoxPropertiesDelta]: {
 		options: {

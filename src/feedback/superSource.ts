@@ -11,13 +11,12 @@ import {
 	AtemSuperSourceArtOption,
 	AtemSuperSourceBoxPicker,
 	AtemSuperSourceBoxSourcePicker,
-	AtemSuperSourcePropertiesPickers,
 	type AtemSuperSourceArtProperties,
-	type AtemSuperSourceProperties,
 	AtemSSrcArtOptionToProtocolEnum,
 	AtemSSrcArtOptionFromProtocolEnum,
 } from '../input.js'
 import { getSuperSourceBox, type StateWrapper } from '../state.js'
+import { AtemSuperSourceProperties, AtemSuperSourcePropertiesPickers } from '../options/superSource.js'
 
 export type AtemSuperSourceFeedbacks = {
 	[FeedbackId.SSrcArtProperties]: {

@@ -216,7 +216,7 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 	}
 
 	/**
-	 * Handle tally packets
+	 * Special handling of some commands
 	 */
 	private processReceivedCommands(commands: Commands.IDeserializedCommand[]): void {
 		const cameraCommands: Commands.CameraControlUpdateCommand[] = []
@@ -530,8 +530,6 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 			}
 		}
 
-		const changedFeedbackIds = this.invalidateCachedTallyState()
-
 		// Apply the change
 		if (reInit) {
 			this.updateCompanionBits()
@@ -542,7 +540,9 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 				const feedbackTypes = Array.from(changedFeedbacks)
 				this.checkFeedbacks(feedbackTypes[0], ...feedbackTypes.slice(1))
 			}
-			if (changedFeedbackIds.size > 0) this.checkFeedbacksById(...Array.from(changedFeedbackIds))
+
+			const changedFeedbackIds = this.invalidateCachedTallyState()
+			if (changedFeedbackIds.size > 0) this.checkFeedbacksById(...changedFeedbackIds)
 		}
 	}
 

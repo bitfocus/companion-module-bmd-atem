@@ -2,11 +2,11 @@ import type { Atem } from 'atem-connection'
 import { convertOptionsFields } from '../../options/common.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import { getMixEffect } from 'atem-connection/dist/state/util.js'
-import { AtemMEPicker, AtemMESourcePicker, FadeDurationFields, type FadeDurationFieldsType } from '../../input.js'
+import { AtemMEPicker, AtemMESourcePicker, FadeDurationFields } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
 import type { StateWrapper } from '../../state.js'
-import type { AtemTransitions } from '../../transitions.js'
+import type { AtemTransitions, FadeDurationFieldsType } from '../../transitions.js'
 
 export type AtemProgramPreviewActions = {
 	[ActionId.Program]: {

@@ -4,12 +4,10 @@ import {
 	type CompanionInputFieldDropdown,
 	type CompanionInputFieldMultiDropdown,
 	type CompanionInputFieldNumber,
-	type CompanionInputFieldTextInput,
 	type DropdownChoice,
 } from '@companion-module/base'
 import { type AtemState, Enums } from 'atem-connection'
 import {
-	CHOICES_KEYTRANS,
 	CHOICES_SSRCBOXES,
 	CHOICES_BORDER_BEVEL,
 	CHOICES_NEXTTRANS_BACKGROUND,
@@ -36,12 +34,8 @@ import {
 } from './choices.js'
 import type { ModelSpec } from './models/index.js'
 import { iterateTimes, compact, NumberComparitor } from './util.js'
-import type { MyOptionsObject } from './options/common.js'
-import * as Easing from './easings.js'
-
-export type WithProperties<T> = T & {
-	properties: Array<keyof T>
-}
+import { DropdownPropertiesPicker, type MyOptionsObject, type WithProperties } from './options/common.js'
+import { FadeDurationFieldsType } from './transitions.js'
 
 export function AtemMESourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown<'input'> {
 	return {
@@ -1226,160 +1220,6 @@ export function AtemSuperSourceArtOption(action: boolean): CompanionInputFieldDr
 	}
 }
 
-export type AtemSuperSourcePropertiesBase = {
-	size: number
-	onair: TrueFalseToggle
-	source: number
-	x: number
-	y: number
-	cropEnable: boolean
-	cropTop: number
-	cropBottom: number
-	cropLeft: number
-	cropRight: number
-}
-export type AtemSuperSourceProperties = WithProperties<AtemSuperSourcePropertiesBase>
-
-export function AtemSuperSourcePropertiesPickers(
-	model: ModelSpec,
-	state: AtemState,
-): {
-	properties: CompanionInputFieldMultiDropdown<'properties'>
-	size: CompanionInputFieldNumber<'size'>
-	onair: CompanionInputFieldDropdown<'onair', TrueFalseToggle>
-	source: CompanionInputFieldDropdown<'source'>
-	x: CompanionInputFieldNumber<'x'>
-	y: CompanionInputFieldNumber<'y'>
-	cropEnable: CompanionInputFieldCheckbox<'cropEnable'>
-	cropTop: CompanionInputFieldNumber<'cropTop'>
-	cropBottom: CompanionInputFieldNumber<'cropBottom'>
-	cropLeft: CompanionInputFieldNumber<'cropLeft'>
-	cropRight: CompanionInputFieldNumber<'cropRight'>
-} {
-	const allProps: Omit<ReturnType<typeof AtemSuperSourcePropertiesPickers>, 'properties'> = {
-		size: {
-			type: 'number',
-			id: 'size',
-			label: 'Size',
-			min: 0,
-			max: 1,
-			range: true,
-			default: 0.5,
-			step: 0.01,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'size')`,
-			asInteger: false,
-			clampValues: true,
-		},
-
-		onair: {
-			id: 'onair',
-			type: 'dropdown',
-			label: 'On Air',
-			default: 'true',
-			choices: CHOICES_KEYTRANS,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'onair')`,
-			disableAutoExpression: true, // Needs translating first
-		},
-		source: {
-			type: 'dropdown',
-			id: 'source',
-			label: 'Source',
-			default: 0,
-			choices: SourcesToChoices(GetSourcesListForType(model, state, 'ssrc-box')),
-			isVisibleExpression: `arrayIncludes($(options:properties), 'source')`,
-		},
-		x: {
-			type: 'number',
-			id: 'x',
-			label: 'X',
-			min: -48,
-			max: 48,
-			range: true,
-			default: 0,
-			step: 0.01,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'x')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		y: {
-			type: 'number',
-			id: 'y',
-			label: 'Y',
-			min: -27,
-			max: 27,
-			range: true,
-			default: 0,
-			step: 0.01,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'y')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		cropEnable: {
-			type: 'checkbox',
-			id: 'cropEnable',
-			label: 'Crop Enable',
-			default: false,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'cropEnable')`,
-		},
-		cropTop: {
-			type: 'number',
-			id: 'cropTop',
-			label: 'Crop Top',
-			min: 0,
-			max: 18,
-			range: true,
-			default: 0,
-			step: 0.01,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'cropTop')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		cropBottom: {
-			type: 'number',
-			id: 'cropBottom',
-			label: 'Crop Bottom',
-			min: 0,
-			max: 18,
-			range: true,
-			default: 0,
-			step: 0.01,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'cropBottom')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		cropLeft: {
-			type: 'number',
-			id: 'cropLeft',
-			label: 'Crop Left',
-			min: 0,
-			max: 32,
-			range: true,
-			default: 0,
-			step: 0.01,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'cropLeft')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		cropRight: {
-			type: 'number',
-			id: 'cropRight',
-			label: 'Crop Right',
-			min: 0,
-			max: 32,
-			range: true,
-			default: 0,
-			step: 0.01,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'cropRight')`,
-			asInteger: false,
-			clampValues: true,
-		},
-	}
-
-	return {
-		properties: DropdownPropertiesPicker(allProps),
-		...allProps,
-	}
-}
 export function AtemSuperSourcePropertiesPickersForOffset(): {
 	properties: CompanionInputFieldMultiDropdown<'properties'>
 	size: CompanionInputFieldNumber<'size'>
@@ -1588,27 +1428,6 @@ export function AtemSuperSourceArtPropertiesPickers(
 	}
 }
 
-export function DropdownPropertiesPicker(
-	allProps: Record<
-		string,
-		| CompanionInputFieldTextInput
-		| CompanionInputFieldCheckbox
-		| CompanionInputFieldDropdown
-		| CompanionInputFieldNumber
-		| CompanionInputFieldMultiDropdown
-	>,
-): CompanionInputFieldMultiDropdown<'properties'> {
-	return {
-		type: 'multidropdown',
-		id: 'properties',
-		label: 'Properties',
-		minSelection: 1,
-		default: Object.values(allProps).map((p) => p.id),
-		choices: Object.values(allProps).map((p) => ({ id: p.id, label: p.label })),
-		disableAutoExpression: true,
-	}
-}
-
 export function AtemSuperSourceArtSourcePicker<T extends string>(
 	model: ModelSpec,
 	state: AtemState,
@@ -1779,12 +1598,6 @@ export function NumberComparitorPicker(): CompanionInputFieldDropdown<'comparito
 		choices: options,
 		disableAutoExpression: true, // Needs translating first
 	}
-}
-
-export type FadeDurationFieldsType = {
-	fadeDuration: number
-	fadeAlgorithm: Easing.algorithm
-	fadeCurve: Easing.curve
 }
 
 export const FadeDurationFields = {

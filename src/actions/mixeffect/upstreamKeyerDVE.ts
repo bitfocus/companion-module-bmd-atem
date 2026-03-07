@@ -16,18 +16,13 @@ import type {
 	UpstreamKeyerDVESettings,
 	UpstreamKeyerFlyKeyframe,
 } from 'atem-connection/dist/state/video/upstreamKeyers.js'
-import type { algorithm, curve } from '../../easings.js'
-import type { AtemTransitions } from '../../transitions.js'
+import type { AtemTransitions, TransitionOptions } from '../../transitions.js'
 
 export type AtemUpstreamKeyerDVEActions = {
 	[ActionId.USKDVEProperties]: {
 		options: {
 			mixeffect: number
 			key: number
-
-			transitionRate: number | undefined
-			transitionEasing: algorithm | undefined
-			transitionCurve: curve | undefined
 
 			properties: Array<
 				| 'positionX'
@@ -84,7 +79,7 @@ export type AtemUpstreamKeyerDVEActions = {
 			borderBevelPosition: number
 			borderBevelSoftness: number
 			rate: number
-		}
+		} & TransitionOptions
 	}
 	[ActionId.USKSetKeyframe]: {
 		options: {
