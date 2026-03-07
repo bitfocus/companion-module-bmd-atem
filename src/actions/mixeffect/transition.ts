@@ -9,6 +9,7 @@ import {
 	AtemTransitionSelectionComponentPicker,
 	AtemTransitionSelectionPicker,
 	AtemTransitionStylePicker,
+	TransitionSelectionComponent,
 } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
@@ -26,7 +27,7 @@ import { type InstanceBaseExt, assertUnreachable, calculateTransitionSelection }
 export type AtemTransitionActions = {
 	[ActionId.PreviewTransition]: {
 		options: {
-			mixeffect: string
+			mixeffect: number
 			state: TrueFalseToggle
 		}
 	}
@@ -46,7 +47,7 @@ export type AtemTransitionActions = {
 	[ActionId.TransitionSelection]: {
 		options: {
 			mixeffect: number
-			selection: ('background' | string)[]
+			selection: TransitionSelectionComponent[]
 		}
 	}
 	[ActionId.TransitionSelectComponents]: {
@@ -76,13 +77,7 @@ export function createTransitionActions(
 		[ActionId.PreviewTransition]: {
 			name: 'Transition: Preview',
 			options: convertOptionsFields({
-				mixeffect: {
-					type: 'textinput',
-					id: 'mixeffect',
-					label: 'M/E',
-					default: '1',
-					useVariables: true,
-				},
+				mixeffect: AtemMEPicker(model, 0),
 				state: {
 					id: 'state',
 					type: 'dropdown',
@@ -92,21 +87,15 @@ export function createTransitionActions(
 				},
 			}),
 			callback: async ({ options }) => {
-				const mixeffect = await options.mixeffect
-
 				let target: boolean
 				if (options.state === 'toggle') {
-					const meState = getMixEffect(state.state, mixeffect - 1)
+					const meState = getMixEffect(state.state, options.mixeffect - 1)
 					target = !meState.transitionPreview
 				} else {
 					target = options.state === 'true'
 				}
 
-				console.log('previewTransition', target, mixeffect)
-
-				if (!isNaN(mixeffect)) {
-					await atem?.previewTransition(target, mixeffect - 1)
-				}
+				await atem?.previewTransition(target, options.mixeffect - 1)
 			},
 		},
 		[ActionId.TransitionStyle]: {
@@ -120,11 +109,11 @@ export function createTransitionActions(
 					{
 						nextStyle: options.style,
 					},
-					options.mixeffect,
+					options.mixeffect - 1,
 				)
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.mixeffect)
+				const me = getMixEffect(state.state, options.mixeffect - 1)
 
 				if (me) {
 					return {
@@ -150,7 +139,7 @@ export function createTransitionActions(
 							{
 								rate: options.rate,
 							},
-							options.mixeffect,
+							options.mixeffect - 1,
 						)
 						break
 					case Enums.TransitionStyle.DIP:
@@ -158,7 +147,7 @@ export function createTransitionActions(
 							{
 								rate: options.rate,
 							},
-							options.mixeffect,
+							options.mixeffect - 1,
 						)
 
 						break
@@ -167,7 +156,7 @@ export function createTransitionActions(
 							{
 								rate: options.rate,
 							},
-							options.mixeffect,
+							options.mixeffect - 1,
 						)
 
 						break
@@ -176,7 +165,7 @@ export function createTransitionActions(
 							{
 								rate: options.rate,
 							},
-							options.mixeffect,
+							options.mixeffect - 1,
 						)
 						break
 					case Enums.TransitionStyle.STING:
@@ -188,7 +177,7 @@ export function createTransitionActions(
 				}
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.mixeffect)
+				const me = getMixEffect(state.state, options.mixeffect - 1)
 
 				if (me?.transitionSettings) {
 					const style = options.style
@@ -233,9 +222,9 @@ export function createTransitionActions(
 			callback: async ({ options }) => {
 				await atem?.setTransitionStyle(
 					{
-						nextSelection: calculateTransitionSelection(model.USKs, options.getRaw('selection')),
+						nextSelection: calculateTransitionSelection(model.USKs, options.selection),
 					},
-					options.mixeffect,
+					options.mixeffect - 1,
 				)
 			},
 		},
@@ -246,7 +235,7 @@ export function createTransitionActions(
 				...AtemTransitionSelectComponentsPickers(model),
 			}),
 			callback: async ({ options }) => {
-				const mixeffect = options.mixeffect
+				const mixeffect = options.mixeffect - 1
 				const tp = getTransitionProperties(state.state, mixeffect)
 				if (!atem || !tp) return
 
@@ -287,7 +276,7 @@ export function createTransitionActions(
 						const component = 1 << (key + 1)
 						const inNextSelection = currentNextSelection.includes(component)
 
-						const mode = options.getPlainString(`key${key}`)
+						const mode = options[`key${key}`]
 						let include
 						switch (mode) {
 							case NextTransKeyChoices.NoChange:
@@ -323,7 +312,7 @@ export function createTransitionActions(
 				}
 			},
 			learn: ({ options }) => {
-				const me = options.mixeffect
+				const me = options.mixeffect - 1
 				const mixeffect = getMixEffect(state.state, me)
 				const tp = getTransitionProperties(state.state, me)
 				if (mixeffect && tp) {
@@ -333,7 +322,7 @@ export function createTransitionActions(
 						? NextTransBackgroundChoices.Include
 						: NextTransBackgroundChoices.Omit
 
-					const keys: { [key: string]: InputValue } = {}
+					const keys: { [key: string]: NextTransKeyChoices } = {}
 					for (let key = 0; key < model.USKs; key++) {
 						const usk = getUSK(state.state, me, key)
 
@@ -375,7 +364,7 @@ export function createTransitionActions(
 				},
 			}),
 			callback: async ({ options }) => {
-				const me = options.mixeffect
+				const me = options.mixeffect - 1
 				const tp = getTransitionProperties(state.state, me)
 				if (tp && atem) {
 					let batch = commandBatching.meTransitionSelection.get(me)

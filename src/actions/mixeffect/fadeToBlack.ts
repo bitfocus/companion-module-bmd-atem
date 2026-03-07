@@ -32,7 +32,7 @@ export function createFadeToBlackActions(
 				mixeffect: AtemMEPicker(model, 0),
 			}),
 			callback: async ({ options }) => {
-				await atem?.fadeToBlack(options.mixeffect)
+				await atem?.fadeToBlack(options.mixeffect - 1)
 			},
 		},
 		[ActionId.FadeToBlackRate]: {
@@ -42,10 +42,10 @@ export function createFadeToBlackActions(
 				rate: AtemRatePicker('Rate'),
 			}),
 			callback: async ({ options }) => {
-				await atem?.setFadeToBlackRate(options.rate, options.mixeffect)
+				await atem?.setFadeToBlackRate(options.rate, options.mixeffect - 1)
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.mixeffect)
+				const me = getMixEffect(state.state, options.mixeffect - 1)
 
 				if (me?.fadeToBlack) {
 					return {

@@ -4,7 +4,6 @@ import type { CompanionActionDefinitions } from '@companion-module/base'
 import {
 	AtemMEPicker,
 	AtemUSKDVEPropertiesPickers,
-	AtemUSKDVEPropertiesVariablesPickers,
 	AtemUSKPicker,
 	AtemUSKKeyframePropertiesPickers,
 	AtemTransitionAnimationOptions,
@@ -85,72 +84,6 @@ export type AtemUpstreamKeyerDVEActions = {
 			borderBevelPosition: number
 			borderBevelSoftness: number
 			rate: number
-		}
-	}
-	[ActionId.USKDVEPropertiesVariables]: {
-		options: {
-			mixeffect: string
-			key: string
-
-			transitionRate: number | undefined
-			transitionEasing: algorithm | undefined
-			transitionCurve: curve | undefined
-
-			properties: Array<
-				| 'positionX'
-				| 'positionY'
-				| 'sizeX'
-				| 'sizeY'
-				| 'rotation'
-				| 'maskEnabled'
-				| 'maskTop'
-				| 'maskBottom'
-				| 'maskLeft'
-				| 'maskRight'
-				| 'shadowEnabled'
-				| 'lightSourceDirection'
-				| 'lightSourceAltitude'
-				| 'borderEnabled'
-				| 'borderHue'
-				| 'borderSaturation'
-				| 'borderLuma'
-				| 'borderBevel'
-				| 'borderOuterWidth'
-				| 'borderInnerWidth'
-				| 'borderOuterSoftness'
-				| 'borderInnerSoftness'
-				| 'borderOpacity'
-				| 'borderBevelPosition'
-				| 'borderBevelSoftness'
-				| 'rate'
-			>
-
-			positionX: string
-			positionY: string
-			sizeX: string
-			sizeY: string
-			rotation: string
-			maskEnabled: string
-			maskTop: string
-			maskBottom: string
-			maskLeft: string
-			maskRight: string
-			shadowEnabled: string
-			lightSourceDirection: string
-			lightSourceAltitude: string
-			borderEnabled: string
-			borderHue: string
-			borderSaturation: string
-			borderLuma: string
-			borderBevel: string
-			borderOuterWidth: string
-			borderInnerWidth: string
-			borderOuterSoftness: string
-			borderInnerSoftness: string
-			borderOpacity: string
-			borderBevelPosition: string
-			borderBevelSoftness: string
-			rate: string
 		}
 	}
 	[ActionId.USKSetKeyframe]: {
@@ -240,7 +173,6 @@ export function createUpstreamKeyerDVEActions(
 	if (!model.USKs || !model.DVEs) {
 		return {
 			[ActionId.USKDVEProperties]: undefined,
-			[ActionId.USKDVEPropertiesVariables]: undefined,
 			[ActionId.USKSetKeyframe]: undefined,
 			[ActionId.USKStoreKeyframe]: undefined,
 			[ActionId.USKFly]: undefined,
@@ -258,8 +190,8 @@ export function createUpstreamKeyerDVEActions(
 				...AtemUSKDVEPropertiesPickers(),
 			}),
 			callback: async ({ options }) => {
-				const keyId = options.key
-				const mixEffectId = options.mixeffect
+				const keyId = options.key - 1
+				const mixEffectId = options.mixeffect - 1
 				const newProps: Partial<UpstreamKeyerDVESettings> = {}
 
 				const props = options.properties
@@ -381,7 +313,7 @@ export function createUpstreamKeyerDVEActions(
 				)
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.mixeffect, options.key)
+				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
 
 				if (usk?.dveSettings) {
 					return {
@@ -417,189 +349,6 @@ export function createUpstreamKeyerDVEActions(
 				}
 			},
 		},
-		[ActionId.USKDVEPropertiesVariables]: {
-			name: 'Upstream key: Change DVE properties from variables',
-			options: convertOptionsFields({
-				mixeffect: {
-					type: 'textinput',
-					id: 'mixeffect',
-					label: 'M/E',
-					default: '1',
-					useVariables: true,
-				},
-				key: {
-					type: 'textinput',
-					label: 'Key',
-					id: 'key',
-					default: '1',
-					useVariables: true,
-				},
-				...AtemTransitionAnimationOptions(),
-				...AtemUSKDVEPropertiesVariablesPickers(),
-			}),
-			callback: async ({ options }) => {
-				const mixEffectId = (await options.mixeffect) - 1
-				const keyId = (await options.key) - 1
-				const newProps: Partial<UpstreamKeyerDVESettings> = {}
-
-				const props = options.properties
-				if (props && Array.isArray(props)) {
-					if (props.includes('maskEnabled')) {
-						newProps.maskEnabled = await options.maskEnabled
-					}
-					if (props.includes('maskTop')) {
-						newProps.maskTop = (await options.maskTop) * 1000
-					}
-					if (props.includes('maskBottom')) {
-						newProps.maskBottom = (await options.maskBottom) * 1000
-					}
-					if (props.includes('maskLeft')) {
-						newProps.maskLeft = (await options.maskLeft) * 1000
-					}
-					if (props.includes('maskRight')) {
-						newProps.maskRight = (await options.maskRight) * 1000
-					}
-					if (props.includes('sizeX')) {
-						newProps.sizeX = (await options.sizeX) * 1000
-					}
-					if (props.includes('sizeY')) {
-						newProps.sizeY = (await options.sizeY) * 1000
-					}
-					if (props.includes('positionX')) {
-						newProps.positionX = (await options.positionX) * 1000
-					}
-					if (props.includes('positionY')) {
-						newProps.positionY = (await options.positionY) * 1000
-					}
-					if (props.includes('rotation')) {
-						newProps.rotation = await options.rotation
-					}
-					if (props.includes('borderOuterWidth')) {
-						newProps.borderOuterWidth = (await options.borderOuterWidth) * 100
-					}
-					if (props.includes('borderInnerWidth')) {
-						newProps.borderInnerWidth = (await options.borderInnerWidth) * 100
-					}
-					if (props.includes('borderOuterSoftness')) {
-						newProps.borderOuterSoftness = await options.borderOuterSoftness
-					}
-					if (props.includes('borderInnerSoftness')) {
-						newProps.borderInnerSoftness = await options.borderInnerSoftness
-					}
-					if (props.includes('borderBevelSoftness')) {
-						newProps.borderBevelSoftness = await options.borderBevelSoftness
-					}
-					if (props.includes('borderBevelPosition')) {
-						newProps.borderBevelPosition = await options.borderBevelPosition
-					}
-					if (props.includes('borderOpacity')) {
-						newProps.borderOpacity = await options.borderOpacity
-					}
-					if (props.includes('borderHue')) {
-						newProps.borderHue = (await options.borderHue) * 10
-					}
-					if (props.includes('borderSaturation')) {
-						newProps.borderSaturation = (await options.borderSaturation) * 10
-					}
-					if (props.includes('borderLuma')) {
-						newProps.borderLuma = (await options.borderLuma) * 10
-					}
-					if (props.includes('lightSourceDirection')) {
-						newProps.lightSourceDirection = (await options.lightSourceDirection) * 10
-					}
-					if (props.includes('lightSourceAltitude')) {
-						newProps.lightSourceAltitude = await options.lightSourceAltitude
-					}
-					if (props.includes('borderEnabled')) {
-						newProps.borderEnabled = await options.borderEnabled
-					}
-					if (props.includes('shadowEnabled')) {
-						newProps.shadowEnabled = await options.shadowEnabled
-					}
-					if (props.includes('borderBevel')) {
-						newProps.borderBevel = await options.borderBevel
-					}
-					if (props.includes('rate')) {
-						newProps.rate = await options.rate
-					}
-				}
-
-				if (isNaN(mixEffectId) || isNaN(keyId)) return
-				if (Object.keys(newProps).length === 0) return
-
-				await transitions.runForProperties(
-					`me.${mixEffectId}.keyer.${keyId}.dveSettings`,
-					async (props) => {
-						await atem?.setUpstreamKeyerDVESettings(props, mixEffectId, keyId)
-					},
-					options,
-					[
-						'positionX',
-						'positionY',
-						'sizeX',
-						'sizeY',
-						'rotation',
-						'maskTop',
-						'maskBottom',
-						'maskLeft',
-						'maskRight',
-						'lightSourceDirection',
-						'lightSourceAltitude',
-						'borderHue',
-						'borderSaturation',
-						'borderLuma',
-						'borderBevel',
-						'borderOuterWidth',
-						'borderInnerWidth',
-						'borderOuterSoftness',
-						'borderInnerSoftness',
-						'borderOpacity',
-						'borderBevelPosition',
-						'borderBevelSoftness',
-					],
-					newProps,
-					state.state.video.mixEffects[mixEffectId]?.upstreamKeyers[keyId]?.dveSettings,
-				)
-			},
-			learn: async ({ options }) => {
-				const mixeffect = (await options.mixeffect) - 1
-				const key = (await options.key) - 1
-				const usk = getUSK(state.state, mixeffect, key)
-
-				if (usk?.dveSettings) {
-					return {
-						maskEnabled: usk.dveSettings.maskEnabled + '',
-						maskTop: usk.dveSettings.maskTop / 1000 + '',
-						maskBottom: usk.dveSettings.maskBottom / 1000 + '',
-						maskLeft: usk.dveSettings.maskLeft / 1000 + '',
-						maskRight: usk.dveSettings.maskRight / 1000 + '',
-						sizeX: usk.dveSettings.sizeX / 1000 + '',
-						sizeY: usk.dveSettings.sizeY / 1000 + '',
-						positionX: usk.dveSettings.positionX / 1000 + '',
-						positionY: usk.dveSettings.positionY / 1000 + '',
-						rotation: usk.dveSettings.rotation + '',
-						borderOuterWidth: usk.dveSettings.borderOuterWidth / 100 + '',
-						borderInnerWidth: usk.dveSettings.borderInnerWidth / 100 + '',
-						borderOuterSoftness: usk.dveSettings.borderOuterSoftness + '',
-						borderInnerSoftness: usk.dveSettings.borderInnerSoftness + '',
-						borderBevelSoftness: usk.dveSettings.borderBevelSoftness + '',
-						borderBevelPosition: usk.dveSettings.borderBevelPosition + '',
-						borderOpacity: usk.dveSettings.borderOpacity + '',
-						borderHue: usk.dveSettings.borderHue / 10 + '',
-						borderSaturation: usk.dveSettings.borderSaturation / 10 + '',
-						borderLuma: usk.dveSettings.borderLuma / 10 + '',
-						lightSourceDirection: usk.dveSettings.lightSourceDirection / 10 + '',
-						lightSourceAltitude: usk.dveSettings.lightSourceAltitude + '',
-						borderEnabled: usk.dveSettings.borderEnabled + '',
-						shadowEnabled: usk.dveSettings.shadowEnabled + '',
-						borderBevel: usk.dveSettings.borderBevel + '',
-						rate: usk.dveSettings.rate + '',
-					}
-				} else {
-					return undefined
-				}
-			},
-		},
 		[ActionId.USKSetKeyframe]: {
 			name: 'Upstream key: Set Keyframe from values',
 			options: convertOptionsFields({
@@ -611,12 +360,13 @@ export function createUpstreamKeyerDVEActions(
 					label: 'Key Frame',
 					choices: CHOICES_KEYFRAMES_CONFIGURABLE,
 					default: CHOICES_KEYFRAMES_CONFIGURABLE[0].id,
+					disableAutoExpression: true, // TODO needs translation
 				},
 				...AtemUSKKeyframePropertiesPickers(),
 			}),
 			callback: async ({ options }) => {
-				const mixEffectId = options.mixeffect
-				const keyId = options.key
+				const mixEffectId = options.mixeffect - 1
+				const keyId = options.key - 1
 				const keyframeId = options.keyframe
 				const properties: Partial<UpstreamKeyerFlyKeyframe> = {}
 
@@ -692,7 +442,7 @@ export function createUpstreamKeyerDVEActions(
 				await atem?.setUpstreamKeyerFlyKeyKeyframe(mixEffectId, keyId, keyframeId, properties)
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.mixeffect, options.key)
+				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
 
 				if (usk?.dveSettings) {
 					return {
@@ -734,10 +484,11 @@ export function createUpstreamKeyerDVEActions(
 					label: 'Key Frame',
 					choices: CHOICES_KEYFRAMES_CONFIGURABLE,
 					default: CHOICES_KEYFRAMES_CONFIGURABLE[0].id,
+					disableAutoExpression: true, // TODO needs translation
 				},
 			}),
 			callback: async ({ options }) => {
-				await atem?.storeUpstreamKeyerFlyKeyKeyframe(options.mixeffect, options.key, options.keyframe)
+				await atem?.storeUpstreamKeyerFlyKeyKeyframe(options.mixeffect - 1, options.key - 1, options.keyframe)
 			},
 		},
 		[ActionId.USKFly]: {
@@ -751,13 +502,14 @@ export function createUpstreamKeyerDVEActions(
 					label: 'Key Frame',
 					choices: CHOICES_KEYFRAMES,
 					default: CHOICES_KEYFRAMES[0].id,
+					disableAutoExpression: true, // TODO needs translation
 				},
 			}),
 			callback: async ({ options }) => {
-				await atem?.runUpstreamKeyerFlyKeyTo(options.mixeffect, options.key, options.keyframe)
+				await atem?.runUpstreamKeyerFlyKeyTo(options.mixeffect - 1, options.key - 1, options.keyframe)
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.mixeffect, options.key)
+				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
 
 				if (usk?.flyProperties) {
 					return {
@@ -779,13 +531,14 @@ export function createUpstreamKeyerDVEActions(
 					label: 'Fly direction',
 					choices: CHOICES_FLYDIRECTIONS,
 					default: CHOICES_FLYDIRECTIONS[0].id,
+					disableAutoExpression: true, // TODO - rework
 				},
 			}),
 			callback: async ({ options }) => {
-				await atem?.runUpstreamKeyerFlyKeyToInfinite(options.mixeffect, options.key, options.flydirection)
+				await atem?.runUpstreamKeyerFlyKeyToInfinite(options.mixeffect - 1, options.key - 1, options.flydirection)
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.mixeffect, options.key)
+				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
 
 				if (usk?.flyProperties) {
 					return {

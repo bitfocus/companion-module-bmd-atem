@@ -29,6 +29,10 @@ type OptionFixupRule = {
 				zeroBased: boolean
 				variables: boolean
 		  }
+		| {
+				type: 'boolean'
+				variables: boolean
+		  }
 }
 
 const timeOfDayModeValueMap: Record<Enums.TimeMode, string> = {
@@ -224,6 +228,204 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 			invert: { transform: { type: 'lookup', lookup: { true: true, false: false } } },
 		},
 	},
+	fadeToBlackAuto: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	fadeToBlackRate: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	tBar: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+			position: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	auto: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	cut: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	preview: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	previewVariables: {
+		newType: 'preview',
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: true } },
+			input: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	program: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	programVariables: {
+		newType: 'program',
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: true } },
+			input: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	previewTransition: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: true } },
+		},
+	},
+	transitionStyle: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	transitionSelection: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	transitionSelectionComponent: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	transitionSelectComponents: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	transitionRate: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	uskType: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	uskSource: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	uskSourceVariables: {
+		newType: 'uskSource',
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: true } },
+			key: { transform: { type: 'number', zeroBased: true, variables: true } },
+			fill: { transform: { type: 'number', zeroBased: false, variables: true } },
+			cut: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	usk: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	uskMaskLumaChromaPattern: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	uskFlyKeyLumaChromaPattern: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	uskFlyKeyLumaChromaPatternVariables: {
+		newType: 'uskFlyKeyLumaChromaPattern',
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: true } },
+			key: { transform: { type: 'number', zeroBased: true, variables: true } },
+			flyEnabled: { transform: { type: 'boolean', variables: true } },
+			positionX: { transform: { type: 'number', zeroBased: false, variables: true } },
+			positionY: { transform: { type: 'number', zeroBased: false, variables: true } },
+			sizeX: { transform: { type: 'number', zeroBased: false, variables: true } },
+			sizeY: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	uskDveProperties: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	uskDvePropertiesVariables: {
+		newType: 'uskDveProperties',
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: true } },
+			key: { transform: { type: 'number', zeroBased: true, variables: true } },
+			positionX: { transform: { type: 'number', zeroBased: false, variables: true } },
+			positionY: { transform: { type: 'number', zeroBased: false, variables: true } },
+			sizeX: { transform: { type: 'number', zeroBased: false, variables: true } },
+			sizeY: { transform: { type: 'number', zeroBased: false, variables: true } },
+			rotation: { transform: { type: 'number', zeroBased: false, variables: true } },
+			maskEnabled: { transform: { type: 'boolean', variables: true } },
+			maskTop: { transform: { type: 'number', zeroBased: false, variables: true } },
+			maskBottom: { transform: { type: 'number', zeroBased: false, variables: true } },
+			maskLeft: { transform: { type: 'number', zeroBased: false, variables: true } },
+			maskRight: { transform: { type: 'number', zeroBased: false, variables: true } },
+			shadowEnabled: { transform: { type: 'boolean', variables: true } },
+			lightSourceDirection: { transform: { type: 'number', zeroBased: false, variables: true } },
+			lightSourceAltitude: { transform: { type: 'number', zeroBased: false, variables: true } },
+			borderEnabled: { transform: { type: 'boolean', variables: true } },
+			borderHue: { transform: { type: 'number', zeroBased: false, variables: true } },
+			borderSaturation: { transform: { type: 'number', zeroBased: false, variables: true } },
+			borderLuma: { transform: { type: 'number', zeroBased: false, variables: true } },
+			borderBevel: { transform: { type: 'number', zeroBased: false, variables: true } },
+			borderOuterWidth: { transform: { type: 'number', zeroBased: false, variables: true } },
+			borderInnerWidth: { transform: { type: 'number', zeroBased: false, variables: true } },
+			borderOuterSoftness: { transform: { type: 'number', zeroBased: false, variables: true } },
+			borderInnerSoftness: { transform: { type: 'number', zeroBased: false, variables: true } },
+			borderOpacity: { transform: { type: 'number', zeroBased: false, variables: true } },
+			borderBevelPosition: { transform: { type: 'number', zeroBased: false, variables: true } },
+			borderBevelSoftness: { transform: { type: 'number', zeroBased: false, variables: true } },
+			rate: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	uskSetKeyframe: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+			//
+		},
+	},
+	uskStoreKeyframe: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+			//
+		},
+	},
+	uskFly: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+			//
+		},
+	},
+	uskFlyInfinite: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+			//
+		},
+	},
 }
 
 export const UpgradeToExpressions: CompanionStaticUpgradeScript<AtemConfig, undefined> = (_context, props) => {
@@ -266,6 +468,8 @@ export const UpgradeToExpressions: CompanionStaticUpgradeScript<AtemConfig, unde
 					if (!action.options[optionKey]) {
 						action.options[optionKey] = { isExpression: false, value: optionRule.transform.value }
 					}
+				} else if (optionRule.transform.type === 'boolean') {
+					// nocommit TODO
 				}
 			}
 
