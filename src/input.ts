@@ -1167,6 +1167,42 @@ export function AtemSuperSourceIdPicker(model: ModelSpec): CompanionInputFieldDr
 
 export type SSrcArtOption = 'unchanged' | 'toggle' | 'foreground' | 'background'
 
+export function AtemSSrcArtOptionToProtocolEnum(
+	rawArtOption: SSrcArtOption,
+	currentValue: Enums.SuperSourceArtOption | undefined,
+): Enums.SuperSourceArtOption | undefined {
+	switch (rawArtOption) {
+		case 'toggle': {
+			return currentValue === Enums.SuperSourceArtOption.Background
+				? Enums.SuperSourceArtOption.Foreground
+				: Enums.SuperSourceArtOption.Background
+		}
+		case 'background':
+			return Enums.SuperSourceArtOption.Background
+		case 'foreground':
+			return Enums.SuperSourceArtOption.Foreground
+		case 'unchanged':
+			return undefined
+		default:
+			assertNever(rawArtOption)
+			return undefined
+	}
+}
+
+export function AtemSSrcArtOptionFromProtocolEnum(artOption: Enums.SuperSourceArtOption | undefined): SSrcArtOption {
+	switch (artOption) {
+		case Enums.SuperSourceArtOption.Foreground:
+			return 'foreground'
+		case Enums.SuperSourceArtOption.Background:
+			return 'background'
+		case undefined:
+			return 'unchanged'
+		default:
+			assertNever(artOption)
+			return 'unchanged'
+	}
+}
+
 export function AtemSuperSourceArtOption(action: boolean): CompanionInputFieldDropdown<'artOption', SSrcArtOption> {
 	const options: DropdownChoice<SSrcArtOption>[] = compact([
 		action
@@ -1561,48 +1597,6 @@ export function AtemSuperSourceArtPropertiesPickers(
 	}
 }
 
-/** @deprecated */
-export type AtemSuperSourceArtPropertiesVariables = {
-	properties: Array<'fill' | 'key'> // | 'artOption' | 'artPreMultiplied' | 'artClip' | 'artGain' | 'artInvertKey'>
-	fill: string
-	key: string
-	// artOption: 'unchanged' | Enums.SuperSourceArtOption | 'toggle'
-	// artPreMultiplied: boolean
-	// artClip: number
-	// artGain: number
-	// artInvertKey: boolean
-}
-
-/** @deprecated */
-export function AtemSuperSourceArtPropertiesVariablesPickers(): MyOptionsObject<
-	AtemSuperSourceArtPropertiesVariables,
-	CompanionInputFieldTextInput | CompanionInputFieldMultiDropdown
-> {
-	const allProps: Omit<ReturnType<typeof AtemSuperSourceArtPropertiesVariablesPickers>, 'properties'> = {
-		fill: {
-			type: 'textinput',
-			id: 'fill',
-			label: 'Fill Source',
-			default: '1',
-			useVariables: true,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'fill')`,
-		},
-		key: {
-			type: 'textinput',
-			id: 'key',
-			label: 'Key Source',
-			default: '1',
-			useVariables: true,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'key')`,
-		},
-	}
-
-	return {
-		properties: DropdownPropertiesPicker(allProps),
-		...allProps,
-	}
-}
-
 export function DropdownPropertiesPicker(
 	allProps: Record<
 		string,
@@ -1624,12 +1618,12 @@ export function DropdownPropertiesPicker(
 	}
 }
 
-export function AtemSuperSourceArtSourcePicker(
+export function AtemSuperSourceArtSourcePicker<T extends string>(
 	model: ModelSpec,
 	state: AtemState,
-	id: string,
+	id: T,
 	label: string,
-): CompanionInputFieldDropdown {
+): CompanionInputFieldDropdown<T> {
 	return {
 		type: 'dropdown',
 		id: id,

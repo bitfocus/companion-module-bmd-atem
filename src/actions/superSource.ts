@@ -14,6 +14,8 @@ import {
 	type AtemSuperSourceProperties,
 	AtemTransitionAnimationOptions,
 	resolveTrueFalseToggle,
+	AtemSSrcArtOptionToProtocolEnum,
+	AtemSSrcArtOptionFromProtocolEnum,
 } from '../input.js'
 import type { SuperSource } from 'atem-connection/dist/state/video/index.js'
 import { CHOICES_KEYTRANS, type TrueFalseToggle } from '../choices.js'
@@ -100,29 +102,9 @@ export function createSuperSourceActions(
 					if (props.includes('key')) newProps.artCutSource = options.key
 
 					if (props.includes('artOption')) {
-						const rawArtOption = options.artOption
-						switch (rawArtOption) {
-							case 'toggle': {
-								const ssrc = state.state.video.superSources[ssrcId]
-
-								newProps.artOption =
-									ssrc?.properties?.artOption === Enums.SuperSourceArtOption.Background
-										? Enums.SuperSourceArtOption.Foreground
-										: Enums.SuperSourceArtOption.Background
-								break
-							}
-							case 'background':
-								newProps.artOption = Enums.SuperSourceArtOption.Background
-								break
-							case 'foreground':
-								newProps.artOption = Enums.SuperSourceArtOption.Foreground
-								break
-							case 'unchanged':
-								break
-							default:
-								assertNever(rawArtOption)
-								break
-						}
+						const ssrc = state.state.video.superSources[ssrcId]
+						const newArtOption = AtemSSrcArtOptionToProtocolEnum(options.artOption, ssrc?.properties?.artOption)
+						if (newArtOption !== undefined) newProps.artOption = newArtOption
 					}
 
 					if (props.includes('artPreMultiplied')) newProps.artPreMultiplied = options.artPreMultiplied
@@ -144,12 +126,7 @@ export function createSuperSourceActions(
 						fill: ssrcConfig.artFillSource,
 						key: ssrcConfig.artCutSource,
 
-						artOption:
-							ssrcConfig.artOption === Enums.SuperSourceArtOption.Foreground
-								? 'foreground'
-								: ssrcConfig.artOption === Enums.SuperSourceArtOption.Background
-									? 'background'
-									: 'unchanged',
+						artOption: AtemSSrcArtOptionFromProtocolEnum(ssrcConfig.artOption),
 						artPreMultiplied: ssrcConfig.artPreMultiplied,
 						artClip: ssrcConfig.artClip / 10,
 						artGain: ssrcConfig.artGain / 10,

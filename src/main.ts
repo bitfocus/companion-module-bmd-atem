@@ -297,7 +297,6 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 			const auxMatch = path.match(/video.auxilliaries.(\d+)/)
 			if (auxMatch) {
 				changedFeedbacks.add(FeedbackId.Aux)
-				changedFeedbacks.add(FeedbackId.AuxVariables)
 				changedVariables.auxes.add(parseInt(auxMatch[1], 10))
 				continue
 			}
@@ -308,7 +307,6 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 				changedFeedbacks.add(FeedbackId.DSKOnAir)
 				changedFeedbacks.add(FeedbackId.DSKTie)
 				changedFeedbacks.add(FeedbackId.DSKSource)
-				changedFeedbacks.add(FeedbackId.DSKSourceVariables)
 				continue
 			}
 
@@ -375,7 +373,6 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 				changedVariables.usk.add([meIndex, keyIndex])
 				changedFeedbacks.add(FeedbackId.USKType)
 				changedFeedbacks.add(FeedbackId.USKSource)
-				changedFeedbacks.add(FeedbackId.USKSourceVariables)
 				continue
 			}
 
@@ -401,7 +398,6 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 				changedVariables.mvWindow.add([mvIndex + 1, windowIndex + 1])
 
 				changedFeedbacks.add(FeedbackId.MVSource)
-				changedFeedbacks.add(FeedbackId.MVSourceVariables)
 				continue
 			}
 
@@ -418,10 +414,6 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 				changedVariables.meProgram.add(meIndex)
 
 				changedFeedbacks.add(FeedbackId.Program)
-				changedFeedbacks.add(FeedbackId.ProgramVariables)
-				changedFeedbacks.add(FeedbackId.ProgramBG2)
-				changedFeedbacks.add(FeedbackId.ProgramBG3)
-				changedFeedbacks.add(FeedbackId.ProgramBG4)
 				continue
 			}
 
@@ -431,10 +423,6 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 				changedVariables.mePreview.add(meIndex)
 
 				changedFeedbacks.add(FeedbackId.Preview)
-				changedFeedbacks.add(FeedbackId.PreviewVariables)
-				changedFeedbacks.add(FeedbackId.PreviewBG2)
-				changedFeedbacks.add(FeedbackId.PreviewBG3)
-				changedFeedbacks.add(FeedbackId.PreviewBG4)
 				continue
 			}
 

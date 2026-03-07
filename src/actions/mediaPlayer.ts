@@ -92,6 +92,7 @@ export function createMediaPlayerActions(
 			},
 		},
 		[ActionId.MediaPlayerSourceVariables]: {
+			// TODO - this needs merging into the default one above
 			name: 'Media player: Set source from variables',
 			options: convertOptionsFields({
 				mediaplayer: {
@@ -100,6 +101,7 @@ export function createMediaPlayerActions(
 					label: 'Media Player',
 					default: '1',
 					useVariables: true,
+					disableAutoExpression: true,
 				},
 				isClip:
 					model.media.clips > 0
@@ -108,6 +110,7 @@ export function createMediaPlayerActions(
 								id: 'isClip',
 								label: 'Is clip',
 								default: false,
+								disableAutoExpression: true,
 							}
 						: undefined,
 				slot: {
@@ -116,6 +119,7 @@ export function createMediaPlayerActions(
 					label: 'Slot number or item name',
 					default: '1',
 					useVariables: true,
+					disableAutoExpression: true,
 				},
 			}),
 			callback: async ({ options }) => {
@@ -189,7 +193,6 @@ export function createMediaPlayerActions(
 					],
 					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
-				// AtemMediaPlayerSourcePicker(model, state)
 			}),
 			callback: async ({ options }) => {
 				const playerId = options.mediaplayer - 1

@@ -23,18 +23,10 @@ export type AtemMultiviewerFeedbacks = {
 			source: number
 		}
 	}
-	[FeedbackId.MVSourceVariables]: {
-		type: 'boolean'
-		options: {
-			multiViewerId: string
-			windowIndex: string
-			source: string
-		}
-	}
 	[FeedbackId.MultiviewerLayout]: {
 		type: 'boolean'
 		options: {
-			multiViewerId: string
+			multiViewerId: number
 			topLeft: MultiviewerQuadrantState
 			topRight: MultiviewerQuadrantState
 			bottomLeft: MultiviewerQuadrantState
@@ -50,7 +42,6 @@ export function createMultiviewerFeedbacks(
 	if (!model.MVs) {
 		return {
 			[FeedbackId.MVSource]: undefined,
-			[FeedbackId.MVSourceVariables]: undefined,
 			[FeedbackId.MultiviewerLayout]: undefined,
 		}
 	}
@@ -69,11 +60,11 @@ export function createMultiviewerFeedbacks(
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: ({ options }): boolean => {
-				const window = getMultiviewerWindow(state.state, options.multiViewerId, options.windowIndex)
+				const window = getMultiviewerWindow(state.state, options.multiViewerId - 1, options.windowIndex - 1)
 				return window?.source === options.source
 			},
 			learn: ({ options }) => {
-				const window = getMultiviewerWindow(state.state, options.multiViewerId, options.windowIndex)
+				const window = getMultiviewerWindow(state.state, options.multiViewerId - 1, options.windowIndex - 1)
 
 				if (window) {
 					return {
@@ -84,71 +75,11 @@ export function createMultiviewerFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.MVSourceVariables]: {
-			type: 'boolean',
-			name: 'Multiviewer: Window source from variables',
-			description: 'If the specified MV window is set to the specified source, change style of the bank',
-			options: convertOptionsFields({
-				multiViewerId: {
-					type: 'textinput',
-					id: 'multiViewerId',
-					label: 'MV',
-					default: '1',
-					useVariables: true,
-				},
-				windowIndex: {
-					type: 'textinput',
-					id: 'windowIndex',
-					label: 'Window #',
-					default: '1',
-					useVariables: true,
-				},
-				source: {
-					type: 'textinput',
-					id: 'source',
-					label: 'Source',
-					default: '1',
-					useVariables: true,
-				},
-			}),
-			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			callback: async ({ options }) => {
-				const multiViewerId = (await options.multiViewerId) - 1
-				const windowIndex = (await options.windowIndex) - 1
-				const source = await options.source
-
-				const window = getMultiviewerWindow(state.state, multiViewerId, windowIndex)
-				return window?.source === source
-			},
-			learn: async ({ options }) => {
-				const multiViewerId = (await options.multiViewerId) - 1
-				const windowIndex = (await options.windowIndex) - 1
-
-				const window = getMultiviewerWindow(state.state, multiViewerId, windowIndex)
-
-				if (window) {
-					return {
-						source: window.source + '',
-					}
-				} else {
-					return undefined
-				}
-			},
-		},
 		[FeedbackId.MultiviewerLayout]: {
 			type: 'boolean',
 			name: 'Multiviewer: Layout',
 			options: convertOptionsFields({
-				multiViewerId: {
-					type: 'textinput',
-					id: 'multiViewerId',
-					label: 'MV',
-					default: '1',
-					useVariables: true,
-				},
+				multiViewerId: AtemMultiviewerPicker(model),
 				topLeft: {
 					id: 'topLeft',
 					type: 'dropdown',
@@ -183,7 +114,7 @@ export function createMultiviewerFeedbacks(
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: async ({ options }) => {
-				const multiViewerId = (await options.multiViewerId) - 1
+				const multiViewerId = options.multiViewerId - 1
 
 				const mv = getMultiviewer(state.state, multiViewerId)
 				const layout = mv?.properties?.layout ?? Enums.MultiViewerLayout.Default
@@ -210,7 +141,7 @@ export function createMultiviewerFeedbacks(
 				)
 			},
 			learn: async ({ options }) => {
-				const multiViewerId = (await options.multiViewerId) - 1
+				const multiViewerId = options.multiViewerId - 1
 
 				const mv = getMultiviewer(state.state, multiViewerId)
 

@@ -1,7 +1,7 @@
 import type { ModelSpec } from '../models/index.js'
 import { convertOptionsFields } from '../common.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb, type CompanionInputFieldDropdown, CompanionFeedbackDefinitions } from '@companion-module/base'
+import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
 import { GetMacroChoices } from '../choices.js'
 import { assertUnreachable } from '../util.js'
 import type { StateWrapper } from '../state.js'

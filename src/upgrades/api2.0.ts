@@ -735,6 +735,80 @@ const feedbackFixupRules: Record<string, FeedbackFixupRule> = {
 			input: { transform: { type: 'number', zeroBased: false, variables: true } },
 		},
 	},
+	mv_source: {
+		options: {
+			multiViewerId: { transform: { type: 'number', zeroBased: true, variables: false } },
+			windowIndex: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	mv_source_variables: {
+		newType: 'mv_source',
+		options: {
+			multiViewerId: { transform: { type: 'number', zeroBased: true, variables: true } },
+			windowIndex: { transform: { type: 'number', zeroBased: true, variables: true } },
+			source: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	multiviewerLayout: {
+		options: {
+			multiViewerId: { transform: { type: 'number', zeroBased: true, variables: true } },
+		},
+	},
+	ssrc_art_properties: {
+		options: {
+			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false } },
+			artOption: { transform: { type: 'lookup', lookup: ssrcArtOptionValueMap } },
+		},
+	},
+	ssrcArtPropertiesVariables: {
+		newType: 'ssrc_art_properties',
+		options: {
+			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false } },
+			fill: { transform: { type: 'number', zeroBased: false, variables: true } },
+			key: { transform: { type: 'number', zeroBased: false, variables: true } },
+			artOption: { transform: { type: 'default', value: 'foreground' } },
+			artPreMultiplied: { transform: { type: 'default', value: true } },
+			artClip: { transform: { type: 'default', value: 50 } },
+			artGain: { transform: { type: 'default', value: 50 } },
+			artInvertKey: { transform: { type: 'default', value: false } },
+		},
+	},
+	ssrc_art_source: {
+		options: {
+			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	ssrc_art_option: {
+		options: {
+			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	ssrc_box_enable: {
+		options: {
+			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false } },
+			boxIndex: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	ssrc_box_source: {
+		options: {
+			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false } },
+			boxIndex: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	ssrc_box_source_variables: {
+		newType: 'ssrc_box_source',
+		options: {
+			ssrcId: { transform: { type: 'number', zeroBased: true, variables: true } },
+			boxIndex: { transform: { type: 'number', zeroBased: true, variables: true } },
+			source: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	ssrc_box_properties: {
+		options: {
+			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false } },
+			boxIndex: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
 }
 
 function applyTransform(

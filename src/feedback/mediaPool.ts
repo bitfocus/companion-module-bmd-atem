@@ -101,6 +101,7 @@ export function createMediaPoolFeedbacks(
 			},
 		},
 		[FeedbackId.MediaPoolPreviewVariables]: {
+			// TODO - this should be merged into the above!
 			type: 'advanced',
 			name: 'Media pool: Preview image from variables',
 			description: 'Preview of the specified media pool slot',
@@ -113,6 +114,7 @@ export function createMediaPoolFeedbacks(
 								label: 'Is clip',
 								default: false,
 								tooltip: 'If slot includes a S or C prefix, that will override this setting',
+								disableAutoExpression: true,
 							}
 						: undefined,
 				slot: {
@@ -121,6 +123,7 @@ export function createMediaPoolFeedbacks(
 					label: 'Slot',
 					default: '1',
 					useVariables: true,
+					disableAutoExpression: true,
 				},
 
 				...cropAndPositionOptions,
