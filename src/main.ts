@@ -206,11 +206,11 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 
 	private updateCompanionBits(): void {
 		InitVariables(this, this.model, this.wrappedState)
-		this.setPresetDefinitions(...GetPresetsList(this, this.model, this.wrappedState.state))
 		this.setFeedbackDefinitions(GetFeedbacksList(this.config, this.model, this.wrappedState))
 		this.setActionDefinitions(
 			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.wrappedState),
 		)
+		this.setPresetDefinitions(...GetPresetsList(this, this.model, this.wrappedState.state))
 
 		this.checkAllFeedbacks()
 	}
