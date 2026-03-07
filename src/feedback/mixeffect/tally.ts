@@ -40,7 +40,7 @@ export function createTallyFeedbacks(
 			name: 'Tally: Program',
 			description: 'If the input specified has an active progam tally light, change style of the bank',
 			options: convertOptionsFields({
-				input: AtemMESourcePicker(model, state.state, 0),
+				input: AtemMESourcePicker(model, state.state),
 			}),
 			defaultStyle: {
 				color: combineRgb(255, 255, 255),
@@ -56,7 +56,7 @@ export function createTallyFeedbacks(
 			name: 'Tally: Preview',
 			description: 'If the input specified has an active preview tally light, change style of the bank',
 			options: convertOptionsFields({
-				input: AtemMESourcePicker(model, state.state, 0),
+				input: AtemMESourcePicker(model, state.state),
 			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -79,7 +79,7 @@ export function createTallyFeedbacks(
 					default: [10010],
 					choices: SourcesToChoices(GetSourcesListForType(model, state.state, 'tally')),
 				},
-				input: AtemMESourcePicker(model, state.state, 0),
+				input: AtemMESourcePicker(model, state.state),
 			}),
 			defaultStyle: {
 				color: combineRgb(255, 255, 255),

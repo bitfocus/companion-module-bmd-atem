@@ -32,7 +32,7 @@ export function createFadeToBlackFeedbacks(
 			name: 'Fade to black: Active',
 			description: 'If the specified fade to black is active, change style of the bank',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				state: AtemFadeToBlackStatePicker(),
 			}),
 			defaultStyle: {
@@ -60,7 +60,7 @@ export function createFadeToBlackFeedbacks(
 			name: 'Fade to black: Rate',
 			description: 'If the specified fade to black rate matches, change style of the bank',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				rate: AtemRatePicker('Rate'),
 			}),
 			defaultStyle: {

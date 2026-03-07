@@ -43,15 +43,10 @@ export type WithProperties<T> = T & {
 	properties: Array<keyof T>
 }
 
-export type InputId<T extends number> = T extends 0 ? 'input' : `input${T}`
-export function AtemMESourcePicker<T extends number>(
-	model: ModelSpec,
-	state: AtemState,
-	id: T,
-): CompanionInputFieldDropdown<InputId<T>> {
+export function AtemMESourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown<'input'> {
 	return {
-		id: `input${id ? id : ''}` as InputId<T>,
-		label: `Input${id ? ` Option ${id}` : ''}`,
+		id: `input`,
+		label: `Input`,
 		type: 'dropdown',
 		default: 1,
 		choices: SourcesToChoices(GetSourcesListForType(model, state, 'me')),
@@ -173,13 +168,12 @@ export function AtemTransitionSelectionComponentPicker(model: ModelSpec): Compan
 		default: 0,
 	}
 }
-export type MeKey<T extends number> = T extends 0 ? 'mixeffect' : `mixeffect${T}`
-export function AtemMEPicker<T extends number>(model: ModelSpec, id: T): CompanionInputFieldDropdown<MeKey<T>> {
+export function AtemMEPicker(model: ModelSpec): CompanionInputFieldDropdown<'mixeffect'> {
 	return {
-		id: (id === 0 ? 'mixeffect' : `mixeffect${id}`) as MeKey<T>,
-		label: `M/E${id ? ` Option ${id}` : ''}`,
+		id: 'mixeffect',
+		label: `M/E`,
 		type: 'dropdown',
-		default: id > 0 ? id - 1 : 0,
+		default: 0,
 		choices: GetMEIdChoices(model),
 	}
 }

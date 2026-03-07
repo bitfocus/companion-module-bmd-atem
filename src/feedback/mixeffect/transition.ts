@@ -62,7 +62,7 @@ export function createTransitionFeedbacks(
 			name: 'Transition: Preview',
 			description: 'If the specified transition is being previewed, change style of the bank',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),
@@ -78,7 +78,7 @@ export function createTransitionFeedbacks(
 			name: 'Transition: Style',
 			description: 'If the specified transition style is active, change style of the bank',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				style: AtemTransitionStylePicker(model.media.clips === 0),
 			}),
 			defaultStyle: {
@@ -106,7 +106,7 @@ export function createTransitionFeedbacks(
 			name: 'Transition: Selection',
 			description: 'If the specified transition selection is active, change style of the bank',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				matchmethod: AtemMatchMethod(),
 				selection: AtemTransitionSelectionPicker(model),
 			}),
@@ -135,7 +135,7 @@ export function createTransitionFeedbacks(
 			name: 'Transition: Rate',
 			description: 'If the specified transition rate is active, change style of the bank',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				style: AtemTransitionStylePicker(true),
 				rate: AtemRatePicker('Transition Rate'),
 			}),
@@ -203,7 +203,7 @@ export function createTransitionFeedbacks(
 			name: 'Transition: Active/Running',
 			description: 'If the specified transition is active, change style of the bank',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),

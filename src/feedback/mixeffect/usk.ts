@@ -59,7 +59,7 @@ export function createUpstreamKeyerFeedbacks(
 			name: 'Upstream key: OnAir state',
 			description: 'If the specified upstream keyer is active, change style of the bank',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
 			}),
 			defaultStyle: {
@@ -76,7 +76,7 @@ export function createUpstreamKeyerFeedbacks(
 			name: 'Upstream key: Key type',
 			description: 'If the specified upstream keyer has the specified type, change style of the bank',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
 				type: AtemUpstreamKeyerTypePicker(),
 			}),
@@ -94,7 +94,7 @@ export function createUpstreamKeyerFeedbacks(
 			name: 'Upstream key: Fill source',
 			description: 'If the input specified is selected in the USK specified, change style of the bank',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
 				fill: AtemKeyFillSourcePicker(model, state.state),
 			}),
@@ -124,7 +124,7 @@ export function createUpstreamKeyerFeedbacks(
 					name: 'Upstream key: Key frame',
 					description: 'If the USK specified is at the Key Frame specified, change style of the bank',
 					options: convertOptionsFields({
-						mixeffect: AtemMEPicker(model, 0),
+						mixeffect: AtemMEPicker(model),
 						key: AtemUSKPicker(model),
 						keyframe: {
 							type: 'dropdown',

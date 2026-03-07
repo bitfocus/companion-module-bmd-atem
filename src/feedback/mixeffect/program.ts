@@ -25,8 +25,8 @@ export function createProgramFeedbacks(
 			name: 'ME: One ME program source',
 			description: 'If the input specified is selected in program on the M/E stage specified, change style of the bank',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
-				input: AtemMESourcePicker(model, state.state, 0),
+				mixeffect: AtemMEPicker(model),
+				input: AtemMESourcePicker(model, state.state),
 			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),

@@ -77,7 +77,7 @@ export function createTransitionActions(
 		[ActionId.PreviewTransition]: {
 			name: 'Transition: Preview',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				state: {
 					id: 'state',
 					type: 'dropdown',
@@ -102,7 +102,7 @@ export function createTransitionActions(
 		[ActionId.TransitionStyle]: {
 			name: 'Transition: Set style/pattern',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				style: AtemTransitionStylePicker(model.media.clips === 0),
 			}),
 			callback: async ({ options }) => {
@@ -128,7 +128,7 @@ export function createTransitionActions(
 		[ActionId.TransitionRate]: {
 			name: 'Transition: Change rate',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				style: AtemTransitionStylePicker(true),
 				rate: AtemRatePicker('Transition Rate'),
 			}),
@@ -217,7 +217,7 @@ export function createTransitionActions(
 		[ActionId.TransitionSelection]: {
 			name: 'Transition: Change selection',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				selection: AtemTransitionSelectionPicker(model),
 			}),
 			callback: async ({ options }) => {
@@ -232,7 +232,7 @@ export function createTransitionActions(
 		[ActionId.TransitionSelectComponents]: {
 			name: 'Transition: Select components in transition',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				...AtemTransitionSelectComponentsPickers(model),
 			}),
 			callback: async ({ options }) => {
@@ -354,7 +354,7 @@ export function createTransitionActions(
 		[ActionId.TransitionSelectionComponent]: {
 			name: 'Transition: Change selection component',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				component: AtemTransitionSelectionComponentPicker(model),
 				mode: {
 					type: 'dropdown',

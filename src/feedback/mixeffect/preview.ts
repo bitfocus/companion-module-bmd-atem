@@ -25,8 +25,8 @@ export function createPreviewFeedbacks(
 			name: 'ME: One ME preview source',
 			description: 'If the input specified is selected in preview on the M/E stage specified, change style of the bank',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
-				input: AtemMESourcePicker(model, state.state, 0),
+				mixeffect: AtemMEPicker(model),
+				input: AtemMESourcePicker(model, state.state),
 			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),

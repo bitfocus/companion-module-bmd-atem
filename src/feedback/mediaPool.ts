@@ -30,6 +30,7 @@ const cropAndPositionOptions = {
 			{ id: 'center', label: 'Center' },
 			{ id: 'right', label: 'Right' },
 		],
+		disableAutoExpression: true,
 	} satisfies CompanionInputFieldDropdown<'crop'>,
 	position: {
 		id: 'position',
@@ -42,6 +43,7 @@ const cropAndPositionOptions = {
 			{ id: 'bottom', label: 'Bottom' },
 		],
 		isVisibleExpression: `$(options:crop) === 'none'`,
+		disableAutoExpression: true,
 	} satisfies CompanionInputFieldDropdown<'position'>,
 }
 

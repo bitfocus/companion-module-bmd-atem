@@ -91,7 +91,7 @@ export function createUpstreamKeyerCommonActions(
 		[ActionId.USKSource]: {
 			name: 'Upstream key: Set inputs',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
 				fill: AtemKeyFillSourcePicker(model, state.state),
 				cut: AtemKeyCutSourcePicker(model, state.state),
@@ -118,7 +118,7 @@ export function createUpstreamKeyerCommonActions(
 		[ActionId.USKType]: {
 			name: 'Upstream key: Set type',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
 				type: AtemUpstreamKeyerTypePicker(),
 			}),
@@ -154,7 +154,7 @@ export function createUpstreamKeyerCommonActions(
 					choices: CHOICES_KEYTRANS,
 					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
 			}),
 			callback: async ({ options }) => {
@@ -179,7 +179,7 @@ export function createUpstreamKeyerCommonActions(
 		[ActionId.USKMaskLumaChromaPattern]: {
 			name: 'Upstream key: Set Mask (Luma, Chroma, Pattern)',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
 				...AtemUSKMaskPropertiesPickers(),
 			}),
@@ -230,7 +230,7 @@ export function createUpstreamKeyerCommonActions(
 		[ActionId.USKFlyKeyLumaChromaPattern]: {
 			name: 'Upstream key: Set Flying Key (Luma, Chroma, Pattern)',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
 				...AtemUSKFlyKeyPropertiesPickers(),
 			}),

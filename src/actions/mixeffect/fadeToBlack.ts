@@ -29,7 +29,7 @@ export function createFadeToBlackActions(
 		[ActionId.FadeToBlackAuto]: {
 			name: 'Fade to black: Run AUTO Transition',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 			}),
 			callback: async ({ options }) => {
 				await atem?.fadeToBlack(options.mixeffect - 1)
@@ -38,7 +38,7 @@ export function createFadeToBlackActions(
 		[ActionId.FadeToBlackRate]: {
 			name: 'Fade to black: Change rate',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				rate: AtemRatePicker('Rate'),
 			}),
 			callback: async ({ options }) => {

@@ -184,7 +184,7 @@ export function createUpstreamKeyerDVEActions(
 		[ActionId.USKDVEProperties]: {
 			name: 'Upstream key: Change DVE properties',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
 				...AtemTransitionAnimationOptions(),
 				...AtemUSKDVEPropertiesPickers(),
@@ -352,7 +352,7 @@ export function createUpstreamKeyerDVEActions(
 		[ActionId.USKSetKeyframe]: {
 			name: 'Upstream key: Set Keyframe from values',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
 				keyframe: {
 					type: 'dropdown',
@@ -476,7 +476,7 @@ export function createUpstreamKeyerDVEActions(
 		[ActionId.USKStoreKeyframe]: {
 			name: 'Upstream key: Set keyframe from current key state',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
 				keyframe: {
 					type: 'dropdown',
@@ -494,7 +494,7 @@ export function createUpstreamKeyerDVEActions(
 		[ActionId.USKFly]: {
 			name: 'Upstream key: fly to keyframe',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
 				keyframe: {
 					type: 'dropdown',
@@ -523,7 +523,7 @@ export function createUpstreamKeyerDVEActions(
 		[ActionId.USKFlyInfinite]: {
 			name: 'Upstream key: fly to infinite',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
 				flydirection: {
 					type: 'dropdown',

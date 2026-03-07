@@ -27,7 +27,7 @@ export function AtemMediaPlayerSourcePickers(
 			type: 'dropdown',
 			id: 'source',
 			label: 'Source',
-			default: 0,
+			default: 'still1',
 			choices: [
 				...(includeClips
 					? iterateTimes(model.media.clips, (i) => {

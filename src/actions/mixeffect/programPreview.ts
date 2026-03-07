@@ -49,8 +49,8 @@ export function createProgramPreviewActions(
 		[ActionId.Program]: {
 			name: 'ME: Set Program input',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
-				input: AtemMESourcePicker(model, state.state, 0),
+				mixeffect: AtemMEPicker(model),
+				input: AtemMESourcePicker(model, state.state),
 			}),
 			callback: async ({ options }) => {
 				await atem?.changeProgramInput(options.input, options.mixeffect - 1)
@@ -71,8 +71,8 @@ export function createProgramPreviewActions(
 		[ActionId.Preview]: {
 			name: 'ME: Set Preview input',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
-				input: AtemMESourcePicker(model, state.state, 0),
+				mixeffect: AtemMEPicker(model),
+				input: AtemMESourcePicker(model, state.state),
 			}),
 			callback: async ({ options }) => {
 				await atem?.changePreviewInput(options.input, options.mixeffect - 1)
@@ -93,7 +93,7 @@ export function createProgramPreviewActions(
 		[ActionId.Cut]: {
 			name: 'ME: Perform CUT transition',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 			}),
 			callback: async ({ options }) => {
 				await atem?.cut(options.mixeffect - 1)
@@ -102,7 +102,7 @@ export function createProgramPreviewActions(
 		[ActionId.Auto]: {
 			name: 'ME: Perform AUTO transition',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 			}),
 			callback: async ({ options }) => {
 				await atem?.autoTransition(options.mixeffect - 1)
@@ -112,7 +112,7 @@ export function createProgramPreviewActions(
 		[ActionId.TBar]: {
 			name: 'ME: Set TBar position',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 
 				position: {
 					type: 'number',

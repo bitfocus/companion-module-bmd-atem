@@ -41,7 +41,7 @@ export function createUpstreamKeyerPatternActions(
 		[ActionId.USKPatternProperties]: {
 			name: 'Upstream key: Change Pattern properties',
 			options: convertOptionsFields({
-				mixeffect: AtemMEPicker(model, 0),
+				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
 				...AtemUSKPatternPropertiesPickers(),
 			}),
