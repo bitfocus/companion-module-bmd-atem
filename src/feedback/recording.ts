@@ -45,6 +45,7 @@ export function createRecordingFeedbacks(
 							label: k,
 						})),
 					default: Enums.RecordingStatus.Recording,
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
 			}),
 			defaultStyle: {

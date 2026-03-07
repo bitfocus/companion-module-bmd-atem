@@ -40,6 +40,7 @@ export function createStreamingFeedbacks(
 							label: k,
 						})),
 					default: Enums.StreamingStatus.Streaming,
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
 			}),
 			defaultStyle: {

@@ -203,6 +203,7 @@ export function createSuperSourceActions(
 					label: 'On Air',
 					default: 'true',
 					choices: CHOICES_KEYTRANS,
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
 			}),
 			callback: async ({ options }) => {

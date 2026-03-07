@@ -98,6 +98,7 @@ export function createMacroActions(
 					label: 'Loop',
 					default: 'toggle',
 					choices: CHOICES_ON_OFF_TOGGLE,
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
 			}),
 			callback: async ({ options }) => {

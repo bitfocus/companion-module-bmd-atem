@@ -122,6 +122,8 @@ export function createProgramPreviewActions(
 					min: 0,
 					max: 100,
 					step: 1,
+					asInteger: true,
+					clampValues: true,
 				},
 
 				...FadeDurationFields,

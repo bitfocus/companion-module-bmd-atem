@@ -57,7 +57,7 @@ export function createCameraControlMediaActions(
 						{ id: 'false', label: 'Stopped' },
 						{ id: 'toggle', label: 'Toggle' },
 					],
-					disableAutoExpression: true,
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
 			}),
 			callback: async ({ options }) => {
@@ -107,7 +107,7 @@ export function createCameraControlMediaActions(
 						{ id: 'true', label: 'Recording' },
 						{ id: 'false', label: 'Stopped' },
 					],
-					disableAutoExpression: true,
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
 			}),
 			callback: async ({ options }) => {

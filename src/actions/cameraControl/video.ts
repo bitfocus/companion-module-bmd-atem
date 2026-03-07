@@ -201,8 +201,8 @@ export function createCameraControlVideoActions(
 						{ id: 'down', label: 'Down -' },
 					],
 					default: 'up',
-					tooltip: 'Up for faster shutter speeds, down for slower.',
-					disableAutoExpression: true,
+					description: 'Up for faster shutter speeds, down for slower.',
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
 			}),
 			callback: async ({ options }) => {
@@ -255,7 +255,7 @@ export function createCameraControlVideoActions(
 							label: 'High',
 						},
 					],
-					disableAutoExpression: true, // TODO needs translation
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
 			}),
 			callback: async ({ options }) => {

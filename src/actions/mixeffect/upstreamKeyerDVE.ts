@@ -360,7 +360,7 @@ export function createUpstreamKeyerDVEActions(
 					label: 'Key Frame',
 					choices: CHOICES_KEYFRAMES_CONFIGURABLE,
 					default: CHOICES_KEYFRAMES_CONFIGURABLE[0].id,
-					disableAutoExpression: true, // TODO needs translation
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
 				...AtemUSKKeyframePropertiesPickers(),
 			}),
@@ -484,7 +484,7 @@ export function createUpstreamKeyerDVEActions(
 					label: 'Key Frame',
 					choices: CHOICES_KEYFRAMES_CONFIGURABLE,
 					default: CHOICES_KEYFRAMES_CONFIGURABLE[0].id,
-					disableAutoExpression: true, // TODO needs translation
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
 			}),
 			callback: async ({ options }) => {
@@ -502,7 +502,7 @@ export function createUpstreamKeyerDVEActions(
 					label: 'Key Frame',
 					choices: CHOICES_KEYFRAMES,
 					default: CHOICES_KEYFRAMES[0].id,
-					disableAutoExpression: true, // TODO needs translation
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
 			}),
 			callback: async ({ options }) => {
@@ -531,7 +531,7 @@ export function createUpstreamKeyerDVEActions(
 					label: 'Fly direction',
 					choices: CHOICES_FLYDIRECTIONS,
 					default: CHOICES_FLYDIRECTIONS[0].id,
-					disableAutoExpression: true, // TODO - rework
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
 			}),
 			callback: async ({ options }) => {

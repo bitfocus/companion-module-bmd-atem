@@ -455,6 +455,7 @@ export function CameraControlSourcePicker(): CompanionInputFieldNumber<'cameraId
 		default: 1,
 		min: 1,
 		max: 40,
+		asInteger: true,
 	}
 }
 

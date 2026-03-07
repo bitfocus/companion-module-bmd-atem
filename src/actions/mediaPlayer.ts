@@ -187,6 +187,7 @@ export function createMediaPlayerActions(
 							label: 'Previous',
 						},
 					],
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
 				// AtemMediaPlayerSourcePicker(model, state)
 			}),
@@ -229,6 +230,8 @@ export function createMediaPlayerActions(
 					default: 1,
 					min: 1,
 					max: 99,
+					asInteger: true,
+					clampValues: false,
 				},
 			}),
 			callback: async ({ options }) => {

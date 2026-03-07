@@ -57,13 +57,17 @@ export function createClassicAudioFeedbacks(
 				comparitor: NumberComparitorPicker(),
 				gain: {
 					type: 'number',
-					label: 'Fader Level (-60 = -inf)',
+					label: 'Fader Level',
 					id: 'gain',
 					range: true,
 					default: 0,
 					step: 0.1,
 					min: -60,
 					max: 6,
+					description: '-60 = -inf',
+					showMinAsNegativeInfinity: true,
+					asInteger: false,
+					clampValues: true,
 				},
 			}),
 			defaultStyle: {
@@ -100,6 +104,7 @@ export function createClassicAudioFeedbacks(
 					type: 'dropdown',
 					default: CHOICES_CLASSIC_AUDIO_MIX_OPTION[0].id,
 					choices: CHOICES_CLASSIC_AUDIO_MIX_OPTION,
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
 			}),
 			defaultStyle: {
@@ -132,13 +137,17 @@ export function createClassicAudioFeedbacks(
 				comparitor: NumberComparitorPicker(),
 				gain: {
 					type: 'number',
-					label: 'Fader Level (-60 = -inf)',
+					label: 'Fader Level',
 					id: 'gain',
 					range: true,
 					default: 0,
 					step: 0.1,
 					min: -60,
 					max: 6,
+					description: '-60 = -inf',
+					showMinAsNegativeInfinity: true,
+					asInteger: false,
+					clampValues: true,
 				},
 			}),
 			defaultStyle: {

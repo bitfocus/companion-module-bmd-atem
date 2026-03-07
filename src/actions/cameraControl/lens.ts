@@ -202,7 +202,7 @@ export function createCameraControlLensActions(
 					label: 'State',
 					default: 'toggle',
 					choices: CHOICES_ON_OFF_TOGGLE,
-					disableAutoExpression: true,
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
 			}),
 			callback: async ({ options }) => {

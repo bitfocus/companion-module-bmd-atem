@@ -1,7 +1,12 @@
 import type { ModelSpec } from '../models/index.js'
 import { convertOptionsFields } from '../common.js'
 import { FeedbackId } from './FeedbackId.js'
-import { assertNever, combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
+import {
+	assertNever,
+	combineRgb,
+	CompanionFeedbackDefinitions,
+	CompanionInputFieldDropdown,
+} from '@companion-module/base'
 import type { StateWrapper } from '../state.js'
 import type { AtemConfig } from '../config.js'
 import { Enums } from 'atem-connection'
@@ -38,11 +43,11 @@ export function createTimecodeFeedbacks(
 					type: 'dropdown',
 					label: 'Mode',
 					choices: [
-						{ id: Enums.TimeMode.FreeRun, label: 'Free run' },
-						{ id: Enums.TimeMode.TimeOfDay, label: 'Time of Day' },
+						{ id: 'freerun', label: 'Free run' },
+						{ id: 'timeofday', label: 'Time of Day' },
 					],
-					default: Enums.TimeMode.FreeRun,
-				},
+					default: 'freerun',
+				} satisfies CompanionInputFieldDropdown<'mode', TimecodeMode>,
 			}),
 			defaultStyle: {
 				color: combineRgb(0, 0, 0),

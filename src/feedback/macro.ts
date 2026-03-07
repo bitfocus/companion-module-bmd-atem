@@ -63,6 +63,7 @@ export function createMacroFeedbacks(
 						{ id: MacroFeedbackType.IsRecording, label: 'Is Recording' },
 						{ id: MacroFeedbackType.IsUsed, label: 'Is Used' },
 					],
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
 			}),
 			defaultStyle: {

@@ -96,6 +96,8 @@ export function AtemRatePicker(label: string): CompanionInputFieldNumber<'rate'>
 		max: 250,
 		range: true,
 		default: 25,
+		asInteger: true,
+		clampValues: true,
 	}
 }
 export function AtemTransitionSelectComponentsPickers(model: ModelSpec): {
@@ -109,6 +111,7 @@ export function AtemTransitionSelectComponentsPickers(model: ModelSpec): {
 			label: 'Background',
 			choices: CHOICES_NEXTTRANS_BACKGROUND,
 			default: NextTransBackgroundChoices.NoChange,
+			disableAutoExpression: true, // Needs translating first
 		},
 	}
 
@@ -119,6 +122,7 @@ export function AtemTransitionSelectComponentsPickers(model: ModelSpec): {
 			id: `key${i}`,
 			choices: CHOICES_NEXTTRANS_KEY,
 			default: NextTransKeyChoices.NoChange,
+			disableAutoExpression: true, // Needs translating first
 		}
 	}
 
@@ -213,6 +217,8 @@ export function AtemDSKMaskPropertiesPickers(): {
 			step: 0.01,
 			max: 9,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'maskTop')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		maskBottom: {
 			type: 'number',
@@ -223,6 +229,8 @@ export function AtemDSKMaskPropertiesPickers(): {
 			step: 0.01,
 			max: 9,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'maskBottom')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		maskLeft: {
 			type: 'number',
@@ -233,6 +241,8 @@ export function AtemDSKMaskPropertiesPickers(): {
 			step: 0.01,
 			max: 16,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'maskLeft')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		maskRight: {
 			type: 'number',
@@ -243,6 +253,8 @@ export function AtemDSKMaskPropertiesPickers(): {
 			step: 0.01,
 			max: 16,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'maskRight')`,
+			asInteger: false,
+			clampValues: true,
 		},
 	}
 
@@ -277,6 +289,8 @@ export function AtemDSKPreMultipliedKeyPropertiesPickers(): {
 			step: 0.1,
 			max: 100,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'clip')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		gain: {
 			type: 'number',
@@ -288,6 +302,8 @@ export function AtemDSKPreMultipliedKeyPropertiesPickers(): {
 			step: 0.1,
 			max: 100,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'gain')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		invert: {
 			type: 'checkbox',
@@ -309,7 +325,7 @@ export function AtemUSKPicker(model: ModelSpec): CompanionInputFieldDropdown<'ke
 		type: 'dropdown',
 		label: 'Key',
 		id: 'key',
-		default: 0,
+		default: 1,
 		choices: GetUSKIdChoices(model),
 	}
 }
@@ -338,6 +354,8 @@ export function AtemUSKMaskPropertiesPickers(): {
 			step: 0.01,
 			max: 9,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'maskTop')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		maskBottom: {
 			type: 'number',
@@ -348,6 +366,8 @@ export function AtemUSKMaskPropertiesPickers(): {
 			step: 0.01,
 			max: 9,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'maskBottom')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		maskLeft: {
 			type: 'number',
@@ -358,6 +378,8 @@ export function AtemUSKMaskPropertiesPickers(): {
 			step: 0.01,
 			max: 16,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'maskLeft')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		maskRight: {
 			type: 'number',
@@ -368,6 +390,8 @@ export function AtemUSKMaskPropertiesPickers(): {
 			step: 0.01,
 			max: 16,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'maskRight')`,
+			asInteger: false,
+			clampValues: true,
 		},
 	}
 
@@ -417,6 +441,8 @@ export function AtemUSKDVEPropertiesPickers(): {
 			step: 0.01,
 			max: 1000,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'positionX')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		positionY: {
 			type: 'number',
@@ -428,6 +454,8 @@ export function AtemUSKDVEPropertiesPickers(): {
 			step: 0.01,
 			max: 1000,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'positionY')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		sizeX: {
 			type: 'number',
@@ -439,6 +467,8 @@ export function AtemUSKDVEPropertiesPickers(): {
 			step: 0.01,
 			max: 99.99,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'sizeX')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		sizeY: {
 			type: 'number',
@@ -450,6 +480,8 @@ export function AtemUSKDVEPropertiesPickers(): {
 			step: 0.01,
 			max: 99.99,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'sizeY')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		rotation: {
 			type: 'number',
@@ -460,6 +492,8 @@ export function AtemUSKDVEPropertiesPickers(): {
 			min: 0,
 			max: 360,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'rotation')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		maskEnabled: {
 			type: 'checkbox',
@@ -478,6 +512,8 @@ export function AtemUSKDVEPropertiesPickers(): {
 			step: 0.01,
 			max: 38,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'maskTop')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		maskBottom: {
 			type: 'number',
@@ -489,6 +525,8 @@ export function AtemUSKDVEPropertiesPickers(): {
 			step: 0.01,
 			max: 38,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'maskBottom')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		maskLeft: {
 			type: 'number',
@@ -500,6 +538,8 @@ export function AtemUSKDVEPropertiesPickers(): {
 			step: 0.01,
 			max: 52,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'maskLeft')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		maskRight: {
 			type: 'number',
@@ -511,6 +551,8 @@ export function AtemUSKDVEPropertiesPickers(): {
 			step: 0.01,
 			max: 52,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'maskRight')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		shadowEnabled: {
 			type: 'checkbox',
@@ -529,6 +571,8 @@ export function AtemUSKDVEPropertiesPickers(): {
 			step: 1,
 			max: 359,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'lightSourceDirection')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		lightSourceAltitude: {
 			type: 'number',
@@ -540,6 +584,8 @@ export function AtemUSKDVEPropertiesPickers(): {
 			step: 1,
 			max: 100,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'lightSourceAltitude')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		borderEnabled: {
 			type: 'checkbox',
@@ -558,6 +604,8 @@ export function AtemUSKDVEPropertiesPickers(): {
 			step: 0.1,
 			max: 360,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'borderHue')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		borderSaturation: {
 			type: 'number',
@@ -569,6 +617,8 @@ export function AtemUSKDVEPropertiesPickers(): {
 			step: 0.1,
 			max: 100,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'borderSaturation')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		borderLuma: {
 			type: 'number',
@@ -580,6 +630,8 @@ export function AtemUSKDVEPropertiesPickers(): {
 			step: 0.1,
 			max: 100,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'borderLuma')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		borderBevel: {
 			type: 'dropdown',
@@ -598,6 +650,8 @@ export function AtemUSKDVEPropertiesPickers(): {
 			step: 0.01,
 			max: 16,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'borderOuterWidth')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		borderInnerWidth: {
 			type: 'number',
@@ -609,6 +663,8 @@ export function AtemUSKDVEPropertiesPickers(): {
 			step: 0.01,
 			max: 16,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'borderInnerWidth')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		borderOuterSoftness: {
 			type: 'number',
@@ -620,6 +676,8 @@ export function AtemUSKDVEPropertiesPickers(): {
 			step: 1,
 			max: 100,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'borderOuterSoftness')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		borderInnerSoftness: {
 			type: 'number',
@@ -631,6 +689,8 @@ export function AtemUSKDVEPropertiesPickers(): {
 			step: 1,
 			max: 100,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'borderInnerSoftness')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		borderOpacity: {
 			type: 'number',
@@ -642,6 +702,8 @@ export function AtemUSKDVEPropertiesPickers(): {
 			step: 1,
 			max: 100,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'borderOpacity')`,
+			asInteger: true,
+			clampValues: true,
 		},
 		borderBevelPosition: {
 			type: 'number',
@@ -653,6 +715,8 @@ export function AtemUSKDVEPropertiesPickers(): {
 			step: 1,
 			max: 100,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'borderBevelPosition')`,
+			asInteger: true,
+			clampValues: true,
 		},
 		borderBevelSoftness: {
 			type: 'number',
@@ -664,6 +728,8 @@ export function AtemUSKDVEPropertiesPickers(): {
 			step: 1,
 			max: 100,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'borderBevelSoftness')`,
+			asInteger: true,
+			clampValues: true,
 		},
 		rate: AtemRatePicker('Rate'),
 	}
@@ -709,6 +775,8 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			step: 0.01,
 			max: 1000,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'positionX')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		positionY: {
 			type: 'number',
@@ -720,6 +788,8 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			step: 0.01,
 			max: 1000,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'positionY')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		sizeX: {
 			type: 'number',
@@ -731,6 +801,8 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			step: 0.01,
 			max: 99.99,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'sizeX')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		sizeY: {
 			type: 'number',
@@ -742,6 +814,8 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			step: 0.01,
 			max: 99.99,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'sizeY')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		rotation: {
 			type: 'number',
@@ -752,6 +826,8 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			min: 0,
 			max: 360,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'rotation')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		maskTop: {
 			type: 'number',
@@ -763,6 +839,8 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			step: 0.01,
 			max: 38,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'maskTop')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		maskBottom: {
 			type: 'number',
@@ -774,6 +852,8 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			step: 0.01,
 			max: 38,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'maskBottom')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		maskLeft: {
 			type: 'number',
@@ -785,6 +865,8 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			step: 0.01,
 			max: 52,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'maskLeft')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		maskRight: {
 			type: 'number',
@@ -796,6 +878,8 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			step: 0.01,
 			max: 52,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'maskRight')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		lightSourceDirection: {
 			type: 'number',
@@ -807,6 +891,8 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			step: 1,
 			max: 359,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'lightSourceDirection')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		lightSourceAltitude: {
 			type: 'number',
@@ -818,6 +904,8 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			step: 1,
 			max: 100,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'lightSourceAltitude')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		borderHue: {
 			type: 'number',
@@ -829,6 +917,8 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			step: 0.1,
 			max: 360,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'borderHue')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		borderSaturation: {
 			type: 'number',
@@ -840,6 +930,8 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			step: 0.1,
 			max: 100,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'borderSaturation')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		borderLuma: {
 			type: 'number',
@@ -851,6 +943,8 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			step: 0.1,
 			max: 100,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'borderLuma')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		borderOuterWidth: {
 			type: 'number',
@@ -862,6 +956,8 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			step: 0.01,
 			max: 16,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'borderOuterWidth')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		borderInnerWidth: {
 			type: 'number',
@@ -873,6 +969,8 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			step: 0.01,
 			max: 16,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'borderInnerWidth')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		borderOuterSoftness: {
 			type: 'number',
@@ -884,6 +982,8 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			step: 1,
 			max: 100,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'borderOuterSoftness')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		borderInnerSoftness: {
 			type: 'number',
@@ -895,6 +995,8 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			step: 1,
 			max: 100,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'borderInnerSoftness')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		borderOpacity: {
 			type: 'number',
@@ -906,6 +1008,8 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			step: 1,
 			max: 100,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'borderOpacity')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		borderBevelPosition: {
 			type: 'number',
@@ -917,6 +1021,8 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			step: 1,
 			max: 100,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'borderBevelPosition')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		borderBevelSoftness: {
 			type: 'number',
@@ -928,6 +1034,8 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			step: 1,
 			max: 100,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'borderBevelSoftness')`,
+			asInteger: false,
+			clampValues: true,
 		},
 	}
 
@@ -995,6 +1103,8 @@ export function AtemTransitionAnimationOptions(): {
 			min: 0,
 			max: 99999,
 			step: 1,
+			asInteger: true,
+			clampValues: true,
 		},
 		transitionEasing: {
 			type: 'dropdown',
@@ -1130,6 +1240,8 @@ export function AtemSuperSourcePropertiesPickers(
 			default: 0.5,
 			step: 0.01,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'size')`,
+			asInteger: false,
+			clampValues: true,
 		},
 
 		onair: {
@@ -1139,6 +1251,7 @@ export function AtemSuperSourcePropertiesPickers(
 			default: 'true',
 			choices: CHOICES_KEYTRANS,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'onair')`,
+			disableAutoExpression: true, // Needs translating first
 		},
 		source: {
 			type: 'dropdown',
@@ -1158,6 +1271,8 @@ export function AtemSuperSourcePropertiesPickers(
 			default: 0,
 			step: 0.01,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'x')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		y: {
 			type: 'number',
@@ -1169,6 +1284,8 @@ export function AtemSuperSourcePropertiesPickers(
 			default: 0,
 			step: 0.01,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'y')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		cropEnable: {
 			type: 'checkbox',
@@ -1187,6 +1304,8 @@ export function AtemSuperSourcePropertiesPickers(
 			default: 0,
 			step: 0.01,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'cropTop')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		cropBottom: {
 			type: 'number',
@@ -1198,6 +1317,8 @@ export function AtemSuperSourcePropertiesPickers(
 			default: 0,
 			step: 0.01,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'cropBottom')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		cropLeft: {
 			type: 'number',
@@ -1209,6 +1330,8 @@ export function AtemSuperSourcePropertiesPickers(
 			default: 0,
 			step: 0.01,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'cropLeft')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		cropRight: {
 			type: 'number',
@@ -1220,6 +1343,8 @@ export function AtemSuperSourcePropertiesPickers(
 			default: 0,
 			step: 0.01,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'cropRight')`,
+			asInteger: false,
+			clampValues: true,
 		},
 	}
 
@@ -1249,6 +1374,8 @@ export function AtemSuperSourcePropertiesPickersForOffset(): {
 			default: 0,
 			step: 0.01,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'size')`,
+			asInteger: false,
+			clampValues: true,
 		},
 
 		x: {
@@ -1261,6 +1388,8 @@ export function AtemSuperSourcePropertiesPickersForOffset(): {
 			default: 0,
 			step: 0.01,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'x')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		y: {
 			type: 'number',
@@ -1272,6 +1401,8 @@ export function AtemSuperSourcePropertiesPickersForOffset(): {
 			default: 0,
 			step: 0.01,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'y')`,
+			asInteger: false,
+			clampValues: true,
 		},
 
 		cropTop: {
@@ -1284,6 +1415,8 @@ export function AtemSuperSourcePropertiesPickersForOffset(): {
 			default: 0,
 			step: 0.01,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'cropTop')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		cropBottom: {
 			type: 'number',
@@ -1295,6 +1428,8 @@ export function AtemSuperSourcePropertiesPickersForOffset(): {
 			default: 0,
 			step: 0.01,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'cropBottom')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		cropLeft: {
 			type: 'number',
@@ -1306,6 +1441,8 @@ export function AtemSuperSourcePropertiesPickersForOffset(): {
 			default: 0,
 			step: 0.01,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'cropLeft')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		cropRight: {
 			type: 'number',
@@ -1317,6 +1454,8 @@ export function AtemSuperSourcePropertiesPickersForOffset(): {
 			default: 0,
 			step: 0.01,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'cropRight')`,
+			asInteger: false,
+			clampValues: true,
 		},
 	}
 
@@ -1391,6 +1530,8 @@ export function AtemSuperSourceArtPropertiesPickers(
 			default: 50,
 			step: 1,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'artClip')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		artGain: {
 			type: 'number',
@@ -1402,6 +1543,8 @@ export function AtemSuperSourceArtPropertiesPickers(
 			default: 50,
 			step: 1,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'artGain')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		artInvertKey: {
 			type: 'checkbox',
@@ -1620,6 +1763,7 @@ export function AtemMatchMethod(): CompanionInputFieldDropdown {
 				label: 'Not Contain',
 			},
 		],
+		disableAutoExpression: true, // Needs translating first
 	}
 }
 
@@ -1679,6 +1823,7 @@ export function NumberComparitorPicker(): CompanionInputFieldDropdown<'comparito
 		id: 'comparitor',
 		default: NumberComparitor.Equal,
 		choices: options,
+		disableAutoExpression: true, // Needs translating first
 	}
 }
 
@@ -1697,6 +1842,8 @@ export const FadeDurationFields = {
 		min: 0,
 		step: 10,
 		max: 60000,
+		asInteger: true,
+		clampValues: true,
 	},
 	fadeAlgorithm: {
 		type: 'dropdown',
@@ -1740,6 +1887,8 @@ export const FaderLevelDeltaChoice: CompanionInputFieldNumber<'delta'> = {
 	default: 1,
 	max: 100,
 	min: -100,
+	asInteger: false,
+	clampValues: true,
 }
 
 export function AtemAllSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown<'source'> {
@@ -1787,6 +1936,8 @@ export function AtemDisplayClockPropertiesPickers(): {
 			default: offset ? 0 : 0.5,
 			step: 0.01,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'size')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		opacity: {
 			type: 'number',
@@ -1798,6 +1949,8 @@ export function AtemDisplayClockPropertiesPickers(): {
 			default: offset ? 0 : 1,
 			step: 0.01,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'opacity')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		x: {
 			type: 'number',
@@ -1809,6 +1962,8 @@ export function AtemDisplayClockPropertiesPickers(): {
 			default: 0,
 			step: 0.01,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'x')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		y: {
 			type: 'number',
@@ -1820,6 +1975,8 @@ export function AtemDisplayClockPropertiesPickers(): {
 			default: 0,
 			step: 0.01,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'y')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		//!offset?
 		autoHide: {
@@ -1867,6 +2024,8 @@ export function AtemDisplayClockTimePickers(): {
 			range: true,
 			default: 0,
 			step: 1,
+			asInteger: true,
+			clampValues: true,
 		},
 		minutes: {
 			type: 'number',
@@ -1877,6 +2036,8 @@ export function AtemDisplayClockTimePickers(): {
 			range: true,
 			default: 0,
 			step: 1,
+			asInteger: true,
+			clampValues: true,
 		},
 		seconds: {
 			type: 'number',
@@ -1887,6 +2048,8 @@ export function AtemDisplayClockTimePickers(): {
 			range: true,
 			default: 0,
 			step: 1,
+			asInteger: true,
+			clampValues: true,
 		},
 	}
 }
@@ -1906,6 +2069,8 @@ export function AtemDisplayClockTimeOffsetPickers(): {
 			range: true,
 			default: 0,
 			step: 1,
+			asInteger: true,
+			clampValues: true,
 		},
 		minutes: {
 			type: 'number',
@@ -1916,6 +2081,8 @@ export function AtemDisplayClockTimeOffsetPickers(): {
 			range: true,
 			default: 0,
 			step: 1,
+			asInteger: true,
+			clampValues: true,
 		},
 		seconds: {
 			type: 'number',
@@ -1926,6 +2093,8 @@ export function AtemDisplayClockTimeOffsetPickers(): {
 			range: true,
 			default: 0,
 			step: 1,
+			asInteger: true,
+			clampValues: true,
 		},
 	}
 }
@@ -1993,6 +2162,7 @@ export function AtemUSKPatternPropertiesPickers(): {
 			default: Enums.Pattern.LeftToRightBar,
 			choices: GetUpstreamKeyerPatternChoices(),
 			isVisibleExpression: `arrayIncludes($(options:properties), 'style')`,
+			disableAutoExpression: true, // Needs translating first
 		},
 		invert: {
 			type: 'checkbox',
@@ -2011,6 +2181,8 @@ export function AtemUSKPatternPropertiesPickers(): {
 			step: 0.01,
 			max: 100.0,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'size')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		symmetry: {
 			type: 'number',
@@ -2022,6 +2194,8 @@ export function AtemUSKPatternPropertiesPickers(): {
 			step: 0.01,
 			max: 100.0,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'symmetry')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		softness: {
 			type: 'number',
@@ -2033,6 +2207,8 @@ export function AtemUSKPatternPropertiesPickers(): {
 			step: 0.01,
 			max: 100.0,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'softness')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		positionX: {
 			type: 'number',
@@ -2044,6 +2220,8 @@ export function AtemUSKPatternPropertiesPickers(): {
 			step: 0.01,
 			max: 1.0,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'positionX')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		positionY: {
 			type: 'number',
@@ -2055,6 +2233,8 @@ export function AtemUSKPatternPropertiesPickers(): {
 			step: 0.01,
 			max: 1.0,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'positionY')`,
+			asInteger: false,
+			clampValues: true,
 		},
 	}
 	return {
@@ -2088,6 +2268,8 @@ export function AtemUSKFlyKeyPropertiesPickers(): {
 			step: 0.01,
 			max: 32,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'positionX')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		positionY: {
 			type: 'number',
@@ -2098,6 +2280,8 @@ export function AtemUSKFlyKeyPropertiesPickers(): {
 			step: 0.01,
 			max: 18,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'positionY')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		sizeX: {
 			type: 'number',
@@ -2108,6 +2292,8 @@ export function AtemUSKFlyKeyPropertiesPickers(): {
 			step: 0.01,
 			max: 99.99,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'sizeX')`,
+			asInteger: false,
+			clampValues: true,
 		},
 		sizeY: {
 			type: 'number',
@@ -2118,6 +2304,8 @@ export function AtemUSKFlyKeyPropertiesPickers(): {
 			step: 0.01,
 			max: 99.99,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'sizeY')`,
+			asInteger: false,
+			clampValues: true,
 		},
 	}
 

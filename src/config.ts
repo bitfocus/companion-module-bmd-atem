@@ -104,6 +104,8 @@ export function GetConfigFields(_self: InstanceBaseExt): SomeCompanionConfigFiel
 			max: 60,
 			step: 1,
 			default: fadeFpsDefault,
+			asInteger: true,
+			clampValues: true,
 		},
 		{
 			type: 'checkbox',

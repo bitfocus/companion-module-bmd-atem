@@ -253,6 +253,7 @@ export function createDownstreamKeyerActions(
 					label: 'On Air',
 					default: 'true',
 					choices: CHOICES_KEYTRANS,
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
 				key: AtemDSKPicker(model),
 			}),
@@ -286,6 +287,7 @@ export function createDownstreamKeyerActions(
 					label: 'State',
 					default: 'true',
 					choices: CHOICES_ON_OFF_TOGGLE,
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
 				key: AtemDSKPicker(model),
 			}),

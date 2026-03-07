@@ -84,6 +84,7 @@ export function createTransitionActions(
 					label: 'State',
 					default: 'toggle',
 					choices: CHOICES_ON_OFF_TOGGLE,
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
 			}),
 			callback: async ({ options }) => {
@@ -361,6 +362,7 @@ export function createTransitionActions(
 					label: 'State',
 					choices: CHOICES_KEYTRANS,
 					default: CHOICES_KEYTRANS[0].id,
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
 			}),
 			callback: async ({ options }) => {

@@ -195,6 +195,7 @@ export function createUpstreamKeyerFeedbacks(
 							label: 'Key Frame',
 							choices: CHOICES_CURRENTKEYFRAMES,
 							default: CHOICES_CURRENTKEYFRAMES[0].id,
+							disableAutoExpression: true, // TODO: Until the options are simplified
 						},
 					}),
 					defaultStyle: {
