@@ -8,9 +8,13 @@ import {
 	AtemSuperSourceBoxSourcePicker,
 	AtemSuperSourceIdPicker,
 	AtemSuperSourcePropertiesPickers,
+	AtemSuperSourcePropertiesVariablesPickers,
 	AtemSuperSourcePropertiesPickersForOffset,
 	type AtemSuperSourceArtProperties,
+	AtemSuperSourceArtPropertiesAllVariablesPickers,
+	type AtemSuperSourceArtPropertiesAllVariables,
 	type AtemSuperSourceProperties,
+	type AtemSuperSourcePropertiesVariables,
 	AtemSuperSourceArtPropertiesVariablesPickers,
 	type AtemSuperSourceArtPropertiesVariables,
 	AtemTransitionAnimationOptions,
@@ -29,6 +33,9 @@ export interface AtemSuperSourceActions {
 	[ActionId.SuperSourceArtVariables]: {
 		ssrcId: number | undefined
 	} & AtemSuperSourceArtPropertiesVariables
+	[ActionId.SuperSourceArtPropertiesVariables]: {
+		ssrcId: string | undefined
+	} & AtemSuperSourceArtPropertiesAllVariables
 	[ActionId.SuperSourceBoxSource]: {
 		ssrcId: number | undefined
 		boxIndex: number
@@ -51,6 +58,13 @@ export interface AtemSuperSourceActions {
 		transitionEasing: algorithm | undefined
 		transitionCurve: curve | undefined
 	} & AtemSuperSourceProperties
+	[ActionId.SuperSourceBoxPropertiesVariables]: {
+		ssrcId: string | undefined
+		boxIndex: string
+		transitionRate: number | undefined
+		transitionEasing: algorithm | undefined
+		transitionCurve: curve | undefined
+	} & AtemSuperSourcePropertiesVariables
 	[ActionId.SuperSourceBoxPropertiesDelta]: {
 		ssrcId: number | undefined
 		boxIndex: number
@@ -76,10 +90,12 @@ export function createSuperSourceActions(
 		return {
 			[ActionId.SuperSourceArt]: undefined,
 			[ActionId.SuperSourceArtVariables]: undefined,
+			[ActionId.SuperSourceArtPropertiesVariables]: undefined,
 			[ActionId.SuperSourceBoxSource]: undefined,
 			[ActionId.SuperSourceBoxSourceVaraibles]: undefined,
 			[ActionId.SuperSourceBoxOnAir]: undefined,
 			[ActionId.SuperSourceBoxProperties]: undefined,
+			[ActionId.SuperSourceBoxPropertiesVariables]: undefined,
 			[ActionId.SuperSourceBoxPropertiesDelta]: undefined,
 		}
 	}
@@ -210,6 +226,85 @@ export function createSuperSourceActions(
 						// artClip: ssrcConfig.artClip / 10,
 						// artGain: ssrcConfig.artGain / 10,
 						// artInvertKey: ssrcConfig.artInvertKey,
+					}
+				} else {
+					return undefined
+				}
+			},
+		},
+		[ActionId.SuperSourceArtPropertiesVariables]: {
+			name: 'SuperSource: Set art properties from variables',
+			options: {
+				ssrcId:
+					model.SSrc > 1
+						? {
+								type: 'textinput',
+								id: 'ssrcId',
+								label: 'Super Source',
+								default: '1',
+								useVariables: true,
+							}
+						: undefined,
+				...AtemSuperSourceArtPropertiesAllVariablesPickers(),
+			},
+			callback: async ({ options }) => {
+				const ssrcId =
+					options.getRaw('ssrcId') && model.SSrc > 1 ? Number(await options.getParsedNumber('ssrcId')) - 1 : 0
+				const newProps: Partial<VideoState.SuperSource.SuperSourceProperties> = {}
+
+				if (isNaN(ssrcId)) return
+
+				const props = options.getRaw('properties')
+				if (props && Array.isArray(props)) {
+					if (props.includes('fill')) newProps.artFillSource = await options.getParsedNumber('fill')
+					if (props.includes('key')) newProps.artCutSource = await options.getParsedNumber('key')
+
+					if (props.includes('artOption')) {
+						const rawArtOption = (await options.getParsedString('artOption')).trim().toLowerCase()
+						if (rawArtOption === 'toggle') {
+							const ssrc = state.state.video.superSources[ssrcId]
+							newProps.artOption =
+								ssrc?.properties?.artOption === Enums.SuperSourceArtOption.Background
+									? Enums.SuperSourceArtOption.Foreground
+									: Enums.SuperSourceArtOption.Background
+						} else if (rawArtOption === 'foreground') {
+							newProps.artOption = Enums.SuperSourceArtOption.Foreground
+						} else if (rawArtOption === 'background') {
+							newProps.artOption = Enums.SuperSourceArtOption.Background
+						} else if (rawArtOption !== '' && rawArtOption !== 'unchanged') {
+							const artOptionNumber = Number(rawArtOption)
+							if (!isNaN(artOptionNumber)) newProps.artOption = artOptionNumber
+						}
+					}
+
+					if (props.includes('artPreMultiplied'))
+						newProps.artPreMultiplied = await options.getParsedBoolean('artPreMultiplied')
+					if (props.includes('artClip')) newProps.artClip = (await options.getParsedNumber('artClip')) * 10
+					if (props.includes('artGain')) newProps.artGain = (await options.getParsedNumber('artGain')) * 10
+					if (props.includes('artInvertKey')) newProps.artInvertKey = await options.getParsedBoolean('artInvertKey')
+				}
+
+				if (Object.keys(newProps).length === 0) return
+
+				await atem?.setSuperSourceProperties(newProps, ssrcId)
+			},
+			learn: async ({ options }) => {
+				const ssrcId =
+					options.getRaw('ssrcId') && model.SSrc > 1 ? Number(await options.getParsedNumber('ssrcId')) - 1 : 0
+
+				if (isNaN(ssrcId)) return undefined
+
+				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.properties
+				if (ssrcConfig) {
+					return {
+						...options.getJson(),
+						fill: ssrcConfig.artFillSource + '',
+						key: ssrcConfig.artCutSource + '',
+						artOption: ssrcConfig.artOption + '',
+						artPreMultiplied: ssrcConfig.artPreMultiplied + '',
+						artClip: ssrcConfig.artClip / 10 + '',
+						artGain: ssrcConfig.artGain / 10 + '',
+						artInvertKey: ssrcConfig.artInvertKey + '',
 					}
 				} else {
 					return undefined
@@ -437,6 +532,103 @@ export function createSuperSourceActions(
 				}
 			},
 		},
+		[ActionId.SuperSourceBoxPropertiesVariables]: {
+			name: 'SuperSource: Change box properties from variables',
+			options: {
+				ssrcId:
+					model.SSrc > 1
+						? {
+								type: 'textinput',
+								id: 'ssrcId',
+								label: 'Super Source',
+								default: '1',
+								useVariables: true,
+							}
+						: undefined,
+				boxIndex: {
+					type: 'textinput',
+					id: 'boxIndex',
+					label: 'Box #',
+					default: '1',
+					useVariables: true,
+				},
+				...AtemTransitionAnimationOptions(),
+				...AtemSuperSourcePropertiesVariablesPickers(),
+			},
+			callback: async ({ options }) => {
+				const ssrcId =
+					options.getRaw('ssrcId') && model.SSrc > 1 ? Number(await options.getParsedNumber('ssrcId')) - 1 : 0
+				const boxIndex = (await options.getParsedNumber('boxIndex')) - 1
+				if (isNaN(ssrcId) || isNaN(boxIndex)) return
+
+				const newProps: Partial<SuperSource.SuperSourceBox> = {}
+
+				const props = options.getRaw('properties')
+				if (props && Array.isArray(props)) {
+					if (props.includes('onair')) {
+						const rawOnAir = (await options.getParsedString('onair')).trim().toLowerCase()
+						if (rawOnAir === 'toggle') {
+							const box = getSuperSourceBox(state.state, boxIndex, ssrcId)
+							newProps.enabled = !box?.enabled
+						} else {
+							newProps.enabled = await options.getParsedBoolean('onair')
+						}
+					}
+
+					if (props.includes('source')) newProps.source = await options.getParsedNumber('source')
+
+					if (props.includes('size')) newProps.size = (await options.getParsedNumber('size')) * 1000
+					if (props.includes('x')) newProps.x = (await options.getParsedNumber('x')) * 100
+					if (props.includes('y')) newProps.y = (await options.getParsedNumber('y')) * 100
+
+					if (props.includes('cropEnable')) newProps.cropped = await options.getParsedBoolean('cropEnable')
+					if (props.includes('cropTop')) newProps.cropTop = (await options.getParsedNumber('cropTop')) * 1000
+					if (props.includes('cropBottom')) newProps.cropBottom = (await options.getParsedNumber('cropBottom')) * 1000
+					if (props.includes('cropLeft')) newProps.cropLeft = (await options.getParsedNumber('cropLeft')) * 1000
+					if (props.includes('cropRight')) newProps.cropRight = (await options.getParsedNumber('cropRight')) * 1000
+				}
+
+				if (Object.keys(newProps).length === 0) return
+
+				await transitions.runForProperties(
+					`superSource.${ssrcId}.box.${boxIndex}`,
+					async (props) => {
+						await atem?.setSuperSourceBoxSettings(props, boxIndex, ssrcId)
+					},
+					options,
+					['size', 'x', 'y', 'cropTop', 'cropBottom', 'cropLeft', 'cropRight'],
+					newProps,
+					state.state.video.superSources[ssrcId]?.boxes[boxIndex],
+				)
+			},
+			learn: async ({ options }) => {
+				const ssrcId =
+					options.getRaw('ssrcId') && model.SSrc > 1 ? Number(await options.getParsedNumber('ssrcId')) - 1 : 0
+				const boxId = (await options.getParsedNumber('boxIndex')) - 1
+
+				if (isNaN(ssrcId) || isNaN(boxId)) return undefined
+
+				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.boxes[boxId]
+				if (ssrcConfig) {
+					return {
+						...options.getJson(),
+						onair: ssrcConfig.enabled ? 'true' : 'false',
+						source: ssrcConfig.source + '',
+						size: ssrcConfig.size / 1000 + '',
+						x: ssrcConfig.x / 100 + '',
+						y: ssrcConfig.y / 100 + '',
+						cropEnable: ssrcConfig.cropped + '',
+						cropTop: ssrcConfig.cropTop / 1000 + '',
+						cropBottom: ssrcConfig.cropBottom / 1000 + '',
+						cropLeft: ssrcConfig.cropLeft / 1000 + '',
+						cropRight: ssrcConfig.cropRight / 1000 + '',
+					}
+				} else {
+					return undefined
+				}
+			},
+		},
+
 		[ActionId.SuperSourceBoxPropertiesDelta]: {
 			name: 'SuperSource: Offset box properties',
 			options: {
