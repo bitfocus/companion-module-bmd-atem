@@ -1,4 +1,4 @@
-import { combineRgb, CompanionPresetGroup, type CompanionButtonStyleProps } from '@companion-module/base'
+import { CompanionPresetGroup, type CompanionButtonStyleProps } from '@companion-module/base'
 import { ActionId } from '../actions/ActionId.js'
 import { FeedbackId } from '../feedback/FeedbackId.js'
 import type { PresetsBuilderContext } from './context.js'
@@ -56,8 +56,8 @@ export function createMediaPlayerPresets(
 		style: {
 			text: `MP $(local:player) Clip $(local:clip)`,
 			size: pstSize,
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		feedbacks: [
 			{
@@ -68,8 +68,8 @@ export function createMediaPlayerPresets(
 					defaultClip: true,
 				},
 				style: {
-					bgcolor: combineRgb(255, 255, 0),
-					color: combineRgb(0, 0, 0),
+					bgcolor: 0xffff00,
+					color: 0x000000,
 				},
 			},
 		],
@@ -108,8 +108,8 @@ export function createMediaPlayerPresets(
 		style: {
 			text: `MP $(local:player) Still $(local:still)`,
 			size: pstSize,
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		feedbacks: [
 			{
@@ -120,8 +120,8 @@ export function createMediaPlayerPresets(
 					defaultClip: false,
 				},
 				style: {
-					bgcolor: combineRgb(255, 255, 0),
-					color: combineRgb(0, 0, 0),
+					bgcolor: 0xffff00,
+					color: 0x000000,
 				},
 			},
 		],

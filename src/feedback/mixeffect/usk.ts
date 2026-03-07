@@ -3,7 +3,7 @@ import { convertOptionsFields } from '../../options/common.js'
 import { AtemKeyFillSourcePicker, AtemMEPicker, AtemUSKPicker, AtemUpstreamKeyerTypePicker } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { FeedbackId } from '../FeedbackId.js'
-import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
+import { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { getUSK, type StateWrapper } from '../../state.js'
 import { CHOICES_CURRENTKEYFRAMES } from '../../choices.js'
 
@@ -63,8 +63,8 @@ export function createUpstreamKeyerFeedbacks(
 				key: AtemUSKPicker(model),
 			}),
 			defaultStyle: {
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(255, 0, 0),
+				color: 0xffffff,
+				bgcolor: 0xff0000,
 			},
 			callback: ({ options }): boolean => {
 				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
@@ -81,8 +81,8 @@ export function createUpstreamKeyerFeedbacks(
 				type: AtemUpstreamKeyerTypePicker(),
 			}),
 			defaultStyle: {
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(255, 0, 0),
+				color: 0xffffff,
+				bgcolor: 0xff0000,
 			},
 			callback: ({ options }): boolean => {
 				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
@@ -99,8 +99,8 @@ export function createUpstreamKeyerFeedbacks(
 				fill: AtemKeyFillSourcePicker(model, state.state),
 			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(238, 238, 0),
+				color: 0x000000,
+				bgcolor: 0xeeee00,
 			},
 			callback: ({ options }): boolean => {
 				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
@@ -136,8 +136,8 @@ export function createUpstreamKeyerFeedbacks(
 						},
 					}),
 					defaultStyle: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(238, 238, 0),
+						color: 0x000000,
+						bgcolor: 0xeeee00,
 					},
 					callback: ({ options }): boolean => {
 						const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)

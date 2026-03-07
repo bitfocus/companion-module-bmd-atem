@@ -1,4 +1,4 @@
-import { combineRgb, CompanionPresetGroup, type CompanionButtonStyleProps } from '@companion-module/base'
+import { CompanionPresetGroup, type CompanionButtonStyleProps } from '@companion-module/base'
 import { ActionId } from '../../actions/ActionId.js'
 import { FeedbackId } from '../../feedback/FeedbackId.js'
 import type { SourceInfo } from '../../choices.js'
@@ -24,8 +24,8 @@ export function createProgramPreviewPresets(
 		style: {
 			text: `$(atem:${pstText}$(local:input))`,
 			size: pstSize,
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		feedbacks: [
 			{
@@ -35,8 +35,8 @@ export function createProgramPreviewPresets(
 					input: { isExpression: true, value: '$(local:input)' },
 				},
 				style: {
-					bgcolor: combineRgb(0, 255, 0),
-					color: combineRgb(255, 255, 255),
+					bgcolor: 0x00ff00,
+					color: 0xffffff,
 				},
 			},
 		],
@@ -73,8 +73,8 @@ export function createProgramPreviewPresets(
 		style: {
 			text: `$(atem:${pstText}$(local:input))`,
 			size: pstSize,
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		feedbacks: [
 			{
@@ -84,8 +84,8 @@ export function createProgramPreviewPresets(
 					input: { isExpression: true, value: '$(local:input)' },
 				},
 				style: {
-					bgcolor: combineRgb(0, 255, 0),
-					color: combineRgb(255, 255, 255),
+					bgcolor: 0x00ff00,
+					color: 0xffffff,
 				},
 			},
 		],

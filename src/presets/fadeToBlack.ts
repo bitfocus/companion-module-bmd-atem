@@ -1,4 +1,4 @@
-import { combineRgb, CompanionPresetGroup, type CompanionButtonStyleProps } from '@companion-module/base'
+import { CompanionPresetGroup, type CompanionButtonStyleProps } from '@companion-module/base'
 import { ActionId } from '../actions/ActionId.js'
 import { FeedbackId } from '../feedback/FeedbackId.js'
 import type { PresetsBuilderContext } from './context.js'
@@ -52,8 +52,8 @@ export function createFadeToBlackPresets(
 		style: {
 			text: `FTB Auto`,
 			size: pstSize,
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		feedbacks: [
 			{
@@ -63,8 +63,8 @@ export function createFadeToBlackPresets(
 					state: 'off',
 				},
 				style: {
-					bgcolor: combineRgb(0, 255, 0),
-					color: combineRgb(255, 255, 255),
+					bgcolor: 0x00ff00,
+					color: 0xffffff,
 				},
 			},
 			{
@@ -74,8 +74,8 @@ export function createFadeToBlackPresets(
 					state: 'on',
 				},
 				style: {
-					bgcolor: combineRgb(255, 0, 0),
-					color: combineRgb(255, 255, 255),
+					bgcolor: 0xff0000,
+					color: 0xffffff,
 				},
 			},
 			{
@@ -85,8 +85,8 @@ export function createFadeToBlackPresets(
 					state: 'fading',
 				},
 				style: {
-					bgcolor: combineRgb(255, 255, 0),
-					color: combineRgb(0, 0, 0),
+					bgcolor: 0xffff00,
+					color: 0x000000,
 				},
 			},
 		],
@@ -118,8 +118,8 @@ export function createFadeToBlackPresets(
 		style: {
 			text: `Rate $(local:rate)`,
 			size: pstSize,
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		feedbacks: [
 			{
@@ -129,8 +129,8 @@ export function createFadeToBlackPresets(
 					rate: { isExpression: true, value: '$(local:rate)' },
 				},
 				style: {
-					bgcolor: combineRgb(255, 255, 0),
-					color: combineRgb(0, 0, 0),
+					bgcolor: 0xffff00,
+					color: 0x000000,
 				},
 			},
 		],

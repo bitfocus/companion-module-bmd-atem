@@ -2,7 +2,7 @@ import { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../options/common.js'
 import type { ModelSpec } from '../models/index.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
+import { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { CHOICES_CLASSIC_AUDIO_MIX_OPTION } from '../choices.js'
 import { compareNumber, NumberComparitor } from '../util.js'
 import { AtemAudioInputPicker, NumberComparitorPicker } from '../input.js'
@@ -71,8 +71,8 @@ export function createClassicAudioFeedbacks(
 				},
 			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(0, 255, 0),
+				color: 0x000000,
+				bgcolor: 0x00ff00,
 			},
 			callback: ({ options }): boolean => {
 				const audioChannels = state.state.audio?.channels ?? {}
@@ -108,8 +108,8 @@ export function createClassicAudioFeedbacks(
 				},
 			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(0, 255, 0),
+				color: 0x000000,
+				bgcolor: 0x00ff00,
 			},
 			callback: ({ options }): boolean => {
 				const audioChannels = state.state.audio?.channels ?? {}
@@ -151,8 +151,8 @@ export function createClassicAudioFeedbacks(
 				},
 			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(0, 255, 0),
+				color: 0x000000,
+				bgcolor: 0x00ff00,
 			},
 			callback: ({ options }): boolean => {
 				const props = state.state.audio?.master

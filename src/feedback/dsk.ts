@@ -1,7 +1,7 @@
 import type { ModelSpec } from '../models/index.js'
 import { convertOptionsFields } from '../options/common.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
+import { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { AtemDSKPicker, AtemKeyFillSourcePicker } from '../input.js'
 import { getDSK, type StateWrapper } from '../state.js'
 
@@ -47,8 +47,8 @@ export function createDownstreamKeyerFeedbacks(
 				key: AtemDSKPicker(model),
 			}),
 			defaultStyle: {
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(255, 0, 0),
+				color: 0xffffff,
+				bgcolor: 0xff0000,
 			},
 			callback: ({ options }): boolean => {
 				const dsk = getDSK(state.state, options.key - 1)
@@ -63,8 +63,8 @@ export function createDownstreamKeyerFeedbacks(
 				key: AtemDSKPicker(model),
 			}),
 			defaultStyle: {
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(255, 0, 0),
+				color: 0xffffff,
+				bgcolor: 0xff0000,
 			},
 			callback: ({ options }): boolean => {
 				const dsk = getDSK(state.state, options.key - 1)
@@ -80,8 +80,8 @@ export function createDownstreamKeyerFeedbacks(
 				fill: AtemKeyFillSourcePicker(model, state.state),
 			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(238, 238, 0),
+				color: 0x000000,
+				bgcolor: 0xeeee00,
 			},
 			callback: ({ options }): boolean => {
 				const dsk = getDSK(state.state, options.key - 1)

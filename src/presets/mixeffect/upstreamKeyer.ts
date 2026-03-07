@@ -1,4 +1,4 @@
-import { assertNever, combineRgb, CompanionPresetGroup, type CompanionButtonStyleProps } from '@companion-module/base'
+import { assertNever, CompanionPresetGroup, type CompanionButtonStyleProps } from '@companion-module/base'
 import { ActionId } from '../../actions/ActionId.js'
 import { FeedbackId } from '../../feedback/FeedbackId.js'
 import { CHOICES_KEYFRAMES, GetUpstreamKeyerTypeChoices, type SourceInfo } from '../../choices.js'
@@ -49,8 +49,8 @@ export function createUpstreamKeyerPresets(
 		style: {
 			text: `KEY $(local:key)`,
 			size: '24',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		feedbacks: [
 			{
@@ -60,8 +60,8 @@ export function createUpstreamKeyerPresets(
 					mixeffect: { isExpression: true, value: '$(local:me)' },
 				},
 				style: {
-					bgcolor: combineRgb(255, 0, 0),
-					color: combineRgb(255, 255, 255),
+					bgcolor: 0xff0000,
+					color: 0xffffff,
 				},
 			},
 		],
@@ -100,8 +100,8 @@ export function createUpstreamKeyerPresets(
 		style: {
 			text: `KEY $(local:key)`,
 			size: '24',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		feedbacks: [
 			{
@@ -112,8 +112,8 @@ export function createUpstreamKeyerPresets(
 					selection: { isExpression: true, value: "'key' + ($(local:key) - 1)" },
 				},
 				style: {
-					bgcolor: combineRgb(255, 255, 0),
-					color: combineRgb(0, 0, 0),
+					bgcolor: 0xffff00,
+					color: 0x000000,
 				},
 			},
 		],
@@ -152,8 +152,8 @@ export function createUpstreamKeyerPresets(
 		style: {
 			text: `$(atem:${pstText}$(local:input))`,
 			size: pstSize,
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		feedbacks: [
 			{
@@ -164,8 +164,8 @@ export function createUpstreamKeyerPresets(
 					mixeffect: { isExpression: true, value: '$(local:me)' },
 				},
 				style: {
-					bgcolor: combineRgb(238, 238, 0),
-					color: combineRgb(0, 0, 0),
+					bgcolor: 0xeeee00,
+					color: 0x000000,
 				},
 			},
 		],
@@ -265,8 +265,8 @@ export function createUpstreamKeyerPresets(
 					style: {
 						text: `Fly to\n${flydirection.label}`,
 						size: pstSize,
-						color: combineRgb(255, 255, 255),
-						bgcolor: combineRgb(0, 0, 0),
+						color: 0xffffff,
+						bgcolor: 0x000000,
 					},
 					feedbacks: [
 						{
@@ -277,8 +277,8 @@ export function createUpstreamKeyerPresets(
 								keyframe: actionKeyframe,
 							},
 							style: {
-								bgcolor: combineRgb(238, 238, 0),
-								color: combineRgb(0, 0, 0),
+								bgcolor: 0xeeee00,
+								color: 0x000000,
 							},
 						},
 					],
@@ -328,8 +328,8 @@ export function createUpstreamKeyerPresets(
 					style: {
 						text: `${keyType.label}`,
 						size: pstSize,
-						color: combineRgb(255, 255, 255),
-						bgcolor: combineRgb(0, 0, 0),
+						color: 0xffffff,
+						bgcolor: 0x000000,
 					},
 					feedbacks: [
 						{
@@ -340,8 +340,8 @@ export function createUpstreamKeyerPresets(
 								type: keyType.id,
 							},
 							style: {
-								bgcolor: combineRgb(238, 238, 0),
-								color: combineRgb(0, 0, 0),
+								bgcolor: 0xeeee00,
+								color: 0x000000,
 							},
 						},
 					],

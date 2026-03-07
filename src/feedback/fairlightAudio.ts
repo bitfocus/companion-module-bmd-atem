@@ -2,7 +2,7 @@ import { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../options/common.js'
 import type { ModelSpec } from '../models/index.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
+import { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION } from '../choices.js'
 import { compareNumber, NumberComparitor, parseAudioRoutingStringSingle } from '../util.js'
 import {
@@ -158,8 +158,8 @@ export function createFairlightAudioFeedbacks(
 				},
 			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(0, 255, 0),
+				color: 0x000000,
+				bgcolor: 0x00ff00,
 			},
 			callback: ({ options }): boolean => {
 				const audioChannels = state.state.fairlight?.inputs ?? {}
@@ -205,8 +205,8 @@ export function createFairlightAudioFeedbacks(
 				},
 			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(0, 255, 0),
+				color: 0x000000,
+				bgcolor: 0x00ff00,
 			},
 			callback: ({ options }): boolean => {
 				const audioChannels = state.state.fairlight?.inputs ?? {}
@@ -247,8 +247,8 @@ export function createFairlightAudioFeedbacks(
 				},
 			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(0, 255, 0),
+				color: 0x000000,
+				bgcolor: 0x00ff00,
 			},
 			callback: ({ options }): boolean => {
 				const audioChannels = state.state.fairlight?.inputs ?? {}
@@ -292,8 +292,8 @@ export function createFairlightAudioFeedbacks(
 				},
 			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(0, 255, 0),
+				color: 0x000000,
+				bgcolor: 0x00ff00,
 			},
 			callback: ({ options }): boolean => {
 				const props = state.state.fairlight?.master?.properties
@@ -327,8 +327,8 @@ export function createFairlightAudioFeedbacks(
 						source: { ...audioSourceOption, isVisibleExpression: `!$(options:nothing)` },
 					}),
 					defaultStyle: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(0, 255, 0),
+						color: 0x000000,
+						bgcolor: 0x00ff00,
 					},
 					callback: ({ options }): boolean => {
 						const soloState = state.state.fairlight?.solo
@@ -376,8 +376,8 @@ export function createFairlightAudioFeedbacks(
 						},
 					}),
 					defaultStyle: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(0, 255, 0),
+						color: 0x000000,
+						bgcolor: 0x00ff00,
 					},
 					callback: ({ options }): boolean => {
 						const gain = state.state.fairlight?.monitor?.gain
@@ -405,8 +405,8 @@ export function createFairlightAudioFeedbacks(
 						// audioInputOption,
 					}),
 					defaultStyle: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(0, 255, 0),
+						color: 0x000000,
+						bgcolor: 0x00ff00,
 					},
 					callback: (): boolean => {
 						return !!state.state.fairlight?.monitor?.inputMasterMuted
@@ -437,8 +437,8 @@ export function createFairlightAudioFeedbacks(
 							},
 						}),
 						defaultStyle: {
-							color: combineRgb(0, 0, 0),
-							bgcolor: combineRgb(0, 255, 0),
+							color: 0x000000,
+							bgcolor: 0x00ff00,
 						},
 						callback: ({ options }): boolean => {
 							const gain = state.state.fairlight?.monitor?.inputMasterGain
@@ -466,8 +466,8 @@ export function createFairlightAudioFeedbacks(
 						// audioInputOption,
 					}),
 					defaultStyle: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(0, 255, 0),
+						color: 0x000000,
+						bgcolor: 0x00ff00,
 					},
 					callback: (): boolean => {
 						return !!state.state.fairlight?.monitor?.inputTalkbackMuted
@@ -498,8 +498,8 @@ export function createFairlightAudioFeedbacks(
 							},
 						}),
 						defaultStyle: {
-							color: combineRgb(0, 0, 0),
-							bgcolor: combineRgb(0, 255, 0),
+							color: 0x000000,
+							bgcolor: 0x00ff00,
 						},
 						callback: ({ options }): boolean => {
 							const gain = state.state.fairlight?.monitor?.inputTalkbackGain
@@ -542,8 +542,8 @@ export function createFairlightAudioFeedbacks(
 							},
 						}),
 						defaultStyle: {
-							color: combineRgb(0, 0, 0),
-							bgcolor: combineRgb(0, 255, 0),
+							color: 0x000000,
+							bgcolor: 0x00ff00,
 						},
 						callback: ({ options }): boolean => {
 							const gain = state.state.fairlight?.monitor?.inputSidetoneGain

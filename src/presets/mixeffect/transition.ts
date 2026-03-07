@@ -1,4 +1,4 @@
-import { combineRgb, CompanionPresetGroup, type CompanionButtonStyleProps } from '@companion-module/base'
+import { CompanionPresetGroup, type CompanionButtonStyleProps } from '@companion-module/base'
 import { ActionId } from '../../actions/ActionId.js'
 import { FeedbackId } from '../../feedback/FeedbackId.js'
 import { GetTransitionStyleChoices } from '../../choices.js'
@@ -67,8 +67,8 @@ export function createTransitionPresets(
 			style: {
 				text: `${opt.label} $(local:rate)`,
 				size: pstSize,
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
+				color: 0xffffff,
+				bgcolor: 0x000000,
 			},
 			feedbacks: [
 				{
@@ -79,8 +79,8 @@ export function createTransitionPresets(
 						rate: { isExpression: true, value: '$(local:rate)' },
 					},
 					style: {
-						bgcolor: combineRgb(255, 255, 0),
-						color: combineRgb(0, 0, 0),
+						bgcolor: 0xffff00,
+						color: 0x000000,
 					},
 				},
 			],
@@ -125,8 +125,8 @@ export function createTransitionPresets(
 			style: {
 				text: 'PREV TRANS',
 				size: pstSize,
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
+				color: 0xffffff,
+				bgcolor: 0x000000,
 			},
 			feedbacks: [
 				{
@@ -135,8 +135,8 @@ export function createTransitionPresets(
 						mixeffect: { isExpression: true, value: '$(local:me)' },
 					},
 					style: {
-						bgcolor: combineRgb(255, 0, 0),
-						color: combineRgb(255, 255, 255),
+						bgcolor: 0xff0000,
+						color: 0xffffff,
 					},
 				},
 			],
@@ -169,8 +169,8 @@ export function createTransitionPresets(
 			style: {
 				text: 'CUT',
 				size: pstSize,
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
+				color: 0xffffff,
+				bgcolor: 0x000000,
 			},
 			feedbacks: [
 				{
@@ -179,8 +179,8 @@ export function createTransitionPresets(
 						mixeffect: { isExpression: true, value: '$(local:me)' },
 					},
 					style: {
-						bgcolor: combineRgb(255, 0, 0),
-						color: combineRgb(255, 255, 255),
+						bgcolor: 0xff0000,
+						color: 0xffffff,
 					},
 				},
 			],
@@ -212,8 +212,8 @@ export function createTransitionPresets(
 			style: {
 				text: 'AUTO',
 				size: pstSize,
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
+				color: 0xffffff,
+				bgcolor: 0x000000,
 			},
 			feedbacks: [
 				{
@@ -222,8 +222,8 @@ export function createTransitionPresets(
 						mixeffect: { isExpression: true, value: '$(local:me)' },
 					},
 					style: {
-						bgcolor: combineRgb(255, 0, 0),
-						color: combineRgb(255, 255, 255),
+						bgcolor: 0xff0000,
+						color: 0xffffff,
 					},
 				},
 			],
@@ -262,8 +262,8 @@ export function createTransitionPresets(
 				style: {
 					text: opt.label,
 					size: pstSize,
-					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 0),
+					color: 0xffffff,
+					bgcolor: 0x000000,
 				},
 				feedbacks: [
 					{
@@ -273,8 +273,8 @@ export function createTransitionPresets(
 							style: opt.id,
 						},
 						style: {
-							bgcolor: combineRgb(255, 255, 0),
-							color: combineRgb(0, 0, 0),
+							bgcolor: 0xffff00,
+							color: 0x000000,
 						},
 					},
 				],
@@ -319,8 +319,8 @@ export function createTransitionPresets(
 				style: {
 					text: transitionString,
 					size: pstSize,
-					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 0),
+					color: 0xffffff,
+					bgcolor: 0x000000,
 				},
 				feedbacks: [
 					{
@@ -331,8 +331,8 @@ export function createTransitionPresets(
 							selection: selectionProps,
 						},
 						style: {
-							bgcolor: combineRgb(255, 255, 0),
-							color: combineRgb(0, 0, 0),
+							bgcolor: 0xffff00,
+							color: 0x000000,
 						},
 					},
 				],

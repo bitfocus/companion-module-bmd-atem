@@ -2,7 +2,7 @@ import { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../options/common.js'
 import type { ModelSpec } from '../models/index.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
+import { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { getSuperSource } from 'atem-connection/dist/state/util.js'
 import {
 	AtemSuperSourceIdPicker,
@@ -96,8 +96,8 @@ export function createSuperSourceFeedbacks(
 				...AtemSuperSourceArtPropertiesPickers(model, state.state, false),
 			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
 				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
@@ -151,8 +151,8 @@ export function createSuperSourceFeedbacks(
 				source: AtemSuperSourceArtSourcePicker(model, state.state, 'source', 'Fill Source'),
 			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
 				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
@@ -182,8 +182,8 @@ export function createSuperSourceFeedbacks(
 				artOption: AtemSuperSourceArtOption(false),
 			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
 				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
@@ -214,8 +214,8 @@ export function createSuperSourceFeedbacks(
 				source: AtemSuperSourceBoxSourcePicker(model, state.state),
 			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
 				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
@@ -245,8 +245,8 @@ export function createSuperSourceFeedbacks(
 				boxIndex: AtemSuperSourceBoxPicker(),
 			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
 				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
@@ -264,8 +264,8 @@ export function createSuperSourceFeedbacks(
 				...AtemSuperSourcePropertiesPickers(model, state.state),
 			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
 				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0

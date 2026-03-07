@@ -1,7 +1,7 @@
 import { AtemMultiviewSourcePicker, AtemMultiviewWindowPicker, AtemMultiviewerPicker } from '../input.js'
 import type { ModelSpec } from '../models/index.js'
 import { FeedbackId } from './FeedbackId.js'
-import { assertNever, combineRgb, CompanionFeedbackDefinitions, DropdownChoice } from '@companion-module/base'
+import { assertNever, CompanionFeedbackDefinitions, DropdownChoice } from '@companion-module/base'
 import { getMultiviewer, getMultiviewerWindow, type StateWrapper } from '../state.js'
 import { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../options/common.js'
@@ -56,8 +56,8 @@ export function createMultiviewerFeedbacks(
 				source: AtemMultiviewSourcePicker(model, state.state),
 			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
 				const window = getMultiviewerWindow(state.state, options.multiViewerId - 1, options.windowIndex - 1)
@@ -110,8 +110,8 @@ export function createMultiviewerFeedbacks(
 				},
 			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: async ({ options }) => {
 				const multiViewerId = options.multiViewerId - 1

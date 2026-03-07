@@ -2,7 +2,7 @@ import { AtemMESourcePicker } from '../../input.js'
 import { convertOptionsFields } from '../../options/common.js'
 import type { ModelSpec } from '../../models/index.js'
 import { FeedbackId } from '../FeedbackId.js'
-import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
+import { CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { StateWrapper } from '../../state.js'
 import { calculateTallyForInputId } from '../../util.js'
 import { GetSourcesListForType, SourcesToChoices } from '../../choices.js'
@@ -43,8 +43,8 @@ export function createTallyFeedbacks(
 				input: AtemMESourcePicker(model, state.state),
 			}),
 			defaultStyle: {
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(255, 0, 0),
+				color: 0xffffff,
+				bgcolor: 0xff0000,
 			},
 			callback: ({ options }): boolean => {
 				const source = state.tally[options.input]
@@ -59,8 +59,8 @@ export function createTallyFeedbacks(
 				input: AtemMESourcePicker(model, state.state),
 			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(0, 255, 0),
+				color: 0x000000,
+				bgcolor: 0x00ff00,
 			},
 			callback: ({ options }): boolean => {
 				const source = state.tally[options.input]
@@ -82,8 +82,8 @@ export function createTallyFeedbacks(
 				input: AtemMESourcePicker(model, state.state),
 			}),
 			defaultStyle: {
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(255, 0, 0),
+				color: 0xffffff,
+				bgcolor: 0xff0000,
 			},
 			callback: ({ id, options, previousOptions }): boolean => {
 				// Resubscribe if needed

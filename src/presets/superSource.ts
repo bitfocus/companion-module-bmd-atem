@@ -1,4 +1,4 @@
-import { combineRgb, CompanionPresetGroup, type CompanionButtonStyleProps } from '@companion-module/base'
+import { CompanionPresetGroup, type CompanionButtonStyleProps } from '@companion-module/base'
 import { ActionId } from '../actions/ActionId.js'
 import { FeedbackId } from '../feedback/FeedbackId.js'
 import type { SourceInfo } from '../choices.js'
@@ -60,8 +60,8 @@ export function createSuperSourcePresets(
 		style: {
 			text: `Box $(local:box)`,
 			size: pstSize,
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		feedbacks: [
 			{
@@ -71,8 +71,8 @@ export function createSuperSourcePresets(
 					boxIndex: { isExpression: true, value: '$(local:box) - 1' },
 				},
 				style: {
-					bgcolor: combineRgb(255, 255, 0),
-					color: combineRgb(0, 0, 0),
+					bgcolor: 0xffff00,
+					color: 0x000000,
 				},
 			},
 		],
@@ -111,8 +111,8 @@ export function createSuperSourcePresets(
 		style: {
 			text: `$(atem:${pstText}$(local:input))`,
 			size: pstSize,
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		feedbacks: [
 			{
@@ -123,8 +123,8 @@ export function createSuperSourcePresets(
 					boxIndex: { isExpression: true, value: '$(local:box) - 1' },
 				},
 				style: {
-					bgcolor: combineRgb(255, 255, 0),
-					color: combineRgb(0, 0, 0),
+					bgcolor: 0xffff00,
+					color: 0x000000,
 				},
 			},
 		],

@@ -1,4 +1,3 @@
-import { combineRgb } from '@companion-module/base'
 import { Enums } from 'atem-connection'
 import { ActionId } from '../actions/ActionId.js'
 import { FeedbackId } from '../feedback/FeedbackId.js'
@@ -20,8 +19,8 @@ export function createRecordingPresets(context: PresetsBuilderContext): void {
 		style: {
 			text: 'Record\\n$(atem:record_duration_hm)',
 			size: '18',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		feedbacks: [
 			{
@@ -30,8 +29,8 @@ export function createRecordingPresets(context: PresetsBuilderContext): void {
 					state: Enums.RecordingStatus.Recording,
 				},
 				style: {
-					bgcolor: combineRgb(0, 255, 0),
-					color: combineRgb(0, 0, 0),
+					bgcolor: 0x00ff00,
+					color: 0x000000,
 				},
 			},
 			{
@@ -40,8 +39,8 @@ export function createRecordingPresets(context: PresetsBuilderContext): void {
 					state: Enums.RecordingStatus.Stopping,
 				},
 				style: {
-					bgcolor: combineRgb(238, 238, 0),
-					color: combineRgb(0, 0, 0),
+					bgcolor: 0xeeee00,
+					color: 0x000000,
 				},
 			},
 		],

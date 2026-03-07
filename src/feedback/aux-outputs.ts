@@ -1,7 +1,7 @@
 import type { ModelSpec } from '../models/index.js'
 import { convertOptionsFields } from '../options/common.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
+import { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { AtemAuxPicker, AtemAuxSourcePicker } from '../input.js'
 import type { StateWrapper } from '../state.js'
 
@@ -34,8 +34,8 @@ export function createAuxOutputFeedbacks(
 				input: AtemAuxSourcePicker(model, state.state),
 			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
 				const auxSource = state.state.video.auxilliaries[options.aux - 1]

@@ -1,7 +1,7 @@
 import type { ModelSpec } from '../models/index.js'
 import { convertOptionsFields } from '../options/common.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
+import { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { GetMacroChoices } from '../choices.js'
 import { assertUnreachable } from '../util.js'
 import type { StateWrapper } from '../state.js'
@@ -67,8 +67,8 @@ export function createMacroFeedbacks(
 				},
 			}),
 			defaultStyle: {
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(238, 238, 0),
+				color: 0xffffff,
+				bgcolor: 0xeeee00,
 			},
 			callback: ({ options }): boolean => {
 				let macroIndex = options.macroIndex
@@ -108,8 +108,8 @@ export function createMacroFeedbacks(
 				},
 			}),
 			defaultStyle: {
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(238, 238, 0),
+				color: 0xffffff,
+				bgcolor: 0xeeee00,
 			},
 			callback: ({ options }): boolean => {
 				return options.loop === !!state.state.macro.macroPlayer.loop

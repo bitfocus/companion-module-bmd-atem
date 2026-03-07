@@ -2,7 +2,7 @@ import { AtemFadeToBlackStatePicker, AtemMEPicker, AtemRatePicker } from '../../
 import { convertOptionsFields } from '../../options/common.js'
 import type { ModelSpec } from '../../models/index.js'
 import { FeedbackId } from '../FeedbackId.js'
-import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
+import { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { getMixEffect, type StateWrapper } from '../../state.js'
 
 export type AtemFadeToBlackFeedbacks = {
@@ -36,8 +36,8 @@ export function createFadeToBlackFeedbacks(
 				state: AtemFadeToBlackStatePicker(),
 			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
 				const me = getMixEffect(state.state, options.mixeffect - 1)
@@ -64,8 +64,8 @@ export function createFadeToBlackFeedbacks(
 				rate: AtemRatePicker('Rate'),
 			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
 				const me = getMixEffect(state.state, options.mixeffect - 1)

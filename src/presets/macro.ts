@@ -1,4 +1,4 @@
-import { combineRgb, CompanionPresetGroup } from '@companion-module/base'
+import { CompanionPresetGroup } from '@companion-module/base'
 import { ActionId } from '../actions/ActionId.js'
 import { FeedbackId } from '../feedback/FeedbackId.js'
 import { MacroFeedbackType } from '../feedback/macro.js'
@@ -32,8 +32,8 @@ export function createMacroPresets(context: PresetsBuilderContext): void {
 		style: {
 			text: `$(atem:macro_$(local:index))`,
 			size: 'auto',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
+			color: 0xffffff,
+			bgcolor: 0x000000,
 		},
 		feedbacks: [
 			{
@@ -43,8 +43,8 @@ export function createMacroPresets(context: PresetsBuilderContext): void {
 					state: MacroFeedbackType.IsUsed,
 				},
 				style: {
-					bgcolor: combineRgb(0, 0, 238),
-					color: combineRgb(255, 255, 255),
+					bgcolor: 0x0000ee,
+					color: 0xffffff,
 				},
 			},
 			{
@@ -54,8 +54,8 @@ export function createMacroPresets(context: PresetsBuilderContext): void {
 					state: MacroFeedbackType.IsRunning,
 				},
 				style: {
-					bgcolor: combineRgb(0, 238, 0),
-					color: combineRgb(255, 255, 255),
+					bgcolor: 0x00ee00,
+					color: 0xffffff,
 				},
 			},
 			{
@@ -65,8 +65,8 @@ export function createMacroPresets(context: PresetsBuilderContext): void {
 					state: MacroFeedbackType.IsWaiting,
 				},
 				style: {
-					bgcolor: combineRgb(238, 238, 0),
-					color: combineRgb(255, 255, 255),
+					bgcolor: 0xeeee00,
+					color: 0xffffff,
 				},
 			},
 			{
@@ -76,8 +76,8 @@ export function createMacroPresets(context: PresetsBuilderContext): void {
 					state: MacroFeedbackType.IsRecording,
 				},
 				style: {
-					bgcolor: combineRgb(238, 0, 0),
-					color: combineRgb(255, 255, 255),
+					bgcolor: 0xee0000,
+					color: 0xffffff,
 				},
 			},
 		],

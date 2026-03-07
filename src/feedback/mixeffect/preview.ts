@@ -2,7 +2,7 @@ import { AtemMEPicker, AtemMESourcePicker } from '../../input.js'
 import { convertOptionsFields } from '../../options/common.js'
 import type { ModelSpec } from '../../models/index.js'
 import { FeedbackId } from '../FeedbackId.js'
-import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
+import { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { getMixEffect, type StateWrapper } from '../../state.js'
 
 export type AtemPreviewFeedbacks = {
@@ -29,8 +29,8 @@ export function createPreviewFeedbacks(
 				input: AtemMESourcePicker(model, state.state),
 			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(0, 255, 0),
+				color: 0x000000,
+				bgcolor: 0x00ff00,
 			},
 			callback: ({ options }): boolean => {
 				const me = getMixEffect(state.state, options.mixeffect - 1)
