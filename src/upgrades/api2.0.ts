@@ -1,4 +1,5 @@
 import {
+	ExpressionOrValue,
 	FixupBooleanOrVariablesValueToExpressions,
 	FixupNumericOrVariablesValueToExpressions,
 	type CompanionStaticUpgradeResult,
@@ -8,11 +9,14 @@ import type { AtemConfig } from '../config.js'
 import { Enums } from 'atem-connection'
 import type { SSrcArtOption } from '../input.js'
 import type { FairlightMixOption2 } from '../choices.js'
+import { OffsetNumericExpressionOrValueByX } from './util.js'
+import { JsonValue } from 'type-fest'
 
 type ActionFixupRule = {
 	newType?: string
 	options: Record<string, OptionFixupRule>
 }
+type FeedbackFixupRule = ActionFixupRule
 
 type OptionFixupRule = {
 	newName?: string
@@ -36,7 +40,7 @@ type OptionFixupRule = {
 		  }
 }
 
-const timeOfDayModeValueMap: Record<Enums.TimeMode, string> = {
+const timecodeModeValueMap: Record<Enums.TimeMode, string> = {
 	[Enums.TimeMode.FreeRun]: 'freerun',
 	[Enums.TimeMode.TimeOfDay]: 'timeofday',
 }
@@ -54,7 +58,7 @@ const fairlightMixOptionValueMap: Record<any, FairlightMixOption2> = {
 const actionFixupRules: Record<string, ActionFixupRule> = {
 	timecodeMode: {
 		options: {
-			mode: { transform: { type: 'lookup', lookup: timeOfDayModeValueMap } },
+			mode: { transform: { type: 'lookup', lookup: timecodeModeValueMap } },
 		},
 	},
 	ssrcArt: {
@@ -183,6 +187,7 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 		},
 	},
 	dsk: {
+		newType: 'dskOnAir',
 		options: {
 			key: { transform: { type: 'number', zeroBased: true, variables: false } },
 		},
@@ -331,6 +336,7 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 		},
 	},
 	usk: {
+		newType: 'uskOnAir',
 		options: {
 			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
 			key: { transform: { type: 'number', zeroBased: true, variables: false } },
@@ -593,6 +599,65 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 	},
 }
 
+const feedbackFixupRules: Record<string, FeedbackFixupRule> = {
+	timecodeMode: {
+		options: {
+			mode: { transform: { type: 'lookup', lookup: timecodeModeValueMap } },
+		},
+	},
+}
+
+function applyTransform(
+	optionTransform: OptionFixupRule['transform'],
+	valueObj: ExpressionOrValue<JsonValue | undefined>,
+): ExpressionOrValue<JsonValue | undefined> | undefined {
+	if (!optionTransform) return valueObj
+
+	const oldValue = valueObj?.value as any
+	if (optionTransform.type === 'lookup' && oldValue in optionTransform.lookup) {
+		// Basic object lookup to transform
+		const newValue = optionTransform.lookup[oldValue]
+		return { isExpression: false, value: newValue }
+	} else if (optionTransform.type === 'number') {
+		// Convert number from 0-based (e.g. for indexes), optionally considering if there are variables
+		const newValue = FixupNumericOrVariablesValueToExpressions(oldValue)
+		if (optionTransform.zeroBased) {
+			// Attempt to offset by 1
+			return OffsetNumericExpressionOrValueByX(newValue, 1)
+		}
+		return newValue
+	} else if (optionTransform.type === 'default') {
+		// Fill in value if missing
+		if (!valueObj) {
+			return { isExpression: false, value: optionTransform.value }
+		}
+		return valueObj
+	} else if (optionTransform.type === 'boolean') {
+		// Convert boolean, optionally considering if there are variables
+		return FixupBooleanOrVariablesValueToExpressions(oldValue)
+	}
+
+	return valueObj
+}
+
+function applyOptionsFixupRules(
+	optionRules: Record<string, OptionFixupRule>,
+	entityOptions: Record<string, any>,
+): void {
+	for (const [optionKey, optionRule] of Object.entries(optionRules)) {
+		if (!entityOptions[optionKey]) continue
+
+		if (optionRule.transform) {
+			entityOptions[optionKey] = applyTransform(optionRule.transform, entityOptions[optionKey])
+		}
+
+		if (optionRule.newName) {
+			entityOptions[optionRule.newName] = entityOptions[optionKey]
+			delete entityOptions[optionKey]
+		}
+	}
+}
+
 export const UpgradeToExpressions: CompanionStaticUpgradeScript<AtemConfig, undefined> = (_context, props) => {
 	const result: CompanionStaticUpgradeResult<AtemConfig, undefined> = {
 		updatedConfig: null,
@@ -608,44 +673,17 @@ export const UpgradeToExpressions: CompanionStaticUpgradeScript<AtemConfig, unde
 		result.updatedActions.push(action)
 		if (rule.newType) action.actionId = rule.newType
 
-		for (const [optionKey, optionRule] of Object.entries(rule.options)) {
-			if (!action.options[optionKey]) continue
+		applyOptionsFixupRules(rule.options, action.options)
+	}
 
-			if (optionRule.transform) {
-				const oldValue = action.options[optionKey]?.value as any
-				if (optionRule.transform.type === 'lookup' && oldValue in optionRule.transform.lookup) {
-					// Basic object lookup to transform
-					const newValue = optionRule.transform.lookup[oldValue]
-					action.options[optionKey] = { isExpression: false, value: newValue }
-				} else if (optionRule.transform.type === 'number') {
-					// Convert number from 0-based (e.g. for indexes), optionally considering if there are variables
-					action.options[optionKey] = FixupNumericOrVariablesValueToExpressions(oldValue)
-					if (action.options[optionKey] && optionRule.transform.zeroBased) {
-						// Attempt to offset by 1
-						if (typeof action.options[optionKey].value === 'number') {
-							action.options[optionKey].value += 1
-						} else if (typeof action.options[optionKey].value === 'string') {
-							action.options[optionKey].value += ' + 1'
-						}
-					}
-				} else if (optionRule.transform.type === 'default') {
-					// Fill in value if missing
-					if (!action.options[optionKey]) {
-						action.options[optionKey] = { isExpression: false, value: optionRule.transform.value }
-					}
-				} else if (optionRule.transform.type === 'boolean') {
-					// Convert boolean, optionally considering if there are variables
-					action.options[optionKey] = FixupBooleanOrVariablesValueToExpressions(oldValue)
-				}
-			}
+	for (const feedback of props.feedbacks) {
+		const rule = feedbackFixupRules[feedback.feedbackId]
+		if (!rule) continue
 
-			if (optionRule.newName) {
-				action.options[optionRule.newName] = action.options[optionKey]
-				delete action.options[optionKey]
-			}
-		}
+		result.updatedFeedbacks.push(feedback)
+		if (rule.newType) feedback.feedbackId = rule.newType
 
-		// TODO
+		applyOptionsFixupRules(rule.options, feedback.options)
 	}
 
 	return result

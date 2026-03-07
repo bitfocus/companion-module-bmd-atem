@@ -8,9 +8,9 @@ import {
 	type CompanionOptionValues,
 	type JsonValue,
 } from '@companion-module/base'
-import { ActionId } from '../actions/ActionId.js'
 import type { AtemConfig } from '../config.js'
 import { FeedbackId } from '../feedback/FeedbackId.js'
+import { OffsetNumericExpressionOrValueByX } from './util.js'
 
 function scaleValue(obj: { [key: string]: JsonValue | undefined }, key: string, scale: number): void {
 	if (obj[key] !== undefined) {
@@ -20,16 +20,16 @@ function scaleValue(obj: { [key: string]: JsonValue | undefined }, key: string, 
 
 function upgradeV2x2x0(
 	_context: CompanionUpgradeContext<AtemConfig>,
-	props: CompanionStaticUpgradeProps<AtemConfig>,
-): CompanionStaticUpgradeResult<AtemConfig> {
-	const result: CompanionStaticUpgradeResult<AtemConfig> = {
+	props: CompanionStaticUpgradeProps<AtemConfig, undefined>,
+): CompanionStaticUpgradeResult<AtemConfig, undefined> {
+	const result: CompanionStaticUpgradeResult<AtemConfig, undefined> = {
 		updatedActions: [],
 		updatedConfig: null,
 		updatedFeedbacks: [],
 	}
 
 	for (const action of props.actions) {
-		if (action.actionId === ActionId.SuperSourceBoxProperties) {
+		if (action.actionId === 'setSsrcBoxProperties') {
 			scaleValue(action.options, 'size', 0.001)
 			scaleValue(action.options, 'x', 0.01)
 			scaleValue(action.options, 'y', 0.01)
@@ -43,7 +43,7 @@ function upgradeV2x2x0(
 	}
 
 	for (const feedback of props.feedbacks) {
-		if (feedback.feedbackId === FeedbackId.SSrcBoxProperties) {
+		if (feedback.feedbackId === 'ssrc_box_properties') {
 			scaleValue(feedback.options, 'size', 0.001)
 			scaleValue(feedback.options, 'x', 0.01)
 			scaleValue(feedback.options, 'y', 0.01)
@@ -101,27 +101,36 @@ const BooleanFeedbackUpgradeMap: {
 
 function upgradeAddSSrcPropertiesPicker(
 	_context: CompanionUpgradeContext<AtemConfig>,
-	props: CompanionStaticUpgradeProps<AtemConfig>,
-): CompanionStaticUpgradeResult<AtemConfig> {
-	const result: CompanionStaticUpgradeResult<AtemConfig> = {
+	props: CompanionStaticUpgradeProps<AtemConfig, undefined>,
+): CompanionStaticUpgradeResult<AtemConfig, undefined> {
+	const result: CompanionStaticUpgradeResult<AtemConfig, undefined> = {
 		updatedActions: [],
 		updatedConfig: null,
 		updatedFeedbacks: [],
 	}
 
 	for (const action of props.actions) {
-		if (action.actionId === ActionId.SuperSourceBoxProperties && !action.options.properties) {
-			action.options.properties = ['size', 'x', 'y', 'cropEnable', 'cropTop', 'cropLeft', 'cropRight', 'cropBottom']
+		if (action.actionId === 'setSsrcBoxProperties' && !action.options.properties) {
+			action.options.properties = {
+				isExpression: false,
+				value: ['size', 'x', 'y', 'cropEnable', 'cropTop', 'cropLeft', 'cropRight', 'cropBottom'],
+			}
 			result.updatedActions.push(action)
-		} else if (action.actionId === ActionId.SuperSourceArt && !action.options.properties) {
-			action.options.properties = ['fill', 'key', 'artOption']
+		} else if (action.actionId === 'ssrcArt' && !action.options.properties) {
+			action.options.properties = {
+				isExpression: false,
+				value: ['fill', 'key', 'artOption'],
+			}
 			result.updatedActions.push(action)
 		}
 	}
 
 	for (const feedback of props.feedbacks) {
-		if (feedback.feedbackId === FeedbackId.SSrcBoxProperties && !feedback.options.properties) {
-			feedback.options.properties = ['size', 'x', 'y', 'cropEnable', 'cropTop', 'cropLeft', 'cropRight', 'cropBottom']
+		if (feedback.feedbackId === 'ssrc_box_properties' && !feedback.options.properties) {
+			feedback.options.properties = {
+				isExpression: false,
+				value: ['size', 'x', 'y', 'cropEnable', 'cropTop', 'cropLeft', 'cropRight', 'cropBottom'],
+			}
 			result.updatedFeedbacks.push(feedback)
 		}
 	}
@@ -131,17 +140,17 @@ function upgradeAddSSrcPropertiesPicker(
 
 function fixUsingFairlightAudioFaderGainInsteadOfFairlightAudioMonitorFaderGain(
 	_context: CompanionUpgradeContext<AtemConfig>,
-	props: CompanionStaticUpgradeProps<AtemConfig>,
-): CompanionStaticUpgradeResult<AtemConfig> {
-	const result: CompanionStaticUpgradeResult<AtemConfig> = {
+	props: CompanionStaticUpgradeProps<AtemConfig, undefined>,
+): CompanionStaticUpgradeResult<AtemConfig, undefined> {
+	const result: CompanionStaticUpgradeResult<AtemConfig, undefined> = {
 		updatedActions: [],
 		updatedConfig: null,
 		updatedFeedbacks: [],
 	}
 
 	for (const feedback of props.feedbacks) {
-		if (feedback.feedbackId === FeedbackId.FairlightAudioFaderGain && feedback.options['input'] === undefined) {
-			feedback.feedbackId = FeedbackId.FairlightAudioMonitorOutputFaderGain
+		if (feedback.feedbackId === 'fairlightAudioFaderGain' && feedback.options['input'] === undefined) {
+			feedback.feedbackId = 'fairlightAudioMonitorFaderGain'
 			result.updatedFeedbacks.push(feedback)
 		}
 	}
@@ -161,9 +170,9 @@ const InvertableFeedbackUpgradeMap: {
 
 function combineTransitionSelectionToDropdown(
 	_context: CompanionUpgradeContext<AtemConfig>,
-	props: CompanionStaticUpgradeProps<AtemConfig>,
-): CompanionStaticUpgradeResult<AtemConfig> {
-	const result: CompanionStaticUpgradeResult<AtemConfig> = {
+	props: CompanionStaticUpgradeProps<AtemConfig, undefined>,
+): CompanionStaticUpgradeResult<AtemConfig, undefined> {
+	const result: CompanionStaticUpgradeResult<AtemConfig, undefined> = {
 		updatedActions: [],
 		updatedConfig: null,
 		updatedFeedbacks: [],
@@ -184,7 +193,7 @@ function combineTransitionSelectionToDropdown(
 	}
 
 	for (const action of props.actions) {
-		if (action.actionId === ActionId.TransitionSelection && action.options['selection'] === undefined) {
+		if (action.actionId === 'transitionSelection' && action.options['selection'] === undefined) {
 			convertSelection(action.options)
 
 			result.updatedActions.push(action)
@@ -192,7 +201,7 @@ function combineTransitionSelectionToDropdown(
 	}
 
 	for (const feedback of props.feedbacks) {
-		if (feedback.feedbackId === FeedbackId.TransitionSelection && feedback.options['selection'] === undefined) {
+		if (feedback.feedbackId === 'transitionSelection' && feedback.options['selection'] === undefined) {
 			convertSelection(feedback.options)
 
 			result.updatedFeedbacks.push(feedback)
@@ -214,8 +223,8 @@ function ChangeMediaPlayerSourceVariablesDropdownToText(
 
 	for (const action of props.actions) {
 		if (action.actionId === 'mediaPlayerSourceVariables') {
-			action.actionId = ActionId.MediaPlayerSourceVariables
-			action.options.mediaplayer = Number(action.options.mediaplayer) + 1
+			action.actionId = 'mediaPlayerSourceVariables2'
+			action.options.mediaplayer = OffsetNumericExpressionOrValueByX(action.options.mediaplayer, 1)
 
 			result.updatedActions.push(action)
 		}
