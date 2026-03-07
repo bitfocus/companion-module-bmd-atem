@@ -6,7 +6,6 @@ import {
 	AtemUSKDVEPropertiesPickers,
 	AtemUSKPicker,
 	AtemUSKKeyframePropertiesPickers,
-	AtemTransitionAnimationOptions,
 } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
@@ -17,6 +16,7 @@ import type {
 	UpstreamKeyerFlyKeyframe,
 } from 'atem-connection/dist/state/video/upstreamKeyers.js'
 import type { AtemTransitions, TransitionOptions } from '../../transitions.js'
+import { AtemTransitionAnimationOptions } from '../../options/fade.js'
 
 export type AtemUpstreamKeyerDVEActions = {
 	[ActionId.USKDVEProperties]: {

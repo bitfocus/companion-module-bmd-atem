@@ -8,7 +8,6 @@ import {
 	AtemFairlightAudioRoutingDestinationsPicker,
 	AtemFairlightAudioRoutingSourcePicker,
 	AtemFairlightAudioSourcePicker,
-	FadeDurationFields,
 	FaderLevelDeltaChoice,
 	resolveTrueFalseToggle,
 } from '../input.js'
@@ -21,6 +20,7 @@ import {
 } from '../choices.js'
 import type { StateWrapper } from '../state.js'
 import { parseAudioRoutingString, parseAudioRoutingStringSingle } from '../util.js'
+import { FadeDurationFields } from '../options/fade.js'
 
 export type AtemFairlightAudioActions = {
 	[ActionId.FairlightAudioInputGain]: {

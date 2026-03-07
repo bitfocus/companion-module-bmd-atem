@@ -4,10 +4,11 @@ import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
 import { CHOICES_CLASSIC_AUDIO_MIX_OPTION } from '../choices.js'
-import { AtemAudioInputPicker, FadeDurationFields, FaderLevelDeltaChoice } from '../input.js'
+import { AtemAudioInputPicker, FaderLevelDeltaChoice } from '../input.js'
 import type { AtemTransitions, FadeDurationFieldsType } from '../transitions.js'
 import type { StateWrapper } from '../state.js'
 import { CLASSIC_AUDIO_MIN_GAIN } from '../util.js'
+import { FadeDurationFields } from '../options/fade.js'
 
 export type AtemClassicAudioActions = {
 	[ActionId.ClassicAudioGain]: {

@@ -34,8 +34,7 @@ import {
 } from './choices.js'
 import type { ModelSpec } from './models/index.js'
 import { iterateTimes, compact, NumberComparitor } from './util.js'
-import { DropdownPropertiesPicker, type MyOptionsObject, type WithProperties } from './options/common.js'
-import { FadeDurationFieldsType } from './transitions.js'
+import { DropdownPropertiesPicker, type WithProperties } from './options/common.js'
 
 export function AtemMESourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown<'input'> {
 	return {
@@ -1077,58 +1076,6 @@ export function AtemAuxSourcePicker(model: ModelSpec, state: AtemState): Compani
 		choices: SourcesToChoices(GetSourcesListForType(model, state, 'aux')),
 	}
 }
-export function AtemTransitionAnimationOptions(): {
-	transitionRate: CompanionInputFieldNumber<'transitionRate'>
-	transitionEasing: CompanionInputFieldDropdown<'transitionEasing'>
-	transitionCurve: CompanionInputFieldDropdown<'transitionCurve'>
-} {
-	return {
-		transitionRate: {
-			type: 'number',
-			id: 'transitionRate',
-			label: 'Transition Rate (ms)',
-			default: 0,
-			min: 0,
-			max: 99999,
-			step: 1,
-			asInteger: true,
-			clampValues: true,
-		},
-		transitionEasing: {
-			type: 'dropdown',
-			label: 'Transition Easing',
-			id: 'transitionEasing',
-			default: 'linear',
-			choices: [
-				{ id: 'linear', label: 'Linear' },
-				{ id: 'quadratic', label: 'Quadratic' },
-				{ id: 'cubic', label: 'Cubic' },
-				{ id: 'quartic', label: 'Quartic' },
-				{ id: 'quintic', label: 'Quintic' },
-				{ id: 'sinusoidal', label: 'Sinusoidal' },
-				{ id: 'exponential', label: 'Exponential' },
-				{ id: 'circular', label: 'Circular' },
-				{ id: 'elastic', label: 'Elastic' },
-				{ id: 'back', label: 'Back' },
-				{ id: 'bounce', label: 'Bounce' },
-			],
-			disableAutoExpression: true,
-		},
-		transitionCurve: {
-			type: 'dropdown',
-			label: 'Transition curve',
-			id: 'transitionCurve',
-			default: 'ease-in',
-			choices: [
-				{ id: 'ease-in', label: 'Ease-in' },
-				{ id: 'ease-out', label: 'Ease-out' },
-				{ id: 'ease-in-out', label: 'Ease-in-out' },
-			],
-			isVisibleExpression: `$(options:transitionEasing) != null && $(options:transitionEasing) != 'linear'`,
-			disableAutoExpression: true,
-		},
-	}
-}
 export function AtemSuperSourceBoxPicker(): CompanionInputFieldDropdown<'boxIndex'> {
 	return {
 		type: 'dropdown',
@@ -1599,53 +1546,6 @@ export function NumberComparitorPicker(): CompanionInputFieldDropdown<'comparito
 		disableAutoExpression: true, // Needs translating first
 	}
 }
-
-export const FadeDurationFields = {
-	fadeDuration: {
-		type: 'number',
-		label: 'Fade Duration (ms)',
-		id: 'fadeDuration',
-		default: 0,
-		min: 0,
-		step: 10,
-		max: 60000,
-		asInteger: true,
-		clampValues: true,
-	},
-	fadeAlgorithm: {
-		type: 'dropdown',
-		label: 'Algorithm',
-		id: 'fadeAlgorithm',
-		default: 'linear',
-		choices: [
-			{ id: 'linear', label: 'Linear' },
-			{ id: 'quadratic', label: 'Quadratic' },
-			{ id: 'cubic', label: 'Cubic' },
-			{ id: 'quartic', label: 'Quartic' },
-			{ id: 'quintic', label: 'Quintic' },
-			{ id: 'sinusoidal', label: 'Sinusoidal' },
-			{ id: 'exponential', label: 'Exponential' },
-			{ id: 'circular', label: 'Circular' },
-			{ id: 'elastic', label: 'Elastic' },
-			{ id: 'back', label: 'Back' },
-			{ id: 'bounce', label: 'Bounce' },
-		],
-		disableAutoExpression: true,
-	},
-	fadeCurve: {
-		type: 'dropdown',
-		label: 'Fade curve',
-		id: 'fadeCurve',
-		default: 'ease-in',
-		choices: [
-			{ id: 'ease-in', label: 'Ease-in' },
-			{ id: 'ease-out', label: 'Ease-out' },
-			{ id: 'ease-in-out', label: 'Ease-in-out' },
-		],
-		isVisibleExpression: `$(options:fadeAlgorithm) != null && $(options:fadeAlgorithm) != 'linear'`,
-		disableAutoExpression: true,
-	},
-} as const satisfies MyOptionsObject<FadeDurationFieldsType, CompanionInputFieldNumber | CompanionInputFieldDropdown>
 
 export const FaderLevelDeltaChoice: CompanionInputFieldNumber<'delta'> = {
 	type: 'number',

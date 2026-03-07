@@ -10,7 +10,6 @@ import {
 	AtemSuperSourceIdPicker,
 	AtemSuperSourcePropertiesPickersForOffset,
 	type AtemSuperSourceArtProperties,
-	AtemTransitionAnimationOptions,
 	resolveTrueFalseToggle,
 	AtemSSrcArtOptionToProtocolEnum,
 	AtemSSrcArtOptionFromProtocolEnum,
@@ -21,6 +20,7 @@ import { getSuperSourceBox, type StateWrapper } from '../state.js'
 import { clamp } from '../util.js'
 import type { AtemTransitions, TransitionOptions } from '../transitions.js'
 import { AtemSuperSourceProperties, AtemSuperSourcePropertiesPickers } from '../options/superSource.js'
+import { AtemTransitionAnimationOptions } from '../options/fade.js'
 
 export type AtemSuperSourceActions = {
 	[ActionId.SuperSourceArt]: {
