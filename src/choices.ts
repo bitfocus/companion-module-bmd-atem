@@ -1,4 +1,4 @@
-import type { CompanionInputFieldTextInput, DropdownChoice } from '@companion-module/base'
+import type { CompanionInputFieldNumber, CompanionInputFieldTextInput, DropdownChoice } from '@companion-module/base'
 import { type AtemState, Enums } from 'atem-connection'
 import type { ModelSpec } from './models/index.js'
 import { iterateTimes, assertUnreachable } from './util.js'
@@ -447,13 +447,14 @@ export function SourcesToChoices(sources: MiniSourceInfo[]): DropdownChoice[] {
 	}))
 }
 
-export function CameraControlSourcePicker(): CompanionInputFieldTextInput {
+export function CameraControlSourcePicker(): CompanionInputFieldNumber<'cameraId'> {
 	return {
 		id: 'cameraId',
-		type: 'textinput',
-		useVariables: true,
-		default: '1',
+		type: 'number',
 		label: 'Camera Id',
+		default: 1,
+		min: 1,
+		max: 40,
 	}
 }
 

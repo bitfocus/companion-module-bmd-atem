@@ -15,7 +15,7 @@ import { InternalPortType } from 'atem-connection/dist/enums/index.js'
 export type AtemCameraControlDisplayActions = {
 	[ActionId.CameraControlMediaRecordSingle]: {
 		options: {
-			cameraId: string
+			cameraId: number
 			state: TrueFalseToggle
 		}
 	}
@@ -57,10 +57,11 @@ export function createCameraControlMediaActions(
 						{ id: 'false', label: 'Stopped' },
 						{ id: 'toggle', label: 'Toggle' },
 					],
+					disableAutoExpression: true,
 				},
 			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.cameraId
+				const cameraId = options.cameraId
 
 				let target: boolean
 				if (options.state === 'toggle') {
@@ -106,10 +107,11 @@ export function createCameraControlMediaActions(
 						{ id: 'true', label: 'Recording' },
 						{ id: 'false', label: 'Stopped' },
 					],
+					disableAutoExpression: true,
 				},
 			}),
 			callback: async ({ options }) => {
-				const cameraIds = options.getRaw('cameraIds')
+				const cameraIds = options.cameraIds
 
 				if (!cameraIds || !Array.isArray(cameraIds) || cameraIds.length === 0) return
 

@@ -10,57 +10,57 @@ import type { AtemConfig } from '../../config.js'
 export type AtemCameraControlVideoActions = {
 	[ActionId.CameraControlVideoManualWhiteBalance]: {
 		options: {
-			cameraId: string
-			colorTemperature: string
-			tint: string
+			cameraId: number
+			colorTemperature: number
+			tint: number
 		}
 	}
 	[ActionId.CameraControlVideoIncrementManualWhiteBalance]: {
 		options: {
-			cameraId: string
-			colorTemperatureIncrement: string
-			tintIncrement: string
+			cameraId: number
+			colorTemperatureIncrement: number
+			tintIncrement: number
 		}
 	}
 	[ActionId.CameraControlVideoAutoWhiteBalance]: {
 		options: {
-			cameraId: string
+			cameraId: number
 		}
 	}
 	[ActionId.CameraControlVideoExposure]: {
 		options: {
-			cameraId: string
-			framerate: string
+			cameraId: number
+			framerate: number
 		}
 	}
 	[ActionId.CameraControlIncrementVideoExposure]: {
 		options: {
-			cameraId: string
+			cameraId: number
 			direction: string
 		}
 	}
 	[ActionId.CameraControlVideoSharpeningLevel]: {
 		options: {
-			cameraId: string
+			cameraId: number
 			level: VideoSharpeningLevel
 		}
 	}
 	[ActionId.CameraControlVideoGain]: {
 		options: {
-			cameraId: string
-			gain: string
+			cameraId: number
+			gain: number
 		}
 	}
 	[ActionId.CameraControlIncrementVideoGain]: {
 		options: {
-			cameraId: string
-			increment: string
+			cameraId: number
+			increment: number
 		}
 	}
 	[ActionId.CameraControlVideoNdFilterStop]: {
 		options: {
-			cameraId: string
-			stop: string
+			cameraId: number
+			stop: number
 		}
 	}
 }
@@ -93,26 +93,26 @@ export function createCameraControlVideoActions(
 				cameraId: CameraControlSourcePicker(),
 				colorTemperature: {
 					id: 'colorTemperature',
-					type: 'textinput',
+					type: 'number',
 					label: 'Color Temperature',
-					default: '5600',
-					useVariables: true,
+					default: 5600,
+					min: 1000,
+					max: 15000,
+					clampValues: true,
 				},
 				tint: {
 					id: 'tint',
-					type: 'textinput',
+					type: 'number',
 					label: 'Tint',
-					default: '0',
-					tooltip: 'Range -50 to 50',
-					useVariables: true,
+					default: 0,
+					min: -50,
+					max: 50,
+					description: 'Range -50 to 50',
+					clampValues: true,
 				},
 			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.cameraId
-				const colorTemperature = await options.colorTemperature
-				const tint = await options.tint
-
-				await commandSender?.videoManualWhiteBalance(cameraId, colorTemperature, tint)
+				await commandSender?.videoManualWhiteBalance(options.cameraId, options.colorTemperature, options.tint)
 			},
 		},
 
@@ -122,29 +122,31 @@ export function createCameraControlVideoActions(
 				cameraId: CameraControlSourcePicker(),
 				colorTemperatureIncrement: {
 					id: 'colorTemperatureIncrement',
-					type: 'textinput',
+					type: 'number',
 					label: 'Color Temperature Increment',
-					default: '100',
-					tooltip: 'e.g. 100 or -100',
-					useVariables: true,
+					default: 100,
+					min: -10000,
+					max: 10000,
+					description: 'e.g. 100 or -100',
+					clampValues: true,
 				},
 				tintIncrement: {
 					id: 'tintIncrement',
-					type: 'textinput',
+					type: 'number',
 					label: 'Tint Increment',
-					default: '0',
-					tooltip: 'e.g 10 or -10',
-					useVariables: true,
+					default: 0,
+					min: -100,
+					max: 100,
+					description: 'e.g 10 or -10',
+					clampValues: true,
 				},
 			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.cameraId
-				const colorTemperatureIncrement = await options.colorTemperatureIncrement
-				const tintIncrement = await options.tintIncrement
+				const cameraId = options.cameraId
 
 				const colorTemperature =
-					(_state.atemCameraState.get(cameraId)?.video.whiteBalance[0] ?? 0) + colorTemperatureIncrement
-				let tint = (_state.atemCameraState.get(cameraId)?.video.whiteBalance[1] ?? 0) + tintIncrement
+					(_state.atemCameraState.get(cameraId)?.video.whiteBalance[0] ?? 0) + options.colorTemperatureIncrement
+				let tint = (_state.atemCameraState.get(cameraId)?.video.whiteBalance[1] ?? 0) + options.tintIncrement
 
 				if (tint > 50) {
 					tint = 50
@@ -162,9 +164,7 @@ export function createCameraControlVideoActions(
 				cameraId: CameraControlSourcePicker(),
 			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.cameraId
-
-				await commandSender?.videoTriggerAutoWhiteBalance(cameraId)
+				await commandSender?.videoTriggerAutoWhiteBalance(options.cameraId)
 			},
 		},
 
@@ -174,18 +174,17 @@ export function createCameraControlVideoActions(
 				cameraId: CameraControlSourcePicker(),
 				framerate: {
 					id: 'framerate',
-					type: 'textinput',
+					type: 'number',
 					label: 'Framerate',
-					default: '60',
-					tooltip: 'eg for 1/60 use 50',
-					useVariables: true,
+					default: 60,
+					min: 1,
+					max: 400,
+					description: 'eg for 1/60 use 60',
+					clampValues: true,
 				},
 			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.cameraId
-				const framerate = await options.framerate
-
-				await commandSender?.videoExposureUs(cameraId, Math.round(1000000 / framerate))
+				await commandSender?.videoExposureUs(options.cameraId, Math.round(1000000 / options.framerate))
 			},
 		},
 
@@ -203,15 +202,18 @@ export function createCameraControlVideoActions(
 					],
 					default: 'up',
 					tooltip: 'Up for faster shutter speeds, down for slower.',
+					disableAutoExpression: true,
 				},
 			}),
 			callback: async ({ options }) => {
+				// Note: this list of exposures is based on the micro studio 4k g2.
+				// unsure if this is correct for other models
 				const exposureUs = [
 					41667, 40000, 33333, 20833, 20000, 16667, 13333, 11111, 10000, 8333, 6667, 5556, 4000, 2778, 2000, 1379, 1000,
 					690, 500,
 				]
 
-				const cameraId = await options.cameraId
+				const cameraId = options.cameraId
 				const increment = options.direction == 'up' ? 1 : -1
 
 				const currentExposreIndex = exposureUs.indexOf(_state.atemCameraState.get(cameraId)?.video.exposure ?? 41667)
@@ -253,13 +255,11 @@ export function createCameraControlVideoActions(
 							label: 'High',
 						},
 					],
+					disableAutoExpression: true, // TODO needs translation
 				},
 			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.cameraId
-				const level = options.level
-
-				await commandSender?.videoSharpeningLevel(cameraId, level)
+				await commandSender?.videoSharpeningLevel(options.cameraId, options.level)
 			},
 		},
 
@@ -269,18 +269,17 @@ export function createCameraControlVideoActions(
 				cameraId: CameraControlSourcePicker(),
 				gain: {
 					id: 'gain',
-					type: 'textinput',
+					type: 'number',
 					label: 'Value',
-					default: '0',
-					tooltip: 'Range 0 - 128',
-					useVariables: true,
+					default: 0,
+					min: 0,
+					max: 128,
+					description: 'Range 0 - 128',
+					clampValues: true,
 				},
 			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.cameraId
-				const gain = await options.gain
-
-				await commandSender?.videoGain(cameraId, gain)
+				await commandSender?.videoGain(options.cameraId, options.gain)
 			},
 		},
 
@@ -290,18 +289,20 @@ export function createCameraControlVideoActions(
 				cameraId: CameraControlSourcePicker(),
 				increment: {
 					id: 'increment',
-					type: 'textinput',
+					type: 'number',
 					label: 'Value',
-					default: '10',
-					tooltip: 'e.g 10 or -10',
-					useVariables: true,
+					default: 10,
+					min: -200,
+					max: 200,
+					description: 'e.g 10 or -10',
+					clampValues: true,
 				},
 			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.cameraId
-				const increment = await options.increment
+				const cameraId = options.cameraId
+				const increment = options.increment
 
-				let gain = (_state.atemCameraState.get(cameraId)?.video.gain ?? 0) + increment
+				let gain = Math.round((_state.atemCameraState.get(cameraId)?.video.gain ?? 0) + increment)
 
 				if (gain > 127) {
 					gain = 127
@@ -319,18 +320,17 @@ export function createCameraControlVideoActions(
 				cameraId: CameraControlSourcePicker(),
 				stop: {
 					id: 'stop',
-					type: 'textinput',
+					type: 'number',
 					label: 'Value',
-					default: '4',
-					tooltip: 'Range 0.0 - 15.0',
-					useVariables: true,
+					default: 4,
+					min: 0,
+					max: 15,
+					description: 'Range 0.0 - 15.0',
+					asInteger: false,
 				},
 			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.cameraId
-				const stop = await options.stop
-
-				await commandSender?.videoNdFilterStop(cameraId, stop)
+				await commandSender?.videoNdFilterStop(options.cameraId, options.stop)
 			},
 		},
 	}

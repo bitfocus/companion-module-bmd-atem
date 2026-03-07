@@ -426,6 +426,170 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 			//
 		},
 	},
+
+	cameraControlLensFocus: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+			delta: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	cameraControlLensAutoFocus: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	cameraControlLensIris: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+			fStop: { transform: { type: 'number', zeroBased: false, variables: true } },
+			normalised: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	cameraControlIncrementLensIris: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+			fStopIncrement: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	cameraControlLensAutoIris: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	cameraControlLensOpticalImageStabilisation: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	cameraControlLensZoom: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+			zoom: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+
+	cameraControlVideoManualWhiteBalance: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+			colorTemperature: { transform: { type: 'number', zeroBased: false, variables: true } },
+			tint: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	cameraControlVideoIncrementManualWhiteBalance: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+			colorTemperatureIncrement: { transform: { type: 'number', zeroBased: false, variables: true } },
+			tintIncrement: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	cameraControlVideoAutoWhiteBalance: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	cameraControlVideoExposure: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+			framerate: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	cameraControlIncrementVideoExposure: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	cameraControlVideoSharpeningLevel: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	cameraControlVideoGain: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+			gain: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	cameraControlIncrementVideoGain: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+			increment: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	cameraControlVideoNdFilterStop: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+			stop: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+
+	cameraControlDisplayColorBars: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+
+	cameraControlMediaRecordSingle: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+
+	cameraControlColorLiftAdjust: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+			red: { transform: { type: 'number', zeroBased: false, variables: true } },
+			green: { transform: { type: 'number', zeroBased: false, variables: true } },
+			blue: { transform: { type: 'number', zeroBased: false, variables: true } },
+			luma: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	cameraControlColorGammaAdjust: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+			red: { transform: { type: 'number', zeroBased: false, variables: true } },
+			green: { transform: { type: 'number', zeroBased: false, variables: true } },
+			blue: { transform: { type: 'number', zeroBased: false, variables: true } },
+			luma: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	cameraControlColorGainAdjust: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+			red: { transform: { type: 'number', zeroBased: false, variables: true } },
+			green: { transform: { type: 'number', zeroBased: false, variables: true } },
+			blue: { transform: { type: 'number', zeroBased: false, variables: true } },
+			luma: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	cameraControlColorOffsetAdjust: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+			red: { transform: { type: 'number', zeroBased: false, variables: true } },
+			green: { transform: { type: 'number', zeroBased: false, variables: true } },
+			blue: { transform: { type: 'number', zeroBased: false, variables: true } },
+			luma: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	cameraControlColorContrastAdjust: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+			contrast: { transform: { type: 'number', zeroBased: false, variables: true } },
+			pivot: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	cameraControlColorLumaMix: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+			lumaMix: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	cameraControlColorHueSaturationAdjust: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+			hue: { transform: { type: 'number', zeroBased: false, variables: true } },
+			saturation: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
 }
 
 export const UpgradeToExpressions: CompanionStaticUpgradeScript<AtemConfig, undefined> = (_context, props) => {

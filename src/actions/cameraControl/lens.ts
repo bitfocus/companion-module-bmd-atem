@@ -10,44 +10,44 @@ import type { AtemConfig } from '../../config.js'
 export type AtemCameraControlLensActions = {
 	[ActionId.CameraControlLensFocus]: {
 		options: {
-			cameraId: string
-			delta: string
+			cameraId: number
+			delta: number
 		}
 	}
 	[ActionId.CameraControlLensAutoFocus]: {
 		options: {
-			cameraId: string
+			cameraId: number
 		}
 	}
 	[ActionId.CameraControlLensIris]: {
 		options: {
-			cameraId: string
+			cameraId: number
 			isNormalised: boolean
-			fStop: string
-			normalised: string
+			fStop: number
+			normalised: number
 		}
 	}
 	[ActionId.CameraControlIncrementLensIris]: {
 		options: {
-			cameraId: string
-			fStopIncrement: string
+			cameraId: number
+			fStopIncrement: number
 		}
 	}
 	[ActionId.CameraControlLensAutoIris]: {
 		options: {
-			cameraId: string
+			cameraId: number
 		}
 	}
 	[ActionId.CameraControlLensOpticalImageStabilisation]: {
 		options: {
-			cameraId: string
+			cameraId: number
 			state: TrueFalseToggle
 		}
 	}
 	[ActionId.CameraControlLensZoom]: {
 		options: {
-			cameraId: string
-			zoom: string
+			cameraId: number
+			zoom: number
 		}
 	}
 }
@@ -78,18 +78,18 @@ export function createCameraControlLensActions(
 				cameraId: CameraControlSourcePicker(),
 				delta: {
 					id: 'delta',
-					type: 'textinput',
+					type: 'number',
 					label: 'Delta',
-					default: '0.1',
-					tooltip: 'Max range -1.0 - 1.0',
-					useVariables: true,
+					default: 0.1,
+					min: -1,
+					max: 1,
+					description: 'Max range -1.0 - 1.0',
+					clampValues: true,
+					asInteger: false,
 				},
 			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.cameraId
-				const value = await options.delta
-
-				await commandSender?.lensFocus(cameraId, value, true)
+				await commandSender?.lensFocus(options.cameraId, options.delta, true)
 			},
 		},
 
@@ -99,7 +99,7 @@ export function createCameraControlLensActions(
 				cameraId: CameraControlSourcePicker(),
 			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.cameraId
+				const cameraId = options.cameraId
 
 				await commandSender?.lensTriggerAutoFocus(cameraId)
 			},
@@ -114,36 +114,38 @@ export function createCameraControlLensActions(
 					type: 'checkbox',
 					label: 'Normalised',
 					default: true,
+					disableAutoExpression: true,
 				},
 				fStop: {
 					id: 'fStop',
-					type: 'textinput',
+					type: 'number',
 					label: 'Value',
-					default: '4',
-					tooltip: 'Max range -1.0 - 16.0',
-					useVariables: true,
+					default: 4,
+					min: -1,
+					max: 16,
+					description: 'Max range -1.0 - 16.0',
 					isVisibleExpression: `!$(options:isNormalised)`,
+					asInteger: false,
+					clampValues: true,
 				},
 				normalised: {
 					id: 'normalised',
-					type: 'textinput',
+					type: 'number',
 					label: 'Value',
-					default: '0.5',
-					tooltip: 'Range 0.0 - 1.0',
-					useVariables: true,
+					default: 0.5,
+					min: 0,
+					max: 1,
+					description: 'Range 0.0 - 1.0',
 					isVisibleExpression: `!$(options:isNormalised)`,
+					asInteger: false,
+					clampValues: true,
 				},
 			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.cameraId
-
-				const isNormalised = options.isNormalised
-				if (isNormalised) {
-					const value = await options.normalised
-					await commandSender?.lensIrisNormalised(cameraId, value)
+				if (options.isNormalised) {
+					await commandSender?.lensIrisNormalised(options.cameraId, options.normalised)
 				} else {
-					const value = await options.fStop
-					await commandSender?.lensIrisFStop(cameraId, value)
+					await commandSender?.lensIrisFStop(options.cameraId, options.fStop)
 				}
 			},
 		},
@@ -154,16 +156,19 @@ export function createCameraControlLensActions(
 				cameraId: CameraControlSourcePicker(),
 				fStopIncrement: {
 					id: 'fStopIncrement',
-					type: 'textinput',
+					type: 'number',
 					label: 'Value',
-					default: '1',
-					tooltip: 'e.g. 1 or -1',
-					useVariables: true,
+					default: 1,
+					min: -100,
+					max: 100,
+					description: 'e.g. 1 or -1',
+					asInteger: false,
+					clampValues: true,
 				},
 			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.cameraId
-				const increment = await options.fStopIncrement
+				const cameraId = options.cameraId
+				const increment = options.fStopIncrement
 
 				let iris = (state.atemCameraState.get(cameraId)?.lens.iris ?? 0) + increment
 
@@ -183,9 +188,7 @@ export function createCameraControlLensActions(
 				cameraId: CameraControlSourcePicker(),
 			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.cameraId
-
-				await commandSender?.lensTriggerAutoIris(cameraId)
+				await commandSender?.lensTriggerAutoIris(options.cameraId)
 			},
 		},
 
@@ -199,10 +202,11 @@ export function createCameraControlLensActions(
 					label: 'State',
 					default: 'toggle',
 					choices: CHOICES_ON_OFF_TOGGLE,
+					disableAutoExpression: true,
 				},
 			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.cameraId
+				const cameraId = options.cameraId
 
 				let target: boolean
 				if (options.state === 'toggle') {
@@ -222,17 +226,18 @@ export function createCameraControlLensActions(
 				cameraId: CameraControlSourcePicker(),
 				zoom: {
 					id: 'zoom',
-					type: 'textinput',
+					type: 'number',
 					label: 'Zoom speed',
-					default: '0.0',
-					tooltip: 'Max range -1.0 - 1.0',
-					useVariables: true,
+					default: 0,
+					min: -1,
+					max: 1,
+					description: 'Max range -1.0 - 1.0',
+					asInteger: false,
+					clampValues: true,
 				},
 			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.cameraId
-				const value = await options.zoom
-				await commandSender?.lensSetContinuousZoomSpeed(cameraId, value)
+				await commandSender?.lensSetContinuousZoomSpeed(options.cameraId, options.zoom)
 			},
 		},
 	}

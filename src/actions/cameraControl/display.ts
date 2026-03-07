@@ -10,7 +10,7 @@ import type { AtemConfig } from '../../config.js'
 export type AtemCameraControlDisplayActions = {
 	[ActionId.CameraControlDisplayColorBars]: {
 		options: {
-			cameraId: string
+			cameraId: number
 			state: TrueFalseToggle
 		}
 	}
@@ -40,10 +40,11 @@ export function createCameraControlDisplayActions(
 					label: 'State',
 					default: 'toggle',
 					choices: CHOICES_ON_OFF_TOGGLE,
+					disableAutoExpression: true,
 				},
 			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.cameraId
+				const cameraId = options.cameraId
 
 				let target: boolean
 				if (options.state === 'toggle') {
