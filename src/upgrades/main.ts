@@ -60,22 +60,22 @@ function upgradeV2x2x0(
 }
 
 const BooleanFeedbackUpgradeMap: {
-	[id in FeedbackId]?: true
+	[id in string]?: true
 } = {
-	[FeedbackId.PreviewBG]: true,
-	[FeedbackId.PreviewBG2]: true,
-	[FeedbackId.PreviewBG3]: true,
-	[FeedbackId.PreviewBG4]: true,
-	[FeedbackId.ProgramBG]: true,
-	[FeedbackId.ProgramBG2]: true,
-	[FeedbackId.ProgramBG3]: true,
-	[FeedbackId.ProgramBG4]: true,
-	[FeedbackId.AuxBG]: true,
-	[FeedbackId.USKOnAir]: true,
-	[FeedbackId.USKSource]: true,
-	[FeedbackId.DSKOnAir]: true,
-	[FeedbackId.DSKTie]: true,
-	[FeedbackId.DSKSource]: true,
+	preview_bg: true,
+	preview_bg_2: true,
+	preview_bg_3: true,
+	preview_bg_4: true,
+	program_bg: true,
+	program_bg_2: true,
+	program_bg_3: true,
+	program_bg_4: true,
+	aux_bg: true,
+	usk_bg: true,
+	usk_source: true,
+	dsk_bg: true,
+	dskTie: true,
+	dsk_source: true,
 	[FeedbackId.Macro]: true,
 	[FeedbackId.MVSource]: true,
 	[FeedbackId.SSrcBoxOnAir]: true,
@@ -159,13 +159,13 @@ function fixUsingFairlightAudioFaderGainInsteadOfFairlightAudioMonitorFaderGain(
 }
 
 const InvertableFeedbackUpgradeMap: {
-	[id in FeedbackId]?: string
+	[id in string]?: string
 } = {
-	[FeedbackId.ProgramTally]: 'invert',
-	[FeedbackId.PreviewTally]: 'invert',
-	[FeedbackId.DSKOnAir]: 'invert',
-	[FeedbackId.DSKTie]: 'invert',
-	[FeedbackId.USKOnAir]: 'invert',
+	program_tally: 'invert',
+	preview_tally: 'invert',
+	dsk_bg: 'invert',
+	dskTie: 'invert',
+	usk_bg: 'invert',
 }
 
 function combineTransitionSelectionToDropdown(

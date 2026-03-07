@@ -31,14 +31,6 @@ export type AtemUpstreamKeyerFeedbacks = {
 			fill: number
 		}
 	}
-	[FeedbackId.USKSourceVariables]: {
-		type: 'boolean'
-		options: {
-			mixeffect: string
-			key: string
-			fill: string
-		}
-	}
 	[FeedbackId.USKKeyFrame]: {
 		type: 'boolean'
 		options: {
@@ -58,7 +50,6 @@ export function createUpstreamKeyerFeedbacks(
 			[FeedbackId.USKOnAir]: undefined,
 			[FeedbackId.USKType]: undefined,
 			[FeedbackId.USKSource]: undefined,
-			[FeedbackId.USKSourceVariables]: undefined,
 			[FeedbackId.USKKeyFrame]: undefined,
 		}
 	}
@@ -76,7 +67,7 @@ export function createUpstreamKeyerFeedbacks(
 				bgcolor: combineRgb(255, 0, 0),
 			},
 			callback: ({ options }): boolean => {
-				const usk = getUSK(state.state, options.mixeffect, options.key)
+				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
 				return !!usk?.onAir
 			},
 		},
@@ -94,7 +85,7 @@ export function createUpstreamKeyerFeedbacks(
 				bgcolor: combineRgb(255, 0, 0),
 			},
 			callback: ({ options }): boolean => {
-				const usk = getUSK(state.state, options.mixeffect, options.key)
+				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
 				return usk?.mixEffectKeyType === options.type
 			},
 		},
@@ -112,69 +103,15 @@ export function createUpstreamKeyerFeedbacks(
 				bgcolor: combineRgb(238, 238, 0),
 			},
 			callback: ({ options }): boolean => {
-				const usk = getUSK(state.state, options.mixeffect, options.key)
+				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
 				return usk?.fillSource === options.fill
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.mixeffect, options.key)
+				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
 
 				if (usk) {
 					return {
 						fill: usk.fillSource,
-					}
-				} else {
-					return undefined
-				}
-			},
-		},
-		[FeedbackId.USKSourceVariables]: {
-			type: 'boolean',
-			name: 'Upstream key: Fill source from variables',
-			description: 'If the input specified is selected in the USK specified, change style of the bank',
-			options: convertOptionsFields({
-				mixeffect: {
-					type: 'textinput',
-					id: 'mixeffect',
-					label: 'M/E',
-					default: '1',
-					useVariables: true,
-				},
-				key: {
-					type: 'textinput',
-					label: 'Key',
-					id: 'key',
-					default: '1',
-					useVariables: true,
-				},
-				fill: {
-					type: 'textinput',
-					id: 'fill',
-					label: 'Fill Source',
-					default: '0',
-					useVariables: true,
-				},
-			}),
-			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(238, 238, 0),
-			},
-			callback: async ({ options }) => {
-				const mixeffect = (await options.mixeffect) - 1
-				const key = (await options.key) - 1
-				const fill = await options.fill
-
-				const usk = getUSK(state.state, mixeffect, key)
-				return usk?.fillSource === fill
-			},
-			learn: async ({ options }) => {
-				const mixeffect = (await options.mixeffect) - 1
-				const key = (await options.key) - 1
-
-				const usk = getUSK(state.state, mixeffect, key)
-
-				if (usk) {
-					return {
-						fill: usk.fillSource + '',
 					}
 				} else {
 					return undefined
@@ -203,11 +140,11 @@ export function createUpstreamKeyerFeedbacks(
 						bgcolor: combineRgb(238, 238, 0),
 					},
 					callback: ({ options }): boolean => {
-						const usk = getUSK(state.state, options.mixeffect, options.key)
+						const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
 						return usk?.flyProperties?.isAtKeyFrame === Number(options.keyframe)
 					},
 					learn: ({ options }) => {
-						const usk = getUSK(state.state, options.mixeffect, options.key)
+						const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
 
 						if (usk?.flyProperties) {
 							return {

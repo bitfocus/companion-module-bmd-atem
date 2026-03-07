@@ -40,7 +40,7 @@ export function createFadeToBlackFeedbacks(
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.mixeffect)
+				const me = getMixEffect(state.state, options.mixeffect - 1)
 				if (me && me.fadeToBlack) {
 					switch (options.state) {
 						case 'off':
@@ -68,12 +68,12 @@ export function createFadeToBlackFeedbacks(
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.mixeffect)
+				const me = getMixEffect(state.state, options.mixeffect - 1)
 				const rate = options.rate
 				return me?.fadeToBlack?.rate === rate
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.mixeffect)
+				const me = getMixEffect(state.state, options.mixeffect - 1)
 
 				if (me?.fadeToBlack) {
 					return {

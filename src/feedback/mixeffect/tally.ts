@@ -85,7 +85,7 @@ export function createTallyFeedbacks(
 				bgcolor: combineRgb(255, 0, 0),
 			},
 			callback: ({ options }): boolean => {
-				const selectedInputIds = options.getRaw('inputIds') ?? []
+				const selectedInputIds = options.inputIds
 				if (!Array.isArray(selectedInputIds)) return false
 
 				const matchInputId = options.input

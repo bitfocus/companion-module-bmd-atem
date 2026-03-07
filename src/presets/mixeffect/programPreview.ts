@@ -29,7 +29,7 @@ export function createProgramPreviewPresets(
 		},
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.PreviewBG,
+				feedbackId: FeedbackId.Preview,
 				options: {
 					mixeffect: { isExpression: true, value: '$(local:me)' },
 					input: { isExpression: true, value: '$(local:input)' },
@@ -78,7 +78,7 @@ export function createProgramPreviewPresets(
 		},
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.ProgramBG,
+				feedbackId: FeedbackId.Program,
 				options: {
 					mixeffect: { isExpression: true, value: '$(local:me)' },
 					input: { isExpression: true, value: '$(local:input)' },

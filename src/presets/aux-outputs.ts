@@ -30,7 +30,7 @@ export function createAuxOutputPresets(
 		},
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.AuxBG,
+				feedbackId: FeedbackId.Aux,
 				options: {
 					input: { isExpression: true, value: '$(local:input)' },
 					aux: { isExpression: true, value: '$(local:output)' },

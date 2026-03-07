@@ -605,6 +605,136 @@ const feedbackFixupRules: Record<string, FeedbackFixupRule> = {
 			mode: { transform: { type: 'lookup', lookup: timecodeModeValueMap } },
 		},
 	},
+	fadeToBlackIsBlack: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	fadeToBlackRate: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	preview_bg: {
+		newType: 'preview',
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	previewVariables: {
+		newType: 'preview',
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: true } },
+			input: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	program_bg: {
+		newType: 'program',
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	programVariables: {
+		newType: 'program',
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: true } },
+			input: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	previewTransition: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	transitionStyle: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	transitionSelection: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	transitionRate: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	inTransition: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	usk_bg: {
+		newType: 'uskOnAir',
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	usk_type: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	usk_source: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	usk_source_variables: {
+		newType: 'usk_source',
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: true } },
+			key: { transform: { type: 'number', zeroBased: true, variables: true } },
+			fill: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	usk_keyframe: {
+		options: {
+			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	aux_bg: {
+		newType: 'aux',
+		options: {
+			aux: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	auxVariables: {
+		newType: 'aux',
+		options: {
+			aux: { transform: { type: 'number', zeroBased: true, variables: true } },
+			input: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	dsk_bg: {
+		newType: 'dskOnAir',
+		options: {
+			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	dskTie: {
+		options: {
+			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	dsk_source: {
+		options: {
+			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+	dsk_source_variables: {
+		newType: 'dsk_source',
+		options: {
+			key: { transform: { type: 'number', zeroBased: true, variables: true } },
+			input: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
 }
 
 function applyTransform(

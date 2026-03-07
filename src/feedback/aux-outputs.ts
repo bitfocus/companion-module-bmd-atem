@@ -6,18 +6,11 @@ import { AtemAuxPicker, AtemAuxSourcePicker } from '../input.js'
 import type { StateWrapper } from '../state.js'
 
 export type AtemAuxOutputFeedbacks = {
-	[FeedbackId.AuxBG]: {
+	[FeedbackId.Aux]: {
 		type: 'boolean'
 		options: {
 			aux: number
 			input: number
-		}
-	}
-	[FeedbackId.AuxVariables]: {
-		type: 'boolean'
-		options: {
-			aux: string
-			input: string
 		}
 	}
 }
@@ -28,12 +21,11 @@ export function createAuxOutputFeedbacks(
 ): CompanionFeedbackDefinitions<AtemAuxOutputFeedbacks> {
 	if (model.outputs.length === 0) {
 		return {
-			[FeedbackId.AuxBG]: undefined,
-			[FeedbackId.AuxVariables]: undefined,
+			[FeedbackId.Aux]: undefined,
 		}
 	}
 	return {
-		[FeedbackId.AuxBG]: {
+		[FeedbackId.Aux]: {
 			type: 'boolean',
 			name: 'Aux/Output: Source',
 			description: 'If the input specified is selected in the aux bus specified, change style of the bank',
@@ -46,60 +38,15 @@ export function createAuxOutputFeedbacks(
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: ({ options }): boolean => {
-				const auxSource = state.state.video.auxilliaries[options.aux]
+				const auxSource = state.state.video.auxilliaries[options.aux - 1]
 				return auxSource === options.input
 			},
 			learn: ({ options }) => {
-				const auxSource = state.state.video.auxilliaries[options.aux]
+				const auxSource = state.state.video.auxilliaries[options.aux - 1]
 
 				if (auxSource !== undefined) {
 					return {
 						input: auxSource,
-					}
-				} else {
-					return undefined
-				}
-			},
-		},
-		[FeedbackId.AuxVariables]: {
-			type: 'boolean',
-			name: 'Aux/Output: Source from variables',
-			description: 'If the input specified is selected in the aux bus specified, change style of the bank',
-			options: convertOptionsFields({
-				aux: {
-					type: 'textinput',
-					id: 'aux',
-					label: 'AUX',
-					default: '1',
-					useVariables: true,
-				},
-				input: {
-					type: 'textinput',
-					id: 'input',
-					label: 'Input ID',
-					default: '0',
-					useVariables: true,
-				},
-			}),
-			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			callback: async ({ options }) => {
-				const output = (await options.aux) - 1
-				const input = await options.input
-
-				const auxSource = state.state.video.auxilliaries[output]
-				return auxSource === input
-			},
-			learn: async ({ options }) => {
-				const output = (await options.aux) - 1
-
-				const auxSource = state.state.video.auxilliaries[output]
-
-				if (auxSource !== undefined) {
-					return {
-						input: auxSource + '',
 					}
 				} else {
 					return undefined

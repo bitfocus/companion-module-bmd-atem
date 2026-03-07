@@ -6,6 +6,7 @@ import {
 	AtemRatePicker,
 	AtemTransitionSelectionPicker,
 	AtemTransitionStylePicker,
+	TransitionSelectionComponent,
 } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { FeedbackId } from '../FeedbackId.js'
@@ -32,7 +33,7 @@ export type AtemTransitionFeedbacks = {
 		options: {
 			mixeffect: number
 			matchmethod: 'exact' | 'contains' | 'not-contain'
-			selection: ('background' | string)[]
+			selection: TransitionSelectionComponent[]
 		}
 	}
 	[FeedbackId.TransitionRate]: {
@@ -68,19 +69,8 @@ export function createTransitionFeedbacks(
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.mixeffect)
+				const me = getMixEffect(state.state, options.mixeffect - 1)
 				return !!me?.transitionPreview
-			},
-			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.mixeffect)
-
-				if (me) {
-					return {
-						state: me.transitionPreview + '',
-					}
-				} else {
-					return undefined
-				}
 			},
 		},
 		[FeedbackId.TransitionStyle]: {
@@ -96,11 +86,11 @@ export function createTransitionFeedbacks(
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.mixeffect)
+				const me = getMixEffect(state.state, options.mixeffect - 1)
 				return me?.transitionProperties.nextStyle === options.style
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.mixeffect)
+				const me = getMixEffect(state.state, options.mixeffect - 1)
 
 				if (me) {
 					return {
@@ -125,8 +115,8 @@ export function createTransitionFeedbacks(
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.mixeffect)
-				const expectedSelection = calculateTransitionSelection(model.USKs, options.getRaw('selection'))
+				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const expectedSelection = calculateTransitionSelection(model.USKs, options.selection)
 				if (me) {
 					switch (options.matchmethod) {
 						case 'exact':
@@ -154,7 +144,7 @@ export function createTransitionFeedbacks(
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.mixeffect)
+				const me = getMixEffect(state.state, options.mixeffect - 1)
 				if (me?.transitionSettings) {
 					const style = options.style
 					const rate = options.rate
@@ -176,7 +166,7 @@ export function createTransitionFeedbacks(
 				return false
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.mixeffect)
+				const me = getMixEffect(state.state, options.mixeffect - 1)
 
 				if (me?.transitionSettings) {
 					const style = options.style
@@ -220,7 +210,7 @@ export function createTransitionFeedbacks(
 				bgcolor: combineRgb(255, 255, 0),
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.mixeffect)
+				const me = getMixEffect(state.state, options.mixeffect - 1)
 				return !!me?.transitionPosition?.inTransition
 			},
 		},

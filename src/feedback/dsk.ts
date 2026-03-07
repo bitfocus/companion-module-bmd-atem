@@ -25,13 +25,6 @@ export type AtemDownstreamKeyerFeedbacks = {
 			fill: number
 		}
 	}
-	[FeedbackId.DSKSourceVariables]: {
-		type: 'boolean'
-		options: {
-			key: string
-			fill: string
-		}
-	}
 }
 
 export function createDownstreamKeyerFeedbacks(
@@ -43,7 +36,6 @@ export function createDownstreamKeyerFeedbacks(
 			[FeedbackId.DSKOnAir]: undefined,
 			[FeedbackId.DSKTie]: undefined,
 			[FeedbackId.DSKSource]: undefined,
-			[FeedbackId.DSKSourceVariables]: undefined,
 		}
 	}
 	return {
@@ -59,7 +51,7 @@ export function createDownstreamKeyerFeedbacks(
 				bgcolor: combineRgb(255, 0, 0),
 			},
 			callback: ({ options }): boolean => {
-				const dsk = getDSK(state.state, options.key)
+				const dsk = getDSK(state.state, options.key - 1)
 				return !!dsk?.onAir
 			},
 		},
@@ -75,7 +67,7 @@ export function createDownstreamKeyerFeedbacks(
 				bgcolor: combineRgb(255, 0, 0),
 			},
 			callback: ({ options }): boolean => {
-				const dsk = getDSK(state.state, options.key)
+				const dsk = getDSK(state.state, options.key - 1)
 				return !!dsk?.properties?.tie
 			},
 		},
@@ -92,60 +84,15 @@ export function createDownstreamKeyerFeedbacks(
 				bgcolor: combineRgb(238, 238, 0),
 			},
 			callback: ({ options }): boolean => {
-				const dsk = getDSK(state.state, options.key)
+				const dsk = getDSK(state.state, options.key - 1)
 				return dsk?.sources?.fillSource === options.fill
 			},
 			learn: ({ options }) => {
-				const dsk = getDSK(state.state, options.key)
+				const dsk = getDSK(state.state, options.key - 1)
 
 				if (dsk?.sources) {
 					return {
 						fill: dsk.sources.fillSource,
-					}
-				} else {
-					return undefined
-				}
-			},
-		},
-		[FeedbackId.DSKSourceVariables]: {
-			type: 'boolean',
-			name: 'Downstream key: Fill source from variables',
-			description: 'If the input specified is selected in the DSK specified, change style of the bank',
-			options: convertOptionsFields({
-				key: {
-					type: 'textinput',
-					label: 'Key',
-					id: 'key',
-					default: '1',
-					useVariables: true,
-				},
-				fill: {
-					type: 'textinput',
-					id: 'fill',
-					label: 'Fill Source',
-					default: '0',
-					useVariables: true,
-				},
-			}),
-			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(238, 238, 0),
-			},
-			callback: async ({ options }) => {
-				const key = (await options.key) - 1
-				const fill = await options.fill
-
-				const dsk = getDSK(state.state, key)
-				return dsk?.sources?.fillSource === fill
-			},
-			learn: async ({ options }) => {
-				const key = (await options.key) - 1
-
-				const dsk = getDSK(state.state, key)
-
-				if (dsk?.sources) {
-					return {
-						fill: dsk.sources.fillSource + '',
 					}
 				} else {
 					return undefined

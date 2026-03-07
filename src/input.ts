@@ -1720,7 +1720,7 @@ export function AtemMediaPlayerSourcePicker(
 	}
 }
 
-export function AtemFadeToBlackStatePicker(): CompanionInputFieldDropdown {
+export function AtemFadeToBlackStatePicker(): CompanionInputFieldDropdown<'state'> {
 	return {
 		type: 'dropdown',
 		label: 'State',
@@ -1740,10 +1740,11 @@ export function AtemFadeToBlackStatePicker(): CompanionInputFieldDropdown {
 				label: 'Fading',
 			},
 		],
+		disableAutoExpression: true,
 	}
 }
 
-export function AtemMatchMethod(): CompanionInputFieldDropdown {
+export function AtemMatchMethod(): CompanionInputFieldDropdown<'matchmethod'> {
 	return {
 		id: 'matchmethod',
 		label: 'Match method',
