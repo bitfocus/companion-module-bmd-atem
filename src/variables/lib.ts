@@ -1,6 +1,6 @@
 import { type AtemState, Enums } from 'atem-connection'
 import { GetSourcesListForType, type SourceInfo } from '../choices.js'
-import { type AtemConfig, PresetStyleName } from '../config.js'
+import { PresetStyleName } from '../config.js'
 import type { ModelSpec } from '../models/index.js'
 import {
 	getClassicAudioInput,
@@ -14,7 +14,7 @@ import {
 	type StateWrapper,
 } from '../state.js'
 import { assertUnreachable, CLASSIC_AUDIO_MIN_GAIN, formatAudioRoutingAsString, type InstanceBaseExt } from '../util.js'
-import type { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
+import type { CompanionVariableDefinitions, CompanionVariableValues } from '@companion-module/base'
 import { initCameraControlVariables, updateCameraControlVariables } from './cameraControl.js'
 import { createEmptyState } from '@atem-connection/camera-control'
 import { updateTimecodeVariables } from './timecode.js'
@@ -24,8 +24,9 @@ import {
 	updateFairlightAudioRoutingSourceVariables,
 	updateFairlightAudioRoutingOutputVariables,
 } from './audioRouting.js'
+import type { VariablesSchema } from './schema.js'
 
-function getSourcePresetName(instance: InstanceBaseExt<AtemConfig>, state: AtemState, id: number): string {
+function getSourcePresetName(instance: InstanceBaseExt, state: AtemState, id: number): string {
 	const input = state.inputs[id]
 	if (input) {
 		const fallbackName = input.longName || input.shortName || `Input ${id}`
@@ -61,11 +62,11 @@ export interface UpdateVariablesProps {
 }
 
 export function updateChangedVariables(
-	instance: InstanceBaseExt<AtemConfig>,
+	instance: InstanceBaseExt,
 	state: AtemState,
 	changes: UpdateVariablesProps,
 ): void {
-	const newValues: CompanionVariableValues = {}
+	const newValues: Partial<VariablesSchema> = {}
 
 	for (const meIndex of changes.meProgram) updateMEProgramVariable(instance, state, meIndex, newValues)
 	for (const meIndex of changes.mePreview) updateMEPreviewVariable(instance, state, meIndex, newValues)
@@ -101,20 +102,20 @@ export function updateChangedVariables(
 }
 
 function updateMEProgramVariable(
-	instance: InstanceBaseExt<AtemConfig>,
+	instance: InstanceBaseExt,
 	state: AtemState,
 	meIndex: number,
-	values: CompanionVariableValues,
+	values: Partial<VariablesSchema>,
 ): void {
 	const input = getMixEffect(state, meIndex)?.programInput ?? 0
 	values[`pgm${meIndex + 1}_input`] = getSourcePresetName(instance, state, input)
 	values[`pgm${meIndex + 1}_input_id`] = input
 }
 function updateMEPreviewVariable(
-	instance: InstanceBaseExt<AtemConfig>,
+	instance: InstanceBaseExt,
 	state: AtemState,
 	meIndex: number,
-	values: CompanionVariableValues,
+	values: Partial<VariablesSchema>,
 ): void {
 	const input = getMixEffect(state, meIndex)?.previewInput ?? 0
 	values[`pvw${meIndex + 1}_input`] = getSourcePresetName(instance, state, input)
@@ -126,11 +127,11 @@ function updateMETransitionPositionVariable(state: AtemState, meIndex: number, v
 }
 
 function updateUSKVariable(
-	instance: InstanceBaseExt<AtemConfig>,
+	instance: InstanceBaseExt,
 	state: AtemState,
 	meIndex: number,
 	keyIndex: number,
-	values: CompanionVariableValues,
+	values: Partial<VariablesSchema>,
 ): void {
 	const input = getUSK(state, meIndex, keyIndex)?.fillSource ?? 0
 	values[`usk_${meIndex + 1}_${keyIndex + 1}_input`] = getSourcePresetName(instance, state, input)
@@ -180,10 +181,10 @@ function updateUSKVariable(
 	}
 }
 function updateDSKVariable(
-	instance: InstanceBaseExt<AtemConfig>,
+	instance: InstanceBaseExt,
 	state: AtemState,
 	keyIndex: number,
-	values: CompanionVariableValues,
+	values: Partial<VariablesSchema>,
 ): void {
 	const input = getDSK(state, keyIndex)?.sources?.fillSource ?? 0
 	values[`dsk_${keyIndex + 1}_input`] = getSourcePresetName(instance, state, input)
@@ -191,10 +192,10 @@ function updateDSKVariable(
 }
 
 function updateAuxVariable(
-	instance: InstanceBaseExt<AtemConfig>,
+	instance: InstanceBaseExt,
 	state: AtemState,
 	auxIndex: number,
-	values: CompanionVariableValues,
+	values: Partial<VariablesSchema>,
 ): void {
 	const input = state.video.auxilliaries[auxIndex] ?? 0
 	values[`aux${auxIndex + 1}_input`] = getSourcePresetName(instance, state, input)
@@ -317,7 +318,7 @@ function formatAudioMixOption(value: Enums.AudioMixOption | undefined): string |
 function updateFairlightAudioVariables(
 	state: AtemState,
 	fairlightAudioIndex: number,
-	values: CompanionVariableValues,
+	values: Partial<VariablesSchema>,
 ): void {
 	const sources = getFairlightAudioInput(state, fairlightAudioIndex)?.sources
 	// combined channel (default)
@@ -356,7 +357,7 @@ function updateFairlightAudioVariables(
 function updateClassicAudioVariables(
 	state: AtemState,
 	classicAudioIndex: number,
-	values: CompanionVariableValues,
+	values: Partial<VariablesSchema>,
 ): void {
 	const channel = getClassicAudioInput(state, classicAudioIndex)
 	const gain = channel && channel.gain <= CLASSIC_AUDIO_MIN_GAIN ? -Infinity : channel?.gain
@@ -380,10 +381,10 @@ function updateFairlightAudioMonitorVariables(state: AtemState, values: Companio
 }
 
 function updateSuperSourceVariables(
-	instance: InstanceBaseExt<AtemConfig>,
+	instance: InstanceBaseExt,
 	state: AtemState,
 	i: number,
-	values: CompanionVariableValues,
+	values: Partial<VariablesSchema>,
 ): void {
 	for (let b = 0; b < 4; b++) {
 		const input = getSuperSourceBox(state, b, i)?.source ?? 0
@@ -393,202 +394,161 @@ function updateSuperSourceVariables(
 }
 
 function updateMultiviewerWindowInput(
-	instance: InstanceBaseExt<AtemConfig>,
+	instance: InstanceBaseExt,
 	state: AtemState,
 	index: number, // 1 index
 	window: number, // 1 index
-	values: CompanionVariableValues,
+	values: Partial<VariablesSchema>,
 ): void {
 	const inputId = state.settings.multiViewers[index - 1]?.windows?.[window - 1]?.source ?? 0
 	values[`mv_${index}_window_${window}_input_id`] = inputId
 	values[`mv_${index}_window_${window}_input`] = getSourcePresetName(instance, state, inputId)
 }
 
-export function updateDeviceIpVariable(instance: InstanceBaseExt<AtemConfig>, values: CompanionVariableValues): void {
+export function updateDeviceIpVariable(instance: InstanceBaseExt, values: CompanionVariableValues): void {
 	values['device_ip'] = instance.parseIpAndPort()?.ip || ''
 }
 
-export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: ModelSpec, state: StateWrapper): void {
-	const variables: CompanionVariableDefinition[] = []
+export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state: StateWrapper): void {
+	const values: Partial<VariablesSchema> = {}
+	const variables: CompanionVariableDefinitions<VariablesSchema> = {
+		device_ip: {
+			name: 'IP address of the ATEM',
+		},
+	}
 
-	const values: CompanionVariableValues = {}
-
-	variables.push({
-		name: 'IP address of ATEM',
-		variableId: `device_ip`,
-	})
 	updateDeviceIpVariable(instance, values)
 
 	// PGM/PV busses
 	for (let i = 0; i < model.MEs; ++i) {
-		variables.push({
+		variables[`pgm${i + 1}_input`] = {
 			name: `Label of input active on program bus (M/E ${i + 1})`,
-			variableId: `pgm${i + 1}_input`,
-		})
-		variables.push({
+		}
+		variables[`pgm${i + 1}_input_id`] = {
 			name: `Id of input active on program bus (M/E ${i + 1})`,
-			variableId: `pgm${i + 1}_input_id`,
-		})
+		}
 		updateMEProgramVariable(instance, state.state, i, values)
 
-		variables.push({
+		variables[`pvw${i + 1}_input`] = {
 			name: `Label of input active on preview bus (M/E ${i + 1})`,
-			variableId: `pvw${i + 1}_input`,
-		})
-		variables.push({
+		}
+		variables[`pvw${i + 1}_input_id`] = {
 			name: `Id of input active on preview bus (M/E ${i + 1})`,
-			variableId: `pvw${i + 1}_input_id`,
-		})
+		}
 		updateMEPreviewVariable(instance, state.state, i, values)
 
-		variables.push({
+		variables[`tbar_${i + 1}`] = {
 			name: `Position of T-bar (M/E ${i + 1})`,
-			variableId: `tbar_${i + 1}`,
-		})
+		}
 		updateMETransitionPositionVariable(state.state, i, values)
 
 		for (let k = 0; k < model.USKs; ++k) {
-			variables.push({
+			variables[`usk_${i + 1}_${k + 1}_input`] = {
 				name: `Label of input active on M/E ${i + 1} Key ${k + 1}`,
-				variableId: `usk_${i + 1}_${k + 1}_input`,
-			})
-			variables.push({
+			}
+			variables[`usk_${i + 1}_${k + 1}_input_id`] = {
 				name: `Id of input active on M/E ${i + 1} Key ${k + 1}`,
-				variableId: `usk_${i + 1}_${k + 1}_input_id`,
-			})
+			}
 			if (model.USKs && model.DVEs) {
-				variables.push({
+				variables[`usk_${i + 1}_${k + 1}_maskEnabled`] = {
 					name: `Mask Enabled for M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_maskEnabled`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_maskTop`] = {
 					name: `Mask cutoff from the top of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_maskTop`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_maskBottom`] = {
 					name: `Mask cutoff from the bottom of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_maskBottom`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_maskLeft`] = {
 					name: `Mask cutoff from the left of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_maskLeft`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_maskRight`] = {
 					name: `Mask cutoff from the right of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_maskRight`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_positionX`] = {
 					name: `X position of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_positionX`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_positionY`] = {
 					name: `Y position of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_positionY`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_sizeX`] = {
 					name: `X scale of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_sizeX`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_sizeY`] = {
 					name: `Y scale of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_sizeY`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_rotation`] = {
 					name: `Rotation of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_rotation`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_bordOutWidth`] = {
 					name: `Border Width (Outer) of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_bordOutWidth`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_bordInWidth`] = {
 					name: `Border Width (Inner) of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_bordInWidth`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_bordOutSoft`] = {
 					name: `Border Softness (Outer) of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_bordOutSoft`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_bordInSoft`] = {
 					name: `Border Softnesss (Inner) of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_bordInSoft`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_bevelSoft`] = {
 					name: `Border Bevel Softnesss of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_bevelSoft`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_bevelPos`] = {
 					name: `Border Bevel Position of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_bevelPos`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_bordOpacity`] = {
 					name: `Border Opacity of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_bordOpacity`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_bordHue`] = {
 					name: `Border Hue of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_bordHue`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_bordLum`] = {
 					name: `Border Luma of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_bordLum`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_lightDirection`] = {
 					name: `Light source Angle of shadow of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_lightDirection`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_lightAltitude`] = {
 					name: `Light source Altitude of shadow of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_lightAltitude`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_bordEnabled`] = {
 					name: `Border Enabled for M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_bordEnabled`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_shadowEnabled`] = {
 					name: `Shadow Enabled for M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_shadowEnabled`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_rate`] = {
 					name: `Keyframe transformation Rate of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_rate`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_pattern_style`] = {
 					name: `Pattern Style of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_pattern_style`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_pattern_size`] = {
 					name: `Pattern Size of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_pattern_size`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_pattern_symmetry`] = {
 					name: `Pattern Symmetry of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_pattern_symmetry`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_pattern_softness`] = {
 					name: `Pattern Softness of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_pattern_softness`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_pattern_positionX`] = {
 					name: `Pattern Position X of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_pattern_positionX`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_pattern_positionY`] = {
 					name: `Pattern Position Y of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_pattern_positionY`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_pattern_invert`] = {
 					name: `Pattern Invert of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_pattern_invert`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_canFlyKey`] = {
 					name: `(read only) Ability to Enable Fly Key or DVE of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_canFlyKey`,
-				})
-				variables.push({
+				}
+				variables[`usk_${i + 1}_${k + 1}_flyEnabled`] = {
 					name: `Fly Key Enable Status of M/E ${i + 1} Key ${k + 1}`,
-					variableId: `usk_${i + 1}_${k + 1}_flyEnabled`,
-				})
+				}
 			}
 
 			updateUSKVariable(instance, state.state, i, k, values)
@@ -597,142 +557,119 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 
 	// Auxs
 	for (const output of model.outputs) {
-		variables.push({
+		variables[`aux${output.id + 1}_input`] = {
 			name: `Label of input active on ${output.name}`,
-			variableId: `aux${output.id + 1}_input`,
-		})
-		variables.push({
+		}
+		variables[`aux${output.id + 1}_input_id`] = {
 			name: `Id of input active on ${output.name}`,
-			variableId: `aux${output.id + 1}_input_id`,
-		})
+		}
 
 		updateAuxVariable(instance, state.state, output.id, values)
 	}
 
 	// DSKs
 	for (let k = 0; k < model.DSKs; ++k) {
-		variables.push({
+		variables[`dsk_${k + 1}_input`] = {
 			name: `Label of input active on DSK ${k + 1}`,
-			variableId: `dsk_${k + 1}_input`,
-		})
-		variables.push({
+		}
+		variables[`dsk_${k + 1}_input_id`] = {
 			name: `Id of input active on DSK ${k + 1}`,
-			variableId: `dsk_${k + 1}_input_id`,
-		})
+		}
 
 		updateDSKVariable(instance, state.state, k, values)
 	}
 
 	// Source names
 	for (const src of GetSourcesListForType(model, state.state)) {
-		variables.push({
+		variables[`long_${src.id}`] = {
 			name: `Long name of source id ${src.id}`,
-			variableId: `long_${src.id}`,
-		})
-		variables.push({
+		}
+		variables[`short_${src.id}`] = {
 			name: `Short name of source id ${src.id}`,
-			variableId: `short_${src.id}`,
-		})
+		}
 
 		updateInputVariables(src, values)
 	}
 
 	// Macros
 	for (let i = 0; i < model.macros; i++) {
-		variables.push({
+		variables[`macro_${i + 1}`] = {
 			name: `Name of macro #${i + 1}`,
-			variableId: `macro_${i + 1}`,
-		})
+		}
 
 		updateMacroVariable(state.state, i, values)
 	}
 
 	// Media
 	for (let i = 0; i < model.media.stills; i++) {
-		variables.push({
+		variables[`still_${i + 1}`] = {
 			name: `Name of still #${i + 1}`,
-			variableId: `still_${i + 1}`,
-		})
+		}
 
 		updateMediaStillVariable(state.state, i, values)
 	}
 	for (let i = 0; i < model.media.clips; i++) {
-		variables.push({
+		variables[`clip_${i + 1}`] = {
 			name: `Name of clip #${i + 1}`,
-			variableId: `clip_${i + 1}`,
-		})
+		}
 
 		updateMediaClipVariable(state.state, i, values)
 	}
 	for (let i = 0; i < model.media.players; i++) {
-		variables.push({
+		variables[`mp_source_${i + 1}`] = {
 			name: `Name of media player source #${i + 1}`,
-			variableId: `mp_source_${i + 1}`,
-		})
-		variables.push({
+		}
+		variables[`mp_index_${i + 1}`] = {
 			name: `Name of media player index #${i + 1}`,
-			variableId: `mp_index_${i + 1}`,
-		})
+		}
 
 		updateMediaPlayerVariables(state.state, i, values)
 	}
 
 	if (model.streaming) {
-		variables.push({
+		variables[`stream_bitrate`] = {
 			name: 'Streaming bitrate in MB/s',
-			variableId: 'stream_bitrate',
-		})
-		variables.push({
+		}
+		variables[`stream_duration_hm`] = {
 			name: 'Streaming duration (hh:mm)',
-			variableId: 'stream_duration_hm',
-		})
-		variables.push({
+		}
+		variables[`stream_duration_hms`] = {
 			name: 'Streaming duration (hh:mm:ss)',
-			variableId: 'stream_duration_hms',
-		})
-		variables.push({
+		}
+		variables[`stream_duration_ms`] = {
 			name: 'Streaming duration (mm:ss)',
-			variableId: 'stream_duration_ms',
-		})
-		variables.push({
+		}
+		variables[`stream_cache_used`] = {
 			name: 'Streaming Cache Used',
-			variableId: 'stream_cache_used',
-		})
+		}
 
 		updateStreamingVariables(state.state, values)
 	}
 
 	if (model.recording) {
-		variables.push({
+		variables[`record_duration_hm`] = {
 			name: 'Recording duration (hh:mm)',
-			variableId: 'record_duration_hm',
-		})
-		variables.push({
+		}
+		variables[`record_duration_hms`] = {
 			name: 'Recording duration (hh:mm:ss)',
-			variableId: 'record_duration_hms',
-		})
-		variables.push({
+		}
+		variables[`record_duration_ms`] = {
 			name: 'Recording duration (mm:ss)',
-			variableId: 'record_duration_ms',
-		})
+		}
 
-		variables.push({
+		variables[`record_remaining_hm`] = {
 			name: 'Recording time remaining (hh:mm)',
-			variableId: 'record_remaining_hm',
-		})
-		variables.push({
+		}
+		variables[`record_remaining_hms`] = {
 			name: 'Recording time remaining (hh:mm:ss)',
-			variableId: 'record_remaining_hms',
-		})
-		variables.push({
+		}
+		variables[`record_remaining_ms`] = {
 			name: 'Recording time remaining (mm:ss)',
-			variableId: 'record_remaining_ms',
-		})
+		}
 
-		variables.push({
+		variables[`record_filename`] = {
 			name: 'Recording filename',
-			variableId: 'record_filename',
-		})
+		}
 
 		updateRecordingVariables(state.state, values)
 	}
@@ -740,14 +677,12 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 	// Supersource
 	for (let i = 0; i < model.SSrc; i++) {
 		for (let b = 0; b < 4; b++) {
-			variables.push({
+			variables[`ssrc${i + 1}_box${b + 1}_source`] = {
 				name: `Supersource ${i + 1} Box ${b + 1} source`,
-				variableId: `ssrc${i + 1}_box${b + 1}_source`,
-			})
-			variables.push({
+			}
+			variables[`ssrc${i + 1}_box${b + 1}_source_id`] = {
 				name: `Supersource ${i + 1} Box ${b + 1} source id`,
-				variableId: `ssrc${i + 1}_box${b + 1}_source_id`,
-			})
+			}
 		}
 
 		updateSuperSourceVariables(instance, state.state, i, values)
@@ -757,101 +692,81 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 	if (state.state.fairlight) {
 		for (const [inputId, input] of Object.entries(state.state.fairlight.inputs)) {
 			if (input?.sources !== undefined && input.sources[-65280]) {
-				variables.push({
+				variables[`audio_input_${inputId}_balance`] = {
 					name: `Pan for input ${inputId}`,
-					variableId: `audio_input_${inputId}_balance`,
-				})
-				variables.push({
+				}
+				variables[`audio_input_${inputId}_faderGain`] = {
 					name: `Fader gain for input ${inputId}`,
-					variableId: `audio_input_${inputId}_faderGain`,
-				})
-				variables.push({
+				}
+				variables[`audio_input_${inputId}_framesDelay`] = {
 					name: `Frames delay for input ${inputId}`,
-					variableId: `audio_input_${inputId}_framesDelay`,
-				})
-				variables.push({
+				}
+				variables[`audio_input_${inputId}_gain`] = {
 					name: `Gain for input ${inputId}`,
-					variableId: `audio_input_${inputId}_gain`,
-				})
-				variables.push({
+				}
+				variables[`audio_input_${inputId}_mixOption`] = {
 					name: `Mix option for input ${inputId}`,
-					variableId: `audio_input_${inputId}_mixOption`,
-				})
+				}
 			}
 
 			if (input?.sources !== undefined && input.sources[-256]) {
-				variables.push({
+				variables[`audio_input_${inputId}_left_balance`] = {
 					name: `Pan for input ${inputId} - left`,
-					variableId: `audio_input_${inputId}_left_balance`,
-				})
-				variables.push({
+				}
+				variables[`audio_input_${inputId}_left_faderGain`] = {
 					name: `Fader gain for input ${inputId} - left`,
-					variableId: `audio_input_${inputId}_left_faderGain`,
-				})
-				variables.push({
+				}
+				variables[`audio_input_${inputId}_left_framesDelay`] = {
 					name: `Frames delay for input ${inputId} - left`,
-					variableId: `audio_input_${inputId}_left_framesDelay`,
-				})
-				variables.push({
+				}
+				variables[`audio_input_${inputId}_left_gain`] = {
 					name: `Gain for input ${inputId} - left`,
-					variableId: `audio_input_${inputId}_left_gain`,
-				})
-				variables.push({
+				}
+				variables[`audio_input_${inputId}_left_mixOption`] = {
 					name: `Mix option for input ${inputId} - left`,
-					variableId: `audio_input_${inputId}_left_mixOption`,
-				})
+				}
 			}
 
 			if (input?.sources !== undefined && input.sources[-255]) {
-				variables.push({
+				variables[`audio_input_${inputId}_right_balance`] = {
 					name: `Pan for input ${inputId} - right`,
-					variableId: `audio_input_${inputId}_right_balance`,
-				})
-				variables.push({
+				}
+				variables[`audio_input_${inputId}_right_faderGain`] = {
 					name: `Fader gain for input ${inputId} - right`,
-					variableId: `audio_input_${inputId}_right_faderGain`,
-				})
-				variables.push({
+				}
+				variables[`audio_input_${inputId}_right_framesDelay`] = {
 					name: `Frames delay for input ${inputId} - right`,
-					variableId: `audio_input_${inputId}_right_framesDelay`,
-				})
-				variables.push({
+				}
+				variables[`audio_input_${inputId}_right_gain`] = {
 					name: `Gain for input ${inputId} - right`,
-					variableId: `audio_input_${inputId}_right_gain`,
-				})
-				variables.push({
+				}
+				variables[`audio_input_${inputId}_right_mixOption`] = {
 					name: `Mix option for input ${inputId} - right`,
-					variableId: `audio_input_${inputId}_right_mixOption`,
-				})
+				}
 			}
 
 			updateFairlightAudioVariables(state.state, Number(inputId), values)
 		}
 
 		//master
-		variables.push({
+		variables[`audio_master_faderGain`] = {
 			name: `Fader gain for master`,
-			variableId: `audio_master_faderGain`,
-		})
+		}
 		updateFairlightAudioMasterVariables(state.state, values)
 
 		//monitor
-		variables.push({
+		variables[`audio_monitor_gain`] = {
 			name: `Gain for Monitor/Headphone`,
-			variableId: `audio_monitor_gain`,
-		})
-		variables.push({
+		}
+		variables[`audio_monitor_master_gain`] = {
 			name: `Gain for Monitor/Headphone Master`,
-			variableId: `audio_monitor_master_gain`,
-		})
-		variables.push({
+		}
+		variables[`audio_monitor_talkback_gain`] = {
 			name: `Gain for Monitor/Headphone Talkback`,
-			variableId: `audio_monitor_talkback_gain`,
-		})
-		variables.push({
+		}
+		variables[`audio_monitor_sidetone_gain`] = {
 			name: `Gain for Monitor/Headphone Sidetone`,
-			variableId: `audio_monitor_sidetone_gain`,
-		})
+		}
 		updateFairlightAudioMonitorVariables(state.state, values)
 	}
 
@@ -861,20 +776,15 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 				const id = combineInputId(output.outputId, pair)
 				const stringId = formatAudioRoutingAsString(id)
 
-				variables.push(
-					{
-						name: `Name of audio routing destination ${stringId}`,
-						variableId: `audio_routing_destinations_${stringId}_name`,
-					},
-					{
-						name: `Source of audio routing destination ${stringId}`,
-						variableId: `audio_routing_destinations_${stringId}_source`,
-					},
-					{
-						name: `Name of source of audio routing destination ${stringId}`,
-						variableId: `audio_routing_destinations_${stringId}_source_name`,
-					},
-				)
+				variables[`audio_routing_destinations_${stringId}_name`] = {
+					name: `Name of audio routing destination ${stringId}`,
+				}
+				variables[`audio_routing_destinations_${stringId}_source`] = {
+					name: `Source of audio routing destination ${stringId}`,
+				}
+				variables[`audio_routing_destinations_${stringId}_source_name`] = {
+					name: `Name of source of audio routing destination ${stringId}`,
+				}
 
 				updateFairlightAudioRoutingOutputVariables(state.state, id, values)
 			}
@@ -885,10 +795,9 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 				const id = combineInputId(source.inputId, pair)
 				const stringId = formatAudioRoutingAsString(id)
 
-				variables.push({
+				variables[`audio_routing_source_${stringId}_name`] = {
 					name: `Name of audio routing source ${stringId}`,
-					variableId: `audio_routing_source_${stringId}_name`,
-				})
+				}
 
 				updateFairlightAudioRoutingSourceVariables(state.state, id, values)
 			}
@@ -898,18 +807,15 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 	// Classic audio
 	if (model.classicAudio) {
 		for (const entry of model.classicAudio.inputs) {
-			variables.push({
+			variables[`audio_input_${entry.id}_balance`] = {
 				name: `Pan for input ${entry.id}`,
-				variableId: `audio_input_${entry.id}_balance`,
-			})
-			variables.push({
+			}
+			variables[`audio_input_${entry.id}_gain`] = {
 				name: `Gain for input ${entry.id}`,
-				variableId: `audio_input_${entry.id}_gain`,
-			})
-			variables.push({
+			}
+			variables[`audio_input_${entry.id}_mixOption`] = {
 				name: `Mix option for input ${entry.id}`,
-				variableId: `audio_input_${entry.id}_mixOption`,
-			})
+			}
 			updateClassicAudioVariables(state.state, entry.id, values)
 		}
 	}
@@ -917,14 +823,12 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 	const boxPerMultiviewer = model.multiviewerFullGrid ? 16 : 10
 	for (let index = 1; index <= model.MVs; index++) {
 		for (let window = 1; window <= boxPerMultiviewer; window++) {
-			variables.push({
+			variables[`mv_${index}_window_${window}_input`] = {
 				name: `Label of input in multiviewer ${index} window ${window}`,
-				variableId: `mv_${index}_window_${window}_input`,
-			})
-			variables.push({
+			}
+			variables[`mv_${index}_window_${window}_input_id`] = {
 				name: `Id of input in multiviewer ${index} window ${window}`,
-				variableId: `mv_${index}_window_${window}_input_id`,
-			})
+			}
 			updateMultiviewerWindowInput(instance, state.state, index, window, values)
 		}
 	}
@@ -942,14 +846,12 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 	}
 
 	if (instance.config.pollTimecode) {
-		variables.push({
+		variables[`timecode`] = {
 			name: `Timecode`,
-			variableId: `timecode`,
-		})
-		variables.push({
+		}
+		variables[`display_clock`] = {
 			name: `Display Clock`,
-			variableId: `display_clock`,
-		})
+		}
 		updateTimecodeVariables(instance, state.state, values)
 	}
 

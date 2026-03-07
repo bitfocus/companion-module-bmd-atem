@@ -1,4 +1,6 @@
 import { Enums, type Atem, type DisplayClock } from 'atem-connection'
+import { convertOptionsFields } from '../options/common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import {
 	AtemDisplayClockPropertiesPickers,
 	AtemDisplayClockTimeOffsetPickers,
@@ -6,33 +8,40 @@ import {
 } from '../input.js'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
-import type { MyActionDefinitions } from './types.js'
 import type { StateWrapper } from '../state.js'
 
-export interface AtemDisplayClockActions {
+export type AtemDisplayClockActions = {
 	[ActionId.DisplayClockState]: {
-		state: 'toggle' | Enums.DisplayClockClockState
+		options: {
+			state: 'toggle' | Enums.DisplayClockClockState
+		}
 	}
 	[ActionId.DisplayClockConfigure]: {
-		properties: Array<'enabled' | 'size' | 'opacity' | 'x' | 'y' | 'autoHide' | 'clockMode'>
+		options: {
+			properties: Array<'enabled' | 'size' | 'opacity' | 'x' | 'y' | 'autoHide' | 'clockMode'>
 
-		enabled: boolean
-		size: number
-		opacity: number
-		x: number
-		y: number
-		autoHide: boolean
-		clockMode: Enums.DisplayClockClockMode
+			enabled: boolean
+			size: number
+			opacity: number
+			x: number
+			y: number
+			autoHide: boolean
+			clockMode: Enums.DisplayClockClockMode
+		}
 	}
 	[ActionId.DisplayClockStartTime]: {
-		hours: number
-		minutes: number
-		seconds: number
+		options: {
+			hours: number
+			minutes: number
+			seconds: number
+		}
 	}
 	[ActionId.DisplayClockOffsetStartTime]: {
-		hours: number
-		minutes: number
-		seconds: number
+		options: {
+			hours: number
+			minutes: number
+			seconds: number
+		}
 	}
 }
 
@@ -40,7 +49,7 @@ export function createDisplayClockActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	state: StateWrapper,
-): MyActionDefinitions<AtemDisplayClockActions> {
+): CompanionActionDefinitions<AtemDisplayClockActions> {
 	if (!model.displayClock) {
 		return {
 			[ActionId.DisplayClockState]: undefined,
@@ -52,7 +61,7 @@ export function createDisplayClockActions(
 	return {
 		[ActionId.DisplayClockState]: {
 			name: 'Display Clock: Start/Stop',
-			options: {
+			options: convertOptionsFields({
 				state: {
 					id: 'state',
 					label: 'State',
@@ -64,11 +73,12 @@ export function createDisplayClockActions(
 						{ id: Enums.DisplayClockClockState.Stopped, label: 'Stop' },
 						{ id: Enums.DisplayClockClockState.Reset, label: 'Reset' },
 					],
+					disableAutoExpression: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
 				let newState: Enums.DisplayClockClockState | undefined
-				const rawState = options.getRaw('state')
+				const rawState = options.state
 				switch (rawState) {
 					case 'toggle':
 						newState =
@@ -90,33 +100,34 @@ export function createDisplayClockActions(
 		},
 		[ActionId.DisplayClockConfigure]: {
 			name: 'Display Clock: Configure',
-			options: { ...AtemDisplayClockPropertiesPickers() },
+			options: convertOptionsFields({
+				...AtemDisplayClockPropertiesPickers(),
+			}),
 			callback: async ({ options }) => {
 				const newProps: Partial<DisplayClock.DisplayClockProperties> = {}
 
-				const props = options.getRaw('properties')
+				const props = options.properties
 				if (props && Array.isArray(props)) {
-					if (props.includes('enabled')) newProps.enabled = options.getPlainBoolean('enabled')
+					if (props.includes('enabled')) newProps.enabled = options.enabled
 
-					if (props.includes('size')) newProps.size = options.getPlainNumber('size') * 100
-					if (props.includes('opacity')) newProps.opacity = options.getPlainNumber('opacity') * 100
-					if (props.includes('x')) newProps.positionX = options.getPlainNumber('x') * 1000
-					if (props.includes('y')) newProps.positionY = options.getPlainNumber('y') * 1000
+					if (props.includes('size')) newProps.size = options.size * 100
+					if (props.includes('opacity')) newProps.opacity = options.opacity * 100
+					if (props.includes('x')) newProps.positionX = options.x * 1000
+					if (props.includes('y')) newProps.positionY = options.y * 1000
 
-					if (props.includes('autoHide')) newProps.autoHide = options.getPlainBoolean('autoHide')
+					if (props.includes('autoHide')) newProps.autoHide = options.autoHide
 
-					if (props.includes('clockMode')) newProps.clockMode = options.getPlainNumber('clockMode')
+					if (props.includes('clockMode')) newProps.clockMode = options.clockMode
 				}
 
 				if (Object.keys(newProps).length === 0) return
 
 				await atem?.setDisplayClockProperties(newProps)
 			},
-			learn: ({ options }) => {
+			learn: () => {
 				const displayClockConfig = state.state.displayClock?.properties
 				if (displayClockConfig) {
 					return {
-						...options.getJson(),
 						enabled: displayClockConfig.enabled,
 						size: displayClockConfig.size / 100,
 						opacity: displayClockConfig.opacity / 100,
@@ -132,12 +143,12 @@ export function createDisplayClockActions(
 		},
 		[ActionId.DisplayClockStartTime]: {
 			name: 'Display Clock: Set Start Time',
-			options: { ...AtemDisplayClockTimePickers() },
+			options: convertOptionsFields({ ...AtemDisplayClockTimePickers() }),
 			callback: async ({ options }) => {
 				const time: DisplayClock.DisplayClockTime = {
-					hours: options.getPlainNumber('hours'),
-					minutes: options.getPlainNumber('minutes'),
-					seconds: options.getPlainNumber('seconds'),
+					hours: options.hours,
+					minutes: options.minutes,
+					seconds: options.seconds,
 					frames: 0,
 				}
 
@@ -145,11 +156,10 @@ export function createDisplayClockActions(
 					startFrom: time,
 				})
 			},
-			learn: ({ options }) => {
+			learn: () => {
 				const displayClockConfig = state.state.displayClock?.properties
 				if (displayClockConfig) {
 					return {
-						...options.getJson(),
 						hours: displayClockConfig.startFrom.hours,
 						minutes: displayClockConfig.startFrom.minutes,
 						seconds: displayClockConfig.startFrom.seconds,
@@ -161,15 +171,12 @@ export function createDisplayClockActions(
 		},
 		[ActionId.DisplayClockOffsetStartTime]: {
 			name: 'Display Clock: Offset Start Time',
-			options: { ...AtemDisplayClockTimeOffsetPickers() },
+			options: convertOptionsFields({ ...AtemDisplayClockTimeOffsetPickers() }),
 			callback: async ({ options }) => {
 				const clockState = state.state.displayClock?.properties?.startFrom
 				const currentTime = clockState ? clockState.hours * 3600 + clockState.minutes * 60 + clockState.seconds : 0
 
-				const offset =
-					options.getPlainNumber('hours') * 3600 +
-					options.getPlainNumber('minutes') * 60 +
-					options.getPlainNumber('seconds')
+				const offset = options.hours * 3600 + options.minutes * 60 + options.seconds
 
 				let newTime = currentTime + offset
 

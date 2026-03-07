@@ -1,25 +1,20 @@
-import { AtemMediaPlayerSourcePicker } from '../input.js'
+import { convertOptionsFields } from '../options/common.js'
+import { CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
-import type { MyFeedbackDefinitions } from './types.js'
 import { FeedbackId } from './FeedbackId.js'
 import type { StateWrapper } from '../state.js'
 import type { MediaPoolPreviewOptions, SourceDefinition } from '../mediaPoolPreviews.js'
-import type { CompanionAdvancedFeedbackResult, CompanionInputFieldDropdown } from '@companion-module/base/dist/index.js'
-import { MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from '../util.js'
+import type { CompanionAdvancedFeedbackResult, CompanionInputFieldDropdown } from '@companion-module/base'
+import { AtemMediaPlayerSourcePickers, MediaPoolSourceOptions, parseMediaPoolSource } from '../options/mediaPool.js'
+import { isEqual } from 'lodash-es'
 
-export interface AtemMediaPoolFeedbacks {
+export type AtemMediaPoolFeedbacks = {
 	[FeedbackId.MediaPoolPreview]: {
-		source: number // The combined still/clip index numbers
-
-		position: 'top' | 'center' | 'bottom'
-		crop: 'none' | 'left' | 'center' | 'right'
-	}
-	[FeedbackId.MediaPoolPreviewVariables]: {
-		isClip?: boolean
-		slot: string
-
-		position: 'top' | 'center' | 'bottom'
-		crop: 'none' | 'left' | 'center' | 'right'
+		type: 'advanced'
+		options: MediaPoolSourceOptions & {
+			position: 'top' | 'center' | 'bottom'
+			crop: 'none' | 'left' | 'center' | 'right'
+		}
 	}
 }
 
@@ -35,7 +30,8 @@ const cropAndPositionOptions = {
 			{ id: 'center', label: 'Center' },
 			{ id: 'right', label: 'Right' },
 		],
-	} satisfies CompanionInputFieldDropdown,
+		disableAutoExpression: true,
+	} satisfies CompanionInputFieldDropdown<'crop'>,
 	position: {
 		id: 'position',
 		type: 'dropdown',
@@ -47,17 +43,17 @@ const cropAndPositionOptions = {
 			{ id: 'bottom', label: 'Bottom' },
 		],
 		isVisibleExpression: `$(options:crop) === 'none'`,
-	} satisfies CompanionInputFieldDropdown,
+		disableAutoExpression: true,
+	} satisfies CompanionInputFieldDropdown<'position'>,
 }
 
 export function createMediaPoolFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemMediaPoolFeedbacks> {
+): CompanionFeedbackDefinitions<AtemMediaPoolFeedbacks> {
 	if (!model.media.players) {
 		return {
 			[FeedbackId.MediaPoolPreview]: undefined,
-			[FeedbackId.MediaPoolPreviewVariables]: undefined,
 		}
 	}
 	return {
@@ -65,105 +61,38 @@ export function createMediaPoolFeedbacks(
 			type: 'advanced',
 			name: 'Media pool: Preview image',
 			description: 'Preview of the specified media pool slot',
-			options: {
-				source: AtemMediaPlayerSourcePicker(model, state.state),
+			options: convertOptionsFields({
+				...AtemMediaPlayerSourcePickers(model, state.state),
 
 				...cropAndPositionOptions,
-			},
-			callback: async ({ options, image }) => {
-				const source = parseSource(options.getPlainNumber('source'))
+			}),
+			callback: async ({ id, options, previousOptions, image }) => {
+				const defaultClips = model.media.clips > 0 && options.defaultClip
 
-				if (!image) return {}
+				const source = parseMediaPoolSource(model, options.source, defaultClips)
+				const previousSource = previousOptions
+					? parseMediaPoolSource(model, previousOptions.source, defaultClips)
+					: null
+
+				if (!previousOptions || !isEqual(source, previousSource)) {
+					state.mediaPoolCache.unsubscribe(id)
+
+					if (source) state.mediaPoolCache.subscribe(source, id)
+				}
+
+				if (!image || !source) return {}
 
 				const previewOptions: MediaPoolPreviewOptions = {
-					crop: options.getPlainString('crop'),
-					position: options.getPlainString('position'),
+					crop: options.crop,
+					position: options.position,
 
 					buttonHeight: image.height,
 					buttonWidth: image.width,
 				}
 
 				return executePreviewFeedback(state, previewOptions, source)
-			},
-			subscribe: ({ id, options }) => {
-				const source = parseSource(options.getPlainNumber('source'))
-				state.mediaPoolCache.subscribe(source, id)
 			},
 			unsubscribe: ({ id }) => {
-				state.mediaPoolCache.unsubscribe(id)
-			},
-		},
-		[FeedbackId.MediaPoolPreviewVariables]: {
-			type: 'advanced',
-			name: 'Media pool: Preview image from variables',
-			description: 'Preview of the specified media pool slot',
-			options: {
-				isClip:
-					model.media.clips > 0
-						? {
-								type: 'checkbox',
-								id: 'isClip',
-								label: 'Is clip',
-								default: false,
-								tooltip: 'If slot includes a S or C prefix, that will override this setting',
-							}
-						: undefined,
-				slot: {
-					id: 'slot',
-					type: 'textinput',
-					label: 'Slot',
-					default: '1',
-					useVariables: { local: true },
-				},
-
-				...cropAndPositionOptions,
-			},
-			callback: async ({ options, image }) => {
-				if (!image) return {}
-
-				let isClip = model.media.clips > 0 && options.getPlainBoolean('isClip')
-
-				let slotStr = await options.getParsedString('slot')
-				if (slotStr.startsWith('S')) {
-					isClip = false
-					slotStr = slotStr.substring(1)
-				} else if (slotStr.startsWith('C')) {
-					if (model.media.clips > 0) {
-						// Can't support a clip, so abort here
-						return {}
-					}
-
-					isClip = true
-					slotStr = slotStr.substring(1)
-				}
-
-				const source: SourceDefinition = {
-					slot: Number(slotStr) - 1,
-					isClip,
-					frameIndex: 0, // Future
-				}
-
-				const previewOptions: MediaPoolPreviewOptions = {
-					crop: options.getPlainString('crop'),
-					position: options.getPlainString('position'),
-
-					buttonHeight: image.height,
-					buttonWidth: image.width,
-				}
-
-				return executePreviewFeedback(state, previewOptions, source)
-			},
-			subscribe: async ({ id, options }) => {
-				state.mediaPoolCache.subscribe(
-					{
-						slot: (await options.getParsedNumber('slot')) - 1,
-						isClip: model.media.clips > 0 && options.getPlainBoolean('isClip'),
-						frameIndex: 0, // Future
-					},
-					id,
-				)
-			},
-			unsubscribe: async ({ id }) => {
 				state.mediaPoolCache.unsubscribe(id)
 			},
 		},
@@ -185,12 +114,7 @@ async function executePreviewFeedback(
 
 	const isSlotOccupied = state.mediaPoolCache.isSlotOccupied(source)
 	if (!isSlotOccupied) {
-		return {
-			text: 'Empty',
-			size: 'auto',
-			bgcolor: 0,
-			color: 0xffffff,
-		}
+		return {}
 	}
 
 	return {
@@ -199,11 +123,4 @@ async function executePreviewFeedback(
 		bgcolor: 0,
 		color: 0xffffff,
 	}
-}
-
-function parseSource(source: number): SourceDefinition {
-	const isClip = source >= MEDIA_PLAYER_SOURCE_CLIP_OFFSET
-	const slot = isClip ? source - MEDIA_PLAYER_SOURCE_CLIP_OFFSET : source
-
-	return { slot, isClip, frameIndex: 0 }
 }

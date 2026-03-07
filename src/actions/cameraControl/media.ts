@@ -1,6 +1,7 @@
 import { type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../../options/common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import { ActionId } from '../ActionId.js'
-import type { MyActionDefinitions } from '../types.js'
 import type { StateWrapper } from '../../state.js'
 import {
 	AtemCameraControlBatchCommandSender,
@@ -11,14 +12,18 @@ import type { AtemConfig } from '../../config.js'
 import type { ModelSpec } from '../../models/types.js'
 import { InternalPortType } from 'atem-connection/dist/enums/index.js'
 
-export interface AtemCameraControlDisplayActions {
+export type AtemCameraControlDisplayActions = {
 	[ActionId.CameraControlMediaRecordSingle]: {
-		cameraId: string
-		state: TrueFalseToggle
+		options: {
+			cameraId: number
+			state: TrueFalseToggle
+		}
 	}
 	[ActionId.CameraControlMediaRecordMultiple]: {
-		cameraIds: number[]
-		state: TrueFalseToggle
+		options: {
+			cameraIds: number[]
+			state: TrueFalseToggle
+		}
 	}
 }
 
@@ -27,7 +32,7 @@ export function createCameraControlMediaActions(
 	model: ModelSpec,
 	atem: Atem | undefined,
 	state: StateWrapper,
-): MyActionDefinitions<AtemCameraControlDisplayActions> {
+): CompanionActionDefinitions<AtemCameraControlDisplayActions> {
 	if (!config.enableCameraControl) {
 		return {
 			[ActionId.CameraControlMediaRecordSingle]: undefined,
@@ -40,7 +45,7 @@ export function createCameraControlMediaActions(
 	return {
 		[ActionId.CameraControlMediaRecordSingle]: {
 			name: 'Camera Control: Set Camera Recording',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				state: {
 					id: 'state',
@@ -52,17 +57,18 @@ export function createCameraControlMediaActions(
 						{ id: 'false', label: 'Stopped' },
 						{ id: 'toggle', label: 'Toggle' },
 					],
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
+				const cameraId = options.cameraId
 
 				let target: boolean
-				if (options.getPlainString('state') === 'toggle') {
+				if (options.state === 'toggle') {
 					const cameraState = state.atemCameraState.get(cameraId)
 					target = !cameraState?.display?.colorBarEnable
 				} else {
-					target = options.getPlainString('state') === 'true'
+					target = options.state === 'true'
 				}
 
 				if (target) {
@@ -74,7 +80,7 @@ export function createCameraControlMediaActions(
 		},
 		[ActionId.CameraControlMediaRecordMultiple]: {
 			name: 'Camera Control: Set Multiple Camera Recording',
-			options: {
+			options: convertOptionsFields({
 				cameraIds: {
 					id: 'cameraIds',
 					type: 'multidropdown',
@@ -101,14 +107,15 @@ export function createCameraControlMediaActions(
 						{ id: 'true', label: 'Recording' },
 						{ id: 'false', label: 'Stopped' },
 					],
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const cameraIds = options.getRaw('cameraIds')
+				const cameraIds = options.cameraIds
 
 				if (!cameraIds || !Array.isArray(cameraIds) || cameraIds.length === 0) return
 
-				const target = options.getPlainString('state') === 'true'
+				const target = options.state === 'true'
 
 				if (!atem) return
 

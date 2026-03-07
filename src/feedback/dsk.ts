@@ -1,37 +1,41 @@
 import type { ModelSpec } from '../models/index.js'
-import type { MyFeedbackDefinitions } from './types.js'
+import { convertOptionsFields } from '../options/common.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb } from '@companion-module/base'
+import { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { AtemDSKPicker, AtemKeyFillSourcePicker } from '../input.js'
 import { getDSK, type StateWrapper } from '../state.js'
 
-export interface AtemDownstreamKeyerFeedbacks {
+export type AtemDownstreamKeyerFeedbacks = {
 	[FeedbackId.DSKOnAir]: {
-		key: number
+		type: 'boolean'
+		options: {
+			key: number
+		}
 	}
 	[FeedbackId.DSKTie]: {
-		key: number
+		type: 'boolean'
+		options: {
+			key: number
+		}
 	}
 	[FeedbackId.DSKSource]: {
-		key: number
-		fill: number
-	}
-	[FeedbackId.DSKSourceVariables]: {
-		key: string
-		fill: string
+		type: 'boolean'
+		options: {
+			key: number
+			fill: number
+		}
 	}
 }
 
 export function createDownstreamKeyerFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemDownstreamKeyerFeedbacks> {
+): CompanionFeedbackDefinitions<AtemDownstreamKeyerFeedbacks> {
 	if (!model.DSKs) {
 		return {
 			[FeedbackId.DSKOnAir]: undefined,
 			[FeedbackId.DSKTie]: undefined,
 			[FeedbackId.DSKSource]: undefined,
-			[FeedbackId.DSKSourceVariables]: undefined,
 		}
 	}
 	return {
@@ -39,15 +43,15 @@ export function createDownstreamKeyerFeedbacks(
 			type: 'boolean',
 			name: 'Downstream key: OnAir',
 			description: 'If the specified downstream keyer is onair, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				key: AtemDSKPicker(model),
-			},
+			}),
 			defaultStyle: {
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(255, 0, 0),
+				color: 0xffffff,
+				bgcolor: 0xff0000,
 			},
 			callback: ({ options }): boolean => {
-				const dsk = getDSK(state.state, options.getPlainNumber('key'))
+				const dsk = getDSK(state.state, options.key - 1)
 				return !!dsk?.onAir
 			},
 		},
@@ -55,15 +59,15 @@ export function createDownstreamKeyerFeedbacks(
 			type: 'boolean',
 			name: 'Downstream key: Tied',
 			description: 'If the specified downstream keyer is tied, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				key: AtemDSKPicker(model),
-			},
+			}),
 			defaultStyle: {
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(255, 0, 0),
+				color: 0xffffff,
+				bgcolor: 0xff0000,
 			},
 			callback: ({ options }): boolean => {
-				const dsk = getDSK(state.state, options.getPlainNumber('key'))
+				const dsk = getDSK(state.state, options.key - 1)
 				return !!dsk?.properties?.tie
 			},
 		},
@@ -71,71 +75,24 @@ export function createDownstreamKeyerFeedbacks(
 			type: 'boolean',
 			name: 'Downstream key: Fill source',
 			description: 'If the input specified is selected in the DSK specified, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				key: AtemDSKPicker(model),
 				fill: AtemKeyFillSourcePicker(model, state.state),
-			},
+			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(238, 238, 0),
+				color: 0x000000,
+				bgcolor: 0xeeee00,
 			},
 			callback: ({ options }): boolean => {
-				const dsk = getDSK(state.state, options.getPlainNumber('key'))
-				return dsk?.sources?.fillSource === options.getPlainNumber('fill')
+				const dsk = getDSK(state.state, options.key - 1)
+				return dsk?.sources?.fillSource === options.fill
 			},
 			learn: ({ options }) => {
-				const dsk = getDSK(state.state, options.getPlainNumber('key'))
+				const dsk = getDSK(state.state, options.key - 1)
 
 				if (dsk?.sources) {
 					return {
-						...options.getJson(),
 						fill: dsk.sources.fillSource,
-					}
-				} else {
-					return undefined
-				}
-			},
-		},
-		[FeedbackId.DSKSourceVariables]: {
-			type: 'boolean',
-			name: 'Downstream key: Fill source from variables',
-			description: 'If the input specified is selected in the DSK specified, change style of the bank',
-			options: {
-				key: {
-					type: 'textinput',
-					label: 'Key',
-					id: 'key',
-					default: '1',
-					useVariables: true,
-				},
-				fill: {
-					type: 'textinput',
-					id: 'fill',
-					label: 'Fill Source',
-					default: '0',
-					useVariables: true,
-				},
-			},
-			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(238, 238, 0),
-			},
-			callback: async ({ options }) => {
-				const key = (await options.getParsedNumber('key')) - 1
-				const fill = await options.getParsedNumber('fill')
-
-				const dsk = getDSK(state.state, key)
-				return dsk?.sources?.fillSource === fill
-			},
-			learn: async ({ options }) => {
-				const key = (await options.getParsedNumber('key')) - 1
-
-				const dsk = getDSK(state.state, key)
-
-				if (dsk?.sources) {
-					return {
-						...options.getJson(),
-						fill: dsk.sources.fillSource + '',
 					}
 				} else {
 					return undefined

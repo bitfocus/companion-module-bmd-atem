@@ -1,37 +1,52 @@
 import { type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../../options/common.js'
+import type { CompanionActionDefinition, CompanionActionDefinitions } from '@companion-module/base'
 import { ActionId } from '../ActionId.js'
-import type { MyActionDefinition, MyActionDefinitions } from '../types.js'
 import type { StateWrapper } from '../../state.js'
 import { AtemCameraControlDirectCommandSender } from '@atem-connection/camera-control'
 import { CameraControlSourcePicker } from '../../choices.js'
 import type { AtemConfig } from '../../config.js'
 
-interface RgbyAdjustmentProps {
-	cameraId: string
-	red: string
-	green: string
-	blue: string
-	luma: string
+type RgbyAdjustmentProps = {
+	cameraId: number
+	red: number
+	green: number
+	blue: number
+	luma: number
 }
 
-export interface AtemCameraControlColorActions {
-	[ActionId.CameraControlColorLiftAdjust]: RgbyAdjustmentProps
-	[ActionId.CameraControlColorGammaAdjust]: RgbyAdjustmentProps
-	[ActionId.CameraControlColorGainAdjust]: RgbyAdjustmentProps
-	[ActionId.CameraControlColorOffsetAdjust]: RgbyAdjustmentProps
+export type AtemCameraControlColorActions = {
+	[ActionId.CameraControlColorLiftAdjust]: {
+		options: RgbyAdjustmentProps
+	}
+	[ActionId.CameraControlColorGammaAdjust]: {
+		options: RgbyAdjustmentProps
+	}
+	[ActionId.CameraControlColorGainAdjust]: {
+		options: RgbyAdjustmentProps
+	}
+	[ActionId.CameraControlColorOffsetAdjust]: {
+		options: RgbyAdjustmentProps
+	}
 	[ActionId.CameraControlColorContrastAdjust]: {
-		cameraId: string
-		contrast: string
-		pivot: string
+		options: {
+			cameraId: number
+			contrast: number
+			pivot: number
+		}
 	}
 	[ActionId.CameraControlColorLumaMix]: {
-		cameraId: string
-		lumaMix: string
+		options: {
+			cameraId: number
+			lumaMix: number
+		}
 	}
 	[ActionId.CameraControlColorHueSaturationAdjust]: {
-		cameraId: string
-		hue: string
-		saturation: string
+		options: {
+			cameraId: number
+			hue: number
+			saturation: number
+		}
 	}
 }
 
@@ -39,7 +54,7 @@ export function createCameraControlColorActions(
 	config: AtemConfig,
 	atem: Atem | undefined,
 	_state: StateWrapper,
-): MyActionDefinitions<AtemCameraControlColorActions> {
+): CompanionActionDefinitions<AtemCameraControlColorActions> {
 	if (!config.enableCameraControl) {
 		return {
 			[ActionId.CameraControlColorLiftAdjust]: undefined,
@@ -57,52 +72,56 @@ export function createCameraControlColorActions(
 	const createRgbaAction = (
 		name: string,
 		doSend: (cameraId: number, red: number, green: number, blue: number, luma: number) => Promise<void>,
-	): MyActionDefinition<RgbyAdjustmentProps> => ({
+	): CompanionActionDefinition<RgbyAdjustmentProps> => ({
 		name: name,
-		options: {
+		options: convertOptionsFields({
 			cameraId: CameraControlSourcePicker(),
 			red: {
 				id: 'red',
-				type: 'textinput',
+				type: 'number',
 				label: 'Red',
-				default: '0.0',
-				tooltip: 'eg for -2.0 to 2.0',
-				useVariables: true,
+				default: 0,
+				min: -2,
+				max: 2,
+				description: 'eg for -2.0 to 2.0',
+				asInteger: false,
+				clampValues: true,
 			},
 			green: {
 				id: 'green',
-				type: 'textinput',
+				type: 'number',
 				label: 'Green',
-				default: '0.0',
-				tooltip: 'eg for -2.0 to 2.0',
-				useVariables: true,
+				default: 0,
+				min: -2,
+				max: 2,
+				description: 'eg for -2.0 to 2.0',
+				asInteger: false,
+				clampValues: true,
 			},
 			blue: {
 				id: 'blue',
-				type: 'textinput',
+				type: 'number',
 				label: 'Blue',
-				default: '0.0',
-				tooltip: 'eg for -2.0 to 2.0',
-				useVariables: true,
+				default: 0,
+				min: -2,
+				max: 2,
+				description: 'eg for -2.0 to 2.0',
+				asInteger: false,
+				clampValues: true,
 			},
 			luma: {
 				id: 'luma',
-				type: 'textinput',
+				type: 'number',
 				label: 'Luma',
-				default: '0.0',
-				tooltip: 'eg for -2.0 to 2.0',
-				useVariables: true,
+				default: 0,
+				min: -2,
+				max: 2,
+				description: 'eg for -2.0 to 2.0',
+				asInteger: false,
+				clampValues: true,
 			},
-		},
-		callback: async ({ options }) => {
-			const cameraId = await options.getParsedNumber('cameraId')
-			const red = await options.getParsedNumber('red')
-			const green = await options.getParsedNumber('green')
-			const blue = await options.getParsedNumber('blue')
-			const luma = await options.getParsedNumber('luma')
-
-			await doSend(cameraId, red, green, blue, luma)
-		},
+		}),
+		callback: async ({ options }) => doSend(options.cameraId, options.red, options.green, options.blue, options.luma),
 	})
 
 	return {
@@ -125,81 +144,85 @@ export function createCameraControlColorActions(
 
 		[ActionId.CameraControlColorContrastAdjust]: {
 			name: 'Camera Control: Contrast Adjust',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				contrast: {
 					id: 'contrast',
-					type: 'textinput',
+					type: 'number',
 					label: 'Value',
-					default: '1.0',
-					tooltip: 'eg for 0.0 to 1.0',
-					useVariables: true,
+					default: 1.0,
+					min: 0,
+					max: 1,
+					description: 'eg for 0.0 to 1.0',
+					asInteger: false,
+					clampValues: true,
 				},
 				pivot: {
 					id: 'pivot',
-					type: 'textinput',
+					type: 'number',
 					label: 'Value',
-					default: '1.0',
-					tooltip: 'eg for 0.0 to 1.0',
-					useVariables: true,
+					default: 1.0,
+					min: 0,
+					max: 1,
+					description: 'eg for 0.0 to 1.0',
+					asInteger: false,
+					clampValues: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
-				const contrast = await options.getParsedNumber('contrast')
-				const pivot = await options.getParsedNumber('pivot')
-
-				await commandSender?.colorContrastAdjust(cameraId, contrast, pivot)
+				await commandSender?.colorContrastAdjust(options.cameraId, options.contrast, options.pivot)
 			},
 		},
 
 		[ActionId.CameraControlColorLumaMix]: {
 			name: 'Camera Control: Color LumaMix',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				lumaMix: {
 					id: 'lumaMix',
-					type: 'textinput',
+					type: 'number',
 					label: 'Value',
-					default: '1.0',
-					tooltip: 'eg for 0.0 to 1.0',
-					useVariables: true,
+					default: 1.0,
+					min: 0,
+					max: 1,
+					description: 'eg for 0.0 to 1.0',
+					asInteger: false,
+					clampValues: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
-				const lumaMix = await options.getParsedNumber('lumaMix')
-
-				await commandSender?.colorLumaMix(cameraId, lumaMix)
+				await commandSender?.colorLumaMix(options.cameraId, options.lumaMix)
 			},
 		},
 		[ActionId.CameraControlColorHueSaturationAdjust]: {
 			name: 'Camera Control: Color Hue & Saturation',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				hue: {
 					id: 'hue',
-					type: 'textinput',
+					type: 'number',
 					label: 'Hue',
-					default: '0.0',
-					tooltip: 'eg for -1.0 to 1.0',
-					useVariables: true,
+					default: 0.0,
+					min: -1,
+					max: 1,
+					description: 'eg for -1.0 to 1.0',
+					asInteger: false,
+					clampValues: true,
 				},
 				saturation: {
 					id: 'saturation',
-					type: 'textinput',
+					type: 'number',
 					label: 'Saturation',
-					default: '1.0',
-					tooltip: 'eg for 0.0 to 2.0',
-					useVariables: true,
+					default: 1.0,
+					min: 0,
+					max: 2,
+					description: 'eg for 0.0 to 2.0',
+					asInteger: false,
+					clampValues: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
-				const hue = await options.getParsedNumber('hue')
-				const saturation = await options.getParsedNumber('saturation')
-
-				await commandSender?.colorHueSaturationAdjust(cameraId, hue, saturation)
+				await commandSender?.colorHueSaturationAdjust(options.cameraId, options.hue, options.saturation)
 			},
 		},
 	}

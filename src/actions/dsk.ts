@@ -1,7 +1,8 @@
 import { type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../options/common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
-import type { MyActionDefinitions } from './types.js'
 import { CHOICES_KEYTRANS, CHOICES_ON_OFF_TOGGLE, GetDSKIdChoices, type TrueFalseToggle } from '../choices.js'
 import type { DownstreamKeyerMask, DownstreamKeyerGeneral } from 'atem-connection/dist/state/video/downstreamKeyers.js'
 import {
@@ -14,50 +15,59 @@ import {
 } from '../input.js'
 import { getDSK, type StateWrapper } from '../state.js'
 
-export interface AtemDownstreamKeyerActions {
+export type AtemDownstreamKeyerActions = {
 	[ActionId.DSKSource]: {
-		key: number
-		fill: number
-		cut: number
-	}
-	[ActionId.DSKSourceVariables]: {
-		key: string
-		fill: string
-		cut: string
+		options: {
+			key: number
+			fill: number
+			cut: number
+		}
 	}
 	[ActionId.DSKRate]: {
-		key: number
-		rate: number
+		options: {
+			key: number
+			rate: number
+		}
 	}
 	[ActionId.DSKMask]: {
-		key: number
+		options: {
+			key: number
 
-		properties: Array<'maskEnabled' | 'maskTop' | 'maskBottom' | 'maskLeft' | 'maskRight'>
-		maskEnabled: boolean
-		maskTop: number
-		maskBottom: number
-		maskLeft: number
-		maskRight: number
+			properties: Array<'maskEnabled' | 'maskTop' | 'maskBottom' | 'maskLeft' | 'maskRight'>
+			maskEnabled: boolean
+			maskTop: number
+			maskBottom: number
+			maskLeft: number
+			maskRight: number
+		}
 	}
 	[ActionId.DSKPreMultipliedKey]: {
-		key: number
+		options: {
+			key: number
 
-		properties: Array<'preMultiply' | 'clip' | 'gain' | 'invert'>
-		preMultiply: boolean
-		clip: number
-		gain: number
-		invert: boolean
+			properties: Array<'preMultiply' | 'clip' | 'gain' | 'invert'>
+			preMultiply: boolean
+			clip: number
+			gain: number
+			invert: boolean
+		}
 	}
 	[ActionId.DSKAuto]: {
-		downstreamKeyerId: number
+		options: {
+			downstreamKeyerId: number
+		}
 	}
 	[ActionId.DSKOnAir]: {
-		key: number
-		onair: TrueFalseToggle
+		options: {
+			key: number
+			onair: TrueFalseToggle
+		}
 	}
 	[ActionId.DSKTie]: {
-		key: number
-		state: TrueFalseToggle
+		options: {
+			key: number
+			state: TrueFalseToggle
+		}
 	}
 }
 
@@ -65,11 +75,10 @@ export function createDownstreamKeyerActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	state: StateWrapper,
-): MyActionDefinitions<AtemDownstreamKeyerActions> {
+): CompanionActionDefinitions<AtemDownstreamKeyerActions> {
 	if (!model.DSKs) {
 		return {
 			[ActionId.DSKSource]: undefined,
-			[ActionId.DSKSourceVariables]: undefined,
 			[ActionId.DSKRate]: undefined,
 			[ActionId.DSKMask]: undefined,
 			[ActionId.DSKPreMultipliedKey]: undefined,
@@ -81,23 +90,22 @@ export function createDownstreamKeyerActions(
 	return {
 		[ActionId.DSKSource]: {
 			name: 'Downstream key: Set inputs',
-			options: {
+			options: convertOptionsFields({
 				key: AtemDSKPicker(model),
 				fill: AtemKeyFillSourcePicker(model, state.state),
 				cut: AtemKeyCutSourcePicker(model, state.state),
-			},
+			}),
 			callback: async ({ options }) => {
 				await Promise.all([
-					atem?.setDownstreamKeyFillSource(options.getPlainNumber('fill'), options.getPlainNumber('key')),
-					atem?.setDownstreamKeyCutSource(options.getPlainNumber('cut'), options.getPlainNumber('key')),
+					atem?.setDownstreamKeyFillSource(options.fill, options.key - 1),
+					atem?.setDownstreamKeyCutSource(options.cut, options.key - 1),
 				])
 			},
 			learn: ({ options }) => {
-				const dsk = getDSK(state.state, options.getPlainNumber('key'))
+				const dsk = getDSK(state.state, options.key - 1)
 
 				if (dsk?.sources) {
 					return {
-						...options.getJson(),
 						fill: dsk.sources.fillSource,
 						cut: dsk.sources.cutSource,
 					}
@@ -106,71 +114,20 @@ export function createDownstreamKeyerActions(
 				}
 			},
 		},
-		[ActionId.DSKSourceVariables]: {
-			name: 'Downstream key: Set inputs from variables',
-			options: {
-				key: {
-					type: 'textinput',
-					label: 'Key',
-					id: 'key',
-					default: '1',
-					useVariables: true,
-				},
-				fill: {
-					type: 'textinput',
-					id: 'fill',
-					label: 'Fill Source',
-					default: '0',
-					useVariables: true,
-				},
-				cut: {
-					type: 'textinput',
-					id: 'cut',
-					label: 'Key Source',
-					default: '0',
-					useVariables: true,
-				},
-			},
-			callback: async ({ options }) => {
-				const key = (await options.getParsedNumber('key')) - 1
-				const fill = await options.getParsedNumber('fill')
-				const cut = await options.getParsedNumber('cut')
-
-				if (isNaN(key) || isNaN(fill) || isNaN(cut)) return
-
-				await Promise.all([atem?.setDownstreamKeyFillSource(fill, key), atem?.setDownstreamKeyCutSource(cut, key)])
-			},
-			learn: async ({ options }) => {
-				const key = (await options.getParsedNumber('key')) - 1
-
-				const dsk = getDSK(state.state, key)
-
-				if (dsk?.sources) {
-					return {
-						...options.getJson(),
-						fill: dsk.sources.fillSource + '',
-						cut: dsk.sources.cutSource + '',
-					}
-				} else {
-					return undefined
-				}
-			},
-		},
 		[ActionId.DSKRate]: {
 			name: 'Downstream key: Set Rate',
-			options: {
+			options: convertOptionsFields({
 				key: AtemDSKPicker(model),
 				rate: AtemRatePicker('Rate'),
-			},
+			}),
 			callback: async ({ options }) => {
-				await atem?.setDownstreamKeyRate(options.getPlainNumber('rate'), options.getPlainNumber('key'))
+				await atem?.setDownstreamKeyRate(options.rate, options.key - 1)
 			},
 			learn: ({ options }) => {
-				const dsk = getDSK(state.state, options.getPlainNumber('key'))
+				const dsk = getDSK(state.state, options.key - 1)
 
 				if (dsk?.properties) {
 					return {
-						...options.getJson(),
 						rate: dsk.properties.rate,
 					}
 				} else {
@@ -180,30 +137,30 @@ export function createDownstreamKeyerActions(
 		},
 		[ActionId.DSKMask]: {
 			name: 'Downstream key: Set Mask',
-			options: {
+			options: convertOptionsFields({
 				key: AtemDSKPicker(model),
 				...AtemDSKMaskPropertiesPickers(),
-			},
+			}),
 			callback: async ({ options }) => {
-				const keyId = options.getPlainNumber('key')
+				const keyId = options.key - 1
 				const newProps: Partial<DownstreamKeyerMask> = {}
 
-				const props = options.getRaw('properties')
+				const props = options.properties
 				if (props && Array.isArray(props)) {
 					if (props.includes('maskEnabled')) {
-						newProps.enabled = options.getPlainBoolean('maskEnabled')
+						newProps.enabled = options.maskEnabled
 					}
 					if (props.includes('maskTop')) {
-						newProps.top = options.getPlainNumber('maskTop') * 1000
+						newProps.top = options.maskTop * 1000
 					}
 					if (props.includes('maskBottom')) {
-						newProps.bottom = options.getPlainNumber('maskBottom') * 1000
+						newProps.bottom = options.maskBottom * 1000
 					}
 					if (props.includes('maskLeft')) {
-						newProps.left = options.getPlainNumber('maskLeft') * 1000
+						newProps.left = options.maskLeft * 1000
 					}
 					if (props.includes('maskRight')) {
-						newProps.right = options.getPlainNumber('maskRight') * 1000
+						newProps.right = options.maskRight * 1000
 					}
 				}
 
@@ -212,11 +169,10 @@ export function createDownstreamKeyerActions(
 				await atem?.setDownstreamKeyMaskSettings(newProps, keyId)
 			},
 			learn: ({ options }) => {
-				const dsk = getDSK(state.state, options.getPlainNumber('key'))
+				const dsk = getDSK(state.state, options.key - 1)
 
 				if (dsk?.properties?.mask) {
 					return {
-						...options.getJson(),
 						maskEnabled: dsk.properties.mask.enabled,
 						maskTop: dsk.properties.mask.top / 1000,
 						maskBottom: dsk.properties.mask.bottom / 1000,
@@ -230,27 +186,27 @@ export function createDownstreamKeyerActions(
 		},
 		[ActionId.DSKPreMultipliedKey]: {
 			name: 'Downstream key: Set Pre Multiplied Key',
-			options: {
+			options: convertOptionsFields({
 				key: AtemDSKPicker(model),
 				...AtemDSKPreMultipliedKeyPropertiesPickers(),
-			},
+			}),
 			callback: async ({ options }) => {
-				const keyId = options.getPlainNumber('key')
+				const keyId = options.key - 1
 				const newProps: Partial<DownstreamKeyerGeneral> = {}
 
-				const props = options.getRaw('properties')
+				const props = options.properties
 				if (props && Array.isArray(props)) {
 					if (props.includes('preMultiply')) {
-						newProps.preMultiply = options.getPlainBoolean('preMultiply')
+						newProps.preMultiply = options.preMultiply
 					}
 					if (props.includes('clip')) {
-						newProps.clip = options.getPlainNumber('clip') * 10
+						newProps.clip = options.clip * 10
 					}
 					if (props.includes('gain')) {
-						newProps.gain = options.getPlainNumber('gain') * 10
+						newProps.gain = options.gain * 10
 					}
 					if (props.includes('invert')) {
-						newProps.invert = options.getPlainBoolean('invert')
+						newProps.invert = options.invert
 					}
 				}
 
@@ -259,11 +215,10 @@ export function createDownstreamKeyerActions(
 				await atem?.setDownstreamKeyGeneralProperties(newProps, keyId)
 			},
 			learn: ({ options }) => {
-				const dsk = getDSK(state.state, options.getPlainNumber('key'))
+				const dsk = getDSK(state.state, options.key - 1)
 
 				if (dsk?.properties) {
 					return {
-						...options.getJson(),
 						preMultiply: dsk.properties.preMultiply,
 						clip: dsk.properties.clip / 10,
 						gain: dsk.properties.gain / 10,
@@ -276,46 +231,46 @@ export function createDownstreamKeyerActions(
 		},
 		[ActionId.DSKAuto]: {
 			name: 'Downstream key: Run AUTO Transition',
-			options: {
+			options: convertOptionsFields({
 				downstreamKeyerId: {
 					type: 'dropdown',
 					id: 'downstreamKeyerId',
 					label: 'DSK',
-					default: 0,
+					default: 1,
 					choices: GetDSKIdChoices(model),
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				await atem?.autoDownstreamKey(options.getPlainNumber('downstreamKeyerId'))
+				await atem?.autoDownstreamKey(options.downstreamKeyerId - 1)
 			},
 		},
 		[ActionId.DSKOnAir]: {
 			name: 'Downstream key: Set OnAir',
-			options: {
+			options: convertOptionsFields({
 				onair: {
 					id: 'onair',
 					type: 'dropdown',
 					label: 'On Air',
 					default: 'true',
 					choices: CHOICES_KEYTRANS,
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
 				key: AtemDSKPicker(model),
-			},
+			}),
 			callback: async ({ options }) => {
-				const keyIndex = options.getPlainNumber('key')
-				if (options.getPlainString('onair') === 'toggle') {
+				const keyIndex = options.key - 1
+				if (options.onair === 'toggle') {
 					const dsk = getDSK(state.state, keyIndex)
 					await atem?.setDownstreamKeyOnAir(!dsk?.onAir, keyIndex)
 				} else {
-					await atem?.setDownstreamKeyOnAir(options.getPlainString('onair') === 'true', keyIndex)
+					await atem?.setDownstreamKeyOnAir(options.onair === 'true', keyIndex)
 				}
 			},
 			learn: ({ options }) => {
-				const dsk = getDSK(state.state, options.getPlainNumber('key'))
+				const dsk = getDSK(state.state, options.key - 1)
 
 				if (dsk) {
 					return {
-						...options.getJson(),
 						onair: dsk.onAir ? 'true' : 'false',
 					}
 				} else {
@@ -325,31 +280,31 @@ export function createDownstreamKeyerActions(
 		},
 		[ActionId.DSKTie]: {
 			name: 'Downstream key: Set Tied',
-			options: {
+			options: convertOptionsFields({
 				state: {
 					id: 'state',
 					type: 'dropdown',
 					label: 'State',
 					default: 'true',
 					choices: CHOICES_ON_OFF_TOGGLE,
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
 				key: AtemDSKPicker(model),
-			},
+			}),
 			callback: async ({ options }) => {
-				const keyIndex = options.getPlainNumber('key')
-				if (options.getPlainString('state') === 'toggle') {
+				const keyIndex = options.key - 1
+				if (options.state === 'toggle') {
 					const dsk = getDSK(state.state, keyIndex)
 					await atem?.setDownstreamKeyTie(!dsk?.properties?.tie, keyIndex)
 				} else {
-					await atem?.setDownstreamKeyTie(options.getPlainString('state') === 'true', keyIndex)
+					await atem?.setDownstreamKeyTie(options.state === 'true', keyIndex)
 				}
 			},
 			learn: ({ options }) => {
-				const dsk = getDSK(state.state, options.getPlainNumber('key'))
+				const dsk = getDSK(state.state, options.key - 1)
 
 				if (dsk?.properties) {
 					return {
-						...options.getJson(),
 						state: dsk.properties.tie ? 'true' : 'false',
 					}
 				} else {

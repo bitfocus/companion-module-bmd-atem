@@ -1,14 +1,19 @@
 import type { ModelSpec } from '../models/index.js'
-import type { MyFeedbackDefinitions } from './types.js'
+import { convertOptionsFields } from '../options/common.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb } from '@companion-module/base'
+import { assertNever, CompanionFeedbackDefinitions, CompanionInputFieldDropdown } from '@companion-module/base'
 import type { StateWrapper } from '../state.js'
 import type { AtemConfig } from '../config.js'
 import { Enums } from 'atem-connection'
 
-export interface AtemTimecodeFeedbacks {
+type TimecodeMode = 'freerun' | 'timeofday'
+
+export type AtemTimecodeFeedbacks = {
 	[FeedbackId.TimecodeMode]: {
-		mode: Enums.TimeMode
+		type: 'boolean'
+		options: {
+			mode: TimecodeMode
+		}
 	}
 }
 
@@ -16,7 +21,7 @@ export function createTimecodeFeedbacks(
 	config: AtemConfig,
 	_model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemTimecodeFeedbacks> {
+): CompanionFeedbackDefinitions<AtemTimecodeFeedbacks> {
 	if (!config.pollTimecode) {
 		return {
 			[FeedbackId.TimecodeMode]: undefined,
@@ -27,29 +32,55 @@ export function createTimecodeFeedbacks(
 			type: 'boolean',
 			name: 'Timecode: Mode',
 			description: 'If the timecode mode is as specified',
-			options: {
+			options: convertOptionsFields({
 				mode: {
 					id: 'mode',
 					type: 'dropdown',
 					label: 'Mode',
 					choices: [
-						{ id: Enums.TimeMode.FreeRun, label: 'Free run' },
-						{ id: Enums.TimeMode.TimeOfDay, label: 'Time of Day' },
+						{ id: 'freerun', label: 'Free run' },
+						{ id: 'timeofday', label: 'Time of Day' },
 					],
-					default: Enums.TimeMode.FreeRun,
-				},
-			},
+					default: 'freerun',
+				} satisfies CompanionInputFieldDropdown<'mode', TimecodeMode>,
+			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
-				return state.state.settings.timeMode === options.getPlainNumber('mode')
+				let targetMode: Enums.TimeMode | undefined
+
+				const rawMode = String(options.mode).toLowerCase()
+				if (rawMode.includes('free') || rawMode.includes('run')) {
+					targetMode = Enums.TimeMode.FreeRun
+				} else if (rawMode.includes('time') || rawMode.includes('day')) {
+					targetMode = Enums.TimeMode.TimeOfDay
+				} else {
+					return false
+				}
+
+				return state.state.settings.timeMode === targetMode
 			},
-			learn: ({ options }) => {
+			learn: () => {
+				const rawMode = state.state.settings.timeMode
+				if (rawMode === undefined) return undefined
+
+				let newMode: TimecodeMode | undefined
+				switch (rawMode) {
+					case Enums.TimeMode.FreeRun:
+						newMode = 'freerun'
+						break
+					case Enums.TimeMode.TimeOfDay:
+						newMode = 'timeofday'
+						break
+					default:
+						assertNever(rawMode)
+						return undefined
+				}
+
 				return {
-					...options.getJson(),
-					mode: state.state.settings.timeMode ?? Enums.TimeMode.FreeRun,
+					mode: newMode,
 				}
 			},
 		},

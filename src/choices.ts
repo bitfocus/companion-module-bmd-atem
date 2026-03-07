@@ -1,16 +1,15 @@
-import type { CompanionInputFieldTextInput, DropdownChoice } from '@companion-module/base'
+import type { CompanionInputFieldNumber, DropdownChoice } from '@companion-module/base'
 import { type AtemState, Enums } from 'atem-connection'
 import type { ModelSpec } from './models/index.js'
 import { iterateTimes, assertUnreachable } from './util.js'
-import type { MyDropdownChoice } from './common.js'
 import { AudioChannelPair } from 'atem-connection/dist/enums/index.js'
 import { combineInputId } from './models/util/audioRouting.js'
 
 export const CHOICES_SSRCBOXES: DropdownChoice[] = [
-	{ id: 0, label: 'Box 1' },
-	{ id: 1, label: 'Box 2' },
-	{ id: 2, label: 'Box 3' },
-	{ id: 3, label: 'Box 4' },
+	{ id: 1, label: 'Box 1' },
+	{ id: 2, label: 'Box 2' },
+	{ id: 3, label: 'Box 3' },
+	{ id: 4, label: 'Box 4' },
 ]
 
 export const CHOICES_BORDER_BEVEL: DropdownChoice[] = [
@@ -22,7 +21,7 @@ export const CHOICES_BORDER_BEVEL: DropdownChoice[] = [
 
 export type TrueFalseToggle = 'true' | 'false' | 'toggle'
 
-export const CHOICES_ON_OFF_TOGGLE: MyDropdownChoice<TrueFalseToggle>[] = [
+export const CHOICES_ON_OFF_TOGGLE: DropdownChoice<TrueFalseToggle>[] = [
 	{ id: 'true', label: 'On' },
 	{ id: 'false', label: 'Off' },
 	{ id: 'toggle', label: 'Toggle' },
@@ -35,7 +34,7 @@ export enum NextTransBackgroundChoices {
 	Toggle = 'toggle',
 }
 
-export const CHOICES_NEXTTRANS_BACKGROUND: MyDropdownChoice<NextTransBackgroundChoices>[] = [
+export const CHOICES_NEXTTRANS_BACKGROUND: DropdownChoice<NextTransBackgroundChoices>[] = [
 	{ id: NextTransBackgroundChoices.NoChange, label: 'No change' },
 	{ id: NextTransBackgroundChoices.Include, label: 'Include' },
 	{ id: NextTransBackgroundChoices.Omit, label: 'Omit' },
@@ -51,7 +50,7 @@ export enum NextTransKeyChoices {
 	Omit = 'omit',
 }
 
-export const CHOICES_NEXTTRANS_KEY: MyDropdownChoice<NextTransKeyChoices>[] = [
+export const CHOICES_NEXTTRANS_KEY: DropdownChoice<NextTransKeyChoices>[] = [
 	{ id: NextTransKeyChoices.NoChange, label: 'No change' },
 	{ id: NextTransKeyChoices.On, label: 'On' },
 	{ id: NextTransKeyChoices.Off, label: 'Off' },
@@ -60,13 +59,13 @@ export const CHOICES_NEXTTRANS_KEY: MyDropdownChoice<NextTransKeyChoices>[] = [
 	{ id: NextTransKeyChoices.Omit, label: 'Omit' },
 ]
 
-export const CHOICES_KEYTRANS: MyDropdownChoice<TrueFalseToggle>[] = [
+export const CHOICES_KEYTRANS: DropdownChoice<TrueFalseToggle>[] = [
 	{ id: 'true', label: 'On Air' },
 	{ id: 'false', label: 'Off' },
 	{ id: 'toggle', label: 'Toggle' },
 ]
 
-export const CHOICES_KEYFRAMES: MyDropdownChoice<
+export const CHOICES_KEYFRAMES: DropdownChoice<
 	Enums.FlyKeyKeyFrame.A | Enums.FlyKeyKeyFrame.B | Enums.FlyKeyKeyFrame.Full
 >[] = [
 	{ id: Enums.FlyKeyKeyFrame.A, label: 'A' },
@@ -74,12 +73,12 @@ export const CHOICES_KEYFRAMES: MyDropdownChoice<
 	{ id: Enums.FlyKeyKeyFrame.Full, label: 'Full' },
 ]
 
-export const CHOICES_KEYFRAMES_CONFIGURABLE: MyDropdownChoice<Enums.FlyKeyKeyFrame.A | Enums.FlyKeyKeyFrame.B>[] = [
+export const CHOICES_KEYFRAMES_CONFIGURABLE: DropdownChoice<Enums.FlyKeyKeyFrame.A | Enums.FlyKeyKeyFrame.B>[] = [
 	{ id: Enums.FlyKeyKeyFrame.A, label: 'A' },
 	{ id: Enums.FlyKeyKeyFrame.B, label: 'B' },
 ]
 
-export const CHOICES_CURRENTKEYFRAMES: MyDropdownChoice<
+export const CHOICES_CURRENTKEYFRAMES: DropdownChoice<
 	Enums.IsAtKeyFrame.A | Enums.IsAtKeyFrame.B | Enums.IsAtKeyFrame.RunToInfinite
 >[] = [
 	{ id: Enums.IsAtKeyFrame.A, label: 'A' },
@@ -87,7 +86,7 @@ export const CHOICES_CURRENTKEYFRAMES: MyDropdownChoice<
 	{ id: Enums.IsAtKeyFrame.RunToInfinite, label: 'Full / Infinite' },
 ]
 
-export const CHOICES_FLYDIRECTIONS: MyDropdownChoice<Enums.FlyKeyDirection>[] = [
+export const CHOICES_FLYDIRECTIONS: DropdownChoice<Enums.FlyKeyDirection>[] = [
 	{ id: Enums.FlyKeyDirection.CentreOfKey, label: 'Centre of key' },
 	{ id: Enums.FlyKeyDirection.TopLeft, label: 'Top left' },
 	{ id: Enums.FlyKeyDirection.TopCentre, label: 'Top centre' },
@@ -100,7 +99,7 @@ export const CHOICES_FLYDIRECTIONS: MyDropdownChoice<Enums.FlyKeyDirection>[] = 
 	{ id: Enums.FlyKeyDirection.BottomRight, label: 'Bottom right' },
 ]
 
-export const CHOICES_CLASSIC_AUDIO_MIX_OPTION: MyDropdownChoice<Enums.AudioMixOption>[] = [
+export const CHOICES_CLASSIC_AUDIO_MIX_OPTION: DropdownChoice<Enums.AudioMixOption>[] = [
 	{
 		id: Enums.AudioMixOption.On,
 		label: 'On',
@@ -115,22 +114,23 @@ export const CHOICES_CLASSIC_AUDIO_MIX_OPTION: MyDropdownChoice<Enums.AudioMixOp
 	},
 ]
 
-export const CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION: MyDropdownChoice<Enums.FairlightAudioMixOption>[] = [
+export type FairlightMixOption2 = 'on' | 'off' | 'afv'
+export const CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION: DropdownChoice<FairlightMixOption2>[] = [
 	{
-		id: Enums.FairlightAudioMixOption.On,
+		id: 'on',
 		label: 'On',
 	},
 	{
-		id: Enums.FairlightAudioMixOption.Off,
+		id: 'off',
 		label: 'Off',
 	},
 	{
-		id: Enums.FairlightAudioMixOption.AudioFollowVideo,
+		id: 'afv',
 		label: 'AFV',
 	},
 ]
 
-export function GetTransitionStyleChoices(skipSting?: boolean): MyDropdownChoice<Enums.TransitionStyle>[] {
+export function GetTransitionStyleChoices(skipSting?: boolean): DropdownChoice<Enums.TransitionStyle>[] {
 	const options = [
 		{ id: Enums.TransitionStyle.MIX, label: 'Mix' },
 		{ id: Enums.TransitionStyle.DIP, label: 'Dip' },
@@ -142,7 +142,7 @@ export function GetTransitionStyleChoices(skipSting?: boolean): MyDropdownChoice
 	}
 	return options
 }
-export function GetUpstreamKeyerTypeChoices(): MyDropdownChoice<Enums.MixEffectKeyType>[] {
+export function GetUpstreamKeyerTypeChoices(): DropdownChoice<Enums.MixEffectKeyType>[] {
 	const options = [
 		{ id: Enums.MixEffectKeyType.Luma, label: 'Luma' },
 		{ id: Enums.MixEffectKeyType.Chroma, label: 'Chroma' },
@@ -152,7 +152,7 @@ export function GetUpstreamKeyerTypeChoices(): MyDropdownChoice<Enums.MixEffectK
 	return options
 }
 
-export function GetUpstreamKeyerPatternChoices(): MyDropdownChoice<Enums.Pattern>[] {
+export function GetUpstreamKeyerPatternChoices(): DropdownChoice<Enums.Pattern>[] {
 	const options = [
 		{ id: Enums.Pattern.LeftToRightBar, label: 'Left To Right Bar' },
 		{ id: Enums.Pattern.TopToBottomBar, label: 'Top To Bottom Bar' },
@@ -178,42 +178,42 @@ export function GetUpstreamKeyerPatternChoices(): MyDropdownChoice<Enums.Pattern
 
 export function GetMEIdChoices(model: ModelSpec): DropdownChoice[] {
 	return iterateTimes(model.MEs, (i) => ({
-		id: i,
+		id: i + 1,
 		label: `M/E ${i + 1}`,
 	}))
 }
 
 export function GetAuxIdChoices(model: ModelSpec): DropdownChoice[] {
 	return model.outputs.map((output) => ({
-		id: output.id,
+		id: output.id + 1,
 		label: output.name,
 	}))
 }
 
 export function GetUSKIdChoices(model: ModelSpec): DropdownChoice[] {
 	return iterateTimes(model.USKs, (i) => ({
-		id: i,
+		id: i + 1,
 		label: `${i + 1}`,
 	}))
 }
 
 export function GetDSKIdChoices(model: ModelSpec): DropdownChoice[] {
 	return iterateTimes(model.DSKs, (i) => ({
-		id: i,
+		id: i + 1,
 		label: `${i + 1}`,
 	}))
 }
 
 export function GetMultiviewerIdChoices(model: ModelSpec): DropdownChoice[] {
 	return iterateTimes(model.MVs, (i) => ({
-		id: i,
+		id: i + 1,
 		label: `MV ${i + 1}`,
 	}))
 }
 
 export function GetSuperSourceIdChoices(model: ModelSpec): DropdownChoice[] {
 	return iterateTimes(model.SSrc, (i) => ({
-		id: i,
+		id: i + 1,
 		label: `Super Source ${i + 1}`,
 	}))
 }
@@ -230,7 +230,7 @@ export function GetMacroChoices(model: ModelSpec, state: AtemState): DropdownCho
 export function GetMediaPlayerChoices(model: ModelSpec): DropdownChoice[] {
 	return iterateTimes(model.media.players, (i) => {
 		return {
-			id: i,
+			id: i + 1,
 			label: `Media Player ${i + 1}`,
 		}
 	})
@@ -447,13 +447,15 @@ export function SourcesToChoices(sources: MiniSourceInfo[]): DropdownChoice[] {
 	}))
 }
 
-export function CameraControlSourcePicker(): CompanionInputFieldTextInput {
+export function CameraControlSourcePicker(): CompanionInputFieldNumber<'cameraId'> {
 	return {
 		id: 'cameraId',
-		type: 'textinput',
-		useVariables: true,
-		default: '1',
+		type: 'number',
 		label: 'Camera Id',
+		default: 1,
+		min: 1,
+		max: 40,
+		asInteger: true,
 	}
 }
 

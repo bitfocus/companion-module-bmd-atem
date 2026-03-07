@@ -222,7 +222,7 @@ export class MediaPoolPreviewCache {
 
 		// Return the scaled image
 		return {
-			imageBuffer: scaledImage.buffer,
+			imageBuffer: scaledImage.buffer.toString('base64'),
 			imageBufferEncoding: {
 				pixelFormat: 'RGBA',
 			},

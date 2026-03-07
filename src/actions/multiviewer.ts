@@ -1,38 +1,36 @@
 import { Enums, type Atem } from 'atem-connection'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
-import type { MyActionDefinitions } from './types.js'
 import { getMultiviewer, getMultiviewerWindow, type StateWrapper } from '../state.js'
 import { AtemMultiviewerPicker, AtemMultiviewWindowPicker, AtemMultiviewSourcePicker } from '../input.js'
-import type { MyDropdownChoice } from '../common.js'
-import { assertNever } from '@companion-module/base'
+import { convertOptionsFields } from '../options/common.js'
+import { assertNever, CompanionActionDefinitions, DropdownChoice } from '@companion-module/base'
 
 type MultiviewerQuadrantState = 'single' | 'quad' | 'ignore' | 'toggle'
 
-const ChoicesMultiviewerQuadrantState: MyDropdownChoice<MultiviewerQuadrantState>[] = [
+const ChoicesMultiviewerQuadrantState: DropdownChoice<MultiviewerQuadrantState>[] = [
 	{ id: 'ignore', label: 'Unchanged' },
 	{ id: 'toggle', label: 'Toggle' },
 	{ id: 'single', label: 'Single' },
 	{ id: 'quad', label: 'Quad' },
 ]
 
-export interface AtemMultiviewerActions {
+export type AtemMultiviewerActions = {
 	[ActionId.MultiviewerWindowSource]: {
-		multiViewerId: number
-		windowIndex: number
-		source: number
-	}
-	[ActionId.MultiviewerWindowSourceVariables]: {
-		multiViewerId: string
-		windowIndex: string
-		source: string
+		options: {
+			multiViewerId: number
+			windowIndex: number
+			source: number
+		}
 	}
 	[ActionId.MultiviewerLayout]: {
-		multiViewerId: string
-		topLeft: MultiviewerQuadrantState
-		topRight: MultiviewerQuadrantState
-		bottomLeft: MultiviewerQuadrantState
-		bottomRight: MultiviewerQuadrantState
+		options: {
+			multiViewerId: number
+			topLeft: MultiviewerQuadrantState
+			topRight: MultiviewerQuadrantState
+			bottomLeft: MultiviewerQuadrantState
+			bottomRight: MultiviewerQuadrantState
+		}
 	}
 }
 
@@ -40,90 +38,30 @@ export function createMultiviewerActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	state: StateWrapper,
-): MyActionDefinitions<AtemMultiviewerActions> {
+): CompanionActionDefinitions<AtemMultiviewerActions> {
 	if (!model.MVs) {
 		return {
 			[ActionId.MultiviewerWindowSource]: undefined,
-			[ActionId.MultiviewerWindowSourceVariables]: undefined,
 			[ActionId.MultiviewerLayout]: undefined,
 		}
 	}
 	return {
 		[ActionId.MultiviewerWindowSource]: {
 			name: 'Multiviewer: Change window source',
-			options: {
+			options: convertOptionsFields({
 				multiViewerId: AtemMultiviewerPicker(model),
 				windowIndex: AtemMultiviewWindowPicker(model),
 				source: AtemMultiviewSourcePicker(model, state.state),
-			},
+			}),
 			callback: async ({ options }) => {
-				await atem?.setMultiViewerWindowSource(
-					options.getPlainNumber('source'),
-					options.getPlainNumber('multiViewerId'),
-					options.getPlainNumber('windowIndex'),
-				)
+				await atem?.setMultiViewerWindowSource(options.source, options.multiViewerId - 1, options.windowIndex - 1)
 			},
 			learn: ({ options }) => {
-				const window = getMultiviewerWindow(
-					state.state,
-					options.getPlainNumber('multiViewerId'),
-					options.getPlainNumber('windowIndex'),
-				)
+				const window = getMultiviewerWindow(state.state, options.multiViewerId - 1, options.windowIndex - 1)
 
 				if (window) {
 					return {
-						...options.getJson(),
 						source: window.source,
-					}
-				} else {
-					return undefined
-				}
-			},
-		},
-		[ActionId.MultiviewerWindowSourceVariables]: {
-			name: 'Multiviewer: Change window source from variables',
-			options: {
-				multiViewerId: {
-					type: 'textinput',
-					id: 'multiViewerId',
-					label: 'MV',
-					default: '1',
-					useVariables: true,
-				},
-				windowIndex: {
-					type: 'textinput',
-					id: 'windowIndex',
-					label: 'Window #',
-					default: '1',
-					useVariables: true,
-				},
-				source: {
-					type: 'textinput',
-					id: 'source',
-					label: 'Source',
-					default: '1',
-					useVariables: true,
-				},
-			},
-			callback: async ({ options }) => {
-				const multiViewerId = (await options.getParsedNumber('multiViewerId')) - 1
-				const windowIndex = (await options.getParsedNumber('windowIndex')) - 1
-				const source = await options.getParsedNumber('source')
-
-				if (isNaN(multiViewerId) || isNaN(windowIndex) || isNaN(source)) return
-
-				await atem?.setMultiViewerWindowSource(source, multiViewerId, windowIndex)
-			},
-			learn: async ({ options }) => {
-				const multiViewerId = (await options.getParsedNumber('multiViewerId')) - 1
-				const windowIndex = (await options.getParsedNumber('windowIndex')) - 1
-
-				const window = getMultiviewerWindow(state.state, multiViewerId, windowIndex)
-
-				if (window) {
-					return {
-						...options.getJson(),
-						source: window.source + '',
 					}
 				} else {
 					return undefined
@@ -132,14 +70,8 @@ export function createMultiviewerActions(
 		},
 		[ActionId.MultiviewerLayout]: {
 			name: 'Multiviewer: Change layout',
-			options: {
-				multiViewerId: {
-					type: 'textinput',
-					id: 'multiViewerId',
-					label: 'MV',
-					default: '1',
-					useVariables: true,
-				},
+			options: convertOptionsFields({
+				multiViewerId: AtemMultiviewerPicker(model),
 				topLeft: {
 					id: 'topLeft',
 					type: 'dropdown',
@@ -168,9 +100,9 @@ export function createMultiviewerActions(
 					choices: ChoicesMultiviewerQuadrantState,
 					default: 'ignore',
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const multiViewerId = (await options.getParsedNumber('multiViewerId')) - 1
+				const multiViewerId = options.multiViewerId - 1
 
 				const mv = getMultiviewer(state.state, multiViewerId)
 				let layout: Enums.MultiViewerLayout = mv?.properties?.layout ?? Enums.MultiViewerLayout.Default
@@ -193,17 +125,17 @@ export function createMultiviewerActions(
 					}
 				}
 
-				updateLayout(options.getPlainString('topLeft'), Enums.MultiViewerLayout.TopLeftSmall)
-				updateLayout(options.getPlainString('topRight'), Enums.MultiViewerLayout.TopRightSmall)
-				updateLayout(options.getPlainString('bottomLeft'), Enums.MultiViewerLayout.BottomLeftSmall)
-				updateLayout(options.getPlainString('bottomRight'), Enums.MultiViewerLayout.BottomRightSmall)
+				updateLayout(options.topLeft, Enums.MultiViewerLayout.TopLeftSmall)
+				updateLayout(options.topRight, Enums.MultiViewerLayout.TopRightSmall)
+				updateLayout(options.bottomLeft, Enums.MultiViewerLayout.BottomLeftSmall)
+				updateLayout(options.bottomRight, Enums.MultiViewerLayout.BottomRightSmall)
 
 				if (isNaN(multiViewerId) || isNaN(layout)) return
 
 				await atem?.setMultiViewerProperties({ layout }, multiViewerId)
 			},
 			learn: async ({ options }) => {
-				const multiViewerId = (await options.getParsedNumber('multiViewerId')) - 1
+				const multiViewerId = options.multiViewerId - 1
 
 				const mv = getMultiviewer(state.state, multiViewerId)
 
@@ -213,7 +145,6 @@ export function createMultiviewerActions(
 					const getState = (value: Enums.MultiViewerLayout) => (layout & value ? 'quad' : 'single')
 
 					return {
-						...options.getJson(),
 						topLeft: getState(Enums.MultiViewerLayout.TopLeftSmall),
 						topRight: getState(Enums.MultiViewerLayout.TopRightSmall),
 						bottomLeft: getState(Enums.MultiViewerLayout.BottomLeftSmall),

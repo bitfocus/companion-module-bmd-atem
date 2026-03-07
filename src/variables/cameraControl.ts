@@ -1,16 +1,16 @@
 import type { AtemCameraControlState, ColorAdjust } from '@atem-connection/camera-control'
-import type { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
-import type { AtemConfig } from '../config.js'
+import type { CompanionVariableDefinitions } from '@companion-module/base'
 import type { InstanceBaseExt } from '../util.js'
+import type { VariablesSchema } from './schema.js'
 
 function roundToFactor(value: number, factor: number) {
 	return Math.round(value * factor) / factor
 }
 
 export function updateCameraControlVariables(
-	_instance: InstanceBaseExt<AtemConfig>,
+	_instance: InstanceBaseExt,
 	state: AtemCameraControlState,
-	values: CompanionVariableValues,
+	values: Partial<VariablesSchema>,
 ): void {
 	values[`camera_${state.cameraId}_focus`] = roundToFactor(state.lens.focus, 1000)
 	values[`camera_${state.cameraId}_iris`] = roundToFactor(state.lens.iris, 1000)
@@ -48,98 +48,78 @@ export function updateCameraControlVariables(
 }
 
 export function initCameraControlVariables(
-	_instance: InstanceBaseExt<AtemConfig>,
+	_instance: InstanceBaseExt,
 	cameraId: number,
-	variables: CompanionVariableDefinition[],
+	variables: CompanionVariableDefinitions<VariablesSchema>,
 ): void {
-	variables.push({
-		variableId: `camera_${cameraId}_focus`,
+	variables[`camera_${cameraId}_focus`] = {
 		name: `Camera ${cameraId}: Focus`,
-	})
-	variables.push({
-		variableId: `camera_${cameraId}_iris`,
+	}
+	variables[`camera_${cameraId}_iris`] = {
 		name: `Camera ${cameraId}: Iris`,
-	})
-	variables.push({
-		variableId: `camera_${cameraId}_ois`,
+	}
+	variables[`camera_${cameraId}_ois`] = {
 		name: `Camera ${cameraId}: Optical Image Stabilisation`,
-	})
+	}
 
-	variables.push({
-		variableId: `camera_${cameraId}_wb_temp`,
+	variables[`camera_${cameraId}_wb_temp`] = {
 		name: `Camera ${cameraId}: White balance temperature`,
-	})
-	variables.push({
-		variableId: `camera_${cameraId}_wb_tint`,
+	}
+	variables[`camera_${cameraId}_wb_tint`] = {
 		name: `Camera ${cameraId}: White balance tint`,
-	})
-	variables.push({
-		variableId: `camera_${cameraId}_exposure_us`,
+	}
+	variables[`camera_${cameraId}_exposure_us`] = {
 		name: `Camera ${cameraId}: Exposure microseconds (us)`,
-	})
-	variables.push({
-		variableId: `camera_${cameraId}_sharpening`,
+	}
+	variables[`camera_${cameraId}_sharpening`] = {
 		name: `Camera ${cameraId}: Sharpening level`,
-	})
-	variables.push({
-		variableId: `camera_${cameraId}_shutter_speed`,
+	}
+	variables[`camera_${cameraId}_shutter_speed`] = {
 		name: `Camera ${cameraId}: Shutter speed (1/x)`,
-	})
-	variables.push({
-		variableId: `camera_${cameraId}_gain`,
+	}
+	variables[`camera_${cameraId}_gain`] = {
 		name: `Camera ${cameraId}: Gain (dB)`,
-	})
-	variables.push({
-		variableId: `camera_${cameraId}_nd_filter`,
+	}
+	variables[`camera_${cameraId}_nd_filter`] = {
 		name: `Camera ${cameraId}: ND Filter`,
-	})
+	}
 
-	variables.push({
-		variableId: `camera_${cameraId}_show_color_bars`,
+	variables[`camera_${cameraId}_show_color_bars`] = {
 		name: `Camera ${cameraId}: Show Color Bars`,
-	})
+	}
 
 	const defineRGBY = (key: string, name: string) => {
-		variables.push({
-			variableId: `camera_${cameraId}_color_${key}_red`,
+		variables[`camera_${cameraId}_color_${key}_red`] = {
 			name: `Camera ${cameraId}: Color ${name} Adjust - Red`,
-		})
-		variables.push({
-			variableId: `camera_${cameraId}_color_${key}_green`,
+		}
+		variables[`camera_${cameraId}_color_${key}_green`] = {
 			name: `Camera ${cameraId}: Color ${name} Adjust - Green`,
-		})
-		variables.push({
-			variableId: `camera_${cameraId}_color_${key}_blue`,
+		}
+		variables[`camera_${cameraId}_color_${key}_blue`] = {
 			name: `Camera ${cameraId}: Color ${name} Adjust - Blue`,
-		})
-		variables.push({
-			variableId: `camera_${cameraId}_color_${key}_Luma`,
+		}
+		variables[`camera_${cameraId}_color_${key}_luma`] = {
 			name: `Camera ${cameraId}: Color ${name} Adjust - Luma`,
-		})
+		}
 	}
 	defineRGBY('lift', 'Lift')
 	defineRGBY('gamma', 'Gamma')
 	defineRGBY('gain', 'Gain')
 	defineRGBY('offset', 'Offset')
 
-	variables.push({
-		variableId: `camera_${cameraId}_contrast_pivot`,
+	variables[`camera_${cameraId}_contrast_pivot`] = {
 		name: `Camera ${cameraId}: Contrast Pivot`,
-	})
-	variables.push({
-		variableId: `camera_${cameraId}_contrast_adjust`,
+	}
+	variables[`camera_${cameraId}_contrast_adjust`] = {
 		name: `Camera ${cameraId}: Contrast Adjust`,
-	})
-	variables.push({
-		variableId: `camera_${cameraId}_lumamix`,
+	}
+	variables[`camera_${cameraId}_lumamix`] = {
 		name: `Camera ${cameraId}: Luma mix`,
-	})
-	variables.push({
-		variableId: `camera_${cameraId}_hue_adjust`,
+	}
+	variables[`camera_${cameraId}_hue_adjust`] = {
 		name: `Camera ${cameraId}: Hue Adjust`,
-	})
-	variables.push({
-		variableId: `camera_${cameraId}_saturation_adjust`,
+	}
+	variables[`camera_${cameraId}_saturation_adjust`] = {
 		name: `Camera ${cameraId}: Saturation Adjust`,
-	})
+	}
 }

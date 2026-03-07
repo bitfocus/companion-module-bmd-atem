@@ -1,29 +1,32 @@
 import { Enums, type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../options/common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
-import type { MyActionDefinitions } from './types.js'
 import { getMediaPlayer } from 'atem-connection/dist/state/util.js'
-import { AtemMediaPlayerPicker, AtemMediaPlayerSourcePicker } from '../input.js'
-import { MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from '../util.js'
+import { AtemMediaPlayerPicker } from '../input.js'
 import type { StateWrapper } from '../state.js'
+import { AtemMediaPlayerSourcePickers, MediaPoolSourceOptions, parseMediaPoolSource } from '../options/mediaPool.js'
 
-export interface AtemMediaPlayerActions {
+export type AtemMediaPlayerActions = {
 	[ActionId.MediaPlayerSource]: {
-		mediaplayer: number
-		source: number
-	}
-	[ActionId.MediaPlayerSourceVariables]: {
-		mediaplayer: string
-		isClip?: boolean
-		slot: string
+		options: {
+			mediaplayer: number
+		} & MediaPoolSourceOptions
 	}
 	[ActionId.MediaPlayerCycle]: {
-		mediaplayer: number
-		direction: 'next' | 'previous'
+		options: {
+			mediaplayer: number
+			direction: 'next' | 'previous'
+		}
 	}
-	[ActionId.MediaCaptureStill]: Record<string, never>
+	[ActionId.MediaCaptureStill]: {
+		options: Record<string, never>
+	}
 	[ActionId.MediaDeleteStill]: {
-		slot: string
+		options: {
+			slot: number
+		}
 	}
 }
 
@@ -31,11 +34,10 @@ export function createMediaPlayerActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	state: StateWrapper,
-): MyActionDefinitions<AtemMediaPlayerActions> {
+): CompanionActionDefinitions<AtemMediaPlayerActions> {
 	if (!model.media.players) {
 		return {
 			[ActionId.MediaPlayerSource]: undefined,
-			[ActionId.MediaPlayerSourceVariables]: undefined,
 			[ActionId.MediaPlayerCycle]: undefined,
 			[ActionId.MediaCaptureStill]: undefined,
 			[ActionId.MediaDeleteStill]: undefined,
@@ -44,118 +46,30 @@ export function createMediaPlayerActions(
 	return {
 		[ActionId.MediaPlayerSource]: {
 			name: 'Media player: Set source',
-			options: {
+			options: convertOptionsFields({
 				mediaplayer: AtemMediaPlayerPicker(model),
-				source: AtemMediaPlayerSourcePicker(model, state.state),
-			},
+				...AtemMediaPlayerSourcePickers(model, state.state),
+			}),
 			callback: async ({ options }) => {
-				const source = options.getPlainNumber('source')
-				if (source >= MEDIA_PLAYER_SOURCE_CLIP_OFFSET) {
-					await atem?.setMediaPlayerSource(
-						{
-							sourceType: Enums.MediaSourceType.Clip,
-							clipIndex: source - MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
-						},
-						options.getPlainNumber('mediaplayer'),
-					)
-				} else {
-					await atem?.setMediaPlayerSource(
-						{
-							sourceType: Enums.MediaSourceType.Still,
-							stillIndex: source,
-						},
-						options.getPlainNumber('mediaplayer'),
-					)
-				}
+				const defaultClips = model.media.clips > 0 && options.defaultClip
+
+				const source = parseMediaPoolSource(model, options.source, defaultClips)
+				if (!source) return
+
+				await atem?.setMediaPlayerSource(
+					{
+						sourceType: source.isClip ? Enums.MediaSourceType.Clip : Enums.MediaSourceType.Still,
+						clipIndex: source.slot - 1,
+					},
+					options.mediaplayer - 1,
+				)
 			},
 			learn: ({ options }) => {
-				const player = state.state.media.players[options.getPlainNumber('mediaplayer')]
+				const player = state.state.media.players[options.mediaplayer - 1]
 
 				if (player) {
 					return {
-						...options.getJson(),
-						source: player.sourceType ? player.stillIndex : player.clipIndex + MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
-					}
-				} else {
-					return undefined
-				}
-			},
-		},
-		[ActionId.MediaPlayerSourceVariables]: {
-			name: 'Media player: Set source from variables',
-			options: {
-				mediaplayer: {
-					id: 'mediaplayer',
-					type: 'textinput',
-					label: 'Media Player',
-					default: '1',
-					useVariables: true,
-				},
-				isClip:
-					model.media.clips > 0
-						? {
-								type: 'checkbox',
-								id: 'isClip',
-								label: 'Is clip',
-								default: false,
-							}
-						: undefined,
-				slot: {
-					id: 'slot',
-					type: 'textinput',
-					label: 'Slot number or item name',
-					default: '1',
-					useVariables: true,
-				},
-			},
-			callback: async ({ options }) => {
-				const [mediaplayer, slot] = await Promise.all([
-					options.getParsedNumber('mediaplayer'),
-					options.getParsedString('slot'),
-				])
-
-				if (model.media.clips > 0 && options.getPlainBoolean('isClip')) {
-					let index = Number(slot) - 1
-					if (isNaN(index)) index = state.state.media.clipPool.findIndex((clip) => clip?.name == slot)
-					if (index == -1) {
-						console.warn(`Media player: Clip "${slot}" not found`)
-						return
-					}
-
-					await atem?.setMediaPlayerSource(
-						{
-							sourceType: Enums.MediaSourceType.Clip,
-							clipIndex: index,
-						},
-						mediaplayer - 1,
-					)
-				} else {
-					let index = Number(slot) - 1
-					if (isNaN(index)) index = state.state.media.stillPool.findIndex((clip) => clip?.fileName == slot)
-					if (index == -1) {
-						console.warn(`Media player: Still "${slot}" not found`)
-						return
-					}
-
-					await atem?.setMediaPlayerSource(
-						{
-							sourceType: Enums.MediaSourceType.Still,
-							stillIndex: index,
-						},
-						mediaplayer - 1,
-					)
-				}
-			},
-			learn: async ({ options }) => {
-				const mediaplayer = await options.getParsedNumber('mediaplayer')
-				const player = state.state.media.players[mediaplayer - 1]
-
-				if (player) {
-					const isClip = player.sourceType === Enums.MediaSourceType.Clip
-					return {
-						...options.getJson(),
-						isClip,
-						source: isClip ? player.clipIndex : player.stillIndex,
+						source: player.sourceType ? `still${player.stillIndex + 1}` : `clip${player.clipIndex + 1}`,
 					}
 				} else {
 					return undefined
@@ -164,7 +78,7 @@ export function createMediaPlayerActions(
 		},
 		[ActionId.MediaPlayerCycle]: {
 			name: 'Media player: Cycle source',
-			options: {
+			options: convertOptionsFields({
 				mediaplayer: AtemMediaPlayerPicker(model),
 				direction: {
 					type: 'dropdown',
@@ -181,12 +95,12 @@ export function createMediaPlayerActions(
 							label: 'Previous',
 						},
 					],
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
-				// AtemMediaPlayerSourcePicker(model, state)
-			},
+			}),
 			callback: async ({ options }) => {
-				const playerId = options.getPlainNumber('mediaplayer')
-				const direction = options.getPlainString('direction')
+				const playerId = options.mediaplayer - 1
+				const direction = options.direction
 				const offset = direction === 'next' ? 1 : -1
 
 				const player = getMediaPlayer(state.state, playerId)
@@ -208,26 +122,27 @@ export function createMediaPlayerActions(
 		},
 		[ActionId.MediaCaptureStill]: {
 			name: 'Media player: Capture still',
-			options: {},
+			options: convertOptionsFields({}),
 			callback: async () => {
 				await atem?.captureMediaPoolStill()
 			},
 		},
 		[ActionId.MediaDeleteStill]: {
 			name: 'Media player: Delete still',
-			options: {
+			options: convertOptionsFields({
 				slot: {
 					id: 'slot',
-					type: 'textinput',
+					type: 'number',
 					label: 'Slot',
-					default: '1',
-					useVariables: true,
+					default: 1,
+					min: 1,
+					max: 99,
+					asInteger: true,
+					clampValues: false,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const slot = await options.getParsedNumber('slot')
-
-				await atem?.clearMediaPoolStill(slot - 1)
+				await atem?.clearMediaPoolStill(options.slot - 1)
 			},
 		},
 	}

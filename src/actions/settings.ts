@@ -1,21 +1,28 @@
 import { type Atem, type InputState } from 'atem-connection'
+import { convertOptionsFields } from '../options/common.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
-import type { MyActionDefinitions } from './types.js'
 import { AtemAllSourcePicker } from '../input.js'
 import type { StateWrapper } from '../state.js'
 
-export interface AtemSettingsActions {
-	[ActionId.SaveStartupState]: Record<string, never>
-	[ActionId.ClearStartupState]: Record<string, never>
+export type AtemSettingsActions = {
+	[ActionId.SaveStartupState]: {
+		options: Record<string, never>
+	}
+	[ActionId.ClearStartupState]: {
+		options: Record<string, never>
+	}
 	[ActionId.InputName]: {
-		source: number
+		options: {
+			source: number
 
-		short_enable: boolean
-		short_value: string
+			short_enable: boolean
+			short_value: string
 
-		long_enable: boolean
-		long_value: string
+			long_enable: boolean
+			long_value: string
+		}
 	}
 }
 
@@ -23,7 +30,7 @@ export function createSettingsActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	state: StateWrapper,
-): MyActionDefinitions<AtemSettingsActions> {
+): CompanionActionDefinitions<AtemSettingsActions> {
 	if (!model.media.players) {
 		return {
 			[ActionId.SaveStartupState]: undefined,
@@ -34,21 +41,21 @@ export function createSettingsActions(
 	return {
 		[ActionId.SaveStartupState]: {
 			name: 'Startup State: Save',
-			options: {},
+			options: convertOptionsFields({}),
 			callback: async () => {
 				await atem?.saveStartupState()
 			},
 		},
 		[ActionId.ClearStartupState]: {
 			name: 'Startup State: Clear',
-			options: {},
+			options: convertOptionsFields({}),
 			callback: async () => {
 				await atem?.clearStartupState()
 			},
 		},
 		[ActionId.InputName]: {
 			name: 'Input: Set name',
-			options: {
+			options: convertOptionsFields({
 				source: AtemAllSourcePicker(model, state.state),
 				short_enable: {
 					id: 'short_enable',
@@ -78,15 +85,15 @@ export function createSettingsActions(
 					tooltip: 'Max 24 characters. Supports variables',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const source = options.getPlainNumber('source')
-				const setShort = options.getPlainBoolean('short_enable')
-				const setLong = options.getPlainBoolean('long_enable')
+				const source = options.source
+				const setShort = options.short_enable
+				const setLong = options.long_enable
 
 				const newProps: Partial<Pick<InputState.InputChannel, 'longName' | 'shortName'>> = {}
-				if (setShort) newProps.shortName = await options.getParsedString('short_value')
-				if (setLong) newProps.longName = await options.getParsedString('long_value')
+				if (setShort) newProps.shortName = options.short_value
+				if (setLong) newProps.longName = options.long_value
 
 				await Promise.all([
 					typeof newProps.longName === 'string' && !atem?.hasInternalMultiviewerLabelGeneration()
@@ -96,12 +103,11 @@ export function createSettingsActions(
 				])
 			},
 			learn: ({ options }) => {
-				const source = options.getPlainNumber('source')
+				const source = options.source
 				const props = state.state.inputs[source]
 
 				if (props) {
 					return {
-						...options.getJson(),
 						long_value: props.longName,
 						short_value: props.shortName,
 					}
