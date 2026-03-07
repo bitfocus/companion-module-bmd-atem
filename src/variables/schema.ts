@@ -61,19 +61,19 @@ export type VariablesSchema = {
 	[key: `mp_source_${number}`]: string
 	[key: `mp_index_${number}`]: string
 
-	stream_bitrate: string | undefined
-	stream_duration_hm: string | undefined
-	stream_duration_hms: string | undefined
-	stream_duration_ms: string | undefined
-	stream_cache_used: number | undefined
+	stream_bitrate?: string
+	stream_duration_hm?: string
+	stream_duration_hms?: string
+	stream_duration_ms?: string
+	stream_cache_used?: number
 
-	record_duration_hm: string | undefined
-	record_duration_hms: string | undefined
-	record_duration_ms: string | undefined
-	record_remaining_hm: string | undefined
-	record_remaining_hms: string | undefined
-	record_remaining_ms: string | undefined
-	record_filename: string | undefined
+	record_duration_hm?: string
+	record_duration_hms?: string
+	record_duration_ms?: string
+	record_remaining_hm?: string
+	record_remaining_hms?: string
+	record_remaining_ms?: string
+	record_filename?: string
 
 	[key: `ssrc${number}_box${number}_source`]: string
 	[key: `ssrc${number}_box${number}_source_id`]: number
@@ -94,12 +94,12 @@ export type VariablesSchema = {
 	[key: `audio_input_${string}_right_gain`]: string | undefined
 	[key: `audio_input_${string}_right_mixOption`]: string | undefined
 
-	audio_master_faderGain: string | undefined
+	audio_master_faderGain?: string
 
-	audio_monitor_gain: string | undefined
-	audio_monitor_master_gain: string | undefined
-	audio_monitor_talkback_gain: string | undefined
-	audio_monitor_sidetone_gain: string | undefined
+	audio_monitor_gain?: string
+	audio_monitor_master_gain?: string
+	audio_monitor_talkback_gain?: string
+	audio_monitor_sidetone_gain?: string
 
 	[key: `audio_routing_destinations_${string}_name`]: string | undefined
 	[key: `audio_routing_destinations_${string}_source`]: number | undefined
@@ -130,6 +130,6 @@ export type VariablesSchema = {
 	[key: `camera_${number}_hue_adjust`]: number
 	[key: `camera_${number}_saturation_adjust`]: number
 
-	timecode: string | undefined
-	display_clock: string | undefined
+	timecode?: string
+	display_clock?: string
 }

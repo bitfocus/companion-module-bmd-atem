@@ -6,6 +6,7 @@ import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base
 import type { StateWrapper } from '../../state.js'
 import { calculateTallyForInputId } from '../../util.js'
 import { GetSourcesListForType, SourcesToChoices } from '../../choices.js'
+import { isEqual } from 'lodash-es'
 
 export type AtemTallyFeedbacks = {
 	[FeedbackId.ProgramTally]: {
@@ -84,7 +85,32 @@ export function createTallyFeedbacks(
 				color: combineRgb(255, 255, 255),
 				bgcolor: combineRgb(255, 0, 0),
 			},
-			callback: ({ options }): boolean => {
+			callback: ({ id, options, previousOptions }): boolean => {
+				// Resubscribe if needed
+				if (!previousOptions || !isEqual(previousOptions.inputIds, options.inputIds)) {
+					// Remove old subscriptions
+					for (const tally of state.tallyCache.values()) {
+						tally.referencedFeedbackIds.delete(id)
+					}
+
+					const selectedInputIds = options.inputIds
+					if (Array.isArray(selectedInputIds)) {
+						for (const inputId of selectedInputIds) {
+							if (typeof inputId !== 'number') continue
+
+							const cacheEntry = state.tallyCache.get(inputId)
+							if (cacheEntry) {
+								cacheEntry.referencedFeedbackIds.add(id)
+							} else {
+								state.tallyCache.set(inputId, {
+									referencedFeedbackIds: new Set([id]),
+									lastVisibleInputs: calculateTallyForInputId(state.state, inputId),
+								})
+							}
+						}
+					}
+				}
+
 				const selectedInputIds = options.inputIds
 				if (!Array.isArray(selectedInputIds)) return false
 
@@ -98,24 +124,6 @@ export function createTallyFeedbacks(
 				}
 
 				return false
-			},
-			subscribe: ({ id, options }): void => {
-				const selectedInputIds = options.getRaw('inputIds') ?? []
-				if (!Array.isArray(selectedInputIds)) return
-
-				for (const inputId of selectedInputIds) {
-					if (typeof inputId !== 'number') continue
-
-					const cacheEntry = state.tallyCache.get(inputId)
-					if (cacheEntry) {
-						cacheEntry.referencedFeedbackIds.add(id)
-					} else {
-						state.tallyCache.set(inputId, {
-							referencedFeedbackIds: new Set([id]),
-							lastVisibleInputs: calculateTallyForInputId(state.state, inputId),
-						})
-					}
-				}
 			},
 			unsubscribe: ({ id }): void => {
 				for (const tally of state.tallyCache.values()) {

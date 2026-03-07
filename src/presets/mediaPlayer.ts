@@ -3,7 +3,7 @@ import { ActionId } from '../actions/ActionId.js'
 import { FeedbackId } from '../feedback/FeedbackId.js'
 import type { PresetsBuilderContext } from './context.js'
 import type { AtemSchema } from '../schema.js'
-import { iterateTimes, MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from '../util.js'
+import { iterateTimes } from '../util.js'
 
 export function createMediaPlayerPresets(
 	context: PresetsBuilderContext,
@@ -63,8 +63,9 @@ export function createMediaPlayerPresets(
 			{
 				feedbackId: FeedbackId.MediaPlayerSource,
 				options: {
-					mediaplayer: { isExpression: true, value: '$(local:player) - 1' },
-					source: { isExpression: true, value: `$(local:clip) - 1 + ${MEDIA_PLAYER_SOURCE_CLIP_OFFSET}` },
+					mediaplayer: { isExpression: true, value: '$(local:player)' },
+					source: { isExpression: true, value: `clip$(local:clip)` },
+					defaultClip: true,
 				},
 				style: {
 					bgcolor: combineRgb(255, 255, 0),
@@ -78,8 +79,9 @@ export function createMediaPlayerPresets(
 					{
 						actionId: ActionId.MediaPlayerSource,
 						options: {
-							mediaplayer: { isExpression: true, value: '$(local:player) - 1' },
-							source: { isExpression: true, value: `$(local:clip) - 1 + ${MEDIA_PLAYER_SOURCE_CLIP_OFFSET}` },
+							mediaplayer: { isExpression: true, value: '$(local:player)' },
+							source: { isExpression: true, value: `clip$(local:clip)` },
+							defaultClip: true,
 						},
 					},
 				],
@@ -113,8 +115,9 @@ export function createMediaPlayerPresets(
 			{
 				feedbackId: FeedbackId.MediaPlayerSource,
 				options: {
-					mediaplayer: { isExpression: true, value: '$(local:player) - 1' },
-					source: { isExpression: true, value: '$(local:still) - 1' },
+					mediaplayer: { isExpression: true, value: '$(local:player)' },
+					source: { isExpression: true, value: '$(local:still)' },
+					defaultClip: false,
 				},
 				style: {
 					bgcolor: combineRgb(255, 255, 0),
@@ -128,8 +131,9 @@ export function createMediaPlayerPresets(
 					{
 						actionId: ActionId.MediaPlayerSource,
 						options: {
-							mediaplayer: { isExpression: true, value: '$(local:player) - 1' },
-							source: { isExpression: true, value: '$(local:still) - 1' },
+							mediaplayer: { isExpression: true, value: '$(local:player)' },
+							source: { isExpression: true, value: '$(local:still)' },
+							defaultClip: false,
 						},
 					},
 				],

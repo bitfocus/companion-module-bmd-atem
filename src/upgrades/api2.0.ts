@@ -18,6 +18,8 @@ type ActionFixupRule = {
 }
 type FeedbackFixupRule = ActionFixupRule
 
+type OptionFixupCustomFn = (val: JsonValue | undefined) => JsonValue | undefined
+
 type OptionFixupRule = {
 	newName?: string
 	transform?:
@@ -39,6 +41,10 @@ type OptionFixupRule = {
 				type: 'boolean'
 				variables: boolean
 		  }
+		| {
+				type: 'custom'
+				fn: OptionFixupCustomFn
+		  }
 }
 
 const timecodeModeValueMap: Record<Enums.TimeMode, string> = {
@@ -54,6 +60,18 @@ const fairlightMixOptionValueMap: Record<any, FairlightMixOption2> = {
 	[Enums.FairlightAudioMixOption.On]: 'on',
 	[Enums.FairlightAudioMixOption.Off]: 'off',
 	[Enums.FairlightAudioMixOption.AudioFollowVideo]: 'afv',
+}
+
+const MEDIA_PLAYER_SOURCE_CLIP_OFFSET = 1000
+const fixupMediaPoolNumericSource: OptionFixupCustomFn = (val) => {
+	if (typeof val !== 'number') return 'still1' // default
+	if (val >= 0 && val < MEDIA_PLAYER_SOURCE_CLIP_OFFSET) {
+		return `still${val + 1}`
+	} else if (val >= MEDIA_PLAYER_SOURCE_CLIP_OFFSET) {
+		return `clip${val - MEDIA_PLAYER_SOURCE_CLIP_OFFSET + 1}`
+	} else {
+		return val
+	}
 }
 
 const actionFixupRules: Record<string, ActionFixupRule> = {
@@ -136,15 +154,20 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 			multiViewerId: { transform: { type: 'number', zeroBased: true, variables: true } },
 		},
 	},
+
 	mediaPlayerSource: {
 		options: {
 			mediaplayer: { transform: { type: 'number', zeroBased: true, variables: false } },
-			// TODO: translate source!!
+			source: { transform: { type: 'custom', fn: fixupMediaPoolNumericSource } },
+			defaultClip: { transform: { type: 'default', value: false } },
 		},
 	},
-	mediaPlayerSourceVariables2: {
+	mediaPlayerSourceVariables: {
+		newType: 'mediaPlayerSource',
 		options: {
-			// TODO - me!
+			mediaplayer: { transform: { type: 'number', zeroBased: false, variables: true } },
+			isClip: { newName: 'defaultClip', transform: { type: 'default', value: false } },
+			slot: { newName: 'source', transform: { type: 'number', zeroBased: false, variables: true } },
 		},
 	},
 	mediaDeleteStill: {
@@ -808,6 +831,34 @@ const feedbackFixupRules: Record<string, FeedbackFixupRule> = {
 		options: {
 			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false, defaultValue: 1 } },
 			boxIndex: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
+
+	mediaPoolPreview: {
+		options: {
+			source: { transform: { type: 'custom', fn: fixupMediaPoolNumericSource } },
+			defaultClip: { transform: { type: 'default', value: false } },
+		},
+	},
+	mediaPoolPreviewVariables: {
+		newType: 'mediaPoolPreview',
+		options: {
+			isClip: { newName: 'defaultClip', transform: { type: 'default', value: false } },
+		},
+	},
+	mediaPlayerSource: {
+		options: {
+			mediaplayer: { transform: { type: 'number', zeroBased: true, variables: false } },
+			source: { transform: { type: 'custom', fn: fixupMediaPoolNumericSource } },
+			defaultClip: { transform: { type: 'default', value: false } },
+		},
+	},
+	mediaPlayerSourceVariables: {
+		newType: 'mediaPlayerSource',
+		options: {
+			mediaplayer: { transform: { type: 'number', zeroBased: false, variables: true } },
+			isClip: { newName: 'defaultClip', transform: { type: 'default', value: false } },
+			slot: { newName: 'source', transform: { type: 'number', zeroBased: false, variables: true } },
 		},
 	},
 }

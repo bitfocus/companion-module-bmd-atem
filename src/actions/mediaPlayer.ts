@@ -4,23 +4,15 @@ import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
 import { getMediaPlayer } from 'atem-connection/dist/state/util.js'
-import { AtemMediaPlayerPicker, AtemMediaPlayerSourcePicker } from '../input.js'
-import { MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from '../util.js'
+import { AtemMediaPlayerPicker } from '../input.js'
 import type { StateWrapper } from '../state.js'
+import { AtemMediaPlayerSourcePickers, MediaPoolSourceOptions, parseMediaPoolSource } from '../options/mediaPool.js'
 
 export type AtemMediaPlayerActions = {
 	[ActionId.MediaPlayerSource]: {
 		options: {
 			mediaplayer: number
-			source: number
-		}
-	}
-	[ActionId.MediaPlayerSourceVariables]: {
-		options: {
-			mediaplayer: string
-			isClip?: boolean
-			slot: string
-		}
+		} & MediaPoolSourceOptions
 	}
 	[ActionId.MediaPlayerCycle]: {
 		options: {
@@ -46,7 +38,6 @@ export function createMediaPlayerActions(
 	if (!model.media.players) {
 		return {
 			[ActionId.MediaPlayerSource]: undefined,
-			[ActionId.MediaPlayerSourceVariables]: undefined,
 			[ActionId.MediaPlayerCycle]: undefined,
 			[ActionId.MediaCaptureStill]: undefined,
 			[ActionId.MediaDeleteStill]: undefined,
@@ -57,115 +48,28 @@ export function createMediaPlayerActions(
 			name: 'Media player: Set source',
 			options: convertOptionsFields({
 				mediaplayer: AtemMediaPlayerPicker(model),
-				source: AtemMediaPlayerSourcePicker(model, state.state),
+				...AtemMediaPlayerSourcePickers(model, state.state),
 			}),
 			callback: async ({ options }) => {
-				const source = options.source
-				if (source >= MEDIA_PLAYER_SOURCE_CLIP_OFFSET) {
-					await atem?.setMediaPlayerSource(
-						{
-							sourceType: Enums.MediaSourceType.Clip,
-							clipIndex: source - MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
-						},
-						options.mediaplayer - 1,
-					)
-				} else {
-					await atem?.setMediaPlayerSource(
-						{
-							sourceType: Enums.MediaSourceType.Still,
-							stillIndex: source,
-						},
-						options.mediaplayer - 1,
-					)
-				}
+				const defaultClips = model.media.clips > 0 && options.defaultClip
+
+				const source = parseMediaPoolSource(model, options.source, defaultClips)
+				if (!source) return
+
+				await atem?.setMediaPlayerSource(
+					{
+						sourceType: source.isClip ? Enums.MediaSourceType.Clip : Enums.MediaSourceType.Still,
+						clipIndex: source.slot - 1,
+					},
+					options.mediaplayer - 1,
+				)
 			},
 			learn: ({ options }) => {
 				const player = state.state.media.players[options.mediaplayer - 1]
 
 				if (player) {
 					return {
-						source: player.sourceType ? player.stillIndex : player.clipIndex + MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
-					}
-				} else {
-					return undefined
-				}
-			},
-		},
-		[ActionId.MediaPlayerSourceVariables]: {
-			// TODO - this needs merging into the default one above
-			name: 'Media player: Set source from variables',
-			options: convertOptionsFields({
-				mediaplayer: {
-					id: 'mediaplayer',
-					type: 'textinput',
-					label: 'Media Player',
-					default: '1',
-					useVariables: true,
-					disableAutoExpression: true,
-				},
-				isClip:
-					model.media.clips > 0
-						? {
-								type: 'checkbox',
-								id: 'isClip',
-								label: 'Is clip',
-								default: false,
-								disableAutoExpression: true,
-							}
-						: undefined,
-				slot: {
-					id: 'slot',
-					type: 'textinput',
-					label: 'Slot number or item name',
-					default: '1',
-					useVariables: true,
-					disableAutoExpression: true,
-				},
-			}),
-			callback: async ({ options }) => {
-				const { mediaplayer, slot } = options
-
-				if (model.media.clips > 0 && options.isClip) {
-					let index = Number(slot) - 1
-					if (isNaN(index)) index = state.state.media.clipPool.findIndex((clip) => clip?.name == slot)
-					if (index == -1) {
-						console.warn(`Media player: Clip "${slot}" not found`)
-						return
-					}
-
-					await atem?.setMediaPlayerSource(
-						{
-							sourceType: Enums.MediaSourceType.Clip,
-							clipIndex: index,
-						},
-						mediaplayer - 1,
-					)
-				} else {
-					let index = Number(slot) - 1
-					if (isNaN(index)) index = state.state.media.stillPool.findIndex((clip) => clip?.fileName == slot)
-					if (index == -1) {
-						console.warn(`Media player: Still "${slot}" not found`)
-						return
-					}
-
-					await atem?.setMediaPlayerSource(
-						{
-							sourceType: Enums.MediaSourceType.Still,
-							stillIndex: index,
-						},
-						mediaplayer - 1,
-					)
-				}
-			},
-			learn: async ({ options }) => {
-				const mediaplayer = await options.mediaplayer
-				const player = state.state.media.players[mediaplayer - 1]
-
-				if (player) {
-					const isClip = player.sourceType === Enums.MediaSourceType.Clip
-					return {
-						isClip,
-						source: isClip ? player.clipIndex : player.stillIndex,
+						source: player.sourceType ? `still${player.stillIndex + 1}` : `clip${player.clipIndex + 1}`,
 					}
 				} else {
 					return undefined

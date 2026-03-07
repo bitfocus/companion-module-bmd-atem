@@ -473,7 +473,6 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 				const mediaPlayer = parseInt(mediaPlayerMatch[1], 10)
 				changedVariables.mediaPlayer.add(mediaPlayer)
 				changedFeedbacks.add(FeedbackId.MediaPlayerSource)
-				changedFeedbacks.add(FeedbackId.MediaPlayerSourceVariables)
 				continue
 			}
 

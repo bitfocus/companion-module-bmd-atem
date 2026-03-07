@@ -35,7 +35,7 @@ import {
 	FairlightAudioRoutingSources,
 } from './choices.js'
 import type { ModelSpec } from './models/index.js'
-import { iterateTimes, MEDIA_PLAYER_SOURCE_CLIP_OFFSET, compact, NumberComparitor } from './util.js'
+import { iterateTimes, compact, NumberComparitor } from './util.js'
 import type { MyOptionsObject } from './common.js'
 import * as Easing from './easings.js'
 
@@ -1676,38 +1676,6 @@ export function AtemMediaPlayerPicker(model: ModelSpec): CompanionInputFieldDrop
 		label: 'Media Player',
 		default: 1,
 		choices: GetMediaPlayerChoices(model),
-	}
-}
-
-export function AtemMediaPlayerSourcePicker(
-	model: ModelSpec,
-	state: AtemState,
-	includeClips = true,
-): CompanionInputFieldDropdown<'source'> {
-	return {
-		type: 'dropdown',
-		id: 'source',
-		label: 'Source',
-		default: 0,
-		choices: [
-			...(includeClips
-				? iterateTimes(model.media.clips, (i) => {
-						const clip = state.media.clipPool[i]
-						return {
-							id: i + MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
-							label: clip?.name ? `Clip #${i + 1}: ${clip.name}` : `Clip #${i + 1}`,
-						}
-					})
-				: []),
-			...iterateTimes(model.media.stills, (i) => {
-				const still = state.media.stillPool[i]
-				return {
-					id: i,
-					label: still?.fileName ? `Still #${i + 1}: ${still.fileName}` : `Still #${i + 1}`,
-				}
-			}),
-		],
-		disableAutoExpression: true, // TODO: allow this to be dynamic!
 	}
 }
 

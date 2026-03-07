@@ -5,17 +5,16 @@ import {
 	type CompanionUpgradeContext,
 	type CompanionStaticUpgradeScript,
 	CreateUseBuiltinInvertForFeedbacksUpgradeScript,
-	type CompanionOptionValues,
-	type JsonValue,
+	type CompanionMigrationOptionValues,
 } from '@companion-module/base'
 import type { AtemConfig } from '../config.js'
 import { FeedbackId } from '../feedback/FeedbackId.js'
 import { OffsetNumericExpressionOrValueByX } from './util.js'
 import { UpgradeToExpressions } from './api2.0.js'
 
-function scaleValue(obj: { [key: string]: JsonValue | undefined }, key: string, scale: number): void {
-	if (obj[key] !== undefined) {
-		obj[key] = parseFloat(obj[key] as string) * scale
+function scaleValue(obj: CompanionMigrationOptionValues, key: string, scale: number): void {
+	if (obj[key] !== undefined && !obj[key].isExpression) {
+		obj[key].value = parseFloat(obj[key].value as string) * scale
 	}
 }
 
@@ -177,15 +176,16 @@ function combineTransitionSelectionToDropdown(
 		updatedFeedbacks: [],
 	}
 
-	const convertSelection = (options: CompanionOptionValues) => {
-		options.selection = []
+	const convertSelection = (options: CompanionMigrationOptionValues) => {
+		const selection: string[] = []
+		options.selection = { isExpression: false, value: selection }
 
-		if (options.background) options.selection.push('background')
+		if (options.background) selection.push('background')
 		delete options.background
 
 		for (const key of Object.keys(options)) {
 			if (key.startsWith('key')) {
-				if (options[key]) options.selection.push(key)
+				if (options[key]) selection.push(key)
 				delete options[key]
 			}
 		}
