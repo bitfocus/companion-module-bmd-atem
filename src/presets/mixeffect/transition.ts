@@ -5,6 +5,7 @@ import { GetTransitionStyleChoices } from '../../choices.js'
 import { calculateTransitionSelection } from '../../util.js'
 import type { PresetsBuilderContext } from '../context.js'
 import type { AtemSchema } from '../../schema.js'
+import type { TransitionSelectionComponent } from '../../input.js'
 
 function getTransitionSelectionOptions(keyCount: number): boolean[][] {
 	let res: boolean[][] = []
@@ -36,10 +37,14 @@ export function createTransitionPresets(
 	})
 
 	// Pre-compute valid selection options (shared across all MEs)
-	const validSelections: Array<{ transitionString: string; selectionId: string; selectionProps: string[] }> = []
+	const validSelections: Array<{
+		transitionString: string
+		selectionId: string
+		selectionProps: TransitionSelectionComponent[]
+	}> = []
 	for (const opt of getTransitionSelectionOptions(context.model.USKs)) {
 		const transitionStringParts = opt[0] ? ['BG'] : []
-		const selectionProps = opt[0] ? ['background'] : []
+		const selectionProps: TransitionSelectionComponent[] = opt[0] ? ['background'] : []
 		for (let i = 0; i < context.model.USKs; i++) {
 			if (opt[i + 1]) {
 				transitionStringParts.push(`K${i + 1}`)

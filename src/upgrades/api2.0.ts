@@ -1,4 +1,5 @@
 import {
+	FixupBooleanOrVariablesValueToExpressions,
 	FixupNumericOrVariablesValueToExpressions,
 	type CompanionStaticUpgradeResult,
 	type CompanionStaticUpgradeScript,
@@ -633,7 +634,8 @@ export const UpgradeToExpressions: CompanionStaticUpgradeScript<AtemConfig, unde
 						action.options[optionKey] = { isExpression: false, value: optionRule.transform.value }
 					}
 				} else if (optionRule.transform.type === 'boolean') {
-					// nocommit TODO
+					// Convert boolean, optionally considering if there are variables
+					action.options[optionKey] = FixupBooleanOrVariablesValueToExpressions(oldValue)
 				}
 			}
 

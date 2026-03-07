@@ -152,6 +152,7 @@ export function createUpstreamKeyerCommonActions(
 					label: 'On Air',
 					default: 'true',
 					choices: CHOICES_KEYTRANS,
+					disableAutoExpression: true,
 				},
 				mixeffect: AtemMEPicker(model, 0),
 				key: AtemUSKPicker(model),
