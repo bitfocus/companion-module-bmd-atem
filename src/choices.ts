@@ -1,4 +1,4 @@
-import type { CompanionInputFieldNumber, CompanionInputFieldTextInput, DropdownChoice } from '@companion-module/base'
+import type { CompanionInputFieldNumber, DropdownChoice } from '@companion-module/base'
 import { type AtemState, Enums } from 'atem-connection'
 import type { ModelSpec } from './models/index.js'
 import { iterateTimes, assertUnreachable } from './util.js'

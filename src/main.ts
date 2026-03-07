@@ -167,7 +167,7 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 	 * Creates the configuration fields for web config.
 	 */
 	public getConfigFields(): SomeCompanionConfigField[] {
-		return GetConfigFields(this)
+		return GetConfigFields(this.config)
 	}
 
 	/**
@@ -429,7 +429,6 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 			const ssrcBoxMatch = path.match(/video.superSources.(\d+).boxes.(\d+)/)
 			if (ssrcBoxMatch) {
 				changedFeedbacks.add(FeedbackId.SSrcBoxSource)
-				changedFeedbacks.add(FeedbackId.SSrcBoxSourceVariables)
 				changedFeedbacks.add(FeedbackId.SSrcBoxOnAir)
 				changedFeedbacks.add(FeedbackId.SSrcBoxProperties)
 				changedVariables.ssrc.add(parseInt(ssrcBoxMatch[1], 10))
@@ -439,7 +438,6 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 				changedFeedbacks.add(FeedbackId.SSrcArtOption)
 				changedFeedbacks.add(FeedbackId.SSrcArtSource)
 				changedFeedbacks.add(FeedbackId.SSrcArtProperties)
-				changedFeedbacks.add(FeedbackId.SSrcArtPropertiesVariables)
 				continue
 			}
 

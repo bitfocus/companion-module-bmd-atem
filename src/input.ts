@@ -1150,18 +1150,15 @@ export function AtemSuperSourceBoxPicker(): CompanionInputFieldDropdown<'boxInde
 		choices: CHOICES_SSRCBOXES,
 	}
 }
-export function AtemSuperSourceIdPicker(model: ModelSpec): CompanionInputFieldDropdown<'ssrcId'> | undefined {
+export function AtemSuperSourceIdPicker(model: ModelSpec): CompanionInputFieldDropdown<'ssrcId'> {
 	const choices = GetSuperSourceIdChoices(model)
-	if (choices.length > 1) {
-		return {
-			type: 'dropdown',
-			id: 'ssrcId',
-			label: 'Super Source',
-			default: 1,
-			choices,
-		}
-	} else {
-		return undefined
+	return {
+		type: 'dropdown',
+		id: 'ssrcId',
+		label: 'Super Source',
+		default: 1,
+		choices,
+		isVisibleExpression: choices.length > 1 ? undefined : 'false', // Hide if only 1 choice
 	}
 }
 

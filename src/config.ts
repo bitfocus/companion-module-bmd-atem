@@ -1,6 +1,5 @@
 import { Regex, type SomeCompanionConfigField } from '@companion-module/base'
 import { ALL_MODEL_CHOICES } from './models/index.js'
-import type { InstanceBaseExt } from './util.js'
 
 export const fadeFpsDefault = 10
 
@@ -22,7 +21,7 @@ export type AtemConfig = {
 	pollTimecode?: boolean
 }
 
-export function GetConfigFields(_self: InstanceBaseExt): SomeCompanionConfigField[] {
+export function GetConfigFields(config: AtemConfig): SomeCompanionConfigField[] {
 	return [
 		{
 			type: 'static-text',
@@ -45,19 +44,11 @@ export function GetConfigFields(_self: InstanceBaseExt): SomeCompanionConfigFiel
 		{
 			type: 'textinput',
 			id: 'host',
-			label: 'Target IP2',
+			label: 'Target IP',
 			width: 6,
 			isVisibleExpression: `!$(options:bonjourHost)`,
 			default: '',
 			regex: Regex.IP,
-		},
-		{
-			type: 'static-text',
-			id: 'host-filler',
-			width: 6,
-			label: '',
-			isVisibleExpression: `!!$(options:bonjourHost)`,
-			value: '',
 		},
 		{
 			type: 'dropdown',
@@ -73,15 +64,7 @@ export function GetConfigFields(_self: InstanceBaseExt): SomeCompanionConfigFiel
 			label: 'Detected Model',
 			width: 6,
 			isVisibleExpression: `$(options:modelID) == 0`, // Loose comparison
-			value: _self.config.autoModelName ?? 'Pending',
-		},
-		{
-			type: 'static-text',
-			id: 'autoModelName-filler',
-			width: 6,
-			label: '',
-			isVisibleExpression: `$(options:modelID) != 0`, // Loose comparison
-			value: '',
+			value: config.autoModelName ?? 'Pending',
 		},
 		{
 			type: 'dropdown',

@@ -11,6 +11,7 @@ import {
 import type { AtemConfig } from '../config.js'
 import { FeedbackId } from '../feedback/FeedbackId.js'
 import { OffsetNumericExpressionOrValueByX } from './util.js'
+import { UpgradeToExpressions } from './api2.0.js'
 
 function scaleValue(obj: { [key: string]: JsonValue | undefined }, key: string, scale: number): void {
 	if (obj[key] !== undefined) {
@@ -158,9 +159,7 @@ function fixUsingFairlightAudioFaderGainInsteadOfFairlightAudioMonitorFaderGain(
 	return result
 }
 
-const InvertableFeedbackUpgradeMap: {
-	[id in string]?: string
-} = {
+const InvertableFeedbackUpgradeMap: Record<string, string> = {
 	program_tally: 'invert',
 	preview_tally: 'invert',
 	dsk_bg: 'invert',
@@ -241,4 +240,5 @@ export const UpgradeScripts: CompanionStaticUpgradeScript<AtemConfig>[] = [
 	CreateUseBuiltinInvertForFeedbacksUpgradeScript(InvertableFeedbackUpgradeMap),
 	combineTransitionSelectionToDropdown,
 	ChangeMediaPlayerSourceVariablesDropdownToText,
+	UpgradeToExpressions,
 ]

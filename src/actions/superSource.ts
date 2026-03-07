@@ -1,6 +1,6 @@
-import { Enums, VideoState, type Atem } from 'atem-connection'
+import { VideoState, type Atem } from 'atem-connection'
 import { convertOptionsFields } from '../common.js'
-import { assertNever, type CompanionActionDefinitions } from '@companion-module/base'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
 import {
@@ -27,26 +27,26 @@ import type { algorithm, curve } from '../easings.js'
 export type AtemSuperSourceActions = {
 	[ActionId.SuperSourceArt]: {
 		options: {
-			ssrcId: number | undefined
+			ssrcId: number
 		} & AtemSuperSourceArtProperties
 	}
 	[ActionId.SuperSourceBoxSource]: {
 		options: {
-			ssrcId: number | undefined
+			ssrcId: number
 			boxIndex: number
 			source: number
 		}
 	}
 	[ActionId.SuperSourceBoxOnAir]: {
 		options: {
-			ssrcId: number | undefined
+			ssrcId: number
 			boxIndex: number
 			onair: TrueFalseToggle
 		}
 	}
 	[ActionId.SuperSourceBoxProperties]: {
 		options: {
-			ssrcId: number | undefined
+			ssrcId: number
 			boxIndex: number
 			transitionRate: number | undefined
 			transitionEasing: algorithm | undefined
@@ -55,7 +55,7 @@ export type AtemSuperSourceActions = {
 	}
 	[ActionId.SuperSourceBoxPropertiesDelta]: {
 		options: {
-			ssrcId: number | undefined
+			ssrcId: number
 			boxIndex: number
 
 			properties: Array<'size' | 'x' | 'y' | 'cropTop' | 'cropBottom' | 'cropLeft' | 'cropRight'>

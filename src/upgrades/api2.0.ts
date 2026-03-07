@@ -33,6 +33,7 @@ type OptionFixupRule = {
 				type: 'number'
 				zeroBased: boolean
 				variables: boolean
+				defaultValue?: number
 		  }
 		| {
 				type: 'boolean'
@@ -63,7 +64,7 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 	},
 	ssrcArt: {
 		options: {
-			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false } },
+			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false, defaultValue: 1 } },
 			fill: { transform: { type: 'number', zeroBased: false, variables: false } },
 			key: { transform: { type: 'number', zeroBased: false, variables: false } },
 			artOption: { transform: { type: 'lookup', lookup: ssrcArtOptionValueMap } },
@@ -72,7 +73,7 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 	ssrcArtVariables: {
 		newType: 'ssrcArt',
 		options: {
-			ssrcId: { transform: { type: 'number', zeroBased: true, variables: true } },
+			ssrcId: { transform: { type: 'number', zeroBased: true, variables: true, defaultValue: 1 } },
 			fill: { transform: { type: 'number', zeroBased: false, variables: true } },
 			key: { transform: { type: 'number', zeroBased: false, variables: true } },
 			// Fill in the missing ones:
@@ -85,33 +86,33 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 	},
 	setSsrcBoxSource: {
 		options: {
-			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false } },
+			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false, defaultValue: 1 } },
 			boxIndex: { transform: { type: 'number', zeroBased: true, variables: false } },
 		},
 	},
 	setSsrcBoxSourceVariables: {
 		newType: 'setSsrcBoxSource',
 		options: {
-			ssrcId: { transform: { type: 'number', zeroBased: true, variables: true } },
+			ssrcId: { transform: { type: 'number', zeroBased: true, variables: true, defaultValue: 1 } },
 			boxIndex: { transform: { type: 'number', zeroBased: true, variables: true } },
 			source: { transform: { type: 'number', zeroBased: false, variables: true } },
 		},
 	},
 	setSsrcBoxEnable: {
 		options: {
-			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false } },
+			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false, defaultValue: 1 } },
 			boxIndex: { transform: { type: 'number', zeroBased: true, variables: false } },
 		},
 	},
 	setSsrcBoxProperties: {
 		options: {
-			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false } },
+			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false, defaultValue: 1 } },
 			boxIndex: { transform: { type: 'number', zeroBased: true, variables: false } },
 		},
 	},
 	setSsrcBoxPropertiesDelta: {
 		options: {
-			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false } },
+			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false, defaultValue: 1 } },
 			boxIndex: { transform: { type: 'number', zeroBased: true, variables: false } },
 		},
 	},
@@ -756,14 +757,14 @@ const feedbackFixupRules: Record<string, FeedbackFixupRule> = {
 	},
 	ssrc_art_properties: {
 		options: {
-			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false } },
+			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false, defaultValue: 1 } },
 			artOption: { transform: { type: 'lookup', lookup: ssrcArtOptionValueMap } },
 		},
 	},
 	ssrcArtPropertiesVariables: {
 		newType: 'ssrc_art_properties',
 		options: {
-			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false } },
+			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false, defaultValue: 1 } },
 			fill: { transform: { type: 'number', zeroBased: false, variables: true } },
 			key: { transform: { type: 'number', zeroBased: false, variables: true } },
 			artOption: { transform: { type: 'default', value: 'foreground' } },
@@ -775,37 +776,37 @@ const feedbackFixupRules: Record<string, FeedbackFixupRule> = {
 	},
 	ssrc_art_source: {
 		options: {
-			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false } },
+			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false, defaultValue: 1 } },
 		},
 	},
 	ssrc_art_option: {
 		options: {
-			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false } },
+			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false, defaultValue: 1 } },
 		},
 	},
 	ssrc_box_enable: {
 		options: {
-			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false } },
+			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false, defaultValue: 1 } },
 			boxIndex: { transform: { type: 'number', zeroBased: true, variables: false } },
 		},
 	},
 	ssrc_box_source: {
 		options: {
-			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false } },
+			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false, defaultValue: 1 } },
 			boxIndex: { transform: { type: 'number', zeroBased: true, variables: false } },
 		},
 	},
 	ssrc_box_source_variables: {
 		newType: 'ssrc_box_source',
 		options: {
-			ssrcId: { transform: { type: 'number', zeroBased: true, variables: true } },
+			ssrcId: { transform: { type: 'number', zeroBased: true, variables: true, defaultValue: 1 } },
 			boxIndex: { transform: { type: 'number', zeroBased: true, variables: true } },
 			source: { transform: { type: 'number', zeroBased: false, variables: true } },
 		},
 	},
 	ssrc_box_properties: {
 		options: {
-			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false } },
+			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false, defaultValue: 1 } },
 			boxIndex: { transform: { type: 'number', zeroBased: true, variables: false } },
 		},
 	},
@@ -823,6 +824,11 @@ function applyTransform(
 		const newValue = optionTransform.lookup[oldValue]
 		return { isExpression: false, value: newValue }
 	} else if (optionTransform.type === 'number') {
+		// If defaultValue is specified and value is missing/undefined, use that
+		if (optionTransform.defaultValue !== undefined && (valueObj === undefined || valueObj.value === undefined)) {
+			return { isExpression: false, value: optionTransform.defaultValue }
+		}
+
 		// Convert number from 0-based (e.g. for indexes), optionally considering if there are variables
 		const newValue = FixupNumericOrVariablesValueToExpressions(oldValue)
 		if (optionTransform.zeroBased) {

@@ -23,27 +23,27 @@ export type AtemSuperSourceFeedbacks = {
 	[FeedbackId.SSrcArtProperties]: {
 		type: 'boolean'
 		options: {
-			ssrcId: number | undefined
+			ssrcId: number
 		} & AtemSuperSourceArtProperties
 	}
 	[FeedbackId.SSrcArtSource]: {
 		type: 'boolean'
 		options: {
-			ssrcId: number | undefined
+			ssrcId: number
 			source: number
 		}
 	}
 	[FeedbackId.SSrcArtOption]: {
 		type: 'boolean'
 		options: {
-			ssrcId: number | undefined
+			ssrcId: number
 			artOption: Enums.SuperSourceArtOption
 		}
 	}
 	[FeedbackId.SSrcBoxSource]: {
 		type: 'boolean'
 		options: {
-			ssrcId: number | undefined
+			ssrcId: number
 			boxIndex: number
 			source: number
 		}
@@ -51,14 +51,14 @@ export type AtemSuperSourceFeedbacks = {
 	[FeedbackId.SSrcBoxOnAir]: {
 		type: 'boolean'
 		options: {
-			ssrcId: number | undefined
+			ssrcId: number
 			boxIndex: number
 		}
 	}
 	[FeedbackId.SSrcBoxProperties]: {
 		type: 'boolean'
 		options: {
-			ssrcId: number | undefined
+			ssrcId: number
 			boxIndex: number
 		} & AtemSuperSourceProperties
 	}
