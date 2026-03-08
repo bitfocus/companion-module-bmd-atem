@@ -18,7 +18,6 @@ import {
 	GetMultiviewerIdChoices,
 	GetSourcesListForType,
 	GetSuperSourceIdChoices,
-	GetTransitionStyleChoices,
 	GetUSKIdChoices,
 	NextTransBackgroundChoices,
 	NextTransKeyChoices,
@@ -33,16 +32,6 @@ import { iterateTimes, compact, NumberComparitor } from './util.js'
 import { DropdownPropertiesPicker, type WithProperties, SourcesToChoices } from './options/util.js'
 import { AtemRatePicker, MaskPropertiesPickers } from './options/common.js'
 
-export function AtemTransitionStylePicker(skipSting?: boolean): CompanionInputFieldDropdown<'style'> {
-	return {
-		type: 'dropdown',
-		id: 'style',
-		label: 'Transition Style',
-		default: Enums.TransitionStyle.MIX,
-		choices: GetTransitionStyleChoices(skipSting),
-		disableAutoExpression: true, // Needs translating first
-	}
-}
 export function AtemUpstreamKeyerPatternPicker(): CompanionInputFieldDropdown<'pattern'> {
 	return {
 		type: 'dropdown',

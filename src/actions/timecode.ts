@@ -1,12 +1,16 @@
-import { type Atem, Enums } from 'atem-connection'
+import type { Atem } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
-import { assertNever, CompanionInputFieldDropdown, type CompanionActionDefinitions } from '@companion-module/base'
+import { JsonValue, type CompanionActionDefinitions } from '@companion-module/base'
 import { ActionId } from './ActionId.js'
 import type { StateWrapper } from '../state.js'
 import type { InstanceBaseExt } from '../util.js'
 import { formatDurationSeconds } from '../variables/util.js'
-
-type TimecodeMode = 'freerun' | 'timeofday'
+import {
+	AtemTimecodeModePicker,
+	TimecodeMode,
+	timecodeModeToEnum,
+	upstreamKeyerTypeEnumToString,
+} from '../options/timecode.js'
 
 export type AtemTimecodeActions = {
 	[ActionId.Timecode]: {
@@ -16,7 +20,7 @@ export type AtemTimecodeActions = {
 	}
 	[ActionId.TimecodeMode]: {
 		options: {
-			mode: TimecodeMode
+			mode: TimecodeMode | JsonValue | undefined
 		}
 	}
 }
@@ -63,49 +67,20 @@ export function createTimecodeActions(
 		[ActionId.TimecodeMode]: {
 			name: 'Timecode: Set mode',
 			options: convertOptionsFields({
-				mode: {
-					id: 'mode',
-					type: 'dropdown',
-					label: 'Mode',
-					choices: [
-						{ id: 'freerun', label: 'Free run' },
-						{ id: 'timeofday', label: 'Time of Day' },
-					],
-					default: 'freerun',
-					expressionDescription: "Set to 'freerun' or 'timeofday'",
-					allowInvalidValues: true,
-				} satisfies CompanionInputFieldDropdown<'mode', TimecodeMode>,
+				mode: AtemTimecodeModePicker(),
 			}),
 			callback: async ({ options }) => {
-				let newMode: Enums.TimeMode | undefined
+				const parsedMode = timecodeModeToEnum(options.mode)
+				if (parsedMode === null) throw new Error("Invalid mode, must be 'freerun' or 'timeofday'")
 
-				const rawMode = String(options.mode).toLowerCase()
-				if (rawMode.includes('free') || rawMode.includes('run')) {
-					newMode = Enums.TimeMode.FreeRun
-				} else if (rawMode.includes('time') || rawMode.includes('day')) {
-					newMode = Enums.TimeMode.TimeOfDay
-				} else {
-					throw new Error("Invalid mode, must be 'freerun' or 'timeofday'")
-				}
-
-				await atem?.setTimeMode(newMode)
+				await atem?.setTimeMode(parsedMode)
 			},
 			learn: () => {
 				const rawMode = state.state.settings.timeMode
 				if (rawMode === undefined) return undefined
 
-				let newMode: TimecodeMode | undefined
-				switch (rawMode) {
-					case Enums.TimeMode.FreeRun:
-						newMode = 'freerun'
-						break
-					case Enums.TimeMode.TimeOfDay:
-						newMode = 'timeofday'
-						break
-					default:
-						assertNever(rawMode)
-						return undefined
-				}
+				const newMode = upstreamKeyerTypeEnumToString(rawMode)
+				if (newMode === undefined) return undefined
 
 				return {
 					mode: newMode,

@@ -1,12 +1,11 @@
 import { Enums, type Atem } from 'atem-connection'
 import { convertOptionsFields } from '../../options/util.js'
-import type { CompanionActionDefinitions } from '@companion-module/base'
+import type { CompanionActionDefinitions, JsonValue } from '@companion-module/base'
 import { getMixEffect } from 'atem-connection/dist/state/util.js'
 import {
 	AtemTransitionSelectComponentsPickers,
 	AtemTransitionSelectionComponentPicker,
 	AtemTransitionSelectionPicker,
-	AtemTransitionStylePicker,
 	TransitionSelectionComponent,
 } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
@@ -21,7 +20,13 @@ import {
 } from '../../choices.js'
 import { getTransitionProperties, getUSK, type StateWrapper } from '../../state.js'
 import { type InstanceBaseExt, assertUnreachable, calculateTransitionSelection } from '../../util.js'
-import { AtemMEPicker } from '../../options/mixEffect.js'
+import {
+	AtemMEPicker,
+	AtemTransitionStylePicker,
+	transitionStyleEnumToString,
+	TransitionStyleString,
+	transitionStyleStringToEnum,
+} from '../../options/mixEffect.js'
 import { AtemRatePicker } from '../../options/common.js'
 
 export type AtemTransitionActions = {
@@ -34,13 +39,13 @@ export type AtemTransitionActions = {
 	[ActionId.TransitionStyle]: {
 		options: {
 			mixeffect: number
-			style: Enums.TransitionStyle
+			style: TransitionStyleString | JsonValue | undefined
 		}
 	}
 	[ActionId.TransitionRate]: {
 		options: {
 			mixeffect: number
-			style: Enums.TransitionStyle
+			style: TransitionStyleString | JsonValue | undefined
 			rate: number
 		}
 	}
@@ -106,9 +111,12 @@ export function createTransitionActions(
 				style: AtemTransitionStylePicker(model.media.clips === 0),
 			}),
 			callback: async ({ options }) => {
+				const parsedStyle = transitionStyleStringToEnum(options.style)
+				if (parsedStyle === null) return // Not valid
+
 				await atem?.setTransitionStyle(
 					{
-						nextStyle: options.style,
+						nextStyle: parsedStyle,
 					},
 					options.mixeffect - 1,
 				)
@@ -118,7 +126,7 @@ export function createTransitionActions(
 
 				if (me) {
 					return {
-						style: me.transitionProperties.nextStyle,
+						style: transitionStyleEnumToString(me.transitionProperties.nextStyle),
 					}
 				} else {
 					return undefined
@@ -133,8 +141,10 @@ export function createTransitionActions(
 				rate: AtemRatePicker('Transition Rate'),
 			}),
 			callback: async ({ options }) => {
-				const style = options.style
-				switch (style) {
+				const parsedStyle = transitionStyleStringToEnum(options.style)
+				if (parsedStyle === null) return // Not valid
+
+				switch (parsedStyle) {
 					case Enums.TransitionStyle.MIX:
 						await atem?.setMixTransitionSettings(
 							{
@@ -173,16 +183,18 @@ export function createTransitionActions(
 						// Not supported
 						break
 					default:
-						assertUnreachable(style)
-						instance.log('debug', 'Unknown transition style: ' + style)
+						assertUnreachable(parsedStyle)
+						instance.log('debug', 'Unknown transition style: ' + parsedStyle)
 				}
 			},
 			learn: ({ options }) => {
+				const parsedStyle = transitionStyleStringToEnum(options.style)
+				if (parsedStyle === null) return // Not valid
+
 				const me = getMixEffect(state.state, options.mixeffect - 1)
 
 				if (me?.transitionSettings) {
-					const style = options.style
-					switch (style) {
+					switch (parsedStyle) {
 						case Enums.TransitionStyle.MIX:
 							if (!me.transitionSettings.mix) return undefined
 							return {
@@ -206,7 +218,7 @@ export function createTransitionActions(
 						case Enums.TransitionStyle.STING:
 							return undefined
 						default:
-							assertUnreachable(style)
+							assertUnreachable(parsedStyle)
 							return undefined
 					}
 				} else {

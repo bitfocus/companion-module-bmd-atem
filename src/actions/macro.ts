@@ -3,9 +3,10 @@ import { convertOptionsFields } from '../options/util.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
-import { GetMacroChoices, CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../choices.js'
+import { CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../choices.js'
 import type { StateWrapper } from '../state.js'
 import { resolveTrueFalseToggle } from '../input.js'
+import { AtemMacroPicker } from '../options/macro.js'
 
 export type AtemMacroActions = {
 	[ActionId.MacroRun]: {
@@ -44,13 +45,7 @@ export function createMacroActions(
 		[ActionId.MacroRun]: {
 			name: 'Macro: Run',
 			options: convertOptionsFields({
-				macro: {
-					type: 'dropdown',
-					id: 'macro',
-					label: 'Macro',
-					default: 1,
-					choices: GetMacroChoices(model, state.state),
-				},
+				macro: AtemMacroPicker(model, state.state, 'macro'),
 				action: {
 					type: 'dropdown',
 					id: 'action',

@@ -2,9 +2,9 @@ import type { ModelSpec } from '../models/index.js'
 import { convertOptionsFields } from '../options/util.js'
 import { FeedbackId } from './FeedbackId.js'
 import { CompanionFeedbackDefinitions } from '@companion-module/base'
-import { GetMacroChoices } from '../choices.js'
 import { assertUnreachable } from '../util.js'
 import type { StateWrapper } from '../state.js'
+import { AtemMacroPicker } from '../options/macro.js'
 
 export enum MacroFeedbackType {
 	IsRunning = 'isRunning',
@@ -45,13 +45,7 @@ export function createMacroFeedbacks(
 			name: 'Macro: State',
 			description: 'If the specified macro is running or waiting, change style of the bank',
 			options: convertOptionsFields({
-				macroIndex: {
-					type: 'dropdown',
-					label: 'Macro Number (1-100)',
-					id: 'macroIndex',
-					default: 1,
-					choices: GetMacroChoices(model, state.state),
-				},
+				macroIndex: AtemMacroPicker(model, state.state, 'macroIndex'),
 				state: {
 					type: 'dropdown',
 					label: 'State',

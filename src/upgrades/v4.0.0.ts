@@ -12,6 +12,7 @@ import type { SSrcArtOption } from '../input.js'
 import type { FairlightMixOption2 } from '../choices.js'
 import { OffsetNumericExpressionOrValueByX } from './util.js'
 import type { UpstreamKeyerTypeString } from '../options/upstreamKeyer.js'
+import type { TransitionStyleString } from '../options/mixEffect.js'
 
 type ActionFixupRule = {
 	newType?: string
@@ -67,6 +68,13 @@ const uskTypeValueMap: Record<Enums.MixEffectKeyType, UpstreamKeyerTypeString> =
 	[Enums.MixEffectKeyType.Chroma]: 'chroma',
 	[Enums.MixEffectKeyType.Pattern]: 'pattern',
 	[Enums.MixEffectKeyType.DVE]: 'dve',
+}
+const transitionStyleValueMap: Record<Enums.TransitionStyle, TransitionStyleString> = {
+	[Enums.TransitionStyle.MIX]: 'mix',
+	[Enums.TransitionStyle.DIP]: 'dip',
+	[Enums.TransitionStyle.WIPE]: 'wipe',
+	[Enums.TransitionStyle.DVE]: 'dve',
+	[Enums.TransitionStyle.STING]: 'sting',
 }
 
 const MEDIA_PLAYER_SOURCE_CLIP_OFFSET = 1000
@@ -323,6 +331,7 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 	transitionStyle: {
 		options: {
 			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+			style: { transform: { type: 'lookup', lookup: transitionStyleValueMap } },
 		},
 	},
 	transitionSelection: {
@@ -343,6 +352,7 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 	transitionRate: {
 		options: {
 			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+			style: { transform: { type: 'lookup', lookup: transitionStyleValueMap } },
 		},
 	},
 	uskType: {
@@ -681,6 +691,7 @@ const feedbackFixupRules: Record<string, FeedbackFixupRule> = {
 	transitionStyle: {
 		options: {
 			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+			style: { transform: { type: 'lookup', lookup: transitionStyleValueMap } },
 		},
 	},
 	transitionSelection: {
@@ -691,6 +702,7 @@ const feedbackFixupRules: Record<string, FeedbackFixupRule> = {
 	transitionRate: {
 		options: {
 			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
+			style: { transform: { type: 'lookup', lookup: transitionStyleValueMap } },
 		},
 	},
 	inTransition: {

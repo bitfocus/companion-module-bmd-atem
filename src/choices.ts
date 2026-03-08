@@ -130,19 +130,6 @@ export const CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION: DropdownChoice<FairlightMixOpti
 	},
 ]
 
-export function GetTransitionStyleChoices(skipSting?: boolean): DropdownChoice<Enums.TransitionStyle>[] {
-	const options = [
-		{ id: Enums.TransitionStyle.MIX, label: 'Mix' },
-		{ id: Enums.TransitionStyle.DIP, label: 'Dip' },
-		{ id: Enums.TransitionStyle.WIPE, label: 'Wipe' },
-		{ id: Enums.TransitionStyle.DVE, label: 'DVE' },
-	]
-	if (!skipSting) {
-		options.push({ id: Enums.TransitionStyle.STING, label: 'Sting' })
-	}
-	return options
-}
-
 export function GetUpstreamKeyerPatternChoices(): DropdownChoice<Enums.Pattern>[] {
 	const options = [
 		{ id: Enums.Pattern.LeftToRightBar, label: 'Left To Right Bar' },
@@ -195,15 +182,6 @@ export function GetSuperSourceIdChoices(model: ModelSpec): DropdownChoice[] {
 	}))
 }
 
-export function GetMacroChoices(model: ModelSpec, state: AtemState): DropdownChoice[] {
-	return iterateTimes(model.macros, (i) => {
-		const macro = state.macro.macroProperties[i]
-		return {
-			id: i + 1,
-			label: (macro?.isUsed ? `${macro.name} (#${i + 1})` : undefined) || `Macro ${i + 1}`,
-		}
-	})
-}
 export function GetMediaPlayerChoices(model: ModelSpec): DropdownChoice[] {
 	return iterateTimes(model.media.players, (i) => {
 		return {
