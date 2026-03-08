@@ -1,5 +1,5 @@
 import type { ModelSpec } from '../models/index.js'
-import { convertOptionsFields } from '../options/common.js'
+import { convertOptionsFields } from '../options/util.js'
 import { FeedbackId } from './FeedbackId.js'
 import { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { GetMacroChoices } from '../choices.js'

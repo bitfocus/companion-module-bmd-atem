@@ -1,6 +1,15 @@
-import { assertNever, DropdownChoice, type JsonValue, type CompanionInputFieldDropdown } from '@companion-module/base'
+import {
+	assertNever,
+	DropdownChoice,
+	type JsonValue,
+	type CompanionInputFieldDropdown,
+	CompanionInputFieldMultiDropdown,
+	CompanionInputFieldCheckbox,
+	CompanionInputFieldNumber,
+} from '@companion-module/base'
 import { Enums } from 'atem-connection'
 import { stringifyValueAlways } from '../util.js'
+import { WithDropdownPropertiesPicker } from './util.js'
 
 export type UpstreamKeyerTypeString = 'luma' | 'chroma' | 'pattern' | 'dve'
 
@@ -60,4 +69,75 @@ export function upstreamKeyerTypeEnumToString(type: Enums.MixEffectKeyType): Ups
 			assertNever(type)
 			return undefined
 	}
+}
+
+export function AtemUSKFlyKeyPropertiesPickers(): {
+	properties: CompanionInputFieldMultiDropdown<'properties'>
+	flyEnabled: CompanionInputFieldCheckbox<'flyEnabled'>
+	positionX: CompanionInputFieldNumber<'positionX'>
+	positionY: CompanionInputFieldNumber<'positionY'>
+	sizeX: CompanionInputFieldNumber<'sizeX'>
+	sizeY: CompanionInputFieldNumber<'sizeY'>
+} {
+	return WithDropdownPropertiesPicker({
+		flyEnabled: {
+			type: 'checkbox',
+			label: 'Enabled',
+			id: 'flyEnabled',
+			default: true,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'flyEnabled')`,
+		},
+		positionX: {
+			type: 'number',
+			label: 'Position X',
+			id: 'positionX',
+			default: 0,
+			min: -32,
+			step: 0.01,
+			max: 32,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'positionX')`,
+			asInteger: false,
+			clampValues: true,
+			description: 'Center position of the fly key. Between -32 and 32.',
+		},
+		positionY: {
+			type: 'number',
+			label: 'Position Y',
+			id: 'positionY',
+			default: 0,
+			min: -18,
+			step: 0.01,
+			max: 18,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'positionY')`,
+			asInteger: false,
+			clampValues: true,
+			description: 'Center position of the fly key. Between -18 and 18.',
+		},
+		sizeX: {
+			type: 'number',
+			label: 'Size X',
+			id: 'sizeX',
+			default: 1.0,
+			min: 0.0,
+			step: 0.01,
+			max: 99.99,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'sizeX')`,
+			asInteger: false,
+			clampValues: true,
+			description: 'Size of the fly key in the X direction. Between 0 and 99.99.',
+		},
+		sizeY: {
+			type: 'number',
+			label: 'Size Y',
+			id: 'sizeY',
+			default: 1.0,
+			min: 0.0,
+			step: 0.01,
+			max: 99.99,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'sizeY')`,
+			asInteger: false,
+			clampValues: true,
+			description: 'Size of the fly key in the Y direction. Between 0 and 99.99.',
+		},
+	})
 }

@@ -1,6 +1,6 @@
 import type { CompanionInputFieldNumber, CompanionInputFieldDropdown, DropdownChoice } from '@companion-module/base'
 import type { FadeDurationFieldsType } from '../transitions.js'
-import type { MyOptionsObject } from './common.js'
+import type { MyOptionsObject } from './util.js'
 
 const fadeAlgorithms: DropdownChoice<FadeDurationFieldsType['fadeAlgorithm']>[] = [
 	{ id: 'linear', label: 'Linear' },

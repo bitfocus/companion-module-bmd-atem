@@ -1,5 +1,5 @@
 import { AtemMESourcePicker } from '../../options/mixEffect.js'
-import { convertOptionsFields, SourcesToChoices } from '../../options/common.js'
+import { convertOptionsFields, SourcesToChoices } from '../../options/util.js'
 import type { ModelSpec } from '../../models/index.js'
 import { FeedbackId } from '../FeedbackId.js'
 import { CompanionFeedbackDefinitions } from '@companion-module/base'

@@ -31,7 +31,8 @@ import {
 } from './choices.js'
 import type { ModelSpec } from './models/index.js'
 import { iterateTimes, compact, NumberComparitor } from './util.js'
-import { DropdownPropertiesPicker, type WithProperties, SourcesToChoices } from './options/common.js'
+import { DropdownPropertiesPicker, type WithProperties, SourcesToChoices } from './options/util.js'
+import { MaskPropertiesPickers } from './options/common.js'
 
 export function AtemTransitionStylePicker(skipSting?: boolean): CompanionInputFieldDropdown<'style'> {
 	return {
@@ -148,6 +149,7 @@ export function AtemDSKPicker(model: ModelSpec): CompanionInputFieldDropdown<'ke
 		choices: GetDSKIdChoices(model),
 	}
 }
+/** @deprecated */
 export function AtemDSKMaskPropertiesPickers(): {
 	properties: CompanionInputFieldMultiDropdown<'properties'>
 	maskEnabled: CompanionInputFieldCheckbox<'maskEnabled'>
@@ -157,61 +159,7 @@ export function AtemDSKMaskPropertiesPickers(): {
 	maskRight: CompanionInputFieldNumber<'maskRight'>
 } {
 	const allProps: Omit<ReturnType<typeof AtemDSKMaskPropertiesPickers>, 'properties'> = {
-		maskEnabled: {
-			type: 'checkbox',
-			label: 'Enabled',
-			id: 'maskEnabled',
-			default: true,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'maskEnabled')`,
-		},
-		maskTop: {
-			type: 'number',
-			label: 'Top',
-			id: 'maskTop',
-			default: 9,
-			min: -9,
-			step: 0.01,
-			max: 9,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'maskTop')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		maskBottom: {
-			type: 'number',
-			label: 'Bottom',
-			id: 'maskBottom',
-			default: -9,
-			min: -9,
-			step: 0.01,
-			max: 9,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'maskBottom')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		maskLeft: {
-			type: 'number',
-			label: 'Left',
-			id: 'maskLeft',
-			default: -16,
-			min: -16,
-			step: 0.01,
-			max: 16,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'maskLeft')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		maskRight: {
-			type: 'number',
-			label: 'Right',
-			id: 'maskRight',
-			default: 16,
-			min: -16,
-			step: 0.01,
-			max: 16,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'maskRight')`,
-			asInteger: false,
-			clampValues: true,
-		},
+		...MaskPropertiesPickers(16, 9, false),
 	}
 
 	return {
@@ -283,77 +231,6 @@ export function AtemUSKPicker(model: ModelSpec): CompanionInputFieldDropdown<'ke
 		id: 'key',
 		default: 1,
 		choices: GetUSKIdChoices(model),
-	}
-}
-export function AtemUSKMaskPropertiesPickers(): {
-	properties: CompanionInputFieldMultiDropdown<'properties'>
-	maskEnabled: CompanionInputFieldCheckbox<'maskEnabled'>
-	maskTop: CompanionInputFieldNumber<'maskTop'>
-	maskBottom: CompanionInputFieldNumber<'maskBottom'>
-	maskLeft: CompanionInputFieldNumber<'maskLeft'>
-	maskRight: CompanionInputFieldNumber<'maskRight'>
-} {
-	const allProps: Omit<ReturnType<typeof AtemUSKMaskPropertiesPickers>, 'properties'> = {
-		maskEnabled: {
-			type: 'checkbox',
-			label: 'Enabled',
-			id: 'maskEnabled',
-			default: true,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'maskEnabled')`,
-		},
-		maskTop: {
-			type: 'number',
-			label: 'Top',
-			id: 'maskTop',
-			default: 9,
-			min: -9,
-			step: 0.01,
-			max: 9,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'maskTop')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		maskBottom: {
-			type: 'number',
-			label: 'Bottom',
-			id: 'maskBottom',
-			default: -9,
-			min: -9,
-			step: 0.01,
-			max: 9,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'maskBottom')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		maskLeft: {
-			type: 'number',
-			label: 'Left',
-			id: 'maskLeft',
-			default: -16,
-			min: -16,
-			step: 0.01,
-			max: 16,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'maskLeft')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		maskRight: {
-			type: 'number',
-			label: 'Right',
-			id: 'maskRight',
-			default: 16,
-			min: -16,
-			step: 0.01,
-			max: 16,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'maskRight')`,
-			asInteger: false,
-			clampValues: true,
-		},
-	}
-
-	return {
-		properties: DropdownPropertiesPicker(allProps),
-		...allProps,
 	}
 }
 export function AtemUSKDVEPropertiesPickers(): {
@@ -451,65 +328,7 @@ export function AtemUSKDVEPropertiesPickers(): {
 			asInteger: false,
 			clampValues: true,
 		},
-		maskEnabled: {
-			type: 'checkbox',
-			label: 'Mask: Enabled',
-			id: 'maskEnabled',
-			default: true,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'maskEnabled')`,
-		},
-		maskTop: {
-			type: 'number',
-			label: 'Mask: Top',
-			id: 'maskTop',
-			default: 0,
-			range: true,
-			min: 0,
-			step: 0.01,
-			max: 38,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'maskTop')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		maskBottom: {
-			type: 'number',
-			label: 'Mask: Bottom',
-			id: 'maskBottom',
-			default: 0,
-			range: true,
-			min: 0,
-			step: 0.01,
-			max: 38,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'maskBottom')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		maskLeft: {
-			type: 'number',
-			label: 'Mask: Left',
-			id: 'maskLeft',
-			default: 0,
-			range: true,
-			min: 0,
-			step: 0.01,
-			max: 52,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'maskLeft')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		maskRight: {
-			type: 'number',
-			label: 'Mask: Right',
-			id: 'maskRight',
-			default: 0,
-			range: true,
-			min: 0,
-			step: 0.01,
-			max: 52,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'maskRight')`,
-			asInteger: false,
-			clampValues: true,
-		},
+		...MaskPropertiesPickers(52, 38, true),
 		shadowEnabled: {
 			type: 'checkbox',
 			label: 'Shadow: Enabled',
@@ -1873,78 +1692,6 @@ export function AtemUSKPatternPropertiesPickers(): {
 			clampValues: true,
 		},
 	}
-	return {
-		properties: DropdownPropertiesPicker(allProps),
-		...allProps,
-	}
-}
-
-export function AtemUSKFlyKeyPropertiesPickers(): {
-	properties: CompanionInputFieldMultiDropdown<'properties'>
-	flyEnabled: CompanionInputFieldCheckbox<'flyEnabled'>
-	positionX: CompanionInputFieldNumber<'positionX'>
-	positionY: CompanionInputFieldNumber<'positionY'>
-	sizeX: CompanionInputFieldNumber<'sizeX'>
-	sizeY: CompanionInputFieldNumber<'sizeY'>
-} {
-	const allProps: Omit<ReturnType<typeof AtemUSKFlyKeyPropertiesPickers>, 'properties'> = {
-		flyEnabled: {
-			type: 'checkbox',
-			label: 'Enabled',
-			id: 'flyEnabled',
-			default: true,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'flyEnabled')`,
-		},
-		positionX: {
-			type: 'number',
-			label: 'Position X',
-			id: 'positionX',
-			default: 0,
-			min: -32,
-			step: 0.01,
-			max: 32,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'positionX')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		positionY: {
-			type: 'number',
-			label: 'Position Y',
-			id: 'positionY',
-			default: 0,
-			min: -18,
-			step: 0.01,
-			max: 18,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'positionY')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		sizeX: {
-			type: 'number',
-			label: 'Size X',
-			id: 'sizeX',
-			default: 1.0,
-			min: 0.0,
-			step: 0.01,
-			max: 99.99,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'sizeX')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		sizeY: {
-			type: 'number',
-			label: 'Size Y',
-			id: 'sizeY',
-			default: 1.0,
-			min: 0.0,
-			step: 0.01,
-			max: 99.99,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'sizeY')`,
-			asInteger: false,
-			clampValues: true,
-		},
-	}
-
 	return {
 		properties: DropdownPropertiesPicker(allProps),
 		...allProps,

@@ -1,5 +1,5 @@
 import { VideoState, type Atem } from 'atem-connection'
-import { convertOptionsFields } from '../options/common.js'
+import { convertOptionsFields } from '../options/util.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'

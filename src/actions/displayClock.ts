@@ -1,5 +1,5 @@
 import { Enums, type Atem, type DisplayClock } from 'atem-connection'
-import { convertOptionsFields } from '../options/common.js'
+import { convertOptionsFields } from '../options/util.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import {
 	AtemDisplayClockPropertiesPickers,

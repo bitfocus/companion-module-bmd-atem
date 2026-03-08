@@ -1,5 +1,5 @@
 import { type Atem, Enums } from 'atem-connection'
-import { convertOptionsFields } from '../options/common.js'
+import { convertOptionsFields } from '../options/util.js'
 import { assertNever, CompanionInputFieldDropdown, type CompanionActionDefinitions } from '@companion-module/base'
 import { ActionId } from './ActionId.js'
 import type { StateWrapper } from '../state.js'

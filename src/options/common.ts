@@ -1,58 +1,111 @@
-import type {
-	CompanionInputFieldBase,
-	CompanionInputFieldCheckbox,
-	CompanionInputFieldDropdown,
-	CompanionInputFieldMultiDropdown,
-	CompanionInputFieldNumber,
-	CompanionInputFieldTextInput,
-	CompanionOptionValues,
-	DropdownChoice,
-} from '@companion-module/base'
-import type { MiniSourceInfo } from '../choices.js'
+import type { CompanionInputFieldCheckbox, CompanionInputFieldNumber } from '@companion-module/base'
 
-export function SourcesToChoices(sources: MiniSourceInfo[]): DropdownChoice<number>[] {
-	return sources.map((s) => ({
-		id: s.id,
-		label: s.longName,
-	}))
-}
-
-export type MyOptionsObject<TOptions, TFields extends CompanionInputFieldBase> = {
-	[K in keyof TOptions]: undefined extends TOptions[K] ? TFields | undefined : TFields
-}
-
-export function convertOptionsFields<TOptions extends CompanionOptionValues, TField extends CompanionInputFieldBase>(
-	options: MyOptionsObject<TOptions, TField>,
-): TField[] {
-	return Object.entries(options)
-		.filter((o) => !!o[1])
-		.map(([id, option]) => ({
-			...(option as TField),
-			id,
-		}))
-}
-
-export type WithProperties<T> = T & {
-	properties: Array<keyof T>
-}
-
-export function DropdownPropertiesPicker(
-	allProps: Record<
-		string,
-		| CompanionInputFieldTextInput
-		| CompanionInputFieldCheckbox
-		| CompanionInputFieldDropdown
-		| CompanionInputFieldNumber
-		| CompanionInputFieldMultiDropdown
-	>,
-): CompanionInputFieldMultiDropdown<'properties'> {
+export function MaskPropertiesPickers(
+	xRange: number,
+	yRange: number,
+	fromZero: boolean,
+): {
+	maskEnabled: CompanionInputFieldCheckbox<'maskEnabled'>
+	maskTop: CompanionInputFieldNumber<'maskTop'>
+	maskBottom: CompanionInputFieldNumber<'maskBottom'>
+	maskLeft: CompanionInputFieldNumber<'maskLeft'>
+	maskRight: CompanionInputFieldNumber<'maskRight'>
+} {
 	return {
-		type: 'multidropdown',
-		id: 'properties',
-		label: 'Properties',
-		minSelection: 1,
-		default: Object.values(allProps).map((p) => p.id),
-		choices: Object.values(allProps).map((p) => ({ id: p.id, label: p.label })),
-		disableAutoExpression: true, // Disable expression, so that other fields can reference this
+		maskEnabled: {
+			type: 'checkbox',
+			label: fromZero ? 'Mask: Enabled' : 'Enabled',
+			id: 'maskEnabled',
+			default: true,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskEnabled')`,
+		},
+		maskTop: {
+			type: 'number',
+			id: 'maskTop',
+			step: 0.01,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskTop')`,
+			asInteger: false,
+			clampValues: true,
+			...(fromZero
+				? {
+						label: 'Mask: Top',
+						default: 0,
+						min: 0,
+						max: yRange,
+					}
+				: {
+						label: 'Top',
+						default: yRange,
+						min: -yRange,
+						max: yRange,
+						description: `${yRange} is the top edge, -${yRange} is the bottom edge.`,
+					}),
+		},
+		maskBottom: {
+			type: 'number',
+			id: 'maskBottom',
+			step: 0.01,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskBottom')`,
+			asInteger: false,
+			clampValues: true,
+			...(fromZero
+				? {
+						label: 'Mask: Bottom',
+						default: 0,
+						min: 0,
+						max: yRange,
+					}
+				: {
+						label: 'Bottom',
+						default: -yRange,
+						min: -yRange,
+						max: yRange,
+						description: `${yRange} is the top edge, -${yRange} is the bottom edge.`,
+					}),
+		},
+		maskLeft: {
+			type: 'number',
+			id: 'maskLeft',
+			step: 0.01,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskLeft')`,
+			asInteger: false,
+			clampValues: true,
+			...(fromZero
+				? {
+						label: 'Mask: Left',
+						default: 0,
+						min: 0,
+						max: xRange,
+					}
+				: {
+						label: 'Left',
+						default: -xRange,
+						min: -xRange,
+						max: xRange,
+						description: `${xRange} is the right edge, -${xRange} is the left edge.`,
+					}),
+		},
+		maskRight: {
+			type: 'number',
+			id: 'maskRight',
+			step: 0.01,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'maskRight')`,
+			asInteger: false,
+			clampValues: true,
+			...(fromZero
+				? {
+						label: 'Mask: Right',
+						default: 0,
+						min: 0,
+						max: xRange,
+					}
+				: {
+						label: 'Right',
+						default: xRange,
+						min: -xRange,
+						max: xRange,
+						description: `${xRange} is the right edge, -${xRange} is the left edge.`,
+					}),
+		},
 	}
 }

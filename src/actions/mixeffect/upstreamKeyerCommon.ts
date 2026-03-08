@@ -1,14 +1,7 @@
 import { type Atem } from 'atem-connection'
-import { convertOptionsFields } from '../../options/common.js'
+import { convertOptionsFields, WithDropdownPropertiesPicker } from '../../options/util.js'
 import type { CompanionActionDefinitions, JsonValue } from '@companion-module/base'
-import {
-	AtemKeyCutSourcePicker,
-	AtemKeyFillSourcePicker,
-	AtemUSKMaskPropertiesPickers,
-	AtemUSKFlyKeyPropertiesPickers,
-	AtemUSKPicker,
-	resolveTrueFalseToggle,
-} from '../../input.js'
+import { AtemKeyCutSourcePicker, AtemKeyFillSourcePicker, AtemUSKPicker, resolveTrueFalseToggle } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
 import { CHOICES_KEYTRANS, type TrueFalseToggle } from '../../choices.js'
@@ -21,10 +14,12 @@ import type {
 import { AtemMEPicker } from '../../options/mixEffect.js'
 import {
 	AtemUpstreamKeyerTypePicker,
+	AtemUSKFlyKeyPropertiesPickers,
 	upstreamKeyerTypeEnumToString,
 	UpstreamKeyerTypeString,
 	upstreamKeyerTypeStringToEnum,
 } from '../../options/upstreamKeyer.js'
+import { MaskPropertiesPickers } from '../../options/common.js'
 
 export type AtemUpstreamKeyerCommonActions = {
 	[ActionId.USKType]: {
@@ -154,6 +149,8 @@ export function createUpstreamKeyerCommonActions(
 		[ActionId.USKOnAir]: {
 			name: 'Upstream key: Set OnAir',
 			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
+				key: AtemUSKPicker(model),
 				onair: {
 					id: 'onair',
 					type: 'dropdown',
@@ -162,8 +159,6 @@ export function createUpstreamKeyerCommonActions(
 					choices: CHOICES_KEYTRANS,
 					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
-				mixeffect: AtemMEPicker(model),
-				key: AtemUSKPicker(model),
 			}),
 			callback: async ({ options }) => {
 				const meIndex = options.mixeffect - 1
@@ -189,7 +184,7 @@ export function createUpstreamKeyerCommonActions(
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
-				...AtemUSKMaskPropertiesPickers(),
+				...WithDropdownPropertiesPicker(MaskPropertiesPickers(16, 9, false)),
 			}),
 			callback: async ({ options }) => {
 				const keyId = options.key - 1

@@ -4,7 +4,7 @@ import { FeedbackId } from './FeedbackId.js'
 import { assertNever, CompanionFeedbackDefinitions, DropdownChoice } from '@companion-module/base'
 import { getMultiviewer, getMultiviewerWindow, type StateWrapper } from '../state.js'
 import { Enums } from 'atem-connection'
-import { convertOptionsFields } from '../options/common.js'
+import { convertOptionsFields } from '../options/util.js'
 
 type MultiviewerQuadrantState = 'single' | 'quad' | 'ignore'
 

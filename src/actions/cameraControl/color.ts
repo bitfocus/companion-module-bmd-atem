@@ -1,5 +1,5 @@
 import { type Atem } from 'atem-connection'
-import { convertOptionsFields } from '../../options/common.js'
+import { convertOptionsFields } from '../../options/util.js'
 import type { CompanionActionDefinition, CompanionActionDefinitions } from '@companion-module/base'
 import { ActionId } from '../ActionId.js'
 import type { StateWrapper } from '../../state.js'

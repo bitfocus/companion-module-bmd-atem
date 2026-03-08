@@ -3,7 +3,7 @@ import type { ModelSpec } from '../models/types.js'
 import { iterateTimes } from '../util.js'
 import { GetSourcesListForType } from '../choices.js'
 import type { AtemState } from 'atem-connection'
-import { SourcesToChoices } from './common.js'
+import { SourcesToChoices } from './util.js'
 
 export function AtemMEPicker(model: ModelSpec): CompanionInputFieldDropdown<'mixeffect'> {
 	return {

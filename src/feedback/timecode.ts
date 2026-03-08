@@ -1,5 +1,5 @@
 import type { ModelSpec } from '../models/index.js'
-import { convertOptionsFields } from '../options/common.js'
+import { convertOptionsFields } from '../options/util.js'
 import { FeedbackId } from './FeedbackId.js'
 import { assertNever, CompanionFeedbackDefinitions, CompanionInputFieldDropdown } from '@companion-module/base'
 import type { StateWrapper } from '../state.js'

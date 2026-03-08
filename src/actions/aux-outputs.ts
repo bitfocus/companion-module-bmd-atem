@@ -3,7 +3,7 @@ import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
 import { AtemAuxPicker, AtemAuxSourcePicker } from '../input.js'
 import type { StateWrapper } from '../state.js'
-import { convertOptionsFields } from '../options/common.js'
+import { convertOptionsFields } from '../options/util.js'
 import { CompanionActionDefinitions } from '@companion-module/base'
 
 export type AtemAuxOutputActions = {
