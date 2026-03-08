@@ -2,12 +2,12 @@ import type { Atem } from 'atem-connection'
 import { convertOptionsFields } from '../../options/common.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import { getMixEffect } from 'atem-connection/dist/state/util.js'
-import { AtemMEPicker, AtemMESourcePicker } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
 import type { StateWrapper } from '../../state.js'
 import type { AtemTransitions, FadeDurationFieldsType } from '../../transitions.js'
 import { FadeDurationFields } from '../../options/fade.js'
+import { AtemMEPicker, AtemMESourcePicker } from '../../options/mixEffect.js'
 
 export type AtemProgramPreviewActions = {
 	[ActionId.Program]: {
@@ -125,6 +125,7 @@ export function createProgramPreviewActions(
 					step: 1,
 					asInteger: true,
 					clampValues: true,
+					description: 'Position of the TBar, from 0 (fully in preview) to 100 (fully in program)',
 				},
 
 				...FadeDurationFields,

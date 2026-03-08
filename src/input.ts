@@ -16,7 +16,6 @@ import {
 	GetAuxIdChoices,
 	GetDSKIdChoices,
 	GetMediaPlayerChoices,
-	GetMEIdChoices,
 	GetMultiviewerIdChoices,
 	GetSourcesListForType,
 	GetSuperSourceIdChoices,
@@ -24,7 +23,6 @@ import {
 	GetUSKIdChoices,
 	NextTransBackgroundChoices,
 	NextTransKeyChoices,
-	SourcesToChoices,
 	type TrueFalseToggle,
 	type AudioInputSubset,
 	GetUpstreamKeyerTypeChoices,
@@ -34,17 +32,8 @@ import {
 } from './choices.js'
 import type { ModelSpec } from './models/index.js'
 import { iterateTimes, compact, NumberComparitor } from './util.js'
-import { DropdownPropertiesPicker, type WithProperties } from './options/common.js'
+import { DropdownPropertiesPicker, type WithProperties, SourcesToChoices } from './options/common.js'
 
-export function AtemMESourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown<'input'> {
-	return {
-		id: `input`,
-		label: `Input`,
-		type: 'dropdown',
-		default: 1,
-		choices: SourcesToChoices(GetSourcesListForType(model, state, 'me')),
-	}
-}
 export function AtemTransitionStylePicker(skipSting?: boolean): CompanionInputFieldDropdown<'style'> {
 	return {
 		type: 'dropdown',
@@ -159,15 +148,6 @@ export function AtemTransitionSelectionComponentPicker(model: ModelSpec): Compan
 		id: 'component',
 		choices: options,
 		default: 0,
-	}
-}
-export function AtemMEPicker(model: ModelSpec): CompanionInputFieldDropdown<'mixeffect'> {
-	return {
-		id: 'mixeffect',
-		label: `M/E`,
-		type: 'dropdown',
-		default: 1,
-		choices: GetMEIdChoices(model),
 	}
 }
 export function AtemDSKPicker(model: ModelSpec): CompanionInputFieldDropdown<'key'> {

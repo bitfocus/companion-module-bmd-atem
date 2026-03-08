@@ -5,8 +5,8 @@ import type {
 	CompanionInputFieldCheckbox,
 } from '@companion-module/base'
 import { AtemState } from 'atem-connection'
-import { TrueFalseToggle, CHOICES_KEYTRANS, SourcesToChoices, GetSourcesListForType } from '../choices.js'
-import { WithProperties, DropdownPropertiesPicker } from './common.js'
+import { TrueFalseToggle, CHOICES_KEYTRANS, GetSourcesListForType } from '../choices.js'
+import { WithProperties, DropdownPropertiesPicker, SourcesToChoices } from './common.js'
 import { ModelSpec } from '../models/types.js'
 
 export type AtemSuperSourcePropertiesBase = {

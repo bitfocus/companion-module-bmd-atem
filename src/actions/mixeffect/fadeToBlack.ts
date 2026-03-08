@@ -1,10 +1,11 @@
 import { type Atem } from 'atem-connection'
 import { convertOptionsFields } from '../../options/common.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-import { AtemMEPicker, AtemRatePicker } from '../../input.js'
+import { AtemRatePicker } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
 import { getMixEffect, type StateWrapper } from '../../state.js'
+import { AtemMEPicker } from '../../options/mixEffect.js'
 
 export type AtemFadeToBlackActions = {
 	[ActionId.FadeToBlackAuto]: {

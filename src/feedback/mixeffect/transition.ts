@@ -1,7 +1,6 @@
 import { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../../options/common.js'
 import {
-	AtemMEPicker,
 	AtemMatchMethod,
 	AtemRatePicker,
 	AtemTransitionSelectionPicker,
@@ -13,6 +12,7 @@ import { FeedbackId } from '../FeedbackId.js'
 import { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { getMixEffect, type StateWrapper } from '../../state.js'
 import { calculateTransitionSelection, assertUnreachable } from '../../util.js'
+import { AtemMEPicker } from '../../options/mixEffect.js'
 
 export type AtemTransitionFeedbacks = {
 	[FeedbackId.PreviewTransition]: {

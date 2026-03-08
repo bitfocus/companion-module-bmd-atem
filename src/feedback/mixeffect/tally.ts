@@ -1,11 +1,11 @@
-import { AtemMESourcePicker } from '../../input.js'
-import { convertOptionsFields } from '../../options/common.js'
+import { AtemMESourcePicker } from '../../options/mixEffect.js'
+import { convertOptionsFields, SourcesToChoices } from '../../options/common.js'
 import type { ModelSpec } from '../../models/index.js'
 import { FeedbackId } from '../FeedbackId.js'
 import { CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { StateWrapper } from '../../state.js'
 import { calculateTallyForInputId } from '../../util.js'
-import { GetSourcesListForType, SourcesToChoices } from '../../choices.js'
+import { GetSourcesListForType } from '../../choices.js'
 import { isEqual } from 'lodash-es'
 
 export type AtemTallyFeedbacks = {

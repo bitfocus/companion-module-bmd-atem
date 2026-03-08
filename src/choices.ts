@@ -176,13 +176,6 @@ export function GetUpstreamKeyerPatternChoices(): DropdownChoice<Enums.Pattern>[
 	return options
 }
 
-export function GetMEIdChoices(model: ModelSpec): DropdownChoice[] {
-	return iterateTimes(model.MEs, (i) => ({
-		id: i + 1,
-		label: `M/E ${i + 1}`,
-	}))
-}
-
 export function GetAuxIdChoices(model: ModelSpec): DropdownChoice[] {
 	return model.outputs.map((output) => ({
 		id: output.id + 1,
@@ -438,13 +431,6 @@ export function GetAudioInputsList(model: ModelSpec, state: AtemState, subset?: 
 
 	sources.sort((a, b) => a.id - b.id)
 	return sources
-}
-
-export function SourcesToChoices(sources: MiniSourceInfo[]): DropdownChoice[] {
-	return sources.map((s) => ({
-		id: s.id,
-		label: s.longName,
-	}))
 }
 
 export function CameraControlSourcePicker(): CompanionInputFieldNumber<'cameraId'> {

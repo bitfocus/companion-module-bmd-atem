@@ -35,7 +35,7 @@ export const FadeDurationFields = {
 	},
 	fadeAlgorithm: {
 		type: 'dropdown',
-		label: 'Algorithm',
+		label: 'Fade Easing',
 		id: 'fadeAlgorithm',
 		default: 'linear',
 		choices: fadeAlgorithms,
@@ -43,7 +43,7 @@ export const FadeDurationFields = {
 	},
 	fadeCurve: {
 		type: 'dropdown',
-		label: 'Fade curve',
+		label: 'Fade Curve',
 		id: 'fadeCurve',
 		default: 'ease-in',
 		choices: fadeCurve,
@@ -79,7 +79,7 @@ export function AtemTransitionAnimationOptions(): {
 		},
 		transitionCurve: {
 			type: 'dropdown',
-			label: 'Transition curve',
+			label: 'Transition Curve',
 			id: 'transitionCurve',
 			default: 'ease-in',
 			choices: fadeCurve,

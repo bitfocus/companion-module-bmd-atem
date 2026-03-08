@@ -1,12 +1,7 @@
 import { Enums, type Atem } from 'atem-connection'
 import { convertOptionsFields } from '../../options/common.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-import {
-	AtemMEPicker,
-	AtemUSKDVEPropertiesPickers,
-	AtemUSKPicker,
-	AtemUSKKeyframePropertiesPickers,
-} from '../../input.js'
+import { AtemUSKDVEPropertiesPickers, AtemUSKPicker, AtemUSKKeyframePropertiesPickers } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
 import { CHOICES_FLYDIRECTIONS, CHOICES_KEYFRAMES, CHOICES_KEYFRAMES_CONFIGURABLE } from '../../choices.js'
@@ -17,6 +12,7 @@ import type {
 } from 'atem-connection/dist/state/video/upstreamKeyers.js'
 import type { AtemTransitions, TransitionOptions } from '../../transitions.js'
 import { AtemTransitionAnimationOptions } from '../../options/fade.js'
+import { AtemMEPicker } from '../../options/mixEffect.js'
 
 export type AtemUpstreamKeyerDVEActions = {
 	[ActionId.USKDVEProperties]: {

@@ -4,7 +4,6 @@ import type { CompanionActionDefinitions } from '@companion-module/base'
 import {
 	AtemKeyCutSourcePicker,
 	AtemKeyFillSourcePicker,
-	AtemMEPicker,
 	AtemUSKMaskPropertiesPickers,
 	AtemUSKFlyKeyPropertiesPickers,
 	AtemUSKPicker,
@@ -20,6 +19,7 @@ import type {
 	UpstreamKeyerDVEBase,
 	UpstreamKeyerMaskSettings,
 } from 'atem-connection/dist/state/video/upstreamKeyers.js'
+import { AtemMEPicker } from '../../options/mixEffect.js'
 
 export type AtemUpstreamKeyerCommonActions = {
 	[ActionId.USKType]: {

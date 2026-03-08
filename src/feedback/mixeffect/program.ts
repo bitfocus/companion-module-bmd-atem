@@ -1,9 +1,9 @@
-import { AtemMEPicker, AtemMESourcePicker } from '../../input.js'
 import { convertOptionsFields } from '../../options/common.js'
 import type { ModelSpec } from '../../models/index.js'
 import { FeedbackId } from '../FeedbackId.js'
 import { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { getMixEffect, type StateWrapper } from '../../state.js'
+import { AtemMEPicker, AtemMESourcePicker } from '../../options/mixEffect.js'
 
 export type AtemProgramFeedbacks = {
 	[FeedbackId.Program]: {
