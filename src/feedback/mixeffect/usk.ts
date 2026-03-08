@@ -1,12 +1,18 @@
 import type { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../../options/common.js'
-import { AtemKeyFillSourcePicker, AtemUSKPicker, AtemUpstreamKeyerTypePicker } from '../../input.js'
+import { AtemKeyFillSourcePicker, AtemUSKPicker } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { FeedbackId } from '../FeedbackId.js'
-import { CompanionFeedbackDefinitions } from '@companion-module/base'
+import { CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
 import { getUSK, type StateWrapper } from '../../state.js'
 import { CHOICES_CURRENTKEYFRAMES } from '../../choices.js'
 import { AtemMEPicker } from '../../options/mixEffect.js'
+import {
+	AtemUpstreamKeyerTypePicker,
+	upstreamKeyerTypeEnumToString,
+	UpstreamKeyerTypeString,
+	upstreamKeyerTypeStringToEnum,
+} from '../../options/upstreamKeyer.js'
 
 export type AtemUpstreamKeyerFeedbacks = {
 	[FeedbackId.USKOnAir]: {
@@ -21,7 +27,7 @@ export type AtemUpstreamKeyerFeedbacks = {
 		options: {
 			mixeffect: number
 			key: number
-			type: Enums.MixEffectKeyType
+			type: UpstreamKeyerTypeString | JsonValue | undefined
 		}
 	}
 	[FeedbackId.USKSource]: {
@@ -86,8 +92,22 @@ export function createUpstreamKeyerFeedbacks(
 				bgcolor: 0xff0000,
 			},
 			callback: ({ options }): boolean => {
+				const parsedType = upstreamKeyerTypeStringToEnum(options.type)
+				if (parsedType === null) return false
+
 				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
-				return usk?.mixEffectKeyType === options.type
+				return usk?.mixEffectKeyType === parsedType
+			},
+			learn: ({ options }) => {
+				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
+
+				if (usk) {
+					return {
+						type: upstreamKeyerTypeEnumToString(usk.mixEffectKeyType),
+					}
+				} else {
+					return undefined
+				}
 			},
 		},
 		[FeedbackId.USKSource]: {

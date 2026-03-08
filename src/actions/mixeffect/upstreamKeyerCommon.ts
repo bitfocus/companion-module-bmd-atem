@@ -1,13 +1,12 @@
-import { Enums, type Atem } from 'atem-connection'
+import { type Atem } from 'atem-connection'
 import { convertOptionsFields } from '../../options/common.js'
-import type { CompanionActionDefinitions } from '@companion-module/base'
+import type { CompanionActionDefinitions, JsonValue } from '@companion-module/base'
 import {
 	AtemKeyCutSourcePicker,
 	AtemKeyFillSourcePicker,
 	AtemUSKMaskPropertiesPickers,
 	AtemUSKFlyKeyPropertiesPickers,
 	AtemUSKPicker,
-	AtemUpstreamKeyerTypePicker,
 	resolveTrueFalseToggle,
 } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
@@ -20,13 +19,19 @@ import type {
 	UpstreamKeyerMaskSettings,
 } from 'atem-connection/dist/state/video/upstreamKeyers.js'
 import { AtemMEPicker } from '../../options/mixEffect.js'
+import {
+	AtemUpstreamKeyerTypePicker,
+	upstreamKeyerTypeEnumToString,
+	UpstreamKeyerTypeString,
+	upstreamKeyerTypeStringToEnum,
+} from '../../options/upstreamKeyer.js'
 
 export type AtemUpstreamKeyerCommonActions = {
 	[ActionId.USKType]: {
 		options: {
 			mixeffect: number
 			key: number
-			type: Enums.MixEffectKeyType
+			type: UpstreamKeyerTypeString | JsonValue | undefined
 		}
 	}
 	[ActionId.USKSource]: {
@@ -123,9 +128,12 @@ export function createUpstreamKeyerCommonActions(
 				type: AtemUpstreamKeyerTypePicker(),
 			}),
 			callback: async ({ options }) => {
+				const parsedType = upstreamKeyerTypeStringToEnum(options.type)
+				if (parsedType === null) return // Not valid
+
 				await atem?.setUpstreamKeyerType(
 					{
-						mixEffectKeyType: options.type,
+						mixEffectKeyType: parsedType,
 					},
 					options.mixeffect - 1,
 					options.key - 1,
@@ -136,7 +144,7 @@ export function createUpstreamKeyerCommonActions(
 
 				if (usk) {
 					return {
-						type: usk.mixEffectKeyType,
+						type: upstreamKeyerTypeEnumToString(usk.mixEffectKeyType),
 					}
 				} else {
 					return undefined

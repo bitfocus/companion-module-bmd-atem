@@ -1,11 +1,12 @@
 import { assertNever, CompanionPresetGroup, type CompanionButtonStyleProps } from '@companion-module/base'
 import { ActionId } from '../../actions/ActionId.js'
 import { FeedbackId } from '../../feedback/FeedbackId.js'
-import { CHOICES_KEYFRAMES, GetUpstreamKeyerTypeChoices, type SourceInfo } from '../../choices.js'
+import { CHOICES_KEYFRAMES, type SourceInfo } from '../../choices.js'
 import { Enums } from 'atem-connection'
 import type { PresetsBuilderContext } from '../context.js'
 import type { AtemSchema } from '../../schema.js'
 import { iterateTimes } from '../../util.js'
+import { GetUpstreamKeyerTypeChoices } from '../../options/upstreamKeyer.js'
 
 export function createUpstreamKeyerPresets(
 	context: PresetsBuilderContext,

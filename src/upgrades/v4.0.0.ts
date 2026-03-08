@@ -4,13 +4,14 @@ import {
 	FixupNumericOrVariablesValueToExpressions,
 	type CompanionStaticUpgradeResult,
 	type CompanionStaticUpgradeScript,
+	type JsonValue,
 } from '@companion-module/base'
 import type { AtemConfig } from '../config.js'
 import { Enums } from 'atem-connection'
 import type { SSrcArtOption } from '../input.js'
 import type { FairlightMixOption2 } from '../choices.js'
 import { OffsetNumericExpressionOrValueByX } from './util.js'
-import { JsonValue } from 'type-fest'
+import type { UpstreamKeyerTypeString } from '../options/upstreamKeyer.js'
 
 type ActionFixupRule = {
 	newType?: string
@@ -60,6 +61,12 @@ const fairlightMixOptionValueMap: Record<any, FairlightMixOption2> = {
 	[Enums.FairlightAudioMixOption.On]: 'on',
 	[Enums.FairlightAudioMixOption.Off]: 'off',
 	[Enums.FairlightAudioMixOption.AudioFollowVideo]: 'afv',
+}
+const uskTypeValueMap: Record<Enums.MixEffectKeyType, UpstreamKeyerTypeString> = {
+	[Enums.MixEffectKeyType.Luma]: 'luma',
+	[Enums.MixEffectKeyType.Chroma]: 'chroma',
+	[Enums.MixEffectKeyType.Pattern]: 'pattern',
+	[Enums.MixEffectKeyType.DVE]: 'dve',
 }
 
 const MEDIA_PLAYER_SOURCE_CLIP_OFFSET = 1000
@@ -342,6 +349,7 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 		options: {
 			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
 			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+			type: { transform: { type: 'lookup', lookup: uskTypeValueMap } },
 		},
 	},
 	uskSource: {

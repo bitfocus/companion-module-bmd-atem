@@ -25,7 +25,6 @@ import {
 	NextTransKeyChoices,
 	type TrueFalseToggle,
 	type AudioInputSubset,
-	GetUpstreamKeyerTypeChoices,
 	GetUpstreamKeyerPatternChoices,
 	FairlightAudioRoutingDestinations,
 	FairlightAudioRoutingSources,
@@ -41,16 +40,6 @@ export function AtemTransitionStylePicker(skipSting?: boolean): CompanionInputFi
 		label: 'Transition Style',
 		default: Enums.TransitionStyle.MIX,
 		choices: GetTransitionStyleChoices(skipSting),
-		disableAutoExpression: true, // Needs translating first
-	}
-}
-export function AtemUpstreamKeyerTypePicker(): CompanionInputFieldDropdown<'type'> {
-	return {
-		type: 'dropdown',
-		id: 'type',
-		label: 'Key Type',
-		default: Enums.MixEffectKeyType.Luma,
-		choices: GetUpstreamKeyerTypeChoices(),
 		disableAutoExpression: true, // Needs translating first
 	}
 }
