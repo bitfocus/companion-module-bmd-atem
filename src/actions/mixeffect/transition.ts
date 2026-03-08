@@ -3,7 +3,6 @@ import { convertOptionsFields } from '../../options/util.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import { getMixEffect } from 'atem-connection/dist/state/util.js'
 import {
-	AtemRatePicker,
 	AtemTransitionSelectComponentsPickers,
 	AtemTransitionSelectionComponentPicker,
 	AtemTransitionSelectionPicker,
@@ -23,6 +22,7 @@ import {
 import { getTransitionProperties, getUSK, type StateWrapper } from '../../state.js'
 import { type InstanceBaseExt, assertUnreachable, calculateTransitionSelection } from '../../util.js'
 import { AtemMEPicker } from '../../options/mixEffect.js'
+import { AtemRatePicker } from '../../options/common.js'
 
 export type AtemTransitionActions = {
 	[ActionId.PreviewTransition]: {

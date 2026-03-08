@@ -2,8 +2,7 @@ import { type CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { type StateWrapper } from '../state.js'
 import { createTallyFeedbacks, type AtemTallyFeedbacks } from './mixeffect/tally.js'
-import { createPreviewFeedbacks, type AtemPreviewFeedbacks } from './mixeffect/preview.js'
-import { createProgramFeedbacks, type AtemProgramFeedbacks } from './mixeffect/program.js'
+import { createProgramPreviewFeedbacks, type AtemProgramPreviewFeedbacks } from './mixeffect/programPreview.js'
 import { createFadeToBlackFeedbacks, type AtemFadeToBlackFeedbacks } from './mixeffect/fadeToBlack.js'
 import { createMediaPlayerFeedbacks, type AtemMediaPlayerFeedbacks } from './mediaPlayer.js'
 import { createMultiviewerFeedbacks, type AtemMultiviewerFeedbacks } from './multiviewer.js'
@@ -11,8 +10,8 @@ import { createMacroFeedbacks, type AtemMacroFeedbacks } from './macro.js'
 import { createAuxOutputFeedbacks, type AtemAuxOutputFeedbacks } from './aux-outputs.js'
 import { createRecordingFeedbacks, type AtemRecordingFeedbacks } from './recording.js'
 import { createStreamingFeedbacks, type AtemStreamingFeedbacks } from './streaming.js'
-import { createDownstreamKeyerFeedbacks, type AtemDownstreamKeyerFeedbacks } from './dsk.js'
-import { createUpstreamKeyerFeedbacks, type AtemUpstreamKeyerFeedbacks } from './mixeffect/usk.js'
+import { createDownstreamKeyerFeedbacks, type AtemDownstreamKeyerFeedbacks } from './downstreamKeyer.js'
+import { createUpstreamKeyerFeedbacks, type AtemUpstreamKeyerFeedbacks } from './mixeffect/upstreamKeyer.js'
 import { createTransitionFeedbacks, type AtemTransitionFeedbacks } from './mixeffect/transition.js'
 import { createSuperSourceFeedbacks, type AtemSuperSourceFeedbacks } from './superSource.js'
 import { createClassicAudioFeedbacks, type AtemClassicAudioFeedbacks } from './classicAudio.js'
@@ -22,8 +21,7 @@ import type { AtemConfig } from '../config.js'
 import { createMediaPoolFeedbacks, type AtemMediaPoolFeedbacks } from './mediaPool.js'
 
 export type FeedbackTypes = AtemTallyFeedbacks &
-	AtemPreviewFeedbacks &
-	AtemProgramFeedbacks &
+	AtemProgramPreviewFeedbacks &
 	AtemUpstreamKeyerFeedbacks &
 	AtemDownstreamKeyerFeedbacks &
 	AtemSuperSourceFeedbacks &
@@ -47,8 +45,7 @@ export function GetFeedbacksList(
 ): CompanionFeedbackDefinitions<FeedbackTypes> {
 	return {
 		...createTallyFeedbacks(model, state),
-		...createPreviewFeedbacks(model, state),
-		...createProgramFeedbacks(model, state),
+		...createProgramPreviewFeedbacks(model, state),
 		...createUpstreamKeyerFeedbacks(model, state),
 		...createDownstreamKeyerFeedbacks(model, state),
 		...createSuperSourceFeedbacks(model, state),

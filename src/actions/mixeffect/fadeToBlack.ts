@@ -1,7 +1,7 @@
 import { type Atem } from 'atem-connection'
 import { convertOptionsFields } from '../../options/util.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-import { AtemRatePicker } from '../../input.js'
+import { AtemRatePicker } from '../../options/common.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
 import { getMixEffect, type StateWrapper } from '../../state.js'

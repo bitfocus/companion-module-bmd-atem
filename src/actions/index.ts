@@ -10,7 +10,7 @@ import { createDisplayClockActions, type AtemDisplayClockActions } from './displ
 import { createMacroActions, type AtemMacroActions } from './macro.js'
 import { createStreamingActions, type AtemStreamingActions } from './streaming.js'
 import { createRecordingActions, type AtemRecordingActions } from './recording.js'
-import { createDownstreamKeyerActions, type AtemDownstreamKeyerActions } from './dsk.js'
+import { createDownstreamKeyerActions, type AtemDownstreamKeyerActions } from './downstreamKeyer.js'
 import { createAuxOutputActions, type AtemAuxOutputActions } from './aux-outputs.js'
 import { createMultiviewerActions, type AtemMultiviewerActions } from './multiviewer.js'
 import { createMediaPlayerActions, type AtemMediaPlayerActions } from './mediaPlayer.js'

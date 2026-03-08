@@ -181,13 +181,6 @@ export function GetUSKIdChoices(model: ModelSpec): DropdownChoice[] {
 	}))
 }
 
-export function GetDSKIdChoices(model: ModelSpec): DropdownChoice[] {
-	return iterateTimes(model.DSKs, (i) => ({
-		id: i + 1,
-		label: `${i + 1}`,
-	}))
-}
-
 export function GetMultiviewerIdChoices(model: ModelSpec): DropdownChoice[] {
 	return iterateTimes(model.MVs, (i) => ({
 		id: i + 1,

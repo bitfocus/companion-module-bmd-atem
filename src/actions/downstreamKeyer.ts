@@ -1,19 +1,14 @@
 import { type Atem } from 'atem-connection'
-import { convertOptionsFields } from '../options/util.js'
+import { convertOptionsFields, WithDropdownPropertiesPicker } from '../options/util.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
-import { CHOICES_KEYTRANS, CHOICES_ON_OFF_TOGGLE, GetDSKIdChoices, type TrueFalseToggle } from '../choices.js'
+import { CHOICES_KEYTRANS, CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../choices.js'
 import type { DownstreamKeyerMask, DownstreamKeyerGeneral } from 'atem-connection/dist/state/video/downstreamKeyers.js'
-import {
-	AtemDSKPicker,
-	AtemKeyFillSourcePicker,
-	AtemKeyCutSourcePicker,
-	AtemRatePicker,
-	AtemDSKMaskPropertiesPickers,
-	AtemDSKPreMultipliedKeyPropertiesPickers,
-} from '../input.js'
 import { getDSK, type StateWrapper } from '../state.js'
+import { AtemRatePicker, MaskPropertiesPickers } from '../options/common.js'
+import { AtemDSKPicker, AtemDSKPreMultipliedKeyPropertiesPickers } from '../options/downstreamKeyer.js'
+import { AtemKeyFillSourcePicker, AtemKeyCutSourcePicker } from '../options/commonKeyer.js'
 
 export type AtemDownstreamKeyerActions = {
 	[ActionId.DSKSource]: {
@@ -91,7 +86,7 @@ export function createDownstreamKeyerActions(
 		[ActionId.DSKSource]: {
 			name: 'Downstream key: Set inputs',
 			options: convertOptionsFields({
-				key: AtemDSKPicker(model),
+				key: AtemDSKPicker(model, 'key'),
 				fill: AtemKeyFillSourcePicker(model, state.state),
 				cut: AtemKeyCutSourcePicker(model, state.state),
 			}),
@@ -117,7 +112,7 @@ export function createDownstreamKeyerActions(
 		[ActionId.DSKRate]: {
 			name: 'Downstream key: Set Rate',
 			options: convertOptionsFields({
-				key: AtemDSKPicker(model),
+				key: AtemDSKPicker(model, 'key'),
 				rate: AtemRatePicker('Rate'),
 			}),
 			callback: async ({ options }) => {
@@ -138,8 +133,8 @@ export function createDownstreamKeyerActions(
 		[ActionId.DSKMask]: {
 			name: 'Downstream key: Set Mask',
 			options: convertOptionsFields({
-				key: AtemDSKPicker(model),
-				...AtemDSKMaskPropertiesPickers(),
+				key: AtemDSKPicker(model, 'key'),
+				...WithDropdownPropertiesPicker(MaskPropertiesPickers(16, 9, false)),
 			}),
 			callback: async ({ options }) => {
 				const keyId = options.key - 1
@@ -187,7 +182,7 @@ export function createDownstreamKeyerActions(
 		[ActionId.DSKPreMultipliedKey]: {
 			name: 'Downstream key: Set Pre Multiplied Key',
 			options: convertOptionsFields({
-				key: AtemDSKPicker(model),
+				key: AtemDSKPicker(model, 'key'),
 				...AtemDSKPreMultipliedKeyPropertiesPickers(),
 			}),
 			callback: async ({ options }) => {
@@ -232,13 +227,7 @@ export function createDownstreamKeyerActions(
 		[ActionId.DSKAuto]: {
 			name: 'Downstream key: Run AUTO Transition',
 			options: convertOptionsFields({
-				downstreamKeyerId: {
-					type: 'dropdown',
-					id: 'downstreamKeyerId',
-					label: 'DSK',
-					default: 1,
-					choices: GetDSKIdChoices(model),
-				},
+				downstreamKeyerId: AtemDSKPicker(model, 'downstreamKeyerId'),
 			}),
 			callback: async ({ options }) => {
 				await atem?.autoDownstreamKey(options.downstreamKeyerId - 1)
@@ -247,6 +236,7 @@ export function createDownstreamKeyerActions(
 		[ActionId.DSKOnAir]: {
 			name: 'Downstream key: Set OnAir',
 			options: convertOptionsFields({
+				key: AtemDSKPicker(model, 'key'),
 				onair: {
 					id: 'onair',
 					type: 'dropdown',
@@ -255,7 +245,6 @@ export function createDownstreamKeyerActions(
 					choices: CHOICES_KEYTRANS,
 					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
-				key: AtemDSKPicker(model),
 			}),
 			callback: async ({ options }) => {
 				const keyIndex = options.key - 1
@@ -281,6 +270,7 @@ export function createDownstreamKeyerActions(
 		[ActionId.DSKTie]: {
 			name: 'Downstream key: Set Tied',
 			options: convertOptionsFields({
+				key: AtemDSKPicker(model, 'key'),
 				state: {
 					id: 'state',
 					type: 'dropdown',
@@ -289,7 +279,6 @@ export function createDownstreamKeyerActions(
 					choices: CHOICES_ON_OFF_TOGGLE,
 					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
-				key: AtemDSKPicker(model),
 			}),
 			callback: async ({ options }) => {
 				const keyIndex = options.key - 1

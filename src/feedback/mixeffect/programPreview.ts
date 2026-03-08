@@ -5,8 +5,15 @@ import { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { getMixEffect, type StateWrapper } from '../../state.js'
 import { AtemMEPicker, AtemMESourcePicker } from '../../options/mixEffect.js'
 
-export type AtemProgramFeedbacks = {
+export type AtemProgramPreviewFeedbacks = {
 	[FeedbackId.Program]: {
+		type: 'boolean'
+		options: {
+			mixeffect: number
+			input: number
+		}
+	}
+	[FeedbackId.Preview]: {
 		type: 'boolean'
 		options: {
 			mixeffect: number
@@ -15,10 +22,10 @@ export type AtemProgramFeedbacks = {
 	}
 }
 
-export function createProgramFeedbacks(
+export function createProgramPreviewFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): CompanionFeedbackDefinitions<AtemProgramFeedbacks> {
+): CompanionFeedbackDefinitions<AtemProgramPreviewFeedbacks> {
 	return {
 		[FeedbackId.Program]: {
 			type: 'boolean',
@@ -42,6 +49,34 @@ export function createProgramFeedbacks(
 				if (me) {
 					return {
 						input: me.programInput,
+					}
+				} else {
+					return undefined
+				}
+			},
+		},
+		[FeedbackId.Preview]: {
+			type: 'boolean',
+			name: 'ME: One ME preview source',
+			description: 'If the input specified is selected in preview on the M/E stage specified, change style of the bank',
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
+				input: AtemMESourcePicker(model, state.state),
+			}),
+			defaultStyle: {
+				color: 0x000000,
+				bgcolor: 0x00ff00,
+			},
+			callback: ({ options }): boolean => {
+				const me = getMixEffect(state.state, options.mixeffect - 1)
+				return me?.previewInput === options.input
+			},
+			learn: ({ options }) => {
+				const me = getMixEffect(state.state, options.mixeffect - 1)
+
+				if (me) {
+					return {
+						input: me.previewInput,
 					}
 				} else {
 					return undefined

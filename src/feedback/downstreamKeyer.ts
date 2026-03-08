@@ -2,8 +2,9 @@ import type { ModelSpec } from '../models/index.js'
 import { convertOptionsFields } from '../options/util.js'
 import { FeedbackId } from './FeedbackId.js'
 import { CompanionFeedbackDefinitions } from '@companion-module/base'
-import { AtemDSKPicker, AtemKeyFillSourcePicker } from '../input.js'
+import { AtemKeyFillSourcePicker } from '../options/commonKeyer.js'
 import { getDSK, type StateWrapper } from '../state.js'
+import { AtemDSKPicker } from '../options/downstreamKeyer.js'
 
 export type AtemDownstreamKeyerFeedbacks = {
 	[FeedbackId.DSKOnAir]: {
@@ -44,7 +45,7 @@ export function createDownstreamKeyerFeedbacks(
 			name: 'Downstream key: OnAir',
 			description: 'If the specified downstream keyer is onair, change style of the bank',
 			options: convertOptionsFields({
-				key: AtemDSKPicker(model),
+				key: AtemDSKPicker(model, 'key'),
 			}),
 			defaultStyle: {
 				color: 0xffffff,
@@ -60,7 +61,7 @@ export function createDownstreamKeyerFeedbacks(
 			name: 'Downstream key: Tied',
 			description: 'If the specified downstream keyer is tied, change style of the bank',
 			options: convertOptionsFields({
-				key: AtemDSKPicker(model),
+				key: AtemDSKPicker(model, 'key'),
 			}),
 			defaultStyle: {
 				color: 0xffffff,
@@ -76,7 +77,7 @@ export function createDownstreamKeyerFeedbacks(
 			name: 'Downstream key: Fill source',
 			description: 'If the input specified is selected in the DSK specified, change style of the bank',
 			options: convertOptionsFields({
-				key: AtemDSKPicker(model),
+				key: AtemDSKPicker(model, 'key'),
 				fill: AtemKeyFillSourcePicker(model, state.state),
 			}),
 			defaultStyle: {

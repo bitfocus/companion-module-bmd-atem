@@ -14,7 +14,6 @@ import {
 	CHOICES_NEXTTRANS_KEY,
 	GetAudioInputsList,
 	GetAuxIdChoices,
-	GetDSKIdChoices,
 	GetMediaPlayerChoices,
 	GetMultiviewerIdChoices,
 	GetSourcesListForType,
@@ -32,7 +31,7 @@ import {
 import type { ModelSpec } from './models/index.js'
 import { iterateTimes, compact, NumberComparitor } from './util.js'
 import { DropdownPropertiesPicker, type WithProperties, SourcesToChoices } from './options/util.js'
-import { MaskPropertiesPickers } from './options/common.js'
+import { AtemRatePicker, MaskPropertiesPickers } from './options/common.js'
 
 export function AtemTransitionStylePicker(skipSting?: boolean): CompanionInputFieldDropdown<'style'> {
 	return {
@@ -52,19 +51,6 @@ export function AtemUpstreamKeyerPatternPicker(): CompanionInputFieldDropdown<'p
 		default: Enums.Pattern.LeftToRightBar,
 		choices: GetUpstreamKeyerPatternChoices(),
 		disableAutoExpression: true, // Needs translating first
-	}
-}
-export function AtemRatePicker(label: string): CompanionInputFieldNumber<'rate'> {
-	return {
-		type: 'number',
-		id: 'rate',
-		label,
-		min: 1,
-		max: 250,
-		range: true,
-		default: 25,
-		asInteger: true,
-		clampValues: true,
 	}
 }
 export function AtemTransitionSelectComponentsPickers(model: ModelSpec): {
@@ -138,89 +124,6 @@ export function AtemTransitionSelectionComponentPicker(model: ModelSpec): Compan
 		id: 'component',
 		choices: options,
 		default: 0,
-	}
-}
-export function AtemDSKPicker(model: ModelSpec): CompanionInputFieldDropdown<'key'> {
-	return {
-		type: 'dropdown',
-		label: 'Key',
-		id: 'key',
-		default: 1,
-		choices: GetDSKIdChoices(model),
-	}
-}
-/** @deprecated */
-export function AtemDSKMaskPropertiesPickers(): {
-	properties: CompanionInputFieldMultiDropdown<'properties'>
-	maskEnabled: CompanionInputFieldCheckbox<'maskEnabled'>
-	maskTop: CompanionInputFieldNumber<'maskTop'>
-	maskBottom: CompanionInputFieldNumber<'maskBottom'>
-	maskLeft: CompanionInputFieldNumber<'maskLeft'>
-	maskRight: CompanionInputFieldNumber<'maskRight'>
-} {
-	const allProps: Omit<ReturnType<typeof AtemDSKMaskPropertiesPickers>, 'properties'> = {
-		...MaskPropertiesPickers(16, 9, false),
-	}
-
-	return {
-		properties: DropdownPropertiesPicker(allProps),
-		...allProps,
-	}
-}
-
-export function AtemDSKPreMultipliedKeyPropertiesPickers(): {
-	properties: CompanionInputFieldMultiDropdown<'properties'>
-	preMultiply: CompanionInputFieldCheckbox<'preMultiply'>
-	clip: CompanionInputFieldNumber<'clip'>
-	gain: CompanionInputFieldNumber<'gain'>
-	invert: CompanionInputFieldCheckbox<'invert'>
-} {
-	const allProps: Omit<ReturnType<typeof AtemDSKPreMultipliedKeyPropertiesPickers>, 'properties'> = {
-		preMultiply: {
-			type: 'checkbox',
-			label: 'Enabled',
-			id: 'preMultiply',
-			default: true,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'preMultiply')`,
-		},
-		clip: {
-			type: 'number',
-			label: 'Clip',
-			id: 'clip',
-			range: true,
-			default: 100,
-			min: 0,
-			step: 0.1,
-			max: 100,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'clip')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		gain: {
-			type: 'number',
-			label: 'Gain',
-			id: 'gain',
-			range: true,
-			default: 0,
-			min: 0,
-			step: 0.1,
-			max: 100,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'gain')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		invert: {
-			type: 'checkbox',
-			label: 'Invert key',
-			id: 'invert',
-			default: false,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'invert')`,
-		},
-	}
-
-	return {
-		properties: DropdownPropertiesPicker(allProps),
-		...allProps,
 	}
 }
 
@@ -835,24 +738,6 @@ export function AtemMultiviewerPicker(model: ModelSpec): CompanionInputFieldDrop
 		label: 'MV',
 		default: 1,
 		choices: GetMultiviewerIdChoices(model),
-	}
-}
-export function AtemKeyFillSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown<'fill'> {
-	return {
-		type: 'dropdown',
-		label: 'Fill Source',
-		id: 'fill',
-		default: 1,
-		choices: SourcesToChoices(GetSourcesListForType(model, state, 'me')),
-	}
-}
-export function AtemKeyCutSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown<'cut'> {
-	return {
-		type: 'dropdown',
-		label: 'Key Source',
-		id: 'cut',
-		default: 0,
-		choices: SourcesToChoices(GetSourcesListForType(model, state, 'key')),
 	}
 }
 export function AtemAuxSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown<'input'> {

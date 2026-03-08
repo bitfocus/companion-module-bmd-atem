@@ -1,5 +1,19 @@
 import type { CompanionInputFieldCheckbox, CompanionInputFieldNumber } from '@companion-module/base'
 
+export function AtemRatePicker(label: string): CompanionInputFieldNumber<'rate'> {
+	return {
+		type: 'number',
+		id: 'rate',
+		label,
+		min: 1,
+		max: 250,
+		range: true,
+		default: 25,
+		asInteger: true,
+		clampValues: true,
+	}
+}
+
 export function MaskPropertiesPickers(
 	xRange: number,
 	yRange: number,
