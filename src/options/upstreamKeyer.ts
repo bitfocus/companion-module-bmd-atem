@@ -71,6 +71,64 @@ export function upstreamKeyerTypeEnumToString(type: Enums.MixEffectKeyType): Ups
 	}
 }
 
+export type FlyKeyKeyFrameString = 'a' | 'b' | 'full'
+
+export function AtemFlyKeyKeyFramePicker(
+	includeFull?: boolean,
+): CompanionInputFieldDropdown<'keyframe', FlyKeyKeyFrameString> {
+	return {
+		type: 'dropdown',
+		id: 'keyframe',
+		label: 'Key Frame',
+		default: 'a',
+		choices: GetFlyKeyKeyFrameChoices(includeFull),
+		expressionDescription: `Should return a string: a, b${includeFull ? ', full' : ''}`,
+		allowInvalidValues: true,
+	}
+}
+
+export function GetFlyKeyKeyFrameChoices(includeFull?: boolean): DropdownChoice<FlyKeyKeyFrameString>[] {
+	const choices: DropdownChoice<FlyKeyKeyFrameString>[] = [
+		{ id: 'a', label: 'A' },
+		{ id: 'b', label: 'B' },
+	]
+	if (includeFull) {
+		choices.push({ id: 'full', label: 'Full' })
+	}
+	return choices
+}
+
+export function flyKeyKeyFrameStringToEnum(
+	ref: JsonValue | undefined,
+	includeFull?: boolean,
+): Enums.FlyKeyKeyFrame | null {
+	const refStr = stringifyValueAlways(ref).toLowerCase().trim()
+	if (!refStr) return null
+
+	if (refStr.startsWith('a')) {
+		return Enums.FlyKeyKeyFrame.A
+	} else if (refStr.startsWith('b')) {
+		return Enums.FlyKeyKeyFrame.B
+	} else if (includeFull && refStr.startsWith('f')) {
+		return Enums.FlyKeyKeyFrame.Full
+	} else {
+		return null
+	}
+}
+
+export function flyKeyKeyFrameEnumToString(frame: Enums.FlyKeyKeyFrame): FlyKeyKeyFrameString | undefined {
+	switch (frame) {
+		case Enums.FlyKeyKeyFrame.A:
+			return 'a'
+		case Enums.FlyKeyKeyFrame.B:
+			return 'b'
+		case Enums.FlyKeyKeyFrame.Full:
+			return 'full'
+		default:
+			return undefined
+	}
+}
+
 export function AtemUSKFlyKeyPropertiesPickers(): {
 	properties: CompanionInputFieldMultiDropdown<'properties'>
 	flyEnabled: CompanionInputFieldCheckbox<'flyEnabled'>

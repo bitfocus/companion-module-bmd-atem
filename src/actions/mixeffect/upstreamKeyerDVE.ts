@@ -1,10 +1,10 @@
 import { Enums, type Atem } from 'atem-connection'
 import { convertOptionsFields } from '../../options/util.js'
-import type { CompanionActionDefinitions } from '@companion-module/base'
+import type { CompanionActionDefinitions, JsonValue } from '@companion-module/base'
 import { AtemUSKDVEPropertiesPickers, AtemUSKPicker, AtemUSKKeyframePropertiesPickers } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
-import { CHOICES_FLYDIRECTIONS, CHOICES_KEYFRAMES, CHOICES_KEYFRAMES_CONFIGURABLE } from '../../choices.js'
+import { CHOICES_FLYDIRECTIONS } from '../../choices.js'
 import { getUSK, type StateWrapper } from '../../state.js'
 import type {
 	UpstreamKeyerDVESettings,
@@ -13,6 +13,11 @@ import type {
 import type { AtemTransitions, TransitionOptions } from '../../transitions.js'
 import { AtemTransitionAnimationOptions } from '../../options/fade.js'
 import { AtemMEPicker } from '../../options/mixEffect.js'
+import {
+	AtemFlyKeyKeyFramePicker,
+	FlyKeyKeyFrameString,
+	flyKeyKeyFrameStringToEnum,
+} from '../../options/upstreamKeyer.js'
 
 export type AtemUpstreamKeyerDVEActions = {
 	[ActionId.USKDVEProperties]: {
@@ -81,7 +86,7 @@ export type AtemUpstreamKeyerDVEActions = {
 		options: {
 			mixeffect: number
 			key: number
-			keyframe: Enums.FlyKeyKeyFrame.A | Enums.FlyKeyKeyFrame.B
+			keyframe: FlyKeyKeyFrameString | JsonValue | undefined
 
 			properties: Array<
 				| 'positionX'
@@ -136,14 +141,14 @@ export type AtemUpstreamKeyerDVEActions = {
 		options: {
 			mixeffect: number
 			key: number
-			keyframe: Enums.FlyKeyKeyFrame.A | Enums.FlyKeyKeyFrame.B
+			keyframe: FlyKeyKeyFrameString | JsonValue | undefined
 		}
 	}
 	[ActionId.USKFly]: {
 		options: {
 			mixeffect: number
 			key: number
-			keyframe: Enums.FlyKeyKeyFrame.A | Enums.FlyKeyKeyFrame.B | Enums.FlyKeyKeyFrame.Full
+			keyframe: FlyKeyKeyFrameString | JsonValue | undefined
 		}
 	}
 	[ActionId.USKFlyInfinite]: {
@@ -345,20 +350,16 @@ export function createUpstreamKeyerDVEActions(
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
-				keyframe: {
-					type: 'dropdown',
-					id: 'keyframe',
-					label: 'Key Frame',
-					choices: CHOICES_KEYFRAMES_CONFIGURABLE,
-					default: CHOICES_KEYFRAMES_CONFIGURABLE[0].id,
-					disableAutoExpression: true, // TODO: Until the options are simplified
-				},
+				keyframe: AtemFlyKeyKeyFramePicker(),
 				...AtemUSKKeyframePropertiesPickers(),
 			}),
 			callback: async ({ options }) => {
 				const mixEffectId = options.mixeffect - 1
 				const keyId = options.key - 1
-				const keyframeId = options.keyframe
+				const keyframeId = flyKeyKeyFrameStringToEnum(options.keyframe)
+				if (keyframeId !== Enums.FlyKeyKeyFrame.A && keyframeId !== Enums.FlyKeyKeyFrame.B)
+					throw new Error(`Cannot set invalid keyfame: ${JSON.stringify(options.keyframe)}`)
+
 				const properties: Partial<UpstreamKeyerFlyKeyframe> = {}
 
 				const props = options.properties
@@ -469,17 +470,14 @@ export function createUpstreamKeyerDVEActions(
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
-				keyframe: {
-					type: 'dropdown',
-					id: 'keyframe',
-					label: 'Key Frame',
-					choices: CHOICES_KEYFRAMES_CONFIGURABLE,
-					default: CHOICES_KEYFRAMES_CONFIGURABLE[0].id,
-					disableAutoExpression: true, // TODO: Until the options are simplified
-				},
+				keyframe: AtemFlyKeyKeyFramePicker(),
 			}),
 			callback: async ({ options }) => {
-				await atem?.storeUpstreamKeyerFlyKeyKeyframe(options.mixeffect - 1, options.key - 1, options.keyframe)
+				const keyframeId = flyKeyKeyFrameStringToEnum(options.keyframe)
+				if (keyframeId !== Enums.FlyKeyKeyFrame.A && keyframeId !== Enums.FlyKeyKeyFrame.B)
+					throw new Error(`Cannot set invalid keyfame: ${JSON.stringify(options.keyframe)}`)
+
+				await atem?.storeUpstreamKeyerFlyKeyKeyframe(options.mixeffect - 1, options.key - 1, keyframeId)
 			},
 		},
 		[ActionId.USKFly]: {
@@ -487,17 +485,18 @@ export function createUpstreamKeyerDVEActions(
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
-				keyframe: {
-					type: 'dropdown',
-					id: 'keyframe',
-					label: 'Key Frame',
-					choices: CHOICES_KEYFRAMES,
-					default: CHOICES_KEYFRAMES[0].id,
-					disableAutoExpression: true, // TODO: Until the options are simplified
-				},
+				keyframe: AtemFlyKeyKeyFramePicker(true),
 			}),
 			callback: async ({ options }) => {
-				await atem?.runUpstreamKeyerFlyKeyTo(options.mixeffect - 1, options.key - 1, options.keyframe)
+				const keyframeId = flyKeyKeyFrameStringToEnum(options.keyframe, true)
+				if (
+					keyframeId !== Enums.FlyKeyKeyFrame.A &&
+					keyframeId !== Enums.FlyKeyKeyFrame.B &&
+					keyframeId !== Enums.FlyKeyKeyFrame.Full
+				)
+					throw new Error(`Cannot set invalid keyfame: ${JSON.stringify(options.keyframe)}`)
+
+				await atem?.runUpstreamKeyerFlyKeyTo(options.mixeffect - 1, options.key - 1, keyframeId)
 			},
 			learn: ({ options }) => {
 				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)

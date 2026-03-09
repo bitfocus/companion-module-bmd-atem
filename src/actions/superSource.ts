@@ -3,23 +3,24 @@ import { convertOptionsFields } from '../options/util.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
-import {
-	AtemSuperSourceArtPropertiesPickers,
-	AtemSuperSourceBoxPicker,
-	AtemSuperSourceBoxSourcePicker,
-	AtemSuperSourceIdPicker,
-	AtemSuperSourcePropertiesPickersForOffset,
-	type AtemSuperSourceArtProperties,
-	resolveTrueFalseToggle,
-	AtemSSrcArtOptionToProtocolEnum,
-	AtemSSrcArtOptionFromProtocolEnum,
-} from '../input.js'
+import { resolveTrueFalseToggle } from '../input.js'
 import type { SuperSource } from 'atem-connection/dist/state/video/index.js'
 import { CHOICES_KEYTRANS, type TrueFalseToggle } from '../choices.js'
 import { getSuperSourceBox, type StateWrapper } from '../state.js'
 import { clamp } from '../util.js'
 import type { AtemTransitions, TransitionOptions } from '../transitions.js'
-import { AtemSuperSourceProperties, AtemSuperSourcePropertiesPickers } from '../options/superSource.js'
+import {
+	AtemSuperSourceIdPicker,
+	AtemSuperSourceBoxPropertiesPickers,
+	AtemSuperSourceArtPropertiesPickers,
+	AtemSSrcArtOptionToProtocolEnum,
+	AtemSSrcArtOptionFromProtocolEnum,
+	AtemSuperSourceBoxPicker,
+	AtemSuperSourceBoxSourcePicker,
+	AtemSuperSourceBoxPropertiesPickersForOffset,
+	type AtemSuperSourceBoxProperties,
+	type AtemSuperSourceArtProperties,
+} from '../options/superSource.js'
 import { AtemTransitionAnimationOptions } from '../options/fade.js'
 
 export type AtemSuperSourceActions = {
@@ -47,7 +48,7 @@ export type AtemSuperSourceActions = {
 			ssrcId: number
 			boxIndex: number
 		} & TransitionOptions &
-			AtemSuperSourceProperties
+			AtemSuperSourceBoxProperties
 	}
 	[ActionId.SuperSourceBoxPropertiesDelta]: {
 		options: {
@@ -214,7 +215,7 @@ export function createSuperSourceActions(
 				ssrcId: AtemSuperSourceIdPicker(model),
 				boxIndex: AtemSuperSourceBoxPicker(),
 				...AtemTransitionAnimationOptions(),
-				...AtemSuperSourcePropertiesPickers(model, state.state),
+				...AtemSuperSourceBoxPropertiesPickers(model, state.state),
 			}),
 			callback: async ({ options }) => {
 				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
@@ -287,7 +288,7 @@ export function createSuperSourceActions(
 			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				boxIndex: AtemSuperSourceBoxPicker(),
-				...AtemSuperSourcePropertiesPickersForOffset(),
+				...AtemSuperSourceBoxPropertiesPickersForOffset(),
 			}),
 			callback: async ({ options }) => {
 				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0

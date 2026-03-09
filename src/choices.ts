@@ -5,13 +5,6 @@ import { iterateTimes, assertUnreachable } from './util.js'
 import { AudioChannelPair } from 'atem-connection/dist/enums/index.js'
 import { combineInputId } from './models/util/audioRouting.js'
 
-export const CHOICES_SSRCBOXES: DropdownChoice[] = [
-	{ id: 1, label: 'Box 1' },
-	{ id: 2, label: 'Box 2' },
-	{ id: 3, label: 'Box 3' },
-	{ id: 4, label: 'Box 4' },
-]
-
 export const CHOICES_BORDER_BEVEL: DropdownChoice[] = [
 	{ id: 0, label: 'None' },
 	{ id: 1, label: 'InOut' },
@@ -63,19 +56,6 @@ export const CHOICES_KEYTRANS: DropdownChoice<TrueFalseToggle>[] = [
 	{ id: 'true', label: 'On Air' },
 	{ id: 'false', label: 'Off' },
 	{ id: 'toggle', label: 'Toggle' },
-]
-
-export const CHOICES_KEYFRAMES: DropdownChoice<
-	Enums.FlyKeyKeyFrame.A | Enums.FlyKeyKeyFrame.B | Enums.FlyKeyKeyFrame.Full
->[] = [
-	{ id: Enums.FlyKeyKeyFrame.A, label: 'A' },
-	{ id: Enums.FlyKeyKeyFrame.B, label: 'B' },
-	{ id: Enums.FlyKeyKeyFrame.Full, label: 'Full' },
-]
-
-export const CHOICES_KEYFRAMES_CONFIGURABLE: DropdownChoice<Enums.FlyKeyKeyFrame.A | Enums.FlyKeyKeyFrame.B>[] = [
-	{ id: Enums.FlyKeyKeyFrame.A, label: 'A' },
-	{ id: Enums.FlyKeyKeyFrame.B, label: 'B' },
 ]
 
 export const CHOICES_CURRENTKEYFRAMES: DropdownChoice<
@@ -172,13 +152,6 @@ export function GetMultiviewerIdChoices(model: ModelSpec): DropdownChoice[] {
 	return iterateTimes(model.MVs, (i) => ({
 		id: i + 1,
 		label: `MV ${i + 1}`,
-	}))
-}
-
-export function GetSuperSourceIdChoices(model: ModelSpec): DropdownChoice[] {
-	return iterateTimes(model.SSrc, (i) => ({
-		id: i + 1,
-		label: `Super Source ${i + 1}`,
 	}))
 }
 

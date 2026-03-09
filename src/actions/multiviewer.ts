@@ -4,16 +4,13 @@ import { ActionId } from './ActionId.js'
 import { getMultiviewer, getMultiviewerWindow, type StateWrapper } from '../state.js'
 import { AtemMultiviewerPicker, AtemMultiviewWindowPicker, AtemMultiviewSourcePicker } from '../input.js'
 import { convertOptionsFields } from '../options/util.js'
-import { assertNever, CompanionActionDefinitions, DropdownChoice } from '@companion-module/base'
-
-type MultiviewerQuadrantState = 'single' | 'quad' | 'ignore' | 'toggle'
-
-const ChoicesMultiviewerQuadrantState: DropdownChoice<MultiviewerQuadrantState>[] = [
-	{ id: 'ignore', label: 'Unchanged' },
-	{ id: 'toggle', label: 'Toggle' },
-	{ id: 'single', label: 'Single' },
-	{ id: 'quad', label: 'Quad' },
-]
+import { assertNever, CompanionActionDefinitions, JsonValue } from '@companion-module/base'
+import {
+	AtemMultiviewerQuadrantStatePicker,
+	MultiviewerQuadrantState,
+	multiviewerQuadrantStateFromLayout,
+	multiviewerQuadrantStateStringToState,
+} from '../options/multiviewer.js'
 
 export type AtemMultiviewerActions = {
 	[ActionId.MultiviewerWindowSource]: {
@@ -26,10 +23,10 @@ export type AtemMultiviewerActions = {
 	[ActionId.MultiviewerLayout]: {
 		options: {
 			multiViewerId: number
-			topLeft: MultiviewerQuadrantState
-			topRight: MultiviewerQuadrantState
-			bottomLeft: MultiviewerQuadrantState
-			bottomRight: MultiviewerQuadrantState
+			topLeft: MultiviewerQuadrantState | JsonValue | undefined
+			topRight: MultiviewerQuadrantState | JsonValue | undefined
+			bottomLeft: MultiviewerQuadrantState | JsonValue | undefined
+			bottomRight: MultiviewerQuadrantState | JsonValue | undefined
 		}
 	}
 }
@@ -74,31 +71,23 @@ export function createMultiviewerActions(
 				multiViewerId: AtemMultiviewerPicker(model),
 				topLeft: {
 					id: 'topLeft',
-					type: 'dropdown',
 					label: 'Top left',
-					choices: ChoicesMultiviewerQuadrantState,
-					default: 'ignore',
+					...AtemMultiviewerQuadrantStatePicker(true),
 				},
 				topRight: {
 					id: 'topRight',
-					type: 'dropdown',
 					label: 'Top right',
-					choices: ChoicesMultiviewerQuadrantState,
-					default: 'ignore',
+					...AtemMultiviewerQuadrantStatePicker(true),
 				},
 				bottomLeft: {
 					id: 'bottomLeft',
-					type: 'dropdown',
 					label: 'Bottom left',
-					choices: ChoicesMultiviewerQuadrantState,
-					default: 'ignore',
+					...AtemMultiviewerQuadrantStatePicker(true),
 				},
 				bottomRight: {
 					id: 'bottomRight',
-					type: 'dropdown',
 					label: 'Bottom right',
-					choices: ChoicesMultiviewerQuadrantState,
-					default: 'ignore',
+					...AtemMultiviewerQuadrantStatePicker(true),
 				},
 			}),
 			callback: async ({ options }) => {
@@ -107,10 +96,16 @@ export function createMultiviewerActions(
 				const mv = getMultiviewer(state.state, multiViewerId)
 				let layout: Enums.MultiViewerLayout = mv?.properties?.layout ?? Enums.MultiViewerLayout.Default
 
-				const updateLayout = (selected: MultiviewerQuadrantState, value: Enums.MultiViewerLayout) => {
-					if (selected === 'toggle') selected = layout & value ? 'single' : 'quad'
+				const updateLayout = (
+					selected: MultiviewerQuadrantState | JsonValue | undefined,
+					value: Enums.MultiViewerLayout,
+				) => {
+					let parsedSelected = multiviewerQuadrantStateStringToState(selected, true)
+					if (parsedSelected === null) return
 
-					switch (selected) {
+					if (parsedSelected === 'toggle') parsedSelected = layout & value ? 'single' : 'quad'
+
+					switch (parsedSelected) {
 						case 'ignore':
 							break
 						case 'single':
@@ -120,7 +115,7 @@ export function createMultiviewerActions(
 							layout = layout | value
 							break
 						default:
-							assertNever(selected)
+							assertNever(parsedSelected)
 							break
 					}
 				}
@@ -142,13 +137,11 @@ export function createMultiviewerActions(
 				if (mv?.properties) {
 					const layout = mv.properties.layout
 
-					const getState = (value: Enums.MultiViewerLayout) => (layout & value ? 'quad' : 'single')
-
 					return {
-						topLeft: getState(Enums.MultiViewerLayout.TopLeftSmall),
-						topRight: getState(Enums.MultiViewerLayout.TopRightSmall),
-						bottomLeft: getState(Enums.MultiViewerLayout.BottomLeftSmall),
-						bottomRight: getState(Enums.MultiViewerLayout.BottomRightSmall),
+						topLeft: multiviewerQuadrantStateFromLayout(layout, Enums.MultiViewerLayout.TopLeftSmall),
+						topRight: multiviewerQuadrantStateFromLayout(layout, Enums.MultiViewerLayout.TopRightSmall),
+						bottomLeft: multiviewerQuadrantStateFromLayout(layout, Enums.MultiViewerLayout.BottomLeftSmall),
+						bottomRight: multiviewerQuadrantStateFromLayout(layout, Enums.MultiViewerLayout.BottomRightSmall),
 					}
 				} else {
 					return undefined

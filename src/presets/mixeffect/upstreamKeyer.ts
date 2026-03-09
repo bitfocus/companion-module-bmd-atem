@@ -1,7 +1,12 @@
-import { assertNever, CompanionPresetGroup, type CompanionButtonStyleProps } from '@companion-module/base'
+import {
+	assertNever,
+	CompanionPresetGroup,
+	DropdownChoice,
+	type CompanionButtonStyleProps,
+} from '@companion-module/base'
 import { ActionId } from '../../actions/ActionId.js'
 import { FeedbackId } from '../../feedback/FeedbackId.js'
-import { CHOICES_KEYFRAMES, type SourceInfo } from '../../choices.js'
+import type { SourceInfo } from '../../choices.js'
 import { Enums } from 'atem-connection'
 import type { PresetsBuilderContext } from '../context.js'
 import type { AtemSchema } from '../../schema.js'
@@ -22,6 +27,14 @@ export function createUpstreamKeyerPresets(
 	})
 
 	// Pre-process fly directions: compute action keyframes and create definitions up-front
+	// TODO - inline this
+	const CHOICES_KEYFRAMES: DropdownChoice<
+		Enums.FlyKeyKeyFrame.A | Enums.FlyKeyKeyFrame.B | Enums.FlyKeyKeyFrame.Full
+	>[] = [
+		{ id: Enums.FlyKeyKeyFrame.A, label: 'A' },
+		{ id: Enums.FlyKeyKeyFrame.B, label: 'B' },
+		{ id: Enums.FlyKeyKeyFrame.Full, label: 'Full' },
+	]
 	const flyDirections: Array<{ choice: (typeof CHOICES_KEYFRAMES)[number]; actionKeyframe: Enums.IsAtKeyFrame }> = []
 	for (const flydirection of CHOICES_KEYFRAMES) {
 		let actionKeyframe: Enums.IsAtKeyFrame

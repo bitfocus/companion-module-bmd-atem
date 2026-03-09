@@ -8,10 +8,10 @@ import {
 } from '@companion-module/base'
 import type { AtemConfig } from '../config.js'
 import { Enums } from 'atem-connection'
-import type { SSrcArtOption } from '../input.js'
+import type { SSrcArtOption } from '../options/superSource.js'
 import type { FairlightMixOption2 } from '../choices.js'
 import { OffsetNumericExpressionOrValueByX } from './util.js'
-import type { UpstreamKeyerTypeString } from '../options/upstreamKeyer.js'
+import type { FlyKeyKeyFrameString, UpstreamKeyerTypeString } from '../options/upstreamKeyer.js'
 import type { TransitionStyleString } from '../options/mixEffect.js'
 
 type ActionFixupRule = {
@@ -75,6 +75,13 @@ const transitionStyleValueMap: Record<Enums.TransitionStyle, TransitionStyleStri
 	[Enums.TransitionStyle.WIPE]: 'wipe',
 	[Enums.TransitionStyle.DVE]: 'dve',
 	[Enums.TransitionStyle.STING]: 'sting',
+}
+const flyKeyKeyFrameValueMap: Record<Enums.FlyKeyKeyFrame, FlyKeyKeyFrameString> = {
+	[Enums.FlyKeyKeyFrame.None]: '' as any,
+	[Enums.FlyKeyKeyFrame.A]: 'a',
+	[Enums.FlyKeyKeyFrame.B]: 'b',
+	[Enums.FlyKeyKeyFrame.Full]: 'full',
+	[Enums.FlyKeyKeyFrame.RunToInfinite]: 'infinite' as any,
 }
 
 const MEDIA_PLAYER_SOURCE_CLIP_OFFSET = 1000
@@ -451,6 +458,7 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 		options: {
 			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
 			key: { transform: { type: 'number', zeroBased: true, variables: false } },
+			keyframe: { transform: { type: 'lookup', lookup: flyKeyKeyFrameValueMap } },
 			//
 		},
 	},
@@ -458,14 +466,14 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 		options: {
 			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
 			key: { transform: { type: 'number', zeroBased: true, variables: false } },
-			//
+			keyframe: { transform: { type: 'lookup', lookup: flyKeyKeyFrameValueMap } },
 		},
 	},
 	uskFly: {
 		options: {
 			mixeffect: { transform: { type: 'number', zeroBased: true, variables: false } },
 			key: { transform: { type: 'number', zeroBased: true, variables: false } },
-			//
+			keyframe: { transform: { type: 'lookup', lookup: flyKeyKeyFrameValueMap } },
 		},
 	},
 	uskFlyInfinite: {

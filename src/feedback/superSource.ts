@@ -4,19 +4,20 @@ import type { ModelSpec } from '../models/index.js'
 import { FeedbackId } from './FeedbackId.js'
 import { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { getSuperSource } from 'atem-connection/dist/state/util.js'
+import { getSuperSourceBox, type StateWrapper } from '../state.js'
 import {
 	AtemSuperSourceIdPicker,
+	AtemSuperSourceBoxProperties,
+	AtemSuperSourceBoxPropertiesPickers,
+	AtemSuperSourceArtProperties,
+	AtemSSrcArtOptionToProtocolEnum,
 	AtemSuperSourceArtPropertiesPickers,
-	AtemSuperSourceArtSourcePicker,
 	AtemSuperSourceArtOption,
+	AtemSSrcArtOptionFromProtocolEnum,
+	AtemSuperSourceArtSourcePicker,
 	AtemSuperSourceBoxPicker,
 	AtemSuperSourceBoxSourcePicker,
-	type AtemSuperSourceArtProperties,
-	AtemSSrcArtOptionToProtocolEnum,
-	AtemSSrcArtOptionFromProtocolEnum,
-} from '../input.js'
-import { getSuperSourceBox, type StateWrapper } from '../state.js'
-import { AtemSuperSourceProperties, AtemSuperSourcePropertiesPickers } from '../options/superSource.js'
+} from '../options/superSource.js'
 
 export type AtemSuperSourceFeedbacks = {
 	[FeedbackId.SSrcArtProperties]: {
@@ -59,7 +60,7 @@ export type AtemSuperSourceFeedbacks = {
 		options: {
 			ssrcId: number
 			boxIndex: number
-		} & AtemSuperSourceProperties
+		} & AtemSuperSourceBoxProperties
 	}
 }
 
@@ -260,7 +261,7 @@ export function createSuperSourceFeedbacks(
 			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				boxIndex: AtemSuperSourceBoxPicker(),
-				...AtemSuperSourcePropertiesPickers(model, state.state),
+				...AtemSuperSourceBoxPropertiesPickers(model, state.state),
 			}),
 			defaultStyle: {
 				color: 0x000000,
