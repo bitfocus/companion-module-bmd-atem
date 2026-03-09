@@ -2,7 +2,7 @@ import type { ModelSpec } from '../models/index.js'
 import { convertOptionsFields } from '../options/util.js'
 import { FeedbackId } from './FeedbackId.js'
 import { CompanionFeedbackDefinitions } from '@companion-module/base'
-import { AtemAuxPicker, AtemAuxSourcePicker } from '../input.js'
+import { AtemAuxPicker, AtemAuxSourcePicker } from '../options/aux-outputs.js'
 import type { StateWrapper } from '../state.js'
 
 export type AtemAuxOutputFeedbacks = {

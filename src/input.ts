@@ -12,11 +12,7 @@ import {
 	CHOICES_NEXTTRANS_BACKGROUND,
 	CHOICES_NEXTTRANS_KEY,
 	GetAudioInputsList,
-	GetAuxIdChoices,
-	GetMediaPlayerChoices,
-	GetMultiviewerIdChoices,
 	GetSourcesListForType,
-	GetUSKIdChoices,
 	NextTransBackgroundChoices,
 	NextTransKeyChoices,
 	type TrueFalseToggle,
@@ -30,16 +26,6 @@ import { iterateTimes, NumberComparitor } from './util.js'
 import { DropdownPropertiesPicker, SourcesToChoices } from './options/util.js'
 import { AtemRatePicker, MaskPropertiesPickers } from './options/common.js'
 
-export function AtemUpstreamKeyerPatternPicker(): CompanionInputFieldDropdown<'pattern'> {
-	return {
-		type: 'dropdown',
-		id: 'pattern',
-		label: 'Pattern',
-		default: Enums.Pattern.LeftToRightBar,
-		choices: GetUpstreamKeyerPatternChoices(),
-		disableAutoExpression: true, // Needs translating first
-	}
-}
 export function AtemTransitionSelectComponentsPickers(model: ModelSpec): {
 	background: CompanionInputFieldDropdown<'background', NextTransBackgroundChoices>
 	[id: `key${string}`]: CompanionInputFieldDropdown<`key${string}`, NextTransKeyChoices>
@@ -120,7 +106,10 @@ export function AtemUSKPicker(model: ModelSpec): CompanionInputFieldDropdown<'ke
 		label: 'Key',
 		id: 'key',
 		default: 1,
-		choices: GetUSKIdChoices(model),
+		choices: iterateTimes(model.USKs, (i) => ({
+			id: i + 1,
+			label: `${i + 1}`,
+		})),
 	}
 }
 export function AtemUSKDVEPropertiesPickers(): {
@@ -709,69 +698,18 @@ export function AtemUSKKeyframePropertiesPickers(): {
 		...allProps,
 	}
 }
-export function AtemAuxPicker(model: ModelSpec): CompanionInputFieldDropdown<'aux'> {
-	return {
-		type: 'dropdown',
-		id: 'aux',
-		label: 'Aux/Output',
-		default: 1,
-		choices: GetAuxIdChoices(model),
-	}
-}
-export function AtemMultiviewerPicker(model: ModelSpec): CompanionInputFieldDropdown<'multiViewerId'> {
-	return {
-		type: 'dropdown',
-		id: 'multiViewerId',
-		label: 'MV',
-		default: 1,
-		choices: GetMultiviewerIdChoices(model),
-	}
-}
-export function AtemAuxSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown<'input'> {
-	return {
-		type: 'dropdown',
-		label: 'Input',
-		id: 'input',
-		default: 1,
-		choices: SourcesToChoices(GetSourcesListForType(model, state, 'aux')),
-	}
-}
-
-export function AtemMultiviewSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown<'source'> {
-	return {
-		type: 'dropdown',
-		id: 'source',
-		label: 'Source',
-		default: 0,
-		choices: SourcesToChoices(GetSourcesListForType(model, state, 'mv')),
-	}
-}
-export function AtemMultiviewWindowPicker(model: ModelSpec): CompanionInputFieldDropdown<'windowIndex'> {
-	const choices = model.multiviewerFullGrid
-		? iterateTimes(16, (i) => ({
-				id: i + 1,
-				label: `Window ${i + 1}`,
-			}))
-		: iterateTimes(8, (i) => ({
-				id: i + 3,
-				label: `Window ${i + 3}`,
-			}))
-
-	return {
-		type: 'dropdown',
-		id: 'windowIndex',
-		label: 'Window #',
-		default: model.multiviewerFullGrid ? 1 : 3,
-		choices,
-	}
-}
 export function AtemMediaPlayerPicker(model: ModelSpec): CompanionInputFieldDropdown<'mediaplayer'> {
 	return {
 		type: 'dropdown',
 		id: 'mediaplayer',
 		label: 'Media Player',
 		default: 1,
-		choices: GetMediaPlayerChoices(model),
+		choices: iterateTimes(model.media.players, (i) => {
+			return {
+				id: i + 1,
+				label: `Media Player ${i + 1}`,
+			}
+		}),
 	}
 }
 
@@ -901,204 +839,6 @@ export function AtemAllSourcePicker(model: ModelSpec, state: AtemState): Compani
 		label: 'Source',
 		default: 0,
 		choices: SourcesToChoices(GetSourcesListForType(model, state)),
-	}
-}
-
-export function AtemDisplayClockPropertiesPickers(): {
-	enabled: CompanionInputFieldCheckbox<'enabled'>
-	size: CompanionInputFieldNumber<'size'>
-	opacity: CompanionInputFieldNumber<'opacity'>
-	x: CompanionInputFieldNumber<'x'>
-	y: CompanionInputFieldNumber<'y'>
-	autoHide: CompanionInputFieldCheckbox<'autoHide'>
-	clockMode: CompanionInputFieldDropdown<'clockMode'>
-	properties: CompanionInputFieldMultiDropdown<'properties'>
-} {
-	// Array <
-	// 	| CompanionInputFieldNumber
-	// 	| CompanionInputFieldCheckbox
-	// 	| CompanionInputFieldDropdown
-	// 	| CompanionInputFieldMultiDropdown
-	// >
-	const offset = false
-	const allProps: Omit<ReturnType<typeof AtemDisplayClockPropertiesPickers>, 'properties'> = {
-		enabled: {
-			type: 'checkbox',
-			id: 'enabled',
-			label: 'Display',
-			default: false,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'enabled')`,
-		},
-		size: {
-			type: 'number',
-			id: 'size',
-			label: 'Size',
-			min: offset ? -1 : 0,
-			max: 1,
-			range: true,
-			default: offset ? 0 : 0.5,
-			step: 0.01,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'size')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		opacity: {
-			type: 'number',
-			id: 'opacity',
-			label: 'Opacity',
-			min: offset ? -1 : 0,
-			max: 1,
-			range: true,
-			default: offset ? 0 : 1,
-			step: 0.01,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'opacity')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		x: {
-			type: 'number',
-			id: 'x',
-			label: 'X',
-			min: -16,
-			max: 16,
-			range: true,
-			default: 0,
-			step: 0.01,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'x')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		y: {
-			type: 'number',
-			id: 'y',
-			label: 'Y',
-			min: -9,
-			max: 9,
-			range: true,
-			default: 0,
-			step: 0.01,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'y')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		//!offset?
-		autoHide: {
-			type: 'checkbox',
-			id: 'autoHide',
-			label: 'Auto Hide',
-			default: false,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'autoHide')`,
-		},
-		// startFrom: 1 << 6,
-		//!offset?
-		clockMode: {
-			id: 'clockMode',
-			label: 'Mode',
-			type: 'dropdown',
-			default: Enums.DisplayClockClockMode.Countdown,
-			choices: [
-				{ id: Enums.DisplayClockClockMode.Countdown, label: 'Count down' },
-				{ id: Enums.DisplayClockClockMode.Countup, label: 'Count up' },
-				{ id: Enums.DisplayClockClockMode.TimeOfDay, label: 'Time of Day' },
-			],
-			isVisibleExpression: `arrayIncludes($(options:properties), 'clockMode')`,
-			disableAutoExpression: true,
-		},
-	}
-
-	return {
-		properties: DropdownPropertiesPicker(allProps),
-		...allProps,
-	}
-}
-
-export function AtemDisplayClockTimePickers(): {
-	hours: CompanionInputFieldNumber<'hours'>
-	minutes: CompanionInputFieldNumber<'minutes'>
-	seconds: CompanionInputFieldNumber<'seconds'>
-} {
-	return {
-		hours: {
-			type: 'number',
-			id: 'hours',
-			label: 'Hours',
-			min: 0,
-			max: 23,
-			range: true,
-			default: 0,
-			step: 1,
-			asInteger: true,
-			clampValues: true,
-		},
-		minutes: {
-			type: 'number',
-			id: 'minutes',
-			label: 'Minutes',
-			min: 0,
-			max: 59,
-			range: true,
-			default: 0,
-			step: 1,
-			asInteger: true,
-			clampValues: true,
-		},
-		seconds: {
-			type: 'number',
-			id: 'seconds',
-			label: 'Seconds',
-			min: 0,
-			max: 59,
-			range: true,
-			default: 0,
-			step: 1,
-			asInteger: true,
-			clampValues: true,
-		},
-	}
-}
-
-export function AtemDisplayClockTimeOffsetPickers(): {
-	hours: CompanionInputFieldNumber<'hours'>
-	minutes: CompanionInputFieldNumber<'minutes'>
-	seconds: CompanionInputFieldNumber<'seconds'>
-} {
-	return {
-		hours: {
-			type: 'number',
-			id: 'hours',
-			label: 'Hours',
-			min: -23,
-			max: 23,
-			range: true,
-			default: 0,
-			step: 1,
-			asInteger: true,
-			clampValues: true,
-		},
-		minutes: {
-			type: 'number',
-			id: 'minutes',
-			label: 'Minutes',
-			min: -59,
-			max: 59,
-			range: true,
-			default: 0,
-			step: 1,
-			asInteger: true,
-			clampValues: true,
-		},
-		seconds: {
-			type: 'number',
-			id: 'seconds',
-			label: 'Seconds',
-			min: -59,
-			max: 59,
-			range: true,
-			default: 0,
-			step: 1,
-			asInteger: true,
-			clampValues: true,
-		},
 	}
 }
 

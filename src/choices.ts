@@ -1,7 +1,7 @@
 import type { CompanionInputFieldNumber, DropdownChoice } from '@companion-module/base'
 import { type AtemState, Enums } from 'atem-connection'
 import type { ModelSpec } from './models/index.js'
-import { iterateTimes, assertUnreachable } from './util.js'
+import { assertUnreachable } from './util.js'
 import { AudioChannelPair } from 'atem-connection/dist/enums/index.js'
 import { combineInputId } from './models/util/audioRouting.js'
 
@@ -132,36 +132,6 @@ export function GetUpstreamKeyerPatternChoices(): DropdownChoice<Enums.Pattern>[
 		{ id: Enums.Pattern.TopRightDiagonal, label: 'Top Right Diagonal' },
 	]
 	return options
-}
-
-export function GetAuxIdChoices(model: ModelSpec): DropdownChoice[] {
-	return model.outputs.map((output) => ({
-		id: output.id + 1,
-		label: output.name,
-	}))
-}
-
-export function GetUSKIdChoices(model: ModelSpec): DropdownChoice[] {
-	return iterateTimes(model.USKs, (i) => ({
-		id: i + 1,
-		label: `${i + 1}`,
-	}))
-}
-
-export function GetMultiviewerIdChoices(model: ModelSpec): DropdownChoice[] {
-	return iterateTimes(model.MVs, (i) => ({
-		id: i + 1,
-		label: `MV ${i + 1}`,
-	}))
-}
-
-export function GetMediaPlayerChoices(model: ModelSpec): DropdownChoice[] {
-	return iterateTimes(model.media.players, (i) => {
-		return {
-			id: i + 1,
-			label: `Media Player ${i + 1}`,
-		}
-	})
 }
 
 export interface MiniSourceInfo {

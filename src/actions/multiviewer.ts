@@ -2,7 +2,6 @@ import { Enums, type Atem } from 'atem-connection'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
 import { getMultiviewer, getMultiviewerWindow, type StateWrapper } from '../state.js'
-import { AtemMultiviewerPicker, AtemMultiviewWindowPicker, AtemMultiviewSourcePicker } from '../input.js'
 import { convertOptionsFields } from '../options/util.js'
 import { assertNever, CompanionActionDefinitions, JsonValue } from '@companion-module/base'
 import {
@@ -10,6 +9,9 @@ import {
 	MultiviewerQuadrantState,
 	multiviewerQuadrantStateFromLayout,
 	multiviewerQuadrantStateStringToState,
+	AtemMultiviewerPicker,
+	AtemMultiviewWindowPicker,
+	AtemMultiviewSourcePicker,
 } from '../options/multiviewer.js'
 
 export type AtemMultiviewerActions = {

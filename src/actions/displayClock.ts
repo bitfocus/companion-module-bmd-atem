@@ -5,7 +5,7 @@ import {
 	AtemDisplayClockPropertiesPickers,
 	AtemDisplayClockTimeOffsetPickers,
 	AtemDisplayClockTimePickers,
-} from '../input.js'
+} from '../options/displayClock.js'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
 import type { StateWrapper } from '../state.js'

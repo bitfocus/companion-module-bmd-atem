@@ -1,4 +1,3 @@
-import { AtemMultiviewSourcePicker, AtemMultiviewWindowPicker, AtemMultiviewerPicker } from '../input.js'
 import type { ModelSpec } from '../models/index.js'
 import { FeedbackId } from './FeedbackId.js'
 import { assertNever, CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
@@ -10,6 +9,9 @@ import {
 	MultiviewerQuadrantState,
 	multiviewerQuadrantStateFromLayout,
 	multiviewerQuadrantStateStringToState,
+	AtemMultiviewSourcePicker,
+	AtemMultiviewWindowPicker,
+	AtemMultiviewerPicker,
 } from '../options/multiviewer.js'
 
 export type AtemMultiviewerFeedbacks = {

@@ -1,6 +1,51 @@
-import { DropdownChoice, type JsonValue, type CompanionInputFieldDropdown } from '@companion-module/base'
-import { Enums } from 'atem-connection'
-import { stringifyValueAlways } from '../util.js'
+import type { DropdownChoice, JsonValue, CompanionInputFieldDropdown } from '@companion-module/base'
+import { AtemState, Enums } from 'atem-connection'
+import { iterateTimes, stringifyValueAlways } from '../util.js'
+import { GetSourcesListForType } from '../choices.js'
+import type { ModelSpec } from '../models/types.js'
+import { SourcesToChoices } from './util.js'
+
+export function AtemMultiviewerPicker(model: ModelSpec): CompanionInputFieldDropdown<'multiViewerId'> {
+	return {
+		type: 'dropdown',
+		id: 'multiViewerId',
+		label: 'MV',
+		default: 1,
+		choices: iterateTimes(model.MVs, (i) => ({
+			id: i + 1,
+			label: `MV ${i + 1}`,
+		})),
+	}
+}
+
+export function AtemMultiviewSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown<'source'> {
+	return {
+		type: 'dropdown',
+		id: 'source',
+		label: 'Source',
+		default: 0,
+		choices: SourcesToChoices(GetSourcesListForType(model, state, 'mv')),
+	}
+}
+export function AtemMultiviewWindowPicker(model: ModelSpec): CompanionInputFieldDropdown<'windowIndex'> {
+	const choices = model.multiviewerFullGrid
+		? iterateTimes(16, (i) => ({
+				id: i + 1,
+				label: `Window ${i + 1}`,
+			}))
+		: iterateTimes(8, (i) => ({
+				id: i + 3,
+				label: `Window ${i + 3}`,
+			}))
+
+	return {
+		type: 'dropdown',
+		id: 'windowIndex',
+		label: 'Window #',
+		default: model.multiviewerFullGrid ? 1 : 3,
+		choices,
+	}
+}
 
 export type MultiviewerQuadrantState = 'single' | 'quad' | 'ignore' | 'toggle'
 

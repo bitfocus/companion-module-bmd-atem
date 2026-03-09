@@ -1,7 +1,7 @@
 import { type Atem } from 'atem-connection'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
-import { AtemAuxPicker, AtemAuxSourcePicker } from '../input.js'
+import { AtemAuxPicker, AtemAuxSourcePicker } from '../options/aux-outputs.js'
 import type { StateWrapper } from '../state.js'
 import { convertOptionsFields } from '../options/util.js'
 import { CompanionActionDefinitions } from '@companion-module/base'
