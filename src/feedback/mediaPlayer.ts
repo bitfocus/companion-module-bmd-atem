@@ -1,32 +1,28 @@
 import { Enums } from 'atem-connection'
-import { AtemMediaPlayerPicker, AtemMediaPlayerSourcePicker } from '../input.js'
+import { convertOptionsFields } from '../options/util.js'
+import { AtemMediaPlayerPicker } from '../input.js'
 import type { ModelSpec } from '../models/index.js'
-import type { MyFeedbackDefinitions } from './types.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb } from '@companion-module/base'
-import { MEDIA_PLAYER_SOURCE_CLIP_OFFSET } from '../util.js'
+import { CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { StateWrapper } from '../state.js'
+import { AtemMediaPlayerSourcePickers, MediaPoolSourceOptions, parseMediaPoolSource } from '../options/mediaPool.js'
 
-export interface AtemMediaPlayerFeedbacks {
+export type AtemMediaPlayerFeedbacks = {
 	[FeedbackId.MediaPlayerSource]: {
-		mediaplayer: number
-		source: number
-	}
-	[FeedbackId.MediaPlayerSourceVariables]: {
-		mediaplayer: string
-		isClip?: boolean
-		slot: string
+		type: 'boolean'
+		options: {
+			mediaplayer: number
+		} & MediaPoolSourceOptions
 	}
 }
 
 export function createMediaPlayerFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemMediaPlayerFeedbacks> {
+): CompanionFeedbackDefinitions<AtemMediaPlayerFeedbacks> {
 	if (!model.media.players) {
 		return {
 			[FeedbackId.MediaPlayerSource]: undefined,
-			[FeedbackId.MediaPlayerSourceVariables]: undefined,
 		}
 	}
 	return {
@@ -34,24 +30,32 @@ export function createMediaPlayerFeedbacks(
 			type: 'boolean',
 			name: 'Media player: Source',
 			description: 'If the specified media player has the specified source, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				mediaplayer: AtemMediaPlayerPicker(model),
-				source: AtemMediaPlayerSourcePicker(model, state.state),
-			},
+
+				...AtemMediaPlayerSourcePickers(model, state.state),
+			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
-				const player = state.state.media.players[options.getPlainNumber('mediaplayer')]
+				const defaultClips = model.media.clips > 0 && options.defaultClip
+
+				const source = parseMediaPoolSource(model, options.source, defaultClips)
+				if (!source) return false
+
+				const player = state.state.media.players[options.mediaplayer]
 				if (
 					player?.sourceType === Enums.MediaSourceType.Still &&
-					player?.stillIndex === options.getPlainNumber('source')
+					!source.isClip &&
+					player?.stillIndex === source.slot
 				) {
 					return true
 				} else if (
 					player?.sourceType === Enums.MediaSourceType.Clip &&
-					player?.clipIndex === options.getPlainNumber('source') - MEDIA_PLAYER_SOURCE_CLIP_OFFSET
+					source.isClip &&
+					player?.clipIndex === source.slot
 				) {
 					return true
 				} else {
@@ -59,80 +63,11 @@ export function createMediaPlayerFeedbacks(
 				}
 			},
 			learn: ({ options }) => {
-				const player = state.state.media.players[options.getPlainNumber('mediaplayer')]
+				const player = state.state.media.players[options.mediaplayer]
 
 				if (player) {
 					return {
-						...options.getJson(),
-						source: player.sourceType ? player.stillIndex : player.clipIndex + MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
-					}
-				} else {
-					return undefined
-				}
-			},
-		},
-		[FeedbackId.MediaPlayerSourceVariables]: {
-			type: 'boolean',
-			name: 'Media player: Source from variables',
-			description: 'If the specified media player has the specified source, change style of the bank',
-			options: {
-				mediaplayer: {
-					id: 'mediaplayer',
-					type: 'textinput',
-					label: 'Media Player',
-					default: '1',
-					useVariables: true,
-				},
-				isClip:
-					model.media.clips > 0
-						? {
-								type: 'checkbox',
-								id: 'isClip',
-								label: 'Is clip',
-								default: false,
-							}
-						: undefined,
-				slot: {
-					id: 'slot',
-					type: 'textinput',
-					label: 'Slot',
-					default: '1',
-					useVariables: true,
-				},
-			},
-			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			callback: async ({ options }): Promise<boolean> => {
-				const [mediaplayer, slot] = await Promise.all([
-					options.getParsedNumber('mediaplayer'),
-					options.getParsedNumber('slot'),
-				])
-
-				const optionIsClip = options.getPlainBoolean('isClip')
-
-				const player = state.state.media.players[mediaplayer - 1]
-				if (!optionIsClip && player?.sourceType === Enums.MediaSourceType.Still && player?.stillIndex === slot - 1) {
-					return true
-				} else if (
-					optionIsClip &&
-					player?.sourceType === Enums.MediaSourceType.Clip &&
-					player?.clipIndex === slot - 1
-				) {
-					return true
-				} else {
-					return false
-				}
-			},
-			learn: async ({ options }) => {
-				const mediaplayer = await options.getParsedNumber('mediaplayer')
-				const player = state.state.media.players[mediaplayer - 1]
-
-				if (player) {
-					return {
-						...options.getJson(),
-						source: player.sourceType ? player.stillIndex : player.clipIndex + MEDIA_PLAYER_SOURCE_CLIP_OFFSET,
+						source: player.sourceType ? `still${player.stillIndex + 1}` : `clip${player.clipIndex + 1}`,
 					}
 				} else {
 					return undefined

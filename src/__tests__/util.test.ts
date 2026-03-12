@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 
 import { AudioChannelPair } from 'atem-connection/dist/enums'
-import { combineInputId } from '../models/util/audioRouting'
+import { combineInputId } from '../models/util/audioRouting.js'
 import { formatAudioRoutingAsString, parseAudioRoutingString, parseAudioRoutingStringSingle } from '../util'
 
 test('formatAudioRoutingAsString', () => {

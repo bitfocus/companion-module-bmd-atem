@@ -1,8 +1,18 @@
-import type { MyOptionsHelper } from './common.js'
 import { fadeFpsDefault, type AtemConfig } from './config.js'
 import type { algorithm, curve } from './easings.js'
 import * as Easing from './easings.js'
-import type { FadeDurationFieldsType } from './input.js'
+
+export type TransitionOptions = {
+	transitionRate: number | undefined
+	transitionEasing: algorithm | undefined
+	transitionCurve: curve | undefined
+}
+
+export type FadeDurationFieldsType = {
+	fadeDuration: number
+	fadeAlgorithm: Easing.algorithm
+	fadeCurve: Easing.curve
+}
 
 export interface TransitionInfo {
 	sendFcn: (value: number[]) => Promise<void>
@@ -60,12 +70,12 @@ export class AtemTransitions {
 		sendFcn: (value: number) => Promise<void>,
 		from: number | undefined,
 		to: number,
-		options: MyOptionsHelper<FadeDurationFieldsType>,
+		options: FadeDurationFieldsType,
 	): Promise<void> {
-		const duration = options.getPlainNumber('fadeDuration')
+		const duration = options.fadeDuration
 
-		const algorithm = options.getPlainString('fadeAlgorithm')
-		const curve = options.getPlainString('fadeCurve')
+		const algorithm = options.fadeAlgorithm
+		const curve = options.fadeCurve
 
 		return this.run(id, async ([value]) => sendFcn(value), [from], [to], duration, algorithm, curve)
 	}
@@ -73,16 +83,12 @@ export class AtemTransitions {
 	public async runForProperties<T extends object>(
 		id: string,
 		sendFcn: (properties: T) => Promise<void>,
-		options: MyOptionsHelper<{
-			transitionRate: number | undefined
-			transitionEasing: algorithm | undefined
-			transitionCurve: curve | undefined
-		}>,
+		options: TransitionOptions,
 		animatedKeys: string[],
 		newProps: T,
 		oldProps: T | undefined,
 	): Promise<void> {
-		const transitionRate = options.getRaw('transitionRate')
+		const transitionRate = options.transitionRate
 
 		if (transitionRate && oldProps) {
 			// filter out the keys that we can animate
@@ -105,8 +111,8 @@ export class AtemTransitions {
 					from,
 					to,
 					transitionRate,
-					options.getRaw('transitionEasing'),
-					options.getRaw('transitionCurve'),
+					options.transitionEasing,
+					options.transitionCurve,
 				)
 			}
 		}

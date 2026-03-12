@@ -1,39 +1,43 @@
 import type { Atem } from 'atem-connection'
+import { convertOptionsFields } from '../../options/util.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import { getMixEffect } from 'atem-connection/dist/state/util.js'
-import { AtemMEPicker, AtemMESourcePicker, FadeDurationFields, type FadeDurationFieldsType } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
-import type { MyActionDefinitions } from '../types.js'
 import type { StateWrapper } from '../../state.js'
-import type { AtemTransitions } from '../../transitions.js'
+import type { AtemTransitions, FadeDurationFieldsType } from '../../transitions.js'
+import { FadeDurationFields } from '../../options/fade.js'
+import { AtemMEPicker, AtemMESourcePicker } from '../../options/mixEffect.js'
 
-export interface AtemProgramPreviewActions {
+export type AtemProgramPreviewActions = {
 	[ActionId.Program]: {
-		mixeffect: number
-		input: number
-	}
-	[ActionId.ProgramVariables]: {
-		mixeffect: string
-		input: string
+		options: {
+			mixeffect: number
+			input: number
+		}
 	}
 	[ActionId.Preview]: {
-		mixeffect: number
-		input: number
-	}
-	[ActionId.PreviewVariables]: {
-		mixeffect: string
-		input: string
+		options: {
+			mixeffect: number
+			input: number
+		}
 	}
 	[ActionId.Cut]: {
-		mixeffect: number
+		options: {
+			mixeffect: number
+		}
 	}
 	[ActionId.Auto]: {
-		mixeffect: number
+		options: {
+			mixeffect: number
+		}
 	}
 	[ActionId.TBar]: {
-		mixeffect: number
-		position: string
-	} & FadeDurationFieldsType
+		options: {
+			mixeffect: number
+			position: number
+		} & FadeDurationFieldsType
+	}
 }
 
 export function createProgramPreviewActions(
@@ -41,23 +45,22 @@ export function createProgramPreviewActions(
 	model: ModelSpec,
 	transitions: AtemTransitions,
 	state: StateWrapper,
-): MyActionDefinitions<AtemProgramPreviewActions> {
+): CompanionActionDefinitions<AtemProgramPreviewActions> {
 	return {
 		[ActionId.Program]: {
 			name: 'ME: Set Program input',
-			options: {
-				mixeffect: AtemMEPicker(model, 0),
-				input: AtemMESourcePicker(model, state.state, 0),
-			},
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
+				input: AtemMESourcePicker(model, state.state),
+			}),
 			callback: async ({ options }) => {
-				await atem?.changeProgramInput(options.getPlainNumber('input'), options.getPlainNumber('mixeffect'))
+				await atem?.changeProgramInput(options.input, options.mixeffect - 1)
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
+				const me = getMixEffect(state.state, options.mixeffect - 1)
 
 				if (me) {
 					return {
-						...options.getJson(),
 						input: me.programInput,
 					}
 				} else {
@@ -65,49 +68,21 @@ export function createProgramPreviewActions(
 				}
 			},
 		},
-		[ActionId.ProgramVariables]: {
-			name: 'ME: Set Program input from variables',
-			options: {
-				mixeffect: {
-					type: 'textinput',
-					id: 'mixeffect',
-					label: 'M/E',
-					default: '1',
-					useVariables: true,
-				},
-				input: {
-					type: 'textinput',
-					id: 'input',
-					label: 'Input ID',
-					default: '0',
-					useVariables: true,
-				},
-			},
-			callback: async ({ options }) => {
-				const mixeffect = await options.getParsedNumber('mixeffect')
-				const input = await options.getParsedNumber('input')
-
-				if (!isNaN(mixeffect) && !isNaN(input)) {
-					await atem?.changeProgramInput(input, mixeffect - 1)
-				}
-			},
-		},
 
 		[ActionId.Preview]: {
 			name: 'ME: Set Preview input',
-			options: {
-				mixeffect: AtemMEPicker(model, 0),
-				input: AtemMESourcePicker(model, state.state, 0),
-			},
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
+				input: AtemMESourcePicker(model, state.state),
+			}),
 			callback: async ({ options }) => {
-				await atem?.changePreviewInput(options.getPlainNumber('input'), options.getPlainNumber('mixeffect'))
+				await atem?.changePreviewInput(options.input, options.mixeffect - 1)
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
+				const me = getMixEffect(state.state, options.mixeffect - 1)
 
 				if (me) {
 					return {
-						...options.getJson(),
 						input: me.previewInput,
 					}
 				} else {
@@ -115,73 +90,49 @@ export function createProgramPreviewActions(
 				}
 			},
 		},
-		[ActionId.PreviewVariables]: {
-			name: 'ME: Set Preview input from variables',
-			options: {
-				mixeffect: {
-					type: 'textinput',
-					id: 'mixeffect',
-					label: 'M/E',
-					default: '1',
-					useVariables: true,
-				},
-				input: {
-					type: 'textinput',
-					id: 'input',
-					label: 'Input ID',
-					default: '0',
-					useVariables: true,
-				},
-			},
-			callback: async ({ options }) => {
-				const mixeffect = await options.getParsedNumber('mixeffect')
-				const input = await options.getParsedNumber('input')
-
-				if (!isNaN(mixeffect) && !isNaN(input)) {
-					await atem?.changePreviewInput(input, mixeffect - 1)
-				}
-			},
-		},
 
 		[ActionId.Cut]: {
 			name: 'ME: Perform CUT transition',
-			options: {
-				mixeffect: AtemMEPicker(model, 0),
-			},
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
+			}),
 			callback: async ({ options }) => {
-				await atem?.cut(options.getPlainNumber('mixeffect'))
+				await atem?.cut(options.mixeffect - 1)
 			},
 		},
 		[ActionId.Auto]: {
 			name: 'ME: Perform AUTO transition',
-			options: {
-				mixeffect: AtemMEPicker(model, 0),
-			},
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
+			}),
 			callback: async ({ options }) => {
-				await atem?.autoTransition(options.getPlainNumber('mixeffect'))
+				await atem?.autoTransition(options.mixeffect - 1)
 			},
 		},
 
 		[ActionId.TBar]: {
 			name: 'ME: Set TBar position',
-			options: {
-				mixeffect: AtemMEPicker(model, 0),
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
 
 				position: {
-					type: 'textinput',
+					type: 'number',
 					id: 'position',
-					label: 'Position (0 - 100)',
-					default: '0',
-					useVariables: true,
+					label: 'Position',
+					default: 0,
+					min: 0,
+					max: 100,
+					step: 1,
+					asInteger: true,
+					clampValues: true,
+					description: 'Position of the TBar, from 0 (fully in preview) to 100 (fully in program)',
 				},
 
 				...FadeDurationFields,
-			},
+			}),
 			callback: async ({ options }) => {
-				const position = await options.getParsedNumber('position')
-				if (isNaN(position)) return
-
-				const meIndex = options.getPlainNumber('mixeffect')
+				const meIndex = options.mixeffect - 1
+				const position = options.position
 				const meState = getMixEffect(state.state, meIndex)
 
 				await transitions.runForFadeOptions(

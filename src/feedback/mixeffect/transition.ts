@@ -1,97 +1,101 @@
 import { Enums } from 'atem-connection'
-import {
-	AtemMEPicker,
-	AtemMatchMethod,
-	AtemRatePicker,
-	AtemTransitionSelectionPicker,
-	AtemTransitionStylePicker,
-} from '../../input.js'
+import { convertOptionsFields } from '../../options/util.js'
+import { AtemMatchMethod, AtemTransitionSelectionPicker, TransitionSelectionComponent } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
-import type { MyFeedbackDefinitions } from '../types.js'
 import { FeedbackId } from '../FeedbackId.js'
-import { combineRgb } from '@companion-module/base'
+import { CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
 import { getMixEffect, type StateWrapper } from '../../state.js'
 import { calculateTransitionSelection, assertUnreachable } from '../../util.js'
+import {
+	AtemMEPicker,
+	AtemTransitionStylePicker,
+	transitionStyleEnumToString,
+	TransitionStyleString,
+	transitionStyleStringToEnum,
+} from '../../options/mixEffect.js'
+import { AtemRatePicker } from '../../options/common.js'
 
-export interface AtemTransitionFeedbacks {
+export type AtemTransitionFeedbacks = {
 	[FeedbackId.PreviewTransition]: {
-		mixeffect: number
+		type: 'boolean'
+		options: {
+			mixeffect: number
+		}
 	}
 	[FeedbackId.TransitionStyle]: {
-		mixeffect: number
-		style: Enums.TransitionStyle
+		type: 'boolean'
+		options: {
+			mixeffect: number
+			style: TransitionStyleString | JsonValue | undefined
+		}
 	}
 	[FeedbackId.TransitionSelection]: {
-		mixeffect: number
-		matchmethod: 'exact' | 'contains' | 'not-contain'
-		selection: ('background' | string)[]
+		type: 'boolean'
+		options: {
+			mixeffect: number
+			matchmethod: 'exact' | 'contains' | 'not-contain'
+			selection: TransitionSelectionComponent[]
+		}
 	}
 	[FeedbackId.TransitionRate]: {
-		mixeffect: number
-		style: Enums.TransitionStyle
-		rate: number
+		type: 'boolean'
+		options: {
+			mixeffect: number
+			style: TransitionStyleString | JsonValue | undefined
+			rate: number
+		}
 	}
 	[FeedbackId.InTransition]: {
-		mixeffect: number
+		type: 'boolean'
+		options: {
+			mixeffect: number
+		}
 	}
 }
 
 export function createTransitionFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemTransitionFeedbacks> {
+): CompanionFeedbackDefinitions<AtemTransitionFeedbacks> {
 	return {
 		[FeedbackId.PreviewTransition]: {
 			type: 'boolean',
 			name: 'Transition: Preview',
 			description: 'If the specified transition is being previewed, change style of the bank',
-			options: {
-				mixeffect: AtemMEPicker(model, 0),
-			},
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
+			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
+				const me = getMixEffect(state.state, options.mixeffect - 1)
 				return !!me?.transitionPreview
-			},
-			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
-
-				if (me) {
-					return {
-						...options.getJson(),
-						state: me.transitionPreview + '',
-					}
-				} else {
-					return undefined
-				}
 			},
 		},
 		[FeedbackId.TransitionStyle]: {
 			type: 'boolean',
 			name: 'Transition: Style',
 			description: 'If the specified transition style is active, change style of the bank',
-			options: {
-				mixeffect: AtemMEPicker(model, 0),
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
 				style: AtemTransitionStylePicker(model.media.clips === 0),
-			},
+			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
-				return me?.transitionProperties.nextStyle === options.getPlainNumber('style')
+				const me = getMixEffect(state.state, options.mixeffect - 1)
+				return me?.transitionProperties.nextStyle === options.style
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
+				const me = getMixEffect(state.state, options.mixeffect - 1)
 
 				if (me) {
 					return {
-						...options.getJson(),
-						style: me.transitionProperties.nextStyle,
+						style: transitionStyleEnumToString(me.transitionProperties.nextStyle),
 					}
 				} else {
 					return undefined
@@ -102,20 +106,20 @@ export function createTransitionFeedbacks(
 			type: 'boolean',
 			name: 'Transition: Selection',
 			description: 'If the specified transition selection is active, change style of the bank',
-			options: {
-				mixeffect: AtemMEPicker(model, 0),
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
 				matchmethod: AtemMatchMethod(),
 				selection: AtemTransitionSelectionPicker(model),
-			},
+			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
-				const expectedSelection = calculateTransitionSelection(model.USKs, options.getRaw('selection'))
+				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const expectedSelection = calculateTransitionSelection(model.USKs, options.selection)
 				if (me) {
-					switch (options.getPlainString('matchmethod')) {
+					switch (options.matchmethod) {
 						case 'exact':
 							return me.transitionProperties.nextSelection.join(',') === expectedSelection.join(',')
 						case 'contains':
@@ -131,21 +135,23 @@ export function createTransitionFeedbacks(
 			type: 'boolean',
 			name: 'Transition: Rate',
 			description: 'If the specified transition rate is active, change style of the bank',
-			options: {
-				mixeffect: AtemMEPicker(model, 0),
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
 				style: AtemTransitionStylePicker(true),
 				rate: AtemRatePicker('Transition Rate'),
-			},
+			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
+				const me = getMixEffect(state.state, options.mixeffect - 1)
 				if (me?.transitionSettings) {
-					const style = options.getPlainNumber('style')
-					const rate = options.getPlainNumber('rate')
-					switch (style) {
+					const parsedStyle = transitionStyleStringToEnum(options.style)
+					if (parsedStyle === null) return false // Not valid
+
+					const rate = options.rate
+					switch (parsedStyle) {
 						case Enums.TransitionStyle.MIX:
 							return me.transitionSettings.mix?.rate === rate
 						case Enums.TransitionStyle.DIP:
@@ -157,41 +163,39 @@ export function createTransitionFeedbacks(
 						case Enums.TransitionStyle.STING:
 							break
 						default:
-							assertUnreachable(style)
+							assertUnreachable(parsedStyle)
 					}
 				}
 				return false
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
+				const me = getMixEffect(state.state, options.mixeffect - 1)
 
 				if (me?.transitionSettings) {
-					const style = options.getPlainNumber('style')
-					switch (style) {
+					const parsedStyle = transitionStyleStringToEnum(options.style)
+					if (parsedStyle === null) return // Not valid
+
+					switch (parsedStyle) {
 						case Enums.TransitionStyle.MIX:
 							return {
-								...options.getJson(),
 								rate: me.transitionSettings.mix?.rate ?? 1,
 							}
 						case Enums.TransitionStyle.DIP:
 							return {
-								...options.getJson(),
 								rate: me.transitionSettings.dip?.rate ?? 1,
 							}
 						case Enums.TransitionStyle.WIPE:
 							return {
-								...options.getJson(),
 								rate: me.transitionSettings.wipe?.rate ?? 1,
 							}
 						case Enums.TransitionStyle.DVE:
 							return {
-								...options.getJson(),
 								rate: me.transitionSettings.DVE?.rate ?? 1,
 							}
 						case Enums.TransitionStyle.STING:
 							return undefined
 						default:
-							assertUnreachable(style)
+							assertUnreachable(parsedStyle)
 							return undefined
 					}
 				} else {
@@ -203,15 +207,15 @@ export function createTransitionFeedbacks(
 			type: 'boolean',
 			name: 'Transition: Active/Running',
 			description: 'If the specified transition is active, change style of the bank',
-			options: {
-				mixeffect: AtemMEPicker(model, 0),
-			},
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
+			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
+				const me = getMixEffect(state.state, options.mixeffect - 1)
 				return !!me?.transitionPosition?.inTransition
 			},
 		},

@@ -1,5 +1,5 @@
 import { Enums } from 'atem-connection'
-import type { VideoInputInfo } from '../types'
+import type { VideoInputInfo } from '../types.js'
 
 interface VideoInputGeneratorOptions {
 	meCount: number

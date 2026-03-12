@@ -1,10 +1,10 @@
 import type { ModelSpec } from '../models/index.js'
-import type { MyFeedbackDefinitions } from './types.js'
+import { convertOptionsFields } from '../options/util.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb, type CompanionInputFieldDropdown } from '@companion-module/base'
-import { GetMacroChoices } from '../choices.js'
+import { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { assertUnreachable } from '../util.js'
 import type { StateWrapper } from '../state.js'
+import { AtemMacroPicker } from '../options/macro.js'
 
 export enum MacroFeedbackType {
 	IsRunning = 'isRunning',
@@ -13,17 +13,26 @@ export enum MacroFeedbackType {
 	IsUsed = 'isUsed',
 }
 
-export interface AtemMacroFeedbacks {
+export type AtemMacroFeedbacks = {
 	[FeedbackId.Macro]: {
-		macroIndex: number
-		state: MacroFeedbackType
+		type: 'boolean'
+		options: {
+			macroIndex: number
+			state: MacroFeedbackType
+		}
 	}
 	[FeedbackId.MacroLoop]: {
-		loop: boolean
+		type: 'boolean'
+		options: {
+			loop: boolean
+		}
 	}
 }
 
-export function createMacroFeedbacks(model: ModelSpec, state: StateWrapper): MyFeedbackDefinitions<AtemMacroFeedbacks> {
+export function createMacroFeedbacks(
+	model: ModelSpec,
+	state: StateWrapper,
+): CompanionFeedbackDefinitions<AtemMacroFeedbacks> {
 	if (!model.macros) {
 		return {
 			[FeedbackId.Macro]: undefined,
@@ -35,14 +44,8 @@ export function createMacroFeedbacks(model: ModelSpec, state: StateWrapper): MyF
 			type: 'boolean',
 			name: 'Macro: State',
 			description: 'If the specified macro is running or waiting, change style of the bank',
-			options: {
-				macroIndex: {
-					type: 'dropdown',
-					label: 'Macro Number (1-100)',
-					id: 'macroIndex',
-					default: 1,
-					choices: GetMacroChoices(model, state.state),
-				} satisfies CompanionInputFieldDropdown,
+			options: convertOptionsFields({
+				macroIndex: AtemMacroPicker(model, state.state, 'macroIndex'),
 				state: {
 					type: 'dropdown',
 					label: 'State',
@@ -54,18 +57,19 @@ export function createMacroFeedbacks(model: ModelSpec, state: StateWrapper): MyF
 						{ id: MacroFeedbackType.IsRecording, label: 'Is Recording' },
 						{ id: MacroFeedbackType.IsUsed, label: 'Is Used' },
 					],
-				} satisfies CompanionInputFieldDropdown,
-			},
+					disableAutoExpression: true, // TODO: Until the options are simplified
+				},
+			}),
 			defaultStyle: {
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(238, 238, 0),
+				color: 0xffffff,
+				bgcolor: 0xeeee00,
 			},
 			callback: ({ options }): boolean => {
-				let macroIndex = options.getPlainNumber('macroIndex')
+				let macroIndex = options.macroIndex
 				if (!isNaN(macroIndex)) {
 					macroIndex -= 1
 					const { macroPlayer, macroRecorder } = state.state.macro
-					const type = options.getPlainString('state')
+					const type = options.state
 
 					switch (type) {
 						case MacroFeedbackType.IsUsed: {
@@ -89,20 +93,20 @@ export function createMacroFeedbacks(model: ModelSpec, state: StateWrapper): MyF
 			type: 'boolean',
 			name: 'Macro: Looping',
 			description: 'If the specified macro is looping, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				loop: {
 					type: 'checkbox',
 					label: 'Looping',
 					id: 'loop',
 					default: true,
 				},
-			},
+			}),
 			defaultStyle: {
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(238, 238, 0),
+				color: 0xffffff,
+				bgcolor: 0xeeee00,
 			},
 			callback: ({ options }): boolean => {
-				return options.getPlainBoolean('loop') === !!state.state.macro.macroPlayer.loop
+				return options.loop === !!state.state.macro.macroPlayer.loop
 			},
 		},
 	}

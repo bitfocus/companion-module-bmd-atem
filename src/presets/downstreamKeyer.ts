@@ -1,152 +1,202 @@
-import { combineRgb, type CompanionButtonStyleProps } from '@companion-module/base'
+import { CompanionPresetGroup, type CompanionButtonStyleProps } from '@companion-module/base'
 import { ActionId } from '../actions/ActionId.js'
 import { FeedbackId } from '../feedback/FeedbackId.js'
-import type { MyPresetDefinitionCategory } from './types.js'
-import type { ActionTypes } from '../actions/index.js'
-import type { FeedbackTypes } from '../feedback/index.js'
-import type { ModelSpec } from '../models/types.js'
 import type { SourceInfo } from '../choices.js'
+import type { PresetsBuilderContext } from './context.js'
+import type { AtemSchema } from '../schema.js'
+import { iterateTimes } from '../util.js'
 
 export function createDownstreamKeyerPresets(
-	model: ModelSpec,
+	context: PresetsBuilderContext,
 	pstSize: CompanionButtonStyleProps['size'],
 	pstText: string,
 	meSources: SourceInfo[],
-): MyPresetDefinitionCategory<ActionTypes, FeedbackTypes>[] {
-	const result: MyPresetDefinitionCategory<ActionTypes, FeedbackTypes>[] = []
+): void {
+	const groups: CompanionPresetGroup<AtemSchema>[] = []
+	context.sections.push({
+		id: 'dsks',
+		name: `Downstream Keyers`,
+		definitions: groups,
+	})
 
-	const onAirCategory: MyPresetDefinitionCategory<ActionTypes, FeedbackTypes> = {
-		name: 'DSK KEYs OnAir',
-		presets: {},
-	}
-	const nextCategory: MyPresetDefinitionCategory<ActionTypes, FeedbackTypes> = {
-		name: 'DSK KEYs Next',
-		presets: {},
-	}
-	result.push(onAirCategory, nextCategory)
+	groups.push(
+		{
+			id: 'dsk_onair',
+			name: 'Toggle On Air',
+			type: 'template',
+			presetId: 'dsk_onair',
+			templateVariableName: 'dsk',
+			templateValues: iterateTimes(context.model.DSKs, (dsk) => ({
+				name: `Toggle downstream KEY ${dsk + 1} OnAir`,
+				value: dsk + 1,
+			})),
+		},
+		{
+			id: 'dsk_tie',
+			name: 'Toggle Tie',
+			type: 'template',
+			presetId: 'dsk_tie',
+			templateVariableName: 'dsk',
+			templateValues: iterateTimes(context.model.DSKs, (dsk) => ({
+				name: `Toggle downstream KEY ${dsk + 1} Tie`,
+				value: dsk + 1,
+			})),
+		},
+	)
 
-	for (let dsk = 0; dsk < model.DSKs; ++dsk) {
-		onAirCategory.presets[`dsk_onair_${dsk}`] = {
-			name: `Toggle downstream KEY ${dsk + 1} OnAir`,
-			type: 'button',
-			style: {
-				text: `DSK ${dsk + 1}`,
-				size: '24',
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
+	for (let dsk = 0; dsk < context.model.DSKs; ++dsk) {
+		groups.push({
+			id: `dsk_src_${dsk}`,
+			name: `DSK ${dsk + 1} source`,
+			type: 'template',
+			presetId: 'dsk_src',
+			templateVariableName: 'input',
+			templateValues: meSources.map((src) => ({
+				name: src.shortName,
+				value: src.id,
+			})),
+			commonVariableValues: {
+				dsk: dsk + 1,
 			},
-			feedbacks: [
-				{
-					feedbackId: FeedbackId.DSKOnAir,
-					options: {
-						key: dsk,
-					},
-					style: {
-						bgcolor: combineRgb(255, 0, 0),
-						color: combineRgb(255, 255, 255),
-					},
-				},
-			],
-			steps: [
-				{
-					down: [
-						{
-							actionId: ActionId.DSKOnAir,
-							options: {
-								onair: 'toggle',
-								key: dsk,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-		}
+		})
+	}
 
-		nextCategory.presets[`dsk_next_${dsk}`] = {
-			name: `Toggle downstream KEY ${dsk + 1} Next`,
-			type: 'button',
-			style: {
-				text: `DSK ${dsk + 1}`,
-				size: '24',
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
-			},
-			feedbacks: [
-				{
-					feedbackId: FeedbackId.DSKTie,
-					options: {
-						key: dsk,
-					},
-					style: {
-						bgcolor: combineRgb(255, 255, 0),
-						color: combineRgb(0, 0, 0),
-					},
+	context.definitions[`dsk_onair`] = {
+		name: `Toggle downstream KEY X OnAir`,
+		type: 'simple',
+		style: {
+			text: `DSK $(local:dsk)`,
+			size: '24',
+			color: 0xffffff,
+			bgcolor: 0x000000,
+		},
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.DSKOnAir,
+				options: {
+					key: { isExpression: true, value: '$(local:dsk)' },
 				},
-			],
-			steps: [
-				{
-					down: [
-						{
-							actionId: ActionId.DSKTie,
-							options: {
-								state: 'toggle',
-								key: dsk,
-							},
-						},
-					],
-					up: [],
-				},
-			],
-		}
-
-		const dskCategory: MyPresetDefinitionCategory<ActionTypes, FeedbackTypes> = {
-			name: `DSK ${dsk + 1}`,
-			presets: {},
-		}
-		result.push(dskCategory)
-
-		for (const src of meSources) {
-			dskCategory.presets[`dsk_src_${dsk}_${src.id}`] = {
-				name: `DSK ${dsk + 1} source ${src.shortName}`,
-				type: 'button',
 				style: {
-					text: `$(atem:${pstText}${src.id})`,
-					size: pstSize,
-					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 0),
+					bgcolor: 0xff0000,
+					color: 0xffffff,
 				},
-				feedbacks: [
+			},
+		],
+		steps: [
+			{
+				down: [
 					{
-						feedbackId: FeedbackId.DSKSource,
+						actionId: ActionId.DSKOnAir,
 						options: {
-							fill: src.id,
-							key: dsk,
-						},
-						style: {
-							bgcolor: combineRgb(238, 238, 0),
-							color: combineRgb(0, 0, 0),
+							onair: 'toggle',
+							key: { isExpression: true, value: '$(local:dsk)' },
 						},
 					},
 				],
-				steps: [
-					{
-						down: [
-							{
-								actionId: ActionId.DSKSource,
-								options: {
-									fill: src.id,
-									cut: src.id + 1,
-									key: dsk,
-								},
-							},
-						],
-						up: [],
-					},
-				],
-			}
-		}
+				up: [],
+			},
+		],
+		localVariables: [
+			{
+				variableType: 'simple',
+				variableName: 'dsk',
+				startupValue: 0,
+			},
+		],
 	}
 
-	return result
+	context.definitions[`dsk_tie`] = {
+		name: `Toggle downstream KEY X Next`,
+		type: 'simple',
+		style: {
+			text: `DSK $(local:dsk)`,
+			size: '24',
+			color: 0xffffff,
+			bgcolor: 0x000000,
+		},
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.DSKTie,
+				options: {
+					key: { isExpression: true, value: '$(local:dsk)' },
+				},
+				style: {
+					bgcolor: 0xffff00,
+					color: 0x000000,
+				},
+			},
+		],
+		steps: [
+			{
+				down: [
+					{
+						actionId: ActionId.DSKTie,
+						options: {
+							state: 'toggle',
+							key: { isExpression: true, value: '$(local:dsk)' },
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		localVariables: [
+			{
+				variableType: 'simple',
+				variableName: 'dsk',
+				startupValue: 0,
+			},
+		],
+	}
+
+	context.definitions[`dsk_src`] = {
+		name: `DSK X source X`,
+		type: 'simple',
+		style: {
+			text: `$(atem:${pstText}$(local:input))`,
+			size: pstSize,
+			color: 0xffffff,
+			bgcolor: 0x000000,
+		},
+		feedbacks: [
+			{
+				feedbackId: FeedbackId.DSKSource,
+				options: {
+					fill: { isExpression: true, value: '$(local:input)' },
+					key: { isExpression: true, value: '$(local:dsk)' },
+				},
+				style: {
+					bgcolor: 0xeeee00,
+					color: 0x000000,
+				},
+			},
+		],
+		steps: [
+			{
+				down: [
+					{
+						actionId: ActionId.DSKSource,
+						options: {
+							fill: { isExpression: true, value: '$(local:input)' },
+							cut: { isExpression: true, value: '$(local:input) + 1' },
+							key: { isExpression: true, value: '$(local:dsk)' },
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		localVariables: [
+			{
+				variableType: 'simple',
+				variableName: 'dsk',
+				startupValue: 0,
+			},
+			{
+				variableType: 'simple',
+				variableName: 'input',
+				startupValue: 0,
+			},
+		],
+	}
 }
