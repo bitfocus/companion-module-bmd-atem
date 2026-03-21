@@ -8,7 +8,7 @@ import type {
 	ClassicAudio,
 } from 'atem-connection'
 import type { SuperSource, TransitionProperties } from 'atem-connection/dist/state/video/index.js'
-import { type InputValue } from '@companion-module/base'
+import type { JsonValue } from '@companion-module/base'
 import type { AtemCameraControlStateBuilder } from '@atem-connection/camera-control'
 import { MediaPoolPreviewCache } from './mediaPoolPreviews.js'
 
@@ -32,42 +32,42 @@ export type TallyCache = Map<
 	}
 >
 
-export function getMixEffect(state: AtemState, meIndex: InputValue | undefined): VideoState.MixEffect | undefined {
+export function getMixEffect(state: AtemState, meIndex: JsonValue | undefined): VideoState.MixEffect | undefined {
 	return state.video.mixEffects[Number(meIndex)]
 }
 export function getTransitionProperties(
 	state: AtemState,
-	meIndex: InputValue | undefined,
+	meIndex: JsonValue | undefined,
 ): TransitionProperties | undefined {
 	const me = getMixEffect(state, meIndex)
 	return me ? me.transitionProperties : undefined
 }
 export function getUSK(
 	state: AtemState,
-	meIndex: InputValue | undefined,
-	keyIndex: InputValue | undefined,
+	meIndex: JsonValue | undefined,
+	keyIndex: JsonValue | undefined,
 ): VideoState.USK.UpstreamKeyer | undefined {
 	const me = getMixEffect(state, meIndex)
 	return me ? me.upstreamKeyers[Number(keyIndex)] : undefined
 }
-export function getDSK(state: AtemState, keyIndex: InputValue | undefined): VideoState.DSK.DownstreamKeyer | undefined {
+export function getDSK(state: AtemState, keyIndex: JsonValue | undefined): VideoState.DSK.DownstreamKeyer | undefined {
 	return state.video.downstreamKeyers[Number(keyIndex)]
 }
 export function getSuperSourceBox(
 	state: AtemState,
-	boxIndex: InputValue | undefined,
-	ssrcId?: InputValue,
+	boxIndex: JsonValue | undefined,
+	ssrcId?: JsonValue,
 ): SuperSource.SuperSourceBox | undefined {
 	const ssrc = state.video.superSources[Number(ssrcId ?? 0)]
 	return ssrc ? ssrc.boxes[Number(boxIndex)] : undefined
 }
-export function getMultiviewer(state: AtemState, index: InputValue | undefined): SettingsState.MultiViewer | undefined {
+export function getMultiviewer(state: AtemState, index: JsonValue | undefined): SettingsState.MultiViewer | undefined {
 	return state.settings.multiViewers[Number(index)]
 }
 export function getMultiviewerWindow(
 	state: AtemState,
-	mvIndex: InputValue | undefined,
-	windowIndex: InputValue | undefined,
+	mvIndex: JsonValue | undefined,
+	windowIndex: JsonValue | undefined,
 ): SettingsState.MultiViewerWindowState | undefined {
 	const mv = getMultiviewer(state, mvIndex)
 	return mv ? mv.windows[Number(windowIndex)] : undefined

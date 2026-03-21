@@ -1,14 +1,19 @@
 import type { ModelSpec } from '../models/index.js'
-import type { MyFeedbackDefinitions } from './types.js'
+import { convertOptionsFields } from '../options/util.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb } from '@companion-module/base'
+import { CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
 import type { StateWrapper } from '../state.js'
 import type { AtemConfig } from '../config.js'
-import { Enums } from 'atem-connection'
+import { AtemTimecodeModePicker, timecodeModeToEnum, upstreamKeyerTypeEnumToString } from '../options/timecode.js'
 
-export interface AtemTimecodeFeedbacks {
+type TimecodeMode = 'freerun' | 'timeofday'
+
+export type AtemTimecodeFeedbacks = {
 	[FeedbackId.TimecodeMode]: {
-		mode: Enums.TimeMode
+		type: 'boolean'
+		options: {
+			mode: TimecodeMode | JsonValue | undefined
+		}
 	}
 }
 
@@ -16,7 +21,7 @@ export function createTimecodeFeedbacks(
 	config: AtemConfig,
 	_model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemTimecodeFeedbacks> {
+): CompanionFeedbackDefinitions<AtemTimecodeFeedbacks> {
 	if (!config.pollTimecode) {
 		return {
 			[FeedbackId.TimecodeMode]: undefined,
@@ -27,29 +32,28 @@ export function createTimecodeFeedbacks(
 			type: 'boolean',
 			name: 'Timecode: Mode',
 			description: 'If the timecode mode is as specified',
-			options: {
-				mode: {
-					id: 'mode',
-					type: 'dropdown',
-					label: 'Mode',
-					choices: [
-						{ id: Enums.TimeMode.FreeRun, label: 'Free run' },
-						{ id: Enums.TimeMode.TimeOfDay, label: 'Time of Day' },
-					],
-					default: Enums.TimeMode.FreeRun,
-				},
-			},
+			options: convertOptionsFields({
+				mode: AtemTimecodeModePicker(),
+			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
-				return state.state.settings.timeMode === options.getPlainNumber('mode')
+				const parsedMode = timecodeModeToEnum(options.mode)
+				if (parsedMode === null) throw new Error("Invalid mode, must be 'freerun' or 'timeofday'")
+
+				return state.state.settings.timeMode === parsedMode
 			},
-			learn: ({ options }) => {
+			learn: () => {
+				const rawMode = state.state.settings.timeMode
+				if (rawMode === undefined) return undefined
+
+				const newMode = upstreamKeyerTypeEnumToString(rawMode)
+				if (newMode === undefined) return undefined
+
 				return {
-					...options.getJson(),
-					mode: state.state.settings.timeMode ?? Enums.TimeMode.FreeRun,
+					mode: newMode,
 				}
 			},
 		},

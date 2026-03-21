@@ -1,20 +1,23 @@
 import { Enums } from 'atem-connection'
+import { convertOptionsFields } from '../options/util.js'
 import type { ModelSpec } from '../models/index.js'
-import type { MyFeedbackDefinitions } from './types.js'
 import { FeedbackId } from './FeedbackId.js'
-import { combineRgb, type CompanionInputFieldDropdown } from '@companion-module/base'
+import { CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { StateWrapper } from '../state.js'
 
-export interface AtemStreamingFeedbacks {
+export type AtemStreamingFeedbacks = {
 	[FeedbackId.StreamStatus]: {
-		state: Enums.StreamingStatus
+		type: 'boolean'
+		options: {
+			state: Enums.StreamingStatus
+		}
 	}
 }
 
 export function createStreamingFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemStreamingFeedbacks> {
+): CompanionFeedbackDefinitions<AtemStreamingFeedbacks> {
 	if (!model.streaming) {
 		return {
 			[FeedbackId.StreamStatus]: undefined,
@@ -25,7 +28,7 @@ export function createStreamingFeedbacks(
 			type: 'boolean',
 			name: 'Streaming: Active/Running',
 			description: 'If the stream has the specified status, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				state: {
 					id: 'state',
 					label: 'State',
@@ -37,20 +40,20 @@ export function createStreamingFeedbacks(
 							label: k,
 						})),
 					default: Enums.StreamingStatus.Streaming,
-				} satisfies CompanionInputFieldDropdown,
-			},
+					disableAutoExpression: true, // TODO: Until the options are simplified
+				},
+			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(0, 255, 0),
+				color: 0x000000,
+				bgcolor: 0x00ff00,
 			},
 			callback: ({ options }): boolean => {
 				const streaming = state.state.streaming?.status?.state
-				return streaming === options.getPlainNumber('state')
+				return streaming === options.state
 			},
-			learn: ({ options }) => {
+			learn: () => {
 				if (state.state.streaming?.status) {
 					return {
-						...options.getJson(),
 						state: state.state.streaming.status.state,
 					}
 				} else {

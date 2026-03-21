@@ -1,15 +1,18 @@
 import { type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../../options/util.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import { ActionId } from '../ActionId.js'
-import type { MyActionDefinitions } from '../types.js'
 import type { StateWrapper } from '../../state.js'
 import { AtemCameraControlDirectCommandSender } from '@atem-connection/camera-control'
 import { CHOICES_ON_OFF_TOGGLE, CameraControlSourcePicker, type TrueFalseToggle } from '../../choices.js'
 import type { AtemConfig } from '../../config.js'
 
-export interface AtemCameraControlDisplayActions {
+export type AtemCameraControlDisplayActions = {
 	[ActionId.CameraControlDisplayColorBars]: {
-		cameraId: string
-		state: TrueFalseToggle
+		options: {
+			cameraId: number
+			state: TrueFalseToggle
+		}
 	}
 }
 
@@ -17,7 +20,7 @@ export function createCameraControlDisplayActions(
 	config: AtemConfig,
 	atem: Atem | undefined,
 	state: StateWrapper,
-): MyActionDefinitions<AtemCameraControlDisplayActions> {
+): CompanionActionDefinitions<AtemCameraControlDisplayActions> {
 	if (!config.enableCameraControl) {
 		return {
 			[ActionId.CameraControlDisplayColorBars]: undefined,
@@ -29,7 +32,7 @@ export function createCameraControlDisplayActions(
 	return {
 		[ActionId.CameraControlDisplayColorBars]: {
 			name: 'Camera Control: Show Color Bars',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				state: {
 					id: 'state',
@@ -37,18 +40,19 @@ export function createCameraControlDisplayActions(
 					label: 'State',
 					default: 'toggle',
 					choices: CHOICES_ON_OFF_TOGGLE,
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
+				const cameraId = options.cameraId
 
 				let target: boolean
-				if (options.getPlainString('state') === 'toggle') {
+				if (options.state === 'toggle') {
 					const cameraState = state.atemCameraState.get(cameraId)
 					target = !cameraState?.display?.colorBarEnable
 					console.log('camera', cameraState, target)
 				} else {
-					target = options.getPlainString('state') === 'true'
+					target = options.state === 'true'
 				}
 
 				await commandSender?.displayColorBars(cameraId, target)

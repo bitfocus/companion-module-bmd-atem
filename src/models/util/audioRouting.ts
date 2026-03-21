@@ -1,5 +1,5 @@
 import { Enums } from 'atem-connection'
-import type { AudioRoutingOutputInfo, AudioRoutingSourceInfo } from '../types'
+import type { AudioRoutingOutputInfo, AudioRoutingSourceInfo } from '../types.js'
 
 const ALL_CHANNEL_PAIRS: Enums.AudioChannelPair[] = [
 	Enums.AudioChannelPair.Channel1_2,

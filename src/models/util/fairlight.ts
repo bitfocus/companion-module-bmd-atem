@@ -1,5 +1,5 @@
 import { Enums } from 'atem-connection'
-import type { AudioFairlightInputInfo } from '../types'
+import type { AudioFairlightInputInfo } from '../types.js'
 
 export const AUDIO_FAIRLIGHT_INPUT_XLR: AudioFairlightInputInfo = {
 	id: 1001,

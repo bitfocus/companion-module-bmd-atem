@@ -32,6 +32,11 @@ To add a new model to the list:
 
 ## Changes
 
+## v4.0.0
+
+- Update module api to v2.0
+- Support expressions in many feedbacks and actions
+
 ## v3.20.0
 
 - Add definition for Mini Extreme ISO G2

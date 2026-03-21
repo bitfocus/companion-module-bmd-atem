@@ -1,11 +1,12 @@
 import { Enums, type AtemState, listVisibleInputs } from 'atem-connection'
-import { InstanceBase } from '@companion-module/base'
+import type { InstanceBase, JsonValue } from '@companion-module/base'
 import { AudioRoutingChannelsNames } from './choices.js'
 import { combineInputId } from './models/util/audioRouting.js'
+import type { AtemSchema } from './schema.js'
+import type { AtemConfig } from './config.js'
+import { TransitionSelectionComponent } from './input.js'
 
 export const CLASSIC_AUDIO_MIN_GAIN = -60 // The minimum value to consider as valid for classic audio gain
-
-export const MEDIA_PLAYER_SOURCE_CLIP_OFFSET = 1000
 
 export function assertUnreachable(_never: never): void {
 	// throw new Error('Unreachable')
@@ -34,9 +35,24 @@ export function clamp(min: number, max: number, val: number): number {
 	return Math.min(Math.max(val, min), max)
 }
 
+export function stringifyValue(value: JsonValue | undefined): string | null | undefined {
+	if (value === undefined || value === null) {
+		return value
+	} else if (typeof value === 'string') {
+		return value
+	} else if (typeof value === 'number' || typeof value === 'boolean') {
+		return value.toString()
+	} else {
+		return JSON.stringify(value)
+	}
+}
+export function stringifyValueAlways(value: JsonValue | undefined): string {
+	return stringifyValue(value) ?? ''
+}
+
 export function calculateTransitionSelection(
 	keyCount: number,
-	rawSelection: ('background' | string)[] | undefined,
+	rawSelection: TransitionSelectionComponent[] | undefined,
 ): Enums.TransitionSelection[] {
 	if (!rawSelection || !Array.isArray(rawSelection)) return []
 
@@ -90,8 +106,8 @@ export interface IpAndPort {
 	port: number | undefined
 }
 
-export interface InstanceBaseExt<TConfig> extends InstanceBase<TConfig> {
-	config: TConfig
+export interface InstanceBaseExt extends InstanceBase<AtemSchema> {
+	config: AtemConfig
 	timecodeSeconds: number
 	displayClockSeconds: number
 

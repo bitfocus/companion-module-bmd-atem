@@ -1,11 +1,11 @@
-import type { CompanionVariableValues } from '@companion-module/base'
 import type { AtemState } from 'atem-connection'
 import { formatAudioRoutingAsString } from '../util.js'
+import type { VariablesSchema } from './schema.js'
 
 export function updateFairlightAudioRoutingSourceVariables(
 	state: AtemState,
 	sourceId: number,
-	values: CompanionVariableValues,
+	values: Partial<VariablesSchema>,
 ): void {
 	const stringId = formatAudioRoutingAsString(sourceId)
 	const sourceState = state.fairlight?.audioRouting?.sources?.[sourceId]
@@ -16,7 +16,7 @@ export function updateFairlightAudioRoutingSourceVariables(
 export function updateFairlightAudioRoutingOutputVariables(
 	state: AtemState,
 	outputId: number,
-	values: CompanionVariableValues,
+	values: Partial<VariablesSchema>,
 ): void {
 	const stringId = formatAudioRoutingAsString(outputId)
 	const outputState = state.fairlight?.audioRouting?.outputs?.[outputId]
