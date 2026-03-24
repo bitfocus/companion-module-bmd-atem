@@ -5,14 +5,14 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"@atem-connection/camera-control@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "@atem-connection/camera-control@npm:0.3.0"
+"@atem-connection/camera-control@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "@atem-connection/camera-control@npm:0.4.0"
   dependencies:
     tslib: "npm:^2.8.1"
   peerDependencies:
     atem-connection: ^3.5.0
-  checksum: 10c0/3733eab2e72bae9a4d94edf215017fbed986dc17a7dd873a92abc83ed65e0cc2e781e85498354edd3e7aab8fd620bf615e82ee79ce7e36868f2298452be107ed
+  checksum: 10c0/f951b380e7cc6503547d4fd2d7940a383be1693b0f179f9249e264c8f76a21ede6d45e03c8a70fcc3039432726992feb8ba05b8f6835fd5fb46329811dbe798c
   languageName: node
   linkType: hard
 
@@ -1411,7 +1411,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "bmd-atem@workspace:."
   dependencies:
-    "@atem-connection/camera-control": "npm:^0.3.0"
+    "@atem-connection/camera-control": "npm:^0.4.0"
     "@atem-connection/image-tools": "npm:^1.1.1"
     "@companion-module/base": "npm:~1.13.6"
     "@companion-module/tools": "patch:@companion-module/tools@npm%3A2.4.2#~/.yarn/patches/@companion-module-tools-npm-2.4.2-17b2d4310e.patch"
