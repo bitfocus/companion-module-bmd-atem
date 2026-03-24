@@ -29,10 +29,10 @@
 		]
 	},
 	"engines": {
-		"node": "^22.2"
+		"node": ">=22.20"
 	},
 	"dependencies": {
-		"@atem-connection/camera-control": "^0.3.0",
+		"@atem-connection/camera-control": "^0.4.0",
 		"@atem-connection/image-tools": "^1.1.1",
 		"@companion-module/base": "~1.13.6",
 		"@julusian/image-rs": "^2.1.1",
