@@ -188,12 +188,12 @@ export function createCameraControlDisplayActions(
 				let target: boolean
 				if (options.getPlainString('state') === 'toggle') {
 					const cameraState = state.atemCameraState.get(cameraId)
-					target = !cameraState?.output?.overlayEnables
+					target = !cameraState?.output?.overlayEnable
 				} else {
 					target = options.getPlainString('state') === 'true'
 				}
 
-				await commandSender?.outputOverlayEnables(cameraId, target)
+				await commandSender?.outputOverlayEnable(cameraId, target)
 			},
 		},
 	}

@@ -28,7 +28,7 @@ export function updateCameraControlVariables(
 	values[`camera_${state.cameraId}_focus_assist`] = state.display.exposureAndFocusTools.focusAssist ? 1 : 0
 	values[`camera_${state.cameraId}_false_color`] = state.display.exposureAndFocusTools.falseColor ? 1 : 0
 	values[`camera_${state.cameraId}_zebra`] = state.display.exposureAndFocusTools.zebra ? 1 : 0
-	values[`camera_${state.cameraId}_status_overlay`] = state.output.overlayEnables ? 1 : 0
+	values[`camera_${state.cameraId}_status_overlay`] = state.output.overlayEnable ? 1 : 0
 
 	const defineRGBY = (key: string, vals: ColorAdjust) => {
 		values[`camera_${state.cameraId}_color_${key}_red`] = roundToFactor(vals.red, 1000)
