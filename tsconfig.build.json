@@ -1,5 +1,5 @@
 {
-	"extends": "@companion-module/tools/tsconfig/node18/recommended",
+	"extends": "@companion-module/tools/tsconfig/node22/recommended.json",
 	"include": ["src/**/*.ts"],
 	"exclude": ["node_modules/**", "src/**/*spec.ts", "src/**/__tests__/*", "src/**/__mocks__/*"],
 	"compilerOptions": {
@@ -8,7 +8,8 @@
 		"paths": {
 			"*": ["./node_modules/*"]
 		},
-		"module": "es2020",
+		"module": "node20",
+		"moduleResolution": "node16",
 		"verbatimModuleSyntax": true
 	}
 }
