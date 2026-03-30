@@ -55,5 +55,3 @@ jobs:
           yarn test
         env:
           CI: true
-      - name: Send coverage
-        uses: codecov/codecov-action@v5
