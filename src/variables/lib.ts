@@ -135,6 +135,7 @@ function updateUSKVariable(
 	const input = getUSK(state, meIndex, keyIndex)?.fillSource ?? 0
 	values[`usk_${meIndex + 1}_${keyIndex + 1}_input`] = getSourcePresetName(instance, state, input)
 	values[`usk_${meIndex + 1}_${keyIndex + 1}_input_id`] = input
+	values[`pgm${meIndex + 1}_usk_${keyIndex + 1}_onAir`] = !!getUSK(state, meIndex, keyIndex)?.onAir
 	const dveSettings = state.video.mixEffects[meIndex]?.upstreamKeyers[keyIndex]?.dveSettings
 	if (dveSettings) {
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_maskEnabled`] = dveSettings.maskEnabled
@@ -188,6 +189,7 @@ function updateDSKVariable(
 	const input = getDSK(state, keyIndex)?.sources?.fillSource ?? 0
 	values[`dsk_${keyIndex + 1}_input`] = getSourcePresetName(instance, state, input)
 	values[`dsk_${keyIndex + 1}_input_id`] = input
+	values[`dsk_${keyIndex + 1}_onAir`] = !!getDSK(state, keyIndex)?.onAir
 }
 
 function updateAuxVariable(
@@ -466,6 +468,10 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 				name: `Id of input active on M/E ${i + 1} Key ${k + 1}`,
 				variableId: `usk_${i + 1}_${k + 1}_input_id`,
 			})
+			variables.push({
+				name: `On Air state of M/E ${i + 1} Key ${k + 1}`,
+				variableId: `pgm${i + 1}_usk_${k + 1}_onAir`,
+			})
 			if (model.USKs && model.DVEs) {
 				variables.push({
 					name: `Mask Enabled for M/E ${i + 1} Key ${k + 1}`,
@@ -628,6 +634,10 @@ export function InitVariables(instance: InstanceBaseExt<AtemConfig>, model: Mode
 		variables.push({
 			name: `Id of input active on DSK ${k + 1}`,
 			variableId: `dsk_${k + 1}_input_id`,
+		})
+		variables.push({
+			name: `On Air state of DSK ${k + 1}`,
+			variableId: `dsk_${k + 1}_onAir`,
 		})
 
 		updateDSKVariable(instance, state.state, k, values)
