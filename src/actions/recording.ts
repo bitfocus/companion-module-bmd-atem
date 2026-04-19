@@ -4,6 +4,7 @@ import { ActionId } from './ActionId.js'
 import type { MyActionDefinitions } from './types.js'
 import { CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../choices.js'
 import type { StateWrapper } from '../state.js'
+import { sanitizeFilename } from '../util.js'
 
 export interface AtemRecordingActions {
 	[ActionId.RecordStartStop]: {
@@ -86,7 +87,7 @@ export function createRecordingActions(
 			},
 			callback: async ({ options }) => {
 				const filename = await options.getParsedString('filename')
-				await atem?.setRecordingSettings({ filename })
+				await atem?.setRecordingSettings({ filename: sanitizeFilename(filename) })
 			},
 			learn: ({ options }) => {
 				if (state.state.recording?.properties) {

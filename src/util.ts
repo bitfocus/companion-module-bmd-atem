@@ -98,6 +98,18 @@ export interface InstanceBaseExt<TConfig> extends InstanceBase<TConfig> {
 	parseIpAndPort(): IpAndPort | null
 }
 
+/**
+ * Sanitize a filename by replacing characters that are invalid on common filesystems
+ * (exFAT, NTFS, HFS+) with underscores. This covers the ATEM's recording storage.
+ *
+ * Invalid characters: \ / : * ? " < > |  and control characters (0x00–0x1F)
+ */
+export function sanitizeFilename(filename: string): string {
+	// Replace control characters and filesystem-reserved characters with _
+	// eslint-disable-next-line no-control-regex
+	return filename.replace(/[\u0000-\u001f\\/:|*?"<>]/g, '_')
+}
+
 export function calculateTallyForInputId(state: AtemState, inputId: number): number[] {
 	if (inputId < 10000 || inputId > 11000) return []
 	// Future: This is copied from atem-connection, and should be exposed as a helper function

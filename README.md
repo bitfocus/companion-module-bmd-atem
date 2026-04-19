@@ -32,6 +32,10 @@ To add a new model to the list:
 
 ## Changes
 
+## v3.21.2
+
+- Sanitise recording filenames
+
 ## v3.21.0
 
 - Reduce connection idle cpu usage
