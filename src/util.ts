@@ -4,7 +4,6 @@ import { AudioRoutingChannelsNames } from './choices.js'
 import { combineInputId } from './models/util/audioRouting.js'
 import type { AtemSchema } from './schema.js'
 import type { AtemConfig } from './config.js'
-import type { TransitionSelectionComponent } from './input.js'
 
 export const CLASSIC_AUDIO_MIN_GAIN = -60 // The minimum value to consider as valid for classic audio gain
 
@@ -48,26 +47,6 @@ export function stringifyValue(value: JsonValue | undefined): string | null | un
 }
 export function stringifyValueAlways(value: JsonValue | undefined): string {
 	return stringifyValue(value) ?? ''
-}
-
-export function calculateTransitionSelection(
-	keyCount: number,
-	rawSelection: TransitionSelectionComponent[] | undefined,
-): Enums.TransitionSelection[] {
-	if (!rawSelection || !Array.isArray(rawSelection)) return []
-
-	const selection: Enums.TransitionSelection[] = []
-	if (rawSelection.includes('background')) {
-		selection.push(Enums.TransitionSelection.Background)
-	}
-
-	for (let i = 0; i < keyCount; i++) {
-		if (rawSelection.includes(`key${i}`)) {
-			selection.push(1 << (i + 1))
-		}
-	}
-
-	return selection
 }
 
 export enum NumberComparitor {

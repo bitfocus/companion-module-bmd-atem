@@ -36,29 +36,6 @@ export type WithProperties<T> = T & {
 	properties: Array<keyof T>
 }
 
-/** @deprecrated */
-export function DropdownPropertiesPicker(
-	allProps: Record<
-		string,
-		| CompanionInputFieldTextInput
-		| CompanionInputFieldCheckbox
-		| CompanionInputFieldDropdown
-		| CompanionInputFieldNumber
-		| CompanionInputFieldMultiDropdown
-	>,
-): CompanionInputFieldMultiDropdown<'properties'> {
-	return {
-		type: 'multidropdown',
-		id: 'properties',
-		label: 'Properties',
-		minSelection: 1,
-		default: Object.values(allProps).map((p) => p.id),
-		choices: Object.values(allProps).map((p) => ({ id: p.id, label: p.label })),
-		sortSelection: true,
-		disableAutoExpression: true, // Disable expression, so that other fields can reference this
-	}
-}
-
 export function WithDropdownPropertiesPicker<
 	T extends Record<
 		string,
@@ -74,7 +51,16 @@ export function WithDropdownPropertiesPicker<
 	properties: CompanionInputFieldMultiDropdown<'properties'>
 } {
 	return {
-		properties: DropdownPropertiesPicker(allProps),
+		properties: {
+			type: 'multidropdown',
+			id: 'properties',
+			label: 'Properties',
+			minSelection: 1,
+			default: Object.values(allProps).map((p) => p.id),
+			choices: Object.values(allProps).map((p) => ({ id: p.id, label: p.label })),
+			sortSelection: true,
+			disableAutoExpression: true, // Disable expression, so that other fields can reference this
+		},
 		...allProps,
 	}
 }

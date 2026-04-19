@@ -2,10 +2,9 @@ import type { CompanionPresetGroup, CompanionButtonStyleProps } from '@companion
 import { ActionId } from '../../actions/ActionId.js'
 import { FeedbackId } from '../../feedback/FeedbackId.js'
 import { GetTransitionStyleChoices } from '../../options/mixEffect.js'
-import { calculateTransitionSelection } from '../../util.js'
 import type { PresetsBuilderContext } from '../context.js'
 import type { AtemSchema } from '../../schema.js'
-import type { TransitionSelectionComponent } from '../../input.js'
+import { calculateTransitionSelection, type TransitionSelectionComponent } from '../../options/transition.js'
 
 function getTransitionSelectionOptions(keyCount: number): boolean[][] {
 	let res: boolean[][] = []

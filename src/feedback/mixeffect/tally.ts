@@ -78,6 +78,7 @@ export function createTallyFeedbacks(
 					type: 'multidropdown',
 					default: [10010],
 					choices: SourcesToChoices(GetSourcesListForType(model, state.state, 'tally')),
+					sortSelection: true,
 				},
 				input: AtemMESourcePicker(model, state.state),
 			}),

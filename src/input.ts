@@ -9,12 +9,8 @@ import {
 import { type AtemState, Enums } from 'atem-connection'
 import {
 	CHOICES_BORDER_BEVEL,
-	CHOICES_NEXTTRANS_BACKGROUND,
-	CHOICES_NEXTTRANS_KEY,
 	GetAudioInputsList,
 	GetSourcesListForType,
-	NextTransBackgroundChoices,
-	NextTransKeyChoices,
 	type TrueFalseToggle,
 	type AudioInputSubset,
 	GetUpstreamKeyerPatternChoices,
@@ -23,82 +19,8 @@ import {
 } from './choices.js'
 import type { ModelSpec } from './models/index.js'
 import { iterateTimes, NumberComparitor } from './util.js'
-import { DropdownPropertiesPicker, SourcesToChoices } from './options/util.js'
+import { SourcesToChoices, WithDropdownPropertiesPicker } from './options/util.js'
 import { AtemRatePicker, MaskPropertiesPickers } from './options/common.js'
-
-export function AtemTransitionSelectComponentsPickers(model: ModelSpec): {
-	background: CompanionInputFieldDropdown<'background', NextTransBackgroundChoices>
-	[id: `key${string}`]: CompanionInputFieldDropdown<`key${string}`, NextTransKeyChoices>
-} {
-	const pickers: ReturnType<typeof AtemTransitionSelectComponentsPickers> = {
-		background: {
-			type: 'dropdown',
-			id: 'background',
-			label: 'Background',
-			choices: CHOICES_NEXTTRANS_BACKGROUND,
-			default: NextTransBackgroundChoices.NoChange,
-			disableAutoExpression: true, // Needs translating first
-		},
-	}
-
-	for (let i = 0; i < model.USKs; i++) {
-		pickers[`key${i}`] = {
-			label: `Key ${i + 1}`,
-			type: 'dropdown',
-			id: `key${i}`,
-			choices: CHOICES_NEXTTRANS_KEY,
-			default: NextTransKeyChoices.NoChange,
-			disableAutoExpression: true, // Needs translating first
-		}
-	}
-
-	return pickers
-}
-export type TransitionSelectionComponent = 'background' | `key${number}`
-export function AtemTransitionSelectionPicker(
-	model: ModelSpec,
-): CompanionInputFieldMultiDropdown<'selection', TransitionSelectionComponent> {
-	const choices: DropdownChoice<TransitionSelectionComponent>[] = [{ id: 'background', label: 'Background' }]
-
-	for (let i = 0; i < model.USKs; i++) {
-		choices.push({
-			id: `key${i}`,
-			label: `Key ${i + 1}`,
-		})
-	}
-
-	return {
-		type: 'multidropdown',
-		id: 'selection',
-		label: 'Selection',
-		default: ['background'],
-		minSelection: 1,
-		choices,
-	}
-}
-export function AtemTransitionSelectionComponentPicker(model: ModelSpec): CompanionInputFieldDropdown<'component'> {
-	const options: DropdownChoice[] = [
-		{
-			id: 0,
-			label: 'Background',
-		},
-	]
-
-	for (let i = 0; i < model.USKs; i++) {
-		options.push({
-			id: i + 1,
-			label: `Key ${i + 1}`,
-		})
-	}
-
-	return {
-		label: 'Component',
-		type: 'dropdown',
-		id: 'component',
-		choices: options,
-		default: 0,
-	}
-}
 
 export function AtemUSKPicker(model: ModelSpec): CompanionInputFieldDropdown<'key'> {
 	return {
@@ -142,7 +64,7 @@ export function AtemUSKDVEPropertiesPickers(): {
 	borderBevelSoftness: CompanionInputFieldNumber<'borderBevelSoftness'>
 	rate: CompanionInputFieldNumber<'rate'>
 } {
-	const allProps: Omit<ReturnType<typeof AtemUSKDVEPropertiesPickers>, 'properties'> = {
+	return WithDropdownPropertiesPicker({
 		positionX: {
 			type: 'number',
 			label: 'Position: X',
@@ -386,12 +308,7 @@ export function AtemUSKDVEPropertiesPickers(): {
 			clampValues: true,
 		},
 		rate: AtemRatePicker('Rate'),
-	}
-
-	return {
-		properties: DropdownPropertiesPicker(allProps),
-		...allProps,
-	}
+	})
 }
 export function AtemUSKKeyframePropertiesPickers(): {
 	properties: CompanionInputFieldMultiDropdown<'properties'>
@@ -418,7 +335,7 @@ export function AtemUSKKeyframePropertiesPickers(): {
 	borderBevelPosition: CompanionInputFieldNumber<'borderBevelPosition'>
 	borderBevelSoftness: CompanionInputFieldNumber<'borderBevelSoftness'>
 } {
-	const allProps: Omit<ReturnType<typeof AtemUSKKeyframePropertiesPickers>, 'properties'> = {
+	return WithDropdownPropertiesPicker({
 		positionX: {
 			type: 'number',
 			label: 'Position: X',
@@ -691,12 +608,7 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			asInteger: false,
 			clampValues: true,
 		},
-	}
-
-	return {
-		properties: DropdownPropertiesPicker(allProps),
-		...allProps,
-	}
+	})
 }
 export function AtemMediaPlayerPicker(model: ModelSpec): CompanionInputFieldDropdown<'mediaplayer'> {
 	return {
@@ -869,6 +781,7 @@ export function AtemFairlightAudioRoutingDestinationsPicker(
 		label: 'Destinations',
 		default: [sources[0].id],
 		choices: sources,
+		sortSelection: true,
 	}
 }
 
@@ -897,7 +810,7 @@ export function AtemUSKPatternPropertiesPickers(): {
 	positionX: CompanionInputFieldNumber<'positionX'>
 	positionY: CompanionInputFieldNumber<'positionY'>
 } {
-	const allProps: Omit<ReturnType<typeof AtemUSKPatternPropertiesPickers>, 'properties'> = {
+	return WithDropdownPropertiesPicker({
 		style: {
 			type: 'dropdown',
 			label: 'Style: ',
@@ -979,11 +892,7 @@ export function AtemUSKPatternPropertiesPickers(): {
 			asInteger: false,
 			clampValues: true,
 		},
-	}
-	return {
-		properties: DropdownPropertiesPicker(allProps),
-		...allProps,
-	}
+	})
 }
 
 export function resolveTrueFalseToggle(value: TrueFalseToggle | boolean, current: boolean | undefined): boolean {

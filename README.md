@@ -34,6 +34,8 @@ To add a new model to the list:
 
 ## v4.0.0
 
+Make sure to backup your config before updating to this version!
+
 - Update module api to v2.0
 - Support expressions in many feedbacks and actions
 

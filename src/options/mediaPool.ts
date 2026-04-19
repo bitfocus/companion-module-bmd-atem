@@ -55,7 +55,7 @@ export function AtemMediaPlayerSourcePickers(
 			default: false,
 			description: 'How to interpret the Source field if it is unclear on whether it refers to a slot of clip',
 			disableAutoExpression: true,
-			isVisibleExpression: model.media.clips > 0 ? undefined : 'false', // Hide if there are no clips, as it won't do anything
+			isVisibleExpression: includeClips && model.media.clips > 0 ? undefined : 'false', // Hide if there are no clips, as it won't do anything
 		},
 	}
 }

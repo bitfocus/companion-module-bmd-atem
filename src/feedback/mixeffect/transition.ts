@@ -1,11 +1,11 @@
 import { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../../options/util.js'
-import { AtemMatchMethod, AtemTransitionSelectionPicker, type TransitionSelectionComponent } from '../../input.js'
+import { AtemMatchMethod } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { FeedbackId } from '../FeedbackId.js'
 import type { CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
 import { getMixEffect, type StateWrapper } from '../../state.js'
-import { calculateTransitionSelection, assertUnreachable } from '../../util.js'
+import { assertUnreachable } from '../../util.js'
 import {
 	AtemMEPicker,
 	AtemTransitionStylePicker,
@@ -14,6 +14,11 @@ import {
 	transitionStyleStringToEnum,
 } from '../../options/mixEffect.js'
 import { AtemRatePicker } from '../../options/common.js'
+import {
+	AtemTransitionSelectionPicker,
+	calculateTransitionSelection,
+	type TransitionSelectionComponent,
+} from '../../options/transition.js'
 
 export type AtemTransitionFeedbacks = {
 	[FeedbackId.PreviewTransition]: {

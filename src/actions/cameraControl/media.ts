@@ -97,6 +97,7 @@ export function createCameraControlMediaActions(
 							}
 						}),
 					default: [1],
+					sortSelection: true,
 				},
 				state: {
 					id: 'state',

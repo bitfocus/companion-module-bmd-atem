@@ -20,7 +20,7 @@ type ActionFixupRule = {
 }
 type FeedbackFixupRule = ActionFixupRule
 
-type OptionFixupCustomFn = (val: JsonValue | undefined) => JsonValue | undefined
+type OptionFixupCustomFn = (val: ExpressionOrValue<JsonValue | undefined>) => ExpressionOrValue<JsonValue | undefined>
 
 type OptionFixupRule = {
 	newName?: string
@@ -86,11 +86,13 @@ const flyKeyKeyFrameValueMap: Record<Enums.FlyKeyKeyFrame, FlyKeyKeyFrameString>
 
 const MEDIA_PLAYER_SOURCE_CLIP_OFFSET = 1000
 const fixupMediaPoolNumericSource: OptionFixupCustomFn = (val) => {
-	if (typeof val !== 'number') return 'still1' // default
-	if (val >= 0 && val < MEDIA_PLAYER_SOURCE_CLIP_OFFSET) {
-		return `still${val + 1}`
-	} else if (val >= MEDIA_PLAYER_SOURCE_CLIP_OFFSET) {
-		return `clip${val - MEDIA_PLAYER_SOURCE_CLIP_OFFSET + 1}`
+	if (val.isExpression) return val // Should never hit, don't know how to handle
+	const numVal = Number(val.value)
+	if (isNaN(numVal)) return { isExpression: false, value: 'still1' } // default
+	if (numVal >= 0 && numVal < MEDIA_PLAYER_SOURCE_CLIP_OFFSET) {
+		return { isExpression: false, value: `still${numVal + 1}` }
+	} else if (numVal >= MEDIA_PLAYER_SOURCE_CLIP_OFFSET) {
+		return { isExpression: false, value: `clip${numVal - MEDIA_PLAYER_SOURCE_CLIP_OFFSET + 1}` }
 	} else {
 		return val
 	}
@@ -192,9 +194,20 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 			slot: { newName: 'source', transform: { type: 'number', zeroBased: false, variables: true } },
 		},
 	},
+	mediaPlayerCycle: {
+		options: {
+			mediaplayer: { transform: { type: 'number', zeroBased: true, variables: false } },
+		},
+	},
 	mediaDeleteStill: {
 		options: {
-			slot: { transform: { type: 'number', zeroBased: false, variables: true } },
+			slot: {
+				newName: 'source',
+				transform: {
+					type: 'custom',
+					fn: (v) => fixupMediaPoolNumericSource(v.isExpression ? v : { ...v, value: Number(v.value) - 1 }),
+				},
+			},
 		},
 	},
 	fairlightAudioMixOption: {
@@ -945,6 +958,9 @@ function applyTransform(
 	} else if (optionTransform.type === 'boolean') {
 		// Convert boolean, optionally considering if there are variables
 		return FixupBooleanOrVariablesValueToExpressions(valueObj)
+	} else if (optionTransform.type === 'custom') {
+		// Custom function to transform value
+		return optionTransform.fn(valueObj)
 	}
 
 	return valueObj
@@ -982,6 +998,8 @@ export const UpgradeToExpressions: CompanionStaticUpgradeScript<AtemConfig, unde
 		if (rule.newType) action.actionId = rule.newType
 
 		applyOptionsFixupRules(rule.options, action.options)
+
+		console.log('fixed up action', action, rule)
 	}
 
 	for (const feedback of props.feedbacks) {
@@ -992,6 +1010,8 @@ export const UpgradeToExpressions: CompanionStaticUpgradeScript<AtemConfig, unde
 		if (rule.newType) feedback.feedbackId = rule.newType
 
 		applyOptionsFixupRules(rule.options, feedback.options)
+
+		console.log('fixed up feedback', feedback, rule)
 	}
 
 	return result

@@ -29,7 +29,8 @@ export type AtemMediaPlayerActions = {
 	}
 	[ActionId.MediaDeleteStill]: {
 		options: {
-			slot: number
+			source: number
+			defaultClip: boolean // unused
 		}
 	}
 }
@@ -63,7 +64,8 @@ export function createMediaPlayerActions(
 				await atem?.setMediaPlayerSource(
 					{
 						sourceType: source.isClip ? Enums.MediaSourceType.Clip : Enums.MediaSourceType.Still,
-						clipIndex: source.slot - 1,
+						clipIndex: source.slot,
+						stillIndex: source.slot,
 					},
 					options.mediaplayer - 1,
 				)
@@ -134,19 +136,15 @@ export function createMediaPlayerActions(
 		[ActionId.MediaDeleteStill]: {
 			name: 'Media player: Delete still',
 			options: convertOptionsFields({
-				slot: {
-					id: 'slot',
-					type: 'number',
-					label: 'Slot',
-					default: 1,
-					min: 1,
-					max: 99,
-					asInteger: true,
-					clampValues: false,
-				},
+				...AtemMediaPlayerSourcePickers(model, state.state, false),
 			}),
 			callback: async ({ options }) => {
-				await atem?.clearMediaPoolStill(options.slot - 1)
+				const source = parseMediaPoolSource(model, options.source, false)
+				if (!source) return
+
+				if (source.isClip) return // Unsupported by this action for now
+
+				await atem?.clearMediaPoolStill(source.slot)
 			},
 		},
 	}

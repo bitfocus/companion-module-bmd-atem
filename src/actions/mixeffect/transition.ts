@@ -6,20 +6,17 @@ import {
 	AtemTransitionSelectComponentsPickers,
 	AtemTransitionSelectionComponentPicker,
 	AtemTransitionSelectionPicker,
+	calculateTransitionSelection,
+	NextTransBackgroundChoices,
+	NextTransKeyChoices,
 	type TransitionSelectionComponent,
-} from '../../input.js'
+} from '../../options/transition.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
 import { AtemCommandBatching, CommandBatching } from '../../batching.js'
-import {
-	CHOICES_KEYTRANS,
-	CHOICES_ON_OFF_TOGGLE,
-	NextTransBackgroundChoices,
-	NextTransKeyChoices,
-	type TrueFalseToggle,
-} from '../../choices.js'
+import { CHOICES_KEYTRANS, CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../../choices.js'
 import { getTransitionProperties, getUSK, type StateWrapper } from '../../state.js'
-import { type InstanceBaseExt, assertUnreachable, calculateTransitionSelection } from '../../util.js'
+import { type InstanceBaseExt, assertUnreachable } from '../../util.js'
 import {
 	AtemMEPicker,
 	AtemTransitionStylePicker,
