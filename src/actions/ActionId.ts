@@ -116,6 +116,10 @@ export enum ActionId {
 	CameraControlVideoNdFilterStop = 'cameraControlVideoNdFilterStop',
 
 	CameraControlDisplayColorBars = 'cameraControlDisplayColorBars',
+	CameraControlDisplayFocusAssist = 'cameraControlDisplayFocusAssist',
+	CameraControlDisplayFalseColor = 'cameraControlDisplayFalseColor',
+	CameraControlDisplayZebra = 'cameraControlDisplayZebra',
+	CameraControlOutputStatusOverlay = 'cameraControlOutputStatusOverlay',
 
 	CameraControlMediaRecordSingle = 'cameraControlMediaRecordSingle',
 	CameraControlMediaRecordMultiple = 'cameraControlMediaRecordMultiple',

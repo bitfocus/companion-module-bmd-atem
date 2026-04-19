@@ -77,6 +77,15 @@ export type VariablesSchema = {
 
 	[key: `ssrc${number}_box${number}_source`]: string
 	[key: `ssrc${number}_box${number}_source_id`]: number
+	[key: `ssrc${number}_box${number}_onair`]: boolean
+	[key: `ssrc${number}_box${number}_size`]: number
+	[key: `ssrc${number}_box${number}_x`]: number
+	[key: `ssrc${number}_box${number}_y`]: number
+	[key: `ssrc${number}_box${number}_cropEnable`]: boolean
+	[key: `ssrc${number}_box${number}_cropTop`]: number
+	[key: `ssrc${number}_box${number}_cropBottom`]: number
+	[key: `ssrc${number}_box${number}_cropLeft`]: number
+	[key: `ssrc${number}_box${number}_cropRight`]: number
 
 	[key: `audio_input_${string}_balance`]: string | undefined
 	[key: `audio_input_${string}_faderGain`]: string | undefined
@@ -119,7 +128,11 @@ export type VariablesSchema = {
 	[key: `camera_${number}_shutter_speed`]: number
 	[key: `camera_${number}_gain`]: number
 	[key: `camera_${number}_nd_filter`]: number
-	[key: `camera_${number}_show_color_bars`]: number
+	[key: `camera_${number}_show_color_bars`]: 1 | 0
+	[key: `camera_${number}_focus_assist`]: 1 | 0
+	[key: `camera_${number}_false_color`]: 1 | 0
+	[key: `camera_${number}_zebra`]: 1 | 0
+	[key: `camera_${number}_status_overlay`]: 1 | 0
 	[key: `camera_${number}_color_${string}_red`]: number
 	[key: `camera_${number}_color_${string}_green`]: number
 	[key: `camera_${number}_color_${string}_blue`]: number

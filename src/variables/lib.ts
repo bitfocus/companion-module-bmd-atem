@@ -387,9 +387,19 @@ function updateSuperSourceVariables(
 	values: Partial<VariablesSchema>,
 ): void {
 	for (let b = 0; b < 4; b++) {
-		const input = getSuperSourceBox(state, b, i)?.source ?? 0
+		const box = getSuperSourceBox(state, b, i)
+		const input = box?.source ?? 0
 		values[`ssrc${i + 1}_box${b + 1}_source`] = getSourcePresetName(instance, state, input)
 		values[`ssrc${i + 1}_box${b + 1}_source_id`] = input
+		values[`ssrc${i + 1}_box${b + 1}_onair`] = box?.enabled ?? false
+		values[`ssrc${i + 1}_box${b + 1}_size`] = (box?.size ?? 0) / 1000
+		values[`ssrc${i + 1}_box${b + 1}_x`] = (box?.x ?? 0) / 100
+		values[`ssrc${i + 1}_box${b + 1}_y`] = (box?.y ?? 0) / 100
+		values[`ssrc${i + 1}_box${b + 1}_cropEnable`] = box?.cropped ?? false
+		values[`ssrc${i + 1}_box${b + 1}_cropTop`] = (box?.cropTop ?? 0) / 1000
+		values[`ssrc${i + 1}_box${b + 1}_cropBottom`] = (box?.cropBottom ?? 0) / 1000
+		values[`ssrc${i + 1}_box${b + 1}_cropLeft`] = (box?.cropLeft ?? 0) / 1000
+		values[`ssrc${i + 1}_box${b + 1}_cropRight`] = (box?.cropRight ?? 0) / 1000
 	}
 }
 
@@ -682,6 +692,33 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 			}
 			variables[`ssrc${i + 1}_box${b + 1}_source_id`] = {
 				name: `Supersource ${i + 1} Box ${b + 1} source id`,
+			}
+			variables[`ssrc${i + 1}_box${b + 1}_onair`] = {
+				name: `Supersource ${i + 1} Box ${b + 1} on air`,
+			}
+			variables[`ssrc${i + 1}_box${b + 1}_size`] = {
+				name: `Supersource ${i + 1} Box ${b + 1} size`,
+			}
+			variables[`ssrc${i + 1}_box${b + 1}_x`] = {
+				name: `Supersource ${i + 1} Box ${b + 1} X position`,
+			}
+			variables[`ssrc${i + 1}_box${b + 1}_y`] = {
+				name: `Supersource ${i + 1} Box ${b + 1} Y position`,
+			}
+			variables[`ssrc${i + 1}_box${b + 1}_cropEnable`] = {
+				name: `Supersource ${i + 1} Box ${b + 1} crop enabled`,
+			}
+			variables[`ssrc${i + 1}_box${b + 1}_cropTop`] = {
+				name: `Supersource ${i + 1} Box ${b + 1} crop top`,
+			}
+			variables[`ssrc${i + 1}_box${b + 1}_cropBottom`] = {
+				name: `Supersource ${i + 1} Box ${b + 1} crop bottom`,
+			}
+			variables[`ssrc${i + 1}_box${b + 1}_cropLeft`] = {
+				name: `Supersource ${i + 1} Box ${b + 1} crop left`,
+			}
+			variables[`ssrc${i + 1}_box${b + 1}_cropRight`] = {
+				name: `Supersource ${i + 1} Box ${b + 1} crop right`,
 			}
 		}
 

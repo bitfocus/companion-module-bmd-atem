@@ -50,6 +50,7 @@ export type AtemDownstreamKeyerActions = {
 	[ActionId.DSKAuto]: {
 		options: {
 			downstreamKeyerId: number
+			onair: TrueFalseToggle
 		}
 	}
 	[ActionId.DSKOnAir]: {
@@ -228,9 +229,19 @@ export function createDownstreamKeyerActions(
 			name: 'Downstream key: Run AUTO Transition',
 			options: convertOptionsFields({
 				downstreamKeyerId: AtemDSKPicker(model, 'downstreamKeyerId'),
+				onair: {
+					id: 'onair',
+					type: 'dropdown',
+					label: 'On Air',
+					default: 'toggle',
+					choices: CHOICES_KEYTRANS,
+					disableAutoExpression: true, // TODO: Until the options are simplified
+				},
 			}),
 			callback: async ({ options }) => {
-				await atem?.autoDownstreamKey(options.downstreamKeyerId - 1)
+				const onair = options.onair
+				const towardOnAir = onair === 'toggle' ? undefined : onair === 'true'
+				await atem?.autoDownstreamKey(options.downstreamKeyerId - 1, towardOnAir)
 			},
 		},
 		[ActionId.DSKOnAir]: {

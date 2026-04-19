@@ -37,6 +37,13 @@ To add a new model to the list:
 - Update module api to v2.0
 - Support expressions in many feedbacks and actions
 
+## v3.21.0
+
+- Reduce connection idle cpu usage
+- Expose supersource box properties via variables (#420)
+- add focus assist, false color, zebra, and status overlay actions (#437)
+- Add On Air option for downstream keys (#379)
+
 ## v3.20.0
 
 - Add definition for Mini Extreme ISO G2
