@@ -141,7 +141,6 @@ export function createFairlightAudioFeedbacks(
 			? {
 					type: 'boolean',
 					name: 'Fairlight Audio: Audio input gain',
-					description: 'If the audio input has the specified input gain, change style of the bank',
 					options: convertOptionsFields({
 						input: audioInputOption,
 						source: audioSourceOption,
@@ -192,7 +191,6 @@ export function createFairlightAudioFeedbacks(
 			? {
 					type: 'boolean',
 					name: 'Fairlight Audio: Audio fader gain',
-					description: 'If the audio input has the specified fader gain, change style of the bank',
 					options: convertOptionsFields({
 						input: audioInputOption,
 						source: audioSourceOption,
@@ -243,7 +241,6 @@ export function createFairlightAudioFeedbacks(
 			? {
 					type: 'boolean',
 					name: 'Fairlight Audio: Audio mix option',
-					description: 'If the audio input has the specified mix option, change style of the bank',
 					options: convertOptionsFields({
 						input: audioInputOption,
 						source: audioSourceOption,
@@ -284,7 +281,6 @@ export function createFairlightAudioFeedbacks(
 		['fairlightAudioMasterGain']: {
 			type: 'boolean',
 			name: 'Fairlight Audio: Master fader gain',
-			description: 'If the master has the specified fader gain, change style of the bank',
 			options: convertOptionsFields({
 				comparitor: NumberComparitorPicker(),
 				gain: {
@@ -327,7 +323,6 @@ export function createFairlightAudioFeedbacks(
 				? {
 						type: 'boolean',
 						name: 'Fairlight Audio: Solo source',
-						description: 'If the specified source is soloed, change style of the bank',
 						options: convertOptionsFields({
 							nothing: {
 								id: 'nothing',
@@ -356,7 +351,7 @@ export function createFairlightAudioFeedbacks(
 			? {
 					type: 'boolean',
 					name: 'Fairlight Audio: Monitor/Headphone Gain',
-					description: 'If the headphone/monitor has the specified fader gain, change style of the bank',
+
 					options: convertOptionsFields({
 						comparitor: NumberComparitorPicker(),
 						gain: {
@@ -399,7 +394,7 @@ export function createFairlightAudioFeedbacks(
 			? {
 					type: 'boolean',
 					name: 'Fairlight Audio: Monitor/Headphone Master muted',
-					description: 'If the headphone master is muted, change style of the bank',
+
 					options: convertOptionsFields({
 						// audioInputOption,
 					}),
@@ -417,7 +412,7 @@ export function createFairlightAudioFeedbacks(
 				? {
 						type: 'boolean',
 						name: 'Fairlight Audio: Monitor/Headphone master Gain',
-						description: 'If the headphone/monitor has the specified master gain, change style of the bank',
+
 						options: convertOptionsFields({
 							comparitor: NumberComparitorPicker(),
 							gain: {
@@ -460,7 +455,7 @@ export function createFairlightAudioFeedbacks(
 			? {
 					type: 'boolean',
 					name: 'Fairlight Audio: Monitor/Headphone Talkback muted',
-					description: 'If the headphone talkback is muted, change style of the bank',
+
 					options: convertOptionsFields({
 						// audioInputOption,
 					}),
@@ -478,7 +473,7 @@ export function createFairlightAudioFeedbacks(
 				? {
 						type: 'boolean',
 						name: 'Fairlight Audio: Monitor/Headphone talkback Gain',
-						description: 'If the headphone/monitor has the specified talkback gain, change style of the bank',
+
 						options: convertOptionsFields({
 							comparitor: NumberComparitorPicker(),
 							gain: {
@@ -522,7 +517,7 @@ export function createFairlightAudioFeedbacks(
 				? {
 						type: 'boolean',
 						name: 'Fairlight Audio: Monitor/Headphone sidetone Gain',
-						description: 'If the headphone/monitor has the specified sidetone gain, change style of the bank',
+
 						options: convertOptionsFields({
 							comparitor: NumberComparitorPicker(),
 							gain: {

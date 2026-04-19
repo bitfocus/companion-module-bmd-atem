@@ -29,7 +29,6 @@ export function createProgramPreviewFeedbacks(
 		['program']: {
 			type: 'boolean',
 			name: 'ME: One ME program source',
-			description: 'If the input specified is selected in program on the M/E stage specified, change style of the bank',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
 				input: AtemMESourcePicker(model, state.state),
@@ -57,7 +56,6 @@ export function createProgramPreviewFeedbacks(
 		['preview']: {
 			type: 'boolean',
 			name: 'ME: One ME preview source',
-			description: 'If the input specified is selected in preview on the M/E stage specified, change style of the bank',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
 				input: AtemMESourcePicker(model, state.state),

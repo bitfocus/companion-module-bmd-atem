@@ -89,7 +89,6 @@ export function createSuperSourceFeedbacks(
 		['ssrc_art_properties']: {
 			type: 'boolean',
 			name: 'Supersource: Art properties',
-			description: 'If the specified SuperSource art properties match, change style of the bank',
 			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				...AtemSuperSourceArtPropertiesPickers(model, state.state, false),
@@ -144,7 +143,6 @@ export function createSuperSourceFeedbacks(
 			// TODO - replace with 'ssrc_art_properties'
 			type: 'boolean',
 			name: 'Supersource: Art fill source',
-			description: 'If the specified SuperSource art fill is set to the specified source, change style of the bank',
 			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				source: AtemSuperSourceArtSourcePicker(model, state.state, 'source', 'Fill Source'),
@@ -175,7 +173,6 @@ export function createSuperSourceFeedbacks(
 			// TODO - replace with 'ssrc_art_properties'
 			type: 'boolean',
 			name: 'Supersource: Art placement',
-			description: 'If the specified SuperSource art is placed in the foreground/background, change style of the bank',
 			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				artOption: AtemSuperSourceArtOption(false),
@@ -206,7 +203,6 @@ export function createSuperSourceFeedbacks(
 			// TODO - replace with 'ssrc_box_properties'
 			type: 'boolean',
 			name: 'Supersource: Box source',
-			description: 'If the specified SuperSource box is set to the specified source, change style of the bank',
 			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				boxIndex: AtemSuperSourceBoxPicker(),
@@ -238,7 +234,6 @@ export function createSuperSourceFeedbacks(
 			// TODO - replace with 'ssrc_box_properties'
 			type: 'boolean',
 			name: 'Supersource: Box state',
-			description: 'If the specified SuperSource box is enabled, change style of the bank',
 			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				boxIndex: AtemSuperSourceBoxPicker(),
@@ -256,7 +251,6 @@ export function createSuperSourceFeedbacks(
 		['ssrc_box_properties']: {
 			type: 'boolean',
 			name: 'Supersource: Box properties',
-			description: 'If the specified SuperSource box properties match, change style of the bank',
 			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				boxIndex: AtemSuperSourceBoxPicker(),

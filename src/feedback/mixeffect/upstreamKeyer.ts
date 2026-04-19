@@ -64,7 +64,6 @@ export function createUpstreamKeyerFeedbacks(
 		['uskOnAir']: {
 			type: 'boolean',
 			name: 'Upstream key: OnAir state',
-			description: 'If the specified upstream keyer is active, change style of the bank',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
@@ -81,7 +80,6 @@ export function createUpstreamKeyerFeedbacks(
 		['usk_type']: {
 			type: 'boolean',
 			name: 'Upstream key: Key type',
-			description: 'If the specified upstream keyer has the specified type, change style of the bank',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
@@ -113,7 +111,6 @@ export function createUpstreamKeyerFeedbacks(
 		['usk_source']: {
 			type: 'boolean',
 			name: 'Upstream key: Fill source',
-			description: 'If the input specified is selected in the USK specified, change style of the bank',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
@@ -143,7 +140,6 @@ export function createUpstreamKeyerFeedbacks(
 			? {
 					type: 'boolean',
 					name: 'Upstream key: Key frame',
-					description: 'If the USK specified is at the Key Frame specified, change style of the bank',
 					options: convertOptionsFields({
 						mixeffect: AtemMEPicker(model),
 						key: AtemUSKPicker(model),

@@ -55,7 +55,7 @@ export function createClassicAudioFeedbacks(
 			? {
 					type: 'boolean',
 					name: 'Classic Audio: Audio gain',
-					description: 'If the audio input has the specified gain, change style of the bank',
+					description: 'If the audio input has the specified gain',
 					options: convertOptionsFields({
 						input: audioInputOption,
 						comparitor: NumberComparitorPicker(),
@@ -101,7 +101,7 @@ export function createClassicAudioFeedbacks(
 			? {
 					type: 'boolean',
 					name: 'Classic Audio: Mix option',
-					description: 'If the audio input has the specified mix option, change style of the bank',
+					description: 'If the audio input has the specified mix option',
 					options: convertOptionsFields({
 						input: audioInputOption,
 						option: {
@@ -139,7 +139,7 @@ export function createClassicAudioFeedbacks(
 		['classicAudioMasterGain']: {
 			type: 'boolean',
 			name: 'Classic Audio: Master gain',
-			description: 'If the audio master has the specified gain, change style of the bank',
+			description: 'If the audio master has the specified gain',
 			options: convertOptionsFields({
 				comparitor: NumberComparitorPicker(),
 				gain: {

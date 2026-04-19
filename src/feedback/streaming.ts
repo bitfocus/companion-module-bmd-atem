@@ -26,7 +26,7 @@ export function createStreamingFeedbacks(
 		['streamStatus']: {
 			type: 'boolean',
 			name: 'Streaming: Active/Running',
-			description: 'If the stream has the specified status, change style of the bank',
+			description: 'If the stream has the specified status',
 			options: convertOptionsFields({
 				state: {
 					id: 'state',

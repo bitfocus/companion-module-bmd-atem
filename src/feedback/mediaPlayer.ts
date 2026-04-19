@@ -32,7 +32,6 @@ export function createMediaPlayerFeedbacks(
 		['mediaPlayerSource']: {
 			type: 'boolean',
 			name: 'Media player: Source',
-			description: 'If the specified media player has the specified source, change style of the bank',
 			options: convertOptionsFields({
 				mediaplayer: AtemMediaPlayerPicker(model),
 

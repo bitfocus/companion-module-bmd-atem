@@ -42,7 +42,6 @@ export function createMacroFeedbacks(
 		['macro']: {
 			type: 'boolean',
 			name: 'Macro: State',
-			description: 'If the specified macro is running or waiting, change style of the bank',
 			options: convertOptionsFields({
 				macroIndex: AtemMacroPicker(model, state.state, 'macroIndex'),
 				state: {
@@ -91,7 +90,6 @@ export function createMacroFeedbacks(
 		['macroloop']: {
 			type: 'boolean',
 			name: 'Macro: Looping',
-			description: 'If the specified macro is looping, change style of the bank',
 			options: convertOptionsFields({
 				loop: {
 					type: 'checkbox',

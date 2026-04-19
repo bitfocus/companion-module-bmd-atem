@@ -42,7 +42,6 @@ export function createDownstreamKeyerFeedbacks(
 		['dskOnAir']: {
 			type: 'boolean',
 			name: 'Downstream key: OnAir',
-			description: 'If the specified downstream keyer is onair, change style of the bank',
 			options: convertOptionsFields({
 				key: AtemDSKPicker(model, 'key'),
 			}),
@@ -58,7 +57,6 @@ export function createDownstreamKeyerFeedbacks(
 		['dskTie']: {
 			type: 'boolean',
 			name: 'Downstream key: Tied',
-			description: 'If the specified downstream keyer is tied, change style of the bank',
 			options: convertOptionsFields({
 				key: AtemDSKPicker(model, 'key'),
 			}),
@@ -74,7 +72,6 @@ export function createDownstreamKeyerFeedbacks(
 		['dsk_source']: {
 			type: 'boolean',
 			name: 'Downstream key: Fill source',
-			description: 'If the input specified is selected in the DSK specified, change style of the bank',
 			options: convertOptionsFields({
 				key: AtemDSKPicker(model, 'key'),
 				fill: AtemKeyFillSourcePicker(model, state.state),

@@ -65,7 +65,6 @@ export function createTransitionFeedbacks(
 		['previewTransition']: {
 			type: 'boolean',
 			name: 'Transition: Preview',
-			description: 'If the specified transition is being previewed, change style of the bank',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
 			}),
@@ -81,7 +80,6 @@ export function createTransitionFeedbacks(
 		['transitionStyle']: {
 			type: 'boolean',
 			name: 'Transition: Style',
-			description: 'If the specified transition style is active, change style of the bank',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
 				style: AtemTransitionStylePicker(model.media.clips === 0),
@@ -109,7 +107,6 @@ export function createTransitionFeedbacks(
 		['transitionSelection']: {
 			type: 'boolean',
 			name: 'Transition: Selection',
-			description: 'If the specified transition selection is active, change style of the bank',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
 				matchmethod: AtemMatchMethod(),
@@ -138,7 +135,6 @@ export function createTransitionFeedbacks(
 		['transitionRate']: {
 			type: 'boolean',
 			name: 'Transition: Rate',
-			description: 'If the specified transition rate is active, change style of the bank',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
 				style: AtemTransitionStylePicker(true),
@@ -210,7 +206,6 @@ export function createTransitionFeedbacks(
 		['inTransition']: {
 			type: 'boolean',
 			name: 'Transition: Active/Running',
-			description: 'If the specified transition is active, change style of the bank',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
 			}),

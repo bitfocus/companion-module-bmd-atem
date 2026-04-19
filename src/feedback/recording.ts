@@ -31,7 +31,7 @@ export function createRecordingFeedbacks(
 		['recordStatus']: {
 			type: 'boolean',
 			name: 'Recording: Active/Running',
-			description: 'If the record has the specified status, change style of the bank',
+			description: 'If the record has the specified status',
 			options: convertOptionsFields({
 				state: {
 					id: 'state',

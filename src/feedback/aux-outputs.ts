@@ -27,7 +27,6 @@ export function createAuxOutputFeedbacks(
 		['aux']: {
 			type: 'boolean',
 			name: 'Aux/Output: Source',
-			description: 'If the input specified is selected in the aux bus specified, change style of the bank',
 			options: convertOptionsFields({
 				aux: AtemAuxPicker(model),
 				input: AtemAuxSourcePicker(model, state.state),

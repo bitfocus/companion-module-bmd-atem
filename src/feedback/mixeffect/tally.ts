@@ -37,7 +37,6 @@ export function createTallyFeedbacks(
 		['program_tally']: {
 			type: 'boolean',
 			name: 'Tally: Program',
-			description: 'If the input specified has an active progam tally light, change style of the bank',
 			options: convertOptionsFields({
 				input: AtemMESourcePicker(model, state.state),
 			}),
@@ -53,7 +52,6 @@ export function createTallyFeedbacks(
 		['preview_tally']: {
 			type: 'boolean',
 			name: 'Tally: Preview',
-			description: 'If the input specified has an active preview tally light, change style of the bank',
 			options: convertOptionsFields({
 				input: AtemMESourcePicker(model, state.state),
 			}),

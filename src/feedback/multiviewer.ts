@@ -48,7 +48,6 @@ export function createMultiviewerFeedbacks(
 		['mv_source']: {
 			type: 'boolean',
 			name: 'Multiviewer: Window source',
-			description: 'If the specified MV window is set to the specified source, change style of the bank',
 			options: convertOptionsFields({
 				multiViewerId: AtemMultiviewerPicker(model),
 				windowIndex: AtemMultiviewWindowPicker(model),
