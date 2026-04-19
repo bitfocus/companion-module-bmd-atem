@@ -41,6 +41,7 @@ Make sure to backup your config before updating to this version!
 - Sanitise recording filenames
 - Constellation 4ME 4K Plus inaccuracies
 - Missing audio delay for Constellation models
+- Fairlight input pan
 
 ## v3.21.0
 

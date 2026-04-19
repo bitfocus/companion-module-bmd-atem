@@ -63,6 +63,20 @@ export type AtemFairlightAudioActions = {
 			delta: number
 		} & FadeDurationFieldsType
 	}
+	['fairlightAudioInputPan']: {
+		options: {
+			input: number
+			source: string
+			balance: number
+		} & FadeDurationFieldsType
+	}
+	['fairlightAudioInputPanDelta']: {
+		options: {
+			input: number
+			source: string
+			delta: number
+		} & FadeDurationFieldsType
+	}
 	['fairlightAudioMixOption']: {
 		options: {
 			input: number
@@ -183,6 +197,8 @@ export function createFairlightAudioActions(
 			['fairlightAudioInputDelayDelta']: undefined,
 			['fairlightAudioFaderGain']: undefined,
 			['fairlightAudioFaderGainDelta']: undefined,
+			['fairlightAudioInputPan']: undefined,
+			['fairlightAudioInputPanDelta']: undefined,
 			['fairlightAudioMixOption']: undefined,
 			['fairlightAudioResetPeaks']: undefined,
 			['fairlightAudioResetSourcePeaks']: undefined,
@@ -465,6 +481,94 @@ export function createFairlightAudioActions(
 								},
 								source.properties.faderGain,
 								source.properties.faderGain + options.delta * 100,
+								options,
+							)
+						}
+					},
+				}
+			: undefined,
+		['fairlightAudioInputPan']: audioInputOption
+			? {
+					name: 'Fairlight Audio: Set input pan',
+					options: convertOptionsFields({
+						input: audioInputOption,
+						source: audioSourceOption,
+						balance: {
+							type: 'number',
+							label: 'Pan',
+							id: 'balance',
+							range: true,
+							default: 0,
+							step: 1,
+							min: -100,
+							max: 100,
+							asInteger: false,
+							clampValues: true,
+						},
+						...FadeDurationFields,
+					}),
+					callback: async ({ options }) => {
+						const inputId = options.input
+						const sourceId = options.source
+
+						const audioChannels = state.state.fairlight?.inputs ?? {}
+						const audioSources = audioChannels[inputId]?.sources ?? {}
+						const source = audioSources[sourceId]
+
+						await transitions.runForFadeOptions(
+							`audio.${inputId}.${sourceId}.balance`,
+							async (value) => {
+								await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
+									balance: value,
+								})
+							},
+							source?.properties?.balance,
+							options.balance * 100,
+							options,
+						)
+					},
+					learn: ({ options }) => {
+						const audioChannels = state.state.fairlight?.inputs ?? {}
+						const audioSources = audioChannels[options.input]?.sources ?? {}
+						const source = audioSources[options.source]
+
+						if (source?.properties) {
+							return {
+								balance: source.properties.balance / 100,
+							}
+						} else {
+							return undefined
+						}
+					},
+				}
+			: undefined,
+		['fairlightAudioInputPanDelta']: audioInputOption
+			? {
+					name: 'Fairlight Audio: Adjust input pan',
+					options: convertOptionsFields({
+						input: audioInputOption,
+						source: audioSourceOption,
+						delta: FaderLevelDeltaChoice,
+						...FadeDurationFields,
+					}),
+					callback: async ({ options }) => {
+						const inputId = options.input
+						const sourceId = options.source
+
+						const audioChannels = state.state.fairlight?.inputs ?? {}
+						const audioSources = audioChannels[inputId]?.sources ?? {}
+						const source = audioSources[sourceId]
+
+						if (typeof source?.properties?.balance === 'number') {
+							await transitions.runForFadeOptions(
+								`audio.${inputId}.${sourceId}.balance`,
+								async (value) => {
+									await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
+										balance: value,
+									})
+								},
+								source.properties.balance,
+								source.properties.balance + options.delta * 100,
 								options,
 							)
 						}
