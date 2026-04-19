@@ -9,13 +9,6 @@ export function assertUnreachable(_never: never): void {
 	// throw new Error('Unreachable')
 }
 
-export function pad(str: string, prefix: string, len: number): string {
-	while (str.length < len) {
-		str = prefix + str
-	}
-	return str
-}
-
 export function compact<T>(arr: Array<T | undefined>): T[] {
 	return arr.filter((v) => v !== undefined) as T[]
 }
