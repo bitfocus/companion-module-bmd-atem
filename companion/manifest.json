@@ -1,5 +1,6 @@
 {
 	"$schema": "../node_modules/@companion-module/base/assets/manifest.schema.json",
+	"type": "connection",
 	"id": "bmd-atem",
 	"name": "bmd-atem",
 	"shortname": "atem",
