@@ -10,6 +10,7 @@ import {
 	type MediaPoolSourceOptions,
 	parseMediaPoolSource,
 } from '../options/mediaPool.js'
+import { CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle, resolveTrueFalseToggle } from '../options/common.js'
 
 export type AtemMediaPlayerActions = {
 	['mediaPlayerSource']: {
@@ -32,6 +33,23 @@ export type AtemMediaPlayerActions = {
 			defaultClip: boolean // unused
 		}
 	}
+	['mediaPlayerLoop']: {
+		options: {
+			mediaplayer: number
+			loop: TrueFalseToggle
+		}
+	}
+	['mediaPlayerPlaying']: {
+		options: {
+			mediaplayer: number
+			playing: TrueFalseToggle
+		}
+	}
+	['mediaPlayerAtBeginning']: {
+		options: {
+			mediaplayer: number
+		}
+	}
 }
 
 export function createMediaPlayerActions(
@@ -45,6 +63,9 @@ export function createMediaPlayerActions(
 			['mediaPlayerCycle']: undefined,
 			['mediaCaptureStill']: undefined,
 			['mediaDeleteStill']: undefined,
+			['mediaPlayerLoop']: undefined,
+			['mediaPlayerPlaying']: undefined,
+			['mediaPlayerAtBeginning']: undefined,
 		}
 	}
 	return {
@@ -144,6 +165,76 @@ export function createMediaPlayerActions(
 				if (source.isClip) return // Unsupported by this action for now
 
 				await atem?.clearMediaPoolStill(source.slot)
+			},
+		},
+		['mediaPlayerLoop']: {
+			name: 'Media player: Set loop',
+			options: convertOptionsFields({
+				mediaplayer: AtemMediaPlayerPicker(model),
+				loop: {
+					id: 'loop',
+					type: 'dropdown',
+					label: 'Loop',
+					default: 'true',
+					choices: CHOICES_ON_OFF_TOGGLE,
+					disableAutoExpression: true,
+				},
+			}),
+			callback: async ({ options }) => {
+				const playerId = options.mediaplayer - 1
+				const player = getMediaPlayer(state.state, playerId)
+				const newVal = resolveTrueFalseToggle(options.loop, player?.loop)
+				await atem?.setMediaPlayerSettings({ loop: newVal }, playerId)
+			},
+			learn: ({ options }) => {
+				const player = getMediaPlayer(state.state, options.mediaplayer - 1)
+				if (player) {
+					return { loop: player.loop ? 'true' : 'false' }
+				} else {
+					return undefined
+				}
+			},
+		},
+		['mediaPlayerPlaying']: {
+			name: 'Media player: Set playing',
+			options: convertOptionsFields({
+				mediaplayer: AtemMediaPlayerPicker(model),
+				playing: {
+					id: 'playing',
+					type: 'dropdown',
+					label: 'Playing',
+					default: 'true',
+					choices: [
+						{ id: 'true', label: 'Play' },
+						{ id: 'false', label: 'Stop' },
+						{ id: 'toggle', label: 'Toggle' },
+					],
+					disableAutoExpression: true,
+				},
+			}),
+			callback: async ({ options }) => {
+				const playerId = options.mediaplayer - 1
+				const player = getMediaPlayer(state.state, playerId)
+				const newVal = resolveTrueFalseToggle(options.playing, player?.playing)
+				await atem?.setMediaPlayerSettings({ playing: newVal }, playerId)
+			},
+			learn: ({ options }) => {
+				const player = getMediaPlayer(state.state, options.mediaplayer - 1)
+				if (player) {
+					return { playing: player.playing ? 'true' : 'false' }
+				} else {
+					return undefined
+				}
+			},
+		},
+		['mediaPlayerAtBeginning']: {
+			name: 'Media player: Jump to beginning',
+			options: convertOptionsFields({
+				mediaplayer: AtemMediaPlayerPicker(model),
+			}),
+			callback: async ({ options }) => {
+				const playerId = options.mediaplayer - 1
+				await atem?.setMediaPlayerSettings({ atBeginning: true }, playerId)
 			},
 		},
 	}

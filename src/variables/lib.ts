@@ -14,7 +14,7 @@ import {
 	type StateWrapper,
 } from '../state.js'
 import { assertUnreachable, CLASSIC_AUDIO_MIN_GAIN, type InstanceBaseExt } from '../util.js'
-import type { CompanionVariableDefinitions, CompanionVariableValues } from '@companion-module/base'
+import type { CompanionVariableDefinitions } from '@companion-module/base'
 import { initCameraControlVariables, updateCameraControlVariables } from './cameraControl.js'
 import { createEmptyState } from '@atem-connection/camera-control'
 import { updateTimecodeVariables } from './timecode.js'
@@ -122,7 +122,7 @@ function updateMEPreviewVariable(
 	values[`pvw${meIndex + 1}_input`] = getSourcePresetName(instance, state, input)
 	values[`pvw${meIndex + 1}_input_id`] = input
 }
-function updateMETransitionPositionVariable(state: AtemState, meIndex: number, values: CompanionVariableValues) {
+function updateMETransitionPositionVariable(state: AtemState, meIndex: number, values: Partial<VariablesSchema>) {
 	const rawPosition = state.video.mixEffects[meIndex]?.transitionPosition?.handlePosition ?? 0
 	values[`tbar_${meIndex + 1}`] = Math.round(rawPosition / 100)
 }
@@ -203,22 +203,22 @@ function updateAuxVariable(
 	values[`aux${auxIndex + 1}_input_id`] = input
 }
 
-function updateMacroVariable(state: AtemState, id: number, values: CompanionVariableValues): void {
+function updateMacroVariable(state: AtemState, id: number, values: Partial<VariablesSchema>): void {
 	const macro = state.macro.macroProperties[id]
 	values[`macro_${id + 1}`] = macro?.name || `Macro ${id + 1}`
 }
 
-function updateMediaStillVariable(state: AtemState, id: number, values: CompanionVariableValues): void {
+function updateMediaStillVariable(state: AtemState, id: number, values: Partial<VariablesSchema>): void {
 	const still = state.media.stillPool[id]
 	values[`still_${id + 1}`] = still?.fileName || `Still ${id + 1}`
 }
 
-function updateMediaClipVariable(state: AtemState, id: number, values: CompanionVariableValues): void {
+function updateMediaClipVariable(state: AtemState, id: number, values: Partial<VariablesSchema>): void {
 	const clip = state.media.clipPool[id]
 	values[`clip_${id + 1}`] = clip?.name || `Clip ${id + 1}`
 }
 
-function updateMediaPlayerVariables(state: AtemState, id: number, values: CompanionVariableValues): void {
+function updateMediaPlayerVariables(state: AtemState, id: number, values: Partial<VariablesSchema>): void {
 	const player = state.media.players[id]
 	let indexStr = '-1'
 	let sourceStr = 'Unknown'
@@ -235,14 +235,16 @@ function updateMediaPlayerVariables(state: AtemState, id: number, values: Compan
 	}
 	values[`mp_index_${id + 1}`] = indexStr
 	values[`mp_source_${id + 1}`] = sourceStr
+	values[`mp_loop_${id + 1}`] = !!player?.loop
+	values[`mp_playing_${id + 1}`] = !!player?.playing
 }
 
-function updateInputVariables(src: SourceInfo, values: CompanionVariableValues): void {
+function updateInputVariables(src: SourceInfo, values: Partial<VariablesSchema>): void {
 	values[`long_${src.id}`] = src.longName
 	values[`short_${src.id}`] = src.shortName
 }
 
-function updateStreamingVariables(state: AtemState, values: CompanionVariableValues): void {
+function updateStreamingVariables(state: AtemState, values: Partial<VariablesSchema>): void {
 	const bitrate = (state.streaming?.stats?.encodingBitrate ?? 0) / (1024 * 1024)
 	const durations = formatDuration(state.streaming?.duration)
 	const cacheused = state.streaming?.stats?.cacheUsed
@@ -254,7 +256,7 @@ function updateStreamingVariables(state: AtemState, values: CompanionVariableVal
 	values[`stream_cache_used`] = cacheused
 }
 
-function updateRecordingVariables(state: AtemState, values: CompanionVariableValues): void {
+function updateRecordingVariables(state: AtemState, values: Partial<VariablesSchema>): void {
 	const durations = formatDuration(state.recording?.duration)
 	const remaining = formatDurationSeconds(state.recording?.status?.recordingTimeAvailable)
 
@@ -368,12 +370,12 @@ function updateClassicAudioVariables(
 	values[`audio_input_${classicAudioIndex}_mixOption`] = formatAudioMixOption(channel?.mixOption)
 }
 
-function updateFairlightAudioMasterVariables(state: AtemState, values: CompanionVariableValues): void {
+function updateFairlightAudioMasterVariables(state: AtemState, values: Partial<VariablesSchema>): void {
 	const master = getFairlightAudioMasterChannel(state)
 	values[`audio_master_faderGain`] = formatAudioProperty(master?.properties?.faderGain)
 }
 
-function updateFairlightAudioMonitorVariables(state: AtemState, values: CompanionVariableValues): void {
+function updateFairlightAudioMonitorVariables(state: AtemState, values: Partial<VariablesSchema>): void {
 	const monitor = getFairlightAudioMonitorChannel(state)
 	values[`audio_monitor_gain`] = formatAudioProperty(monitor?.gain)
 	values[`audio_monitor_master_gain`] = formatAudioProperty(monitor?.inputMasterGain)
@@ -416,7 +418,7 @@ function updateMultiviewerWindowInput(
 	values[`mv_${index}_window_${window}_input`] = getSourcePresetName(instance, state, inputId)
 }
 
-export function updateDeviceIpVariable(instance: InstanceBaseExt, values: CompanionVariableValues): void {
+export function updateDeviceIpVariable(instance: InstanceBaseExt, values: Partial<VariablesSchema>): void {
 	values['device_ip'] = instance.parseIpAndPort()?.ip || ''
 }
 
@@ -632,6 +634,12 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 		}
 		variables[`mp_index_${i + 1}`] = {
 			name: `Name of media player index #${i + 1}`,
+		}
+		variables[`mp_loop_${i + 1}`] = {
+			name: `Media player #${i + 1} loop enabled`,
+		}
+		variables[`mp_playing_${i + 1}`] = {
+			name: `Media player #${i + 1} playing`,
 		}
 
 		updateMediaPlayerVariables(state.state, i, values)

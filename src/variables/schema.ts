@@ -60,6 +60,8 @@ export type VariablesSchema = {
 
 	[key: `mp_source_${number}`]: string
 	[key: `mp_index_${number}`]: string
+	[key: `mp_loop_${number}`]: boolean
+	[key: `mp_playing_${number}`]: boolean
 
 	stream_bitrate?: string
 	stream_duration_hm?: string

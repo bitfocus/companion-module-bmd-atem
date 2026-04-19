@@ -44,6 +44,7 @@ Make sure to backup your config before updating to this version!
 - Fairlight input pan
 - Mini Extreme ISO G2 audio channel labelling
 - Allow disabling status text for media pool previews
+- Media clip player control
 
 ## v3.21.0
 
