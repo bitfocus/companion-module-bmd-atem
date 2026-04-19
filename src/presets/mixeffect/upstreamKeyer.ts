@@ -4,7 +4,6 @@ import {
 	type DropdownChoice,
 	type CompanionButtonStyleProps,
 } from '@companion-module/base'
-import { FeedbackId } from '../../feedback/FeedbackId.js'
 import type { SourceInfo } from '../../options/sources.js'
 import { Enums } from 'atem-connection'
 import type { PresetsBuilderContext } from '../context.js'
@@ -67,7 +66,7 @@ export function createUpstreamKeyerPresets(
 		},
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.USKOnAir,
+				feedbackId: 'uskOnAir',
 				options: {
 					key: { isExpression: true, value: '$(local:key)' },
 					mixeffect: { isExpression: true, value: '$(local:me)' },
@@ -118,7 +117,7 @@ export function createUpstreamKeyerPresets(
 		},
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.TransitionSelection,
+				feedbackId: 'transitionSelection',
 				options: {
 					mixeffect: { isExpression: true, value: '$(local:me)' },
 					matchmethod: 'contains',
@@ -170,7 +169,7 @@ export function createUpstreamKeyerPresets(
 		},
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.USKSource,
+				feedbackId: 'usk_source',
 				options: {
 					fill: { isExpression: true, value: '$(local:input)' },
 					key: { isExpression: true, value: '$(local:key)' },
@@ -283,7 +282,7 @@ export function createUpstreamKeyerPresets(
 					},
 					feedbacks: [
 						{
-							feedbackId: FeedbackId.USKKeyFrame,
+							feedbackId: 'usk_keyframe',
 							options: {
 								mixeffect: { isExpression: true, value: '$(local:me)' },
 								key: { isExpression: true, value: '$(local:key)' },
@@ -346,7 +345,7 @@ export function createUpstreamKeyerPresets(
 					},
 					feedbacks: [
 						{
-							feedbackId: FeedbackId.USKType,
+							feedbackId: 'usk_type',
 							options: {
 								mixeffect: { isExpression: true, value: '$(local:me)' },
 								key: { isExpression: true, value: '$(local:key)' },

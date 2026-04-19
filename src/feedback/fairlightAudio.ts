@@ -1,7 +1,6 @@
 import { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
 import type { ModelSpec } from '../models/index.js'
-import { FeedbackId } from './FeedbackId.js'
 import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import {
 	compareNumber,
@@ -19,7 +18,7 @@ import {
 } from '../options/fairlight-routing.js'
 
 export type AtemFairlightAudioFeedbacks = {
-	[FeedbackId.FairlightAudioInputGain]: {
+	['fairlightAudioInputGain']: {
 		type: 'boolean'
 		options: {
 			input: number
@@ -28,7 +27,7 @@ export type AtemFairlightAudioFeedbacks = {
 			gain: number
 		}
 	}
-	[FeedbackId.FairlightAudioFaderGain]: {
+	['fairlightAudioFaderGain']: {
 		type: 'boolean'
 		options: {
 			input: number
@@ -37,7 +36,7 @@ export type AtemFairlightAudioFeedbacks = {
 			gain: number
 		}
 	}
-	[FeedbackId.FairlightAudioMixOption]: {
+	['fairlightAudioMixOption']: {
 		type: 'boolean'
 		options: {
 			input: number
@@ -45,14 +44,14 @@ export type AtemFairlightAudioFeedbacks = {
 			option: Enums.FairlightAudioMixOption
 		}
 	}
-	[FeedbackId.FairlightAudioMasterGain]: {
+	['fairlightAudioMasterGain']: {
 		type: 'boolean'
 		options: {
 			comparitor: NumberComparitor
 			gain: number
 		}
 	}
-	[FeedbackId.FairlightAudioMonitorSolo]: {
+	['fairlightAudioMonitorSolo']: {
 		type: 'boolean'
 		options: {
 			nothing: boolean
@@ -60,50 +59,50 @@ export type AtemFairlightAudioFeedbacks = {
 			source: string
 		}
 	}
-	[FeedbackId.FairlightAudioMonitorOutputFaderGain]: {
+	['fairlightAudioMonitorFaderGain']: {
 		type: 'boolean'
 		options: {
 			comparitor: NumberComparitor
 			gain: number
 		}
 	}
-	[FeedbackId.FairlightAudioMonitorMasterMuted]: {
+	['fairlightAudioMonitorMasterMuted']: {
 		type: 'boolean'
 		options: Record<string, never>
 	}
-	[FeedbackId.FairlightAudioMonitorMasterGain]: {
+	['fairlightAudioMonitorMasterGain']: {
 		type: 'boolean'
 		options: {
 			comparitor: NumberComparitor
 			gain: number
 		}
 	}
-	[FeedbackId.FairlightAudioMonitorTalkbackMuted]: {
+	['fairlightAudioMonitorTalkbackMuted']: {
 		type: 'boolean'
 		options: Record<string, never>
 	}
-	[FeedbackId.FairlightAudioMonitorTalkbackGain]: {
+	['fairlightAudioMonitorTalkbackGain']: {
 		type: 'boolean'
 		options: {
 			comparitor: NumberComparitor
 			gain: number
 		}
 	}
-	[FeedbackId.FairlightAudioMonitorSidetoneGain]: {
+	['fairlightAudioMonitorSidetoneGain']: {
 		type: 'boolean'
 		options: {
 			comparitor: NumberComparitor
 			gain: number
 		}
 	}
-	[FeedbackId.FairlightAudioRouting]: {
+	['fairlightAudioRouting']: {
 		type: 'boolean'
 		options: {
 			destination: number
 			source: number
 		}
 	}
-	[FeedbackId.FairlightAudioRoutingVariables]: {
+	['fairlightAudioRoutingVariables']: {
 		type: 'boolean'
 		options: {
 			destination: string
@@ -118,19 +117,19 @@ export function createFairlightAudioFeedbacks(
 ): CompanionFeedbackDefinitions<AtemFairlightAudioFeedbacks> {
 	if (!model.fairlightAudio) {
 		return {
-			[FeedbackId.FairlightAudioInputGain]: undefined,
-			[FeedbackId.FairlightAudioFaderGain]: undefined,
-			[FeedbackId.FairlightAudioMixOption]: undefined,
-			[FeedbackId.FairlightAudioMasterGain]: undefined,
-			[FeedbackId.FairlightAudioMonitorSolo]: undefined,
-			[FeedbackId.FairlightAudioMonitorOutputFaderGain]: undefined,
-			[FeedbackId.FairlightAudioMonitorMasterMuted]: undefined,
-			[FeedbackId.FairlightAudioMonitorMasterGain]: undefined,
-			[FeedbackId.FairlightAudioMonitorTalkbackMuted]: undefined,
-			[FeedbackId.FairlightAudioMonitorTalkbackGain]: undefined,
-			[FeedbackId.FairlightAudioMonitorSidetoneGain]: undefined,
-			[FeedbackId.FairlightAudioRouting]: undefined,
-			[FeedbackId.FairlightAudioRoutingVariables]: undefined,
+			['fairlightAudioInputGain']: undefined,
+			['fairlightAudioFaderGain']: undefined,
+			['fairlightAudioMixOption']: undefined,
+			['fairlightAudioMasterGain']: undefined,
+			['fairlightAudioMonitorSolo']: undefined,
+			['fairlightAudioMonitorFaderGain']: undefined,
+			['fairlightAudioMonitorMasterMuted']: undefined,
+			['fairlightAudioMonitorMasterGain']: undefined,
+			['fairlightAudioMonitorTalkbackMuted']: undefined,
+			['fairlightAudioMonitorTalkbackGain']: undefined,
+			['fairlightAudioMonitorSidetoneGain']: undefined,
+			['fairlightAudioRouting']: undefined,
+			['fairlightAudioRoutingVariables']: undefined,
 		}
 	}
 
@@ -138,7 +137,7 @@ export function createFairlightAudioFeedbacks(
 	const audioSourceOption = AtemFairlightAudioSourcePicker()
 
 	return {
-		[FeedbackId.FairlightAudioInputGain]: {
+		['fairlightAudioInputGain']: {
 			type: 'boolean',
 			name: 'Fairlight Audio: Audio input gain',
 			description: 'If the audio input has the specified input gain, change style of the bank',
@@ -185,7 +184,7 @@ export function createFairlightAudioFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.FairlightAudioFaderGain]: {
+		['fairlightAudioFaderGain']: {
 			type: 'boolean',
 			name: 'Fairlight Audio: Audio fader gain',
 			description: 'If the audio input has the specified fader gain, change style of the bank',
@@ -234,7 +233,7 @@ export function createFairlightAudioFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.FairlightAudioMixOption]: {
+		['fairlightAudioMixOption']: {
 			type: 'boolean',
 			name: 'Fairlight Audio: Audio mix option',
 			description: 'If the audio input has the specified mix option, change style of the bank',
@@ -274,7 +273,7 @@ export function createFairlightAudioFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.FairlightAudioMasterGain]: {
+		['fairlightAudioMasterGain']: {
 			type: 'boolean',
 			name: 'Fairlight Audio: Master fader gain',
 			description: 'If the master has the specified fader gain, change style of the bank',
@@ -315,7 +314,7 @@ export function createFairlightAudioFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.FairlightAudioMonitorSolo]: model.fairlightAudio.monitor
+		['fairlightAudioMonitorSolo']: model.fairlightAudio.monitor
 			? {
 					type: 'boolean',
 					name: 'Fairlight Audio: Solo source',
@@ -344,7 +343,7 @@ export function createFairlightAudioFeedbacks(
 					},
 				}
 			: undefined,
-		[FeedbackId.FairlightAudioMonitorOutputFaderGain]: model.fairlightAudio.monitor
+		['fairlightAudioMonitorFaderGain']: model.fairlightAudio.monitor
 			? {
 					type: 'boolean',
 					name: 'Fairlight Audio: Monitor/Headphone Gain',
@@ -387,7 +386,7 @@ export function createFairlightAudioFeedbacks(
 					},
 				}
 			: undefined,
-		[FeedbackId.FairlightAudioMonitorMasterMuted]: model.fairlightAudio.monitor
+		['fairlightAudioMonitorMasterMuted']: model.fairlightAudio.monitor
 			? {
 					type: 'boolean',
 					name: 'Fairlight Audio: Monitor/Headphone Master muted',
@@ -404,7 +403,7 @@ export function createFairlightAudioFeedbacks(
 					},
 				}
 			: undefined,
-		[FeedbackId.FairlightAudioMonitorMasterGain]:
+		['fairlightAudioMonitorMasterGain']:
 			model.fairlightAudio.monitor === 'split'
 				? {
 						type: 'boolean',
@@ -448,7 +447,7 @@ export function createFairlightAudioFeedbacks(
 						},
 					}
 				: undefined,
-		[FeedbackId.FairlightAudioMonitorTalkbackMuted]: model.fairlightAudio.monitor
+		['fairlightAudioMonitorTalkbackMuted']: model.fairlightAudio.monitor
 			? {
 					type: 'boolean',
 					name: 'Fairlight Audio: Monitor/Headphone Talkback muted',
@@ -465,7 +464,7 @@ export function createFairlightAudioFeedbacks(
 					},
 				}
 			: undefined,
-		[FeedbackId.FairlightAudioMonitorTalkbackGain]:
+		['fairlightAudioMonitorTalkbackGain']:
 			model.fairlightAudio.monitor === 'split'
 				? {
 						type: 'boolean',
@@ -509,7 +508,7 @@ export function createFairlightAudioFeedbacks(
 						},
 					}
 				: undefined,
-		[FeedbackId.FairlightAudioMonitorSidetoneGain]:
+		['fairlightAudioMonitorSidetoneGain']:
 			model.fairlightAudio.monitor === 'split'
 				? {
 						type: 'boolean',
@@ -562,16 +561,16 @@ function AudioRoutingFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
 ): CompanionFeedbackDefinitions<
-	Pick<AtemFairlightAudioFeedbacks, FeedbackId.FairlightAudioRouting | FeedbackId.FairlightAudioRoutingVariables>
+	Pick<AtemFairlightAudioFeedbacks, 'fairlightAudioRouting' | 'fairlightAudioRoutingVariables'>
 > {
 	if (!model.fairlightAudio?.audioRouting)
 		return {
-			[FeedbackId.FairlightAudioRouting]: undefined,
-			[FeedbackId.FairlightAudioRoutingVariables]: undefined,
+			['fairlightAudioRouting']: undefined,
+			['fairlightAudioRoutingVariables']: undefined,
 		}
 
 	return {
-		[FeedbackId.FairlightAudioRouting]: {
+		['fairlightAudioRouting']: {
 			type: 'boolean',
 			name: 'Fairlight Audio: Audio Routing',
 			description: 'Requires firmware 9.4+',
@@ -594,7 +593,7 @@ function AudioRoutingFeedbacks(
 				return output && output.sourceId === sourceId
 			},
 		},
-		[FeedbackId.FairlightAudioRoutingVariables]: {
+		['fairlightAudioRoutingVariables']: {
 			type: 'boolean',
 			name: 'Fairlight Audio: Audio Routing from variables',
 			description: 'Requires firmware 9.4+',

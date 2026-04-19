@@ -8,7 +8,6 @@ import {
 	type CompanionMigrationOptionValues,
 } from '@companion-module/base'
 import type { AtemConfig } from '../config.js'
-import { FeedbackId } from '../feedback/FeedbackId.js'
 import { OffsetNumericExpressionOrValueByX } from './util.js'
 
 function scaleValue(obj: CompanionMigrationOptionValues, key: string, scale: number): void {
@@ -75,27 +74,27 @@ const BooleanFeedbackUpgradeMap: {
 	dsk_bg: true,
 	dskTie: true,
 	dsk_source: true,
-	[FeedbackId.Macro]: true,
-	[FeedbackId.MVSource]: true,
-	[FeedbackId.SSrcBoxOnAir]: true,
-	[FeedbackId.SSrcBoxSource]: true,
-	[FeedbackId.SSrcBoxProperties]: true,
-	[FeedbackId.TransitionStyle]: true,
-	[FeedbackId.TransitionSelection]: true,
-	[FeedbackId.TransitionRate]: true,
-	[FeedbackId.InTransition]: true,
-	[FeedbackId.MediaPlayerSource]: true,
-	[FeedbackId.FadeToBlackIsBlack]: true,
-	[FeedbackId.FadeToBlackRate]: true,
-	[FeedbackId.ProgramTally]: true,
-	[FeedbackId.PreviewTally]: true,
-	[FeedbackId.StreamStatus]: true,
-	[FeedbackId.RecordStatus]: true,
-	[FeedbackId.ClassicAudioGain]: true,
-	[FeedbackId.ClassicAudioMixOption]: true,
-	[FeedbackId.FairlightAudioFaderGain]: true,
-	[FeedbackId.FairlightAudioInputGain]: true,
-	[FeedbackId.FairlightAudioMixOption]: true,
+	['macro']: true,
+	['mv_source']: true,
+	['ssrc_box_enable']: true,
+	['ssrc_box_source']: true,
+	['ssrc_box_properties']: true,
+	['transitionStyle']: true,
+	['transitionSelection']: true,
+	['transitionRate']: true,
+	['inTransition']: true,
+	['mediaPlayerSource']: true,
+	['fadeToBlackIsBlack']: true,
+	['fadeToBlackRate']: true,
+	['program_tally']: true,
+	['preview_tally']: true,
+	['streamStatus']: true,
+	['recordStatus']: true,
+	['classicAudioGain']: true,
+	['classicAudioMixOption']: true,
+	['fairlightAudioFaderGain']: true,
+	['fairlightAudioInputGain']: true,
+	['fairlightAudioMixOption']: true,
 }
 
 function upgradeAddSSrcPropertiesPicker(

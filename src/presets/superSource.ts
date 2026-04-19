@@ -1,5 +1,4 @@
 import type { CompanionPresetGroup, CompanionButtonStyleProps } from '@companion-module/base'
-import { FeedbackId } from '../feedback/FeedbackId.js'
 import type { SourceInfo } from '../options/sources.js'
 import type { PresetsBuilderContext } from './context.js'
 import type { AtemSchema } from '../schema.js'
@@ -64,7 +63,7 @@ export function createSuperSourcePresets(
 		},
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.SSrcBoxOnAir,
+				feedbackId: 'ssrc_box_enable',
 				options: {
 					ssrcId: { isExpression: true, value: '$(local:ssrc) - 1' },
 					boxIndex: { isExpression: true, value: '$(local:box) - 1' },
@@ -115,7 +114,7 @@ export function createSuperSourcePresets(
 		},
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.SSrcBoxSource,
+				feedbackId: 'ssrc_box_source',
 				options: {
 					ssrcId: { isExpression: true, value: '$(local:ssrc) - 1' },
 					source: { isExpression: true, value: '$(local:input)' },

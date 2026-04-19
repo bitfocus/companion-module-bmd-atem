@@ -1,12 +1,11 @@
 import { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
 import type { ModelSpec } from '../models/index.js'
-import { FeedbackId } from './FeedbackId.js'
 import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { StateWrapper } from '../state.js'
 
 export type AtemStreamingFeedbacks = {
-	[FeedbackId.StreamStatus]: {
+	['streamStatus']: {
 		type: 'boolean'
 		options: {
 			state: Enums.StreamingStatus
@@ -20,11 +19,11 @@ export function createStreamingFeedbacks(
 ): CompanionFeedbackDefinitions<AtemStreamingFeedbacks> {
 	if (!model.streaming) {
 		return {
-			[FeedbackId.StreamStatus]: undefined,
+			['streamStatus']: undefined,
 		}
 	}
 	return {
-		[FeedbackId.StreamStatus]: {
+		['streamStatus']: {
 			type: 'boolean',
 			name: 'Streaming: Active/Running',
 			description: 'If the stream has the specified status, change style of the bank',

@@ -1,5 +1,4 @@
 import type { CompanionPresetGroup, CompanionButtonStyleProps } from '@companion-module/base'
-import { FeedbackId } from '../feedback/FeedbackId.js'
 import type { SourceInfo } from '../options/sources.js'
 import type { PresetsBuilderContext } from './context.js'
 import type { AtemSchema } from '../schema.js'
@@ -71,7 +70,7 @@ export function createDownstreamKeyerPresets(
 		},
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.DSKOnAir,
+				feedbackId: 'dskOnAir',
 				options: {
 					key: { isExpression: true, value: '$(local:dsk)' },
 				},
@@ -115,7 +114,7 @@ export function createDownstreamKeyerPresets(
 		},
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.DSKTie,
+				feedbackId: 'dskTie',
 				options: {
 					key: { isExpression: true, value: '$(local:dsk)' },
 				},
@@ -159,7 +158,7 @@ export function createDownstreamKeyerPresets(
 		},
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.DSKSource,
+				feedbackId: 'dsk_source',
 				options: {
 					fill: { isExpression: true, value: '$(local:input)' },
 					key: { isExpression: true, value: '$(local:dsk)' },

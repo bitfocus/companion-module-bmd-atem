@@ -1,25 +1,24 @@
 import type { ModelSpec } from '../models/index.js'
 import { convertOptionsFields } from '../options/util.js'
-import { FeedbackId } from './FeedbackId.js'
 import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { AtemKeyFillSourcePicker } from '../options/commonKeyer.js'
 import { getDSK, type StateWrapper } from '../state.js'
 import { AtemDSKPicker } from '../options/downstreamKeyer.js'
 
 export type AtemDownstreamKeyerFeedbacks = {
-	[FeedbackId.DSKOnAir]: {
+	['dskOnAir']: {
 		type: 'boolean'
 		options: {
 			key: number
 		}
 	}
-	[FeedbackId.DSKTie]: {
+	['dskTie']: {
 		type: 'boolean'
 		options: {
 			key: number
 		}
 	}
-	[FeedbackId.DSKSource]: {
+	['dsk_source']: {
 		type: 'boolean'
 		options: {
 			key: number
@@ -34,13 +33,13 @@ export function createDownstreamKeyerFeedbacks(
 ): CompanionFeedbackDefinitions<AtemDownstreamKeyerFeedbacks> {
 	if (!model.DSKs) {
 		return {
-			[FeedbackId.DSKOnAir]: undefined,
-			[FeedbackId.DSKTie]: undefined,
-			[FeedbackId.DSKSource]: undefined,
+			['dskOnAir']: undefined,
+			['dskTie']: undefined,
+			['dsk_source']: undefined,
 		}
 	}
 	return {
-		[FeedbackId.DSKOnAir]: {
+		['dskOnAir']: {
 			type: 'boolean',
 			name: 'Downstream key: OnAir',
 			description: 'If the specified downstream keyer is onair, change style of the bank',
@@ -56,7 +55,7 @@ export function createDownstreamKeyerFeedbacks(
 				return !!dsk?.onAir
 			},
 		},
-		[FeedbackId.DSKTie]: {
+		['dskTie']: {
 			type: 'boolean',
 			name: 'Downstream key: Tied',
 			description: 'If the specified downstream keyer is tied, change style of the bank',
@@ -72,7 +71,7 @@ export function createDownstreamKeyerFeedbacks(
 				return !!dsk?.properties?.tie
 			},
 		},
-		[FeedbackId.DSKSource]: {
+		['dsk_source']: {
 			type: 'boolean',
 			name: 'Downstream key: Fill source',
 			description: 'If the input specified is selected in the DSK specified, change style of the bank',

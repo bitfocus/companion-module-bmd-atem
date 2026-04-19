@@ -1,5 +1,4 @@
 import type { ModelSpec } from '../models/index.js'
-import { FeedbackId } from './FeedbackId.js'
 import { assertNever, type CompanionFeedbackDefinitions, type JsonValue } from '@companion-module/base'
 import { getMultiviewer, getMultiviewerWindow, type StateWrapper } from '../state.js'
 import { Enums } from 'atem-connection'
@@ -15,7 +14,7 @@ import {
 } from '../options/multiviewer.js'
 
 export type AtemMultiviewerFeedbacks = {
-	[FeedbackId.MVSource]: {
+	['mv_source']: {
 		type: 'boolean'
 		options: {
 			multiViewerId: number
@@ -23,7 +22,7 @@ export type AtemMultiviewerFeedbacks = {
 			source: number
 		}
 	}
-	[FeedbackId.MultiviewerLayout]: {
+	['multiviewerLayout']: {
 		type: 'boolean'
 		options: {
 			multiViewerId: number
@@ -41,12 +40,12 @@ export function createMultiviewerFeedbacks(
 ): CompanionFeedbackDefinitions<AtemMultiviewerFeedbacks> {
 	if (!model.MVs) {
 		return {
-			[FeedbackId.MVSource]: undefined,
-			[FeedbackId.MultiviewerLayout]: undefined,
+			['mv_source']: undefined,
+			['multiviewerLayout']: undefined,
 		}
 	}
 	return {
-		[FeedbackId.MVSource]: {
+		['mv_source']: {
 			type: 'boolean',
 			name: 'Multiviewer: Window source',
 			description: 'If the specified MV window is set to the specified source, change style of the bank',
@@ -75,7 +74,7 @@ export function createMultiviewerFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.MultiviewerLayout]: {
+		['multiviewerLayout']: {
 			type: 'boolean',
 			name: 'Multiviewer: Layout',
 			options: convertOptionsFields({

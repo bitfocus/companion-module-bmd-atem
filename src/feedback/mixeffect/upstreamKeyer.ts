@@ -1,7 +1,6 @@
 import type { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../../options/util.js'
 import type { ModelSpec } from '../../models/index.js'
-import { FeedbackId } from '../FeedbackId.js'
 import type { CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
 import { getUSK, type StateWrapper } from '../../state.js'
 import { AtemMEPicker } from '../../options/mixEffect.js'
@@ -16,14 +15,14 @@ import { AtemKeyFillSourcePicker } from '../../options/commonKeyer.js'
 import { CHOICES_CURRENTKEYFRAMES } from '../../options/upstreamKeyer-dve.js'
 
 export type AtemUpstreamKeyerFeedbacks = {
-	[FeedbackId.USKOnAir]: {
+	['uskOnAir']: {
 		type: 'boolean'
 		options: {
 			mixeffect: number
 			key: number
 		}
 	}
-	[FeedbackId.USKType]: {
+	['usk_type']: {
 		type: 'boolean'
 		options: {
 			mixeffect: number
@@ -31,7 +30,7 @@ export type AtemUpstreamKeyerFeedbacks = {
 			type: UpstreamKeyerTypeString | JsonValue | undefined
 		}
 	}
-	[FeedbackId.USKSource]: {
+	['usk_source']: {
 		type: 'boolean'
 		options: {
 			mixeffect: number
@@ -39,7 +38,7 @@ export type AtemUpstreamKeyerFeedbacks = {
 			fill: number
 		}
 	}
-	[FeedbackId.USKKeyFrame]: {
+	['usk_keyframe']: {
 		type: 'boolean'
 		options: {
 			mixeffect: number
@@ -55,14 +54,14 @@ export function createUpstreamKeyerFeedbacks(
 ): CompanionFeedbackDefinitions<AtemUpstreamKeyerFeedbacks> {
 	if (!model.USKs) {
 		return {
-			[FeedbackId.USKOnAir]: undefined,
-			[FeedbackId.USKType]: undefined,
-			[FeedbackId.USKSource]: undefined,
-			[FeedbackId.USKKeyFrame]: undefined,
+			['uskOnAir']: undefined,
+			['usk_type']: undefined,
+			['usk_source']: undefined,
+			['usk_keyframe']: undefined,
 		}
 	}
 	return {
-		[FeedbackId.USKOnAir]: {
+		['uskOnAir']: {
 			type: 'boolean',
 			name: 'Upstream key: OnAir state',
 			description: 'If the specified upstream keyer is active, change style of the bank',
@@ -79,7 +78,7 @@ export function createUpstreamKeyerFeedbacks(
 				return !!usk?.onAir
 			},
 		},
-		[FeedbackId.USKType]: {
+		['usk_type']: {
 			type: 'boolean',
 			name: 'Upstream key: Key type',
 			description: 'If the specified upstream keyer has the specified type, change style of the bank',
@@ -111,7 +110,7 @@ export function createUpstreamKeyerFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.USKSource]: {
+		['usk_source']: {
 			type: 'boolean',
 			name: 'Upstream key: Fill source',
 			description: 'If the input specified is selected in the USK specified, change style of the bank',
@@ -140,7 +139,7 @@ export function createUpstreamKeyerFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.USKKeyFrame]: model.DVEs
+		['usk_keyframe']: model.DVEs
 			? {
 					type: 'boolean',
 					name: 'Upstream key: Key frame',

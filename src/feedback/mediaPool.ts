@@ -1,7 +1,6 @@
 import { convertOptionsFields } from '../options/util.js'
 import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
-import { FeedbackId } from './FeedbackId.js'
 import type { StateWrapper } from '../state.js'
 import type { MediaPoolPreviewOptions, SourceDefinition } from '../mediaPoolPreviews.js'
 import type { CompanionAdvancedFeedbackResult, CompanionInputFieldDropdown } from '@companion-module/base'
@@ -13,7 +12,7 @@ import {
 import { isEqual } from 'lodash-es'
 
 export type AtemMediaPoolFeedbacks = {
-	[FeedbackId.MediaPoolPreview]: {
+	['mediaPoolPreview']: {
 		type: 'advanced'
 		options: MediaPoolSourceOptions & {
 			position: 'top' | 'center' | 'bottom'
@@ -57,11 +56,11 @@ export function createMediaPoolFeedbacks(
 ): CompanionFeedbackDefinitions<AtemMediaPoolFeedbacks> {
 	if (!model.media.players) {
 		return {
-			[FeedbackId.MediaPoolPreview]: undefined,
+			['mediaPoolPreview']: undefined,
 		}
 	}
 	return {
-		[FeedbackId.MediaPoolPreview]: {
+		['mediaPoolPreview']: {
 			type: 'advanced',
 			name: 'Media pool: Preview image',
 			description: 'Preview of the specified media pool slot',

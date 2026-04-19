@@ -1,5 +1,4 @@
 import type { CompanionPresetGroup, CompanionButtonStyleProps } from '@companion-module/base'
-import { FeedbackId } from '../../feedback/FeedbackId.js'
 import { GetTransitionStyleChoices } from '../../options/mixEffect.js'
 import type { PresetsBuilderContext } from '../context.js'
 import type { AtemSchema } from '../../schema.js'
@@ -70,7 +69,7 @@ export function createTransitionPresets(
 			},
 			feedbacks: [
 				{
-					feedbackId: FeedbackId.TransitionRate,
+					feedbackId: 'transitionRate',
 					options: {
 						mixeffect: { isExpression: true, value: '$(local:me)' },
 						style: opt.id,
@@ -128,7 +127,7 @@ export function createTransitionPresets(
 			},
 			feedbacks: [
 				{
-					feedbackId: FeedbackId.PreviewTransition,
+					feedbackId: 'previewTransition',
 					options: {
 						mixeffect: { isExpression: true, value: '$(local:me)' },
 					},
@@ -172,7 +171,7 @@ export function createTransitionPresets(
 			},
 			feedbacks: [
 				{
-					feedbackId: FeedbackId.InTransition,
+					feedbackId: 'inTransition',
 					options: {
 						mixeffect: { isExpression: true, value: '$(local:me)' },
 					},
@@ -215,7 +214,7 @@ export function createTransitionPresets(
 			},
 			feedbacks: [
 				{
-					feedbackId: FeedbackId.InTransition,
+					feedbackId: 'inTransition',
 					options: {
 						mixeffect: { isExpression: true, value: '$(local:me)' },
 					},
@@ -265,7 +264,7 @@ export function createTransitionPresets(
 				},
 				feedbacks: [
 					{
-						feedbackId: FeedbackId.TransitionStyle,
+						feedbackId: 'transitionStyle',
 						options: {
 							mixeffect: { isExpression: true, value: '$(local:me)' },
 							style: opt.id,
@@ -322,7 +321,7 @@ export function createTransitionPresets(
 				},
 				feedbacks: [
 					{
-						feedbackId: FeedbackId.TransitionSelection,
+						feedbackId: 'transitionSelection',
 						options: {
 							mixeffect: { isExpression: true, value: '$(local:me)' },
 							matchmethod: 'contains',

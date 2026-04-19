@@ -1,6 +1,5 @@
 import type { ModelSpec } from '../models/index.js'
 import { convertOptionsFields } from '../options/util.js'
-import { FeedbackId } from './FeedbackId.js'
 import type { CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
 import type { StateWrapper } from '../state.js'
 import type { AtemConfig } from '../config.js'
@@ -9,7 +8,7 @@ import { AtemTimecodeModePicker, timecodeModeToEnum, upstreamKeyerTypeEnumToStri
 type TimecodeMode = 'freerun' | 'timeofday'
 
 export type AtemTimecodeFeedbacks = {
-	[FeedbackId.TimecodeMode]: {
+	['timecodeMode']: {
 		type: 'boolean'
 		options: {
 			mode: TimecodeMode | JsonValue | undefined
@@ -24,11 +23,11 @@ export function createTimecodeFeedbacks(
 ): CompanionFeedbackDefinitions<AtemTimecodeFeedbacks> {
 	if (!config.pollTimecode) {
 		return {
-			[FeedbackId.TimecodeMode]: undefined,
+			['timecodeMode']: undefined,
 		}
 	}
 	return {
-		[FeedbackId.TimecodeMode]: {
+		['timecodeMode']: {
 			type: 'boolean',
 			name: 'Timecode: Mode',
 			description: 'If the timecode mode is as specified',

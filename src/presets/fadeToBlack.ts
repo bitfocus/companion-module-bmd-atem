@@ -1,5 +1,4 @@
 import type { CompanionPresetGroup, CompanionButtonStyleProps } from '@companion-module/base'
-import { FeedbackId } from '../feedback/FeedbackId.js'
 import type { PresetsBuilderContext } from './context.js'
 import type { AtemSchema } from '../schema.js'
 import { iterateTimes } from '../util.js'
@@ -56,7 +55,7 @@ export function createFadeToBlackPresets(
 		},
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.FadeToBlackIsBlack,
+				feedbackId: 'fadeToBlackIsBlack',
 				options: {
 					mixeffect: { isExpression: true, value: '$(local:me)' },
 					state: 'off',
@@ -67,7 +66,7 @@ export function createFadeToBlackPresets(
 				},
 			},
 			{
-				feedbackId: FeedbackId.FadeToBlackIsBlack,
+				feedbackId: 'fadeToBlackIsBlack',
 				options: {
 					mixeffect: { isExpression: true, value: '$(local:me)' },
 					state: 'on',
@@ -78,7 +77,7 @@ export function createFadeToBlackPresets(
 				},
 			},
 			{
-				feedbackId: FeedbackId.FadeToBlackIsBlack,
+				feedbackId: 'fadeToBlackIsBlack',
 				options: {
 					mixeffect: { isExpression: true, value: '$(local:me)' },
 					state: 'fading',
@@ -122,7 +121,7 @@ export function createFadeToBlackPresets(
 		},
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.FadeToBlackRate,
+				feedbackId: 'fadeToBlackRate',
 				options: {
 					mixeffect: { isExpression: true, value: '$(local:me)' },
 					rate: { isExpression: true, value: '$(local:rate)' },

@@ -1,7 +1,6 @@
 import { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../../options/util.js'
 import type { ModelSpec } from '../../models/index.js'
-import { FeedbackId } from '../FeedbackId.js'
 import type { CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
 import { getMixEffect, type StateWrapper } from '../../state.js'
 import { assertUnreachable } from '../../util.js'
@@ -21,20 +20,20 @@ import {
 } from '../../options/transition.js'
 
 export type AtemTransitionFeedbacks = {
-	[FeedbackId.PreviewTransition]: {
+	['previewTransition']: {
 		type: 'boolean'
 		options: {
 			mixeffect: number
 		}
 	}
-	[FeedbackId.TransitionStyle]: {
+	['transitionStyle']: {
 		type: 'boolean'
 		options: {
 			mixeffect: number
 			style: TransitionStyleString | JsonValue | undefined
 		}
 	}
-	[FeedbackId.TransitionSelection]: {
+	['transitionSelection']: {
 		type: 'boolean'
 		options: {
 			mixeffect: number
@@ -42,7 +41,7 @@ export type AtemTransitionFeedbacks = {
 			selection: TransitionSelectionComponent[]
 		}
 	}
-	[FeedbackId.TransitionRate]: {
+	['transitionRate']: {
 		type: 'boolean'
 		options: {
 			mixeffect: number
@@ -50,7 +49,7 @@ export type AtemTransitionFeedbacks = {
 			rate: number
 		}
 	}
-	[FeedbackId.InTransition]: {
+	['inTransition']: {
 		type: 'boolean'
 		options: {
 			mixeffect: number
@@ -63,7 +62,7 @@ export function createTransitionFeedbacks(
 	state: StateWrapper,
 ): CompanionFeedbackDefinitions<AtemTransitionFeedbacks> {
 	return {
-		[FeedbackId.PreviewTransition]: {
+		['previewTransition']: {
 			type: 'boolean',
 			name: 'Transition: Preview',
 			description: 'If the specified transition is being previewed, change style of the bank',
@@ -79,7 +78,7 @@ export function createTransitionFeedbacks(
 				return !!me?.transitionPreview
 			},
 		},
-		[FeedbackId.TransitionStyle]: {
+		['transitionStyle']: {
 			type: 'boolean',
 			name: 'Transition: Style',
 			description: 'If the specified transition style is active, change style of the bank',
@@ -107,7 +106,7 @@ export function createTransitionFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.TransitionSelection]: {
+		['transitionSelection']: {
 			type: 'boolean',
 			name: 'Transition: Selection',
 			description: 'If the specified transition selection is active, change style of the bank',
@@ -136,7 +135,7 @@ export function createTransitionFeedbacks(
 				return false
 			},
 		},
-		[FeedbackId.TransitionRate]: {
+		['transitionRate']: {
 			type: 'boolean',
 			name: 'Transition: Rate',
 			description: 'If the specified transition rate is active, change style of the bank',
@@ -208,7 +207,7 @@ export function createTransitionFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.InTransition]: {
+		['inTransition']: {
 			type: 'boolean',
 			name: 'Transition: Active/Running',
 			description: 'If the specified transition is active, change style of the bank',

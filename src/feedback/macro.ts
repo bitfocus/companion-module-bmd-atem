@@ -1,6 +1,5 @@
 import type { ModelSpec } from '../models/index.js'
 import { convertOptionsFields } from '../options/util.js'
-import { FeedbackId } from './FeedbackId.js'
 import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { assertUnreachable } from '../util.js'
 import type { StateWrapper } from '../state.js'
@@ -14,14 +13,14 @@ export enum MacroFeedbackType {
 }
 
 export type AtemMacroFeedbacks = {
-	[FeedbackId.Macro]: {
+	['macro']: {
 		type: 'boolean'
 		options: {
 			macroIndex: number
 			state: MacroFeedbackType
 		}
 	}
-	[FeedbackId.MacroLoop]: {
+	['macroloop']: {
 		type: 'boolean'
 		options: {
 			loop: boolean
@@ -35,12 +34,12 @@ export function createMacroFeedbacks(
 ): CompanionFeedbackDefinitions<AtemMacroFeedbacks> {
 	if (!model.macros) {
 		return {
-			[FeedbackId.Macro]: undefined,
-			[FeedbackId.MacroLoop]: undefined,
+			['macro']: undefined,
+			['macroloop']: undefined,
 		}
 	}
 	return {
-		[FeedbackId.Macro]: {
+		['macro']: {
 			type: 'boolean',
 			name: 'Macro: State',
 			description: 'If the specified macro is running or waiting, change style of the bank',
@@ -89,7 +88,7 @@ export function createMacroFeedbacks(
 				return false
 			},
 		},
-		[FeedbackId.MacroLoop]: {
+		['macroloop']: {
 			type: 'boolean',
 			name: 'Macro: Looping',
 			description: 'If the specified macro is looping, change style of the bank',

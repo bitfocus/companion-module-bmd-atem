@@ -1,19 +1,18 @@
 import { convertOptionsFields } from '../../options/util.js'
 import type { ModelSpec } from '../../models/index.js'
-import { FeedbackId } from '../FeedbackId.js'
 import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { getMixEffect, type StateWrapper } from '../../state.js'
 import { AtemMEPicker, AtemMESourcePicker } from '../../options/mixEffect.js'
 
 export type AtemProgramPreviewFeedbacks = {
-	[FeedbackId.Program]: {
+	['program']: {
 		type: 'boolean'
 		options: {
 			mixeffect: number
 			input: number
 		}
 	}
-	[FeedbackId.Preview]: {
+	['preview']: {
 		type: 'boolean'
 		options: {
 			mixeffect: number
@@ -27,7 +26,7 @@ export function createProgramPreviewFeedbacks(
 	state: StateWrapper,
 ): CompanionFeedbackDefinitions<AtemProgramPreviewFeedbacks> {
 	return {
-		[FeedbackId.Program]: {
+		['program']: {
 			type: 'boolean',
 			name: 'ME: One ME program source',
 			description: 'If the input specified is selected in program on the M/E stage specified, change style of the bank',
@@ -55,7 +54,7 @@ export function createProgramPreviewFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.Preview]: {
+		['preview']: {
 			type: 'boolean',
 			name: 'ME: One ME preview source',
 			description: 'If the input specified is selected in preview on the M/E stage specified, change style of the bank',

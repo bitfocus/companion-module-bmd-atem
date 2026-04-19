@@ -2,7 +2,6 @@ import { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
 import { AtemMediaPlayerPicker } from '../options/mediaPlayer.js'
 import type { ModelSpec } from '../models/index.js'
-import { FeedbackId } from './FeedbackId.js'
 import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { StateWrapper } from '../state.js'
 import {
@@ -12,7 +11,7 @@ import {
 } from '../options/mediaPool.js'
 
 export type AtemMediaPlayerFeedbacks = {
-	[FeedbackId.MediaPlayerSource]: {
+	['mediaPlayerSource']: {
 		type: 'boolean'
 		options: {
 			mediaplayer: number
@@ -26,11 +25,11 @@ export function createMediaPlayerFeedbacks(
 ): CompanionFeedbackDefinitions<AtemMediaPlayerFeedbacks> {
 	if (!model.media.players) {
 		return {
-			[FeedbackId.MediaPlayerSource]: undefined,
+			['mediaPlayerSource']: undefined,
 		}
 	}
 	return {
-		[FeedbackId.MediaPlayerSource]: {
+		['mediaPlayerSource']: {
 			type: 'boolean',
 			name: 'Media player: Source',
 			description: 'If the specified media player has the specified source, change style of the bank',

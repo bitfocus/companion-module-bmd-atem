@@ -1,5 +1,4 @@
 import { Enums } from 'atem-connection'
-import { FeedbackId } from '../feedback/FeedbackId.js'
 import type { PresetsBuilderContext } from './context.js'
 
 export function createRecordingPresets(context: PresetsBuilderContext): void {
@@ -23,7 +22,7 @@ export function createRecordingPresets(context: PresetsBuilderContext): void {
 		},
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.RecordStatus,
+				feedbackId: 'recordStatus',
 				options: {
 					state: Enums.RecordingStatus.Recording,
 				},
@@ -33,7 +32,7 @@ export function createRecordingPresets(context: PresetsBuilderContext): void {
 				},
 			},
 			{
-				feedbackId: FeedbackId.RecordStatus,
+				feedbackId: 'recordStatus',
 				options: {
 					state: Enums.RecordingStatus.Stopping,
 				},

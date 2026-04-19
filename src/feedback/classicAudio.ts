@@ -1,7 +1,6 @@
 import { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
 import type { ModelSpec } from '../models/index.js'
-import { FeedbackId } from './FeedbackId.js'
 import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import {
 	compareNumber,
@@ -13,7 +12,7 @@ import {
 import type { StateWrapper } from '../state.js'
 
 export type AtemClassicAudioFeedbacks = {
-	[FeedbackId.ClassicAudioGain]: {
+	['classicAudioGain']: {
 		type: 'boolean'
 		options: {
 			input: number
@@ -21,14 +20,14 @@ export type AtemClassicAudioFeedbacks = {
 			gain: number
 		}
 	}
-	[FeedbackId.ClassicAudioMixOption]: {
+	['classicAudioMixOption']: {
 		type: 'boolean'
 		options: {
 			input: number
 			option: Enums.AudioMixOption
 		}
 	}
-	[FeedbackId.ClassicAudioMasterGain]: {
+	['classicAudioMasterGain']: {
 		type: 'boolean'
 		options: {
 			comparitor: NumberComparitor
@@ -43,16 +42,16 @@ export function createClassicAudioFeedbacks(
 ): CompanionFeedbackDefinitions<AtemClassicAudioFeedbacks> {
 	if (!model.classicAudio) {
 		return {
-			[FeedbackId.ClassicAudioGain]: undefined,
-			[FeedbackId.ClassicAudioMixOption]: undefined,
-			[FeedbackId.ClassicAudioMasterGain]: undefined,
+			['classicAudioGain']: undefined,
+			['classicAudioMixOption']: undefined,
+			['classicAudioMasterGain']: undefined,
 		}
 	}
 
 	const audioInputOption = AtemAudioInputPicker(model, state.state)
 
 	return {
-		[FeedbackId.ClassicAudioGain]: {
+		['classicAudioGain']: {
 			type: 'boolean',
 			name: 'Classic Audio: Audio gain',
 			description: 'If the audio input has the specified gain, change style of the bank',
@@ -96,7 +95,7 @@ export function createClassicAudioFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.ClassicAudioMixOption]: {
+		['classicAudioMixOption']: {
 			type: 'boolean',
 			name: 'Classic Audio: Mix option',
 			description: 'If the audio input has the specified mix option, change style of the bank',
@@ -133,7 +132,7 @@ export function createClassicAudioFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.ClassicAudioMasterGain]: {
+		['classicAudioMasterGain']: {
 			type: 'boolean',
 			name: 'Classic Audio: Master gain',
 			description: 'If the audio master has the specified gain, change style of the bank',

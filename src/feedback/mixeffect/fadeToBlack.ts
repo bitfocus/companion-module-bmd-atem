@@ -1,21 +1,20 @@
 import { AtemFadeToBlackStatePicker } from '../../options/fadeToBlack.js'
 import { convertOptionsFields } from '../../options/util.js'
 import type { ModelSpec } from '../../models/index.js'
-import { FeedbackId } from '../FeedbackId.js'
 import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { getMixEffect, type StateWrapper } from '../../state.js'
 import { AtemMEPicker } from '../../options/mixEffect.js'
 import { AtemRatePicker } from '../../options/common.js'
 
 export type AtemFadeToBlackFeedbacks = {
-	[FeedbackId.FadeToBlackIsBlack]: {
+	['fadeToBlackIsBlack']: {
 		type: 'boolean'
 		options: {
 			mixeffect: number
 			state: 'on' | 'off' | 'fading'
 		}
 	}
-	[FeedbackId.FadeToBlackRate]: {
+	['fadeToBlackRate']: {
 		type: 'boolean'
 		options: {
 			mixeffect: number
@@ -29,7 +28,7 @@ export function createFadeToBlackFeedbacks(
 	state: StateWrapper,
 ): CompanionFeedbackDefinitions<AtemFadeToBlackFeedbacks> {
 	return {
-		[FeedbackId.FadeToBlackIsBlack]: {
+		['fadeToBlackIsBlack']: {
 			type: 'boolean',
 			name: 'Fade to black: Active',
 			description: 'If the specified fade to black is active, change style of the bank',
@@ -57,7 +56,7 @@ export function createFadeToBlackFeedbacks(
 				return false
 			},
 		},
-		[FeedbackId.FadeToBlackRate]: {
+		['fadeToBlackRate']: {
 			type: 'boolean',
 			name: 'Fade to black: Rate',
 			description: 'If the specified fade to black rate matches, change style of the bank',

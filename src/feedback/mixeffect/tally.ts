@@ -1,7 +1,6 @@
 import { AtemMESourcePicker } from '../../options/mixEffect.js'
 import { convertOptionsFields, SourcesToChoices } from '../../options/util.js'
 import type { ModelSpec } from '../../models/index.js'
-import { FeedbackId } from '../FeedbackId.js'
 import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { StateWrapper } from '../../state.js'
 import { calculateTallyForInputId } from '../../util.js'
@@ -9,19 +8,19 @@ import { GetSourcesListForType } from '../../options/sources.js'
 import { isEqual } from 'lodash-es'
 
 export type AtemTallyFeedbacks = {
-	[FeedbackId.ProgramTally]: {
+	['program_tally']: {
 		type: 'boolean'
 		options: {
 			input: number
 		}
 	}
-	[FeedbackId.PreviewTally]: {
+	['preview_tally']: {
 		type: 'boolean'
 		options: {
 			input: number
 		}
 	}
-	[FeedbackId.AdvancedTally]: {
+	['advanced_tally']: {
 		type: 'boolean'
 		options: {
 			inputIds: number[]
@@ -35,7 +34,7 @@ export function createTallyFeedbacks(
 	state: StateWrapper,
 ): CompanionFeedbackDefinitions<AtemTallyFeedbacks> {
 	return {
-		[FeedbackId.ProgramTally]: {
+		['program_tally']: {
 			type: 'boolean',
 			name: 'Tally: Program',
 			description: 'If the input specified has an active progam tally light, change style of the bank',
@@ -51,7 +50,7 @@ export function createTallyFeedbacks(
 				return !!source?.program
 			},
 		},
-		[FeedbackId.PreviewTally]: {
+		['preview_tally']: {
 			type: 'boolean',
 			name: 'Tally: Preview',
 			description: 'If the input specified has an active preview tally light, change style of the bank',
@@ -67,7 +66,7 @@ export function createTallyFeedbacks(
 				return !!source?.preview
 			},
 		},
-		[FeedbackId.AdvancedTally]: {
+		['advanced_tally']: {
 			type: 'boolean',
 			name: 'Tally: Advanced',
 			description: 'Check if the input specified is active in one of the selected outputs/mixes',

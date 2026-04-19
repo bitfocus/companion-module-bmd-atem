@@ -1,7 +1,6 @@
 import { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
 import type { ModelSpec } from '../models/index.js'
-import { FeedbackId } from './FeedbackId.js'
 import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { getSuperSource } from 'atem-connection/dist/state/util.js'
 import { getSuperSourceBox, type StateWrapper } from '../state.js'
@@ -20,27 +19,27 @@ import {
 } from '../options/superSource.js'
 
 export type AtemSuperSourceFeedbacks = {
-	[FeedbackId.SSrcArtProperties]: {
+	['ssrc_art_properties']: {
 		type: 'boolean'
 		options: {
 			ssrcId: number
 		} & AtemSuperSourceArtProperties
 	}
-	[FeedbackId.SSrcArtSource]: {
+	['ssrc_art_source']: {
 		type: 'boolean'
 		options: {
 			ssrcId: number
 			source: number
 		}
 	}
-	[FeedbackId.SSrcArtOption]: {
+	['ssrc_art_option']: {
 		type: 'boolean'
 		options: {
 			ssrcId: number
 			artOption: Enums.SuperSourceArtOption
 		}
 	}
-	[FeedbackId.SSrcBoxSource]: {
+	['ssrc_box_source']: {
 		type: 'boolean'
 		options: {
 			ssrcId: number
@@ -48,14 +47,14 @@ export type AtemSuperSourceFeedbacks = {
 			source: number
 		}
 	}
-	[FeedbackId.SSrcBoxOnAir]: {
+	['ssrc_box_enable']: {
 		type: 'boolean'
 		options: {
 			ssrcId: number
 			boxIndex: number
 		}
 	}
-	[FeedbackId.SSrcBoxProperties]: {
+	['ssrc_box_properties']: {
 		type: 'boolean'
 		options: {
 			ssrcId: number
@@ -78,16 +77,16 @@ export function createSuperSourceFeedbacks(
 ): CompanionFeedbackDefinitions<AtemSuperSourceFeedbacks> {
 	if (!model.SSrc) {
 		return {
-			[FeedbackId.SSrcArtProperties]: undefined,
-			[FeedbackId.SSrcArtSource]: undefined,
-			[FeedbackId.SSrcArtOption]: undefined,
-			[FeedbackId.SSrcBoxSource]: undefined,
-			[FeedbackId.SSrcBoxOnAir]: undefined,
-			[FeedbackId.SSrcBoxProperties]: undefined,
+			['ssrc_art_properties']: undefined,
+			['ssrc_art_source']: undefined,
+			['ssrc_art_option']: undefined,
+			['ssrc_box_source']: undefined,
+			['ssrc_box_enable']: undefined,
+			['ssrc_box_properties']: undefined,
 		}
 	}
 	return {
-		[FeedbackId.SSrcArtProperties]: {
+		['ssrc_art_properties']: {
 			type: 'boolean',
 			name: 'Supersource: Art properties',
 			description: 'If the specified SuperSource art properties match, change style of the bank',
@@ -141,8 +140,8 @@ export function createSuperSourceFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.SSrcArtSource]: {
-			// TODO - replace with FeedbackId.SSrcArtProperties
+		['ssrc_art_source']: {
+			// TODO - replace with 'ssrc_art_properties'
 			type: 'boolean',
 			name: 'Supersource: Art fill source',
 			description: 'If the specified SuperSource art fill is set to the specified source, change style of the bank',
@@ -172,8 +171,8 @@ export function createSuperSourceFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.SSrcArtOption]: {
-			// TODO - replace with FeedbackId.SSrcArtProperties
+		['ssrc_art_option']: {
+			// TODO - replace with 'ssrc_art_properties'
 			type: 'boolean',
 			name: 'Supersource: Art placement',
 			description: 'If the specified SuperSource art is placed in the foreground/background, change style of the bank',
@@ -203,8 +202,8 @@ export function createSuperSourceFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.SSrcBoxSource]: {
-			// TODO - replace with FeedbackId.SSrcBoxProperties
+		['ssrc_box_source']: {
+			// TODO - replace with 'ssrc_box_properties'
 			type: 'boolean',
 			name: 'Supersource: Box source',
 			description: 'If the specified SuperSource box is set to the specified source, change style of the bank',
@@ -235,8 +234,8 @@ export function createSuperSourceFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.SSrcBoxOnAir]: {
-			// TODO - replace with FeedbackId.SSrcBoxProperties
+		['ssrc_box_enable']: {
+			// TODO - replace with 'ssrc_box_properties'
 			type: 'boolean',
 			name: 'Supersource: Box state',
 			description: 'If the specified SuperSource box is enabled, change style of the bank',
@@ -254,7 +253,7 @@ export function createSuperSourceFeedbacks(
 				return !!(box && box.enabled)
 			},
 		},
-		[FeedbackId.SSrcBoxProperties]: {
+		['ssrc_box_properties']: {
 			type: 'boolean',
 			name: 'Supersource: Box properties',
 			description: 'If the specified SuperSource box properties match, change style of the bank',

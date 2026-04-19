@@ -1,5 +1,4 @@
 import { Enums } from 'atem-connection'
-import { FeedbackId } from '../feedback/FeedbackId.js'
 import type { PresetsBuilderContext } from './context.js'
 
 export function createStreamingPresets(context: PresetsBuilderContext): void {
@@ -23,7 +22,7 @@ export function createStreamingPresets(context: PresetsBuilderContext): void {
 		},
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.StreamStatus,
+				feedbackId: 'streamStatus',
 				options: {
 					state: Enums.StreamingStatus.Streaming,
 				},
@@ -33,7 +32,7 @@ export function createStreamingPresets(context: PresetsBuilderContext): void {
 				},
 			},
 			{
-				feedbackId: FeedbackId.StreamStatus,
+				feedbackId: 'streamStatus',
 				options: {
 					state: Enums.StreamingStatus.Stopping,
 				},
@@ -43,7 +42,7 @@ export function createStreamingPresets(context: PresetsBuilderContext): void {
 				},
 			},
 			{
-				feedbackId: FeedbackId.StreamStatus,
+				feedbackId: 'streamStatus',
 				options: {
 					state: Enums.StreamingStatus.Connecting,
 				},

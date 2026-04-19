@@ -1,5 +1,4 @@
 import type { CompanionPresetGroup } from '@companion-module/base'
-import { FeedbackId } from '../feedback/FeedbackId.js'
 import { MacroFeedbackType } from '../feedback/macro.js'
 import type { PresetsBuilderContext } from './context.js'
 import { iterateTimes } from '../util.js'
@@ -36,7 +35,7 @@ export function createMacroPresets(context: PresetsBuilderContext): void {
 		},
 		feedbacks: [
 			{
-				feedbackId: FeedbackId.Macro,
+				feedbackId: 'macro',
 				options: {
 					macroIndex: { isExpression: true, value: '$(local:index)' },
 					state: MacroFeedbackType.IsUsed,
@@ -47,7 +46,7 @@ export function createMacroPresets(context: PresetsBuilderContext): void {
 				},
 			},
 			{
-				feedbackId: FeedbackId.Macro,
+				feedbackId: 'macro',
 				options: {
 					macroIndex: { isExpression: true, value: '$(local:index)' },
 					state: MacroFeedbackType.IsRunning,
@@ -58,7 +57,7 @@ export function createMacroPresets(context: PresetsBuilderContext): void {
 				},
 			},
 			{
-				feedbackId: FeedbackId.Macro,
+				feedbackId: 'macro',
 				options: {
 					macroIndex: { isExpression: true, value: '$(local:index)' },
 					state: MacroFeedbackType.IsWaiting,
@@ -69,7 +68,7 @@ export function createMacroPresets(context: PresetsBuilderContext): void {
 				},
 			},
 			{
-				feedbackId: FeedbackId.Macro,
+				feedbackId: 'macro',
 				options: {
 					macroIndex: { isExpression: true, value: '$(local:index)' },
 					state: MacroFeedbackType.IsRecording,

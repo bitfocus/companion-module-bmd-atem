@@ -1,18 +1,17 @@
 import { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
 import type { ModelSpec } from '../models/index.js'
-import { FeedbackId } from './FeedbackId.js'
 import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { StateWrapper } from '../state.js'
 
 export type AtemRecordingFeedbacks = {
-	[FeedbackId.RecordStatus]: {
+	['recordStatus']: {
 		type: 'boolean'
 		options: {
 			state: Enums.RecordingStatus
 		}
 	}
-	[FeedbackId.RecordISO]: {
+	['recordISO']: {
 		type: 'boolean'
 		options: Record<never, never>
 	}
@@ -24,12 +23,12 @@ export function createRecordingFeedbacks(
 ): CompanionFeedbackDefinitions<AtemRecordingFeedbacks> {
 	if (!model.recording) {
 		return {
-			[FeedbackId.RecordStatus]: undefined,
-			[FeedbackId.RecordISO]: undefined,
+			['recordStatus']: undefined,
+			['recordISO']: undefined,
 		}
 	}
 	return {
-		[FeedbackId.RecordStatus]: {
+		['recordStatus']: {
 			type: 'boolean',
 			name: 'Recording: Active/Running',
 			description: 'If the record has the specified status, change style of the bank',
@@ -66,7 +65,7 @@ export function createRecordingFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.RecordISO]: {
+		['recordISO']: {
 			type: 'boolean',
 			name: 'Recording: ISO enabled',
 			description: 'If ISO recording is enabled',
