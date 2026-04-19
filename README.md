@@ -38,6 +38,7 @@ Make sure to backup your config before updating to this version!
 
 - Update module api to v2.0
 - Support expressions in many feedbacks and actions
+- Sanitise recording filenames
 
 ## v3.21.0
 

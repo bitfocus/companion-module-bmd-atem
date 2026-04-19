@@ -4,6 +4,7 @@ import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle, resolveTrueFalseToggle } from '../options/common.js'
 import type { StateWrapper } from '../state.js'
+import { sanitizeFilename } from '../util.js'
 
 export type AtemRecordingActions = {
 	['recordStartStop']: {
@@ -85,7 +86,7 @@ export function createRecordingActions(
 			}),
 			callback: async ({ options }) => {
 				await atem?.setRecordingSettings({
-					filename: options.filename,
+					filename: sanitizeFilename(options.filename),
 				})
 			},
 			learn: () => {
