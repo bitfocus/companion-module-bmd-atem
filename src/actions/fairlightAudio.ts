@@ -5,21 +5,20 @@ import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
 import {
 	AtemAudioInputPicker,
-	AtemFairlightAudioRoutingDestinationsPicker,
-	AtemFairlightAudioRoutingSourcePicker,
 	AtemFairlightAudioSourcePicker,
 	FaderLevelDeltaChoice,
-	resolveTrueFalseToggle,
-} from '../input.js'
-import type { AtemTransitions, FadeDurationFieldsType } from '../transitions.js'
-import {
 	CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION,
-	CHOICES_ON_OFF_TOGGLE,
 	type FairlightMixOption2,
-	type TrueFalseToggle,
-} from '../choices.js'
+} from '../options/audio.js'
+import type { AtemTransitions, FadeDurationFieldsType } from '../transitions.js'
+import { CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle, resolveTrueFalseToggle } from '../options/common.js'
 import type { StateWrapper } from '../state.js'
-import { parseAudioRoutingString, parseAudioRoutingStringSingle } from '../util.js'
+import {
+	AtemFairlightAudioRoutingDestinationsPicker,
+	AtemFairlightAudioRoutingSourcePicker,
+	parseAudioRoutingString,
+	parseAudioRoutingStringSingle,
+} from '../options/fairlight-routing.js'
 import { FadeDurationFields } from '../options/fade.js'
 
 export type AtemFairlightAudioActions = {

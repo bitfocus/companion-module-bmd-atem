@@ -7,10 +7,11 @@ import {
 	type DropdownChoice,
 } from '@companion-module/base'
 import { type AtemState, Enums } from 'atem-connection'
-import { type TrueFalseToggle, CHOICES_KEYTRANS, GetSourcesListForType } from '../choices.js'
+import { type TrueFalseToggle, CHOICES_KEYTRANS } from '../options/common.js'
 import { type WithProperties, SourcesToChoices, WithDropdownPropertiesPicker } from './util.js'
 import type { ModelSpec } from '../models/types.js'
 import { compact, iterateTimes } from '../util.js'
+import { GetSourcesListForType } from './sources.js'
 
 export function AtemSuperSourceIdPicker(model: ModelSpec): CompanionInputFieldDropdown<'ssrcId'> {
 	const choices = iterateTimes(model.SSrc, (i) => ({

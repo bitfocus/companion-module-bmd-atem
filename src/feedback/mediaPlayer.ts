@@ -1,6 +1,6 @@
 import { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
-import { AtemMediaPlayerPicker } from '../input.js'
+import { AtemMediaPlayerPicker } from '../options/mediaPlayer.js'
 import type { ModelSpec } from '../models/index.js'
 import { FeedbackId } from './FeedbackId.js'
 import type { CompanionFeedbackDefinitions } from '@companion-module/base'

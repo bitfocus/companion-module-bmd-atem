@@ -1,6 +1,5 @@
 import { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../../options/util.js'
-import { AtemMatchMethod } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { FeedbackId } from '../FeedbackId.js'
 import type { CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
@@ -18,6 +17,7 @@ import {
 	AtemTransitionSelectionPicker,
 	calculateTransitionSelection,
 	type TransitionSelectionComponent,
+	AtemMatchMethod,
 } from '../../options/transition.js'
 
 export type AtemTransitionFeedbacks = {

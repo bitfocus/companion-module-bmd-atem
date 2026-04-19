@@ -4,8 +4,9 @@ import type { CompanionActionDefinitions } from '@companion-module/base'
 import { ActionId } from '../ActionId.js'
 import type { StateWrapper } from '../../state.js'
 import { AtemCameraControlDirectCommandSender } from '@atem-connection/camera-control'
-import { CHOICES_ON_OFF_TOGGLE, CameraControlSourcePicker, type TrueFalseToggle } from '../../choices.js'
+import { CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../../options/common.js'
 import type { AtemConfig } from '../../config.js'
+import { CameraControlSourcePicker } from '../../options/cameraControl.js'
 
 export type AtemCameraControlLensActions = {
 	[ActionId.CameraControlLensFocus]: {

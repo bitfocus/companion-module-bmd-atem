@@ -1,7 +1,7 @@
 import type { DropdownChoice, JsonValue, CompanionInputFieldDropdown } from '@companion-module/base'
 import { type AtemState, Enums } from 'atem-connection'
 import { iterateTimes, stringifyValueAlways } from '../util.js'
-import { GetSourcesListForType } from '../choices.js'
+import { GetSourcesListForType } from '../options/sources.js'
 import type { ModelSpec } from '../models/types.js'
 import { SourcesToChoices } from './util.js'
 

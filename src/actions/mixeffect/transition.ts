@@ -14,7 +14,7 @@ import {
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
 import { AtemCommandBatching, CommandBatching } from '../../batching.js'
-import { CHOICES_KEYTRANS, CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../../choices.js'
+import { CHOICES_KEYTRANS, CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle, AtemRatePicker } from '../../options/common.js'
 import { getTransitionProperties, getUSK, type StateWrapper } from '../../state.js'
 import { type InstanceBaseExt, assertUnreachable } from '../../util.js'
 import {
@@ -24,7 +24,6 @@ import {
 	type TransitionStyleString,
 	transitionStyleStringToEnum,
 } from '../../options/mixEffect.js'
-import { AtemRatePicker } from '../../options/common.js'
 
 export type AtemTransitionActions = {
 	[ActionId.PreviewTransition]: {

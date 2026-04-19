@@ -8,7 +8,7 @@ import type {
 	CompanionOptionValues,
 	DropdownChoice,
 } from '@companion-module/base'
-import type { MiniSourceInfo } from '../choices.js'
+import type { MiniSourceInfo } from '../options/sources.js'
 
 export function SourcesToChoices(sources: MiniSourceInfo[]): DropdownChoice<number>[] {
 	return sources.map((s) => ({

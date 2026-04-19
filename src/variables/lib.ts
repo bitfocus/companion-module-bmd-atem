@@ -1,5 +1,5 @@
 import { type AtemState, Enums } from 'atem-connection'
-import { GetSourcesListForType, type SourceInfo } from '../choices.js'
+import { GetSourcesListForType, type SourceInfo } from '../options/sources.js'
 import { PresetStyleName } from '../config.js'
 import type { ModelSpec } from '../models/index.js'
 import {
@@ -13,7 +13,7 @@ import {
 	getUSK,
 	type StateWrapper,
 } from '../state.js'
-import { assertUnreachable, CLASSIC_AUDIO_MIN_GAIN, formatAudioRoutingAsString, type InstanceBaseExt } from '../util.js'
+import { assertUnreachable, CLASSIC_AUDIO_MIN_GAIN, type InstanceBaseExt } from '../util.js'
 import type { CompanionVariableDefinitions, CompanionVariableValues } from '@companion-module/base'
 import { initCameraControlVariables, updateCameraControlVariables } from './cameraControl.js'
 import { createEmptyState } from '@atem-connection/camera-control'
@@ -25,6 +25,7 @@ import {
 	updateFairlightAudioRoutingOutputVariables,
 } from './audioRouting.js'
 import type { VariablesSchema } from './schema.js'
+import { formatAudioRoutingAsString } from '../options/fairlight-routing.js'
 
 function getSourcePresetName(instance: InstanceBaseExt, state: AtemState, id: number): string {
 	const input = state.inputs[id]

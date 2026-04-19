@@ -1,4 +1,39 @@
-import type { CompanionInputFieldCheckbox, CompanionInputFieldNumber } from '@companion-module/base'
+import {
+	assertNever,
+	type CompanionInputFieldCheckbox,
+	type CompanionInputFieldNumber,
+	type DropdownChoice,
+} from '@companion-module/base'
+
+export type TrueFalseToggle = 'true' | 'false' | 'toggle'
+
+export const CHOICES_ON_OFF_TOGGLE: DropdownChoice<TrueFalseToggle>[] = [
+	{ id: 'true', label: 'On' },
+	{ id: 'false', label: 'Off' },
+	{ id: 'toggle', label: 'Toggle' },
+]
+
+export const CHOICES_KEYTRANS: DropdownChoice<TrueFalseToggle>[] = [
+	{ id: 'true', label: 'On Air' },
+	{ id: 'false', label: 'Off' },
+	{ id: 'toggle', label: 'Toggle' },
+]
+
+export function resolveTrueFalseToggle(value: TrueFalseToggle | boolean, current: boolean | undefined): boolean {
+	switch (value) {
+		case 'false':
+		case false:
+			return false
+		case 'true':
+		case true:
+			return true
+		case 'toggle':
+			return !current
+		default:
+			assertNever(value)
+			return false
+	}
+}
 
 export function AtemRatePicker(label: string): CompanionInputFieldNumber<'rate'> {
 	return {

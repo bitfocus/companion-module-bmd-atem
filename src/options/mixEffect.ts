@@ -6,7 +6,7 @@ import {
 } from '@companion-module/base'
 import type { ModelSpec } from '../models/types.js'
 import { iterateTimes, stringifyValueAlways } from '../util.js'
-import { GetSourcesListForType } from '../choices.js'
+import { GetSourcesListForType } from '../options/sources.js'
 import { type AtemState, Enums } from 'atem-connection'
 import { SourcesToChoices } from './util.js'
 

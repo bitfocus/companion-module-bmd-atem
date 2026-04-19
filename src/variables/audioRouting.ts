@@ -1,6 +1,6 @@
 import type { AtemState } from 'atem-connection'
-import { formatAudioRoutingAsString } from '../util.js'
 import type { VariablesSchema } from './schema.js'
+import { formatAudioRoutingAsString } from '../options/fairlight-routing.js'
 
 export function updateFairlightAudioRoutingSourceVariables(
 	state: AtemState,

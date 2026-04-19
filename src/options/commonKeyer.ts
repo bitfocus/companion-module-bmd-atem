@@ -1,7 +1,7 @@
 import type { CompanionInputFieldDropdown } from '@companion-module/base'
 import type { AtemState } from 'atem-connection'
 import type { ModelSpec } from '../models/types.js'
-import { GetSourcesListForType } from '../choices.js'
+import { GetSourcesListForType } from '../options/sources.js'
 import { SourcesToChoices } from './util.js'
 
 export function AtemKeyFillSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown<'fill'> {

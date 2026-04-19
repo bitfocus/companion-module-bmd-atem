@@ -1,19 +1,19 @@
 import type { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../../options/util.js'
-import { AtemUSKPicker } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { FeedbackId } from '../FeedbackId.js'
 import type { CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
 import { getUSK, type StateWrapper } from '../../state.js'
-import { CHOICES_CURRENTKEYFRAMES } from '../../choices.js'
 import { AtemMEPicker } from '../../options/mixEffect.js'
 import {
 	AtemUpstreamKeyerTypePicker,
 	upstreamKeyerTypeEnumToString,
 	type UpstreamKeyerTypeString,
 	upstreamKeyerTypeStringToEnum,
+	AtemUSKPicker,
 } from '../../options/upstreamKeyer.js'
 import { AtemKeyFillSourcePicker } from '../../options/commonKeyer.js'
+import { CHOICES_CURRENTKEYFRAMES } from '../../options/upstreamKeyer-dve.js'
 
 export type AtemUpstreamKeyerFeedbacks = {
 	[FeedbackId.USKOnAir]: {

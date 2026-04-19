@@ -1,4 +1,4 @@
-import { AtemFadeToBlackStatePicker } from '../../input.js'
+import { AtemFadeToBlackStatePicker } from '../../options/fadeToBlack.js'
 import { convertOptionsFields } from '../../options/util.js'
 import type { ModelSpec } from '../../models/index.js'
 import { FeedbackId } from '../FeedbackId.js'

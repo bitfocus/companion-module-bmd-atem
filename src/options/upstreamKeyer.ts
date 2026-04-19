@@ -8,8 +8,22 @@ import {
 	type CompanionInputFieldNumber,
 } from '@companion-module/base'
 import { Enums } from 'atem-connection'
-import { stringifyValueAlways } from '../util.js'
+import { iterateTimes, stringifyValueAlways } from '../util.js'
 import { WithDropdownPropertiesPicker } from './util.js'
+import type { ModelSpec } from '../models/types.js'
+
+export function AtemUSKPicker(model: ModelSpec): CompanionInputFieldDropdown<'key'> {
+	return {
+		type: 'dropdown',
+		label: 'Key',
+		id: 'key',
+		default: 1,
+		choices: iterateTimes(model.USKs, (i) => ({
+			id: i + 1,
+			label: `${i + 1}`,
+		})),
+	}
+}
 
 export type UpstreamKeyerTypeString = 'luma' | 'chroma' | 'pattern' | 'dve'
 
@@ -196,6 +210,125 @@ export function AtemUSKFlyKeyPropertiesPickers(): {
 			asInteger: false,
 			clampValues: true,
 			description: 'Size of the fly key in the Y direction. Between 0 and 99.99.',
+		},
+	})
+}
+
+function GetUpstreamKeyerPatternChoices(): DropdownChoice<Enums.Pattern>[] {
+	const options = [
+		{ id: Enums.Pattern.LeftToRightBar, label: 'Left To Right Bar' },
+		{ id: Enums.Pattern.TopToBottomBar, label: 'Top To Bottom Bar' },
+		{ id: Enums.Pattern.HorizontalBarnDoor, label: 'Horizontal Barn Door' },
+		{ id: Enums.Pattern.VerticalBarnDoor, label: 'Vertical Barn Door' },
+		{ id: Enums.Pattern.CornersInFourBox, label: 'Corners In Four Box' },
+		{ id: Enums.Pattern.RectangleIris, label: 'Rectangle Iris' },
+		{ id: Enums.Pattern.DiamondIris, label: 'Diamond Iris' },
+		{ id: Enums.Pattern.CircleIris, label: 'Circle Iris' },
+		{ id: Enums.Pattern.TopLeftBox, label: 'Top Left Box' },
+		{ id: Enums.Pattern.TopRightBox, label: 'Top Right Box' },
+		{ id: Enums.Pattern.BottomRightBox, label: 'Bottom Right Box' },
+		{ id: Enums.Pattern.BottomLeftBox, label: 'Bottom Left Box' },
+		{ id: Enums.Pattern.TopCentreBox, label: 'Top Centre Box' },
+		{ id: Enums.Pattern.RightCentreBox, label: 'Right Centre Box' },
+		{ id: Enums.Pattern.BottomCentreBox, label: 'Bottom Centre Box' },
+		{ id: Enums.Pattern.LeftCentreBox, label: 'Left Centre Box' },
+		{ id: Enums.Pattern.TopLeftDiagonal, label: 'Top Left Diagonal' },
+		{ id: Enums.Pattern.TopRightDiagonal, label: 'Top Right Diagonal' },
+	]
+	return options
+}
+
+export function AtemUSKPatternPropertiesPickers(): {
+	properties: CompanionInputFieldMultiDropdown<'properties'>
+	style: CompanionInputFieldDropdown<'style'>
+	invert: CompanionInputFieldCheckbox<'invert'>
+	size: CompanionInputFieldNumber<'size'>
+	symmetry: CompanionInputFieldNumber<'symmetry'>
+	softness: CompanionInputFieldNumber<'softness'>
+	positionX: CompanionInputFieldNumber<'positionX'>
+	positionY: CompanionInputFieldNumber<'positionY'>
+} {
+	return WithDropdownPropertiesPicker({
+		style: {
+			type: 'dropdown',
+			label: 'Style: ',
+			id: 'style',
+			default: Enums.Pattern.LeftToRightBar,
+			choices: GetUpstreamKeyerPatternChoices(),
+			isVisibleExpression: `arrayIncludes($(options:properties), 'style')`,
+			disableAutoExpression: true, // Needs translating first
+		},
+		invert: {
+			type: 'checkbox',
+			label: 'Invert Pattern',
+			id: 'invert',
+			default: false,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'invert')`,
+		},
+		size: {
+			type: 'number',
+			label: 'Size',
+			id: 'size',
+			default: 50,
+			range: true,
+			min: 0.0,
+			step: 0.01,
+			max: 100.0,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'size')`,
+			asInteger: false,
+			clampValues: true,
+		},
+		symmetry: {
+			type: 'number',
+			label: 'Symmetry',
+			id: 'symmetry',
+			default: 81.6,
+			range: true,
+			min: 0.0,
+			step: 0.01,
+			max: 100.0,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'symmetry')`,
+			asInteger: false,
+			clampValues: true,
+		},
+		softness: {
+			type: 'number',
+			label: 'Softness',
+			id: 'softness',
+			default: 50,
+			range: true,
+			min: 0.0,
+			step: 0.01,
+			max: 100.0,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'softness')`,
+			asInteger: false,
+			clampValues: true,
+		},
+		positionX: {
+			type: 'number',
+			label: 'Position: X',
+			id: 'positionX',
+			default: 0.5,
+			min: 0.0,
+			range: true,
+			step: 0.01,
+			max: 1.0,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'positionX')`,
+			asInteger: false,
+			clampValues: true,
+		},
+		positionY: {
+			type: 'number',
+			label: 'Position: Y',
+			id: 'positionY',
+			default: 0.5,
+			range: true,
+			min: 0.0,
+			step: 0.01,
+			max: 1.0,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'positionY')`,
+			asInteger: false,
+			clampValues: true,
 		},
 	})
 }

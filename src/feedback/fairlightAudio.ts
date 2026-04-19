@@ -3,16 +3,20 @@ import { convertOptionsFields } from '../options/util.js'
 import type { ModelSpec } from '../models/index.js'
 import { FeedbackId } from './FeedbackId.js'
 import type { CompanionFeedbackDefinitions } from '@companion-module/base'
-import { CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION } from '../choices.js'
-import { compareNumber, NumberComparitor, parseAudioRoutingStringSingle } from '../util.js'
 import {
+	compareNumber,
+	NumberComparitor,
 	AtemAudioInputPicker,
-	AtemFairlightAudioRoutingDestinationPicker,
-	AtemFairlightAudioRoutingSourcePicker,
 	AtemFairlightAudioSourcePicker,
 	NumberComparitorPicker,
-} from '../input.js'
+	CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION,
+} from '../options/audio.js'
 import type { StateWrapper } from '../state.js'
+import {
+	AtemFairlightAudioRoutingDestinationPicker,
+	AtemFairlightAudioRoutingSourcePicker,
+	parseAudioRoutingStringSingle,
+} from '../options/fairlight-routing.js'
 
 export type AtemFairlightAudioFeedbacks = {
 	[FeedbackId.FairlightAudioInputGain]: {

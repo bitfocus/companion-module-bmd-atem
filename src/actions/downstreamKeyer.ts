@@ -3,10 +3,15 @@ import { convertOptionsFields, WithDropdownPropertiesPicker } from '../options/u
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
-import { CHOICES_KEYTRANS, CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../choices.js'
+import {
+	CHOICES_KEYTRANS,
+	CHOICES_ON_OFF_TOGGLE,
+	type TrueFalseToggle,
+	AtemRatePicker,
+	MaskPropertiesPickers,
+} from '../options/common.js'
 import type { DownstreamKeyerMask, DownstreamKeyerGeneral } from 'atem-connection/dist/state/video/downstreamKeyers.js'
 import { getDSK, type StateWrapper } from '../state.js'
-import { AtemRatePicker, MaskPropertiesPickers } from '../options/common.js'
 import { AtemDSKPicker, AtemDSKPreMultipliedKeyPropertiesPickers } from '../options/downstreamKeyer.js'
 import { AtemKeyFillSourcePicker, AtemKeyCutSourcePicker } from '../options/commonKeyer.js'
 

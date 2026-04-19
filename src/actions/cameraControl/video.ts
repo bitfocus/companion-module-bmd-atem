@@ -4,7 +4,7 @@ import type { CompanionActionDefinitions } from '@companion-module/base'
 import { ActionId } from '../ActionId.js'
 import type { StateWrapper } from '../../state.js'
 import { AtemCameraControlDirectCommandSender, VideoSharpeningLevel } from '@atem-connection/camera-control'
-import { CameraControlSourcePicker } from '../../choices.js'
+import { CameraControlSourcePicker } from '../../options/cameraControl.js'
 import type { AtemConfig } from '../../config.js'
 
 export type AtemCameraControlVideoActions = {

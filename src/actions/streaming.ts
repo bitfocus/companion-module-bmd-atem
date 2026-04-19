@@ -3,9 +3,8 @@ import { convertOptionsFields } from '../options/util.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
-import { CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../choices.js'
+import { CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle, resolveTrueFalseToggle } from '../options/common.js'
 import type { StateWrapper } from '../state.js'
-import { resolveTrueFalseToggle } from '../input.js'
 
 export type AtemStreamingActions = {
 	[ActionId.StreamStartStop]: {

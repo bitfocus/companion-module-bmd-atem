@@ -132,3 +132,27 @@ export function calculateTransitionSelection(
 
 	return selection
 }
+
+export function AtemMatchMethod(): CompanionInputFieldDropdown<'matchmethod'> {
+	return {
+		id: 'matchmethod',
+		label: 'Match method',
+		type: 'dropdown',
+		default: 'exact',
+		choices: [
+			{
+				id: 'exact',
+				label: 'Exact',
+			},
+			{
+				id: 'contains',
+				label: 'Contains',
+			},
+			{
+				id: 'not-contain',
+				label: 'Not Contain',
+			},
+		],
+		disableAutoExpression: true, // Needs translating first
+	}
+}

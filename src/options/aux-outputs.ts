@@ -1,6 +1,6 @@
 import type { CompanionInputFieldDropdown } from '@companion-module/base'
 import type { ModelSpec } from '../models/types.js'
-import { GetSourcesListForType } from '../choices.js'
+import { GetSourcesListForType } from '../options/sources.js'
 import { SourcesToChoices } from './util.js'
 import type { AtemState } from 'atem-connection'
 

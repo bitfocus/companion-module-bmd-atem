@@ -1,7 +1,7 @@
 import type { CompanionPresetGroup, CompanionButtonStyleProps } from '@companion-module/base'
 import { ActionId } from '../actions/ActionId.js'
 import { FeedbackId } from '../feedback/FeedbackId.js'
-import { GetSourcesListForType } from '../choices.js'
+import { GetSourcesListForType } from '../options/sources.js'
 import type { AtemState } from 'atem-connection'
 import type { PresetsBuilderContext } from './context.js'
 import type { AtemSchema } from '../schema.js'

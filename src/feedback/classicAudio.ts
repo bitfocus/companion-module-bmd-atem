@@ -3,9 +3,13 @@ import { convertOptionsFields } from '../options/util.js'
 import type { ModelSpec } from '../models/index.js'
 import { FeedbackId } from './FeedbackId.js'
 import type { CompanionFeedbackDefinitions } from '@companion-module/base'
-import { CHOICES_CLASSIC_AUDIO_MIX_OPTION } from '../choices.js'
-import { compareNumber, NumberComparitor } from '../util.js'
-import { AtemAudioInputPicker, NumberComparitorPicker } from '../input.js'
+import {
+	compareNumber,
+	NumberComparitor,
+	AtemAudioInputPicker,
+	NumberComparitorPicker,
+	CHOICES_CLASSIC_AUDIO_MIX_OPTION,
+} from '../options/audio.js'
 import type { StateWrapper } from '../state.js'
 
 export type AtemClassicAudioFeedbacks = {

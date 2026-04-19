@@ -1,10 +1,13 @@
 import { Enums, type Atem } from 'atem-connection'
 import { convertOptionsFields } from '../../options/util.js'
 import type { CompanionActionDefinitions, JsonValue } from '@companion-module/base'
-import { AtemUSKDVEPropertiesPickers, AtemUSKPicker, AtemUSKKeyframePropertiesPickers } from '../../input.js'
+import {
+	AtemUSKDVEPropertiesPickers,
+	AtemUSKKeyframePropertiesPickers,
+	CHOICES_FLYDIRECTIONS,
+} from '../../options/upstreamKeyer-dve.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
-import { CHOICES_FLYDIRECTIONS } from '../../choices.js'
 import { getUSK, type StateWrapper } from '../../state.js'
 import type {
 	UpstreamKeyerDVESettings,
@@ -17,6 +20,7 @@ import {
 	AtemFlyKeyKeyFramePicker,
 	type FlyKeyKeyFrameString,
 	flyKeyKeyFrameStringToEnum,
+	AtemUSKPicker,
 } from '../../options/upstreamKeyer.js'
 
 export type AtemUpstreamKeyerDVEActions = {

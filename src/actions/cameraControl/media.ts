@@ -7,10 +7,11 @@ import {
 	AtemCameraControlBatchCommandSender,
 	AtemCameraControlDirectCommandSender,
 } from '@atem-connection/camera-control'
-import { CameraControlSourcePicker, type TrueFalseToggle } from '../../choices.js'
+import type { TrueFalseToggle } from '../../options/common.js'
 import type { AtemConfig } from '../../config.js'
 import type { ModelSpec } from '../../models/types.js'
 import { InternalPortType } from 'atem-connection/dist/enums/index.js'
+import { CameraControlSourcePicker } from '../../options/cameraControl.js'
 
 export type AtemCameraControlDisplayActions = {
 	[ActionId.CameraControlMediaRecordSingle]: {

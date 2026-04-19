@@ -9,7 +9,7 @@ import {
 import type { AtemConfig } from '../config.js'
 import { Enums } from 'atem-connection'
 import type { SSrcArtOption } from '../options/superSource.js'
-import type { FairlightMixOption2 } from '../choices.js'
+import type { FairlightMixOption2 } from '../options/audio.js'
 import { OffsetNumericExpressionOrValueByX } from './util.js'
 import type { FlyKeyKeyFrameString, UpstreamKeyerTypeString } from '../options/upstreamKeyer.js'
 import type { TransitionStyleString } from '../options/mixEffect.js'

@@ -1,39 +1,42 @@
-import {
-	assertNever,
-	type CompanionInputFieldCheckbox,
-	type CompanionInputFieldDropdown,
-	type CompanionInputFieldMultiDropdown,
-	type CompanionInputFieldNumber,
-	type DropdownChoice,
+import type {
+	CompanionInputFieldMultiDropdown,
+	CompanionInputFieldNumber,
+	CompanionInputFieldCheckbox,
+	CompanionInputFieldDropdown,
+	DropdownChoice,
 } from '@companion-module/base'
-import { type AtemState, Enums } from 'atem-connection'
-import {
-	CHOICES_BORDER_BEVEL,
-	GetAudioInputsList,
-	GetSourcesListForType,
-	type TrueFalseToggle,
-	type AudioInputSubset,
-	GetUpstreamKeyerPatternChoices,
-	FairlightAudioRoutingDestinations,
-	FairlightAudioRoutingSources,
-} from './choices.js'
-import type { ModelSpec } from './models/index.js'
-import { iterateTimes, NumberComparitor } from './util.js'
-import { SourcesToChoices, WithDropdownPropertiesPicker } from './options/util.js'
-import { AtemRatePicker, MaskPropertiesPickers } from './options/common.js'
+import { MaskPropertiesPickers, AtemRatePicker } from './common.js'
+import { WithDropdownPropertiesPicker } from './util.js'
+import { Enums } from 'atem-connection'
 
-export function AtemUSKPicker(model: ModelSpec): CompanionInputFieldDropdown<'key'> {
-	return {
-		type: 'dropdown',
-		label: 'Key',
-		id: 'key',
-		default: 1,
-		choices: iterateTimes(model.USKs, (i) => ({
-			id: i + 1,
-			label: `${i + 1}`,
-		})),
-	}
-}
+export const CHOICES_CURRENTKEYFRAMES: DropdownChoice<
+	Enums.IsAtKeyFrame.A | Enums.IsAtKeyFrame.B | Enums.IsAtKeyFrame.RunToInfinite
+>[] = [
+	{ id: Enums.IsAtKeyFrame.A, label: 'A' },
+	{ id: Enums.IsAtKeyFrame.B, label: 'B' },
+	{ id: Enums.IsAtKeyFrame.RunToInfinite, label: 'Full / Infinite' },
+]
+
+export const CHOICES_FLYDIRECTIONS: DropdownChoice<Enums.FlyKeyDirection>[] = [
+	{ id: Enums.FlyKeyDirection.CentreOfKey, label: 'Centre of key' },
+	{ id: Enums.FlyKeyDirection.TopLeft, label: 'Top left' },
+	{ id: Enums.FlyKeyDirection.TopCentre, label: 'Top centre' },
+	{ id: Enums.FlyKeyDirection.TopRight, label: 'Top right' },
+	{ id: Enums.FlyKeyDirection.MiddleLeft, label: 'Middle left' },
+	{ id: Enums.FlyKeyDirection.MiddleCentre, label: 'Middle centre' },
+	{ id: Enums.FlyKeyDirection.MiddleRight, label: 'Middle right' },
+	{ id: Enums.FlyKeyDirection.BottomLeft, label: 'Bottom left' },
+	{ id: Enums.FlyKeyDirection.BottomCentre, label: 'Bottom centre' },
+	{ id: Enums.FlyKeyDirection.BottomRight, label: 'Bottom right' },
+]
+
+export const CHOICES_BORDER_BEVEL: DropdownChoice[] = [
+	{ id: 0, label: 'None' },
+	{ id: 1, label: 'InOut' },
+	{ id: 2, label: 'In' },
+	{ id: 3, label: 'Out' },
+]
+
 export function AtemUSKDVEPropertiesPickers(): {
 	properties: CompanionInputFieldMultiDropdown<'properties'>
 
@@ -609,304 +612,4 @@ export function AtemUSKKeyframePropertiesPickers(): {
 			clampValues: true,
 		},
 	})
-}
-export function AtemMediaPlayerPicker(model: ModelSpec): CompanionInputFieldDropdown<'mediaplayer'> {
-	return {
-		type: 'dropdown',
-		id: 'mediaplayer',
-		label: 'Media Player',
-		default: 1,
-		choices: iterateTimes(model.media.players, (i) => {
-			return {
-				id: i + 1,
-				label: `Media Player ${i + 1}`,
-			}
-		}),
-	}
-}
-
-export function AtemFadeToBlackStatePicker(): CompanionInputFieldDropdown<'state'> {
-	return {
-		type: 'dropdown',
-		label: 'State',
-		id: 'state',
-		default: 'on',
-		choices: [
-			{
-				id: 'on',
-				label: 'On',
-			},
-			{
-				id: 'off',
-				label: 'Off',
-			},
-			{
-				id: 'fading',
-				label: 'Fading',
-			},
-		],
-		disableAutoExpression: true,
-	}
-}
-
-export function AtemMatchMethod(): CompanionInputFieldDropdown<'matchmethod'> {
-	return {
-		id: 'matchmethod',
-		label: 'Match method',
-		type: 'dropdown',
-		default: 'exact',
-		choices: [
-			{
-				id: 'exact',
-				label: 'Exact',
-			},
-			{
-				id: 'contains',
-				label: 'Contains',
-			},
-			{
-				id: 'not-contain',
-				label: 'Not Contain',
-			},
-		],
-		disableAutoExpression: true, // Needs translating first
-	}
-}
-
-export function AtemAudioInputPicker(
-	model: ModelSpec,
-	state: AtemState,
-	subset?: AudioInputSubset,
-): CompanionInputFieldDropdown<'input'> {
-	const inputs = SourcesToChoices(GetAudioInputsList(model, state, subset))
-	return {
-		type: 'dropdown',
-		id: 'input',
-		label: 'Input',
-		default: inputs[0]?.id,
-		choices: inputs,
-	}
-}
-
-export function AtemFairlightAudioSourcePicker(): CompanionInputFieldDropdown<'source'> {
-	const sources: DropdownChoice[] = [
-		{
-			id: '-65280',
-			label: 'Stereo',
-		},
-		{
-			id: '-256',
-			label: 'Mono (Ch1)',
-		},
-		{
-			id: '-255',
-			label: 'Mono (Ch2)',
-		},
-	]
-
-	return {
-		type: 'dropdown',
-		id: 'source',
-		label: 'Source',
-		default: sources[0].id,
-		choices: sources,
-		disableAutoExpression: true, // This is a pretty messy value currently
-	}
-}
-
-export function NumberComparitorPicker(): CompanionInputFieldDropdown<'comparitor'> {
-	const options = [
-		{ id: NumberComparitor.Equal, label: 'Equal' },
-		{ id: NumberComparitor.NotEqual, label: 'Not Equal' },
-		{ id: NumberComparitor.GreaterThan, label: 'Greater than' },
-		{ id: NumberComparitor.GreaterThanEqual, label: 'Greater than or equal' },
-		{ id: NumberComparitor.LessThan, label: 'Less than' },
-		{ id: NumberComparitor.LessThanEqual, label: 'Less than or equal' },
-	]
-	return {
-		type: 'dropdown',
-		label: 'Comparitor',
-		id: 'comparitor',
-		default: NumberComparitor.Equal,
-		choices: options,
-		disableAutoExpression: true, // Needs translating first
-	}
-}
-
-export const FaderLevelDeltaChoice: CompanionInputFieldNumber<'delta'> = {
-	type: 'number',
-	label: 'Delta',
-	id: 'delta',
-	default: 1,
-	max: 100,
-	min: -100,
-	asInteger: false,
-	clampValues: true,
-}
-
-export function AtemAllSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown<'source'> {
-	return {
-		type: 'dropdown',
-		id: 'source',
-		label: 'Source',
-		default: 0,
-		choices: SourcesToChoices(GetSourcesListForType(model, state)),
-	}
-}
-
-export function AtemFairlightAudioRoutingSourcePicker(
-	model: ModelSpec,
-	state: AtemState,
-): CompanionInputFieldDropdown<'source'> {
-	const sources = FairlightAudioRoutingSources(model, state)
-
-	return {
-		type: 'dropdown',
-		id: 'source',
-		label: 'Source',
-		default: sources[0].id,
-		choices: sources,
-	}
-}
-
-export function AtemFairlightAudioRoutingDestinationsPicker(
-	model: ModelSpec,
-	state: AtemState,
-): CompanionInputFieldMultiDropdown<'destinations'> {
-	const sources = FairlightAudioRoutingDestinations(model, state)
-
-	return {
-		type: 'multidropdown',
-		id: 'destinations',
-		label: 'Destinations',
-		default: [sources[0].id],
-		choices: sources,
-		sortSelection: true,
-	}
-}
-
-export function AtemFairlightAudioRoutingDestinationPicker(
-	model: ModelSpec,
-	state: AtemState,
-): CompanionInputFieldDropdown<'destination'> {
-	const sources = FairlightAudioRoutingDestinations(model, state)
-
-	return {
-		type: 'dropdown',
-		id: 'destination',
-		label: 'Destination',
-		default: sources[0].id,
-		choices: sources,
-	}
-}
-
-export function AtemUSKPatternPropertiesPickers(): {
-	properties: CompanionInputFieldMultiDropdown<'properties'>
-	style: CompanionInputFieldDropdown<'style'>
-	invert: CompanionInputFieldCheckbox<'invert'>
-	size: CompanionInputFieldNumber<'size'>
-	symmetry: CompanionInputFieldNumber<'symmetry'>
-	softness: CompanionInputFieldNumber<'softness'>
-	positionX: CompanionInputFieldNumber<'positionX'>
-	positionY: CompanionInputFieldNumber<'positionY'>
-} {
-	return WithDropdownPropertiesPicker({
-		style: {
-			type: 'dropdown',
-			label: 'Style: ',
-			id: 'style',
-			default: Enums.Pattern.LeftToRightBar,
-			choices: GetUpstreamKeyerPatternChoices(),
-			isVisibleExpression: `arrayIncludes($(options:properties), 'style')`,
-			disableAutoExpression: true, // Needs translating first
-		},
-		invert: {
-			type: 'checkbox',
-			label: 'Invert Pattern',
-			id: 'invert',
-			default: false,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'invert')`,
-		},
-		size: {
-			type: 'number',
-			label: 'Size',
-			id: 'size',
-			default: 50,
-			range: true,
-			min: 0.0,
-			step: 0.01,
-			max: 100.0,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'size')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		symmetry: {
-			type: 'number',
-			label: 'Symmetry',
-			id: 'symmetry',
-			default: 81.6,
-			range: true,
-			min: 0.0,
-			step: 0.01,
-			max: 100.0,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'symmetry')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		softness: {
-			type: 'number',
-			label: 'Softness',
-			id: 'softness',
-			default: 50,
-			range: true,
-			min: 0.0,
-			step: 0.01,
-			max: 100.0,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'softness')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		positionX: {
-			type: 'number',
-			label: 'Position: X',
-			id: 'positionX',
-			default: 0.5,
-			min: 0.0,
-			range: true,
-			step: 0.01,
-			max: 1.0,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'positionX')`,
-			asInteger: false,
-			clampValues: true,
-		},
-		positionY: {
-			type: 'number',
-			label: 'Position: Y',
-			id: 'positionY',
-			default: 0.5,
-			range: true,
-			min: 0.0,
-			step: 0.01,
-			max: 1.0,
-			isVisibleExpression: `arrayIncludes($(options:properties), 'positionY')`,
-			asInteger: false,
-			clampValues: true,
-		},
-	})
-}
-
-export function resolveTrueFalseToggle(value: TrueFalseToggle | boolean, current: boolean | undefined): boolean {
-	switch (value) {
-		case 'false':
-		case false:
-			return false
-		case 'true':
-		case true:
-			return true
-		case 'toggle':
-			return !current
-		default:
-			assertNever(value)
-			return false
-	}
 }

@@ -5,7 +5,7 @@ import { FeedbackId } from '../FeedbackId.js'
 import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { StateWrapper } from '../../state.js'
 import { calculateTallyForInputId } from '../../util.js'
-import { GetSourcesListForType } from '../../choices.js'
+import { GetSourcesListForType } from '../../options/sources.js'
 import { isEqual } from 'lodash-es'
 
 export type AtemTallyFeedbacks = {

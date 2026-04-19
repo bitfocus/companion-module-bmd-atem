@@ -1,10 +1,14 @@
 import { type Atem } from 'atem-connection'
 import { convertOptionsFields, WithDropdownPropertiesPicker } from '../../options/util.js'
 import type { CompanionActionDefinitions, JsonValue } from '@companion-module/base'
-import { AtemUSKPicker, resolveTrueFalseToggle } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
-import { CHOICES_KEYTRANS, type TrueFalseToggle } from '../../choices.js'
+import {
+	CHOICES_KEYTRANS,
+	type TrueFalseToggle,
+	MaskPropertiesPickers,
+	resolveTrueFalseToggle,
+} from '../../options/common.js'
 import { getUSK, type StateWrapper } from '../../state.js'
 import type {
 	UpstreamKeyerTypeSettings,
@@ -18,8 +22,8 @@ import {
 	upstreamKeyerTypeEnumToString,
 	type UpstreamKeyerTypeString,
 	upstreamKeyerTypeStringToEnum,
+	AtemUSKPicker,
 } from '../../options/upstreamKeyer.js'
-import { MaskPropertiesPickers } from '../../options/common.js'
 import { AtemKeyFillSourcePicker, AtemKeyCutSourcePicker } from '../../options/commonKeyer.js'
 
 export type AtemUpstreamKeyerCommonActions = {

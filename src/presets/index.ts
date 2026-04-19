@@ -1,6 +1,6 @@
 import type { CompanionPresetSection, CompanionPresetDefinitions } from '@companion-module/base'
 import { type AtemState } from 'atem-connection'
-import { GetSourcesListForType } from '../choices.js'
+import { GetSourcesListForType } from '../options/sources.js'
 import { PresetStyleName } from '../config.js'
 import type { ModelSpec } from '../models/index.js'
 import { type InstanceBaseExt } from '../util.js'

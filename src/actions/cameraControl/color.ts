@@ -4,7 +4,7 @@ import type { CompanionActionDefinition, CompanionActionDefinitions } from '@com
 import { ActionId } from '../ActionId.js'
 import type { StateWrapper } from '../../state.js'
 import { AtemCameraControlDirectCommandSender } from '@atem-connection/camera-control'
-import { CameraControlSourcePicker } from '../../choices.js'
+import { CameraControlSourcePicker } from '../../options/cameraControl.js'
 import type { AtemConfig } from '../../config.js'
 
 type RgbyAdjustmentProps = {
