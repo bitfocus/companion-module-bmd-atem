@@ -35,6 +35,7 @@ To add a new model to the list:
 ## v3.21.2
 
 - Sanitise recording filenames
+- Constellation 4ME 4K Plus inaccuracies
 
 ## v3.21.0
 
