@@ -42,6 +42,7 @@ Make sure to backup your config before updating to this version!
 - Constellation 4ME 4K Plus inaccuracies
 - Missing audio delay for Constellation models
 - Fairlight input pan
+- Mini Extreme ISO G2 audio channel labelling
 
 ## v3.21.0
 
