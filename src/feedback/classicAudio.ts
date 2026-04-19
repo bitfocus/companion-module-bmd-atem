@@ -51,87 +51,91 @@ export function createClassicAudioFeedbacks(
 	const audioInputOption = AtemAudioInputPicker(model, state.state)
 
 	return {
-		['classicAudioGain']: {
-			type: 'boolean',
-			name: 'Classic Audio: Audio gain',
-			description: 'If the audio input has the specified gain, change style of the bank',
-			options: convertOptionsFields({
-				input: audioInputOption,
-				comparitor: NumberComparitorPicker(),
-				gain: {
-					type: 'number',
-					label: 'Fader Level',
-					id: 'gain',
-					range: true,
-					default: 0,
-					step: 0.1,
-					min: -60,
-					max: 6,
-					description: '-60 = -inf',
-					showMinAsNegativeInfinity: true,
-					asInteger: false,
-					clampValues: true,
-				},
-			}),
-			defaultStyle: {
-				color: 0x000000,
-				bgcolor: 0x00ff00,
-			},
-			callback: ({ options }): boolean => {
-				const audioChannels = state.state.audio?.channels ?? {}
-				const channel = audioChannels[options.input]
-				return !!(channel && compareNumber(options.gain, options.comparitor, channel.gain))
-			},
-			learn: ({ options }) => {
-				const audioChannels = state.state.audio?.channels ?? {}
-				const channel = audioChannels[options.input]
+		['classicAudioGain']: audioInputOption
+			? {
+					type: 'boolean',
+					name: 'Classic Audio: Audio gain',
+					description: 'If the audio input has the specified gain, change style of the bank',
+					options: convertOptionsFields({
+						input: audioInputOption,
+						comparitor: NumberComparitorPicker(),
+						gain: {
+							type: 'number',
+							label: 'Fader Level',
+							id: 'gain',
+							range: true,
+							default: 0,
+							step: 0.1,
+							min: -60,
+							max: 6,
+							description: '-60 = -inf',
+							showMinAsNegativeInfinity: true,
+							asInteger: false,
+							clampValues: true,
+						},
+					}),
+					defaultStyle: {
+						color: 0x000000,
+						bgcolor: 0x00ff00,
+					},
+					callback: ({ options }): boolean => {
+						const audioChannels = state.state.audio?.channels ?? {}
+						const channel = audioChannels[options.input]
+						return !!(channel && compareNumber(options.gain, options.comparitor, channel.gain))
+					},
+					learn: ({ options }) => {
+						const audioChannels = state.state.audio?.channels ?? {}
+						const channel = audioChannels[options.input]
 
-				if (channel) {
-					return {
-						gain: channel.gain,
-					}
-				} else {
-					return undefined
+						if (channel) {
+							return {
+								gain: channel.gain,
+							}
+						} else {
+							return undefined
+						}
+					},
 				}
-			},
-		},
-		['classicAudioMixOption']: {
-			type: 'boolean',
-			name: 'Classic Audio: Mix option',
-			description: 'If the audio input has the specified mix option, change style of the bank',
-			options: convertOptionsFields({
-				input: audioInputOption,
-				option: {
-					id: 'option',
-					label: 'Mix option',
-					type: 'dropdown',
-					default: CHOICES_CLASSIC_AUDIO_MIX_OPTION[0].id,
-					choices: CHOICES_CLASSIC_AUDIO_MIX_OPTION,
-					disableAutoExpression: true, // TODO: Until the options are simplified
-				},
-			}),
-			defaultStyle: {
-				color: 0x000000,
-				bgcolor: 0x00ff00,
-			},
-			callback: ({ options }): boolean => {
-				const audioChannels = state.state.audio?.channels ?? {}
-				const channel = audioChannels[options.input]
-				return channel?.mixOption === options.option
-			},
-			learn: ({ options }) => {
-				const audioChannels = state.state.audio?.channels ?? {}
-				const channel = audioChannels[options.input]
+			: undefined,
+		['classicAudioMixOption']: audioInputOption
+			? {
+					type: 'boolean',
+					name: 'Classic Audio: Mix option',
+					description: 'If the audio input has the specified mix option, change style of the bank',
+					options: convertOptionsFields({
+						input: audioInputOption,
+						option: {
+							id: 'option',
+							label: 'Mix option',
+							type: 'dropdown',
+							default: CHOICES_CLASSIC_AUDIO_MIX_OPTION[0].id,
+							choices: CHOICES_CLASSIC_AUDIO_MIX_OPTION,
+							disableAutoExpression: true, // TODO: Until the options are simplified
+						},
+					}),
+					defaultStyle: {
+						color: 0x000000,
+						bgcolor: 0x00ff00,
+					},
+					callback: ({ options }): boolean => {
+						const audioChannels = state.state.audio?.channels ?? {}
+						const channel = audioChannels[options.input]
+						return channel?.mixOption === options.option
+					},
+					learn: ({ options }) => {
+						const audioChannels = state.state.audio?.channels ?? {}
+						const channel = audioChannels[options.input]
 
-				if (channel) {
-					return {
-						option: channel.mixOption,
-					}
-				} else {
-					return undefined
+						if (channel) {
+							return {
+								option: channel.mixOption,
+							}
+						} else {
+							return undefined
+						}
+					},
 				}
-			},
-		},
+			: undefined,
 		['classicAudioMasterGain']: {
 			type: 'boolean',
 			name: 'Classic Audio: Master gain',

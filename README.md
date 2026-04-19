@@ -40,6 +40,7 @@ Make sure to backup your config before updating to this version!
 - Support expressions in many feedbacks and actions
 - Sanitise recording filenames
 - Constellation 4ME 4K Plus inaccuracies
+- Missing audio delay for Constellation models
 
 ## v3.21.0
 

@@ -211,92 +211,96 @@ export function createFairlightAudioActions(
 	const audioInputFrameDelayOption = AtemAudioInputPicker(model, state.state, 'delay')
 
 	return {
-		['fairlightAudioInputGain']: {
-			name: 'Fairlight Audio: Set input gain',
-			options: convertOptionsFields({
-				input: audioInputOption,
-				source: audioSourceOption,
-				gain: {
-					type: 'number',
-					label: 'Input Level',
-					id: 'gain',
-					range: true,
-					default: 0,
-					step: 0.1,
-					min: -100,
-					max: 6,
-					description: '-100 = -inf',
-					showMinAsNegativeInfinity: true,
-					asInteger: false,
-					clampValues: true,
-				},
-				...FadeDurationFields,
-			}),
-			callback: async ({ options }) => {
-				const inputId = options.input
-				const sourceId = options.source
-
-				const audioChannels = state.state.fairlight?.inputs ?? {}
-				const audioSources = audioChannels[inputId]?.sources ?? {}
-				const source = audioSources[sourceId]
-
-				await transitions.runForFadeOptions(
-					`audio.${inputId}.${sourceId}.gain`,
-					async (value) => {
-						await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
-							gain: value,
-						})
-					},
-					source?.properties?.gain,
-					options.gain * 100,
-					options,
-				)
-			},
-			learn: ({ options }) => {
-				const audioChannels = state.state.fairlight?.inputs ?? {}
-				const audioSources = audioChannels[options.input]?.sources ?? {}
-				const source = audioSources[options.source]
-
-				if (source?.properties) {
-					return {
-						gain: source.properties.gain / 100,
-					}
-				} else {
-					return undefined
-				}
-			},
-		},
-		['fairlightAudioInputGainDelta']: {
-			name: 'Fairlight Audio: Adjust input gain',
-			options: convertOptionsFields({
-				input: audioInputOption,
-				source: audioSourceOption,
-				delta: FaderLevelDeltaChoice,
-				...FadeDurationFields,
-			}),
-			callback: async ({ options }) => {
-				const inputId = options.input
-				const sourceId = options.source
-
-				const audioChannels = state.state.fairlight?.inputs ?? {}
-				const audioSources = audioChannels[inputId]?.sources ?? {}
-				const source = audioSources[sourceId]
-
-				if (typeof source?.properties?.gain === 'number') {
-					await transitions.runForFadeOptions(
-						`audio.${inputId}.${sourceId}.gain`,
-						async (value) => {
-							await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
-								gain: value,
-							})
+		['fairlightAudioInputGain']: audioInputOption
+			? {
+					name: 'Fairlight Audio: Set input gain',
+					options: convertOptionsFields({
+						input: audioInputOption,
+						source: audioSourceOption,
+						gain: {
+							type: 'number',
+							label: 'Input Level',
+							id: 'gain',
+							range: true,
+							default: 0,
+							step: 0.1,
+							min: -100,
+							max: 6,
+							description: '-100 = -inf',
+							showMinAsNegativeInfinity: true,
+							asInteger: false,
+							clampValues: true,
 						},
-						source.properties.gain,
-						source.properties.gain + options.delta * 100,
-						options,
-					)
+						...FadeDurationFields,
+					}),
+					callback: async ({ options }) => {
+						const inputId = options.input
+						const sourceId = options.source
+
+						const audioChannels = state.state.fairlight?.inputs ?? {}
+						const audioSources = audioChannels[inputId]?.sources ?? {}
+						const source = audioSources[sourceId]
+
+						await transitions.runForFadeOptions(
+							`audio.${inputId}.${sourceId}.gain`,
+							async (value) => {
+								await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
+									gain: value,
+								})
+							},
+							source?.properties?.gain,
+							options.gain * 100,
+							options,
+						)
+					},
+					learn: ({ options }) => {
+						const audioChannels = state.state.fairlight?.inputs ?? {}
+						const audioSources = audioChannels[options.input]?.sources ?? {}
+						const source = audioSources[options.source]
+
+						if (source?.properties) {
+							return {
+								gain: source.properties.gain / 100,
+							}
+						} else {
+							return undefined
+						}
+					},
 				}
-			},
-		},
+			: undefined,
+		['fairlightAudioInputGainDelta']: audioInputOption
+			? {
+					name: 'Fairlight Audio: Adjust input gain',
+					options: convertOptionsFields({
+						input: audioInputOption,
+						source: audioSourceOption,
+						delta: FaderLevelDeltaChoice,
+						...FadeDurationFields,
+					}),
+					callback: async ({ options }) => {
+						const inputId = options.input
+						const sourceId = options.source
+
+						const audioChannels = state.state.fairlight?.inputs ?? {}
+						const audioSources = audioChannels[inputId]?.sources ?? {}
+						const source = audioSources[sourceId]
+
+						if (typeof source?.properties?.gain === 'number') {
+							await transitions.runForFadeOptions(
+								`audio.${inputId}.${sourceId}.gain`,
+								async (value) => {
+									await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
+										gain: value,
+									})
+								},
+								source.properties.gain,
+								source.properties.gain + options.delta * 100,
+								options,
+							)
+						}
+					},
+				}
+			: undefined,
 		['fairlightAudioInputDelay']: audioInputFrameDelayOption
 			? {
 					name: 'Fairlight Audio: Set delay',
@@ -377,174 +381,180 @@ export function createFairlightAudioActions(
 					},
 				}
 			: undefined,
-		['fairlightAudioFaderGain']: {
-			name: 'Fairlight Audio: Set fader gain',
-			options: convertOptionsFields({
-				input: audioInputOption,
-				source: audioSourceOption,
-				gain: {
-					type: 'number',
-					label: 'Fader Level',
-					id: 'gain',
-					range: true,
-					default: 0,
-					step: 0.1,
-					min: -100,
-					max: 10,
-					description: '-100 = -inf',
-					showMinAsNegativeInfinity: true,
-					asInteger: false,
-					clampValues: true,
-				},
-				...FadeDurationFields,
-			}),
-			callback: async ({ options }) => {
-				const inputId = options.input
-				const sourceId = options.source
-
-				const audioChannels = state.state.fairlight?.inputs ?? {}
-				const audioSources = audioChannels[inputId]?.sources ?? {}
-				const source = audioSources[sourceId]
-
-				await transitions.runForFadeOptions(
-					`audio.${inputId}.${sourceId}.faderGain`,
-					async (value) => {
-						await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
-							faderGain: value,
-						})
-					},
-					source?.properties?.faderGain,
-					options.gain * 100,
-					options,
-				)
-			},
-			learn: ({ options }) => {
-				const audioChannels = state.state.fairlight?.inputs ?? {}
-				const audioSources = audioChannels[options.input]?.sources ?? {}
-				const source = audioSources[options.source]
-
-				if (source?.properties) {
-					return {
-						gain: source.properties.faderGain / 100,
-					}
-				} else {
-					return undefined
-				}
-			},
-		},
-		['fairlightAudioFaderGainDelta']: {
-			name: 'Fairlight Audio: Adjust fader gain',
-			options: convertOptionsFields({
-				input: audioInputOption,
-				source: audioSourceOption,
-				delta: FaderLevelDeltaChoice,
-				...FadeDurationFields,
-			}),
-			callback: async ({ options }) => {
-				const inputId = options.input
-				const sourceId = options.source
-
-				const audioChannels = state.state.fairlight?.inputs ?? {}
-				const audioSources = audioChannels[inputId]?.sources ?? {}
-				const source = audioSources[sourceId]
-
-				if (typeof source?.properties?.faderGain === 'number') {
-					await transitions.runForFadeOptions(
-						`audio.${inputId}.${sourceId}.faderGain`,
-						async (value) => {
-							await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
-								faderGain: value,
-							})
+		['fairlightAudioFaderGain']: audioInputOption
+			? {
+					name: 'Fairlight Audio: Set fader gain',
+					options: convertOptionsFields({
+						input: audioInputOption,
+						source: audioSourceOption,
+						gain: {
+							type: 'number',
+							label: 'Fader Level',
+							id: 'gain',
+							range: true,
+							default: 0,
+							step: 0.1,
+							min: -100,
+							max: 10,
+							description: '-100 = -inf',
+							showMinAsNegativeInfinity: true,
+							asInteger: false,
+							clampValues: true,
 						},
-						source.properties.faderGain,
-						source.properties.faderGain + options.delta * 100,
-						options,
-					)
-				}
-			},
-		},
-		['fairlightAudioMixOption']: {
-			name: 'Fairlight Audio: Set input mix option',
-			options: convertOptionsFields({
-				input: audioInputOption,
-				source: audioSourceOption,
-				option: {
-					id: 'option',
-					label: 'Mix option',
-					type: 'dropdown',
-					default: 'toggle',
-					choices: [
-						{
-							id: 'toggle',
-							label: 'Toggle (On/Off)',
-						},
-						...CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION,
-					],
-				},
-			}),
-			callback: async ({ options }) => {
-				const inputId = options.input
-				const sourceId = options.source
+						...FadeDurationFields,
+					}),
+					callback: async ({ options }) => {
+						const inputId = options.input
+						const sourceId = options.source
 
-				let newVal: Enums.FairlightAudioMixOption
-				switch (options.option) {
-					case 'on':
-						newVal = Enums.FairlightAudioMixOption.On
-						break
-					case 'off':
-						newVal = Enums.FairlightAudioMixOption.Off
-						break
-					case 'afv':
-						newVal = Enums.FairlightAudioMixOption.AudioFollowVideo
-						break
-					case 'toggle': {
 						const audioChannels = state.state.fairlight?.inputs ?? {}
 						const audioSources = audioChannels[inputId]?.sources ?? {}
+						const source = audioSources[sourceId]
 
-						newVal =
-							audioSources[sourceId]?.properties?.mixOption === Enums.FairlightAudioMixOption.On
-								? Enums.FairlightAudioMixOption.Off
-								: Enums.FairlightAudioMixOption.On
-						break
-					}
-					default:
-						assertNever(options.option)
-						return
+						await transitions.runForFadeOptions(
+							`audio.${inputId}.${sourceId}.faderGain`,
+							async (value) => {
+								await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
+									faderGain: value,
+								})
+							},
+							source?.properties?.faderGain,
+							options.gain * 100,
+							options,
+						)
+					},
+					learn: ({ options }) => {
+						const audioChannels = state.state.fairlight?.inputs ?? {}
+						const audioSources = audioChannels[options.input]?.sources ?? {}
+						const source = audioSources[options.source]
+
+						if (source?.properties) {
+							return {
+								gain: source.properties.faderGain / 100,
+							}
+						} else {
+							return undefined
+						}
+					},
 				}
+			: undefined,
+		['fairlightAudioFaderGainDelta']: audioInputOption
+			? {
+					name: 'Fairlight Audio: Adjust fader gain',
+					options: convertOptionsFields({
+						input: audioInputOption,
+						source: audioSourceOption,
+						delta: FaderLevelDeltaChoice,
+						...FadeDurationFields,
+					}),
+					callback: async ({ options }) => {
+						const inputId = options.input
+						const sourceId = options.source
 
-				await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, { mixOption: newVal })
-			},
-			learn: ({ options }) => {
-				const audioChannels = state.state.fairlight?.inputs ?? {}
-				const audioSources = audioChannels[options.input]?.sources ?? {}
-				const source = audioSources[options.source]
+						const audioChannels = state.state.fairlight?.inputs ?? {}
+						const audioSources = audioChannels[inputId]?.sources ?? {}
+						const source = audioSources[sourceId]
 
-				if (source?.properties) {
-					let newMixOption: FairlightMixOption2
-					switch (source.properties.mixOption) {
-						case Enums.FairlightAudioMixOption.On:
-							newMixOption = 'on'
-							break
-						case Enums.FairlightAudioMixOption.Off:
-							newMixOption = 'off'
-							break
-						case Enums.FairlightAudioMixOption.AudioFollowVideo:
-							newMixOption = 'afv'
-							break
-						default:
-							assertNever(source.properties.mixOption)
-							newMixOption = 'on'
-							break
-					}
-
-					return {
-						option: newMixOption,
-					}
-				} else {
-					return undefined
+						if (typeof source?.properties?.faderGain === 'number') {
+							await transitions.runForFadeOptions(
+								`audio.${inputId}.${sourceId}.faderGain`,
+								async (value) => {
+									await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, {
+										faderGain: value,
+									})
+								},
+								source.properties.faderGain,
+								source.properties.faderGain + options.delta * 100,
+								options,
+							)
+						}
+					},
 				}
-			},
-		},
+			: undefined,
+		['fairlightAudioMixOption']: audioInputOption
+			? {
+					name: 'Fairlight Audio: Set input mix option',
+					options: convertOptionsFields({
+						input: audioInputOption,
+						source: audioSourceOption,
+						option: {
+							id: 'option',
+							label: 'Mix option',
+							type: 'dropdown',
+							default: 'toggle',
+							choices: [
+								{
+									id: 'toggle',
+									label: 'Toggle (On/Off)',
+								},
+								...CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION,
+							],
+						},
+					}),
+					callback: async ({ options }) => {
+						const inputId = options.input
+						const sourceId = options.source
+
+						let newVal: Enums.FairlightAudioMixOption
+						switch (options.option) {
+							case 'on':
+								newVal = Enums.FairlightAudioMixOption.On
+								break
+							case 'off':
+								newVal = Enums.FairlightAudioMixOption.Off
+								break
+							case 'afv':
+								newVal = Enums.FairlightAudioMixOption.AudioFollowVideo
+								break
+							case 'toggle': {
+								const audioChannels = state.state.fairlight?.inputs ?? {}
+								const audioSources = audioChannels[inputId]?.sources ?? {}
+
+								newVal =
+									audioSources[sourceId]?.properties?.mixOption === Enums.FairlightAudioMixOption.On
+										? Enums.FairlightAudioMixOption.Off
+										: Enums.FairlightAudioMixOption.On
+								break
+							}
+							default:
+								assertNever(options.option)
+								return
+						}
+
+						await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, { mixOption: newVal })
+					},
+					learn: ({ options }) => {
+						const audioChannels = state.state.fairlight?.inputs ?? {}
+						const audioSources = audioChannels[options.input]?.sources ?? {}
+						const source = audioSources[options.source]
+
+						if (source?.properties) {
+							let newMixOption: FairlightMixOption2
+							switch (source.properties.mixOption) {
+								case Enums.FairlightAudioMixOption.On:
+									newMixOption = 'on'
+									break
+								case Enums.FairlightAudioMixOption.Off:
+									newMixOption = 'off'
+									break
+								case Enums.FairlightAudioMixOption.AudioFollowVideo:
+									newMixOption = 'afv'
+									break
+								default:
+									assertNever(source.properties.mixOption)
+									newMixOption = 'on'
+									break
+							}
+
+							return {
+								option: newMixOption,
+							}
+						} else {
+							return undefined
+						}
+					},
+				}
+			: undefined,
 		['fairlightAudioResetPeaks']: {
 			name: 'Fairlight Audio: Reset peaks',
 			options: convertOptionsFields({
@@ -574,22 +584,24 @@ export function createFairlightAudioActions(
 				}
 			},
 		},
-		['fairlightAudioResetSourcePeaks']: {
-			name: 'Fairlight Audio: Reset Source peaks',
-			options: convertOptionsFields({
-				input: audioInputOption,
-				source: audioSourceOption,
-			}),
-			callback: async ({ options }) => {
-				const inputId = options.input
-				const sourceId = options.source
-				await atem?.setFairlightAudioMixerSourceResetPeaks(inputId, sourceId, {
-					output: true,
-					dynamicsInput: false,
-					dynamicsOutput: false,
-				})
-			},
-		},
+		['fairlightAudioResetSourcePeaks']: audioInputOption
+			? {
+					name: 'Fairlight Audio: Reset Source peaks',
+					options: convertOptionsFields({
+						input: audioInputOption,
+						source: audioSourceOption,
+					}),
+					callback: async ({ options }) => {
+						const inputId = options.input
+						const sourceId = options.source
+						await atem?.setFairlightAudioMixerSourceResetPeaks(inputId, sourceId, {
+							output: true,
+							dynamicsInput: false,
+							dynamicsOutput: false,
+						})
+					},
+				}
+			: undefined,
 		['fairlightAudioMasterGain']: {
 			name: 'Fairlight Audio: Set master gain',
 			options: convertOptionsFields({
@@ -659,47 +671,48 @@ export function createFairlightAudioActions(
 			},
 		},
 
-		['fairlightAudioMonitorSolo']: model.fairlightAudio.monitor
-			? {
-					name: 'Fairlight Audio: Solo source',
-					options: convertOptionsFields({
-						solo: {
-							id: 'solo',
-							type: 'dropdown',
-							label: 'State',
-							default: 'true',
-							choices: CHOICES_ON_OFF_TOGGLE,
-							disableAutoExpression: true, // TODO: Until the options are simplified
-						},
-						input: audioInputOption,
-						source: audioSourceOption,
-					}),
-					callback: async ({ options }) => {
-						const inputId = options.input
-						const sourceId = options.source
+		['fairlightAudioMonitorSolo']:
+			model.fairlightAudio.monitor && audioInputOption
+				? {
+						name: 'Fairlight Audio: Solo source',
+						options: convertOptionsFields({
+							solo: {
+								id: 'solo',
+								type: 'dropdown',
+								label: 'State',
+								default: 'true',
+								choices: CHOICES_ON_OFF_TOGGLE,
+								disableAutoExpression: true, // TODO: Until the options are simplified
+							},
+							input: audioInputOption,
+							source: audioSourceOption,
+						}),
+						callback: async ({ options }) => {
+							const inputId = options.input
+							const sourceId = options.source
 
-						let target: boolean
-						if (options.solo === 'toggle') {
-							const soloProps = state.state.fairlight?.solo
-							if (soloProps) {
-								const isSourceSelectedForSolo = soloProps.index === inputId && soloProps.source === sourceId
+							let target: boolean
+							if (options.solo === 'toggle') {
+								const soloProps = state.state.fairlight?.solo
+								if (soloProps) {
+									const isSourceSelectedForSolo = soloProps.index === inputId && soloProps.source === sourceId
 
-								target = !soloProps.solo || !isSourceSelectedForSolo
+									target = !soloProps.solo || !isSourceSelectedForSolo
+								} else {
+									target = true
+								}
 							} else {
-								target = true
+								target = options.solo === 'true'
 							}
-						} else {
-							target = options.solo === 'true'
-						}
 
-						await atem?.setFairlightAudioMixerMonitorSolo({
-							solo: target,
-							index: inputId,
-							source: sourceId,
-						})
-					},
-				}
-			: undefined,
+							await atem?.setFairlightAudioMixerMonitorSolo({
+								solo: target,
+								index: inputId,
+								source: sourceId,
+							})
+						},
+					}
+				: undefined,
 
 		['fairlightAudioMonitorGain']: model.fairlightAudio.monitor
 			? {

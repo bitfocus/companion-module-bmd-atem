@@ -76,162 +76,170 @@ export function createClassicAudioActions(
 	const audioInputOption = AtemAudioInputPicker(model, state.state)
 
 	return {
-		['classicAudioGain']: {
-			name: 'Classic Audio: Set input gain',
-			options: convertOptionsFields({
-				input: audioInputOption,
-				gain: {
-					type: 'number',
-					label: 'Fader Level',
-					id: 'gain',
-					range: true,
-					default: 0,
-					step: 0.1,
-					min: -60,
-					max: 6,
-					description: '-60 = -inf',
-					showMinAsNegativeInfinity: true,
-					asInteger: false,
-					clampValues: true,
-				},
-				...FadeDurationFields,
-			}),
-			callback: async ({ options }) => {
-				const inputId = options.input
-				const audioChannels = state.state.audio?.channels ?? {}
-				const channel = audioChannels[inputId]
+		['classicAudioGain']: audioInputOption
+			? {
+					name: 'Classic Audio: Set input gain',
+					options: convertOptionsFields({
+						input: audioInputOption,
+						gain: {
+							type: 'number',
+							label: 'Fader Level',
+							id: 'gain',
+							range: true,
+							default: 0,
+							step: 0.1,
+							min: -60,
+							max: 6,
+							description: '-60 = -inf',
+							showMinAsNegativeInfinity: true,
+							asInteger: false,
+							clampValues: true,
+						},
+						...FadeDurationFields,
+					}),
+					callback: async ({ options }) => {
+						const inputId = options.input
+						const audioChannels = state.state.audio?.channels ?? {}
+						const channel = audioChannels[inputId]
 
-				await transitions.runForFadeOptions(
-					`audio.${inputId}.gain`,
-					async (value) => {
-						await atem?.setClassicAudioMixerInputProps(inputId, { gain: value })
+						await transitions.runForFadeOptions(
+							`audio.${inputId}.gain`,
+							async (value) => {
+								await atem?.setClassicAudioMixerInputProps(inputId, { gain: value })
+							},
+							channel?.gain,
+							options.gain,
+							options,
+						)
 					},
-					channel?.gain,
-					options.gain,
-					options,
-				)
-			},
-			learn: ({ options }) => {
-				const audioChannels = state.state.audio?.channels ?? {}
-				const channel = audioChannels[options.input]
+					learn: ({ options }) => {
+						const audioChannels = state.state.audio?.channels ?? {}
+						const channel = audioChannels[options.input]
 
-				if (channel) {
-					return {
-						gain: channel.gain,
-					}
-				} else {
-					return undefined
+						if (channel) {
+							return {
+								gain: channel.gain,
+							}
+						} else {
+							return undefined
+						}
+					},
 				}
-			},
-		},
-		['classicAudioGainDelta']: {
-			name: 'Classic Audio: Adjust input gain',
-			options: convertOptionsFields({
-				input: audioInputOption,
-				delta: FaderLevelDeltaChoice,
-				...FadeDurationFields,
-			}),
-			callback: async ({ options }) => {
-				const inputId = options.input
-				const audioChannels = state.state.audio?.channels ?? {}
-				const channel = audioChannels[inputId]
+			: undefined,
+		['classicAudioGainDelta']: audioInputOption
+			? {
+					name: 'Classic Audio: Adjust input gain',
+					options: convertOptionsFields({
+						input: audioInputOption,
+						delta: FaderLevelDeltaChoice,
+						...FadeDurationFields,
+					}),
+					callback: async ({ options }) => {
+						const inputId = options.input
+						const audioChannels = state.state.audio?.channels ?? {}
+						const channel = audioChannels[inputId]
 
-				if (typeof channel?.gain === 'number') {
-					const currentGain = Math.max(CLASSIC_AUDIO_MIN_GAIN, channel.gain)
-					await transitions.runForFadeOptions(
-						`audio.${inputId}.gain`,
-						async (value) => {
-							await atem?.setClassicAudioMixerInputProps(inputId, { gain: value })
-						},
-						currentGain,
-						currentGain + options.delta,
-						options,
-					)
+						if (typeof channel?.gain === 'number') {
+							const currentGain = Math.max(CLASSIC_AUDIO_MIN_GAIN, channel.gain)
+							await transitions.runForFadeOptions(
+								`audio.${inputId}.gain`,
+								async (value) => {
+									await atem?.setClassicAudioMixerInputProps(inputId, { gain: value })
+								},
+								currentGain,
+								currentGain + options.delta,
+								options,
+							)
+						}
+					},
 				}
-			},
-		},
-		['classicAudioMixOption']: {
-			name: 'Classic Audio: Set input mix option',
-			options: convertOptionsFields({
-				input: audioInputOption,
-				option: {
-					id: 'option',
-					label: 'Mix option',
-					type: 'dropdown',
-					default: 'toggle',
-					choices: [
-						{
-							id: 'toggle',
-							label: 'Toggle (On/Off)',
+			: undefined,
+		['classicAudioMixOption']: audioInputOption
+			? {
+					name: 'Classic Audio: Set input mix option',
+					options: convertOptionsFields({
+						input: audioInputOption,
+						option: {
+							id: 'option',
+							label: 'Mix option',
+							type: 'dropdown',
+							default: 'toggle',
+							choices: [
+								{
+									id: 'toggle',
+									label: 'Toggle (On/Off)',
+								},
+								...CHOICES_CLASSIC_AUDIO_MIX_OPTION,
+							],
+							disableAutoExpression: true, // TODO: Until the options are simplified
 						},
-						...CHOICES_CLASSIC_AUDIO_MIX_OPTION,
-					],
-					disableAutoExpression: true, // TODO: Until the options are simplified
-				},
-			}),
-			callback: async ({ options }) => {
-				const inputId = options.input
-				const audioChannels = state.state.audio?.channels ?? {}
-				const toggleVal =
-					audioChannels[inputId]?.mixOption === Enums.AudioMixOption.On
-						? Enums.AudioMixOption.Off
-						: Enums.AudioMixOption.On
-				const rawVal = options.option
-				const newVal = rawVal === 'toggle' ? toggleVal : rawVal
-				await atem?.setClassicAudioMixerInputProps(inputId, { mixOption: newVal })
-			},
-			learn: ({ options }) => {
-				const audioChannels = state.state.audio?.channels ?? {}
-				const channel = audioChannels[options.input]
+					}),
+					callback: async ({ options }) => {
+						const inputId = options.input
+						const audioChannels = state.state.audio?.channels ?? {}
+						const toggleVal =
+							audioChannels[inputId]?.mixOption === Enums.AudioMixOption.On
+								? Enums.AudioMixOption.Off
+								: Enums.AudioMixOption.On
+						const rawVal = options.option
+						const newVal = rawVal === 'toggle' ? toggleVal : rawVal
+						await atem?.setClassicAudioMixerInputProps(inputId, { mixOption: newVal })
+					},
+					learn: ({ options }) => {
+						const audioChannels = state.state.audio?.channels ?? {}
+						const channel = audioChannels[options.input]
 
-				if (channel) {
-					return {
-						option: channel.mixOption,
-					}
-				} else {
-					return undefined
+						if (channel) {
+							return {
+								option: channel.mixOption,
+							}
+						} else {
+							return undefined
+						}
+					},
 				}
-			},
-		},
-		['classicAudioResetPeaks']: {
-			name: 'Classic Audio: Reset peaks',
-			options: convertOptionsFields({
-				reset: {
-					type: 'dropdown',
-					id: 'reset',
-					label: 'Reset',
-					default: 'all',
-					choices: [
-						{
-							id: 'all',
-							label: 'All',
+			: undefined,
+		['classicAudioResetPeaks']: audioInputOption
+			? {
+					name: 'Classic Audio: Reset peaks',
+					options: convertOptionsFields({
+						reset: {
+							type: 'dropdown',
+							id: 'reset',
+							label: 'Reset',
+							default: 'all',
+							choices: [
+								{
+									id: 'all',
+									label: 'All',
+								},
+								{
+									id: 'master',
+									label: 'Master',
+								},
+								{
+									id: 'monitor',
+									label: 'Monitor',
+								},
+								...audioInputOption.choices,
+							],
 						},
-						{
-							id: 'master',
-							label: 'Master',
-						},
-						{
-							id: 'monitor',
-							label: 'Monitor',
-						},
-						...audioInputOption.choices,
-					],
-				},
-			}),
-			callback: async ({ options }) => {
-				const rawVal = options.reset
-				if (rawVal === 'all') {
-					await atem?.setClassicAudioResetPeaks({ all: true })
-				} else if (rawVal === 'master') {
-					await atem?.setClassicAudioResetPeaks({ master: true })
-				} else if (rawVal === 'monitor') {
-					await atem?.setClassicAudioResetPeaks({ monitor: true })
-				} else {
-					const inputId = Number(rawVal)
-					await atem?.setClassicAudioResetPeaks({ input: inputId })
+					}),
+					callback: async ({ options }) => {
+						const rawVal = options.reset
+						if (rawVal === 'all') {
+							await atem?.setClassicAudioResetPeaks({ all: true })
+						} else if (rawVal === 'master') {
+							await atem?.setClassicAudioResetPeaks({ master: true })
+						} else if (rawVal === 'monitor') {
+							await atem?.setClassicAudioResetPeaks({ monitor: true })
+						} else {
+							const inputId = Number(rawVal)
+							await atem?.setClassicAudioResetPeaks({ input: inputId })
+						}
+					},
 				}
-			},
-		},
+			: undefined,
 		['classicAudioMasterGain']: {
 			name: 'Classic Audio: Set master gain',
 			options: convertOptionsFields({

@@ -321,10 +321,12 @@ exports[`Check 1 M/E Constellation 4K (28) 1`] = `
       },
       {
         "id": 1301,
+        "maxDelay": 8,
         "portType": 512,
       },
       {
         "id": 1401,
+        "maxDelay": 8,
         "portType": 2048,
       },
       {
@@ -901,10 +903,12 @@ exports[`Check 1 M/E Constellation HD (18) 1`] = `
       },
       {
         "id": 1301,
+        "maxDelay": 8,
         "portType": 512,
       },
       {
         "id": 1401,
+        "maxDelay": 8,
         "portType": 2048,
       },
       {
@@ -2241,10 +2245,12 @@ exports[`Check 2 M/E Constellation 4K (29) 1`] = `
       },
       {
         "id": 1301,
+        "maxDelay": 8,
         "portType": 512,
       },
       {
         "id": 1401,
+        "maxDelay": 8,
         "portType": 2048,
       },
       {
@@ -3235,10 +3241,12 @@ exports[`Check 2 M/E Constellation HD (19) 1`] = `
       },
       {
         "id": 1301,
+        "maxDelay": 8,
         "portType": 512,
       },
       {
         "id": 1401,
+        "maxDelay": 8,
         "portType": 2048,
       },
       {
@@ -5973,10 +5981,12 @@ exports[`Check 4 M/E Constellation 4K (30) 1`] = `
       },
       {
         "id": 1301,
+        "maxDelay": 8,
         "portType": 512,
       },
       {
         "id": 1401,
+        "maxDelay": 8,
         "portType": 2048,
       },
       {
@@ -9855,10 +9865,12 @@ exports[`Check 4 M/E Constellation 4K Plus (31) 1`] = `
       },
       {
         "id": 1301,
+        "maxDelay": 8,
         "portType": 512,
       },
       {
         "id": 1401,
+        "maxDelay": 8,
         "portType": 2048,
       },
       {
@@ -12937,10 +12949,12 @@ exports[`Check 4 M/E Constellation HD (20) 1`] = `
       },
       {
         "id": 1301,
+        "maxDelay": 8,
         "portType": 512,
       },
       {
         "id": 1401,
+        "maxDelay": 8,
         "portType": 2048,
       },
       {
@@ -15199,10 +15213,12 @@ exports[`Check Constellation 8K (8K Mode) (12) 1`] = `
       },
       {
         "id": 1301,
+        "maxDelay": 8,
         "portType": 512,
       },
       {
         "id": 1401,
+        "maxDelay": 8,
         "portType": 2048,
       },
       {
@@ -17202,10 +17218,12 @@ exports[`Check Constellation 8K (HD/4K Mode) (11) 1`] = `
       },
       {
         "id": 1301,
+        "maxDelay": 8,
         "portType": 512,
       },
       {
         "id": 1401,
+        "maxDelay": 8,
         "portType": 2048,
       },
       {
@@ -21156,6 +21174,7 @@ exports[`Check TV Studio Pro 4K (10) 1`] = `
       },
       {
         "id": 1301,
+        "maxDelay": 8,
         "portType": 512,
       },
       {
@@ -22358,10 +22377,12 @@ exports[`Check Television Studio 4K8 (32) 1`] = `
       },
       {
         "id": 1201,
+        "maxDelay": 8,
         "portType": 128,
       },
       {
         "id": 1301,
+        "maxDelay": 8,
         "portType": 512,
       },
       {
@@ -23355,10 +23376,12 @@ exports[`Check Television Studio HD8 (26) 1`] = `
       },
       {
         "id": 1201,
+        "maxDelay": 8,
         "portType": 128,
       },
       {
         "id": 1301,
+        "maxDelay": 8,
         "portType": 512,
       },
       {
@@ -24266,10 +24289,12 @@ exports[`Check Television Studio HD8 ISO (27) 1`] = `
       },
       {
         "id": 1201,
+        "maxDelay": 8,
         "portType": 128,
       },
       {
         "id": 1301,
+        "maxDelay": 8,
         "portType": 512,
       },
       {

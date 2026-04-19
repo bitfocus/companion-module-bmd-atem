@@ -40,8 +40,10 @@ export function AtemAudioInputPicker(
 	model: ModelSpec,
 	state: AtemState,
 	subset?: AudioInputSubset,
-): CompanionInputFieldDropdown<'input'> {
+): CompanionInputFieldDropdown<'input'> | null {
 	const inputs = SourcesToChoices(GetAudioInputsList(model, state, subset))
+	if (inputs.length === 0) return null
+
 	return {
 		type: 'dropdown',
 		id: 'input',
