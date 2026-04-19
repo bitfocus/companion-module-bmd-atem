@@ -1,216 +1,219 @@
 import { Enums, type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../../options/util.js'
+import type { CompanionActionDefinitions, JsonValue } from '@companion-module/base'
 import { getMixEffect } from 'atem-connection/dist/state/util.js'
 import {
-	AtemMEPicker,
-	AtemRatePicker,
 	AtemTransitionSelectComponentsPickers,
 	AtemTransitionSelectionComponentPicker,
 	AtemTransitionSelectionPicker,
-	AtemTransitionStylePicker,
-} from '../../input.js'
-import type { ModelSpec } from '../../models/index.js'
-import { ActionId } from '../ActionId.js'
-import type { MyActionDefinitions } from './../types.js'
-import { AtemCommandBatching, CommandBatching } from '../../batching.js'
-import {
-	CHOICES_KEYTRANS,
-	CHOICES_ON_OFF_TOGGLE,
+	calculateTransitionSelection,
 	NextTransBackgroundChoices,
 	NextTransKeyChoices,
-	type TrueFalseToggle,
-} from '../../choices.js'
-import type { AtemConfig } from '../../config.js'
+	type TransitionSelectionComponent,
+} from '../../options/transition.js'
+import type { ModelSpec } from '../../models/index.js'
+import { AtemCommandBatching, CommandBatching } from '../../batching.js'
+import { CHOICES_KEYTRANS, CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle, AtemRatePicker } from '../../options/common.js'
 import { getTransitionProperties, getUSK, type StateWrapper } from '../../state.js'
-import { type InstanceBaseExt, assertUnreachable, calculateTransitionSelection } from '../../util.js'
-import type { InputValue } from '@companion-module/base'
+import { type InstanceBaseExt, assertUnreachable } from '../../util.js'
+import {
+	AtemMEPicker,
+	AtemTransitionStylePicker,
+	transitionStyleEnumToString,
+	type TransitionStyleString,
+	transitionStyleStringToEnum,
+} from '../../options/mixEffect.js'
 
-export interface AtemTransitionActions {
-	[ActionId.PreviewTransition]: {
-		mixeffect: string
-		state: TrueFalseToggle
+export type AtemTransitionActions = {
+	['previewTransition']: {
+		options: {
+			mixeffect: number
+			state: TrueFalseToggle
+		}
 	}
-	[ActionId.TransitionStyle]: {
-		mixeffect: number
-		style: Enums.TransitionStyle
+	['transitionStyle']: {
+		options: {
+			mixeffect: number
+			style: TransitionStyleString | JsonValue | undefined
+		}
 	}
-	[ActionId.TransitionRate]: {
-		mixeffect: number
-		style: Enums.TransitionStyle
-		rate: number
+	['transitionRate']: {
+		options: {
+			mixeffect: number
+			style: TransitionStyleString | JsonValue | undefined
+			rate: number
+		}
 	}
-	[ActionId.TransitionSelection]: {
-		mixeffect: number
-		selection: ('background' | string)[]
+	['transitionSelection']: {
+		options: {
+			mixeffect: number
+			selection: TransitionSelectionComponent[]
+		}
 	}
-	[ActionId.TransitionSelectComponents]: {
-		mixeffect: number
-		background: NextTransBackgroundChoices
-		[id: `key${string}`]: NextTransKeyChoices
+	['transitionSelectComponents']: {
+		options: {
+			mixeffect: number
+			background: NextTransBackgroundChoices
+			[id: `key${string}`]: NextTransKeyChoices
+		}
 	}
-	[ActionId.TransitionSelectionComponent]: {
-		mixeffect: number
-		component: number
-		mode: TrueFalseToggle
+	['transitionSelectionComponent']: {
+		options: {
+			mixeffect: number
+			component: number
+			mode: TrueFalseToggle
+		}
 	}
 }
 
 export function createTransitionActions(
-	instance: InstanceBaseExt<AtemConfig>,
+	instance: InstanceBaseExt,
 	atem: Atem | undefined,
 	model: ModelSpec,
 	commandBatching: AtemCommandBatching,
 	state: StateWrapper,
-): MyActionDefinitions<AtemTransitionActions> {
+): CompanionActionDefinitions<AtemTransitionActions> {
 	return {
-		[ActionId.PreviewTransition]: {
+		['previewTransition']: {
 			name: 'Transition: Preview',
-			options: {
-				mixeffect: {
-					type: 'textinput',
-					id: 'mixeffect',
-					label: 'M/E',
-					default: '1',
-					useVariables: true,
-				},
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
 				state: {
 					id: 'state',
 					type: 'dropdown',
 					label: 'State',
 					default: 'toggle',
 					choices: CHOICES_ON_OFF_TOGGLE,
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const mixeffect = await options.getParsedNumber('mixeffect')
-
 				let target: boolean
-				if (options.getPlainString('state') === 'toggle') {
-					const meState = getMixEffect(state.state, mixeffect - 1)
+				if (options.state === 'toggle') {
+					const meState = getMixEffect(state.state, options.mixeffect - 1)
 					target = !meState.transitionPreview
 				} else {
-					target = options.getPlainString('state') === 'true'
+					target = options.state === 'true'
 				}
 
-				console.log('previewTransition', target, mixeffect)
-
-				if (!isNaN(mixeffect)) {
-					await atem?.previewTransition(target, mixeffect - 1)
-				}
+				await atem?.previewTransition(target, options.mixeffect - 1)
 			},
 		},
-		[ActionId.TransitionStyle]: {
+		['transitionStyle']: {
 			name: 'Transition: Set style/pattern',
-			options: {
-				mixeffect: AtemMEPicker(model, 0),
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
 				style: AtemTransitionStylePicker(model.media.clips === 0),
-			},
+			}),
 			callback: async ({ options }) => {
+				const parsedStyle = transitionStyleStringToEnum(options.style)
+				if (parsedStyle === null) return // Not valid
+
 				await atem?.setTransitionStyle(
 					{
-						nextStyle: options.getPlainNumber('style'),
+						nextStyle: parsedStyle,
 					},
-					options.getPlainNumber('mixeffect'),
+					options.mixeffect - 1,
 				)
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
+				const me = getMixEffect(state.state, options.mixeffect - 1)
 
 				if (me) {
 					return {
-						...options.getJson(),
-						style: me.transitionProperties.nextStyle,
+						style: transitionStyleEnumToString(me.transitionProperties.nextStyle),
 					}
 				} else {
 					return undefined
 				}
 			},
 		},
-		[ActionId.TransitionRate]: {
+		['transitionRate']: {
 			name: 'Transition: Change rate',
-			options: {
-				mixeffect: AtemMEPicker(model, 0),
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
 				style: AtemTransitionStylePicker(true),
 				rate: AtemRatePicker('Transition Rate'),
-			},
+			}),
 			callback: async ({ options }) => {
-				const style = options.getPlainNumber('style')
-				switch (style) {
+				const parsedStyle = transitionStyleStringToEnum(options.style)
+				if (parsedStyle === null) return // Not valid
+
+				switch (parsedStyle) {
 					case Enums.TransitionStyle.MIX:
 						await atem?.setMixTransitionSettings(
 							{
-								rate: options.getPlainNumber('rate'),
+								rate: options.rate,
 							},
-							options.getPlainNumber('mixeffect'),
+							options.mixeffect - 1,
 						)
 						break
 					case Enums.TransitionStyle.DIP:
 						await atem?.setDipTransitionSettings(
 							{
-								rate: options.getPlainNumber('rate'),
+								rate: options.rate,
 							},
-							options.getPlainNumber('mixeffect'),
+							options.mixeffect - 1,
 						)
 
 						break
 					case Enums.TransitionStyle.WIPE:
 						await atem?.setWipeTransitionSettings(
 							{
-								rate: options.getPlainNumber('rate'),
+								rate: options.rate,
 							},
-							options.getPlainNumber('mixeffect'),
+							options.mixeffect - 1,
 						)
 
 						break
 					case Enums.TransitionStyle.DVE:
 						await atem?.setDVETransitionSettings(
 							{
-								rate: options.getPlainNumber('rate'),
+								rate: options.rate,
 							},
-							options.getPlainNumber('mixeffect'),
+							options.mixeffect - 1,
 						)
 						break
 					case Enums.TransitionStyle.STING:
 						// Not supported
 						break
 					default:
-						assertUnreachable(style)
-						instance.log('debug', 'Unknown transition style: ' + style)
+						assertUnreachable(parsedStyle)
+						instance.log('debug', 'Unknown transition style: ' + parsedStyle)
 				}
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
+				const parsedStyle = transitionStyleStringToEnum(options.style)
+				if (parsedStyle === null) return // Not valid
+
+				const me = getMixEffect(state.state, options.mixeffect - 1)
 
 				if (me?.transitionSettings) {
-					const style = options.getPlainNumber('style')
-					switch (style) {
+					switch (parsedStyle) {
 						case Enums.TransitionStyle.MIX:
 							if (!me.transitionSettings.mix) return undefined
 							return {
-								...options.getJson(),
 								rate: me.transitionSettings.mix.rate,
 							}
 						case Enums.TransitionStyle.DIP:
 							if (!me.transitionSettings.dip) return undefined
 							return {
-								...options.getJson(),
 								rate: me.transitionSettings.dip.rate,
 							}
 						case Enums.TransitionStyle.WIPE:
 							if (!me.transitionSettings.wipe) return undefined
 							return {
-								...options.getJson(),
 								rate: me.transitionSettings.wipe.rate,
 							}
 						case Enums.TransitionStyle.DVE:
 							if (!me.transitionSettings.DVE) return undefined
 							return {
-								...options.getJson(),
 								rate: me.transitionSettings.DVE.rate,
 							}
 						case Enums.TransitionStyle.STING:
 							return undefined
 						default:
-							assertUnreachable(style)
+							assertUnreachable(parsedStyle)
 							return undefined
 					}
 				} else {
@@ -218,29 +221,29 @@ export function createTransitionActions(
 				}
 			},
 		},
-		[ActionId.TransitionSelection]: {
+		['transitionSelection']: {
 			name: 'Transition: Change selection',
-			options: {
-				mixeffect: AtemMEPicker(model, 0),
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
 				selection: AtemTransitionSelectionPicker(model),
-			},
+			}),
 			callback: async ({ options }) => {
 				await atem?.setTransitionStyle(
 					{
-						nextSelection: calculateTransitionSelection(model.USKs, options.getRaw('selection')),
+						nextSelection: calculateTransitionSelection(model.USKs, options.selection),
 					},
-					options.getPlainNumber('mixeffect'),
+					options.mixeffect - 1,
 				)
 			},
 		},
-		[ActionId.TransitionSelectComponents]: {
+		['transitionSelectComponents']: {
 			name: 'Transition: Select components in transition',
-			options: {
-				mixeffect: AtemMEPicker(model, 0),
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
 				...AtemTransitionSelectComponentsPickers(model),
-			},
+			}),
 			callback: async ({ options }) => {
-				const mixeffect = options.getPlainNumber('mixeffect')
+				const mixeffect = options.mixeffect - 1
 				const tp = getTransitionProperties(state.state, mixeffect)
 				if (!atem || !tp) return
 
@@ -251,7 +254,7 @@ export function createTransitionActions(
 					const inNextSelection = currentNextSelection.includes(Enums.TransitionSelection.Background)
 
 					let include
-					const mode = options.getPlainString('background')
+					const mode = options.background
 					switch (mode) {
 						case NextTransBackgroundChoices.NoChange:
 							include = inNextSelection
@@ -281,7 +284,7 @@ export function createTransitionActions(
 						const component = 1 << (key + 1)
 						const inNextSelection = currentNextSelection.includes(component)
 
-						const mode = options.getPlainString(`key${key}`)
+						const mode = options[`key${key}`]
 						let include
 						switch (mode) {
 							case NextTransKeyChoices.NoChange:
@@ -317,7 +320,7 @@ export function createTransitionActions(
 				}
 			},
 			learn: ({ options }) => {
-				const me = options.getPlainNumber('mixeffect')
+				const me = options.mixeffect - 1
 				const mixeffect = getMixEffect(state.state, me)
 				const tp = getTransitionProperties(state.state, me)
 				if (mixeffect && tp) {
@@ -327,7 +330,7 @@ export function createTransitionActions(
 						? NextTransBackgroundChoices.Include
 						: NextTransBackgroundChoices.Omit
 
-					const keys: { [key: string]: InputValue } = {}
+					const keys: { [key: string]: NextTransKeyChoices } = {}
 					for (let key = 0; key < model.USKs; key++) {
 						const usk = getUSK(state.state, me, key)
 
@@ -347,7 +350,6 @@ export function createTransitionActions(
 					}
 
 					return {
-						...options.getJson(),
 						background,
 						...keys,
 					}
@@ -356,10 +358,10 @@ export function createTransitionActions(
 				}
 			},
 		},
-		[ActionId.TransitionSelectionComponent]: {
+		['transitionSelectionComponent']: {
 			name: 'Transition: Change selection component',
-			options: {
-				mixeffect: AtemMEPicker(model, 0),
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
 				component: AtemTransitionSelectionComponentPicker(model),
 				mode: {
 					type: 'dropdown',
@@ -367,10 +369,11 @@ export function createTransitionActions(
 					label: 'State',
 					choices: CHOICES_KEYTRANS,
 					default: CHOICES_KEYTRANS[0].id,
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const me = options.getPlainNumber('mixeffect')
+				const me = options.mixeffect - 1
 				const tp = getTransitionProperties(state.state, me)
 				if (tp && atem) {
 					let batch = commandBatching.meTransitionSelection.get(me)
@@ -391,8 +394,8 @@ export function createTransitionActions(
 						commandBatching.meTransitionSelection.set(me, batch)
 					}
 
-					const mode = options.getPlainString('mode')
-					const component = 1 << options.getPlainNumber('component')
+					const mode = options.mode
+					const component = 1 << options.component
 					batch.queueChange(tp.nextSelection, (oldVal) => {
 						let mode2 = mode
 						if (mode === 'toggle') {

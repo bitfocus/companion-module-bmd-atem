@@ -1,220 +1,165 @@
 import { Enums, type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../../options/util.js'
+import type { CompanionActionDefinitions, JsonValue } from '@companion-module/base'
 import {
-	AtemMEPicker,
 	AtemUSKDVEPropertiesPickers,
-	AtemUSKDVEPropertiesVariablesPickers,
-	AtemUSKPicker,
 	AtemUSKKeyframePropertiesPickers,
-	AtemTransitionAnimationOptions,
-} from '../../input.js'
+	CHOICES_FLYDIRECTIONS,
+} from '../../options/upstreamKeyer-dve.js'
 import type { ModelSpec } from '../../models/index.js'
-import { ActionId } from '../ActionId.js'
-import type { MyActionDefinitions } from '../types.js'
-import { CHOICES_FLYDIRECTIONS, CHOICES_KEYFRAMES, CHOICES_KEYFRAMES_CONFIGURABLE } from '../../choices.js'
 import { getUSK, type StateWrapper } from '../../state.js'
 import type {
 	UpstreamKeyerDVESettings,
 	UpstreamKeyerFlyKeyframe,
 } from 'atem-connection/dist/state/video/upstreamKeyers.js'
-import type { algorithm, curve } from '../../easings.js'
-import type { AtemTransitions } from '../../transitions.js'
+import type { AtemTransitions, TransitionOptions } from '../../transitions.js'
+import { AtemTransitionAnimationOptions } from '../../options/fade.js'
+import { AtemMEPicker } from '../../options/mixEffect.js'
+import {
+	AtemFlyKeyKeyFramePicker,
+	type FlyKeyKeyFrameString,
+	flyKeyKeyFrameStringToEnum,
+	AtemUSKPicker,
+} from '../../options/upstreamKeyer.js'
 
-export interface AtemUpstreamKeyerDVEActions {
-	[ActionId.USKDVEProperties]: {
-		mixeffect: number
-		key: number
+export type AtemUpstreamKeyerDVEActions = {
+	['uskDveProperties']: {
+		options: {
+			mixeffect: number
+			key: number
 
-		transitionRate: number | undefined
-		transitionEasing: algorithm | undefined
-		transitionCurve: curve | undefined
+			properties: Array<
+				| 'positionX'
+				| 'positionY'
+				| 'sizeX'
+				| 'sizeY'
+				| 'rotation'
+				| 'maskEnabled'
+				| 'maskTop'
+				| 'maskBottom'
+				| 'maskLeft'
+				| 'maskRight'
+				| 'shadowEnabled'
+				| 'lightSourceDirection'
+				| 'lightSourceAltitude'
+				| 'borderEnabled'
+				| 'borderHue'
+				| 'borderSaturation'
+				| 'borderLuma'
+				| 'borderBevel'
+				| 'borderOuterWidth'
+				| 'borderInnerWidth'
+				| 'borderOuterSoftness'
+				| 'borderInnerSoftness'
+				| 'borderOpacity'
+				| 'borderBevelPosition'
+				| 'borderBevelSoftness'
+				| 'rate'
+			>
 
-		properties: Array<
-			| 'positionX'
-			| 'positionY'
-			| 'sizeX'
-			| 'sizeY'
-			| 'rotation'
-			| 'maskEnabled'
-			| 'maskTop'
-			| 'maskBottom'
-			| 'maskLeft'
-			| 'maskRight'
-			| 'shadowEnabled'
-			| 'lightSourceDirection'
-			| 'lightSourceAltitude'
-			| 'borderEnabled'
-			| 'borderHue'
-			| 'borderSaturation'
-			| 'borderLuma'
-			| 'borderBevel'
-			| 'borderOuterWidth'
-			| 'borderInnerWidth'
-			| 'borderOuterSoftness'
-			| 'borderInnerSoftness'
-			| 'borderOpacity'
-			| 'borderBevelPosition'
-			| 'borderBevelSoftness'
-			| 'rate'
-		>
-
-		positionX: number
-		positionY: number
-		sizeX: number
-		sizeY: number
-		rotation: number
-		maskEnabled: boolean
-		maskTop: number
-		maskBottom: number
-		maskLeft: number
-		maskRight: number
-		shadowEnabled: boolean
-		lightSourceDirection: number
-		lightSourceAltitude: number
-		borderEnabled: boolean
-		borderHue: number
-		borderSaturation: number
-		borderLuma: number
-		borderBevel: Enums.BorderBevel
-		borderOuterWidth: number
-		borderInnerWidth: number
-		borderOuterSoftness: number
-		borderInnerSoftness: number
-		borderOpacity: number
-		borderBevelPosition: number
-		borderBevelSoftness: number
-		rate: number
+			positionX: number
+			positionY: number
+			sizeX: number
+			sizeY: number
+			rotation: number
+			maskEnabled: boolean
+			maskTop: number
+			maskBottom: number
+			maskLeft: number
+			maskRight: number
+			shadowEnabled: boolean
+			lightSourceDirection: number
+			lightSourceAltitude: number
+			borderEnabled: boolean
+			borderHue: number
+			borderSaturation: number
+			borderLuma: number
+			borderBevel: Enums.BorderBevel
+			borderOuterWidth: number
+			borderInnerWidth: number
+			borderOuterSoftness: number
+			borderInnerSoftness: number
+			borderOpacity: number
+			borderBevelPosition: number
+			borderBevelSoftness: number
+			rate: number
+		} & TransitionOptions
 	}
-	[ActionId.USKDVEPropertiesVariables]: {
-		mixeffect: string
-		key: string
+	['uskSetKeyframe']: {
+		options: {
+			mixeffect: number
+			key: number
+			keyframe: FlyKeyKeyFrameString | JsonValue | undefined
 
-		transitionRate: number | undefined
-		transitionEasing: algorithm | undefined
-		transitionCurve: curve | undefined
+			properties: Array<
+				| 'positionX'
+				| 'positionY'
+				| 'sizeX'
+				| 'sizeY'
+				| 'rotation'
+				| 'maskTop'
+				| 'maskBottom'
+				| 'maskLeft'
+				| 'maskRight'
+				| 'shadowEnabled'
+				| 'lightSourceDirection'
+				| 'lightSourceAltitude'
+				| 'borderEnabled'
+				| 'borderHue'
+				| 'borderSaturation'
+				| 'borderLuma'
+				| 'borderOuterWidth'
+				| 'borderInnerWidth'
+				| 'borderOuterSoftness'
+				| 'borderInnerSoftness'
+				| 'borderOpacity'
+				| 'borderBevelPosition'
+				| 'borderBevelSoftness'
+			>
 
-		properties: Array<
-			| 'positionX'
-			| 'positionY'
-			| 'sizeX'
-			| 'sizeY'
-			| 'rotation'
-			| 'maskEnabled'
-			| 'maskTop'
-			| 'maskBottom'
-			| 'maskLeft'
-			| 'maskRight'
-			| 'shadowEnabled'
-			| 'lightSourceDirection'
-			| 'lightSourceAltitude'
-			| 'borderEnabled'
-			| 'borderHue'
-			| 'borderSaturation'
-			| 'borderLuma'
-			| 'borderBevel'
-			| 'borderOuterWidth'
-			| 'borderInnerWidth'
-			| 'borderOuterSoftness'
-			| 'borderInnerSoftness'
-			| 'borderOpacity'
-			| 'borderBevelPosition'
-			| 'borderBevelSoftness'
-			| 'rate'
-		>
-
-		positionX: string
-		positionY: string
-		sizeX: string
-		sizeY: string
-		rotation: string
-		maskEnabled: string
-		maskTop: string
-		maskBottom: string
-		maskLeft: string
-		maskRight: string
-		shadowEnabled: string
-		lightSourceDirection: string
-		lightSourceAltitude: string
-		borderEnabled: string
-		borderHue: string
-		borderSaturation: string
-		borderLuma: string
-		borderBevel: string
-		borderOuterWidth: string
-		borderInnerWidth: string
-		borderOuterSoftness: string
-		borderInnerSoftness: string
-		borderOpacity: string
-		borderBevelPosition: string
-		borderBevelSoftness: string
-		rate: string
+			positionX: number
+			positionY: number
+			sizeX: number
+			sizeY: number
+			rotation: number
+			maskTop: number
+			maskBottom: number
+			maskLeft: number
+			maskRight: number
+			lightSourceDirection: number
+			lightSourceAltitude: number
+			borderHue: number
+			borderSaturation: number
+			borderLuma: number
+			borderOuterWidth: number
+			borderInnerWidth: number
+			borderOuterSoftness: number
+			borderInnerSoftness: number
+			borderOpacity: number
+			borderBevelPosition: number
+			borderBevelSoftness: number
+		}
 	}
-	[ActionId.USKSetKeyframe]: {
-		mixeffect: number
-		key: number
-		keyframe: Enums.FlyKeyKeyFrame.A | Enums.FlyKeyKeyFrame.B
-
-		properties: Array<
-			| 'positionX'
-			| 'positionY'
-			| 'sizeX'
-			| 'sizeY'
-			| 'rotation'
-			| 'maskTop'
-			| 'maskBottom'
-			| 'maskLeft'
-			| 'maskRight'
-			| 'shadowEnabled'
-			| 'lightSourceDirection'
-			| 'lightSourceAltitude'
-			| 'borderEnabled'
-			| 'borderHue'
-			| 'borderSaturation'
-			| 'borderLuma'
-			| 'borderOuterWidth'
-			| 'borderInnerWidth'
-			| 'borderOuterSoftness'
-			| 'borderInnerSoftness'
-			| 'borderOpacity'
-			| 'borderBevelPosition'
-			| 'borderBevelSoftness'
-		>
-
-		positionX: number
-		positionY: number
-		sizeX: number
-		sizeY: number
-		rotation: number
-		maskTop: number
-		maskBottom: number
-		maskLeft: number
-		maskRight: number
-		lightSourceDirection: number
-		lightSourceAltitude: number
-		borderHue: number
-		borderSaturation: number
-		borderLuma: number
-		borderOuterWidth: number
-		borderInnerWidth: number
-		borderOuterSoftness: number
-		borderInnerSoftness: number
-		borderOpacity: number
-		borderBevelPosition: number
-		borderBevelSoftness: number
+	['uskStoreKeyframe']: {
+		options: {
+			mixeffect: number
+			key: number
+			keyframe: FlyKeyKeyFrameString | JsonValue | undefined
+		}
 	}
-	[ActionId.USKStoreKeyframe]: {
-		mixeffect: number
-		key: number
-		keyframe: Enums.FlyKeyKeyFrame.A | Enums.FlyKeyKeyFrame.B
+	['uskFly']: {
+		options: {
+			mixeffect: number
+			key: number
+			keyframe: FlyKeyKeyFrameString | JsonValue | undefined
+		}
 	}
-	[ActionId.USKFly]: {
-		mixeffect: number
-		key: number
-		keyframe: Enums.FlyKeyKeyFrame.A | Enums.FlyKeyKeyFrame.B | Enums.FlyKeyKeyFrame.Full
-	}
-	[ActionId.USKFlyInfinite]: {
-		mixeffect: number
-		key: number
-		flydirection: Enums.FlyKeyDirection
+	['uskFlyInfinite']: {
+		options: {
+			mixeffect: number
+			key: number
+			flydirection: Enums.FlyKeyDirection
+		}
 	}
 }
 
@@ -223,111 +168,110 @@ export function createUpstreamKeyerDVEActions(
 	model: ModelSpec,
 	transitions: AtemTransitions,
 	state: StateWrapper,
-): MyActionDefinitions<AtemUpstreamKeyerDVEActions> {
+): CompanionActionDefinitions<AtemUpstreamKeyerDVEActions> {
 	if (!model.USKs || !model.DVEs) {
 		return {
-			[ActionId.USKDVEProperties]: undefined,
-			[ActionId.USKDVEPropertiesVariables]: undefined,
-			[ActionId.USKSetKeyframe]: undefined,
-			[ActionId.USKStoreKeyframe]: undefined,
-			[ActionId.USKFly]: undefined,
-			[ActionId.USKFlyInfinite]: undefined,
+			['uskDveProperties']: undefined,
+			['uskSetKeyframe']: undefined,
+			['uskStoreKeyframe']: undefined,
+			['uskFly']: undefined,
+			['uskFlyInfinite']: undefined,
 		}
 	}
 
 	return {
-		[ActionId.USKDVEProperties]: {
+		['uskDveProperties']: {
 			name: 'Upstream key: Change DVE properties',
-			options: {
-				mixeffect: AtemMEPicker(model, 0),
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
 				...AtemTransitionAnimationOptions(),
 				...AtemUSKDVEPropertiesPickers(),
-			},
+			}),
 			callback: async ({ options }) => {
-				const keyId = options.getPlainNumber('key')
-				const mixEffectId = options.getPlainNumber('mixeffect')
+				const keyId = options.key - 1
+				const mixEffectId = options.mixeffect - 1
 				const newProps: Partial<UpstreamKeyerDVESettings> = {}
 
-				const props = options.getRaw('properties')
+				const props = options.properties
 				if (props && Array.isArray(props)) {
 					if (props.includes('maskEnabled')) {
-						newProps.maskEnabled = options.getPlainBoolean('maskEnabled')
+						newProps.maskEnabled = options.maskEnabled
 					}
 					if (props.includes('maskTop')) {
-						newProps.maskTop = options.getPlainNumber('maskTop') * 1000
+						newProps.maskTop = options.maskTop * 1000
 					}
 					if (props.includes('maskBottom')) {
-						newProps.maskBottom = options.getPlainNumber('maskBottom') * 1000
+						newProps.maskBottom = options.maskBottom * 1000
 					}
 					if (props.includes('maskLeft')) {
-						newProps.maskLeft = options.getPlainNumber('maskLeft') * 1000
+						newProps.maskLeft = options.maskLeft * 1000
 					}
 					if (props.includes('maskRight')) {
-						newProps.maskRight = options.getPlainNumber('maskRight') * 1000
+						newProps.maskRight = options.maskRight * 1000
 					}
 					if (props.includes('sizeX')) {
-						newProps.sizeX = options.getPlainNumber('sizeX') * 1000
+						newProps.sizeX = options.sizeX * 1000
 					}
 					if (props.includes('sizeY')) {
-						newProps.sizeY = options.getPlainNumber('sizeY') * 1000
+						newProps.sizeY = options.sizeY * 1000
 					}
 					if (props.includes('positionX')) {
-						newProps.positionX = options.getPlainNumber('positionX') * 1000
+						newProps.positionX = options.positionX * 1000
 					}
 					if (props.includes('positionY')) {
-						newProps.positionY = options.getPlainNumber('positionY') * 1000
+						newProps.positionY = options.positionY * 1000
 					}
 					if (props.includes('rotation')) {
-						newProps.rotation = options.getPlainNumber('rotation')
+						newProps.rotation = options.rotation
 					}
 					if (props.includes('borderOuterWidth')) {
-						newProps.borderOuterWidth = options.getPlainNumber('borderOuterWidth') * 100
+						newProps.borderOuterWidth = options.borderOuterWidth * 100
 					}
 					if (props.includes('borderInnerWidth')) {
-						newProps.borderInnerWidth = options.getPlainNumber('borderInnerWidth') * 100
+						newProps.borderInnerWidth = options.borderInnerWidth * 100
 					}
 					if (props.includes('borderOuterSoftness')) {
-						newProps.borderOuterSoftness = options.getPlainNumber('borderOuterSoftness')
+						newProps.borderOuterSoftness = options.borderOuterSoftness
 					}
 					if (props.includes('borderInnerSoftness')) {
-						newProps.borderInnerSoftness = options.getPlainNumber('borderInnerSoftness')
+						newProps.borderInnerSoftness = options.borderInnerSoftness
 					}
 					if (props.includes('borderBevelSoftness')) {
-						newProps.borderBevelSoftness = options.getPlainNumber('borderBevelSoftness')
+						newProps.borderBevelSoftness = options.borderBevelSoftness
 					}
 					if (props.includes('borderBevelPosition')) {
-						newProps.borderBevelPosition = options.getPlainNumber('borderBevelPosition')
+						newProps.borderBevelPosition = options.borderBevelPosition
 					}
 					if (props.includes('borderOpacity')) {
-						newProps.borderOpacity = options.getPlainNumber('borderOpacity')
+						newProps.borderOpacity = options.borderOpacity
 					}
 					if (props.includes('borderHue')) {
-						newProps.borderHue = options.getPlainNumber('borderHue') * 10
+						newProps.borderHue = options.borderHue * 10
 					}
 					if (props.includes('borderSaturation')) {
-						newProps.borderSaturation = options.getPlainNumber('borderSaturation') * 10
+						newProps.borderSaturation = options.borderSaturation * 10
 					}
 					if (props.includes('borderLuma')) {
-						newProps.borderLuma = options.getPlainNumber('borderLuma') * 10
+						newProps.borderLuma = options.borderLuma * 10
 					}
 					if (props.includes('lightSourceDirection')) {
-						newProps.lightSourceDirection = options.getPlainNumber('lightSourceDirection') * 10
+						newProps.lightSourceDirection = options.lightSourceDirection * 10
 					}
 					if (props.includes('lightSourceAltitude')) {
-						newProps.lightSourceAltitude = options.getPlainNumber('lightSourceAltitude')
+						newProps.lightSourceAltitude = options.lightSourceAltitude
 					}
 					if (props.includes('borderEnabled')) {
-						newProps.borderEnabled = options.getPlainBoolean('borderEnabled')
+						newProps.borderEnabled = options.borderEnabled
 					}
 					if (props.includes('shadowEnabled')) {
-						newProps.shadowEnabled = options.getPlainBoolean('shadowEnabled')
+						newProps.shadowEnabled = options.shadowEnabled
 					}
 					if (props.includes('borderBevel')) {
-						newProps.borderBevel = options.getPlainNumber('borderBevel')
+						newProps.borderBevel = options.borderBevel
 					}
 					if (props.includes('rate')) {
-						newProps.rate = options.getPlainNumber('rate')
+						newProps.rate = options.rate
 					}
 				}
 
@@ -368,11 +312,10 @@ export function createUpstreamKeyerDVEActions(
 				)
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.getPlainNumber('mixeffect'), options.getPlainNumber('key'))
+				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
 
 				if (usk?.dveSettings) {
 					return {
-						...options.getJson(),
 						maskEnabled: usk.dveSettings.maskEnabled,
 						maskTop: usk.dveSettings.maskTop / 1000,
 						maskBottom: usk.dveSettings.maskBottom / 1000,
@@ -405,274 +348,87 @@ export function createUpstreamKeyerDVEActions(
 				}
 			},
 		},
-		[ActionId.USKDVEPropertiesVariables]: {
-			name: 'Upstream key: Change DVE properties from variables',
-			options: {
-				mixeffect: {
-					type: 'textinput',
-					id: 'mixeffect',
-					label: 'M/E',
-					default: '1',
-					useVariables: true,
-				},
-				key: {
-					type: 'textinput',
-					label: 'Key',
-					id: 'key',
-					default: '1',
-					useVariables: true,
-				},
-				...AtemTransitionAnimationOptions(),
-				...AtemUSKDVEPropertiesVariablesPickers(),
-			},
-			callback: async ({ options }) => {
-				const mixEffectId = (await options.getParsedNumber('mixeffect')) - 1
-				const keyId = (await options.getParsedNumber('key')) - 1
-				const newProps: Partial<UpstreamKeyerDVESettings> = {}
-
-				const props = options.getRaw('properties')
-				if (props && Array.isArray(props)) {
-					if (props.includes('maskEnabled')) {
-						newProps.maskEnabled = await options.getParsedBoolean('maskEnabled')
-					}
-					if (props.includes('maskTop')) {
-						newProps.maskTop = (await options.getParsedNumber('maskTop')) * 1000
-					}
-					if (props.includes('maskBottom')) {
-						newProps.maskBottom = (await options.getParsedNumber('maskBottom')) * 1000
-					}
-					if (props.includes('maskLeft')) {
-						newProps.maskLeft = (await options.getParsedNumber('maskLeft')) * 1000
-					}
-					if (props.includes('maskRight')) {
-						newProps.maskRight = (await options.getParsedNumber('maskRight')) * 1000
-					}
-					if (props.includes('sizeX')) {
-						newProps.sizeX = (await options.getParsedNumber('sizeX')) * 1000
-					}
-					if (props.includes('sizeY')) {
-						newProps.sizeY = (await options.getParsedNumber('sizeY')) * 1000
-					}
-					if (props.includes('positionX')) {
-						newProps.positionX = (await options.getParsedNumber('positionX')) * 1000
-					}
-					if (props.includes('positionY')) {
-						newProps.positionY = (await options.getParsedNumber('positionY')) * 1000
-					}
-					if (props.includes('rotation')) {
-						newProps.rotation = await options.getParsedNumber('rotation')
-					}
-					if (props.includes('borderOuterWidth')) {
-						newProps.borderOuterWidth = (await options.getParsedNumber('borderOuterWidth')) * 100
-					}
-					if (props.includes('borderInnerWidth')) {
-						newProps.borderInnerWidth = (await options.getParsedNumber('borderInnerWidth')) * 100
-					}
-					if (props.includes('borderOuterSoftness')) {
-						newProps.borderOuterSoftness = await options.getParsedNumber('borderOuterSoftness')
-					}
-					if (props.includes('borderInnerSoftness')) {
-						newProps.borderInnerSoftness = await options.getParsedNumber('borderInnerSoftness')
-					}
-					if (props.includes('borderBevelSoftness')) {
-						newProps.borderBevelSoftness = await options.getParsedNumber('borderBevelSoftness')
-					}
-					if (props.includes('borderBevelPosition')) {
-						newProps.borderBevelPosition = await options.getParsedNumber('borderBevelPosition')
-					}
-					if (props.includes('borderOpacity')) {
-						newProps.borderOpacity = await options.getParsedNumber('borderOpacity')
-					}
-					if (props.includes('borderHue')) {
-						newProps.borderHue = (await options.getParsedNumber('borderHue')) * 10
-					}
-					if (props.includes('borderSaturation')) {
-						newProps.borderSaturation = (await options.getParsedNumber('borderSaturation')) * 10
-					}
-					if (props.includes('borderLuma')) {
-						newProps.borderLuma = (await options.getParsedNumber('borderLuma')) * 10
-					}
-					if (props.includes('lightSourceDirection')) {
-						newProps.lightSourceDirection = (await options.getParsedNumber('lightSourceDirection')) * 10
-					}
-					if (props.includes('lightSourceAltitude')) {
-						newProps.lightSourceAltitude = await options.getParsedNumber('lightSourceAltitude')
-					}
-					if (props.includes('borderEnabled')) {
-						newProps.borderEnabled = await options.getParsedBoolean('borderEnabled')
-					}
-					if (props.includes('shadowEnabled')) {
-						newProps.shadowEnabled = await options.getParsedBoolean('shadowEnabled')
-					}
-					if (props.includes('borderBevel')) {
-						newProps.borderBevel = await options.getParsedNumber('borderBevel')
-					}
-					if (props.includes('rate')) {
-						newProps.rate = await options.getParsedNumber('rate')
-					}
-				}
-
-				if (isNaN(mixEffectId) || isNaN(keyId)) return
-				if (Object.keys(newProps).length === 0) return
-
-				await transitions.runForProperties(
-					`me.${mixEffectId}.keyer.${keyId}.dveSettings`,
-					async (props) => {
-						await atem?.setUpstreamKeyerDVESettings(props, mixEffectId, keyId)
-					},
-					options,
-					[
-						'positionX',
-						'positionY',
-						'sizeX',
-						'sizeY',
-						'rotation',
-						'maskTop',
-						'maskBottom',
-						'maskLeft',
-						'maskRight',
-						'lightSourceDirection',
-						'lightSourceAltitude',
-						'borderHue',
-						'borderSaturation',
-						'borderLuma',
-						'borderBevel',
-						'borderOuterWidth',
-						'borderInnerWidth',
-						'borderOuterSoftness',
-						'borderInnerSoftness',
-						'borderOpacity',
-						'borderBevelPosition',
-						'borderBevelSoftness',
-					],
-					newProps,
-					state.state.video.mixEffects[mixEffectId]?.upstreamKeyers[keyId]?.dveSettings,
-				)
-			},
-			learn: async ({ options }) => {
-				const mixeffect = (await options.getParsedNumber('mixeffect')) - 1
-				const key = (await options.getParsedNumber('key')) - 1
-				const usk = getUSK(state.state, mixeffect, key)
-
-				if (usk?.dveSettings) {
-					return {
-						...options.getJson(),
-						maskEnabled: usk.dveSettings.maskEnabled + '',
-						maskTop: usk.dveSettings.maskTop / 1000 + '',
-						maskBottom: usk.dveSettings.maskBottom / 1000 + '',
-						maskLeft: usk.dveSettings.maskLeft / 1000 + '',
-						maskRight: usk.dveSettings.maskRight / 1000 + '',
-						sizeX: usk.dveSettings.sizeX / 1000 + '',
-						sizeY: usk.dveSettings.sizeY / 1000 + '',
-						positionX: usk.dveSettings.positionX / 1000 + '',
-						positionY: usk.dveSettings.positionY / 1000 + '',
-						rotation: usk.dveSettings.rotation + '',
-						borderOuterWidth: usk.dveSettings.borderOuterWidth / 100 + '',
-						borderInnerWidth: usk.dveSettings.borderInnerWidth / 100 + '',
-						borderOuterSoftness: usk.dveSettings.borderOuterSoftness + '',
-						borderInnerSoftness: usk.dveSettings.borderInnerSoftness + '',
-						borderBevelSoftness: usk.dveSettings.borderBevelSoftness + '',
-						borderBevelPosition: usk.dveSettings.borderBevelPosition + '',
-						borderOpacity: usk.dveSettings.borderOpacity + '',
-						borderHue: usk.dveSettings.borderHue / 10 + '',
-						borderSaturation: usk.dveSettings.borderSaturation / 10 + '',
-						borderLuma: usk.dveSettings.borderLuma / 10 + '',
-						lightSourceDirection: usk.dveSettings.lightSourceDirection / 10 + '',
-						lightSourceAltitude: usk.dveSettings.lightSourceAltitude + '',
-						borderEnabled: usk.dveSettings.borderEnabled + '',
-						shadowEnabled: usk.dveSettings.shadowEnabled + '',
-						borderBevel: usk.dveSettings.borderBevel + '',
-						rate: usk.dveSettings.rate + '',
-					}
-				} else {
-					return undefined
-				}
-			},
-		},
-		[ActionId.USKSetKeyframe]: {
+		['uskSetKeyframe']: {
 			name: 'Upstream key: Set Keyframe from values',
-			options: {
-				mixeffect: AtemMEPicker(model, 0),
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
-				keyframe: {
-					type: 'dropdown',
-					id: 'keyframe',
-					label: 'Key Frame',
-					choices: CHOICES_KEYFRAMES_CONFIGURABLE,
-					default: CHOICES_KEYFRAMES_CONFIGURABLE[0].id,
-				},
+				keyframe: AtemFlyKeyKeyFramePicker(),
 				...AtemUSKKeyframePropertiesPickers(),
-			},
+			}),
 			callback: async ({ options }) => {
-				const mixEffectId = options.getPlainNumber('mixeffect')
-				const keyId = options.getPlainNumber('key')
-				const keyframeId = options.getPlainNumber('keyframe')
+				const mixEffectId = options.mixeffect - 1
+				const keyId = options.key - 1
+				const keyframeId = flyKeyKeyFrameStringToEnum(options.keyframe)
+				if (keyframeId !== Enums.FlyKeyKeyFrame.A && keyframeId !== Enums.FlyKeyKeyFrame.B)
+					throw new Error(`Cannot set invalid keyfame: ${JSON.stringify(options.keyframe)}`)
+
 				const properties: Partial<UpstreamKeyerFlyKeyframe> = {}
 
-				const props = options.getRaw('properties')
+				const props = options.properties
 				if (props && Array.isArray(props)) {
 					if (props.includes('maskTop')) {
-						properties.maskTop = options.getPlainNumber('maskTop') * 1000
+						properties.maskTop = options.maskTop * 1000
 					}
 					if (props.includes('maskBottom')) {
-						properties.maskBottom = options.getPlainNumber('maskBottom') * 1000
+						properties.maskBottom = options.maskBottom * 1000
 					}
 					if (props.includes('maskLeft')) {
-						properties.maskLeft = options.getPlainNumber('maskLeft') * 1000
+						properties.maskLeft = options.maskLeft * 1000
 					}
 					if (props.includes('maskRight')) {
-						properties.maskRight = options.getPlainNumber('maskRight') * 1000
+						properties.maskRight = options.maskRight * 1000
 					}
 					if (props.includes('sizeX')) {
-						properties.sizeX = options.getPlainNumber('sizeX') * 1000
+						properties.sizeX = options.sizeX * 1000
 					}
 					if (props.includes('sizeY')) {
-						properties.sizeY = options.getPlainNumber('sizeY') * 1000
+						properties.sizeY = options.sizeY * 1000
 					}
 					if (props.includes('positionX')) {
-						properties.positionX = options.getPlainNumber('positionX') * 1000
+						properties.positionX = options.positionX * 1000
 					}
 					if (props.includes('positionY')) {
-						properties.positionY = options.getPlainNumber('positionY') * 1000
+						properties.positionY = options.positionY * 1000
 					}
 					if (props.includes('rotation')) {
-						properties.rotation = options.getPlainNumber('rotation')
+						properties.rotation = options.rotation
 					}
 					if (props.includes('borderOuterWidth')) {
-						properties.borderOuterWidth = options.getPlainNumber('borderOuterWidth') * 100
+						properties.borderOuterWidth = options.borderOuterWidth * 100
 					}
 					if (props.includes('borderInnerWidth')) {
-						properties.borderInnerWidth = options.getPlainNumber('borderInnerWidth') * 100
+						properties.borderInnerWidth = options.borderInnerWidth * 100
 					}
 					if (props.includes('borderOuterSoftness')) {
-						properties.borderOuterSoftness = options.getPlainNumber('borderOuterSoftness')
+						properties.borderOuterSoftness = options.borderOuterSoftness
 					}
 					if (props.includes('borderInnerSoftness')) {
-						properties.borderInnerSoftness = options.getPlainNumber('borderInnerSoftness')
+						properties.borderInnerSoftness = options.borderInnerSoftness
 					}
 					if (props.includes('borderBevelSoftness')) {
-						properties.borderBevelSoftness = options.getPlainNumber('borderBevelSoftness')
+						properties.borderBevelSoftness = options.borderBevelSoftness
 					}
 					if (props.includes('borderBevelPosition')) {
-						properties.borderBevelPosition = options.getPlainNumber('borderBevelPosition')
+						properties.borderBevelPosition = options.borderBevelPosition
 					}
 					if (props.includes('borderOpacity')) {
-						properties.borderOpacity = options.getPlainNumber('borderOpacity')
+						properties.borderOpacity = options.borderOpacity
 					}
 					if (props.includes('borderHue')) {
-						properties.borderHue = options.getPlainNumber('borderHue') * 10
+						properties.borderHue = options.borderHue * 10
 					}
 					if (props.includes('borderSaturation')) {
-						properties.borderSaturation = options.getPlainNumber('borderSaturation') * 10
+						properties.borderSaturation = options.borderSaturation * 10
 					}
 					if (props.includes('borderLuma')) {
-						properties.borderLuma = options.getPlainNumber('borderLuma') * 10
+						properties.borderLuma = options.borderLuma * 10
 					}
 					if (props.includes('lightSourceDirection')) {
-						properties.lightSourceDirection = options.getPlainNumber('lightSourceDirection') * 10
+						properties.lightSourceDirection = options.lightSourceDirection * 10
 					}
 					if (props.includes('lightSourceAltitude')) {
-						properties.lightSourceAltitude = options.getPlainNumber('lightSourceAltitude')
+						properties.lightSourceAltitude = options.lightSourceAltitude
 					}
 				}
 
@@ -681,11 +437,10 @@ export function createUpstreamKeyerDVEActions(
 				await atem?.setUpstreamKeyerFlyKeyKeyframe(mixEffectId, keyId, keyframeId, properties)
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.getPlainNumber('mixeffect'), options.getPlainNumber('key'))
+				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
 
 				if (usk?.dveSettings) {
 					return {
-						...options.getJson(),
 						maskTop: usk.dveSettings.maskTop / 1000,
 						maskBottom: usk.dveSettings.maskBottom / 1000,
 						maskLeft: usk.dveSettings.maskLeft / 1000,
@@ -713,53 +468,44 @@ export function createUpstreamKeyerDVEActions(
 				}
 			},
 		},
-		[ActionId.USKStoreKeyframe]: {
+		['uskStoreKeyframe']: {
 			name: 'Upstream key: Set keyframe from current key state',
-			options: {
-				mixeffect: AtemMEPicker(model, 0),
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
-				keyframe: {
-					type: 'dropdown',
-					id: 'keyframe',
-					label: 'Key Frame',
-					choices: CHOICES_KEYFRAMES_CONFIGURABLE,
-					default: CHOICES_KEYFRAMES_CONFIGURABLE[0].id,
-				},
-			},
+				keyframe: AtemFlyKeyKeyFramePicker(),
+			}),
 			callback: async ({ options }) => {
-				await atem?.storeUpstreamKeyerFlyKeyKeyframe(
-					options.getPlainNumber('mixeffect'),
-					options.getPlainNumber('key'),
-					options.getPlainNumber('keyframe'),
-				)
+				const keyframeId = flyKeyKeyFrameStringToEnum(options.keyframe)
+				if (keyframeId !== Enums.FlyKeyKeyFrame.A && keyframeId !== Enums.FlyKeyKeyFrame.B)
+					throw new Error(`Cannot set invalid keyfame: ${JSON.stringify(options.keyframe)}`)
+
+				await atem?.storeUpstreamKeyerFlyKeyKeyframe(options.mixeffect - 1, options.key - 1, keyframeId)
 			},
 		},
-		[ActionId.USKFly]: {
+		['uskFly']: {
 			name: 'Upstream key: fly to keyframe',
-			options: {
-				mixeffect: AtemMEPicker(model, 0),
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
-				keyframe: {
-					type: 'dropdown',
-					id: 'keyframe',
-					label: 'Key Frame',
-					choices: CHOICES_KEYFRAMES,
-					default: CHOICES_KEYFRAMES[0].id,
-				},
-			},
+				keyframe: AtemFlyKeyKeyFramePicker(true),
+			}),
 			callback: async ({ options }) => {
-				await atem?.runUpstreamKeyerFlyKeyTo(
-					options.getPlainNumber('mixeffect'),
-					options.getPlainNumber('key'),
-					options.getPlainNumber('keyframe'),
+				const keyframeId = flyKeyKeyFrameStringToEnum(options.keyframe, true)
+				if (
+					keyframeId !== Enums.FlyKeyKeyFrame.A &&
+					keyframeId !== Enums.FlyKeyKeyFrame.B &&
+					keyframeId !== Enums.FlyKeyKeyFrame.Full
 				)
+					throw new Error(`Cannot set invalid keyfame: ${JSON.stringify(options.keyframe)}`)
+
+				await atem?.runUpstreamKeyerFlyKeyTo(options.mixeffect - 1, options.key - 1, keyframeId)
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.getPlainNumber('mixeffect'), options.getPlainNumber('key'))
+				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
 
 				if (usk?.flyProperties) {
 					return {
-						...options.getJson(),
 						keyframe: usk.flyProperties.isAtKeyFrame as any,
 					}
 				} else {
@@ -767,10 +513,10 @@ export function createUpstreamKeyerDVEActions(
 				}
 			},
 		},
-		[ActionId.USKFlyInfinite]: {
+		['uskFlyInfinite']: {
 			name: 'Upstream key: fly to infinite',
-			options: {
-				mixeffect: AtemMEPicker(model, 0),
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
 				key: AtemUSKPicker(model),
 				flydirection: {
 					type: 'dropdown',
@@ -778,21 +524,17 @@ export function createUpstreamKeyerDVEActions(
 					label: 'Fly direction',
 					choices: CHOICES_FLYDIRECTIONS,
 					default: CHOICES_FLYDIRECTIONS[0].id,
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				await atem?.runUpstreamKeyerFlyKeyToInfinite(
-					options.getPlainNumber('mixeffect'),
-					options.getPlainNumber('key'),
-					options.getPlainNumber('flydirection'),
-				)
+				await atem?.runUpstreamKeyerFlyKeyToInfinite(options.mixeffect - 1, options.key - 1, options.flydirection)
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.getPlainNumber('mixeffect'), options.getPlainNumber('key'))
+				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
 
 				if (usk?.flyProperties) {
 					return {
-						...options.getJson(),
 						flydirection: usk.flyProperties.runToInfiniteIndex,
 					}
 				} else {

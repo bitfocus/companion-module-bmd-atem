@@ -1,12 +1,8 @@
-import { combineRgb, type CompanionButtonStyleProps } from '@companion-module/base'
-import { ActionId } from '../../actions/ActionId.js'
-import { FeedbackId } from '../../feedback/FeedbackId.js'
-import type { MyPresetDefinitionCategory } from '../types.js'
-import type { ActionTypes } from '../../actions/index.js'
-import type { FeedbackTypes } from '../../feedback/index.js'
-import type { ModelSpec } from '../../models/types.js'
-import { GetTransitionStyleChoices } from '../../choices.js'
-import { calculateTransitionSelection } from '../../util.js'
+import type { CompanionPresetGroup, CompanionButtonStyleProps } from '@companion-module/base'
+import { GetTransitionStyleChoices } from '../../options/mixEffect.js'
+import type { PresetsBuilderContext } from '../context.js'
+import type { AtemSchema } from '../../schema.js'
+import { calculateTransitionSelection, type TransitionSelectionComponent } from '../../options/transition.js'
 
 function getTransitionSelectionOptions(keyCount: number): boolean[][] {
 	let res: boolean[][] = []
@@ -26,37 +22,62 @@ function getTransitionSelectionOptions(keyCount: number): boolean[][] {
 }
 
 export function createTransitionPresets(
-	model: ModelSpec,
+	context: PresetsBuilderContext,
 	pstSize: CompanionButtonStyleProps['size'],
 	rateOptions: number[],
-): MyPresetDefinitionCategory<ActionTypes, FeedbackTypes>[] {
-	const result: MyPresetDefinitionCategory<ActionTypes, FeedbackTypes>[] = []
+): void {
+	const groups: CompanionPresetGroup<AtemSchema>[] = []
+	context.sections.push({
+		id: 'transitions',
+		name: `Transitions`,
+		definitions: groups,
+	})
 
-	for (let me = 0; me < model.MEs; ++me) {
-		const transitionCategory: MyPresetDefinitionCategory<ActionTypes, FeedbackTypes> = {
-			name: `Transitions (M/E ${me + 1})`,
-			presets: {},
+	// Pre-compute valid selection options (shared across all MEs)
+	const validSelections: Array<{
+		transitionString: string
+		selectionId: string
+		selectionProps: TransitionSelectionComponent[]
+	}> = []
+	for (const opt of getTransitionSelectionOptions(context.model.USKs)) {
+		const transitionStringParts = opt[0] ? ['BG'] : []
+		const selectionProps: TransitionSelectionComponent[] = opt[0] ? ['background'] : []
+		for (let i = 0; i < context.model.USKs; i++) {
+			if (opt[i + 1]) {
+				transitionStringParts.push(`K${i + 1}`)
+				selectionProps.push(`key${i}`)
+			}
 		}
-		result.push(transitionCategory)
+		if (calculateTransitionSelection(context.model.USKs, selectionProps).length === 0) continue
+		validSelections.push({
+			transitionString: transitionStringParts.join(' & '),
+			selectionId: transitionStringParts.join('_'),
+			selectionProps,
+		})
+	}
 
-		transitionCategory.presets[`transition_preview_me_${me}`] = {
-			name: `PREVIEW`,
-			type: 'button',
+	// Rate definitions are shared templates (ME injected via commonVariableValues at group level)
+	for (const opt of GetTransitionStyleChoices(true)) {
+		context.definitions[`transition_rate_${opt.id}`] = {
+			name: `Transition ${opt.label} rate X`,
+			type: 'simple',
 			style: {
-				text: 'PREV TRANS',
+				text: `${opt.label} $(local:rate)`,
 				size: pstSize,
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
+				color: 0xffffff,
+				bgcolor: 0x000000,
 			},
 			feedbacks: [
 				{
-					feedbackId: FeedbackId.PreviewTransition,
+					feedbackId: 'transitionRate',
 					options: {
-						mixeffect: me,
+						mixeffect: { isExpression: true, value: '$(local:me)' },
+						style: opt.id,
+						rate: { isExpression: true, value: '$(local:rate)' },
 					},
 					style: {
-						bgcolor: combineRgb(255, 0, 0),
-						color: combineRgb(255, 255, 255),
+						bgcolor: 0xffff00,
+						color: 0x000000,
 					},
 				},
 			],
@@ -64,9 +85,65 @@ export function createTransitionPresets(
 				{
 					down: [
 						{
-							actionId: ActionId.PreviewTransition,
+							actionId: 'transitionRate',
 							options: {
-								mixeffect: me + 1 + '',
+								mixeffect: { isExpression: true, value: '$(local:me)' },
+								style: opt.id,
+								rate: { isExpression: true, value: '$(local:rate)' },
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			localVariables: [
+				{
+					variableType: 'simple',
+					variableName: 'me',
+					startupValue: 0,
+				},
+				{
+					variableType: 'simple',
+					variableName: 'rate',
+					startupValue: 0,
+				},
+			],
+		}
+	}
+
+	// Per-ME groups: controls (preview/cut/auto + styles) + selection + rates
+	for (let me = 0; me < context.model.MEs; ++me) {
+		const meNum = me + 1
+
+		// Per-ME control preset definitions
+		context.definitions[`transition_preview_me${meNum}`] = {
+			name: `Preview transition`,
+			type: 'simple',
+			style: {
+				text: 'PREV TRANS',
+				size: pstSize,
+				color: 0xffffff,
+				bgcolor: 0x000000,
+			},
+			feedbacks: [
+				{
+					feedbackId: 'previewTransition',
+					options: {
+						mixeffect: { isExpression: true, value: '$(local:me)' },
+					},
+					style: {
+						bgcolor: 0xff0000,
+						color: 0xffffff,
+					},
+				},
+			],
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'previewTransition',
+							options: {
+								mixeffect: { isExpression: true, value: '$(local:me)' },
 								state: 'toggle',
 							},
 						},
@@ -74,26 +151,33 @@ export function createTransitionPresets(
 					up: [],
 				},
 			],
+			localVariables: [
+				{
+					variableType: 'simple',
+					variableName: 'me',
+					startupValue: meNum,
+				},
+			],
 		}
 
-		transitionCategory.presets[`transition_cut_me_${me}`] = {
+		context.definitions[`transition_cut_me${meNum}`] = {
 			name: `CUT`,
-			type: 'button',
+			type: 'simple',
 			style: {
 				text: 'CUT',
 				size: pstSize,
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
+				color: 0xffffff,
+				bgcolor: 0x000000,
 			},
 			feedbacks: [
 				{
-					feedbackId: FeedbackId.InTransition,
+					feedbackId: 'inTransition',
 					options: {
-						mixeffect: me,
+						mixeffect: { isExpression: true, value: '$(local:me)' },
 					},
 					style: {
-						bgcolor: combineRgb(255, 0, 0),
-						color: combineRgb(255, 255, 255),
+						bgcolor: 0xff0000,
+						color: 0xffffff,
 					},
 				},
 			],
@@ -101,35 +185,42 @@ export function createTransitionPresets(
 				{
 					down: [
 						{
-							actionId: ActionId.Cut,
+							actionId: 'cut',
 							options: {
-								mixeffect: me,
+								mixeffect: { isExpression: true, value: '$(local:me)' },
 							},
 						},
 					],
 					up: [],
+				},
+			],
+			localVariables: [
+				{
+					variableType: 'simple',
+					variableName: 'me',
+					startupValue: meNum,
 				},
 			],
 		}
 
-		transitionCategory.presets[`transition_auto_me_${me}`] = {
+		context.definitions[`transition_auto_me${meNum}`] = {
 			name: `AUTO`,
-			type: 'button',
+			type: 'simple',
 			style: {
 				text: 'AUTO',
 				size: pstSize,
-				color: combineRgb(255, 255, 255),
-				bgcolor: combineRgb(0, 0, 0),
+				color: 0xffffff,
+				bgcolor: 0x000000,
 			},
 			feedbacks: [
 				{
-					feedbackId: FeedbackId.InTransition,
+					feedbackId: 'inTransition',
 					options: {
-						mixeffect: me,
+						mixeffect: { isExpression: true, value: '$(local:me)' },
 					},
 					style: {
-						bgcolor: combineRgb(255, 0, 0),
-						color: combineRgb(255, 255, 255),
+						bgcolor: 0xff0000,
+						color: 0xffffff,
 					},
 				},
 			],
@@ -137,36 +228,50 @@ export function createTransitionPresets(
 				{
 					down: [
 						{
-							actionId: ActionId.Auto,
+							actionId: 'auto',
 							options: {
-								mixeffect: me,
+								mixeffect: { isExpression: true, value: '$(local:me)' },
 							},
 						},
 					],
 					up: [],
 				},
 			],
+			localVariables: [
+				{
+					variableType: 'simple',
+					variableName: 'me',
+					startupValue: meNum,
+				},
+			],
 		}
+
+		const controlPresets: string[] = [
+			`transition_preview_me${meNum}`,
+			`transition_cut_me${meNum}`,
+			`transition_auto_me${meNum}`,
+		]
+
 		for (const opt of GetTransitionStyleChoices()) {
-			transitionCategory.presets[`transition_style_me_${me}_${opt.id}`] = {
+			context.definitions[`transition_style_${opt.id}_me${meNum}`] = {
 				name: `Transition style ${opt.label}`,
-				type: 'button',
+				type: 'simple',
 				style: {
 					text: opt.label,
 					size: pstSize,
-					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 0),
+					color: 0xffffff,
+					bgcolor: 0x000000,
 				},
 				feedbacks: [
 					{
-						feedbackId: FeedbackId.TransitionStyle,
+						feedbackId: 'transitionStyle',
 						options: {
-							mixeffect: me,
+							mixeffect: { isExpression: true, value: '$(local:me)' },
 							style: opt.id,
 						},
 						style: {
-							bgcolor: combineRgb(255, 255, 0),
-							color: combineRgb(0, 0, 0),
+							bgcolor: 0xffff00,
+							color: 0x000000,
 						},
 					},
 				],
@@ -174,9 +279,9 @@ export function createTransitionPresets(
 					{
 						down: [
 							{
-								actionId: ActionId.TransitionStyle,
+								actionId: 'transitionStyle',
 								options: {
-									mixeffect: me,
+									mixeffect: { isExpression: true, value: '$(local:me)' },
 									style: opt.id,
 								},
 							},
@@ -184,90 +289,47 @@ export function createTransitionPresets(
 						up: [],
 					},
 				],
-			}
-		}
-		for (const opt of GetTransitionStyleChoices(true)) {
-			for (const rate of rateOptions) {
-				transitionCategory.presets[`transition_rate_${me}_${opt.id}_${rate}`] = {
-					name: `Transition ${opt.label} rate ${rate}`,
-					type: 'button',
-					style: {
-						text: `${opt.label} ${rate}`,
-						size: pstSize,
-						color: combineRgb(255, 255, 255),
-						bgcolor: combineRgb(0, 0, 0),
+				localVariables: [
+					{
+						variableType: 'simple',
+						variableName: 'me',
+						startupValue: meNum,
 					},
-					feedbacks: [
-						{
-							feedbackId: FeedbackId.TransitionRate,
-							options: {
-								mixeffect: me,
-								style: opt.id,
-								rate,
-							},
-							style: {
-								bgcolor: combineRgb(255, 255, 0),
-								color: combineRgb(0, 0, 0),
-							},
-						},
-					],
-					steps: [
-						{
-							down: [
-								{
-									actionId: ActionId.TransitionRate,
-									options: {
-										mixeffect: me,
-										style: opt.id,
-										rate,
-									},
-								},
-							],
-							up: [],
-						},
-					],
-				}
+				],
 			}
+			controlPresets.push(`transition_style_${opt.id}_me${meNum}`)
 		}
 
-		for (const opt of getTransitionSelectionOptions(model.USKs)) {
-			const transitionStringParts = opt[0] ? ['BG'] : []
-			const selectionProps = opt[0] ? ['background'] : []
+		groups.push({
+			id: `transition_controls_${me}`,
+			name: `M/E ${meNum} - Controls`,
+			type: 'simple',
+			presets: controlPresets,
+		})
 
-			for (let i = 0; i < model.USKs; i++) {
-				if (opt[i + 1]) {
-					transitionStringParts.push(`K${i + 1}`)
-					selectionProps.push(`key${i}`)
-				}
-			}
-
-			if (calculateTransitionSelection(model.USKs, selectionProps).length === 0) {
-				// The 0 case is not supported on the atem
-				continue
-			}
-
-			const transitionString = transitionStringParts.join(' & ')
-
-			transitionCategory.presets[`transition_selection_${me}_${transitionString.trim()}`] = {
-				name: `Transition Selection ${transitionString.trim()}`,
-				type: 'button',
+		// Per-ME selection group
+		const selectionPresets: string[] = []
+		for (const { transitionString, selectionId, selectionProps } of validSelections) {
+			context.definitions[`transition_selection_${selectionId}_me${meNum}`] = {
+				name: `Transition Selection ${transitionString}`,
+				type: 'simple',
 				style: {
-					text: transitionString.trim(),
+					text: transitionString,
 					size: pstSize,
-					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 0),
+					color: 0xffffff,
+					bgcolor: 0x000000,
 				},
 				feedbacks: [
 					{
-						feedbackId: FeedbackId.TransitionSelection,
+						feedbackId: 'transitionSelection',
 						options: {
-							mixeffect: me,
+							mixeffect: { isExpression: true, value: '$(local:me)' },
 							matchmethod: 'contains',
 							selection: selectionProps,
 						},
 						style: {
-							bgcolor: combineRgb(255, 255, 0),
-							color: combineRgb(0, 0, 0),
+							bgcolor: 0xffff00,
+							color: 0x000000,
 						},
 					},
 				],
@@ -275,9 +337,9 @@ export function createTransitionPresets(
 					{
 						down: [
 							{
-								actionId: ActionId.TransitionSelection,
+								actionId: 'transitionSelection',
 								options: {
-									mixeffect: me,
+									mixeffect: { isExpression: true, value: '$(local:me)' },
 									selection: selectionProps,
 								},
 							},
@@ -285,9 +347,40 @@ export function createTransitionPresets(
 						up: [],
 					},
 				],
+				localVariables: [
+					{
+						variableType: 'simple',
+						variableName: 'me',
+						startupValue: meNum,
+					},
+				],
 			}
+			selectionPresets.push(`transition_selection_${selectionId}_me${meNum}`)
+		}
+
+		groups.push({
+			id: `transition_selection_${me}`,
+			name: `M/E ${meNum} - Selection`,
+			type: 'simple',
+			presets: selectionPresets,
+		})
+
+		// Rate groups for this ME (one per style)
+		for (const opt of GetTransitionStyleChoices(true)) {
+			groups.push({
+				id: `transition_rate_${opt.id}_${me}`,
+				name: `${opt.label} Rate (M/E ${meNum})`,
+				type: 'template',
+				presetId: `transition_rate_${opt.id}`,
+				templateVariableName: 'rate',
+				templateValues: rateOptions.map((rate) => ({
+					name: `Transition ${opt.label} rate ${rate}`,
+					value: rate,
+				})),
+				commonVariableValues: {
+					me: meNum,
+				},
+			})
 		}
 	}
-
-	return result
 }

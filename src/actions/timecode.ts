@@ -1,35 +1,44 @@
-import { type Atem, Enums } from 'atem-connection'
-import { ActionId } from './ActionId.js'
-import type { MyActionDefinitions } from './types.js'
+import type { Atem } from 'atem-connection'
+import { convertOptionsFields } from '../options/util.js'
+import type { JsonValue, CompanionActionDefinitions } from '@companion-module/base'
 import type { StateWrapper } from '../state.js'
-import type { AtemConfig } from '../config.js'
 import type { InstanceBaseExt } from '../util.js'
 import { formatDurationSeconds } from '../variables/util.js'
+import {
+	AtemTimecodeModePicker,
+	type TimecodeMode,
+	timecodeModeToEnum,
+	upstreamKeyerTypeEnumToString,
+} from '../options/timecode.js'
 
-export interface AtemTimecodeActions {
-	[ActionId.Timecode]: {
-		time: string
+export type AtemTimecodeActions = {
+	['timecode']: {
+		options: {
+			time: string
+		}
 	}
-	[ActionId.TimecodeMode]: {
-		mode: Enums.TimeMode
+	['timecodeMode']: {
+		options: {
+			mode: TimecodeMode | JsonValue | undefined
+		}
 	}
 }
 
 export function createTimecodeActions(
-	instance: InstanceBaseExt<AtemConfig>,
+	instance: InstanceBaseExt,
 	atem: Atem | undefined,
 	state: StateWrapper,
-): MyActionDefinitions<AtemTimecodeActions> {
+): CompanionActionDefinitions<AtemTimecodeActions> {
 	if (!instance.config.pollTimecode) {
 		return {
-			[ActionId.Timecode]: undefined,
-			[ActionId.TimecodeMode]: undefined,
+			['timecode']: undefined,
+			['timecodeMode']: undefined,
 		}
 	}
 	return {
-		[ActionId.Timecode]: {
+		['timecode']: {
 			name: 'Timecode: Set time',
-			options: {
+			options: convertOptionsFields({
 				time: {
 					id: 'time',
 					type: 'textinput',
@@ -38,47 +47,42 @@ export function createTimecodeActions(
 					tooltip: 'HH:MM:SS',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const timecodeStr = await options.getParsedString('time')
-				const [hour, minute, seconds, frames] = timecodeStr.split(/:|;/).map((v) => parseInt(v, 10))
+				const [hour, minute, seconds, frames] = options.time.split(/:|;/).map((v) => parseInt(v, 10))
 
 				if (isNaN(hour) || isNaN(minute) || isNaN(seconds)) throw new Error('Invalid timecode')
 
 				await atem?.setTime(hour, minute, seconds, isNaN(frames) ? 0 : frames)
 			},
-			learn: ({ options }) => {
+			learn: () => {
 				const timecode = formatDurationSeconds(instance.timecodeSeconds).hms
 
 				return {
-					...options.getJson(),
 					time: timecode,
 				}
 			},
 		},
-		[ActionId.TimecodeMode]: {
+		['timecodeMode']: {
 			name: 'Timecode: Set mode',
-			options: {
-				mode: {
-					id: 'mode',
-					type: 'dropdown',
-					label: 'Mode',
-					choices: [
-						{ id: Enums.TimeMode.FreeRun, label: 'Free run' },
-						{ id: Enums.TimeMode.TimeOfDay, label: 'Time of Day' },
-					],
-					default: Enums.TimeMode.FreeRun,
-				},
-			},
+			options: convertOptionsFields({
+				mode: AtemTimecodeModePicker(),
+			}),
 			callback: async ({ options }) => {
-				const mode = options.getPlainNumber('mode')
+				const parsedMode = timecodeModeToEnum(options.mode)
+				if (parsedMode === null) throw new Error("Invalid mode, must be 'freerun' or 'timeofday'")
 
-				await atem?.setTimeMode(mode)
+				await atem?.setTimeMode(parsedMode)
 			},
-			learn: ({ options }) => {
+			learn: () => {
+				const rawMode = state.state.settings.timeMode
+				if (rawMode === undefined) return undefined
+
+				const newMode = upstreamKeyerTypeEnumToString(rawMode)
+				if (newMode === undefined) return undefined
+
 				return {
-					...options.getJson(),
-					mode: state.state.settings.timeMode ?? Enums.TimeMode.FreeRun,
+					mode: newMode,
 				}
 			},
 		},

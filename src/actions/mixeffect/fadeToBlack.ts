@@ -1,17 +1,22 @@
 import { type Atem } from 'atem-connection'
-import { AtemMEPicker, AtemRatePicker } from '../../input.js'
+import { convertOptionsFields } from '../../options/util.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
+import { AtemRatePicker } from '../../options/common.js'
 import type { ModelSpec } from '../../models/index.js'
-import { ActionId } from '../ActionId.js'
-import type { MyActionDefinitions } from './../types.js'
 import { getMixEffect, type StateWrapper } from '../../state.js'
+import { AtemMEPicker } from '../../options/mixEffect.js'
 
-export interface AtemFadeToBlackActions {
-	[ActionId.FadeToBlackAuto]: {
-		mixeffect: number
+export type AtemFadeToBlackActions = {
+	['fadeToBlackAuto']: {
+		options: {
+			mixeffect: number
+		}
 	}
-	[ActionId.FadeToBlackRate]: {
-		mixeffect: number
-		rate: number
+	['fadeToBlackRate']: {
+		options: {
+			mixeffect: number
+			rate: number
+		}
 	}
 }
 
@@ -19,32 +24,31 @@ export function createFadeToBlackActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	state: StateWrapper,
-): MyActionDefinitions<AtemFadeToBlackActions> {
+): CompanionActionDefinitions<AtemFadeToBlackActions> {
 	return {
-		[ActionId.FadeToBlackAuto]: {
+		['fadeToBlackAuto']: {
 			name: 'Fade to black: Run AUTO Transition',
-			options: {
-				mixeffect: AtemMEPicker(model, 0),
-			},
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
+			}),
 			callback: async ({ options }) => {
-				await atem?.fadeToBlack(options.getPlainNumber('mixeffect'))
+				await atem?.fadeToBlack(options.mixeffect - 1)
 			},
 		},
-		[ActionId.FadeToBlackRate]: {
+		['fadeToBlackRate']: {
 			name: 'Fade to black: Change rate',
-			options: {
-				mixeffect: AtemMEPicker(model, 0),
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
 				rate: AtemRatePicker('Rate'),
-			},
+			}),
 			callback: async ({ options }) => {
-				await atem?.setFadeToBlackRate(options.getPlainNumber('rate'), options.getPlainNumber('mixeffect'))
+				await atem?.setFadeToBlackRate(options.rate, options.mixeffect - 1)
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.getPlainNumber('mixeffect'))
+				const me = getMixEffect(state.state, options.mixeffect - 1)
 
 				if (me?.fadeToBlack) {
 					return {
-						...options.getJson(),
 						rate: me.fadeToBlack.rate,
 					}
 				} else {

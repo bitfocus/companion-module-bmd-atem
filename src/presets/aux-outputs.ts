@@ -1,68 +1,86 @@
-import { combineRgb, type CompanionButtonStyleProps } from '@companion-module/base'
-import { ActionId } from '../actions/ActionId.js'
-import { FeedbackId } from '../feedback/FeedbackId.js'
-import type { MyPresetDefinitionCategory } from './types.js'
-import type { ActionTypes } from '../actions/index.js'
-import type { FeedbackTypes } from '../feedback/index.js'
-import type { ModelSpec } from '../models/types.js'
-import { GetSourcesListForType } from '../choices.js'
+import type { CompanionPresetGroup, CompanionButtonStyleProps } from '@companion-module/base'
+import { GetSourcesListForType } from '../options/sources.js'
 import type { AtemState } from 'atem-connection'
+import type { PresetsBuilderContext } from './context.js'
+import type { AtemSchema } from '../schema.js'
 
 export function createAuxOutputPresets(
-	model: ModelSpec,
+	context: PresetsBuilderContext,
 	state: AtemState,
 	pstSize: CompanionButtonStyleProps['size'],
 	pstText: string,
-): MyPresetDefinitionCategory<ActionTypes, FeedbackTypes>[] {
-	const result: MyPresetDefinitionCategory<ActionTypes, FeedbackTypes>[] = []
+): void {
+	const groups: CompanionPresetGroup<AtemSchema>[] = []
+	context.sections.push({
+		id: 'aux_outputs',
+		name: `Aux/Outputs`,
+		definitions: groups,
+	})
 
-	for (const output of model.outputs) {
-		const category: MyPresetDefinitionCategory<ActionTypes, FeedbackTypes> = {
-			name: output.name,
-			presets: {},
-		}
-		result.push(category)
-
-		for (const src of GetSourcesListForType(model, state, 'aux')) {
-			category.presets[`aux_${output.id}_${src.id}`] = {
-				name: `${output.name} button for ${src.shortName}`,
-				type: 'button',
-				style: {
-					text: `$(atem:${pstText}${src.id})`,
-					size: pstSize,
-					color: combineRgb(255, 255, 255),
-					bgcolor: combineRgb(0, 0, 0),
+	context.definitions[`aux_source`] = {
+		name: `X button for X`,
+		type: 'simple',
+		style: {
+			text: `$(atem:${pstText}$(local:input))`,
+			size: pstSize,
+			color: 0xffffff,
+			bgcolor: 0x000000,
+		},
+		feedbacks: [
+			{
+				feedbackId: 'aux',
+				options: {
+					input: { isExpression: true, value: '$(local:input)' },
+					aux: { isExpression: true, value: '$(local:output)' },
 				},
-				feedbacks: [
+				style: {
+					bgcolor: 0xffff00,
+					color: 0x000000,
+				},
+			},
+		],
+		steps: [
+			{
+				down: [
 					{
-						feedbackId: FeedbackId.AuxBG,
+						actionId: 'aux',
 						options: {
-							input: src.id,
-							aux: output.id,
-						},
-						style: {
-							bgcolor: combineRgb(255, 255, 0),
-							color: combineRgb(0, 0, 0),
+							aux: { isExpression: true, value: '$(local:output)' },
+							input: { isExpression: true, value: '$(local:input)' },
 						},
 					},
 				],
-				steps: [
-					{
-						down: [
-							{
-								actionId: ActionId.Aux,
-								options: {
-									aux: output.id,
-									input: src.id,
-								},
-							},
-						],
-						up: [],
-					},
-				],
-			}
-		}
+				up: [],
+			},
+		],
+		localVariables: [
+			{
+				variableType: 'simple',
+				variableName: 'input',
+				startupValue: 0,
+			},
+			{
+				variableType: 'simple',
+				variableName: 'output',
+				startupValue: 0,
+			},
+		],
 	}
 
-	return result
+	for (const output of context.model.outputs) {
+		groups.push({
+			id: `aux_${output.id}`,
+			name: output.name,
+			type: 'template',
+			presetId: 'aux_source',
+			templateVariableName: 'input',
+			templateValues: GetSourcesListForType(context.model, state, 'aux').map((src) => ({
+				name: `${output.name} button for ${src.shortName}`,
+				value: src.id,
+			})),
+			commonVariableValues: {
+				output: output.id + 1,
+			},
+		})
+	}
 }

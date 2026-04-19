@@ -1,48 +1,66 @@
 import { type Atem } from 'atem-connection'
-import { ActionId } from '../ActionId.js'
-import type { MyActionDefinitions } from '../types.js'
+import { convertOptionsFields } from '../../options/util.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { StateWrapper } from '../../state.js'
 import { AtemCameraControlDirectCommandSender, VideoSharpeningLevel } from '@atem-connection/camera-control'
-import { CameraControlSourcePicker } from '../../choices.js'
+import { CameraControlSourcePicker } from '../../options/cameraControl.js'
 import type { AtemConfig } from '../../config.js'
 
-export interface AtemCameraControlVideoActions {
-	[ActionId.CameraControlVideoManualWhiteBalance]: {
-		cameraId: string
-		colorTemperature: string
-		tint: string
+export type AtemCameraControlVideoActions = {
+	['cameraControlVideoManualWhiteBalance']: {
+		options: {
+			cameraId: number
+			colorTemperature: number
+			tint: number
+		}
 	}
-	[ActionId.CameraControlVideoIncrementManualWhiteBalance]: {
-		cameraId: string
-		colorTemperatureIncrement: string
-		tintIncrement: string
+	['cameraControlVideoIncrementManualWhiteBalance']: {
+		options: {
+			cameraId: number
+			colorTemperatureIncrement: number
+			tintIncrement: number
+		}
 	}
-	[ActionId.CameraControlVideoAutoWhiteBalance]: {
-		cameraId: string
+	['cameraControlVideoAutoWhiteBalance']: {
+		options: {
+			cameraId: number
+		}
 	}
-	[ActionId.CameraControlVideoExposure]: {
-		cameraId: string
-		framerate: string
+	['cameraControlVideoExposure']: {
+		options: {
+			cameraId: number
+			framerate: number
+		}
 	}
-	[ActionId.CameraControlIncrementVideoExposure]: {
-		cameraId: string
-		direction: string
+	['cameraControlIncrementVideoExposure']: {
+		options: {
+			cameraId: number
+			direction: string
+		}
 	}
-	[ActionId.CameraControlVideoSharpeningLevel]: {
-		cameraId: string
-		level: VideoSharpeningLevel
+	['cameraControlVideoSharpeningLevel']: {
+		options: {
+			cameraId: number
+			level: VideoSharpeningLevel
+		}
 	}
-	[ActionId.CameraControlVideoGain]: {
-		cameraId: string
-		gain: string
+	['cameraControlVideoGain']: {
+		options: {
+			cameraId: number
+			gain: number
+		}
 	}
-	[ActionId.CameraControlIncrementVideoGain]: {
-		cameraId: string
-		increment: string
+	['cameraControlIncrementVideoGain']: {
+		options: {
+			cameraId: number
+			increment: number
+		}
 	}
-	[ActionId.CameraControlVideoNdFilterStop]: {
-		cameraId: string
-		stop: string
+	['cameraControlVideoNdFilterStop']: {
+		options: {
+			cameraId: number
+			stop: number
+		}
 	}
 }
 
@@ -50,82 +68,84 @@ export function createCameraControlVideoActions(
 	config: AtemConfig,
 	atem: Atem | undefined,
 	_state: StateWrapper,
-): MyActionDefinitions<AtemCameraControlVideoActions> {
+): CompanionActionDefinitions<AtemCameraControlVideoActions> {
 	if (!config.enableCameraControl) {
 		return {
-			[ActionId.CameraControlVideoManualWhiteBalance]: undefined,
-			[ActionId.CameraControlVideoIncrementManualWhiteBalance]: undefined,
-			[ActionId.CameraControlVideoAutoWhiteBalance]: undefined,
-			[ActionId.CameraControlVideoExposure]: undefined,
-			[ActionId.CameraControlIncrementVideoExposure]: undefined,
-			[ActionId.CameraControlVideoSharpeningLevel]: undefined,
-			[ActionId.CameraControlVideoGain]: undefined,
-			[ActionId.CameraControlIncrementVideoGain]: undefined,
-			[ActionId.CameraControlVideoNdFilterStop]: undefined,
+			['cameraControlVideoManualWhiteBalance']: undefined,
+			['cameraControlVideoIncrementManualWhiteBalance']: undefined,
+			['cameraControlVideoAutoWhiteBalance']: undefined,
+			['cameraControlVideoExposure']: undefined,
+			['cameraControlIncrementVideoExposure']: undefined,
+			['cameraControlVideoSharpeningLevel']: undefined,
+			['cameraControlVideoGain']: undefined,
+			['cameraControlIncrementVideoGain']: undefined,
+			['cameraControlVideoNdFilterStop']: undefined,
 		}
 	}
 
 	const commandSender = atem && new AtemCameraControlDirectCommandSender(atem)
 
 	return {
-		[ActionId.CameraControlVideoManualWhiteBalance]: {
+		['cameraControlVideoManualWhiteBalance']: {
 			name: 'Camera Control: White Balance',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				colorTemperature: {
 					id: 'colorTemperature',
-					type: 'textinput',
+					type: 'number',
 					label: 'Color Temperature',
-					default: '5600',
-					useVariables: true,
+					default: 5600,
+					min: 1000,
+					max: 15000,
+					clampValues: true,
 				},
 				tint: {
 					id: 'tint',
-					type: 'textinput',
+					type: 'number',
 					label: 'Tint',
-					default: '0',
-					tooltip: 'Range -50 to 50',
-					useVariables: true,
+					default: 0,
+					min: -50,
+					max: 50,
+					description: 'Range -50 to 50',
+					clampValues: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
-				const colorTemperature = await options.getParsedNumber('colorTemperature')
-				const tint = await options.getParsedNumber('tint')
-
-				await commandSender?.videoManualWhiteBalance(cameraId, colorTemperature, tint)
+				await commandSender?.videoManualWhiteBalance(options.cameraId, options.colorTemperature, options.tint)
 			},
 		},
 
-		[ActionId.CameraControlVideoIncrementManualWhiteBalance]: {
+		['cameraControlVideoIncrementManualWhiteBalance']: {
 			name: 'Camera Control: Increment White Balance',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				colorTemperatureIncrement: {
 					id: 'colorTemperatureIncrement',
-					type: 'textinput',
+					type: 'number',
 					label: 'Color Temperature Increment',
-					default: '100',
-					tooltip: 'e.g. 100 or -100',
-					useVariables: true,
+					default: 100,
+					min: -10000,
+					max: 10000,
+					description: 'e.g. 100 or -100',
+					clampValues: true,
 				},
 				tintIncrement: {
 					id: 'tintIncrement',
-					type: 'textinput',
+					type: 'number',
 					label: 'Tint Increment',
-					default: '0',
-					tooltip: 'e.g 10 or -10',
-					useVariables: true,
+					default: 0,
+					min: -100,
+					max: 100,
+					description: 'e.g 10 or -10',
+					clampValues: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
-				const colorTemperatureIncrement = await options.getParsedNumber('colorTemperatureIncrement')
-				const tintIncrement = await options.getParsedNumber('tintIncrement')
+				const cameraId = options.cameraId
 
 				const colorTemperature =
-					(_state.atemCameraState.get(cameraId)?.video.whiteBalance[0] ?? 0) + colorTemperatureIncrement
-				let tint = (_state.atemCameraState.get(cameraId)?.video.whiteBalance[1] ?? 0) + tintIncrement
+					(_state.atemCameraState.get(cameraId)?.video.whiteBalance[0] ?? 0) + options.colorTemperatureIncrement
+				let tint = (_state.atemCameraState.get(cameraId)?.video.whiteBalance[1] ?? 0) + options.tintIncrement
 
 				if (tint > 50) {
 					tint = 50
@@ -137,42 +157,39 @@ export function createCameraControlVideoActions(
 			},
 		},
 
-		[ActionId.CameraControlVideoAutoWhiteBalance]: {
+		['cameraControlVideoAutoWhiteBalance']: {
 			name: 'Camera Control: Trigger Auto White Balance',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
-			},
+			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
-
-				await commandSender?.videoTriggerAutoWhiteBalance(cameraId)
+				await commandSender?.videoTriggerAutoWhiteBalance(options.cameraId)
 			},
 		},
 
-		[ActionId.CameraControlVideoExposure]: {
+		['cameraControlVideoExposure']: {
 			name: 'Camera Control: Video Exposure',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				framerate: {
 					id: 'framerate',
-					type: 'textinput',
+					type: 'number',
 					label: 'Framerate',
-					default: '60',
-					tooltip: 'eg for 1/60 use 50',
-					useVariables: true,
+					default: 60,
+					min: 1,
+					max: 400,
+					description: 'eg for 1/60 use 60',
+					clampValues: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
-				const framerate = await options.getParsedNumber('framerate')
-
-				await commandSender?.videoExposureUs(cameraId, Math.round(1000000 / framerate))
+				await commandSender?.videoExposureUs(options.cameraId, Math.round(1000000 / options.framerate))
 			},
 		},
 
-		[ActionId.CameraControlIncrementVideoExposure]: {
+		['cameraControlIncrementVideoExposure']: {
 			name: 'Camera Control: Increment Video Exposure',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				direction: {
 					id: 'direction',
@@ -183,17 +200,20 @@ export function createCameraControlVideoActions(
 						{ id: 'down', label: 'Down -' },
 					],
 					default: 'up',
-					tooltip: 'Up for faster shutter speeds, down for slower.',
+					description: 'Up for faster shutter speeds, down for slower.',
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
-			},
+			}),
 			callback: async ({ options }) => {
+				// Note: this list of exposures is based on the micro studio 4k g2.
+				// unsure if this is correct for other models
 				const exposureUs = [
 					41667, 40000, 33333, 20833, 20000, 16667, 13333, 11111, 10000, 8333, 6667, 5556, 4000, 2778, 2000, 1379, 1000,
 					690, 500,
 				]
 
-				const cameraId = await options.getParsedNumber('cameraId')
-				const increment = options.getPlainString('direction') == 'up' ? 1 : -1
+				const cameraId = options.cameraId
+				const increment = options.direction == 'up' ? 1 : -1
 
 				const currentExposreIndex = exposureUs.indexOf(_state.atemCameraState.get(cameraId)?.video.exposure ?? 41667)
 
@@ -207,9 +227,9 @@ export function createCameraControlVideoActions(
 			},
 		},
 
-		[ActionId.CameraControlVideoSharpeningLevel]: {
+		['cameraControlVideoSharpeningLevel']: {
 			name: 'Camera Control: Video Sharpening Level',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				level: {
 					id: 'level',
@@ -234,55 +254,54 @@ export function createCameraControlVideoActions(
 							label: 'High',
 						},
 					],
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
-				const level = options.getPlainNumber('level')
-
-				await commandSender?.videoSharpeningLevel(cameraId, level)
+				await commandSender?.videoSharpeningLevel(options.cameraId, options.level)
 			},
 		},
 
-		[ActionId.CameraControlVideoGain]: {
+		['cameraControlVideoGain']: {
 			name: 'Camera Control: Video Gain',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				gain: {
 					id: 'gain',
-					type: 'textinput',
+					type: 'number',
 					label: 'Value',
-					default: '0',
-					tooltip: 'Range 0 - 128',
-					useVariables: true,
+					default: 0,
+					min: 0,
+					max: 128,
+					description: 'Range 0 - 128',
+					clampValues: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
-				const gain = await options.getParsedNumber('gain')
-
-				await commandSender?.videoGain(cameraId, gain)
+				await commandSender?.videoGain(options.cameraId, options.gain)
 			},
 		},
 
-		[ActionId.CameraControlIncrementVideoGain]: {
+		['cameraControlIncrementVideoGain']: {
 			name: 'Camera Control: Increment Video Gain',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				increment: {
 					id: 'increment',
-					type: 'textinput',
+					type: 'number',
 					label: 'Value',
-					default: '10',
-					tooltip: 'e.g 10 or -10',
-					useVariables: true,
+					default: 10,
+					min: -200,
+					max: 200,
+					description: 'e.g 10 or -10',
+					clampValues: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
-				const increment = await options.getParsedNumber('increment')
+				const cameraId = options.cameraId
+				const increment = options.increment
 
-				let gain = (_state.atemCameraState.get(cameraId)?.video.gain ?? 0) + increment
+				let gain = Math.round((_state.atemCameraState.get(cameraId)?.video.gain ?? 0) + increment)
 
 				if (gain > 127) {
 					gain = 127
@@ -294,24 +313,23 @@ export function createCameraControlVideoActions(
 			},
 		},
 
-		[ActionId.CameraControlVideoNdFilterStop]: {
+		['cameraControlVideoNdFilterStop']: {
 			name: 'Camera Control: ND Filter Stop',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				stop: {
 					id: 'stop',
-					type: 'textinput',
+					type: 'number',
 					label: 'Value',
-					default: '4',
-					tooltip: 'Range 0.0 - 15.0',
-					useVariables: true,
+					default: 4,
+					min: 0,
+					max: 15,
+					description: 'Range 0.0 - 15.0',
+					asInteger: false,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
-				const stop = await options.getParsedNumber('stop')
-
-				await commandSender?.videoNdFilterStop(cameraId, stop)
+				await commandSender?.videoNdFilterStop(options.cameraId, options.stop)
 			},
 		},
 	}

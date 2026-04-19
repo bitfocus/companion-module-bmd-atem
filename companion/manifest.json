@@ -1,5 +1,6 @@
 {
 	"$schema": "../node_modules/@companion-module/base/assets/manifest.schema.json",
+	"type": "connection",
 	"id": "bmd-atem",
 	"name": "bmd-atem",
 	"shortname": "atem",
@@ -19,7 +20,7 @@
 		"type": "node22",
 		"api": "nodejs-ipc",
 		"apiVersion": "0.0.0",
-		"entrypoint": "../dist/index.js",
+		"entrypoint": "../dist/main.js",
 		"permissions": {
 			"native-addons": true,
 			"worker-threads": true

@@ -3,8 +3,8 @@
 	"include": ["src/**/*.ts"],
 	"exclude": ["node_modules/**", "src/**/*spec.ts", "src/**/__tests__/*", "src/**/__mocks__/*"],
 	"compilerOptions": {
-		"outDir": "./dist",
 		"rootDir": "./src",
+		"outDir": "./dist",
 		"module": "node20",
 		"moduleResolution": "node16",
 		"verbatimModuleSyntax": true,

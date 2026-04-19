@@ -1,8 +1,7 @@
 import AtemPkg, { type Atem as IAtem, type AtemState, Commands } from 'atem-connection'
 import { GetActionsList } from './actions/index.js'
 import { type AtemConfig, GetConfigFields } from './config.js'
-import { GetFeedbacksList } from './feedback/index.js'
-import { FeedbackId } from './feedback/FeedbackId.js'
+import { GetFeedbacksList, type FeedbackTypes } from './feedback/index.js'
 import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, type ModelSpec } from './models/index.js'
 import { GetPresetsList } from './presets/index.js'
 import { type StateWrapper } from './state.js'
@@ -16,32 +15,31 @@ import {
 } from './variables/lib.js'
 import { AtemCommandBatching } from './batching.js'
 import { AtemTransitions } from './transitions.js'
-import {
-	InstanceBase,
-	type SomeCompanionConfigField,
-	runEntrypoint,
-	InstanceStatus,
-	type CompanionVariableValues,
-} from '@companion-module/base'
+import { InstanceBase, type SomeCompanionConfigField, InstanceStatus } from '@companion-module/base'
 import { isEqual } from 'lodash-es'
-import { UpgradeScripts } from './upgrades.js'
+import { UpgradeScripts } from './upgrades/main.js'
 import { calculateTallyForInputId, type IpAndPort } from './util.js'
 import { AtemCameraControlStateBuilder, createEmptyState } from '@atem-connection/camera-control'
 import { decodeImageFromAtem } from '@atem-connection/image-tools'
 import { updateCameraControlVariables } from './variables/cameraControl.js'
 import { updateTimecodeVariables } from './variables/timecode.js'
+import type { AtemSchema } from './schema.js'
+import type { VariablesSchema } from './variables/schema.js'
 
 const { Atem, AtemConnectionStatus, AtemStateUtil } = AtemPkg
 
+// eslint-disable-next-line n/no-extraneous-import
 import { ThreadedClassManager, RegisterExitHandlers } from 'threadedclass'
 
 // HACK: This stops it from registering an unhandledException handler, as that causes companion to exit on error
 ThreadedClassManager.handleExit = RegisterExitHandlers.NO
 
+export { UpgradeScripts }
+
 /**
  * Companion instance class for the Blackmagic ATEM Switchers.
  */
-class AtemInstance extends InstanceBase<AtemConfig> {
+export default class AtemInstance extends InstanceBase<AtemSchema> {
 	private model: ModelSpec
 	private atem: IAtem | undefined
 	private readonly wrappedState: StateWrapper
@@ -129,7 +127,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	public async configUpdated(config: AtemConfig): Promise<void> {
 		this.config = config
 
-		const variables: CompanionVariableValues = {}
+		const variables: Partial<VariablesSchema> = {}
 		updateDeviceIpVariable(this, variables)
 		this.setVariableValues(variables)
 
@@ -169,7 +167,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 	 * Creates the configuration fields for web config.
 	 */
 	public getConfigFields(): SomeCompanionConfigField[] {
-		return GetConfigFields(this)
+		return GetConfigFields(this.config)
 	}
 
 	/**
@@ -208,31 +206,27 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 
 	private updateCompanionBits(): void {
 		InitVariables(this, this.model, this.wrappedState)
-		this.setPresetDefinitions(GetPresetsList(this, this.model, this.wrappedState.state))
 		this.setFeedbackDefinitions(GetFeedbacksList(this.config, this.model, this.wrappedState))
 		this.setActionDefinitions(
 			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.wrappedState),
 		)
+		this.setPresetDefinitions(...GetPresetsList(this, this.model, this.wrappedState.state))
 
-		this.checkFeedbacks()
-	}
-
-	public checkFeedbacks(...feedbackTypes: FeedbackId[]): void {
-		super.checkFeedbacks(...feedbackTypes)
+		this.checkAllFeedbacks()
 	}
 
 	/**
-	 * Handle tally packets
+	 * Special handling of some commands
 	 */
 	private processReceivedCommands(commands: Commands.IDeserializedCommand[]): void {
 		const cameraCommands: Commands.CameraControlUpdateCommand[] = []
 
-		const values: CompanionVariableValues = {}
+		const values: Partial<VariablesSchema> = {}
 
 		for (const command of commands) {
 			if (command instanceof Commands.TallyBySourceCommand) {
 				this.wrappedState.tally = command.properties
-				this.checkFeedbacks(FeedbackId.ProgramTally, FeedbackId.PreviewTally)
+				this.checkFeedbacks('program_tally', 'preview_tally')
 			} else if (this.config.enableCameraControl && command instanceof Commands.CameraControlUpdateCommand) {
 				cameraCommands.push(command)
 			} else if (this.config.pollTimecode && command instanceof Commands.TimeCommand) {
@@ -275,7 +269,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		this.wrappedState.mediaPoolCache.checkUpdatedState(newState)
 
 		let reInit = false
-		const changedFeedbacks = new Set<FeedbackId>()
+		const changedFeedbacks = new Set<keyof FeedbackTypes>()
 		const changedVariables: UpdateVariablesProps = {
 			meProgram: new Set(),
 			mePreview: new Set(),
@@ -302,8 +296,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 
 			const auxMatch = path.match(/video.auxilliaries.(\d+)/)
 			if (auxMatch) {
-				changedFeedbacks.add(FeedbackId.AuxBG)
-				changedFeedbacks.add(FeedbackId.AuxVariables)
+				changedFeedbacks.add('aux')
 				changedVariables.auxes.add(parseInt(auxMatch[1], 10))
 				continue
 			}
@@ -311,49 +304,48 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			const dskMatch = path.match(/video.downstreamKeyers.(\d+)/)
 			if (dskMatch) {
 				changedVariables.dsk.add(parseInt(dskMatch[1], 10))
-				changedFeedbacks.add(FeedbackId.DSKOnAir)
-				changedFeedbacks.add(FeedbackId.DSKTie)
-				changedFeedbacks.add(FeedbackId.DSKSource)
-				changedFeedbacks.add(FeedbackId.DSKSourceVariables)
+				changedFeedbacks.add('dskOnAir')
+				changedFeedbacks.add('dskTie')
+				changedFeedbacks.add('dsk_source')
 				continue
 			}
 
 			const fairlightInputMatch = path.match(/fairlight.inputs.(\d+)/)
 			if (fairlightInputMatch) {
 				changedVariables.fairlightAudio.add(parseInt(fairlightInputMatch[1], 10))
-				changedFeedbacks.add(FeedbackId.FairlightAudioInputGain)
-				changedFeedbacks.add(FeedbackId.FairlightAudioFaderGain)
-				changedFeedbacks.add(FeedbackId.FairlightAudioMixOption)
+				changedFeedbacks.add('fairlightAudioInputGain')
+				changedFeedbacks.add('fairlightAudioFaderGain')
+				changedFeedbacks.add('fairlightAudioMixOption')
 				continue
 			}
 
 			const classicAudioInputMatch = path.match(/audio.channels.(\d+)/)
 			if (classicAudioInputMatch) {
 				changedVariables.classicAudio.add(parseInt(classicAudioInputMatch[1], 10))
-				changedFeedbacks.add(FeedbackId.ClassicAudioGain)
-				changedFeedbacks.add(FeedbackId.ClassicAudioMixOption)
+				changedFeedbacks.add('classicAudioGain')
+				changedFeedbacks.add('classicAudioMixOption')
 				continue
 			}
 
 			if (path.match(/fairlight.master/)) {
 				changedVariables.fairlightAudioMaster = true
-				changedFeedbacks.add(FeedbackId.FairlightAudioMasterGain)
+				changedFeedbacks.add('fairlightAudioMasterGain')
 				continue
 			}
 
 			if (path.match(/fairlight.monitor/)) {
 				changedVariables.fairlightAudioMonitor = true
-				changedFeedbacks.add(FeedbackId.FairlightAudioMonitorOutputFaderGain)
-				changedFeedbacks.add(FeedbackId.FairlightAudioMonitorMasterGain)
-				changedFeedbacks.add(FeedbackId.FairlightAudioMonitorMasterMuted)
-				changedFeedbacks.add(FeedbackId.FairlightAudioMonitorSidetoneGain)
-				changedFeedbacks.add(FeedbackId.FairlightAudioMonitorTalkbackGain)
-				changedFeedbacks.add(FeedbackId.FairlightAudioMonitorTalkbackMuted)
+				changedFeedbacks.add('fairlightAudioMonitorFaderGain')
+				changedFeedbacks.add('fairlightAudioMonitorMasterGain')
+				changedFeedbacks.add('fairlightAudioMonitorMasterMuted')
+				changedFeedbacks.add('fairlightAudioMonitorSidetoneGain')
+				changedFeedbacks.add('fairlightAudioMonitorTalkbackGain')
+				changedFeedbacks.add('fairlightAudioMonitorTalkbackMuted')
 				continue
 			}
 
 			if (path.match(/fairlight.solo/)) {
-				changedFeedbacks.add(FeedbackId.FairlightAudioMonitorSolo)
+				changedFeedbacks.add('fairlightAudioMonitorSolo')
 				continue
 			}
 
@@ -364,12 +356,12 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			}
 
 			if (path.match(/video.mixEffects.(\d+).upstreamKeyers.(\d+).flyProperties/)) {
-				changedFeedbacks.add(FeedbackId.USKKeyFrame)
+				changedFeedbacks.add('usk_keyframe')
 				continue
 			}
 
 			if (path.match(/video.mixEffects.(\d+).upstreamKeyers.(\d+).onAir/)) {
-				changedFeedbacks.add(FeedbackId.USKOnAir)
+				changedFeedbacks.add('uskOnAir')
 				continue
 			}
 
@@ -379,9 +371,8 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				const keyIndex = parseInt(uskSourceMatch[2], 10)
 
 				changedVariables.usk.add([meIndex, keyIndex])
-				changedFeedbacks.add(FeedbackId.USKType)
-				changedFeedbacks.add(FeedbackId.USKSource)
-				changedFeedbacks.add(FeedbackId.USKSourceVariables)
+				changedFeedbacks.add('usk_type')
+				changedFeedbacks.add('usk_source')
 				continue
 			}
 
@@ -390,13 +381,13 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				const macroIndex = parseInt(macroPropertiesMatch[1], 10)
 				changedVariables.macros.add(macroIndex)
 
-				changedFeedbacks.add(FeedbackId.Macro)
+				changedFeedbacks.add('macro')
 				continue
 			}
 
 			if (path.match(/macro.macroRecorder/) || path.match(/macro.macroPlayer/)) {
-				changedFeedbacks.add(FeedbackId.Macro)
-				changedFeedbacks.add(FeedbackId.MacroLoop)
+				changedFeedbacks.add('macro')
+				changedFeedbacks.add('macroloop')
 				continue
 			}
 
@@ -406,15 +397,14 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				const windowIndex = parseInt(mvWindowMatch[2], 10)
 				changedVariables.mvWindow.add([mvIndex + 1, windowIndex + 1])
 
-				changedFeedbacks.add(FeedbackId.MVSource)
-				changedFeedbacks.add(FeedbackId.MVSourceVariables)
+				changedFeedbacks.add('mv_source')
 				continue
 			}
 
 			const mvPropsMatch = path.match(/settings.multiViewers.(\d+).properties/)
 			if (mvPropsMatch) {
 				// const mvIndex = parseInt(mvPropsMatch[1], 10)
-				changedFeedbacks.add(FeedbackId.MultiviewerLayout)
+				changedFeedbacks.add('multiviewerLayout')
 				continue
 			}
 
@@ -423,11 +413,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				const meIndex = parseInt(meProgramMatch[1], 10)
 				changedVariables.meProgram.add(meIndex)
 
-				changedFeedbacks.add(FeedbackId.ProgramBG)
-				changedFeedbacks.add(FeedbackId.ProgramVariables)
-				changedFeedbacks.add(FeedbackId.ProgramBG2)
-				changedFeedbacks.add(FeedbackId.ProgramBG3)
-				changedFeedbacks.add(FeedbackId.ProgramBG4)
+				changedFeedbacks.add('program')
 				continue
 			}
 
@@ -436,42 +422,36 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				const meIndex = parseInt(mePreviewMatch[1], 10)
 				changedVariables.mePreview.add(meIndex)
 
-				changedFeedbacks.add(FeedbackId.PreviewBG)
-				changedFeedbacks.add(FeedbackId.PreviewVariables)
-				changedFeedbacks.add(FeedbackId.PreviewBG2)
-				changedFeedbacks.add(FeedbackId.PreviewBG3)
-				changedFeedbacks.add(FeedbackId.PreviewBG4)
+				changedFeedbacks.add('preview')
 				continue
 			}
 
 			const ssrcBoxMatch = path.match(/video.superSources.(\d+).boxes.(\d+)/)
 			if (ssrcBoxMatch) {
-				changedFeedbacks.add(FeedbackId.SSrcBoxSource)
-				changedFeedbacks.add(FeedbackId.SSrcBoxSourceVariables)
-				changedFeedbacks.add(FeedbackId.SSrcBoxOnAir)
-				changedFeedbacks.add(FeedbackId.SSrcBoxProperties)
+				changedFeedbacks.add('ssrc_box_source')
+				changedFeedbacks.add('ssrc_box_enable')
+				changedFeedbacks.add('ssrc_box_properties')
 				changedVariables.ssrc.add(parseInt(ssrcBoxMatch[1], 10))
 				continue
 			}
 			if (path.match(/video.superSources.(\d+).properties/)) {
-				changedFeedbacks.add(FeedbackId.SSrcArtOption)
-				changedFeedbacks.add(FeedbackId.SSrcArtSource)
-				changedFeedbacks.add(FeedbackId.SSrcArtProperties)
-				changedFeedbacks.add(FeedbackId.SSrcArtPropertiesVariables)
+				changedFeedbacks.add('ssrc_art_option')
+				changedFeedbacks.add('ssrc_art_source')
+				changedFeedbacks.add('ssrc_art_properties')
 				continue
 			}
 
 			if (path.match(/video.mixEffects.(\d+).transitionProperties/)) {
-				changedFeedbacks.add(FeedbackId.TransitionStyle)
-				changedFeedbacks.add(FeedbackId.TransitionSelection)
+				changedFeedbacks.add('transitionStyle')
+				changedFeedbacks.add('transitionSelection')
 				continue
 			}
 			if (path.match(/video.mixEffects.(\d+).transitionSettings/)) {
-				changedFeedbacks.add(FeedbackId.TransitionRate)
+				changedFeedbacks.add('transitionRate')
 				continue
 			}
 			if (path.match(/video.mixEffects.(\d+).transitionPreview/)) {
-				changedFeedbacks.add(FeedbackId.PreviewTransition)
+				changedFeedbacks.add('previewTransition')
 				continue
 			}
 			const transitionPositionMatch = path.match(/video.mixEffects.(\d+).transitionPosition/)
@@ -479,12 +459,12 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				const meIndex = parseInt(transitionPositionMatch[1], 10)
 				changedVariables.transitionPosition.add(meIndex)
 
-				changedFeedbacks.add(FeedbackId.InTransition)
+				changedFeedbacks.add('inTransition')
 				continue
 			}
 			if (path.match(/video.mixEffects.(\d+).fadeToBlack/)) {
-				changedFeedbacks.add(FeedbackId.FadeToBlackRate)
-				changedFeedbacks.add(FeedbackId.FadeToBlackIsBlack)
+				changedFeedbacks.add('fadeToBlackRate')
+				changedFeedbacks.add('fadeToBlackIsBlack')
 				continue
 			}
 
@@ -492,8 +472,7 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			if (mediaPlayerMatch) {
 				const mediaPlayer = parseInt(mediaPlayerMatch[1], 10)
 				changedVariables.mediaPlayer.add(mediaPlayer)
-				changedFeedbacks.add(FeedbackId.MediaPlayerSource)
-				changedFeedbacks.add(FeedbackId.MediaPlayerSourceVariables)
+				changedFeedbacks.add('mediaPlayerSource')
 				continue
 			}
 
@@ -504,15 +483,15 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 			}
 
 			if (path.match(/streaming.status/)) {
-				changedFeedbacks.add(FeedbackId.StreamStatus)
+				changedFeedbacks.add('streamStatus')
 				continue
 			}
 			if (path.match(/recording.status/)) {
-				changedFeedbacks.add(FeedbackId.RecordStatus)
+				changedFeedbacks.add('recordStatus')
 				continue
 			}
 			if (path.match(/recording.recordAllInputs/)) {
-				changedFeedbacks.add(FeedbackId.RecordISO)
+				changedFeedbacks.add('recordISO')
 				continue
 			}
 			if (path.match(/streaming.duration/) || path.match(/streaming.stats/)) {
@@ -524,13 +503,13 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				continue
 			}
 			if (path.match(/fairlight.monitor/)) {
-				changedFeedbacks.add(FeedbackId.FairlightAudioMonitorMasterMuted)
+				changedFeedbacks.add('fairlightAudioMonitorMasterMuted')
 				continue
 			}
 
 			if (path.match(/fairlight.audioRouting/)) {
-				changedFeedbacks.add(FeedbackId.FairlightAudioRouting)
-				changedFeedbacks.add(FeedbackId.FairlightAudioRoutingVariables)
+				changedFeedbacks.add('fairlightAudioRouting')
+				changedFeedbacks.add('fairlightAudioRoutingVariables')
 
 				const sourceMatch = path.match(/fairlight.audioRouting.sources.(\d+)/)
 				if (sourceMatch) {
@@ -546,20 +525,24 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 				continue
 			}
 			if (path.match(/settings.timeMode/)) {
-				changedFeedbacks.add(FeedbackId.TimecodeMode)
+				changedFeedbacks.add('timecodeMode')
 				continue
 			}
 		}
-
-		const changedFeedbackIds = this.invalidateCachedTallyState()
 
 		// Apply the change
 		if (reInit) {
 			this.updateCompanionBits()
 		} else {
 			updateChangedVariables(this, this.wrappedState.state, changedVariables)
-			if (changedFeedbacks.size > 0) this.checkFeedbacks(...Array.from(changedFeedbacks))
-			if (changedFeedbackIds.size > 0) this.checkFeedbacksById(...Array.from(changedFeedbackIds))
+			if (changedFeedbacks.size > 0) {
+				// Weird split because of types
+				const feedbackTypes = Array.from(changedFeedbacks)
+				this.checkFeedbacks(feedbackTypes[0], ...feedbackTypes.slice(1))
+			}
+
+			const changedFeedbackIds = this.invalidateCachedTallyState()
+			if (changedFeedbackIds.size > 0) this.checkFeedbacksById(...changedFeedbackIds)
 		}
 	}
 
@@ -717,5 +700,3 @@ class AtemInstance extends InstanceBase<AtemConfig> {
 		return null
 	}
 }
-
-runEntrypoint(AtemInstance, UpgradeScripts)

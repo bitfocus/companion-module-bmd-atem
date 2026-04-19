@@ -1,33 +1,38 @@
 import { Enums } from 'atem-connection'
+import { convertOptionsFields } from '../options/util.js'
 import type { ModelSpec } from '../models/index.js'
-import type { MyFeedbackDefinitions } from './types.js'
-import { FeedbackId } from './FeedbackId.js'
-import { combineRgb, type CompanionInputFieldDropdown } from '@companion-module/base'
+import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { StateWrapper } from '../state.js'
 
-export interface AtemRecordingFeedbacks {
-	[FeedbackId.RecordStatus]: {
-		state: Enums.RecordingStatus
+export type AtemRecordingFeedbacks = {
+	['recordStatus']: {
+		type: 'boolean'
+		options: {
+			state: Enums.RecordingStatus
+		}
 	}
-	[FeedbackId.RecordISO]: Record<never, never>
+	['recordISO']: {
+		type: 'boolean'
+		options: Record<never, never>
+	}
 }
 
 export function createRecordingFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemRecordingFeedbacks> {
+): CompanionFeedbackDefinitions<AtemRecordingFeedbacks> {
 	if (!model.recording) {
 		return {
-			[FeedbackId.RecordStatus]: undefined,
-			[FeedbackId.RecordISO]: undefined,
+			['recordStatus']: undefined,
+			['recordISO']: undefined,
 		}
 	}
 	return {
-		[FeedbackId.RecordStatus]: {
+		['recordStatus']: {
 			type: 'boolean',
 			name: 'Recording: Active/Running',
 			description: 'If the record has the specified status, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				state: {
 					id: 'state',
 					label: 'State',
@@ -39,20 +44,20 @@ export function createRecordingFeedbacks(
 							label: k,
 						})),
 					default: Enums.RecordingStatus.Recording,
-				} satisfies CompanionInputFieldDropdown,
-			},
+					disableAutoExpression: true, // TODO: Until the options are simplified
+				},
+			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(0, 255, 0),
+				color: 0x000000,
+				bgcolor: 0x00ff00,
 			},
 			callback: ({ options }): boolean => {
 				const recording = state.state.recording?.status?.state
-				return recording === options.getPlainNumber('state')
+				return recording === options.state
 			},
-			learn: ({ options }) => {
+			learn: () => {
 				if (state.state.recording?.status) {
 					return {
-						...options.getJson(),
 						state: state.state.recording.status.state,
 					}
 				} else {
@@ -60,14 +65,14 @@ export function createRecordingFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.RecordISO]: {
+		['recordISO']: {
 			type: 'boolean',
 			name: 'Recording: ISO enabled',
 			description: 'If ISO recording is enabled',
-			options: {},
+			options: convertOptionsFields({}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(0, 255, 0),
+				color: 0x000000,
+				bgcolor: 0x00ff00,
 			},
 			callback: (): boolean => {
 				return !!state.state.recording?.recordAllInputs

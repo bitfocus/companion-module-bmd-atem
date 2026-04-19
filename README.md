@@ -32,6 +32,13 @@ To add a new model to the list:
 
 ## Changes
 
+## v4.0.0
+
+Make sure to backup your config before updating to this version!
+
+- Update module api to v2.0
+- Support expressions in many feedbacks and actions
+
 ## v3.21.0
 
 - Reduce connection idle cpu usage

@@ -1,93 +1,135 @@
 import { Enums } from 'atem-connection'
+import { convertOptionsFields } from '../options/util.js'
 import type { ModelSpec } from '../models/index.js'
-import type { MyFeedbackDefinitions } from './types.js'
-import { FeedbackId } from './FeedbackId.js'
-import { combineRgb, type CompanionInputFieldDropdown, type CompanionInputFieldNumber } from '@companion-module/base'
-import { CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION } from '../choices.js'
-import { compareNumber, NumberComparitor, parseAudioRoutingStringSingle } from '../util.js'
+import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import {
+	compareNumber,
+	NumberComparitor,
 	AtemAudioInputPicker,
-	AtemFairlightAudioRoutingDestinationPicker,
-	AtemFairlightAudioRoutingSourcePicker,
 	AtemFairlightAudioSourcePicker,
 	NumberComparitorPicker,
-} from '../input.js'
+	CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION,
+} from '../options/audio.js'
 import type { StateWrapper } from '../state.js'
+import {
+	AtemFairlightAudioRoutingDestinationPicker,
+	AtemFairlightAudioRoutingSourcePicker,
+	parseAudioRoutingStringSingle,
+} from '../options/fairlight-routing.js'
 
-export interface AtemFairlightAudioFeedbacks {
-	[FeedbackId.FairlightAudioInputGain]: {
-		input: number
-		source: string
-		comparitor: NumberComparitor
-		gain: number
+export type AtemFairlightAudioFeedbacks = {
+	['fairlightAudioInputGain']: {
+		type: 'boolean'
+		options: {
+			input: number
+			source: string
+			comparitor: NumberComparitor
+			gain: number
+		}
 	}
-	[FeedbackId.FairlightAudioFaderGain]: {
-		input: number
-		source: string
-		comparitor: NumberComparitor
-		gain: number
+	['fairlightAudioFaderGain']: {
+		type: 'boolean'
+		options: {
+			input: number
+			source: string
+			comparitor: NumberComparitor
+			gain: number
+		}
 	}
-	[FeedbackId.FairlightAudioMixOption]: {
-		input: number
-		source: string
-		option: Enums.FairlightAudioMixOption
+	['fairlightAudioMixOption']: {
+		type: 'boolean'
+		options: {
+			input: number
+			source: string
+			option: Enums.FairlightAudioMixOption
+		}
 	}
-	[FeedbackId.FairlightAudioMasterGain]: {
-		comparitor: NumberComparitor
-		gain: number
+	['fairlightAudioMasterGain']: {
+		type: 'boolean'
+		options: {
+			comparitor: NumberComparitor
+			gain: number
+		}
 	}
-	[FeedbackId.FairlightAudioMonitorSolo]: {
-		nothing: boolean
-		input: number
-		source: string
+	['fairlightAudioMonitorSolo']: {
+		type: 'boolean'
+		options: {
+			nothing: boolean
+			input: number
+			source: string
+		}
 	}
-	[FeedbackId.FairlightAudioMonitorOutputFaderGain]: {
-		comparitor: NumberComparitor
-		gain: number
+	['fairlightAudioMonitorFaderGain']: {
+		type: 'boolean'
+		options: {
+			comparitor: NumberComparitor
+			gain: number
+		}
 	}
-	[FeedbackId.FairlightAudioMonitorMasterMuted]: Record<string, never>
-	[FeedbackId.FairlightAudioMonitorMasterGain]: {
-		comparitor: NumberComparitor
-		gain: number
+	['fairlightAudioMonitorMasterMuted']: {
+		type: 'boolean'
+		options: Record<string, never>
 	}
-	[FeedbackId.FairlightAudioMonitorTalkbackMuted]: Record<string, never>
-	[FeedbackId.FairlightAudioMonitorTalkbackGain]: {
-		comparitor: NumberComparitor
-		gain: number
+	['fairlightAudioMonitorMasterGain']: {
+		type: 'boolean'
+		options: {
+			comparitor: NumberComparitor
+			gain: number
+		}
 	}
-	[FeedbackId.FairlightAudioMonitorSidetoneGain]: {
-		comparitor: NumberComparitor
-		gain: number
+	['fairlightAudioMonitorTalkbackMuted']: {
+		type: 'boolean'
+		options: Record<string, never>
 	}
-	[FeedbackId.FairlightAudioRouting]: {
-		destination: number
-		source: number
+	['fairlightAudioMonitorTalkbackGain']: {
+		type: 'boolean'
+		options: {
+			comparitor: NumberComparitor
+			gain: number
+		}
 	}
-	[FeedbackId.FairlightAudioRoutingVariables]: {
-		destination: string
-		source: string
+	['fairlightAudioMonitorSidetoneGain']: {
+		type: 'boolean'
+		options: {
+			comparitor: NumberComparitor
+			gain: number
+		}
+	}
+	['fairlightAudioRouting']: {
+		type: 'boolean'
+		options: {
+			destination: number
+			source: number
+		}
+	}
+	['fairlightAudioRoutingVariables']: {
+		type: 'boolean'
+		options: {
+			destination: string
+			source: string
+		}
 	}
 }
 
 export function createFairlightAudioFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemFairlightAudioFeedbacks> {
+): CompanionFeedbackDefinitions<AtemFairlightAudioFeedbacks> {
 	if (!model.fairlightAudio) {
 		return {
-			[FeedbackId.FairlightAudioInputGain]: undefined,
-			[FeedbackId.FairlightAudioFaderGain]: undefined,
-			[FeedbackId.FairlightAudioMixOption]: undefined,
-			[FeedbackId.FairlightAudioMasterGain]: undefined,
-			[FeedbackId.FairlightAudioMonitorSolo]: undefined,
-			[FeedbackId.FairlightAudioMonitorOutputFaderGain]: undefined,
-			[FeedbackId.FairlightAudioMonitorMasterMuted]: undefined,
-			[FeedbackId.FairlightAudioMonitorMasterGain]: undefined,
-			[FeedbackId.FairlightAudioMonitorTalkbackMuted]: undefined,
-			[FeedbackId.FairlightAudioMonitorTalkbackGain]: undefined,
-			[FeedbackId.FairlightAudioMonitorSidetoneGain]: undefined,
-			[FeedbackId.FairlightAudioRouting]: undefined,
-			[FeedbackId.FairlightAudioRoutingVariables]: undefined,
+			['fairlightAudioInputGain']: undefined,
+			['fairlightAudioFaderGain']: undefined,
+			['fairlightAudioMixOption']: undefined,
+			['fairlightAudioMasterGain']: undefined,
+			['fairlightAudioMonitorSolo']: undefined,
+			['fairlightAudioMonitorFaderGain']: undefined,
+			['fairlightAudioMonitorMasterMuted']: undefined,
+			['fairlightAudioMonitorMasterGain']: undefined,
+			['fairlightAudioMonitorTalkbackMuted']: undefined,
+			['fairlightAudioMonitorTalkbackGain']: undefined,
+			['fairlightAudioMonitorSidetoneGain']: undefined,
+			['fairlightAudioRouting']: undefined,
+			['fairlightAudioRoutingVariables']: undefined,
 		}
 	}
 
@@ -95,51 +137,46 @@ export function createFairlightAudioFeedbacks(
 	const audioSourceOption = AtemFairlightAudioSourcePicker()
 
 	return {
-		[FeedbackId.FairlightAudioInputGain]: {
+		['fairlightAudioInputGain']: {
 			type: 'boolean',
 			name: 'Fairlight Audio: Audio input gain',
 			description: 'If the audio input has the specified input gain, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				input: audioInputOption,
 				source: audioSourceOption,
 				comparitor: NumberComparitorPicker(),
 				gain: {
 					type: 'number',
-					label: 'Input Level (-100 = -inf)',
+					label: 'Input Level',
 					id: 'gain',
 					range: true,
-					required: true,
 					default: 0,
 					step: 0.1,
 					min: -100,
 					max: 6,
-				} satisfies CompanionInputFieldNumber,
-			},
+					description: '-100 = -inf',
+					showMinAsNegativeInfinity: true,
+					asInteger: false,
+					clampValues: true,
+				},
+			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(0, 255, 0),
+				color: 0x000000,
+				bgcolor: 0x00ff00,
 			},
 			callback: ({ options }): boolean => {
 				const audioChannels = state.state.fairlight?.inputs ?? {}
-				const audioSources = audioChannels[options.getPlainNumber('input')]?.sources ?? {}
-				const source = audioSources[options.getPlainString('source')]
-				return !!(
-					source?.properties &&
-					compareNumber(
-						options.getPlainNumber('gain'),
-						options.getPlainString('comparitor'),
-						source.properties.gain / 100,
-					)
-				)
+				const audioSources = audioChannels[options.input]?.sources ?? {}
+				const source = audioSources[options.source]
+				return !!(source?.properties && compareNumber(options.gain, options.comparitor, source.properties.gain / 100))
 			},
 			learn: ({ options }) => {
 				const audioChannels = state.state.fairlight?.inputs ?? {}
-				const audioSources = audioChannels[options.getPlainNumber('input')]?.sources ?? {}
-				const source = audioSources[options.getPlainString('source')]
+				const audioSources = audioChannels[options.input]?.sources ?? {}
+				const source = audioSources[options.source]
 
 				if (source?.properties) {
 					return {
-						...options.getJson(),
 						gain: source.properties.gain / 100,
 					}
 				} else {
@@ -147,51 +184,48 @@ export function createFairlightAudioFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.FairlightAudioFaderGain]: {
+		['fairlightAudioFaderGain']: {
 			type: 'boolean',
 			name: 'Fairlight Audio: Audio fader gain',
 			description: 'If the audio input has the specified fader gain, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				input: audioInputOption,
 				source: audioSourceOption,
 				comparitor: NumberComparitorPicker(),
 				gain: {
 					type: 'number',
-					label: 'Fader Level (-100 = -inf)',
+					label: 'Fader Level',
 					id: 'gain',
 					range: true,
-					required: true,
 					default: 0,
 					step: 0.1,
 					min: -100,
 					max: 10,
-				} satisfies CompanionInputFieldNumber,
-			},
+					description: '-100 = -inf',
+					showMinAsNegativeInfinity: true,
+					asInteger: false,
+					clampValues: true,
+				},
+			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(0, 255, 0),
+				color: 0x000000,
+				bgcolor: 0x00ff00,
 			},
 			callback: ({ options }): boolean => {
 				const audioChannels = state.state.fairlight?.inputs ?? {}
-				const audioSources = audioChannels[options.getPlainNumber('input')]?.sources ?? {}
-				const source = audioSources[options.getPlainString('source')]
+				const audioSources = audioChannels[options.input]?.sources ?? {}
+				const source = audioSources[options.source]
 				return !!(
-					source?.properties &&
-					compareNumber(
-						options.getPlainNumber('gain'),
-						options.getPlainString('comparitor'),
-						source.properties.faderGain / 100,
-					)
+					source?.properties && compareNumber(options.gain, options.comparitor, source.properties.faderGain / 100)
 				)
 			},
 			learn: ({ options }) => {
 				const audioChannels = state.state.fairlight?.inputs ?? {}
-				const audioSources = audioChannels[options.getPlainNumber('input')]?.sources ?? {}
-				const source = audioSources[options.getPlainString('source')]
+				const audioSources = audioChannels[options.input]?.sources ?? {}
+				const source = audioSources[options.source]
 
 				if (source?.properties) {
 					return {
-						...options.getJson(),
 						gain: source.properties.faderGain / 100,
 					}
 				} else {
@@ -199,11 +233,11 @@ export function createFairlightAudioFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.FairlightAudioMixOption]: {
+		['fairlightAudioMixOption']: {
 			type: 'boolean',
 			name: 'Fairlight Audio: Audio mix option',
 			description: 'If the audio input has the specified mix option, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				input: audioInputOption,
 				source: audioSourceOption,
 				option: {
@@ -212,26 +246,26 @@ export function createFairlightAudioFeedbacks(
 					type: 'dropdown',
 					default: CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION[0].id,
 					choices: CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION,
-				} satisfies CompanionInputFieldDropdown,
-			},
+					disableAutoExpression: true, // TODO: Until the options are simplified
+				},
+			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(0, 255, 0),
+				color: 0x000000,
+				bgcolor: 0x00ff00,
 			},
 			callback: ({ options }): boolean => {
 				const audioChannels = state.state.fairlight?.inputs ?? {}
-				const audioSources = audioChannels[options.getPlainNumber('input')]?.sources ?? {}
-				const source = audioSources[options.getPlainString('source')]
-				return source?.properties?.mixOption === options.getPlainNumber('option')
+				const audioSources = audioChannels[options.input]?.sources ?? {}
+				const source = audioSources[options.source]
+				return source?.properties?.mixOption === options.option
 			},
 			learn: ({ options }) => {
 				const audioChannels = state.state.fairlight?.inputs ?? {}
-				const audioSources = audioChannels[options.getPlainNumber('input')]?.sources ?? {}
-				const source = audioSources[options.getPlainString('source')]
+				const audioSources = audioChannels[options.input]?.sources ?? {}
+				const source = audioSources[options.source]
 
 				if (source?.properties) {
 					return {
-						...options.getJson(),
 						option: source.properties.mixOption,
 					}
 				} else {
@@ -239,41 +273,40 @@ export function createFairlightAudioFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.FairlightAudioMasterGain]: {
+		['fairlightAudioMasterGain']: {
 			type: 'boolean',
 			name: 'Fairlight Audio: Master fader gain',
 			description: 'If the master has the specified fader gain, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				comparitor: NumberComparitorPicker(),
 				gain: {
 					type: 'number',
-					label: 'Fader Level (-100 = -inf)',
+					label: 'Fader Level',
 					id: 'gain',
 					range: true,
-					required: true,
 					default: 0,
 					step: 0.1,
 					min: -100,
 					max: 10,
-				} satisfies CompanionInputFieldNumber,
-			},
+					description: '-100 = -inf',
+					showMinAsNegativeInfinity: true,
+					asInteger: false,
+					clampValues: true,
+				},
+			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(0, 255, 0),
+				color: 0x000000,
+				bgcolor: 0x00ff00,
 			},
 			callback: ({ options }): boolean => {
 				const props = state.state.fairlight?.master?.properties
-				return !!(
-					props &&
-					compareNumber(options.getPlainNumber('gain'), options.getPlainString('comparitor'), props.faderGain / 100)
-				)
+				return !!(props && compareNumber(options.gain, options.comparitor, props.faderGain / 100))
 			},
-			learn: ({ options }) => {
+			learn: () => {
 				const props = state.state.fairlight?.master?.properties
 
 				if (props) {
 					return {
-						...options.getJson(),
 						gain: props.faderGain / 100,
 					}
 				} else {
@@ -281,12 +314,12 @@ export function createFairlightAudioFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.FairlightAudioMonitorSolo]: model.fairlightAudio.monitor
+		['fairlightAudioMonitorSolo']: model.fairlightAudio.monitor
 			? {
 					type: 'boolean',
 					name: 'Fairlight Audio: Solo source',
 					description: 'If the specified source is soloed, change style of the bank',
-					options: {
+					options: convertOptionsFields({
 						nothing: {
 							id: 'nothing',
 							type: 'checkbox',
@@ -295,75 +328,56 @@ export function createFairlightAudioFeedbacks(
 						},
 						input: { ...audioInputOption, isVisibleExpression: `!$(options:nothing)` },
 						source: { ...audioSourceOption, isVisibleExpression: `!$(options:nothing)` },
-					},
+					}),
 					defaultStyle: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(0, 255, 0),
+						color: 0x000000,
+						bgcolor: 0x00ff00,
 					},
 					callback: ({ options }): boolean => {
 						const soloState = state.state.fairlight?.solo
-						if (options.getPlainBoolean('nothing')) {
+						if (options.nothing) {
 							return !soloState?.solo
 						} else {
-							return (
-								!!soloState?.solo &&
-								soloState?.index === options.getPlainNumber('input') &&
-								soloState?.source === options.getPlainString('source')
-							)
-						}
-					},
-					learn: ({ options }) => {
-						const audioChannels = state.state.fairlight?.inputs ?? {}
-						const audioSources = audioChannels[options.getPlainNumber('input')]?.sources ?? {}
-						const source = audioSources[options.getPlainString('source')]
-
-						if (source?.properties) {
-							return {
-								...options.getJson(),
-								gain: source.properties.faderGain / 100,
-							}
-						} else {
-							return undefined
+							return !!soloState?.solo && soloState?.index === options.input && soloState?.source === options.source
 						}
 					},
 				}
 			: undefined,
-		[FeedbackId.FairlightAudioMonitorOutputFaderGain]: model.fairlightAudio.monitor
+		['fairlightAudioMonitorFaderGain']: model.fairlightAudio.monitor
 			? {
 					type: 'boolean',
 					name: 'Fairlight Audio: Monitor/Headphone Gain',
 					description: 'If the headphone/monitor has the specified fader gain, change style of the bank',
-					options: {
+					options: convertOptionsFields({
 						comparitor: NumberComparitorPicker(),
 						gain: {
 							type: 'number',
-							label: 'Fader Level (-60 = Min)',
+							label: 'Fader Level',
 							id: 'gain',
 							range: true,
-							required: true,
 							default: 0,
 							step: 0.1,
 							min: -60,
 							max: 10,
-						} satisfies CompanionInputFieldNumber,
-					},
+							description: '-60 = -inf',
+							showMinAsNegativeInfinity: true,
+							asInteger: false,
+							clampValues: true,
+						},
+					}),
 					defaultStyle: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(0, 255, 0),
+						color: 0x000000,
+						bgcolor: 0x00ff00,
 					},
 					callback: ({ options }): boolean => {
 						const gain = state.state.fairlight?.monitor?.gain
-						return !!(
-							typeof gain === 'number' &&
-							compareNumber(options.getPlainNumber('gain'), options.getPlainString('comparitor'), gain / 100)
-						)
+						return !!(typeof gain === 'number' && compareNumber(options.gain, options.comparitor, gain / 100))
 					},
-					learn: ({ options }) => {
+					learn: () => {
 						const props = state.state.fairlight?.monitor
 
 						if (props) {
 							return {
-								...options.getJson(),
 								gain: props.gain / 100,
 							}
 						} else {
@@ -372,60 +386,59 @@ export function createFairlightAudioFeedbacks(
 					},
 				}
 			: undefined,
-		[FeedbackId.FairlightAudioMonitorMasterMuted]: model.fairlightAudio.monitor
+		['fairlightAudioMonitorMasterMuted']: model.fairlightAudio.monitor
 			? {
 					type: 'boolean',
 					name: 'Fairlight Audio: Monitor/Headphone Master muted',
 					description: 'If the headphone master is muted, change style of the bank',
-					options: {
+					options: convertOptionsFields({
 						// audioInputOption,
-					},
+					}),
 					defaultStyle: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(0, 255, 0),
+						color: 0x000000,
+						bgcolor: 0x00ff00,
 					},
 					callback: (): boolean => {
 						return !!state.state.fairlight?.monitor?.inputMasterMuted
 					},
 				}
 			: undefined,
-		[FeedbackId.FairlightAudioMonitorMasterGain]:
+		['fairlightAudioMonitorMasterGain']:
 			model.fairlightAudio.monitor === 'split'
 				? {
 						type: 'boolean',
 						name: 'Fairlight Audio: Monitor/Headphone master Gain',
 						description: 'If the headphone/monitor has the specified master gain, change style of the bank',
-						options: {
+						options: convertOptionsFields({
 							comparitor: NumberComparitorPicker(),
 							gain: {
 								type: 'number',
-								label: 'Fader Level (-60 = Min)',
+								label: 'Fader Level',
 								id: 'gain',
 								range: true,
-								required: true,
 								default: 0,
 								step: 0.1,
 								min: -60,
 								max: 10,
-							} satisfies CompanionInputFieldNumber,
-						},
+								description: '-60 = -inf',
+								showMinAsNegativeInfinity: true,
+								asInteger: false,
+								clampValues: true,
+							},
+						}),
 						defaultStyle: {
-							color: combineRgb(0, 0, 0),
-							bgcolor: combineRgb(0, 255, 0),
+							color: 0x000000,
+							bgcolor: 0x00ff00,
 						},
 						callback: ({ options }): boolean => {
 							const gain = state.state.fairlight?.monitor?.inputMasterGain
-							return !!(
-								typeof gain === 'number' &&
-								compareNumber(options.getPlainNumber('gain'), options.getPlainString('comparitor'), gain / 100)
-							)
+							return !!(typeof gain === 'number' && compareNumber(options.gain, options.comparitor, gain / 100))
 						},
-						learn: ({ options }) => {
+						learn: () => {
 							const props = state.state.fairlight?.monitor
 
 							if (props) {
 								return {
-									...options.getJson(),
 									gain: props.inputMasterGain / 100,
 								}
 							} else {
@@ -434,60 +447,59 @@ export function createFairlightAudioFeedbacks(
 						},
 					}
 				: undefined,
-		[FeedbackId.FairlightAudioMonitorTalkbackMuted]: model.fairlightAudio.monitor
+		['fairlightAudioMonitorTalkbackMuted']: model.fairlightAudio.monitor
 			? {
 					type: 'boolean',
 					name: 'Fairlight Audio: Monitor/Headphone Talkback muted',
 					description: 'If the headphone talkback is muted, change style of the bank',
-					options: {
+					options: convertOptionsFields({
 						// audioInputOption,
-					},
+					}),
 					defaultStyle: {
-						color: combineRgb(0, 0, 0),
-						bgcolor: combineRgb(0, 255, 0),
+						color: 0x000000,
+						bgcolor: 0x00ff00,
 					},
 					callback: (): boolean => {
 						return !!state.state.fairlight?.monitor?.inputTalkbackMuted
 					},
 				}
 			: undefined,
-		[FeedbackId.FairlightAudioMonitorTalkbackGain]:
+		['fairlightAudioMonitorTalkbackGain']:
 			model.fairlightAudio.monitor === 'split'
 				? {
 						type: 'boolean',
 						name: 'Fairlight Audio: Monitor/Headphone talkback Gain',
 						description: 'If the headphone/monitor has the specified talkback gain, change style of the bank',
-						options: {
+						options: convertOptionsFields({
 							comparitor: NumberComparitorPicker(),
 							gain: {
 								type: 'number',
-								label: 'Fader Level (-60 = Min)',
+								label: 'Fader Level',
 								id: 'gain',
 								range: true,
-								required: true,
 								default: 0,
 								step: 0.1,
 								min: -60,
 								max: 10,
-							} satisfies CompanionInputFieldNumber,
-						},
+								description: '-60 = -inf',
+								showMinAsNegativeInfinity: true,
+								asInteger: false,
+								clampValues: true,
+							},
+						}),
 						defaultStyle: {
-							color: combineRgb(0, 0, 0),
-							bgcolor: combineRgb(0, 255, 0),
+							color: 0x000000,
+							bgcolor: 0x00ff00,
 						},
 						callback: ({ options }): boolean => {
 							const gain = state.state.fairlight?.monitor?.inputTalkbackGain
-							return !!(
-								typeof gain === 'number' &&
-								compareNumber(options.getPlainNumber('gain'), options.getPlainString('comparitor'), gain / 100)
-							)
+							return !!(typeof gain === 'number' && compareNumber(options.gain, options.comparitor, gain / 100))
 						},
-						learn: ({ options }) => {
+						learn: () => {
 							const props = state.state.fairlight?.monitor
 
 							if (props) {
 								return {
-									...options.getJson(),
 									gain: props.inputTalkbackGain / 100,
 								}
 							} else {
@@ -496,43 +508,42 @@ export function createFairlightAudioFeedbacks(
 						},
 					}
 				: undefined,
-		[FeedbackId.FairlightAudioMonitorSidetoneGain]:
+		['fairlightAudioMonitorSidetoneGain']:
 			model.fairlightAudio.monitor === 'split'
 				? {
 						type: 'boolean',
 						name: 'Fairlight Audio: Monitor/Headphone sidetone Gain',
 						description: 'If the headphone/monitor has the specified sidetone gain, change style of the bank',
-						options: {
+						options: convertOptionsFields({
 							comparitor: NumberComparitorPicker(),
 							gain: {
 								type: 'number',
-								label: 'Fader Level (-60 = Min)',
+								label: 'Fader Level',
 								id: 'gain',
 								range: true,
-								required: true,
 								default: 0,
 								step: 0.1,
 								min: -60,
 								max: 10,
-							} satisfies CompanionInputFieldNumber,
-						},
+								description: '-60 = -inf',
+								showMinAsNegativeInfinity: true,
+								asInteger: false,
+								clampValues: true,
+							},
+						}),
 						defaultStyle: {
-							color: combineRgb(0, 0, 0),
-							bgcolor: combineRgb(0, 255, 0),
+							color: 0x000000,
+							bgcolor: 0x00ff00,
 						},
 						callback: ({ options }): boolean => {
 							const gain = state.state.fairlight?.monitor?.inputSidetoneGain
-							return !!(
-								typeof gain === 'number' &&
-								compareNumber(options.getPlainNumber('gain'), options.getPlainString('comparitor'), gain / 100)
-							)
+							return !!(typeof gain === 'number' && compareNumber(options.gain, options.comparitor, gain / 100))
 						},
-						learn: ({ options }) => {
+						learn: () => {
 							const props = state.state.fairlight?.monitor
 
 							if (props) {
 								return {
-									...options.getJson(),
 									gain: props.inputSidetoneGain / 100,
 								}
 							} else {
@@ -549,24 +560,24 @@ export function createFairlightAudioFeedbacks(
 function AudioRoutingFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<
-	Pick<AtemFairlightAudioFeedbacks, FeedbackId.FairlightAudioRouting | FeedbackId.FairlightAudioRoutingVariables>
+): CompanionFeedbackDefinitions<
+	Pick<AtemFairlightAudioFeedbacks, 'fairlightAudioRouting' | 'fairlightAudioRoutingVariables'>
 > {
 	if (!model.fairlightAudio?.audioRouting)
 		return {
-			[FeedbackId.FairlightAudioRouting]: undefined,
-			[FeedbackId.FairlightAudioRoutingVariables]: undefined,
+			['fairlightAudioRouting']: undefined,
+			['fairlightAudioRoutingVariables']: undefined,
 		}
 
 	return {
-		[FeedbackId.FairlightAudioRouting]: {
+		['fairlightAudioRouting']: {
 			type: 'boolean',
 			name: 'Fairlight Audio: Audio Routing',
 			description: 'Requires firmware 9.4+',
-			options: {
+			options: convertOptionsFields({
 				destination: AtemFairlightAudioRoutingDestinationPicker(model, state.state),
 				source: AtemFairlightAudioRoutingSourcePicker(model, state.state),
-			},
+			}),
 			defaultStyle: {
 				color: 0x000000,
 				bgcolor: 0x00ff00,
@@ -575,18 +586,18 @@ function AudioRoutingFeedbacks(
 				const outputsState = state.state.fairlight?.audioRouting?.outputs
 				if (!outputsState) return false
 
-				const sourceId = options.getPlainNumber('source')
-				const destinationId = options.getPlainNumber('destination')
+				const sourceId = options.source
+				const destinationId = options.destination
 
 				const output = outputsState[destinationId]
 				return output && output.sourceId === sourceId
 			},
 		},
-		[FeedbackId.FairlightAudioRoutingVariables]: {
+		['fairlightAudioRoutingVariables']: {
 			type: 'boolean',
 			name: 'Fairlight Audio: Audio Routing from variables',
 			description: 'Requires firmware 9.4+',
-			options: {
+			options: convertOptionsFields({
 				destination: {
 					type: 'textinput',
 					id: 'destination',
@@ -605,7 +616,7 @@ function AudioRoutingFeedbacks(
 						'IDs are formed as "output-channel". channel can be omitted when wanting "1/2" eg 1503-3_4 for "MADI 3 3/4"',
 					useVariables: true,
 				},
-			},
+			}),
 			defaultStyle: {
 				color: 0x000000,
 				bgcolor: 0x00ff00,
@@ -614,14 +625,10 @@ function AudioRoutingFeedbacks(
 				const outputsState = state.state.fairlight?.audioRouting?.outputs
 				if (!outputsState) return false
 
-				const [sourceStr, destinationStr] = await Promise.all([
-					options.getParsedString('source'),
-					options.getParsedString('destination'),
-				])
-				if (!destinationStr || !sourceStr) return false
+				if (!options.destination || !options.source) return false
 
-				const source = parseAudioRoutingStringSingle(sourceStr) ?? 0
-				const destination = parseAudioRoutingStringSingle(destinationStr)
+				const source = parseAudioRoutingStringSingle(options.source) ?? 0
+				const destination = parseAudioRoutingStringSingle(options.destination)
 				if (!destination) return false
 
 				const output = outputsState[destination]

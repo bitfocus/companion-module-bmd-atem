@@ -1,58 +1,66 @@
 import { Enums } from 'atem-connection'
+import { convertOptionsFields } from '../options/util.js'
 import type { ModelSpec } from '../models/index.js'
-import type { MyFeedbackDefinitions } from './types.js'
-import { FeedbackId } from './FeedbackId.js'
-import { combineRgb } from '@companion-module/base'
+import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { getSuperSource } from 'atem-connection/dist/state/util.js'
+import { getSuperSourceBox, type StateWrapper } from '../state.js'
 import {
 	AtemSuperSourceIdPicker,
+	type AtemSuperSourceBoxProperties,
+	AtemSuperSourceBoxPropertiesPickers,
+	type AtemSuperSourceArtProperties,
+	AtemSSrcArtOptionToProtocolEnum,
 	AtemSuperSourceArtPropertiesPickers,
-	AtemSuperSourceArtSourcePicker,
 	AtemSuperSourceArtOption,
+	AtemSSrcArtOptionFromProtocolEnum,
+	AtemSuperSourceArtSourcePicker,
 	AtemSuperSourceBoxPicker,
 	AtemSuperSourceBoxSourcePicker,
-	AtemSuperSourcePropertiesPickers,
-	type AtemSuperSourceArtProperties,
-	type AtemSuperSourceProperties,
-	type AtemSuperSourceArtPropertiesVariables,
-	AtemSuperSourceArtPropertiesVariablesPickers,
-} from '../input.js'
-import { getSuperSourceBox, type StateWrapper } from '../state.js'
-import type { SuperSourceProperties } from 'atem-connection/dist/state/video/superSource.js'
+} from '../options/superSource.js'
 
-export interface AtemSuperSourceFeedbacks {
-	[FeedbackId.SSrcArtProperties]: {
-		ssrcId: number | undefined
-	} & AtemSuperSourceArtProperties
-	[FeedbackId.SSrcArtPropertiesVariables]: {
-		ssrcId: number | undefined
-	} & AtemSuperSourceArtPropertiesVariables
-	[FeedbackId.SSrcArtSource]: {
-		ssrcId: number | undefined
-		source: number
+export type AtemSuperSourceFeedbacks = {
+	['ssrc_art_properties']: {
+		type: 'boolean'
+		options: {
+			ssrcId: number
+		} & AtemSuperSourceArtProperties
 	}
-	[FeedbackId.SSrcArtOption]: {
-		ssrcId: number | undefined
-		artOption: Enums.SuperSourceArtOption
+	['ssrc_art_source']: {
+		type: 'boolean'
+		options: {
+			ssrcId: number
+			source: number
+		}
 	}
-	[FeedbackId.SSrcBoxSource]: {
-		ssrcId: number | undefined
-		boxIndex: number
-		source: number
+	['ssrc_art_option']: {
+		type: 'boolean'
+		options: {
+			ssrcId: number
+			artOption: Enums.SuperSourceArtOption
+		}
 	}
-	[FeedbackId.SSrcBoxSourceVariables]: {
-		ssrcId: string | undefined
-		boxIndex: string
-		source: string
+	['ssrc_box_source']: {
+		type: 'boolean'
+		options: {
+			ssrcId: number
+			boxIndex: number
+			source: number
+		}
 	}
-	[FeedbackId.SSrcBoxOnAir]: {
-		ssrcId: number | undefined
-		boxIndex: number
+	['ssrc_box_enable']: {
+		type: 'boolean'
+		options: {
+			ssrcId: number
+			boxIndex: number
+		}
 	}
-	[FeedbackId.SSrcBoxProperties]: {
-		ssrcId: number | undefined
-		boxIndex: number
-	} & AtemSuperSourceProperties
+	['ssrc_box_properties']: {
+		type: 'boolean'
+		options: {
+			ssrcId: number
+			boxIndex: number
+		} & AtemSuperSourceBoxProperties
+	}
 }
 
 function compareAsInt(value: number, actual: number, targetScale: number, actualRounding = 1): boolean {
@@ -66,65 +74,62 @@ function compareAsInt(value: number, actual: number, targetScale: number, actual
 export function createSuperSourceFeedbacks(
 	model: ModelSpec,
 	state: StateWrapper,
-): MyFeedbackDefinitions<AtemSuperSourceFeedbacks> {
+): CompanionFeedbackDefinitions<AtemSuperSourceFeedbacks> {
 	if (!model.SSrc) {
 		return {
-			[FeedbackId.SSrcArtProperties]: undefined,
-			[FeedbackId.SSrcArtPropertiesVariables]: undefined,
-			[FeedbackId.SSrcArtSource]: undefined,
-			[FeedbackId.SSrcArtOption]: undefined,
-			[FeedbackId.SSrcBoxSource]: undefined,
-			[FeedbackId.SSrcBoxSourceVariables]: undefined,
-			[FeedbackId.SSrcBoxOnAir]: undefined,
-			[FeedbackId.SSrcBoxProperties]: undefined,
+			['ssrc_art_properties']: undefined,
+			['ssrc_art_source']: undefined,
+			['ssrc_art_option']: undefined,
+			['ssrc_box_source']: undefined,
+			['ssrc_box_enable']: undefined,
+			['ssrc_box_properties']: undefined,
 		}
 	}
 	return {
-		[FeedbackId.SSrcArtProperties]: {
+		['ssrc_art_properties']: {
 			type: 'boolean',
 			name: 'Supersource: Art properties',
 			description: 'If the specified SuperSource art properties match, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				...AtemSuperSourceArtPropertiesPickers(model, state.state, false),
-			},
+			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
+				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
 				const ssrc = getSuperSource(state.state, ssrcId).properties
 
-				const props = options.getRaw('properties')
+				const props = options.properties
 				if (!ssrc || !props || !Array.isArray(props)) return false
 
-				if (props.includes('fill') && ssrc.artFillSource !== options.getPlainNumber('fill')) return false
-				if (props.includes('key') && ssrc.artCutSource !== options.getPlainNumber('key')) return false
+				if (props.includes('fill') && ssrc.artFillSource !== options.fill) return false
+				if (props.includes('key') && ssrc.artCutSource !== options.key) return false
 
-				if (props.includes('artOption') && ssrc.artOption !== options.getRaw('artOption')) return false
-				if (props.includes('artPreMultiplied') && ssrc.artPreMultiplied !== options.getPlainBoolean('artPreMultiplied'))
-					return false
-				if (props.includes('artClip') && !compareAsInt(options.getPlainNumber('artClip'), ssrc.artClip, 10))
-					return false
-				if (props.includes('artGain') && !compareAsInt(options.getPlainNumber('artGain'), ssrc.artGain, 10))
-					return false
-				if (props.includes('artInvertKey') && ssrc.artInvertKey !== options.getPlainBoolean('artInvertKey'))
-					return false
+				if (props.includes('artOption')) {
+					const currentArtOption = AtemSSrcArtOptionToProtocolEnum(options.artOption, ssrc.artOption)
+					if (ssrc.artOption !== currentArtOption) return false
+				}
+
+				if (props.includes('artPreMultiplied') && ssrc.artPreMultiplied !== options.artPreMultiplied) return false
+				if (props.includes('artClip') && !compareAsInt(options.artClip, ssrc.artClip, 10)) return false
+				if (props.includes('artGain') && !compareAsInt(options.artGain, ssrc.artGain, 10)) return false
+				if (props.includes('artInvertKey') && ssrc.artInvertKey !== options.artInvertKey) return false
 
 				return true
 			},
 			learn: ({ options }) => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
+				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
 
 				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.properties
 				if (ssrcConfig) {
 					return {
-						...options.getJson(),
 						fill: ssrcConfig.artFillSource,
 						key: ssrcConfig.artCutSource,
 
-						artOption: ssrcConfig.artOption,
+						artOption: AtemSSrcArtOptionFromProtocolEnum(ssrcConfig.artOption),
 						artPreMultiplied: ssrcConfig.artPreMultiplied,
 						artClip: ssrcConfig.artClip / 10,
 						artGain: ssrcConfig.artGain / 10,
@@ -135,98 +140,30 @@ export function createSuperSourceFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.SSrcArtPropertiesVariables]: {
-			type: 'boolean',
-			name: 'Supersource: Art sources from variables',
-			description: 'If the specified SuperSource art properties match, change style of the bank',
-			options: {
-				ssrcId: AtemSuperSourceIdPicker(model),
-				...AtemSuperSourceArtPropertiesVariablesPickers(),
-			},
-			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			callback: async ({ options }): Promise<boolean> => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-				const ssrc = getSuperSource(state.state, ssrcId).properties
-
-				const props = options.getRaw('properties')
-				if (!ssrc || !props || !Array.isArray(props)) return false
-
-				const ps: Promise<boolean>[] = []
-				const pushComparison = <T extends keyof SuperSourceProperties>(
-					key: T,
-					value: Promise<SuperSourceProperties[T]>,
-				) => ps.push(value.then((v) => ssrc[key] == v))
-
-				if (props.includes('fill')) pushComparison('artFillSource', options.getParsedNumber('fill'))
-				if (props.includes('key')) pushComparison('artCutSource', options.getParsedNumber('key'))
-
-				// if (props.includes('artOption') && ssrc.artOption !== options.getRaw('artOption')) return false
-				// if (props.includes('artPreMultiplied') && ssrc.artPreMultiplied !== options.getPlainBoolean('artPreMultiplied'))
-				// 	return false
-				// if (props.includes('artClip') && !compareAsInt(options.getPlainNumber('artClip'), ssrc.artClip, 10))
-				// 	return false
-				// if (props.includes('artGain') && !compareAsInt(options.getPlainNumber('artGain'), ssrc.artGain, 10))
-				// 	return false
-				// if (props.includes('artInvertKey') && ssrc.artInvertKey !== options.getPlainBoolean('artInvertKey'))
-				// 	return false
-
-				// Check each value
-				const results = await Promise.all(ps)
-				for (const value of results) {
-					if (!value) return false
-				}
-
-				return true
-			},
-			learn: ({ options }) => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-
-				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.properties
-				if (ssrcConfig) {
-					return {
-						...options.getJson(),
-						fill: ssrcConfig.artFillSource + '',
-						key: ssrcConfig.artCutSource + '',
-
-						// artOption: ssrcConfig.artOption,
-						// artPreMultiplied: ssrcConfig.artPreMultiplied,
-						// artClip: ssrcConfig.artClip / 10,
-						// artGain: ssrcConfig.artGain / 10,
-						// artInvertKey: ssrcConfig.artInvertKey,
-					}
-				} else {
-					return undefined
-				}
-			},
-		},
-		[FeedbackId.SSrcArtSource]: {
-			// TODO - replace with FeedbackId.SSrcArtProperties
+		['ssrc_art_source']: {
+			// TODO - replace with 'ssrc_art_properties'
 			type: 'boolean',
 			name: 'Supersource: Art fill source',
 			description: 'If the specified SuperSource art fill is set to the specified source, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				source: AtemSuperSourceArtSourcePicker(model, state.state, 'source', 'Fill Source'),
-			},
+			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
+				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
 				const ssrc = getSuperSource(state.state, ssrcId)
-				return ssrc.properties?.artFillSource === options.getPlainNumber('source')
+				return ssrc.properties?.artFillSource === options.source
 			},
 			learn: ({ options }) => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
+				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
 				const ssrc = getSuperSource(state.state, ssrcId)
 
 				if (ssrc.properties) {
 					return {
-						...options.getJson(),
 						source: ssrc.properties.artFillSource,
 					}
 				} else {
@@ -234,31 +171,30 @@ export function createSuperSourceFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.SSrcArtOption]: {
-			// TODO - replace with FeedbackId.SSrcArtProperties
+		['ssrc_art_option']: {
+			// TODO - replace with 'ssrc_art_properties'
 			type: 'boolean',
 			name: 'Supersource: Art placement',
 			description: 'If the specified SuperSource art is placed in the foreground/background, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				artOption: AtemSuperSourceArtOption(false),
-			},
+			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
+				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
 				const ssrc = getSuperSource(state.state, ssrcId)
-				return ssrc.properties?.artOption === options.getRaw('artOption')
+				return ssrc.properties?.artOption === options.artOption
 			},
 			learn: ({ options }) => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
+				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
 				const ssrc = getSuperSource(state.state, ssrcId)
 
 				if (ssrc.properties) {
 					return {
-						...options.getJson(),
 						artOption: ssrc.properties.artOption,
 					}
 				} else {
@@ -266,32 +202,31 @@ export function createSuperSourceFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.SSrcBoxSource]: {
-			// TODO - replace with FeedbackId.SSrcBoxProperties
+		['ssrc_box_source']: {
+			// TODO - replace with 'ssrc_box_properties'
 			type: 'boolean',
 			name: 'Supersource: Box source',
 			description: 'If the specified SuperSource box is set to the specified source, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				boxIndex: AtemSuperSourceBoxPicker(),
 				source: AtemSuperSourceBoxSourcePicker(model, state.state),
-			},
+			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-				const box = getSuperSourceBox(state.state, options.getPlainNumber('boxIndex'), ssrcId)
-				return box?.source === options.getPlainNumber('source')
+				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
+				const box = getSuperSourceBox(state.state, options.boxIndex, ssrcId)
+				return box?.source === options.source
 			},
 			learn: ({ options }) => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-				const box = getSuperSourceBox(state.state, options.getPlainNumber('boxIndex'), ssrcId)
+				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
+				const box = getSuperSourceBox(state.state, options.boxIndex, ssrcId)
 
 				if (box) {
 					return {
-						...options.getJson(),
 						source: box.source,
 					}
 				} else {
@@ -299,140 +234,68 @@ export function createSuperSourceFeedbacks(
 				}
 			},
 		},
-		[FeedbackId.SSrcBoxSourceVariables]: {
-			// TODO - replace with FeedbackId.SSrcBoxProperties
-			type: 'boolean',
-			name: 'Supersource: Box source from variables',
-			description: 'If the specified SuperSource box is set to the specified source, change style of the bank',
-			options: {
-				ssrcId:
-					model.SSrc > 1
-						? {
-								type: 'textinput',
-								id: 'ssrcId',
-								label: 'Super Source',
-								default: '1',
-								useVariables: true,
-							}
-						: undefined,
-				boxIndex: {
-					type: 'textinput',
-					id: 'boxIndex',
-					label: 'Box #',
-					default: '1',
-					useVariables: true,
-				},
-				source: {
-					type: 'textinput',
-					id: 'source',
-					label: 'Source',
-					default: '1',
-					useVariables: true,
-				},
-			},
-			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
-			},
-			callback: async ({ options }) => {
-				const ssrcId =
-					options.getRaw('ssrcId') && model.SSrc > 1 ? Number(await options.getParsedNumber('ssrcId')) - 1 : 0
-				const boxIndex = (await options.getParsedNumber('boxIndex')) - 1
-				const source = await options.getParsedNumber('source')
-
-				const box = getSuperSourceBox(state.state, boxIndex, ssrcId)
-				return box?.source === source
-			},
-			learn: async ({ options }) => {
-				const ssrcId =
-					options.getRaw('ssrcId') && model.SSrc > 1 ? Number(await options.getParsedNumber('ssrcId')) - 1 : 0
-				const boxIndex = (await options.getParsedNumber('boxIndex')) - 1
-
-				const box = getSuperSourceBox(state.state, boxIndex, ssrcId)
-
-				if (box) {
-					return {
-						...options.getJson(),
-						source: box.source + '',
-					}
-				} else {
-					return undefined
-				}
-			},
-		},
-		[FeedbackId.SSrcBoxOnAir]: {
-			// TODO - replace with FeedbackId.SSrcBoxProperties
+		['ssrc_box_enable']: {
+			// TODO - replace with 'ssrc_box_properties'
 			type: 'boolean',
 			name: 'Supersource: Box state',
 			description: 'If the specified SuperSource box is enabled, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				boxIndex: AtemSuperSourceBoxPicker(),
-			},
+			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-				const box = getSuperSourceBox(state.state, options.getPlainNumber('boxIndex'), ssrcId)
+				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
+				const box = getSuperSourceBox(state.state, options.boxIndex, ssrcId)
 				return !!(box && box.enabled)
 			},
 		},
-		[FeedbackId.SSrcBoxProperties]: {
+		['ssrc_box_properties']: {
 			type: 'boolean',
 			name: 'Supersource: Box properties',
 			description: 'If the specified SuperSource box properties match, change style of the bank',
-			options: {
+			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				boxIndex: AtemSuperSourceBoxPicker(),
-				...AtemSuperSourcePropertiesPickers(model, state.state),
-			},
+				...AtemSuperSourceBoxPropertiesPickers(model, state.state),
+			}),
 			defaultStyle: {
-				color: combineRgb(0, 0, 0),
-				bgcolor: combineRgb(255, 255, 0),
+				color: 0x000000,
+				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-				const box = getSuperSourceBox(state.state, options.getPlainNumber('boxIndex'), ssrcId)
+				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
+				const box = getSuperSourceBox(state.state, options.boxIndex, ssrcId)
 
-				const props = options.getRaw('properties')
+				const props = options.properties
 				if (!box || !props || !Array.isArray(props)) return false
 
-				if (props.includes('source') && box.source !== options.getPlainNumber('source')) return false
+				if (props.includes('source') && box.source !== options.source) return false
 
-				if (props.includes('size') && !compareAsInt(options.getPlainNumber('size'), box.size, 1000, 10)) return false
-				if (props.includes('x') && !compareAsInt(options.getPlainNumber('x'), box.x, 100)) return false
-				if (props.includes('y') && !compareAsInt(options.getPlainNumber('y'), box.y, 100)) return false
+				if (props.includes('size') && !compareAsInt(options.size, box.size, 1000, 10)) return false
+				if (props.includes('x') && !compareAsInt(options.x, box.x, 100)) return false
+				if (props.includes('y') && !compareAsInt(options.y, box.y, 100)) return false
 
-				if (props.includes('cropEnable') && box.cropped !== options.getPlainBoolean('cropEnable')) return false
+				if (props.includes('cropEnable') && box.cropped !== options.cropEnable) return false
 
 				if (box.cropped) {
-					if (props.includes('cropTop') && !compareAsInt(options.getPlainNumber('cropTop'), box.cropTop, 1000, 10))
-						return false
-					if (
-						props.includes('cropBottom') &&
-						!compareAsInt(options.getPlainNumber('cropBottom'), box.cropBottom, 1000, 10)
-					)
-						return false
-					if (props.includes('cropLeft') && !compareAsInt(options.getPlainNumber('cropLeft'), box.cropLeft, 1000, 10))
-						return false
-					if (
-						props.includes('cropRight') &&
-						!compareAsInt(options.getPlainNumber('cropRight'), box.cropRight, 1000, 10)
-					)
-						return false
+					if (props.includes('cropTop') && !compareAsInt(options.cropTop, box.cropTop, 1000, 10)) return false
+					if (props.includes('cropBottom') && !compareAsInt(options.cropBottom, box.cropBottom, 1000, 10)) return false
+					if (props.includes('cropLeft') && !compareAsInt(options.cropLeft, box.cropLeft, 1000, 10)) return false
+					if (props.includes('cropRight') && !compareAsInt(options.cropRight, box.cropRight, 1000, 10)) return false
 				}
 
 				return true
 			},
 			learn: ({ options }) => {
-				const ssrcId = options.getRaw('ssrcId') && model.SSrc > 1 ? Number(options.getRaw('ssrcId')) : 0
-				const boxId = options.getPlainNumber('boxIndex')
+				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
+				const boxId = options.boxIndex
 				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.boxes[boxId]
 				if (ssrcConfig) {
 					return {
-						...options.getJson(),
 						source: ssrcConfig.source,
 						size: ssrcConfig.size / 1000,
 						x: ssrcConfig.x / 100,

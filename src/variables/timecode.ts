@@ -1,13 +1,12 @@
-import type { CompanionVariableValues } from '@companion-module/base'
-import type { AtemConfig } from '../config.js'
 import type { InstanceBaseExt } from '../util.js'
 import type { AtemState } from 'atem-connection'
 import { formatDurationSeconds } from './util.js'
+import type { VariablesSchema } from './schema.js'
 
 export function updateTimecodeVariables(
-	instance: InstanceBaseExt<AtemConfig>,
+	instance: InstanceBaseExt,
 	_state: AtemState,
-	values: CompanionVariableValues,
+	values: Partial<VariablesSchema>,
 ): void {
 	values['timecode'] = formatDurationSeconds(instance.timecodeSeconds).hms
 	// values['timecode_ms'] = formatDurationSeconds(instance.timecodeSeconds).hms

@@ -1,18 +1,22 @@
 import { Enums, type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../options/util.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
-import { ActionId } from './ActionId.js'
-import type { MyActionDefinitions } from './types.js'
-import { CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../choices.js'
+import { CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle, resolveTrueFalseToggle } from '../options/common.js'
 import type { StateWrapper } from '../state.js'
 
-export interface AtemStreamingActions {
-	[ActionId.StreamStartStop]: {
-		stream: TrueFalseToggle
+export type AtemStreamingActions = {
+	['streamStartStop']: {
+		options: {
+			stream: TrueFalseToggle
+		}
 	}
-	[ActionId.StreamService]: {
-		service: string
-		url: string
-		key: string
+	['streamService']: {
+		options: {
+			service: string
+			url: string
+			key: string
+		}
 	}
 }
 
@@ -20,30 +24,31 @@ export function createStreamingActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	state: StateWrapper,
-): MyActionDefinitions<AtemStreamingActions> {
+): CompanionActionDefinitions<AtemStreamingActions> {
 	if (!model.streaming) {
 		return {
-			[ActionId.StreamStartStop]: undefined,
-			[ActionId.StreamService]: undefined,
+			['streamStartStop']: undefined,
+			['streamService']: undefined,
 		}
 	}
 	return {
-		[ActionId.StreamStartStop]: {
+		['streamStartStop']: {
 			name: 'Stream: Start or Stop',
-			options: {
+			options: convertOptionsFields({
 				stream: {
 					id: 'stream',
 					type: 'dropdown',
 					label: 'Stream',
 					default: 'toggle',
 					choices: CHOICES_ON_OFF_TOGGLE,
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				let newState = options.getPlainString('stream') === 'true'
-				if (options.getPlainString('stream') === 'toggle') {
-					newState = state.state.streaming?.status?.state === Enums.StreamingStatus.Idle
-				}
+				const newState = resolveTrueFalseToggle(
+					options.stream,
+					state.state.streaming?.status?.state !== Enums.StreamingStatus.Idle,
+				)
 
 				if (newState) {
 					await atem?.startStreaming()
@@ -51,20 +56,10 @@ export function createStreamingActions(
 					await atem?.stopStreaming()
 				}
 			},
-			learn: ({ options }) => {
-				if (state.state.streaming?.status) {
-					return {
-						...options.getJson(),
-						state: state.state.streaming.status.state,
-					}
-				} else {
-					return undefined
-				}
-			},
 		},
-		[ActionId.StreamService]: {
+		['streamService']: {
 			name: 'Stream: Set service',
-			options: {
+			options: convertOptionsFields({
 				service: {
 					id: 'service',
 					label: 'Service',
@@ -86,20 +81,17 @@ export function createStreamingActions(
 					default: '',
 					useVariables: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const [serviceName, url, key] = await Promise.all([
-					options.getParsedString('service'),
-					options.getParsedString('url'),
-					options.getParsedString('key'),
-				])
-
-				await atem?.setStreamingService({ serviceName, url, key })
+				await atem?.setStreamingService({
+					serviceName: options.service,
+					url: options.url,
+					key: options.key,
+				})
 			},
-			learn: ({ options }) => {
+			learn: () => {
 				if (state.state.streaming?.service) {
 					return {
-						...options.getJson(),
 						service: state.state.streaming.service.serviceName,
 						url: state.state.streaming.service.url,
 						key: state.state.streaming.service.key,

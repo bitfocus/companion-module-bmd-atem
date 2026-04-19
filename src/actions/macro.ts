@@ -1,19 +1,28 @@
 import { type Atem } from 'atem-connection'
+import { convertOptionsFields } from '../options/util.js'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
-import { ActionId } from './ActionId.js'
-import type { MyActionDefinitions } from './types.js'
-import { GetMacroChoices, CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../choices.js'
+import { CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle, resolveTrueFalseToggle } from '../options/common.js'
 import type { StateWrapper } from '../state.js'
+import { AtemMacroPicker } from '../options/macro.js'
 
-export interface AtemMacroActions {
-	[ActionId.MacroRun]: {
-		macro: number
-		action: 'run' | 'runContinue'
+export type AtemMacroActions = {
+	['macrorun']: {
+		options: {
+			macro: number
+			action: 'run' | 'runContinue'
+		}
 	}
-	[ActionId.MacroContinue]: Record<string, never>
-	[ActionId.MacroStop]: Record<string, never>
-	[ActionId.MacroLoop]: {
-		loop: TrueFalseToggle
+	['macrocontinue']: {
+		options: Record<string, never>
+	}
+	['macrostop']: {
+		options: Record<string, never>
+	}
+	['macroloop']: {
+		options: {
+			loop: TrueFalseToggle
+		}
 	}
 }
 
@@ -21,26 +30,20 @@ export function createMacroActions(
 	atem: Atem | undefined,
 	model: ModelSpec,
 	state: StateWrapper,
-): MyActionDefinitions<AtemMacroActions> {
+): CompanionActionDefinitions<AtemMacroActions> {
 	if (!model.macros) {
 		return {
-			[ActionId.MacroRun]: undefined,
-			[ActionId.MacroContinue]: undefined,
-			[ActionId.MacroStop]: undefined,
-			[ActionId.MacroLoop]: undefined,
+			['macrorun']: undefined,
+			['macrocontinue']: undefined,
+			['macrostop']: undefined,
+			['macroloop']: undefined,
 		}
 	}
 	return {
-		[ActionId.MacroRun]: {
+		['macrorun']: {
 			name: 'Macro: Run',
-			options: {
-				macro: {
-					type: 'dropdown',
-					id: 'macro',
-					label: 'Macro',
-					default: 1,
-					choices: GetMacroChoices(model, state.state),
-				},
+			options: convertOptionsFields({
+				macro: AtemMacroPicker(model, state.state, 'macro'),
 				action: {
 					type: 'dropdown',
 					id: 'action',
@@ -50,16 +53,13 @@ export function createMacroActions(
 						{ id: 'run', label: 'Run' },
 						{ id: 'runContinue', label: 'Run/Continue' },
 					],
+					disableAutoExpression: true,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const macroIndex = options.getPlainNumber('macro') - 1
+				const macroIndex = options.macro - 1
 				const { macroPlayer, macroRecorder } = state.state.macro
-				if (
-					options.getPlainString('action') === 'runContinue' &&
-					macroPlayer.isWaiting &&
-					macroPlayer.macroIndex === macroIndex
-				) {
+				if (options.action === 'runContinue' && macroPlayer.isWaiting && macroPlayer.macroIndex === macroIndex) {
 					await atem?.macroContinue()
 				} else if (macroRecorder.isRecording && macroRecorder.macroIndex === macroIndex) {
 					await atem?.macroStopRecord()
@@ -68,36 +68,34 @@ export function createMacroActions(
 				}
 			},
 		},
-		[ActionId.MacroContinue]: {
+		['macrocontinue']: {
 			name: 'Macro: Continue',
-			options: {},
+			options: convertOptionsFields({}),
 			callback: async () => {
 				await atem?.macroContinue()
 			},
 		},
-		[ActionId.MacroStop]: {
+		['macrostop']: {
 			name: 'Macro: Stop',
-			options: {},
+			options: convertOptionsFields({}),
 			callback: async () => {
 				await atem?.macroStop()
 			},
 		},
-		[ActionId.MacroLoop]: {
+		['macroloop']: {
 			name: 'Macro: Loop',
-			options: {
+			options: convertOptionsFields({
 				loop: {
 					id: 'loop',
 					type: 'dropdown',
 					label: 'Loop',
 					default: 'toggle',
 					choices: CHOICES_ON_OFF_TOGGLE,
+					disableAutoExpression: true, // TODO: Until the options are simplified
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				let newState = options.getPlainString('loop') === 'true'
-				if (options.getPlainString('loop') === 'toggle') {
-					newState = !state.state.macro.macroPlayer.loop
-				}
+				const newState = resolveTrueFalseToggle(options.loop, state.state.macro.macroPlayer.loop)
 
 				await atem?.macroSetLoop(newState)
 			},

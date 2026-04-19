@@ -1,5 +1,11 @@
 import type { Timecode } from 'atem-connection/dist/state/common.js'
-import { pad } from '../util.js'
+
+export function pad(str: string, prefix: string, len: number): string {
+	while (str.length < len) {
+		str = prefix + str
+	}
+	return str
+}
 
 export function formatDuration(durationObj: Timecode | undefined): { hms: string; hm: string; ms: string } {
 	let durationHMS = '00:00:00'
