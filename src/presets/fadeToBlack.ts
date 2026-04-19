@@ -1,5 +1,4 @@
 import type { CompanionPresetGroup, CompanionButtonStyleProps } from '@companion-module/base'
-import { ActionId } from '../actions/ActionId.js'
 import { FeedbackId } from '../feedback/FeedbackId.js'
 import type { PresetsBuilderContext } from './context.js'
 import type { AtemSchema } from '../schema.js'
@@ -94,7 +93,7 @@ export function createFadeToBlackPresets(
 			{
 				down: [
 					{
-						actionId: ActionId.FadeToBlackAuto,
+						actionId: 'fadeToBlackAuto',
 						options: {
 							mixeffect: { isExpression: true, value: '$(local:me)' },
 						},
@@ -138,7 +137,7 @@ export function createFadeToBlackPresets(
 			{
 				down: [
 					{
-						actionId: ActionId.FadeToBlackRate,
+						actionId: 'fadeToBlackRate',
 						options: {
 							mixeffect: { isExpression: true, value: '$(local:me)' },
 							rate: { isExpression: true, value: '$(local:rate)' },

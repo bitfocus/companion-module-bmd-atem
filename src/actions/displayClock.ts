@@ -7,16 +7,15 @@ import {
 	AtemDisplayClockTimePickers,
 } from '../options/displayClock.js'
 import type { ModelSpec } from '../models/index.js'
-import { ActionId } from './ActionId.js'
 import type { StateWrapper } from '../state.js'
 
 export type AtemDisplayClockActions = {
-	[ActionId.DisplayClockState]: {
+	['displayClockState']: {
 		options: {
 			state: 'toggle' | Enums.DisplayClockClockState
 		}
 	}
-	[ActionId.DisplayClockConfigure]: {
+	['displayClockConfigure']: {
 		options: {
 			properties: Array<'enabled' | 'size' | 'opacity' | 'x' | 'y' | 'autoHide' | 'clockMode'>
 
@@ -29,14 +28,14 @@ export type AtemDisplayClockActions = {
 			clockMode: Enums.DisplayClockClockMode
 		}
 	}
-	[ActionId.DisplayClockStartTime]: {
+	['displayClockStartTime']: {
 		options: {
 			hours: number
 			minutes: number
 			seconds: number
 		}
 	}
-	[ActionId.DisplayClockOffsetStartTime]: {
+	['displayClockOffsetStartTime']: {
 		options: {
 			hours: number
 			minutes: number
@@ -52,14 +51,14 @@ export function createDisplayClockActions(
 ): CompanionActionDefinitions<AtemDisplayClockActions> {
 	if (!model.displayClock) {
 		return {
-			[ActionId.DisplayClockState]: undefined,
-			[ActionId.DisplayClockConfigure]: undefined,
-			[ActionId.DisplayClockStartTime]: undefined,
-			[ActionId.DisplayClockOffsetStartTime]: undefined,
+			['displayClockState']: undefined,
+			['displayClockConfigure']: undefined,
+			['displayClockStartTime']: undefined,
+			['displayClockOffsetStartTime']: undefined,
 		}
 	}
 	return {
-		[ActionId.DisplayClockState]: {
+		['displayClockState']: {
 			name: 'Display Clock: Start/Stop',
 			options: convertOptionsFields({
 				state: {
@@ -98,7 +97,7 @@ export function createDisplayClockActions(
 				}
 			},
 		},
-		[ActionId.DisplayClockConfigure]: {
+		['displayClockConfigure']: {
 			name: 'Display Clock: Configure',
 			options: convertOptionsFields({
 				...AtemDisplayClockPropertiesPickers(),
@@ -141,7 +140,7 @@ export function createDisplayClockActions(
 				}
 			},
 		},
-		[ActionId.DisplayClockStartTime]: {
+		['displayClockStartTime']: {
 			name: 'Display Clock: Set Start Time',
 			options: convertOptionsFields({ ...AtemDisplayClockTimePickers() }),
 			callback: async ({ options }) => {
@@ -169,7 +168,7 @@ export function createDisplayClockActions(
 				}
 			},
 		},
-		[ActionId.DisplayClockOffsetStartTime]: {
+		['displayClockOffsetStartTime']: {
 			name: 'Display Clock: Offset Start Time',
 			options: convertOptionsFields({ ...AtemDisplayClockTimeOffsetPickers() }),
 			callback: async ({ options }) => {

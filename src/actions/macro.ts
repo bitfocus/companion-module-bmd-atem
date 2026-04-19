@@ -2,25 +2,24 @@ import { type Atem } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
-import { ActionId } from './ActionId.js'
 import { CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle, resolveTrueFalseToggle } from '../options/common.js'
 import type { StateWrapper } from '../state.js'
 import { AtemMacroPicker } from '../options/macro.js'
 
 export type AtemMacroActions = {
-	[ActionId.MacroRun]: {
+	['macrorun']: {
 		options: {
 			macro: number
 			action: 'run' | 'runContinue'
 		}
 	}
-	[ActionId.MacroContinue]: {
+	['macrocontinue']: {
 		options: Record<string, never>
 	}
-	[ActionId.MacroStop]: {
+	['macrostop']: {
 		options: Record<string, never>
 	}
-	[ActionId.MacroLoop]: {
+	['macroloop']: {
 		options: {
 			loop: TrueFalseToggle
 		}
@@ -34,14 +33,14 @@ export function createMacroActions(
 ): CompanionActionDefinitions<AtemMacroActions> {
 	if (!model.macros) {
 		return {
-			[ActionId.MacroRun]: undefined,
-			[ActionId.MacroContinue]: undefined,
-			[ActionId.MacroStop]: undefined,
-			[ActionId.MacroLoop]: undefined,
+			['macrorun']: undefined,
+			['macrocontinue']: undefined,
+			['macrostop']: undefined,
+			['macroloop']: undefined,
 		}
 	}
 	return {
-		[ActionId.MacroRun]: {
+		['macrorun']: {
 			name: 'Macro: Run',
 			options: convertOptionsFields({
 				macro: AtemMacroPicker(model, state.state, 'macro'),
@@ -69,21 +68,21 @@ export function createMacroActions(
 				}
 			},
 		},
-		[ActionId.MacroContinue]: {
+		['macrocontinue']: {
 			name: 'Macro: Continue',
 			options: convertOptionsFields({}),
 			callback: async () => {
 				await atem?.macroContinue()
 			},
 		},
-		[ActionId.MacroStop]: {
+		['macrostop']: {
 			name: 'Macro: Stop',
 			options: convertOptionsFields({}),
 			callback: async () => {
 				await atem?.macroStop()
 			},
 		},
-		[ActionId.MacroLoop]: {
+		['macroloop']: {
 			name: 'Macro: Loop',
 			options: convertOptionsFields({
 				loop: {

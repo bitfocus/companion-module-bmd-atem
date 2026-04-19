@@ -1,5 +1,4 @@
 import type { CompanionPresetGroup } from '@companion-module/base'
-import { ActionId } from '../actions/ActionId.js'
 import { FeedbackId } from '../feedback/FeedbackId.js'
 import { MacroFeedbackType } from '../feedback/macro.js'
 import type { PresetsBuilderContext } from './context.js'
@@ -85,7 +84,7 @@ export function createMacroPresets(context: PresetsBuilderContext): void {
 			{
 				down: [
 					{
-						actionId: ActionId.MacroRun,
+						actionId: 'macrorun',
 						options: {
 							macro: { isExpression: true, value: '$(local:index)' },
 							action: 'runContinue',

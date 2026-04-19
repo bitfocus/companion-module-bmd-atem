@@ -2,7 +2,6 @@ import { type Atem } from 'atem-connection'
 import { convertOptionsFields, WithDropdownPropertiesPicker } from '../options/util.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
-import { ActionId } from './ActionId.js'
 import {
 	CHOICES_KEYTRANS,
 	CHOICES_ON_OFF_TOGGLE,
@@ -16,20 +15,20 @@ import { AtemDSKPicker, AtemDSKPreMultipliedKeyPropertiesPickers } from '../opti
 import { AtemKeyFillSourcePicker, AtemKeyCutSourcePicker } from '../options/commonKeyer.js'
 
 export type AtemDownstreamKeyerActions = {
-	[ActionId.DSKSource]: {
+	['dskSource']: {
 		options: {
 			key: number
 			fill: number
 			cut: number
 		}
 	}
-	[ActionId.DSKRate]: {
+	['dskRate']: {
 		options: {
 			key: number
 			rate: number
 		}
 	}
-	[ActionId.DSKMask]: {
+	['dskMask']: {
 		options: {
 			key: number
 
@@ -41,7 +40,7 @@ export type AtemDownstreamKeyerActions = {
 			maskRight: number
 		}
 	}
-	[ActionId.DSKPreMultipliedKey]: {
+	['dskPreMultipliedKey']: {
 		options: {
 			key: number
 
@@ -52,19 +51,19 @@ export type AtemDownstreamKeyerActions = {
 			invert: boolean
 		}
 	}
-	[ActionId.DSKAuto]: {
+	['dskAuto']: {
 		options: {
 			downstreamKeyerId: number
 			onair: TrueFalseToggle
 		}
 	}
-	[ActionId.DSKOnAir]: {
+	['dskOnAir']: {
 		options: {
 			key: number
 			onair: TrueFalseToggle
 		}
 	}
-	[ActionId.DSKTie]: {
+	['dskTie']: {
 		options: {
 			key: number
 			state: TrueFalseToggle
@@ -79,17 +78,17 @@ export function createDownstreamKeyerActions(
 ): CompanionActionDefinitions<AtemDownstreamKeyerActions> {
 	if (!model.DSKs) {
 		return {
-			[ActionId.DSKSource]: undefined,
-			[ActionId.DSKRate]: undefined,
-			[ActionId.DSKMask]: undefined,
-			[ActionId.DSKPreMultipliedKey]: undefined,
-			[ActionId.DSKAuto]: undefined,
-			[ActionId.DSKOnAir]: undefined,
-			[ActionId.DSKTie]: undefined,
+			['dskSource']: undefined,
+			['dskRate']: undefined,
+			['dskMask']: undefined,
+			['dskPreMultipliedKey']: undefined,
+			['dskAuto']: undefined,
+			['dskOnAir']: undefined,
+			['dskTie']: undefined,
 		}
 	}
 	return {
-		[ActionId.DSKSource]: {
+		['dskSource']: {
 			name: 'Downstream key: Set inputs',
 			options: convertOptionsFields({
 				key: AtemDSKPicker(model, 'key'),
@@ -115,7 +114,7 @@ export function createDownstreamKeyerActions(
 				}
 			},
 		},
-		[ActionId.DSKRate]: {
+		['dskRate']: {
 			name: 'Downstream key: Set Rate',
 			options: convertOptionsFields({
 				key: AtemDSKPicker(model, 'key'),
@@ -136,7 +135,7 @@ export function createDownstreamKeyerActions(
 				}
 			},
 		},
-		[ActionId.DSKMask]: {
+		['dskMask']: {
 			name: 'Downstream key: Set Mask',
 			options: convertOptionsFields({
 				key: AtemDSKPicker(model, 'key'),
@@ -185,7 +184,7 @@ export function createDownstreamKeyerActions(
 				}
 			},
 		},
-		[ActionId.DSKPreMultipliedKey]: {
+		['dskPreMultipliedKey']: {
 			name: 'Downstream key: Set Pre Multiplied Key',
 			options: convertOptionsFields({
 				key: AtemDSKPicker(model, 'key'),
@@ -230,7 +229,7 @@ export function createDownstreamKeyerActions(
 				}
 			},
 		},
-		[ActionId.DSKAuto]: {
+		['dskAuto']: {
 			name: 'Downstream key: Run AUTO Transition',
 			options: convertOptionsFields({
 				downstreamKeyerId: AtemDSKPicker(model, 'downstreamKeyerId'),
@@ -249,7 +248,7 @@ export function createDownstreamKeyerActions(
 				await atem?.autoDownstreamKey(options.downstreamKeyerId - 1, towardOnAir)
 			},
 		},
-		[ActionId.DSKOnAir]: {
+		['dskOnAir']: {
 			name: 'Downstream key: Set OnAir',
 			options: convertOptionsFields({
 				key: AtemDSKPicker(model, 'key'),
@@ -283,7 +282,7 @@ export function createDownstreamKeyerActions(
 				}
 			},
 		},
-		[ActionId.DSKTie]: {
+		['dskTie']: {
 			name: 'Downstream key: Set Tied',
 			options: convertOptionsFields({
 				key: AtemDSKPicker(model, 'key'),

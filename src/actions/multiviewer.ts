@@ -1,6 +1,5 @@
 import { Enums, type Atem } from 'atem-connection'
 import type { ModelSpec } from '../models/index.js'
-import { ActionId } from './ActionId.js'
 import { getMultiviewer, getMultiviewerWindow, type StateWrapper } from '../state.js'
 import { convertOptionsFields } from '../options/util.js'
 import { assertNever, type CompanionActionDefinitions, type JsonValue } from '@companion-module/base'
@@ -15,14 +14,14 @@ import {
 } from '../options/multiviewer.js'
 
 export type AtemMultiviewerActions = {
-	[ActionId.MultiviewerWindowSource]: {
+	['setMvSource']: {
 		options: {
 			multiViewerId: number
 			windowIndex: number
 			source: number
 		}
 	}
-	[ActionId.MultiviewerLayout]: {
+	['multiviewerLayout']: {
 		options: {
 			multiViewerId: number
 			topLeft: MultiviewerQuadrantState | JsonValue | undefined
@@ -40,12 +39,12 @@ export function createMultiviewerActions(
 ): CompanionActionDefinitions<AtemMultiviewerActions> {
 	if (!model.MVs) {
 		return {
-			[ActionId.MultiviewerWindowSource]: undefined,
-			[ActionId.MultiviewerLayout]: undefined,
+			['setMvSource']: undefined,
+			['multiviewerLayout']: undefined,
 		}
 	}
 	return {
-		[ActionId.MultiviewerWindowSource]: {
+		['setMvSource']: {
 			name: 'Multiviewer: Change window source',
 			options: convertOptionsFields({
 				multiViewerId: AtemMultiviewerPicker(model),
@@ -67,7 +66,7 @@ export function createMultiviewerActions(
 				}
 			},
 		},
-		[ActionId.MultiviewerLayout]: {
+		['multiviewerLayout']: {
 			name: 'Multiviewer: Change layout',
 			options: convertOptionsFields({
 				multiViewerId: AtemMultiviewerPicker(model),

@@ -1,5 +1,4 @@
 import type { CompanionPresetGroup, CompanionButtonStyleProps } from '@companion-module/base'
-import { ActionId } from '../actions/ActionId.js'
 import { FeedbackId } from '../feedback/FeedbackId.js'
 import { GetSourcesListForType } from '../options/sources.js'
 import type { AtemState } from 'atem-connection'
@@ -45,7 +44,7 @@ export function createAuxOutputPresets(
 			{
 				down: [
 					{
-						actionId: ActionId.Aux,
+						actionId: 'aux',
 						options: {
 							aux: { isExpression: true, value: '$(local:output)' },
 							input: { isExpression: true, value: '$(local:input)' },

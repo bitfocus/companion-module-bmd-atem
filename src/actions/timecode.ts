@@ -1,7 +1,6 @@
 import type { Atem } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
 import type { JsonValue, CompanionActionDefinitions } from '@companion-module/base'
-import { ActionId } from './ActionId.js'
 import type { StateWrapper } from '../state.js'
 import type { InstanceBaseExt } from '../util.js'
 import { formatDurationSeconds } from '../variables/util.js'
@@ -13,12 +12,12 @@ import {
 } from '../options/timecode.js'
 
 export type AtemTimecodeActions = {
-	[ActionId.Timecode]: {
+	['timecode']: {
 		options: {
 			time: string
 		}
 	}
-	[ActionId.TimecodeMode]: {
+	['timecodeMode']: {
 		options: {
 			mode: TimecodeMode | JsonValue | undefined
 		}
@@ -32,12 +31,12 @@ export function createTimecodeActions(
 ): CompanionActionDefinitions<AtemTimecodeActions> {
 	if (!instance.config.pollTimecode) {
 		return {
-			[ActionId.Timecode]: undefined,
-			[ActionId.TimecodeMode]: undefined,
+			['timecode']: undefined,
+			['timecodeMode']: undefined,
 		}
 	}
 	return {
-		[ActionId.Timecode]: {
+		['timecode']: {
 			name: 'Timecode: Set time',
 			options: convertOptionsFields({
 				time: {
@@ -64,7 +63,7 @@ export function createTimecodeActions(
 				}
 			},
 		},
-		[ActionId.TimecodeMode]: {
+		['timecodeMode']: {
 			name: 'Timecode: Set mode',
 			options: convertOptionsFields({
 				mode: AtemTimecodeModePicker(),

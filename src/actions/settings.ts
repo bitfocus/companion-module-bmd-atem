@@ -2,18 +2,17 @@ import { type Atem, type InputState } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
-import { ActionId } from './ActionId.js'
 import { AtemAllSourcePicker } from '../options/sources.js'
 import type { StateWrapper } from '../state.js'
 
 export type AtemSettingsActions = {
-	[ActionId.SaveStartupState]: {
+	['saveStartupState']: {
 		options: Record<string, never>
 	}
-	[ActionId.ClearStartupState]: {
+	['clearStartupState']: {
 		options: Record<string, never>
 	}
-	[ActionId.InputName]: {
+	['inputName']: {
 		options: {
 			source: number
 
@@ -33,27 +32,27 @@ export function createSettingsActions(
 ): CompanionActionDefinitions<AtemSettingsActions> {
 	if (!model.media.players) {
 		return {
-			[ActionId.SaveStartupState]: undefined,
-			[ActionId.ClearStartupState]: undefined,
-			[ActionId.InputName]: undefined,
+			['saveStartupState']: undefined,
+			['clearStartupState']: undefined,
+			['inputName']: undefined,
 		}
 	}
 	return {
-		[ActionId.SaveStartupState]: {
+		['saveStartupState']: {
 			name: 'Startup State: Save',
 			options: convertOptionsFields({}),
 			callback: async () => {
 				await atem?.saveStartupState()
 			},
 		},
-		[ActionId.ClearStartupState]: {
+		['clearStartupState']: {
 			name: 'Startup State: Clear',
 			options: convertOptionsFields({}),
 			callback: async () => {
 				await atem?.clearStartupState()
 			},
 		},
-		[ActionId.InputName]: {
+		['inputName']: {
 			name: 'Input: Set name',
 			options: convertOptionsFields({
 				source: AtemAllSourcePicker(model, state.state),

@@ -1,5 +1,4 @@
 import { Enums } from 'atem-connection'
-import { ActionId } from '../actions/ActionId.js'
 import { FeedbackId } from '../feedback/FeedbackId.js'
 import type { PresetsBuilderContext } from './context.js'
 
@@ -48,7 +47,7 @@ export function createRecordingPresets(context: PresetsBuilderContext): void {
 			{
 				down: [
 					{
-						actionId: ActionId.RecordStartStop,
+						actionId: 'recordStartStop',
 						options: {
 							record: 'toggle',
 						},

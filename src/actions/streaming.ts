@@ -2,17 +2,16 @@ import { Enums, type Atem } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
-import { ActionId } from './ActionId.js'
 import { CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle, resolveTrueFalseToggle } from '../options/common.js'
 import type { StateWrapper } from '../state.js'
 
 export type AtemStreamingActions = {
-	[ActionId.StreamStartStop]: {
+	['streamStartStop']: {
 		options: {
 			stream: TrueFalseToggle
 		}
 	}
-	[ActionId.StreamService]: {
+	['streamService']: {
 		options: {
 			service: string
 			url: string
@@ -28,12 +27,12 @@ export function createStreamingActions(
 ): CompanionActionDefinitions<AtemStreamingActions> {
 	if (!model.streaming) {
 		return {
-			[ActionId.StreamStartStop]: undefined,
-			[ActionId.StreamService]: undefined,
+			['streamStartStop']: undefined,
+			['streamService']: undefined,
 		}
 	}
 	return {
-		[ActionId.StreamStartStop]: {
+		['streamStartStop']: {
 			name: 'Stream: Start or Stop',
 			options: convertOptionsFields({
 				stream: {
@@ -58,7 +57,7 @@ export function createStreamingActions(
 				}
 			},
 		},
-		[ActionId.StreamService]: {
+		['streamService']: {
 			name: 'Stream: Set service',
 			options: convertOptionsFields({
 				service: {

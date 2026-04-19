@@ -1,5 +1,4 @@
 import type { CompanionPresetGroup, CompanionButtonStyleProps } from '@companion-module/base'
-import { ActionId } from '../actions/ActionId.js'
 import { FeedbackId } from '../feedback/FeedbackId.js'
 import type { PresetsBuilderContext } from './context.js'
 import type { AtemSchema } from '../schema.js'
@@ -77,7 +76,7 @@ export function createMediaPlayerPresets(
 			{
 				down: [
 					{
-						actionId: ActionId.MediaPlayerSource,
+						actionId: 'mediaPlayerSource',
 						options: {
 							mediaplayer: { isExpression: true, value: '$(local:player)' },
 							source: { isExpression: true, value: `clip$(local:clip)` },
@@ -129,7 +128,7 @@ export function createMediaPlayerPresets(
 			{
 				down: [
 					{
-						actionId: ActionId.MediaPlayerSource,
+						actionId: 'mediaPlayerSource',
 						options: {
 							mediaplayer: { isExpression: true, value: '$(local:player)' },
 							source: { isExpression: true, value: '$(local:still)' },

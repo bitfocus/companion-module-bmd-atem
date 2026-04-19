@@ -12,7 +12,6 @@ import {
 	type TransitionSelectionComponent,
 } from '../../options/transition.js'
 import type { ModelSpec } from '../../models/index.js'
-import { ActionId } from '../ActionId.js'
 import { AtemCommandBatching, CommandBatching } from '../../batching.js'
 import { CHOICES_KEYTRANS, CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle, AtemRatePicker } from '../../options/common.js'
 import { getTransitionProperties, getUSK, type StateWrapper } from '../../state.js'
@@ -26,39 +25,39 @@ import {
 } from '../../options/mixEffect.js'
 
 export type AtemTransitionActions = {
-	[ActionId.PreviewTransition]: {
+	['previewTransition']: {
 		options: {
 			mixeffect: number
 			state: TrueFalseToggle
 		}
 	}
-	[ActionId.TransitionStyle]: {
+	['transitionStyle']: {
 		options: {
 			mixeffect: number
 			style: TransitionStyleString | JsonValue | undefined
 		}
 	}
-	[ActionId.TransitionRate]: {
+	['transitionRate']: {
 		options: {
 			mixeffect: number
 			style: TransitionStyleString | JsonValue | undefined
 			rate: number
 		}
 	}
-	[ActionId.TransitionSelection]: {
+	['transitionSelection']: {
 		options: {
 			mixeffect: number
 			selection: TransitionSelectionComponent[]
 		}
 	}
-	[ActionId.TransitionSelectComponents]: {
+	['transitionSelectComponents']: {
 		options: {
 			mixeffect: number
 			background: NextTransBackgroundChoices
 			[id: `key${string}`]: NextTransKeyChoices
 		}
 	}
-	[ActionId.TransitionSelectionComponent]: {
+	['transitionSelectionComponent']: {
 		options: {
 			mixeffect: number
 			component: number
@@ -75,7 +74,7 @@ export function createTransitionActions(
 	state: StateWrapper,
 ): CompanionActionDefinitions<AtemTransitionActions> {
 	return {
-		[ActionId.PreviewTransition]: {
+		['previewTransition']: {
 			name: 'Transition: Preview',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
@@ -100,7 +99,7 @@ export function createTransitionActions(
 				await atem?.previewTransition(target, options.mixeffect - 1)
 			},
 		},
-		[ActionId.TransitionStyle]: {
+		['transitionStyle']: {
 			name: 'Transition: Set style/pattern',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
@@ -129,7 +128,7 @@ export function createTransitionActions(
 				}
 			},
 		},
-		[ActionId.TransitionRate]: {
+		['transitionRate']: {
 			name: 'Transition: Change rate',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
@@ -222,7 +221,7 @@ export function createTransitionActions(
 				}
 			},
 		},
-		[ActionId.TransitionSelection]: {
+		['transitionSelection']: {
 			name: 'Transition: Change selection',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
@@ -237,7 +236,7 @@ export function createTransitionActions(
 				)
 			},
 		},
-		[ActionId.TransitionSelectComponents]: {
+		['transitionSelectComponents']: {
 			name: 'Transition: Select components in transition',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
@@ -359,7 +358,7 @@ export function createTransitionActions(
 				}
 			},
 		},
-		[ActionId.TransitionSelectionComponent]: {
+		['transitionSelectionComponent']: {
 			name: 'Transition: Change selection component',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),

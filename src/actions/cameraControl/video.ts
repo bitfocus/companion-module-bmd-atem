@@ -1,63 +1,62 @@
 import { type Atem } from 'atem-connection'
 import { convertOptionsFields } from '../../options/util.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-import { ActionId } from '../ActionId.js'
 import type { StateWrapper } from '../../state.js'
 import { AtemCameraControlDirectCommandSender, VideoSharpeningLevel } from '@atem-connection/camera-control'
 import { CameraControlSourcePicker } from '../../options/cameraControl.js'
 import type { AtemConfig } from '../../config.js'
 
 export type AtemCameraControlVideoActions = {
-	[ActionId.CameraControlVideoManualWhiteBalance]: {
+	['cameraControlVideoManualWhiteBalance']: {
 		options: {
 			cameraId: number
 			colorTemperature: number
 			tint: number
 		}
 	}
-	[ActionId.CameraControlVideoIncrementManualWhiteBalance]: {
+	['cameraControlVideoIncrementManualWhiteBalance']: {
 		options: {
 			cameraId: number
 			colorTemperatureIncrement: number
 			tintIncrement: number
 		}
 	}
-	[ActionId.CameraControlVideoAutoWhiteBalance]: {
+	['cameraControlVideoAutoWhiteBalance']: {
 		options: {
 			cameraId: number
 		}
 	}
-	[ActionId.CameraControlVideoExposure]: {
+	['cameraControlVideoExposure']: {
 		options: {
 			cameraId: number
 			framerate: number
 		}
 	}
-	[ActionId.CameraControlIncrementVideoExposure]: {
+	['cameraControlIncrementVideoExposure']: {
 		options: {
 			cameraId: number
 			direction: string
 		}
 	}
-	[ActionId.CameraControlVideoSharpeningLevel]: {
+	['cameraControlVideoSharpeningLevel']: {
 		options: {
 			cameraId: number
 			level: VideoSharpeningLevel
 		}
 	}
-	[ActionId.CameraControlVideoGain]: {
+	['cameraControlVideoGain']: {
 		options: {
 			cameraId: number
 			gain: number
 		}
 	}
-	[ActionId.CameraControlIncrementVideoGain]: {
+	['cameraControlIncrementVideoGain']: {
 		options: {
 			cameraId: number
 			increment: number
 		}
 	}
-	[ActionId.CameraControlVideoNdFilterStop]: {
+	['cameraControlVideoNdFilterStop']: {
 		options: {
 			cameraId: number
 			stop: number
@@ -72,22 +71,22 @@ export function createCameraControlVideoActions(
 ): CompanionActionDefinitions<AtemCameraControlVideoActions> {
 	if (!config.enableCameraControl) {
 		return {
-			[ActionId.CameraControlVideoManualWhiteBalance]: undefined,
-			[ActionId.CameraControlVideoIncrementManualWhiteBalance]: undefined,
-			[ActionId.CameraControlVideoAutoWhiteBalance]: undefined,
-			[ActionId.CameraControlVideoExposure]: undefined,
-			[ActionId.CameraControlIncrementVideoExposure]: undefined,
-			[ActionId.CameraControlVideoSharpeningLevel]: undefined,
-			[ActionId.CameraControlVideoGain]: undefined,
-			[ActionId.CameraControlIncrementVideoGain]: undefined,
-			[ActionId.CameraControlVideoNdFilterStop]: undefined,
+			['cameraControlVideoManualWhiteBalance']: undefined,
+			['cameraControlVideoIncrementManualWhiteBalance']: undefined,
+			['cameraControlVideoAutoWhiteBalance']: undefined,
+			['cameraControlVideoExposure']: undefined,
+			['cameraControlIncrementVideoExposure']: undefined,
+			['cameraControlVideoSharpeningLevel']: undefined,
+			['cameraControlVideoGain']: undefined,
+			['cameraControlIncrementVideoGain']: undefined,
+			['cameraControlVideoNdFilterStop']: undefined,
 		}
 	}
 
 	const commandSender = atem && new AtemCameraControlDirectCommandSender(atem)
 
 	return {
-		[ActionId.CameraControlVideoManualWhiteBalance]: {
+		['cameraControlVideoManualWhiteBalance']: {
 			name: 'Camera Control: White Balance',
 			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
@@ -116,7 +115,7 @@ export function createCameraControlVideoActions(
 			},
 		},
 
-		[ActionId.CameraControlVideoIncrementManualWhiteBalance]: {
+		['cameraControlVideoIncrementManualWhiteBalance']: {
 			name: 'Camera Control: Increment White Balance',
 			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
@@ -158,7 +157,7 @@ export function createCameraControlVideoActions(
 			},
 		},
 
-		[ActionId.CameraControlVideoAutoWhiteBalance]: {
+		['cameraControlVideoAutoWhiteBalance']: {
 			name: 'Camera Control: Trigger Auto White Balance',
 			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
@@ -168,7 +167,7 @@ export function createCameraControlVideoActions(
 			},
 		},
 
-		[ActionId.CameraControlVideoExposure]: {
+		['cameraControlVideoExposure']: {
 			name: 'Camera Control: Video Exposure',
 			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
@@ -188,7 +187,7 @@ export function createCameraControlVideoActions(
 			},
 		},
 
-		[ActionId.CameraControlIncrementVideoExposure]: {
+		['cameraControlIncrementVideoExposure']: {
 			name: 'Camera Control: Increment Video Exposure',
 			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
@@ -228,7 +227,7 @@ export function createCameraControlVideoActions(
 			},
 		},
 
-		[ActionId.CameraControlVideoSharpeningLevel]: {
+		['cameraControlVideoSharpeningLevel']: {
 			name: 'Camera Control: Video Sharpening Level',
 			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
@@ -263,7 +262,7 @@ export function createCameraControlVideoActions(
 			},
 		},
 
-		[ActionId.CameraControlVideoGain]: {
+		['cameraControlVideoGain']: {
 			name: 'Camera Control: Video Gain',
 			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
@@ -283,7 +282,7 @@ export function createCameraControlVideoActions(
 			},
 		},
 
-		[ActionId.CameraControlIncrementVideoGain]: {
+		['cameraControlIncrementVideoGain']: {
 			name: 'Camera Control: Increment Video Gain',
 			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
@@ -314,7 +313,7 @@ export function createCameraControlVideoActions(
 			},
 		},
 
-		[ActionId.CameraControlVideoNdFilterStop]: {
+		['cameraControlVideoNdFilterStop']: {
 			name: 'Camera Control: ND Filter Stop',
 			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),

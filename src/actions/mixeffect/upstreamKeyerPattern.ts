@@ -2,14 +2,13 @@ import { Enums, type Atem } from 'atem-connection'
 import { convertOptionsFields } from '../../options/util.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../../models/index.js'
-import { ActionId } from '../ActionId.js'
 import { getUSK, type StateWrapper } from '../../state.js'
 import type { UpstreamKeyerPatternSettings } from 'atem-connection/dist/state/video/upstreamKeyers.js'
 import { AtemMEPicker } from '../../options/mixEffect.js'
 import { AtemUSKPatternPropertiesPickers, AtemUSKPicker } from '../../options/upstreamKeyer.js'
 
 export type AtemUpstreamKeyerPatternActions = {
-	[ActionId.USKPatternProperties]: {
+	['uskPatternProperties']: {
 		options: {
 			mixeffect: number
 			key: number
@@ -34,12 +33,12 @@ export function createUpstreamKeyerPatternActions(
 ): CompanionActionDefinitions<AtemUpstreamKeyerPatternActions> {
 	if (!model.USKs || !model.DVEs) {
 		return {
-			[ActionId.USKPatternProperties]: undefined,
+			['uskPatternProperties']: undefined,
 		}
 	}
 
 	return {
-		[ActionId.USKPatternProperties]: {
+		['uskPatternProperties']: {
 			name: 'Upstream key: Change Pattern properties',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),

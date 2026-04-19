@@ -1,7 +1,6 @@
 import { type Atem } from 'atem-connection'
 import { convertOptionsFields } from '../../options/util.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-import { ActionId } from '../ActionId.js'
 import type { StateWrapper } from '../../state.js'
 import { AtemCameraControlDirectCommandSender } from '@atem-connection/camera-control'
 import { CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../../options/common.js'
@@ -9,31 +8,31 @@ import type { AtemConfig } from '../../config.js'
 import { CameraControlSourcePicker } from '../../options/cameraControl.js'
 
 export type AtemCameraControlDisplayActions = {
-	[ActionId.CameraControlDisplayColorBars]: {
+	['cameraControlDisplayColorBars']: {
 		options: {
 			cameraId: number
 			state: TrueFalseToggle
 		}
 	}
-	[ActionId.CameraControlDisplayFocusAssist]: {
+	['cameraControlDisplayFocusAssist']: {
 		options: {
 			cameraId: number
 			state: TrueFalseToggle
 		}
 	}
-	[ActionId.CameraControlDisplayFalseColor]: {
+	['cameraControlDisplayFalseColor']: {
 		options: {
 			cameraId: number
 			state: TrueFalseToggle
 		}
 	}
-	[ActionId.CameraControlDisplayZebra]: {
+	['cameraControlDisplayZebra']: {
 		options: {
 			cameraId: number
 			state: TrueFalseToggle
 		}
 	}
-	[ActionId.CameraControlOutputStatusOverlay]: {
+	['cameraControlOutputStatusOverlay']: {
 		options: {
 			cameraId: number
 			state: TrueFalseToggle
@@ -48,18 +47,18 @@ export function createCameraControlDisplayActions(
 ): CompanionActionDefinitions<AtemCameraControlDisplayActions> {
 	if (!config.enableCameraControl) {
 		return {
-			[ActionId.CameraControlDisplayColorBars]: undefined,
-			[ActionId.CameraControlDisplayFocusAssist]: undefined,
-			[ActionId.CameraControlDisplayFalseColor]: undefined,
-			[ActionId.CameraControlDisplayZebra]: undefined,
-			[ActionId.CameraControlOutputStatusOverlay]: undefined,
+			['cameraControlDisplayColorBars']: undefined,
+			['cameraControlDisplayFocusAssist']: undefined,
+			['cameraControlDisplayFalseColor']: undefined,
+			['cameraControlDisplayZebra']: undefined,
+			['cameraControlOutputStatusOverlay']: undefined,
 		}
 	}
 
 	const commandSender = atem && new AtemCameraControlDirectCommandSender(atem)
 
 	return {
-		[ActionId.CameraControlDisplayColorBars]: {
+		['cameraControlDisplayColorBars']: {
 			name: 'Camera Control: Show Color Bars',
 			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
@@ -87,7 +86,7 @@ export function createCameraControlDisplayActions(
 				await commandSender?.displayColorBars(cameraId, target)
 			},
 		},
-		[ActionId.CameraControlDisplayFocusAssist]: {
+		['cameraControlDisplayFocusAssist']: {
 			name: 'Camera Control: Focus Assist',
 			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
@@ -119,7 +118,7 @@ export function createCameraControlDisplayActions(
 				)
 			},
 		},
-		[ActionId.CameraControlDisplayFalseColor]: {
+		['cameraControlDisplayFalseColor']: {
 			name: 'Camera Control: False Color',
 			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
@@ -151,7 +150,7 @@ export function createCameraControlDisplayActions(
 				)
 			},
 		},
-		[ActionId.CameraControlDisplayZebra]: {
+		['cameraControlDisplayZebra']: {
 			name: 'Camera Control: Zebra',
 			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
@@ -183,7 +182,7 @@ export function createCameraControlDisplayActions(
 				)
 			},
 		},
-		[ActionId.CameraControlOutputStatusOverlay]: {
+		['cameraControlOutputStatusOverlay']: {
 			name: 'Camera Control: Status Overlay',
 			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),

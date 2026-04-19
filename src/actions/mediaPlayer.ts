@@ -2,7 +2,6 @@ import { Enums, type Atem } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
-import { ActionId } from './ActionId.js'
 import { getMediaPlayer } from 'atem-connection/dist/state/util.js'
 import { AtemMediaPlayerPicker } from '../options/mediaPlayer.js'
 import type { StateWrapper } from '../state.js'
@@ -13,21 +12,21 @@ import {
 } from '../options/mediaPool.js'
 
 export type AtemMediaPlayerActions = {
-	[ActionId.MediaPlayerSource]: {
+	['mediaPlayerSource']: {
 		options: {
 			mediaplayer: number
 		} & MediaPoolSourceOptions
 	}
-	[ActionId.MediaPlayerCycle]: {
+	['mediaPlayerCycle']: {
 		options: {
 			mediaplayer: number
 			direction: 'next' | 'previous'
 		}
 	}
-	[ActionId.MediaCaptureStill]: {
+	['mediaCaptureStill']: {
 		options: Record<string, never>
 	}
-	[ActionId.MediaDeleteStill]: {
+	['mediaDeleteStill']: {
 		options: {
 			source: number
 			defaultClip: boolean // unused
@@ -42,14 +41,14 @@ export function createMediaPlayerActions(
 ): CompanionActionDefinitions<AtemMediaPlayerActions> {
 	if (!model.media.players) {
 		return {
-			[ActionId.MediaPlayerSource]: undefined,
-			[ActionId.MediaPlayerCycle]: undefined,
-			[ActionId.MediaCaptureStill]: undefined,
-			[ActionId.MediaDeleteStill]: undefined,
+			['mediaPlayerSource']: undefined,
+			['mediaPlayerCycle']: undefined,
+			['mediaCaptureStill']: undefined,
+			['mediaDeleteStill']: undefined,
 		}
 	}
 	return {
-		[ActionId.MediaPlayerSource]: {
+		['mediaPlayerSource']: {
 			name: 'Media player: Set source',
 			options: convertOptionsFields({
 				mediaplayer: AtemMediaPlayerPicker(model),
@@ -82,7 +81,7 @@ export function createMediaPlayerActions(
 				}
 			},
 		},
-		[ActionId.MediaPlayerCycle]: {
+		['mediaPlayerCycle']: {
 			name: 'Media player: Cycle source',
 			options: convertOptionsFields({
 				mediaplayer: AtemMediaPlayerPicker(model),
@@ -126,14 +125,14 @@ export function createMediaPlayerActions(
 				}
 			},
 		},
-		[ActionId.MediaCaptureStill]: {
+		['mediaCaptureStill']: {
 			name: 'Media player: Capture still',
 			options: convertOptionsFields({}),
 			callback: async () => {
 				await atem?.captureMediaPoolStill()
 			},
 		},
-		[ActionId.MediaDeleteStill]: {
+		['mediaDeleteStill']: {
 			name: 'Media player: Delete still',
 			options: convertOptionsFields({
 				...AtemMediaPlayerSourcePickers(model, state.state, false),

@@ -7,7 +7,6 @@ import {
 	CHOICES_FLYDIRECTIONS,
 } from '../../options/upstreamKeyer-dve.js'
 import type { ModelSpec } from '../../models/index.js'
-import { ActionId } from '../ActionId.js'
 import { getUSK, type StateWrapper } from '../../state.js'
 import type {
 	UpstreamKeyerDVESettings,
@@ -24,7 +23,7 @@ import {
 } from '../../options/upstreamKeyer.js'
 
 export type AtemUpstreamKeyerDVEActions = {
-	[ActionId.USKDVEProperties]: {
+	['uskDveProperties']: {
 		options: {
 			mixeffect: number
 			key: number
@@ -86,7 +85,7 @@ export type AtemUpstreamKeyerDVEActions = {
 			rate: number
 		} & TransitionOptions
 	}
-	[ActionId.USKSetKeyframe]: {
+	['uskSetKeyframe']: {
 		options: {
 			mixeffect: number
 			key: number
@@ -141,21 +140,21 @@ export type AtemUpstreamKeyerDVEActions = {
 			borderBevelSoftness: number
 		}
 	}
-	[ActionId.USKStoreKeyframe]: {
+	['uskStoreKeyframe']: {
 		options: {
 			mixeffect: number
 			key: number
 			keyframe: FlyKeyKeyFrameString | JsonValue | undefined
 		}
 	}
-	[ActionId.USKFly]: {
+	['uskFly']: {
 		options: {
 			mixeffect: number
 			key: number
 			keyframe: FlyKeyKeyFrameString | JsonValue | undefined
 		}
 	}
-	[ActionId.USKFlyInfinite]: {
+	['uskFlyInfinite']: {
 		options: {
 			mixeffect: number
 			key: number
@@ -172,16 +171,16 @@ export function createUpstreamKeyerDVEActions(
 ): CompanionActionDefinitions<AtemUpstreamKeyerDVEActions> {
 	if (!model.USKs || !model.DVEs) {
 		return {
-			[ActionId.USKDVEProperties]: undefined,
-			[ActionId.USKSetKeyframe]: undefined,
-			[ActionId.USKStoreKeyframe]: undefined,
-			[ActionId.USKFly]: undefined,
-			[ActionId.USKFlyInfinite]: undefined,
+			['uskDveProperties']: undefined,
+			['uskSetKeyframe']: undefined,
+			['uskStoreKeyframe']: undefined,
+			['uskFly']: undefined,
+			['uskFlyInfinite']: undefined,
 		}
 	}
 
 	return {
-		[ActionId.USKDVEProperties]: {
+		['uskDveProperties']: {
 			name: 'Upstream key: Change DVE properties',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
@@ -349,7 +348,7 @@ export function createUpstreamKeyerDVEActions(
 				}
 			},
 		},
-		[ActionId.USKSetKeyframe]: {
+		['uskSetKeyframe']: {
 			name: 'Upstream key: Set Keyframe from values',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
@@ -469,7 +468,7 @@ export function createUpstreamKeyerDVEActions(
 				}
 			},
 		},
-		[ActionId.USKStoreKeyframe]: {
+		['uskStoreKeyframe']: {
 			name: 'Upstream key: Set keyframe from current key state',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
@@ -484,7 +483,7 @@ export function createUpstreamKeyerDVEActions(
 				await atem?.storeUpstreamKeyerFlyKeyKeyframe(options.mixeffect - 1, options.key - 1, keyframeId)
 			},
 		},
-		[ActionId.USKFly]: {
+		['uskFly']: {
 			name: 'Upstream key: fly to keyframe',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
@@ -514,7 +513,7 @@ export function createUpstreamKeyerDVEActions(
 				}
 			},
 		},
-		[ActionId.USKFlyInfinite]: {
+		['uskFlyInfinite']: {
 			name: 'Upstream key: fly to infinite',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),

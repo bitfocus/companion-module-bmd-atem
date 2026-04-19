@@ -1,5 +1,4 @@
 import type { CompanionPresetGroup, CompanionButtonStyleProps } from '@companion-module/base'
-import { ActionId } from '../../actions/ActionId.js'
 import { FeedbackId } from '../../feedback/FeedbackId.js'
 import type { SourceInfo } from '../../options/sources.js'
 import type { PresetsBuilderContext } from '../context.js'
@@ -44,7 +43,7 @@ export function createProgramPreviewPresets(
 			{
 				down: [
 					{
-						actionId: ActionId.Preview,
+						actionId: 'preview',
 						options: {
 							mixeffect: { isExpression: true, value: '$(local:me)' },
 							input: { isExpression: true, value: '$(local:input)' },
@@ -93,7 +92,7 @@ export function createProgramPreviewPresets(
 			{
 				down: [
 					{
-						actionId: ActionId.Program,
+						actionId: 'program',
 						options: {
 							mixeffect: { isExpression: true, value: '$(local:me)' },
 							input: { isExpression: true, value: '$(local:input)' },

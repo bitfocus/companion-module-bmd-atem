@@ -1,5 +1,4 @@
 import type { CompanionPresetGroup, CompanionButtonStyleProps } from '@companion-module/base'
-import { ActionId } from '../actions/ActionId.js'
 import { FeedbackId } from '../feedback/FeedbackId.js'
 import { GetSourcesListForType } from '../options/sources.js'
 import type { AtemState } from 'atem-connection'
@@ -46,7 +45,7 @@ export function createMultiviewerWindowPresets(
 			{
 				down: [
 					{
-						actionId: ActionId.MultiviewerWindowSource,
+						actionId: 'setMvSource',
 						options: {
 							multiViewerId: { isExpression: true, value: '$(local:multiviewer)' },
 							source: { isExpression: true, value: '$(local:input)' },

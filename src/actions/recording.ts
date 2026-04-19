@@ -2,25 +2,24 @@ import { Enums, type Atem } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
-import { ActionId } from './ActionId.js'
 import { CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle, resolveTrueFalseToggle } from '../options/common.js'
 import type { StateWrapper } from '../state.js'
 
 export type AtemRecordingActions = {
-	[ActionId.RecordStartStop]: {
+	['recordStartStop']: {
 		options: {
 			record: TrueFalseToggle
 		}
 	}
-	[ActionId.RecordSwitchDisk]: {
+	['recordSwitchDisk']: {
 		options: Record<string, never>
 	}
-	[ActionId.RecordFilename]: {
+	['recordFilename']: {
 		options: {
 			filename: string
 		}
 	}
-	[ActionId.RecordISO]: {
+	['recordISO']: {
 		options: {
 			recordISO: TrueFalseToggle
 		}
@@ -34,14 +33,14 @@ export function createRecordingActions(
 ): CompanionActionDefinitions<AtemRecordingActions> {
 	if (!model.recording) {
 		return {
-			[ActionId.RecordStartStop]: undefined,
-			[ActionId.RecordSwitchDisk]: undefined,
-			[ActionId.RecordFilename]: undefined,
-			[ActionId.RecordISO]: undefined,
+			['recordStartStop']: undefined,
+			['recordSwitchDisk']: undefined,
+			['recordFilename']: undefined,
+			['recordISO']: undefined,
 		}
 	}
 	return {
-		[ActionId.RecordStartStop]: {
+		['recordStartStop']: {
 			name: 'Recording: Start or Stop',
 			options: convertOptionsFields({
 				record: {
@@ -66,14 +65,14 @@ export function createRecordingActions(
 				}
 			},
 		},
-		[ActionId.RecordSwitchDisk]: {
+		['recordSwitchDisk']: {
 			name: 'Recording: Switch disk',
 			options: convertOptionsFields({}),
 			callback: async () => {
 				await atem?.switchRecordingDisk()
 			},
 		},
-		[ActionId.RecordFilename]: {
+		['recordFilename']: {
 			name: 'Recording: Set filename',
 			options: convertOptionsFields({
 				filename: {
@@ -99,7 +98,7 @@ export function createRecordingActions(
 				}
 			},
 		},
-		[ActionId.RecordISO]: {
+		['recordISO']: {
 			name: 'Recording: Enable/Disable ISO',
 			options: convertOptionsFields({
 				recordISO: {

@@ -3,36 +3,35 @@ import { convertOptionsFields } from '../../options/util.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import { getMixEffect } from 'atem-connection/dist/state/util.js'
 import type { ModelSpec } from '../../models/index.js'
-import { ActionId } from '../ActionId.js'
 import type { StateWrapper } from '../../state.js'
 import type { AtemTransitions, FadeDurationFieldsType } from '../../transitions.js'
 import { FadeDurationFields } from '../../options/fade.js'
 import { AtemMEPicker, AtemMESourcePicker } from '../../options/mixEffect.js'
 
 export type AtemProgramPreviewActions = {
-	[ActionId.Program]: {
+	['program']: {
 		options: {
 			mixeffect: number
 			input: number
 		}
 	}
-	[ActionId.Preview]: {
+	['preview']: {
 		options: {
 			mixeffect: number
 			input: number
 		}
 	}
-	[ActionId.Cut]: {
+	['cut']: {
 		options: {
 			mixeffect: number
 		}
 	}
-	[ActionId.Auto]: {
+	['auto']: {
 		options: {
 			mixeffect: number
 		}
 	}
-	[ActionId.TBar]: {
+	['tBar']: {
 		options: {
 			mixeffect: number
 			position: number
@@ -47,7 +46,7 @@ export function createProgramPreviewActions(
 	state: StateWrapper,
 ): CompanionActionDefinitions<AtemProgramPreviewActions> {
 	return {
-		[ActionId.Program]: {
+		['program']: {
 			name: 'ME: Set Program input',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
@@ -69,7 +68,7 @@ export function createProgramPreviewActions(
 			},
 		},
 
-		[ActionId.Preview]: {
+		['preview']: {
 			name: 'ME: Set Preview input',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
@@ -91,7 +90,7 @@ export function createProgramPreviewActions(
 			},
 		},
 
-		[ActionId.Cut]: {
+		['cut']: {
 			name: 'ME: Perform CUT transition',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
@@ -100,7 +99,7 @@ export function createProgramPreviewActions(
 				await atem?.cut(options.mixeffect - 1)
 			},
 		},
-		[ActionId.Auto]: {
+		['auto']: {
 			name: 'ME: Perform AUTO transition',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),
@@ -110,7 +109,7 @@ export function createProgramPreviewActions(
 			},
 		},
 
-		[ActionId.TBar]: {
+		['tBar']: {
 			name: 'ME: Set TBar position',
 			options: convertOptionsFields({
 				mixeffect: AtemMEPicker(model),

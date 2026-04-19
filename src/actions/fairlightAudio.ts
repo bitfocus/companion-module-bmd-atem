@@ -2,7 +2,6 @@ import { Enums, type Atem, Commands } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
 import { assertNever, type CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
-import { ActionId } from './ActionId.js'
 import {
 	AtemAudioInputPicker,
 	AtemFairlightAudioSourcePicker,
@@ -22,120 +21,120 @@ import {
 import { FadeDurationFields } from '../options/fade.js'
 
 export type AtemFairlightAudioActions = {
-	[ActionId.FairlightAudioInputGain]: {
+	['fairlightAudioInputGain']: {
 		options: {
 			input: number
 			source: string
 			gain: number
 		} & FadeDurationFieldsType
 	}
-	[ActionId.FairlightAudioInputGainDelta]: {
+	['fairlightAudioInputGainDelta']: {
 		options: {
 			input: number
 			source: string
 			delta: number
 		} & FadeDurationFieldsType
 	}
-	[ActionId.FairlightAudioInputDelay]: {
+	['fairlightAudioInputDelay']: {
 		options: {
 			input: number
 			source: string
 			delay: number
 		}
 	}
-	[ActionId.FairlightAudioInputDelayDelta]: {
+	['fairlightAudioInputDelayDelta']: {
 		options: {
 			input: number
 			source: string
 			delay: number
 		}
 	}
-	[ActionId.FairlightAudioFaderGain]: {
+	['fairlightAudioFaderGain']: {
 		options: {
 			input: number
 			source: string
 			gain: number
 		} & FadeDurationFieldsType
 	}
-	[ActionId.FairlightAudioFaderGainDelta]: {
+	['fairlightAudioFaderGainDelta']: {
 		options: {
 			input: number
 			source: string
 			delta: number
 		} & FadeDurationFieldsType
 	}
-	[ActionId.FairlightAudioMixOption]: {
+	['fairlightAudioMixOption']: {
 		options: {
 			input: number
 			source: string
 			option: 'toggle' | FairlightMixOption2
 		}
 	}
-	[ActionId.FairlightAudioResetPeaks]: {
+	['fairlightAudioResetPeaks']: {
 		options: {
 			reset: 'all' | 'master'
 		}
 	}
-	[ActionId.FairlightAudioResetSourcePeaks]: {
+	['fairlightAudioResetSourcePeaks']: {
 		options: {
 			input: number
 			source: string
 		}
 	}
-	[ActionId.FairlightAudioMasterGain]: {
+	['fairlightAudioMasterGain']: {
 		options: {
 			gain: number
 		} & FadeDurationFieldsType
 	}
-	[ActionId.FairlightAudioMasterGainDelta]: {
+	['fairlightAudioMasterGainDelta']: {
 		options: {
 			delta: number
 		} & FadeDurationFieldsType
 	}
-	[ActionId.FairlightAudioMonitorSolo]: {
+	['fairlightAudioMonitorSolo']: {
 		options: {
 			solo: TrueFalseToggle
 			input: number
 			source: string
 		}
 	}
-	[ActionId.FairlightAudioMonitorOutputGain]: {
+	['fairlightAudioMonitorGain']: {
 		options: {
 			gain: number
 		} & FadeDurationFieldsType
 	}
-	[ActionId.FairlightAudioMonitorOutputGainDelta]: {
+	['fairlightAudioMonitorGainDelta']: {
 		options: {
 			delta: number
 		} & FadeDurationFieldsType
 	}
 
-	[ActionId.FairlightAudioMonitorMasterMuted]: {
+	['fairlightAudioMonitorMasterMuted']: {
 		options: {
 			state: TrueFalseToggle
 		}
 	}
-	[ActionId.FairlightAudioMonitorMasterGain]: {
+	['fairlightAudioMonitorMasterGain']: {
 		options: {
 			gain: number
 		} & FadeDurationFieldsType
 	}
-	[ActionId.FairlightAudioMonitorMasterGainDelta]: {
+	['fairlightAudioMonitorMasterGainDelta']: {
 		options: {
 			delta: number
 		} & FadeDurationFieldsType
 	}
-	[ActionId.FairlightAudioMonitorTalkbackMuted]: {
+	['fairlightAudioMonitorTalkbackMuted']: {
 		options: {
 			state: TrueFalseToggle
 		}
 	}
-	[ActionId.FairlightAudioMonitorTalkbackGain]: {
+	['fairlightAudioMonitorTalkbackGain']: {
 		options: {
 			gain: number
 		} & FadeDurationFieldsType
 	}
-	[ActionId.FairlightAudioMonitorTalkbackGainDelta]: {
+	['fairlightAudioMonitorTalkbackGainDelta']: {
 		options: {
 			delta: number
 		} & FadeDurationFieldsType
@@ -145,24 +144,24 @@ export type AtemFairlightAudioActions = {
 	// 		state: TrueFalseToggle
 	// 	}
 	// }
-	[ActionId.FairlightAudioMonitorSidetoneGain]: {
+	['fairlightAudioMonitorSidetoneGain']: {
 		options: {
 			gain: number
 		} & FadeDurationFieldsType
 	}
-	[ActionId.FairlightAudioMonitorSidetoneGainDelta]: {
+	['fairlightAudioMonitorSidetoneGainDelta']: {
 		options: {
 			delta: number
 		} & FadeDurationFieldsType
 	}
 
-	[ActionId.FairlightAudioRouting]: {
+	['fairlightAudioRouting']: {
 		options: {
 			destinations: number[]
 			source: number
 		}
 	}
-	[ActionId.FairlightAudioRoutingVariables]: {
+	['fairlightAudioRoutingVariables']: {
 		options: {
 			destinations: string
 			source: string
@@ -178,31 +177,31 @@ export function createFairlightAudioActions(
 ): CompanionActionDefinitions<AtemFairlightAudioActions> {
 	if (!model.fairlightAudio) {
 		return {
-			[ActionId.FairlightAudioInputGain]: undefined,
-			[ActionId.FairlightAudioInputGainDelta]: undefined,
-			[ActionId.FairlightAudioInputDelay]: undefined,
-			[ActionId.FairlightAudioInputDelayDelta]: undefined,
-			[ActionId.FairlightAudioFaderGain]: undefined,
-			[ActionId.FairlightAudioFaderGainDelta]: undefined,
-			[ActionId.FairlightAudioMixOption]: undefined,
-			[ActionId.FairlightAudioResetPeaks]: undefined,
-			[ActionId.FairlightAudioResetSourcePeaks]: undefined,
-			[ActionId.FairlightAudioMasterGain]: undefined,
-			[ActionId.FairlightAudioMasterGainDelta]: undefined,
-			[ActionId.FairlightAudioMonitorSolo]: undefined,
-			[ActionId.FairlightAudioMonitorOutputGain]: undefined,
-			[ActionId.FairlightAudioMonitorOutputGainDelta]: undefined,
-			[ActionId.FairlightAudioMonitorMasterMuted]: undefined,
-			[ActionId.FairlightAudioMonitorMasterGain]: undefined,
-			[ActionId.FairlightAudioMonitorMasterGainDelta]: undefined,
-			[ActionId.FairlightAudioMonitorTalkbackMuted]: undefined,
-			[ActionId.FairlightAudioMonitorTalkbackGain]: undefined,
-			[ActionId.FairlightAudioMonitorTalkbackGainDelta]: undefined,
+			['fairlightAudioInputGain']: undefined,
+			['fairlightAudioInputGainDelta']: undefined,
+			['fairlightAudioInputDelay']: undefined,
+			['fairlightAudioInputDelayDelta']: undefined,
+			['fairlightAudioFaderGain']: undefined,
+			['fairlightAudioFaderGainDelta']: undefined,
+			['fairlightAudioMixOption']: undefined,
+			['fairlightAudioResetPeaks']: undefined,
+			['fairlightAudioResetSourcePeaks']: undefined,
+			['fairlightAudioMasterGain']: undefined,
+			['fairlightAudioMasterGainDelta']: undefined,
+			['fairlightAudioMonitorSolo']: undefined,
+			['fairlightAudioMonitorGain']: undefined,
+			['fairlightAudioMonitorGainDelta']: undefined,
+			['fairlightAudioMonitorMasterMuted']: undefined,
+			['fairlightAudioMonitorMasterGain']: undefined,
+			['fairlightAudioMonitorMasterGainDelta']: undefined,
+			['fairlightAudioMonitorTalkbackMuted']: undefined,
+			['fairlightAudioMonitorTalkbackGain']: undefined,
+			['fairlightAudioMonitorTalkbackGainDelta']: undefined,
 			// [ActionId.FairlightAudioMonitorSidetoneMuted]: undefined,
-			[ActionId.FairlightAudioMonitorSidetoneGain]: undefined,
-			[ActionId.FairlightAudioMonitorSidetoneGainDelta]: undefined,
-			[ActionId.FairlightAudioRouting]: undefined,
-			[ActionId.FairlightAudioRoutingVariables]: undefined,
+			['fairlightAudioMonitorSidetoneGain']: undefined,
+			['fairlightAudioMonitorSidetoneGainDelta']: undefined,
+			['fairlightAudioRouting']: undefined,
+			['fairlightAudioRoutingVariables']: undefined,
 		}
 	}
 
@@ -212,7 +211,7 @@ export function createFairlightAudioActions(
 	const audioInputFrameDelayOption = AtemAudioInputPicker(model, state.state, 'delay')
 
 	return {
-		[ActionId.FairlightAudioInputGain]: {
+		['fairlightAudioInputGain']: {
 			name: 'Fairlight Audio: Set input gain',
 			options: convertOptionsFields({
 				input: audioInputOption,
@@ -267,7 +266,7 @@ export function createFairlightAudioActions(
 				}
 			},
 		},
-		[ActionId.FairlightAudioInputGainDelta]: {
+		['fairlightAudioInputGainDelta']: {
 			name: 'Fairlight Audio: Adjust input gain',
 			options: convertOptionsFields({
 				input: audioInputOption,
@@ -298,7 +297,7 @@ export function createFairlightAudioActions(
 				}
 			},
 		},
-		[ActionId.FairlightAudioInputDelay]: audioInputFrameDelayOption
+		['fairlightAudioInputDelay']: audioInputFrameDelayOption
 			? {
 					name: 'Fairlight Audio: Set delay',
 					options: convertOptionsFields({
@@ -340,7 +339,7 @@ export function createFairlightAudioActions(
 					},
 				}
 			: undefined,
-		[ActionId.FairlightAudioInputDelayDelta]: audioInputFrameDelayOption
+		['fairlightAudioInputDelayDelta']: audioInputFrameDelayOption
 			? {
 					name: 'Fairlight Audio: Adjust delay',
 					options: convertOptionsFields({
@@ -378,7 +377,7 @@ export function createFairlightAudioActions(
 					},
 				}
 			: undefined,
-		[ActionId.FairlightAudioFaderGain]: {
+		['fairlightAudioFaderGain']: {
 			name: 'Fairlight Audio: Set fader gain',
 			options: convertOptionsFields({
 				input: audioInputOption,
@@ -433,7 +432,7 @@ export function createFairlightAudioActions(
 				}
 			},
 		},
-		[ActionId.FairlightAudioFaderGainDelta]: {
+		['fairlightAudioFaderGainDelta']: {
 			name: 'Fairlight Audio: Adjust fader gain',
 			options: convertOptionsFields({
 				input: audioInputOption,
@@ -464,7 +463,7 @@ export function createFairlightAudioActions(
 				}
 			},
 		},
-		[ActionId.FairlightAudioMixOption]: {
+		['fairlightAudioMixOption']: {
 			name: 'Fairlight Audio: Set input mix option',
 			options: convertOptionsFields({
 				input: audioInputOption,
@@ -546,7 +545,7 @@ export function createFairlightAudioActions(
 				}
 			},
 		},
-		[ActionId.FairlightAudioResetPeaks]: {
+		['fairlightAudioResetPeaks']: {
 			name: 'Fairlight Audio: Reset peaks',
 			options: convertOptionsFields({
 				reset: {
@@ -575,7 +574,7 @@ export function createFairlightAudioActions(
 				}
 			},
 		},
-		[ActionId.FairlightAudioResetSourcePeaks]: {
+		['fairlightAudioResetSourcePeaks']: {
 			name: 'Fairlight Audio: Reset Source peaks',
 			options: convertOptionsFields({
 				input: audioInputOption,
@@ -591,7 +590,7 @@ export function createFairlightAudioActions(
 				})
 			},
 		},
-		[ActionId.FairlightAudioMasterGain]: {
+		['fairlightAudioMasterGain']: {
 			name: 'Fairlight Audio: Set master gain',
 			options: convertOptionsFields({
 				gain: {
@@ -635,7 +634,7 @@ export function createFairlightAudioActions(
 				}
 			},
 		},
-		[ActionId.FairlightAudioMasterGainDelta]: {
+		['fairlightAudioMasterGainDelta']: {
 			name: 'Fairlight Audio: Adjust master gain',
 			options: convertOptionsFields({
 				delta: FaderLevelDeltaChoice,
@@ -660,7 +659,7 @@ export function createFairlightAudioActions(
 			},
 		},
 
-		[ActionId.FairlightAudioMonitorSolo]: model.fairlightAudio.monitor
+		['fairlightAudioMonitorSolo']: model.fairlightAudio.monitor
 			? {
 					name: 'Fairlight Audio: Solo source',
 					options: convertOptionsFields({
@@ -702,7 +701,7 @@ export function createFairlightAudioActions(
 				}
 			: undefined,
 
-		[ActionId.FairlightAudioMonitorOutputGain]: model.fairlightAudio.monitor
+		['fairlightAudioMonitorGain']: model.fairlightAudio.monitor
 			? {
 					name: 'Fairlight Audio: Set Monitor/Headphone fader gain',
 					options: convertOptionsFields({
@@ -748,7 +747,7 @@ export function createFairlightAudioActions(
 					},
 				}
 			: undefined,
-		[ActionId.FairlightAudioMonitorOutputGainDelta]: model.fairlightAudio.monitor
+		['fairlightAudioMonitorGainDelta']: model.fairlightAudio.monitor
 			? {
 					name: 'Fairlight Audio: Adjust Monitor/Headphone fader gain',
 					options: convertOptionsFields({
@@ -789,13 +788,11 @@ function HeadphoneMasterActions(
 ): CompanionActionDefinitions<
 	Pick<
 		AtemFairlightAudioActions,
-		| ActionId.FairlightAudioMonitorMasterMuted
-		| ActionId.FairlightAudioMonitorMasterGain
-		| ActionId.FairlightAudioMonitorMasterGainDelta
+		'fairlightAudioMonitorMasterMuted' | 'fairlightAudioMonitorMasterGain' | 'fairlightAudioMonitorMasterGainDelta'
 	>
 > {
 	return {
-		[ActionId.FairlightAudioMonitorMasterMuted]: model.fairlightAudio?.monitor
+		['fairlightAudioMonitorMasterMuted']: model.fairlightAudio?.monitor
 			? {
 					name: 'Fairlight Audio: Monitor/Headphone master muted',
 					options: convertOptionsFields({
@@ -828,7 +825,7 @@ function HeadphoneMasterActions(
 					},
 				}
 			: undefined,
-		[ActionId.FairlightAudioMonitorMasterGain]:
+		['fairlightAudioMonitorMasterGain']:
 			model.fairlightAudio?.monitor === 'split'
 				? {
 						name: 'Fairlight Audio: Set Monitor/Headphone master gain',
@@ -875,7 +872,7 @@ function HeadphoneMasterActions(
 						},
 					}
 				: undefined,
-		[ActionId.FairlightAudioMonitorMasterGainDelta]:
+		['fairlightAudioMonitorMasterGainDelta']:
 			model.fairlightAudio?.monitor === 'split'
 				? {
 						name: 'Fairlight Audio: Adjust Monitor/Headphone master gain',
@@ -912,13 +909,13 @@ function HeadphoneTalkbackActions(
 ): CompanionActionDefinitions<
 	Pick<
 		AtemFairlightAudioActions,
-		| ActionId.FairlightAudioMonitorTalkbackMuted
-		| ActionId.FairlightAudioMonitorTalkbackGain
-		| ActionId.FairlightAudioMonitorTalkbackGainDelta
+		| 'fairlightAudioMonitorTalkbackMuted'
+		| 'fairlightAudioMonitorTalkbackGain'
+		| 'fairlightAudioMonitorTalkbackGainDelta'
 	>
 > {
 	return {
-		[ActionId.FairlightAudioMonitorTalkbackMuted]: model.fairlightAudio?.monitor
+		['fairlightAudioMonitorTalkbackMuted']: model.fairlightAudio?.monitor
 			? {
 					name: 'Fairlight Audio: Monitor/Headphone talkback muted',
 					options: convertOptionsFields({
@@ -951,7 +948,7 @@ function HeadphoneTalkbackActions(
 					},
 				}
 			: undefined,
-		[ActionId.FairlightAudioMonitorTalkbackGain]:
+		['fairlightAudioMonitorTalkbackGain']:
 			model.fairlightAudio?.monitor === 'split'
 				? {
 						name: 'Fairlight Audio: Set Monitor/Headphone talkback gain',
@@ -998,7 +995,7 @@ function HeadphoneTalkbackActions(
 						},
 					}
 				: undefined,
-		[ActionId.FairlightAudioMonitorTalkbackGainDelta]:
+		['fairlightAudioMonitorTalkbackGainDelta']:
 			model.fairlightAudio?.monitor === 'split'
 				? {
 						name: 'Fairlight Audio: Adjust Monitor/Headphone talkback gain',
@@ -1036,7 +1033,7 @@ function HeadphoneSidetoneActions(
 	Pick<
 		AtemFairlightAudioActions,
 		// | ActionId.FairlightAudioMonitorSidetoneMuted
-		ActionId.FairlightAudioMonitorSidetoneGain | ActionId.FairlightAudioMonitorSidetoneGainDelta
+		'fairlightAudioMonitorSidetoneGain' | 'fairlightAudioMonitorSidetoneGainDelta'
 	>
 > {
 	return {
@@ -1079,7 +1076,7 @@ function HeadphoneSidetoneActions(
 					},
 			  }
 			: undefined, */
-		[ActionId.FairlightAudioMonitorSidetoneGain]:
+		['fairlightAudioMonitorSidetoneGain']:
 			model.fairlightAudio?.monitor === 'split'
 				? {
 						name: 'Fairlight Audio: Set Monitor/Headphone sidetone gain',
@@ -1126,7 +1123,7 @@ function HeadphoneSidetoneActions(
 						},
 					}
 				: undefined,
-		[ActionId.FairlightAudioMonitorSidetoneGainDelta]:
+		['fairlightAudioMonitorSidetoneGainDelta']:
 			model.fairlightAudio?.monitor === 'split'
 				? {
 						name: 'Fairlight Audio: Adjust Monitor/Headphone sidetone gain',
@@ -1160,16 +1157,16 @@ function AudioRoutingActions(
 	_transitions: AtemTransitions,
 	state: StateWrapper,
 ): CompanionActionDefinitions<
-	Pick<AtemFairlightAudioActions, ActionId.FairlightAudioRouting | ActionId.FairlightAudioRoutingVariables>
+	Pick<AtemFairlightAudioActions, 'fairlightAudioRouting' | 'fairlightAudioRoutingVariables'>
 > {
 	if (!model.fairlightAudio?.audioRouting)
 		return {
-			[ActionId.FairlightAudioRouting]: undefined,
-			[ActionId.FairlightAudioRoutingVariables]: undefined,
+			['fairlightAudioRouting']: undefined,
+			['fairlightAudioRoutingVariables']: undefined,
 		}
 
 	return {
-		[ActionId.FairlightAudioRouting]: {
+		['fairlightAudioRouting']: {
 			name: 'Fairlight Audio: Audio Routing',
 			description: 'Requires firmware 9.4+',
 			options: convertOptionsFields({
@@ -1192,7 +1189,7 @@ function AudioRoutingActions(
 				await atem?.sendCommands(commands)
 			},
 		},
-		[ActionId.FairlightAudioRoutingVariables]: {
+		['fairlightAudioRoutingVariables']: {
 			// TODO - merge this into the non-variables one
 			name: 'Fairlight Audio: Audio Routing from variables',
 			description: 'Requires firmware 9.4+',

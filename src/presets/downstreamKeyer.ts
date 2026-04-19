@@ -1,5 +1,4 @@
 import type { CompanionPresetGroup, CompanionButtonStyleProps } from '@companion-module/base'
-import { ActionId } from '../actions/ActionId.js'
 import { FeedbackId } from '../feedback/FeedbackId.js'
 import type { SourceInfo } from '../options/sources.js'
 import type { PresetsBuilderContext } from './context.js'
@@ -86,7 +85,7 @@ export function createDownstreamKeyerPresets(
 			{
 				down: [
 					{
-						actionId: ActionId.DSKOnAir,
+						actionId: 'dskOnAir',
 						options: {
 							onair: 'toggle',
 							key: { isExpression: true, value: '$(local:dsk)' },
@@ -130,7 +129,7 @@ export function createDownstreamKeyerPresets(
 			{
 				down: [
 					{
-						actionId: ActionId.DSKTie,
+						actionId: 'dskTie',
 						options: {
 							state: 'toggle',
 							key: { isExpression: true, value: '$(local:dsk)' },
@@ -175,7 +174,7 @@ export function createDownstreamKeyerPresets(
 			{
 				down: [
 					{
-						actionId: ActionId.DSKSource,
+						actionId: 'dskSource',
 						options: {
 							fill: { isExpression: true, value: '$(local:input)' },
 							cut: { isExpression: true, value: '$(local:input) + 1' },

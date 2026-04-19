@@ -1,7 +1,6 @@
 import { type Atem } from 'atem-connection'
 import { convertOptionsFields } from '../../options/util.js'
 import type { CompanionActionDefinition, CompanionActionDefinitions } from '@companion-module/base'
-import { ActionId } from '../ActionId.js'
 import type { StateWrapper } from '../../state.js'
 import { AtemCameraControlDirectCommandSender } from '@atem-connection/camera-control'
 import { CameraControlSourcePicker } from '../../options/cameraControl.js'
@@ -16,32 +15,32 @@ type RgbyAdjustmentProps = {
 }
 
 export type AtemCameraControlColorActions = {
-	[ActionId.CameraControlColorLiftAdjust]: {
+	['cameraControlColorLiftAdjust']: {
 		options: RgbyAdjustmentProps
 	}
-	[ActionId.CameraControlColorGammaAdjust]: {
+	['cameraControlColorGammaAdjust']: {
 		options: RgbyAdjustmentProps
 	}
-	[ActionId.CameraControlColorGainAdjust]: {
+	['cameraControlColorGainAdjust']: {
 		options: RgbyAdjustmentProps
 	}
-	[ActionId.CameraControlColorOffsetAdjust]: {
+	['cameraControlColorOffsetAdjust']: {
 		options: RgbyAdjustmentProps
 	}
-	[ActionId.CameraControlColorContrastAdjust]: {
+	['cameraControlColorContrastAdjust']: {
 		options: {
 			cameraId: number
 			contrast: number
 			pivot: number
 		}
 	}
-	[ActionId.CameraControlColorLumaMix]: {
+	['cameraControlColorLumaMix']: {
 		options: {
 			cameraId: number
 			lumaMix: number
 		}
 	}
-	[ActionId.CameraControlColorHueSaturationAdjust]: {
+	['cameraControlColorHueSaturationAdjust']: {
 		options: {
 			cameraId: number
 			hue: number
@@ -57,13 +56,13 @@ export function createCameraControlColorActions(
 ): CompanionActionDefinitions<AtemCameraControlColorActions> {
 	if (!config.enableCameraControl) {
 		return {
-			[ActionId.CameraControlColorLiftAdjust]: undefined,
-			[ActionId.CameraControlColorGammaAdjust]: undefined,
-			[ActionId.CameraControlColorGainAdjust]: undefined,
-			[ActionId.CameraControlColorOffsetAdjust]: undefined,
-			[ActionId.CameraControlColorContrastAdjust]: undefined,
-			[ActionId.CameraControlColorLumaMix]: undefined,
-			[ActionId.CameraControlColorHueSaturationAdjust]: undefined,
+			['cameraControlColorLiftAdjust']: undefined,
+			['cameraControlColorGammaAdjust']: undefined,
+			['cameraControlColorGainAdjust']: undefined,
+			['cameraControlColorOffsetAdjust']: undefined,
+			['cameraControlColorContrastAdjust']: undefined,
+			['cameraControlColorLumaMix']: undefined,
+			['cameraControlColorHueSaturationAdjust']: undefined,
 		}
 	}
 
@@ -125,24 +124,24 @@ export function createCameraControlColorActions(
 	})
 
 	return {
-		[ActionId.CameraControlColorLiftAdjust]: createRgbaAction(
+		['cameraControlColorLiftAdjust']: createRgbaAction(
 			'Camera Control: Color Lift Adjust',
 			async (cameraId, red, green, blue, luma) => commandSender?.colorLiftAdjust(cameraId, red, green, blue, luma),
 		),
-		[ActionId.CameraControlColorGammaAdjust]: createRgbaAction(
+		['cameraControlColorGammaAdjust']: createRgbaAction(
 			'Camera Control: Color Gamma Adjust',
 			async (cameraId, red, green, blue, luma) => commandSender?.colorGammaAdjust(cameraId, red, green, blue, luma),
 		),
-		[ActionId.CameraControlColorGainAdjust]: createRgbaAction(
+		['cameraControlColorGainAdjust']: createRgbaAction(
 			'Camera Control: Color Gain Adjust',
 			async (cameraId, red, green, blue, luma) => commandSender?.colorGainAdjust(cameraId, red, green, blue, luma),
 		),
-		[ActionId.CameraControlColorOffsetAdjust]: createRgbaAction(
+		['cameraControlColorOffsetAdjust']: createRgbaAction(
 			'Camera Control: Color Offset Adjust',
 			async (cameraId, red, green, blue, luma) => commandSender?.colorOffsetAdjust(cameraId, red, green, blue, luma),
 		),
 
-		[ActionId.CameraControlColorContrastAdjust]: {
+		['cameraControlColorContrastAdjust']: {
 			name: 'Camera Control: Contrast Adjust',
 			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
@@ -174,7 +173,7 @@ export function createCameraControlColorActions(
 			},
 		},
 
-		[ActionId.CameraControlColorLumaMix]: {
+		['cameraControlColorLumaMix']: {
 			name: 'Camera Control: Color LumaMix',
 			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
@@ -194,7 +193,7 @@ export function createCameraControlColorActions(
 				await commandSender?.colorLumaMix(options.cameraId, options.lumaMix)
 			},
 		},
-		[ActionId.CameraControlColorHueSaturationAdjust]: {
+		['cameraControlColorHueSaturationAdjust']: {
 			name: 'Camera Control: Color Hue & Saturation',
 			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),

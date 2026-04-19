@@ -1,7 +1,6 @@
 import { type Atem } from 'atem-connection'
 import { convertOptionsFields } from '../../options/util.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
-import { ActionId } from '../ActionId.js'
 import type { StateWrapper } from '../../state.js'
 import { AtemCameraControlDirectCommandSender } from '@atem-connection/camera-control'
 import { CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle } from '../../options/common.js'
@@ -9,18 +8,18 @@ import type { AtemConfig } from '../../config.js'
 import { CameraControlSourcePicker } from '../../options/cameraControl.js'
 
 export type AtemCameraControlLensActions = {
-	[ActionId.CameraControlLensFocus]: {
+	['cameraControlLensFocus']: {
 		options: {
 			cameraId: number
 			delta: number
 		}
 	}
-	[ActionId.CameraControlLensAutoFocus]: {
+	['cameraControlLensAutoFocus']: {
 		options: {
 			cameraId: number
 		}
 	}
-	[ActionId.CameraControlLensIris]: {
+	['cameraControlLensIris']: {
 		options: {
 			cameraId: number
 			isNormalised: boolean
@@ -28,24 +27,24 @@ export type AtemCameraControlLensActions = {
 			normalised: number
 		}
 	}
-	[ActionId.CameraControlIncrementLensIris]: {
+	['cameraControlIncrementLensIris']: {
 		options: {
 			cameraId: number
 			fStopIncrement: number
 		}
 	}
-	[ActionId.CameraControlLensAutoIris]: {
+	['cameraControlLensAutoIris']: {
 		options: {
 			cameraId: number
 		}
 	}
-	[ActionId.CameraControlLensOpticalImageStabilisation]: {
+	['cameraControlLensOpticalImageStabilisation']: {
 		options: {
 			cameraId: number
 			state: TrueFalseToggle
 		}
 	}
-	[ActionId.CameraControlLensZoom]: {
+	['cameraControlLensZoom']: {
 		options: {
 			cameraId: number
 			zoom: number
@@ -60,20 +59,20 @@ export function createCameraControlLensActions(
 ): CompanionActionDefinitions<AtemCameraControlLensActions> {
 	if (!config.enableCameraControl) {
 		return {
-			[ActionId.CameraControlLensFocus]: undefined,
-			[ActionId.CameraControlLensAutoFocus]: undefined,
-			[ActionId.CameraControlLensIris]: undefined,
-			[ActionId.CameraControlIncrementLensIris]: undefined,
-			[ActionId.CameraControlLensAutoIris]: undefined,
-			[ActionId.CameraControlLensOpticalImageStabilisation]: undefined,
-			[ActionId.CameraControlLensZoom]: undefined,
+			['cameraControlLensFocus']: undefined,
+			['cameraControlLensAutoFocus']: undefined,
+			['cameraControlLensIris']: undefined,
+			['cameraControlIncrementLensIris']: undefined,
+			['cameraControlLensAutoIris']: undefined,
+			['cameraControlLensOpticalImageStabilisation']: undefined,
+			['cameraControlLensZoom']: undefined,
 		}
 	}
 
 	const commandSender = atem && new AtemCameraControlDirectCommandSender(atem)
 
 	return {
-		[ActionId.CameraControlLensFocus]: {
+		['cameraControlLensFocus']: {
 			name: 'Camera Control: Focus adjust',
 			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
@@ -94,7 +93,7 @@ export function createCameraControlLensActions(
 			},
 		},
 
-		[ActionId.CameraControlLensAutoFocus]: {
+		['cameraControlLensAutoFocus']: {
 			name: 'Camera Control: Trigger Auto Focus',
 			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
@@ -106,7 +105,7 @@ export function createCameraControlLensActions(
 			},
 		},
 
-		[ActionId.CameraControlLensIris]: {
+		['cameraControlLensIris']: {
 			name: 'Camera Control: Iris',
 			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
@@ -151,7 +150,7 @@ export function createCameraControlLensActions(
 			},
 		},
 
-		[ActionId.CameraControlIncrementLensIris]: {
+		['cameraControlIncrementLensIris']: {
 			name: 'Camera Control: Increment Iris',
 			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
@@ -183,7 +182,7 @@ export function createCameraControlLensActions(
 			},
 		},
 
-		[ActionId.CameraControlLensAutoIris]: {
+		['cameraControlLensAutoIris']: {
 			name: 'Camera Control: Trigger Auto Iris',
 			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
@@ -193,7 +192,7 @@ export function createCameraControlLensActions(
 			},
 		},
 
-		[ActionId.CameraControlLensOpticalImageStabilisation]: {
+		['cameraControlLensOpticalImageStabilisation']: {
 			name: 'Camera Control: Set Optical Image Stabilisation enabled',
 			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
@@ -221,7 +220,7 @@ export function createCameraControlLensActions(
 			},
 		},
 
-		[ActionId.CameraControlLensZoom]: {
+		['cameraControlLensZoom']: {
 			name: 'Camera Control: Zoom (Continuous)',
 			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),

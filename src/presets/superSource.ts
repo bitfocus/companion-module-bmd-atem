@@ -1,5 +1,4 @@
 import type { CompanionPresetGroup, CompanionButtonStyleProps } from '@companion-module/base'
-import { ActionId } from '../actions/ActionId.js'
 import { FeedbackId } from '../feedback/FeedbackId.js'
 import type { SourceInfo } from '../options/sources.js'
 import type { PresetsBuilderContext } from './context.js'
@@ -80,7 +79,7 @@ export function createSuperSourcePresets(
 			{
 				down: [
 					{
-						actionId: ActionId.SuperSourceBoxOnAir,
+						actionId: 'setSsrcBoxEnable',
 						options: {
 							ssrcId: { isExpression: true, value: '$(local:ssrc) - 1' },
 							onair: 'toggle',
@@ -132,7 +131,7 @@ export function createSuperSourcePresets(
 			{
 				down: [
 					{
-						actionId: ActionId.SuperSourceBoxSource,
+						actionId: 'setSsrcBoxSource',
 						options: {
 							ssrcId: { isExpression: true, value: '$(local:ssrc) - 1' },
 							source: { isExpression: true, value: '$(local:input)' },

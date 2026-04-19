@@ -2,7 +2,6 @@ import { VideoState, type Atem } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
-import { ActionId } from './ActionId.js'
 import type { SuperSource } from 'atem-connection/dist/state/video/index.js'
 import { CHOICES_KEYTRANS, type TrueFalseToggle, resolveTrueFalseToggle } from '../options/common.js'
 import { getSuperSourceBox, type StateWrapper } from '../state.js'
@@ -23,33 +22,33 @@ import {
 import { AtemTransitionAnimationOptions } from '../options/fade.js'
 
 export type AtemSuperSourceActions = {
-	[ActionId.SuperSourceArt]: {
+	['ssrcArt']: {
 		options: {
 			ssrcId: number
 		} & AtemSuperSourceArtProperties
 	}
-	[ActionId.SuperSourceBoxSource]: {
+	['setSsrcBoxSource']: {
 		options: {
 			ssrcId: number
 			boxIndex: number
 			source: number
 		}
 	}
-	[ActionId.SuperSourceBoxOnAir]: {
+	['setSsrcBoxEnable']: {
 		options: {
 			ssrcId: number
 			boxIndex: number
 			onair: TrueFalseToggle
 		}
 	}
-	[ActionId.SuperSourceBoxProperties]: {
+	['setSsrcBoxProperties']: {
 		options: {
 			ssrcId: number
 			boxIndex: number
 		} & TransitionOptions &
 			AtemSuperSourceBoxProperties
 	}
-	[ActionId.SuperSourceBoxPropertiesDelta]: {
+	['setSsrcBoxPropertiesDelta']: {
 		options: {
 			ssrcId: number
 			boxIndex: number
@@ -74,15 +73,15 @@ export function createSuperSourceActions(
 ): CompanionActionDefinitions<AtemSuperSourceActions> {
 	if (!model.SSrc) {
 		return {
-			[ActionId.SuperSourceArt]: undefined,
-			[ActionId.SuperSourceBoxSource]: undefined,
-			[ActionId.SuperSourceBoxOnAir]: undefined,
-			[ActionId.SuperSourceBoxProperties]: undefined,
-			[ActionId.SuperSourceBoxPropertiesDelta]: undefined,
+			['ssrcArt']: undefined,
+			['setSsrcBoxSource']: undefined,
+			['setSsrcBoxEnable']: undefined,
+			['setSsrcBoxProperties']: undefined,
+			['setSsrcBoxPropertiesDelta']: undefined,
 		}
 	}
 	return {
-		[ActionId.SuperSourceArt]: {
+		['ssrcArt']: {
 			name: 'SuperSource: Set art properties',
 			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
@@ -133,8 +132,8 @@ export function createSuperSourceActions(
 				}
 			},
 		},
-		[ActionId.SuperSourceBoxSource]: {
-			// TODO - combine into ActionId.SuperSourceBoxProperties
+		['setSsrcBoxSource']: {
+			// TODO - combine into 'setSsrcBoxProperties'
 			name: 'SuperSource: Set box source',
 			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
@@ -164,8 +163,8 @@ export function createSuperSourceActions(
 				}
 			},
 		},
-		[ActionId.SuperSourceBoxOnAir]: {
-			// TODO - combine into ActionId.SuperSourceBoxProperties
+		['setSsrcBoxEnable']: {
+			// TODO - combine into 'setSsrcBoxProperties'
 			name: 'SuperSource: Set box enabled',
 			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
@@ -208,7 +207,7 @@ export function createSuperSourceActions(
 				}
 			},
 		},
-		[ActionId.SuperSourceBoxProperties]: {
+		['setSsrcBoxProperties']: {
 			name: 'SuperSource: Change box properties',
 			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
@@ -282,7 +281,7 @@ export function createSuperSourceActions(
 				}
 			},
 		},
-		[ActionId.SuperSourceBoxPropertiesDelta]: {
+		['setSsrcBoxPropertiesDelta']: {
 			name: 'SuperSource: Offset box properties',
 			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),

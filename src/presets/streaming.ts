@@ -1,5 +1,4 @@
 import { Enums } from 'atem-connection'
-import { ActionId } from '../actions/ActionId.js'
 import { FeedbackId } from '../feedback/FeedbackId.js'
 import type { PresetsBuilderContext } from './context.js'
 
@@ -58,7 +57,7 @@ export function createStreamingPresets(context: PresetsBuilderContext): void {
 			{
 				down: [
 					{
-						actionId: ActionId.StreamStartStop,
+						actionId: 'streamStartStop',
 						options: {
 							stream: 'toggle',
 						},
