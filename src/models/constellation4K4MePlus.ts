@@ -37,7 +37,7 @@ export const ModelSpecConstellation4K4MEPlus: ModelSpec = {
 	displayClock: 1,
 	media: {
 		players: 4,
-		stills: 64,
+		stills: 96, // Online says 64, but a capture shows 96
 		clips: 4,
 		captureStills: true,
 	},
@@ -57,9 +57,10 @@ export const ModelSpecConstellation4K4MEPlus: ModelSpec = {
 		.addMediaPlayers(4)
 		.addUpstreamKeyMasks(16)
 		.addDownstreamKeyMasksAndClean(4)
-		.addAuxiliaryOutputs(24)
+		.addAuxiliaryOutputs(48)
 		.addSuperSource(2)
 		.addProgramPreview()
+		.addMultiviewers(4)
 		.generate(),
 	fairlightAudio: {
 		monitor: 'split',
