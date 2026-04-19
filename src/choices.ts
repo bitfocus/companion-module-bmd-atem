@@ -400,9 +400,11 @@ export function GetAudioInputsList(model: ModelSpec, state: AtemState, subset?: 
 			case Enums.ExternalPortType.HDMI:
 				sources.push(getSource(input.id, input.id, `Input ${input.id}`))
 				break
-			case Enums.ExternalPortType.XLR:
-				sources.push(getSource(input.id, undefined, `XLR`))
+			case Enums.ExternalPortType.XLR: {
+				const offset = input.id - 1000
+				sources.push(getSource(input.id, undefined, offset > 1 ? `XLR ${offset}` : `XLR`))
 				break
+			}
 			case Enums.ExternalPortType.AESEBU:
 				sources.push(getSource(input.id, undefined, `AES/EBU`))
 				break
@@ -411,7 +413,12 @@ export function GetAudioInputsList(model: ModelSpec, state: AtemState, subset?: 
 				break
 			case Enums.ExternalPortType.Internal: {
 				const mpId = input.id - 2000
-				sources.push(getSource(input.id, 3000 + mpId * 10, `Media Player ${mpId}`))
+				if (mpId === 51) {
+					// No way to discover this other than to know it :(
+					sources.push(getSource(input.id, undefined, `Thunderbolt`))
+				} else {
+					sources.push(getSource(input.id, 3000 + mpId * 10, `Media Player ${mpId}`))
+				}
 				break
 			}
 			case Enums.ExternalPortType.TSJack: {
