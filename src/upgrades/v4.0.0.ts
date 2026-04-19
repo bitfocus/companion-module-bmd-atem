@@ -906,6 +906,7 @@ const feedbackFixupRules: Record<string, FeedbackFixupRule> = {
 		options: {
 			source: { transform: { type: 'number', zeroBased: false, variables: true } },
 			isClip: { newName: 'defaultClip', transform: { type: 'default', value: false } },
+			showStatus: { transform: { type: 'default', value: true } },
 		},
 	},
 	mediaPlayerSource: {

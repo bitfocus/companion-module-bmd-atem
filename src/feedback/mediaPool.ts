@@ -17,6 +17,7 @@ export type AtemMediaPoolFeedbacks = {
 		options: MediaPoolSourceOptions & {
 			position: 'top' | 'center' | 'bottom'
 			crop: 'none' | 'left' | 'center' | 'right'
+			showStatus: boolean
 		}
 	}
 }
@@ -68,6 +69,12 @@ export function createMediaPoolFeedbacks(
 				...AtemMediaPlayerSourcePickers(model, state.state),
 
 				...cropAndPositionOptions,
+				showStatus: {
+					id: 'showStatus',
+					type: 'checkbox',
+					label: 'Show status text',
+					default: true,
+				},
 			}),
 			callback: async ({ id, options, previousOptions, image }) => {
 				const defaultClips = model.media.clips > 0 && options.defaultClip
@@ -91,6 +98,8 @@ export function createMediaPoolFeedbacks(
 
 					buttonHeight: image.height,
 					buttonWidth: image.width,
+
+					showStatus: options.showStatus,
 				}
 
 				return executePreviewFeedback(state, previewOptions, source)
@@ -116,7 +125,7 @@ async function executePreviewFeedback(
 	state.mediaPoolCache.ensureLoaded(source)
 
 	const isSlotOccupied = state.mediaPoolCache.isSlotOccupied(source)
-	if (!isSlotOccupied) {
+	if (!isSlotOccupied || !previewOptions.showStatus) {
 		return {}
 	}
 

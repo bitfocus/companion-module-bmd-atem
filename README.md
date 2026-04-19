@@ -43,6 +43,7 @@ Make sure to backup your config before updating to this version!
 - Missing audio delay for Constellation models
 - Fairlight input pan
 - Mini Extreme ISO G2 audio channel labelling
+- Allow disabling status text for media pool previews
 
 ## v3.21.0
 

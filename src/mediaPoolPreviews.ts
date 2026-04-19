@@ -8,6 +8,8 @@ export interface MediaPoolPreviewOptions {
 	crop: 'none' | 'left' | 'center' | 'right'
 	buttonWidth: number
 	buttonHeight: number
+
+	showStatus: boolean
 }
 function getPreviewOptionsKey(options: MediaPoolPreviewOptions): string {
 	let str = `${options.buttonWidth}-${options.buttonHeight}-${options.crop}`
