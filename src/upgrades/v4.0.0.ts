@@ -835,7 +835,7 @@ const feedbackFixupRules: Record<string, FeedbackFixupRule> = {
 	ssrcArtPropertiesVariables: {
 		newType: 'ssrc_art_properties',
 		options: {
-			ssrcId: { transform: { type: 'number', zeroBased: true, variables: false, defaultValue: 1 } },
+			ssrcId: { transform: { type: 'number', zeroBased: false, variables: false, defaultValue: 1 } },
 			fill: { transform: { type: 'number', zeroBased: false, variables: true } },
 			key: { transform: { type: 'number', zeroBased: false, variables: true } },
 			artOption: { transform: { type: 'default', value: 'foreground' } },
@@ -891,6 +891,7 @@ const feedbackFixupRules: Record<string, FeedbackFixupRule> = {
 	mediaPoolPreviewVariables: {
 		newType: 'mediaPoolPreview',
 		options: {
+			source: { transform: { type: 'number', zeroBased: false, variables: true } },
 			isClip: { newName: 'defaultClip', transform: { type: 'default', value: false } },
 		},
 	},
@@ -901,7 +902,7 @@ const feedbackFixupRules: Record<string, FeedbackFixupRule> = {
 			defaultClip: { transform: { type: 'default', value: false } },
 		},
 	},
-	mediaPlayerSourceVariables: {
+	mediaPlayerSourceVariables2: {
 		newType: 'mediaPlayerSource',
 		options: {
 			mediaplayer: { transform: { type: 'number', zeroBased: false, variables: true } },
