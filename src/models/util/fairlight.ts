@@ -12,14 +12,17 @@ export const AUDIO_FAIRLIGHT_INPUT_XLR2: AudioFairlightInputInfo = {
 export const AUDIO_FAIRLIGHT_INPUT_RCA: AudioFairlightInputInfo = {
 	id: 1201,
 	portType: Enums.ExternalPortType.RCA,
+	maxDelay: 8,
 }
 export const AUDIO_FAIRLIGHT_INPUT_TS_JACK: AudioFairlightInputInfo = {
 	id: 1301,
 	portType: Enums.ExternalPortType.TSJack,
+	maxDelay: 8,
 }
 export const AUDIO_FAIRLIGHT_INPUT_TRS_JACK: AudioFairlightInputInfo = {
 	id: 1401,
 	portType: Enums.ExternalPortType.TRSJack,
+	maxDelay: 8,
 }
 
 export const AUDIO_FAIRLIGHT_INPUT_MINI_TS_JACKS: AudioFairlightInputInfo[] = [

@@ -36,6 +36,7 @@ To add a new model to the list:
 
 - Sanitise recording filenames
 - Constellation 4ME 4K Plus inaccuracies
+- Missing audio delay for Constellation models
 
 ## v3.21.0
 
