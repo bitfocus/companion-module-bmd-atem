@@ -1,15 +1,13 @@
 {
-	"extends": "@companion-module/tools/tsconfig/node22/recommended.json",
+	"extends": "@companion-module/tools/tsconfig/node22/recommended-esm.json",
 	"include": ["src/**/*.ts"],
 	"exclude": ["node_modules/**", "src/**/*spec.ts", "src/**/__tests__/*", "src/**/__mocks__/*"],
 	"compilerOptions": {
 		"outDir": "./dist",
-		"baseUrl": "./",
-		"paths": {
-			"*": ["./node_modules/*"]
-		},
+		"rootDir": "./src",
 		"module": "node20",
 		"moduleResolution": "node16",
-		"verbatimModuleSyntax": true
+		"verbatimModuleSyntax": true,
+		"alwaysStrict": true
 	}
 }
