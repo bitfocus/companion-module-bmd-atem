@@ -2,7 +2,7 @@ import { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
 import type { ModelSpec } from '../models/index.js'
 import { FeedbackId } from './FeedbackId.js'
-import { CompanionFeedbackDefinitions } from '@companion-module/base'
+import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { StateWrapper } from '../state.js'
 
 export type AtemRecordingFeedbacks = {

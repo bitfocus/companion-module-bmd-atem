@@ -15,7 +15,7 @@ import { AtemTransitionAnimationOptions } from '../../options/fade.js'
 import { AtemMEPicker } from '../../options/mixEffect.js'
 import {
 	AtemFlyKeyKeyFramePicker,
-	FlyKeyKeyFrameString,
+	type FlyKeyKeyFrameString,
 	flyKeyKeyFrameStringToEnum,
 } from '../../options/upstreamKeyer.js'
 

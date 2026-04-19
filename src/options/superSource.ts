@@ -4,12 +4,12 @@ import {
 	type CompanionInputFieldDropdown,
 	type CompanionInputFieldCheckbox,
 	assertNever,
-	DropdownChoice,
+	type DropdownChoice,
 } from '@companion-module/base'
-import { AtemState, Enums } from 'atem-connection'
-import { TrueFalseToggle, CHOICES_KEYTRANS, GetSourcesListForType } from '../choices.js'
-import { WithProperties, SourcesToChoices, WithDropdownPropertiesPicker } from './util.js'
-import { ModelSpec } from '../models/types.js'
+import { type AtemState, Enums } from 'atem-connection'
+import { type TrueFalseToggle, CHOICES_KEYTRANS, GetSourcesListForType } from '../choices.js'
+import { type WithProperties, SourcesToChoices, WithDropdownPropertiesPicker } from './util.js'
+import type { ModelSpec } from '../models/types.js'
 import { compact, iterateTimes } from '../util.js'
 
 export function AtemSuperSourceIdPicker(model: ModelSpec): CompanionInputFieldDropdown<'ssrcId'> {

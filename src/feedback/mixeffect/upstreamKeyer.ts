@@ -3,14 +3,14 @@ import { convertOptionsFields } from '../../options/util.js'
 import { AtemUSKPicker } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { FeedbackId } from '../FeedbackId.js'
-import { CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
+import type { CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
 import { getUSK, type StateWrapper } from '../../state.js'
 import { CHOICES_CURRENTKEYFRAMES } from '../../choices.js'
 import { AtemMEPicker } from '../../options/mixEffect.js'
 import {
 	AtemUpstreamKeyerTypePicker,
 	upstreamKeyerTypeEnumToString,
-	UpstreamKeyerTypeString,
+	type UpstreamKeyerTypeString,
 	upstreamKeyerTypeStringToEnum,
 } from '../../options/upstreamKeyer.js'
 import { AtemKeyFillSourcePicker } from '../../options/commonKeyer.js'

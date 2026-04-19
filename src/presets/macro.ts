@@ -1,4 +1,4 @@
-import { CompanionPresetGroup } from '@companion-module/base'
+import type { CompanionPresetGroup } from '@companion-module/base'
 import { ActionId } from '../actions/ActionId.js'
 import { FeedbackId } from '../feedback/FeedbackId.js'
 import { MacroFeedbackType } from '../feedback/macro.js'

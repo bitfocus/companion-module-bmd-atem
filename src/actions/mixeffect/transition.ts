@@ -6,7 +6,7 @@ import {
 	AtemTransitionSelectComponentsPickers,
 	AtemTransitionSelectionComponentPicker,
 	AtemTransitionSelectionPicker,
-	TransitionSelectionComponent,
+	type TransitionSelectionComponent,
 } from '../../input.js'
 import type { ModelSpec } from '../../models/index.js'
 import { ActionId } from '../ActionId.js'
@@ -24,7 +24,7 @@ import {
 	AtemMEPicker,
 	AtemTransitionStylePicker,
 	transitionStyleEnumToString,
-	TransitionStyleString,
+	type TransitionStyleString,
 	transitionStyleStringToEnum,
 } from '../../options/mixEffect.js'
 import { AtemRatePicker } from '../../options/common.js'

@@ -15,7 +15,7 @@ import type { AtemTransitions, FadeDurationFieldsType } from '../transitions.js'
 import {
 	CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION,
 	CHOICES_ON_OFF_TOGGLE,
-	FairlightMixOption2,
+	type FairlightMixOption2,
 	type TrueFalseToggle,
 } from '../choices.js'
 import type { StateWrapper } from '../state.js'

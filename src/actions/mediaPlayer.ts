@@ -6,7 +6,11 @@ import { ActionId } from './ActionId.js'
 import { getMediaPlayer } from 'atem-connection/dist/state/util.js'
 import { AtemMediaPlayerPicker } from '../input.js'
 import type { StateWrapper } from '../state.js'
-import { AtemMediaPlayerSourcePickers, MediaPoolSourceOptions, parseMediaPoolSource } from '../options/mediaPool.js'
+import {
+	AtemMediaPlayerSourcePickers,
+	type MediaPoolSourceOptions,
+	parseMediaPoolSource,
+} from '../options/mediaPool.js'
 
 export type AtemMediaPlayerActions = {
 	[ActionId.MediaPlayerSource]: {

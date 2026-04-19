@@ -1,6 +1,6 @@
 import type { AtemState } from 'atem-connection'
 import type { ModelSpec } from '../models/types.js'
-import { CompanionInputFieldDropdown } from '@companion-module/base'
+import type { CompanionInputFieldDropdown } from '@companion-module/base'
 import { iterateTimes } from '../util.js'
 
 export function AtemMacroPicker<TId extends string>(

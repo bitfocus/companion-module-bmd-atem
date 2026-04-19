@@ -4,7 +4,7 @@ import { AudioRoutingChannelsNames } from './choices.js'
 import { combineInputId } from './models/util/audioRouting.js'
 import type { AtemSchema } from './schema.js'
 import type { AtemConfig } from './config.js'
-import { TransitionSelectionComponent } from './input.js'
+import type { TransitionSelectionComponent } from './input.js'
 
 export const CLASSIC_AUDIO_MIN_GAIN = -60 // The minimum value to consider as valid for classic audio gain
 

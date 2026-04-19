@@ -1,11 +1,15 @@
 import { convertOptionsFields } from '../options/util.js'
-import { CompanionFeedbackDefinitions } from '@companion-module/base'
+import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { FeedbackId } from './FeedbackId.js'
 import type { StateWrapper } from '../state.js'
 import type { MediaPoolPreviewOptions, SourceDefinition } from '../mediaPoolPreviews.js'
 import type { CompanionAdvancedFeedbackResult, CompanionInputFieldDropdown } from '@companion-module/base'
-import { AtemMediaPlayerSourcePickers, MediaPoolSourceOptions, parseMediaPoolSource } from '../options/mediaPool.js'
+import {
+	AtemMediaPlayerSourcePickers,
+	type MediaPoolSourceOptions,
+	parseMediaPoolSource,
+} from '../options/mediaPool.js'
 import { isEqual } from 'lodash-es'
 
 export type AtemMediaPoolFeedbacks = {

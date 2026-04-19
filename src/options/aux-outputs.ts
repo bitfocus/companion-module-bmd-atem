@@ -2,7 +2,7 @@ import type { CompanionInputFieldDropdown } from '@companion-module/base'
 import type { ModelSpec } from '../models/types.js'
 import { GetSourcesListForType } from '../choices.js'
 import { SourcesToChoices } from './util.js'
-import { AtemState } from 'atem-connection'
+import type { AtemState } from 'atem-connection'
 
 export function AtemAuxPicker(model: ModelSpec): CompanionInputFieldDropdown<'aux'> {
 	return {

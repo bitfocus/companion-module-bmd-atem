@@ -1,12 +1,12 @@
 import type { ModelSpec } from '../models/index.js'
 import { FeedbackId } from './FeedbackId.js'
-import { assertNever, CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
+import { assertNever, type CompanionFeedbackDefinitions, type JsonValue } from '@companion-module/base'
 import { getMultiviewer, getMultiviewerWindow, type StateWrapper } from '../state.js'
 import { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
 import {
 	AtemMultiviewerQuadrantStatePicker,
-	MultiviewerQuadrantState,
+	type MultiviewerQuadrantState,
 	multiviewerQuadrantStateFromLayout,
 	multiviewerQuadrantStateStringToState,
 	AtemMultiviewSourcePicker,

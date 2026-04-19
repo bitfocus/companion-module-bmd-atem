@@ -1,5 +1,4 @@
-import type { ExpressionOrValue } from '@companion-module/base'
-import { JsonValue } from 'type-fest'
+import type { ExpressionOrValue, JsonValue } from '@companion-module/base'
 
 export function OffsetNumericExpressionOrValueByX(
 	input: ExpressionOrValue<JsonValue | undefined> | undefined,

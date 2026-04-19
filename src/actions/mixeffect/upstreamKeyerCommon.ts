@@ -16,7 +16,7 @@ import {
 	AtemUpstreamKeyerTypePicker,
 	AtemUSKFlyKeyPropertiesPickers,
 	upstreamKeyerTypeEnumToString,
-	UpstreamKeyerTypeString,
+	type UpstreamKeyerTypeString,
 	upstreamKeyerTypeStringToEnum,
 } from '../../options/upstreamKeyer.js'
 import { MaskPropertiesPickers } from '../../options/common.js'

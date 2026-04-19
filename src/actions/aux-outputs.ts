@@ -4,7 +4,7 @@ import { ActionId } from './ActionId.js'
 import { AtemAuxPicker, AtemAuxSourcePicker } from '../options/aux-outputs.js'
 import type { StateWrapper } from '../state.js'
 import { convertOptionsFields } from '../options/util.js'
-import { CompanionActionDefinitions } from '@companion-module/base'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 
 export type AtemAuxOutputActions = {
 	[ActionId.Aux]: {

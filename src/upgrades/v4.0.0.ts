@@ -1,7 +1,7 @@
 import {
-	ExpressionOrValue,
 	FixupBooleanOrVariablesValueToExpressions,
 	FixupNumericOrVariablesValueToExpressions,
+	type ExpressionOrValue,
 	type CompanionStaticUpgradeResult,
 	type CompanionStaticUpgradeScript,
 	type JsonValue,
@@ -580,6 +580,26 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 	},
 
 	cameraControlDisplayColorBars: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	cameraControlDisplayFocusAssist: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	cameraControlDisplayFalseColor: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	cameraControlDisplayZebra: {
+		options: {
+			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
+		},
+	},
+	cameraControlOutputStatusOverlay: {
 		options: {
 			cameraId: { transform: { type: 'number', zeroBased: false, variables: true } },
 		},

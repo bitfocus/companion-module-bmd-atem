@@ -1,4 +1,4 @@
-import { CompanionPresetSection, type CompanionPresetDefinitions } from '@companion-module/base'
+import type { CompanionPresetSection, CompanionPresetDefinitions } from '@companion-module/base'
 import { type AtemState } from 'atem-connection'
 import { GetSourcesListForType } from '../choices.js'
 import { PresetStyleName } from '../config.js'
@@ -17,7 +17,7 @@ import { createAuxOutputPresets } from './aux-outputs.js'
 import { createUpstreamKeyerPresets } from './mixeffect/upstreamKeyer.js'
 import { createDownstreamKeyerPresets } from './downstreamKeyer.js'
 import type { AtemSchema } from '../schema.js'
-import { PresetsBuilderContext } from './context.js'
+import type { PresetsBuilderContext } from './context.js'
 
 const rateOptions = [12, 15, 25, 30, 37, 45, 50, 60]
 

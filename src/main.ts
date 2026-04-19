@@ -24,12 +24,13 @@ import { AtemCameraControlStateBuilder, createEmptyState } from '@atem-connectio
 import { decodeImageFromAtem } from '@atem-connection/image-tools'
 import { updateCameraControlVariables } from './variables/cameraControl.js'
 import { updateTimecodeVariables } from './variables/timecode.js'
-import { AtemSchema } from './schema.js'
+import type { AtemSchema } from './schema.js'
+import type { VariablesSchema } from './variables/schema.js'
 
 const { Atem, AtemConnectionStatus, AtemStateUtil } = AtemPkg
 
+// eslint-disable-next-line n/no-extraneous-import
 import { ThreadedClassManager, RegisterExitHandlers } from 'threadedclass'
-import { VariablesSchema } from './variables/schema.js'
 
 // HACK: This stops it from registering an unhandledException handler, as that causes companion to exit on error
 ThreadedClassManager.handleExit = RegisterExitHandlers.NO

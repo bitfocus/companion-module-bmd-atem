@@ -1,7 +1,7 @@
 import {
 	assertNever,
-	CompanionPresetGroup,
-	DropdownChoice,
+	type CompanionPresetGroup,
+	type DropdownChoice,
 	type CompanionButtonStyleProps,
 } from '@companion-module/base'
 import { ActionId } from '../../actions/ActionId.js'

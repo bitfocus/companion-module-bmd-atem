@@ -1,7 +1,7 @@
 import type { ModelSpec } from '../models/index.js'
 import { convertOptionsFields } from '../options/util.js'
 import { FeedbackId } from './FeedbackId.js'
-import { CompanionFeedbackDefinitions } from '@companion-module/base'
+import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { AtemKeyFillSourcePicker } from '../options/commonKeyer.js'
 import { getDSK, type StateWrapper } from '../state.js'
 import { AtemDSKPicker } from '../options/downstreamKeyer.js'

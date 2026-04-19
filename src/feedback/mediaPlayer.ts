@@ -3,9 +3,13 @@ import { convertOptionsFields } from '../options/util.js'
 import { AtemMediaPlayerPicker } from '../input.js'
 import type { ModelSpec } from '../models/index.js'
 import { FeedbackId } from './FeedbackId.js'
-import { CompanionFeedbackDefinitions } from '@companion-module/base'
+import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { StateWrapper } from '../state.js'
-import { AtemMediaPlayerSourcePickers, MediaPoolSourceOptions, parseMediaPoolSource } from '../options/mediaPool.js'
+import {
+	AtemMediaPlayerSourcePickers,
+	type MediaPoolSourceOptions,
+	parseMediaPoolSource,
+} from '../options/mediaPool.js'
 
 export type AtemMediaPlayerFeedbacks = {
 	[FeedbackId.MediaPlayerSource]: {

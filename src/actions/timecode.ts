@@ -1,13 +1,13 @@
 import type { Atem } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
-import { JsonValue, type CompanionActionDefinitions } from '@companion-module/base'
+import type { JsonValue, CompanionActionDefinitions } from '@companion-module/base'
 import { ActionId } from './ActionId.js'
 import type { StateWrapper } from '../state.js'
 import type { InstanceBaseExt } from '../util.js'
 import { formatDurationSeconds } from '../variables/util.js'
 import {
 	AtemTimecodeModePicker,
-	TimecodeMode,
+	type TimecodeMode,
 	timecodeModeToEnum,
 	upstreamKeyerTypeEnumToString,
 } from '../options/timecode.js'

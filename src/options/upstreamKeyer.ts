@@ -1,11 +1,11 @@
 import {
 	assertNever,
-	DropdownChoice,
+	type DropdownChoice,
 	type JsonValue,
 	type CompanionInputFieldDropdown,
-	CompanionInputFieldMultiDropdown,
-	CompanionInputFieldCheckbox,
-	CompanionInputFieldNumber,
+	type CompanionInputFieldMultiDropdown,
+	type CompanionInputFieldCheckbox,
+	type CompanionInputFieldNumber,
 } from '@companion-module/base'
 import { Enums } from 'atem-connection'
 import { stringifyValueAlways } from '../util.js'

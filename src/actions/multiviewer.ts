@@ -3,10 +3,10 @@ import type { ModelSpec } from '../models/index.js'
 import { ActionId } from './ActionId.js'
 import { getMultiviewer, getMultiviewerWindow, type StateWrapper } from '../state.js'
 import { convertOptionsFields } from '../options/util.js'
-import { assertNever, CompanionActionDefinitions, JsonValue } from '@companion-module/base'
+import { assertNever, type CompanionActionDefinitions, type JsonValue } from '@companion-module/base'
 import {
 	AtemMultiviewerQuadrantStatePicker,
-	MultiviewerQuadrantState,
+	type MultiviewerQuadrantState,
 	multiviewerQuadrantStateFromLayout,
 	multiviewerQuadrantStateStringToState,
 	AtemMultiviewerPicker,

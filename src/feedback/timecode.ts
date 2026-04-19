@@ -1,7 +1,7 @@
 import type { ModelSpec } from '../models/index.js'
 import { convertOptionsFields } from '../options/util.js'
 import { FeedbackId } from './FeedbackId.js'
-import { CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
+import type { CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
 import type { StateWrapper } from '../state.js'
 import type { AtemConfig } from '../config.js'
 import { AtemTimecodeModePicker, timecodeModeToEnum, upstreamKeyerTypeEnumToString } from '../options/timecode.js'

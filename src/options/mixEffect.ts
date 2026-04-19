@@ -1,4 +1,9 @@
-import { assertNever, JsonValue, type CompanionInputFieldDropdown, type DropdownChoice } from '@companion-module/base'
+import {
+	assertNever,
+	type JsonValue,
+	type CompanionInputFieldDropdown,
+	type DropdownChoice,
+} from '@companion-module/base'
 import type { ModelSpec } from '../models/types.js'
 import { iterateTimes, stringifyValueAlways } from '../util.js'
 import { GetSourcesListForType } from '../choices.js'

@@ -2,7 +2,7 @@ import { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
 import type { ModelSpec } from '../models/index.js'
 import { FeedbackId } from './FeedbackId.js'
-import { CompanionFeedbackDefinitions } from '@companion-module/base'
+import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION } from '../choices.js'
 import { compareNumber, NumberComparitor, parseAudioRoutingStringSingle } from '../util.js'
 import {
@@ -336,19 +336,6 @@ export function createFairlightAudioFeedbacks(
 							return !soloState?.solo
 						} else {
 							return !!soloState?.solo && soloState?.index === options.input && soloState?.source === options.source
-						}
-					},
-					learn: ({ options }) => {
-						const audioChannels = state.state.fairlight?.inputs ?? {}
-						const audioSources = audioChannels[options.input]?.sources ?? {}
-						const source = audioSources[options.source]
-
-						if (source?.properties) {
-							return {
-								gain: source.properties.faderGain / 100,
-							}
-						} else {
-							return undefined
 						}
 					},
 				}

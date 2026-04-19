@@ -15,20 +15,28 @@ export type AtemCameraControlDisplayActions = {
 		}
 	}
 	[ActionId.CameraControlDisplayFocusAssist]: {
-		cameraId: string
-		state: TrueFalseToggle
+		options: {
+			cameraId: number
+			state: TrueFalseToggle
+		}
 	}
 	[ActionId.CameraControlDisplayFalseColor]: {
-		cameraId: string
-		state: TrueFalseToggle
+		options: {
+			cameraId: number
+			state: TrueFalseToggle
+		}
 	}
 	[ActionId.CameraControlDisplayZebra]: {
-		cameraId: string
-		state: TrueFalseToggle
+		options: {
+			cameraId: number
+			state: TrueFalseToggle
+		}
 	}
 	[ActionId.CameraControlOutputStatusOverlay]: {
-		cameraId: string
-		state: TrueFalseToggle
+		options: {
+			cameraId: number
+			state: TrueFalseToggle
+		}
 	}
 }
 
@@ -80,7 +88,7 @@ export function createCameraControlDisplayActions(
 		},
 		[ActionId.CameraControlDisplayFocusAssist]: {
 			name: 'Camera Control: Focus Assist',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				state: {
 					id: 'state',
@@ -89,17 +97,17 @@ export function createCameraControlDisplayActions(
 					default: 'toggle',
 					choices: CHOICES_ON_OFF_TOGGLE,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
+				const cameraId = options.cameraId
 				const cameraState = state.atemCameraState.get(cameraId)
 				const tools = cameraState?.display?.exposureAndFocusTools
 
 				let target: boolean
-				if (options.getPlainString('state') === 'toggle') {
+				if (options.state === 'toggle') {
 					target = !tools?.focusAssist
 				} else {
-					target = options.getPlainString('state') === 'true'
+					target = options.state === 'true'
 				}
 
 				await commandSender?.displayExposureAndFocusTools(
@@ -112,7 +120,7 @@ export function createCameraControlDisplayActions(
 		},
 		[ActionId.CameraControlDisplayFalseColor]: {
 			name: 'Camera Control: False Color',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				state: {
 					id: 'state',
@@ -121,17 +129,17 @@ export function createCameraControlDisplayActions(
 					default: 'toggle',
 					choices: CHOICES_ON_OFF_TOGGLE,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
+				const cameraId = options.cameraId
 				const cameraState = state.atemCameraState.get(cameraId)
 				const tools = cameraState?.display?.exposureAndFocusTools
 
 				let target: boolean
-				if (options.getPlainString('state') === 'toggle') {
+				if (options.state === 'toggle') {
 					target = !tools?.falseColor
 				} else {
-					target = options.getPlainString('state') === 'true'
+					target = options.state === 'true'
 				}
 
 				await commandSender?.displayExposureAndFocusTools(
@@ -144,7 +152,7 @@ export function createCameraControlDisplayActions(
 		},
 		[ActionId.CameraControlDisplayZebra]: {
 			name: 'Camera Control: Zebra',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				state: {
 					id: 'state',
@@ -153,17 +161,17 @@ export function createCameraControlDisplayActions(
 					default: 'toggle',
 					choices: CHOICES_ON_OFF_TOGGLE,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
+				const cameraId = options.cameraId
 				const cameraState = state.atemCameraState.get(cameraId)
 				const tools = cameraState?.display?.exposureAndFocusTools
 
 				let target: boolean
-				if (options.getPlainString('state') === 'toggle') {
+				if (options.state === 'toggle') {
 					target = !tools?.zebra
 				} else {
-					target = options.getPlainString('state') === 'true'
+					target = options.state === 'true'
 				}
 
 				await commandSender?.displayExposureAndFocusTools(
@@ -176,7 +184,7 @@ export function createCameraControlDisplayActions(
 		},
 		[ActionId.CameraControlOutputStatusOverlay]: {
 			name: 'Camera Control: Status Overlay',
-			options: {
+			options: convertOptionsFields({
 				cameraId: CameraControlSourcePicker(),
 				state: {
 					id: 'state',
@@ -185,16 +193,16 @@ export function createCameraControlDisplayActions(
 					default: 'toggle',
 					choices: CHOICES_ON_OFF_TOGGLE,
 				},
-			},
+			}),
 			callback: async ({ options }) => {
-				const cameraId = await options.getParsedNumber('cameraId')
+				const cameraId = options.cameraId
 
 				let target: boolean
-				if (options.getPlainString('state') === 'toggle') {
+				if (options.state === 'toggle') {
 					const cameraState = state.atemCameraState.get(cameraId)
 					target = !cameraState?.output?.overlayEnable
 				} else {
-					target = options.getPlainString('state') === 'true'
+					target = options.state === 'true'
 				}
 
 				await commandSender?.outputOverlayEnable(cameraId, target)
