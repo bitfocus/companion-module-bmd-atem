@@ -683,11 +683,6 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 }
 
 const feedbackFixupRules: Record<string, FeedbackFixupRule> = {
-	fairlightAudioMixOption: {
-		options: {
-			option: { transform: { type: 'lookup', lookup: fairlightMixOptionValueMap } },
-		},
-	},
 	timecodeMode: {
 		options: {
 			mode: { transform: { type: 'lookup', lookup: timecodeModeValueMap } },
@@ -1026,33 +1021,14 @@ export const UpgradeToExpressions: CompanionStaticUpgradeScript<AtemConfig, unde
 /**
  * Migrate any feedbacks that still have legacy numeric option values.
  *
- * The initial API 2.0 upgrade script was missing entries for `fairlightAudioMixOption` and
- * `transitionStyle` feedbacks, so those were never converted from numeric enum IDs to string
- * IDs. This script fixes any remaining instances.
+ * The initial API 2.0 upgrade script missed a few feedbacks, so fix those up now
  */
-export const FixLegacyNumericFeedbackOptions: CompanionStaticUpgradeScript<AtemConfig, undefined> = (
-	_context,
-	props,
-) => {
+export const FixMissedUpgradeToExpressions: CompanionStaticUpgradeScript<AtemConfig, undefined> = (_context, props) => {
 	const result: CompanionStaticUpgradeResult<AtemConfig, undefined> = {
 		updatedConfig: null,
 		updatedSecrets: null,
 		updatedActions: [],
 		updatedFeedbacks: [],
-	}
-
-	const fairlightMixOptionMap: Record<number, string> = {
-		[Enums.FairlightAudioMixOption.On]: 'on',
-		[Enums.FairlightAudioMixOption.Off]: 'off',
-		[Enums.FairlightAudioMixOption.AudioFollowVideo]: 'afv',
-	}
-
-	const transitionStyleMap: Record<number, string> = {
-		[Enums.TransitionStyle.MIX]: 'mix',
-		[Enums.TransitionStyle.DIP]: 'dip',
-		[Enums.TransitionStyle.WIPE]: 'wipe',
-		[Enums.TransitionStyle.DVE]: 'dve',
-		[Enums.TransitionStyle.STING]: 'sting',
 	}
 
 	function migrateNumericOption(
@@ -1069,15 +1045,9 @@ export const FixLegacyNumericFeedbackOptions: CompanionStaticUpgradeScript<AtemC
 
 	for (const feedback of props.feedbacks) {
 		if (feedback.feedbackId === 'fairlightAudioMixOption') {
-			const migrated = migrateNumericOption(feedback.options['option'], fairlightMixOptionMap)
+			const migrated = migrateNumericOption(feedback.options['option'], fairlightMixOptionValueMap)
 			if (migrated) {
 				feedback.options['option'] = migrated
-				result.updatedFeedbacks.push(feedback)
-			}
-		} else if (feedback.feedbackId === 'transitionStyle') {
-			const migrated = migrateNumericOption(feedback.options['style'], transitionStyleMap)
-			if (migrated) {
-				feedback.options['style'] = migrated
 				result.updatedFeedbacks.push(feedback)
 			}
 		}

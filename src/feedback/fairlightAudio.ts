@@ -1,6 +1,6 @@
 import { convertOptionsFields } from '../options/util.js'
 import type { ModelSpec } from '../models/index.js'
-import type { CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
+import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import {
 	compareNumber,
 	NumberComparitor,
@@ -8,7 +8,6 @@ import {
 	AtemFairlightAudioSourcePicker,
 	NumberComparitorPicker,
 	CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION,
-	fairlightMixOptionStringToEnum,
 	fairlightMixOptionFromProtocol,
 	fairlightMixOptionToProtocol,
 	type FairlightMixOption2,

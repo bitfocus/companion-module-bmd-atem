@@ -1,13 +1,8 @@
-import type {
-	CompanionInputFieldDropdown,
-	DropdownChoice,
-	CompanionInputFieldNumber,
-	JsonValue,
-} from '@companion-module/base'
+import type { CompanionInputFieldDropdown, DropdownChoice, CompanionInputFieldNumber } from '@companion-module/base'
 import { Enums, type AtemState } from 'atem-connection'
 import type { ModelSpec } from '../models/types.js'
 import { SourcesToChoices } from './util.js'
-import { assertUnreachable, stringifyValueAlways } from '../util.js'
+import { assertUnreachable } from '../util.js'
 import type { MiniSourceInfo } from '../options/sources.js'
 
 export enum NumberComparitor {
@@ -115,23 +110,6 @@ export const FaderLevelDeltaChoice: CompanionInputFieldNumber<'delta'> = {
 }
 
 export type FairlightMixOption2 = 'on' | 'off' | 'afv'
-
-export function fairlightMixOptionStringToEnum(ref: JsonValue | undefined): Enums.FairlightAudioMixOption | null {
-	const refStr = stringifyValueAlways(ref).toLowerCase().trim()
-	if (!refStr) return null
-
-	if (refStr === 'on') return Enums.FairlightAudioMixOption.On
-	if (refStr === 'off') return Enums.FairlightAudioMixOption.Off
-	if (refStr === 'afv' || refStr === 'audiofollowvideo') return Enums.FairlightAudioMixOption.AudioFollowVideo
-
-	// Legacy numeric values (stored before API 2.0 migration)
-	if (refStr === String(Enums.FairlightAudioMixOption.On)) return Enums.FairlightAudioMixOption.On
-	if (refStr === String(Enums.FairlightAudioMixOption.Off)) return Enums.FairlightAudioMixOption.Off
-	if (refStr === String(Enums.FairlightAudioMixOption.AudioFollowVideo))
-		return Enums.FairlightAudioMixOption.AudioFollowVideo
-
-	return null
-}
 
 export const CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION: DropdownChoice<FairlightMixOption2>[] = [
 	{
