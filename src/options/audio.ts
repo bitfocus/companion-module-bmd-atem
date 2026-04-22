@@ -124,6 +124,12 @@ export function fairlightMixOptionStringToEnum(ref: JsonValue | undefined): Enum
 	if (refStr === 'off') return Enums.FairlightAudioMixOption.Off
 	if (refStr === 'afv' || refStr === 'audiofollowvideo') return Enums.FairlightAudioMixOption.AudioFollowVideo
 
+	// Legacy numeric values (stored before API 2.0 migration)
+	if (refStr === String(Enums.FairlightAudioMixOption.On)) return Enums.FairlightAudioMixOption.On
+	if (refStr === String(Enums.FairlightAudioMixOption.Off)) return Enums.FairlightAudioMixOption.Off
+	if (refStr === String(Enums.FairlightAudioMixOption.AudioFollowVideo))
+		return Enums.FairlightAudioMixOption.AudioFollowVideo
+
 	return null
 }
 

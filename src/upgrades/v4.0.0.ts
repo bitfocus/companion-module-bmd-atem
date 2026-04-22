@@ -1022,3 +1022,66 @@ export const UpgradeToExpressions: CompanionStaticUpgradeScript<AtemConfig, unde
 
 	return result
 }
+
+/**
+ * Migrate any feedbacks that still have legacy numeric option values.
+ *
+ * The initial API 2.0 upgrade script was missing entries for `fairlightAudioMixOption` and
+ * `transitionStyle` feedbacks, so those were never converted from numeric enum IDs to string
+ * IDs. This script fixes any remaining instances.
+ */
+export const FixLegacyNumericFeedbackOptions: CompanionStaticUpgradeScript<AtemConfig, undefined> = (
+	_context,
+	props,
+) => {
+	const result: CompanionStaticUpgradeResult<AtemConfig, undefined> = {
+		updatedConfig: null,
+		updatedSecrets: null,
+		updatedActions: [],
+		updatedFeedbacks: [],
+	}
+
+	const fairlightMixOptionMap: Record<number, string> = {
+		[Enums.FairlightAudioMixOption.On]: 'on',
+		[Enums.FairlightAudioMixOption.Off]: 'off',
+		[Enums.FairlightAudioMixOption.AudioFollowVideo]: 'afv',
+	}
+
+	const transitionStyleMap: Record<number, string> = {
+		[Enums.TransitionStyle.MIX]: 'mix',
+		[Enums.TransitionStyle.DIP]: 'dip',
+		[Enums.TransitionStyle.WIPE]: 'wipe',
+		[Enums.TransitionStyle.DVE]: 'dve',
+		[Enums.TransitionStyle.STING]: 'sting',
+	}
+
+	function migrateNumericOption(
+		optionVal: ExpressionOrValue<JsonValue | undefined> | undefined,
+		lookup: Record<number, string>,
+	): ExpressionOrValue<JsonValue | undefined> | undefined {
+		if (!optionVal || optionVal.isExpression) return undefined
+		const raw = optionVal.value
+		if (typeof raw === 'number' && raw in lookup) {
+			return { isExpression: false, value: lookup[raw] }
+		}
+		return undefined
+	}
+
+	for (const feedback of props.feedbacks) {
+		if (feedback.feedbackId === 'fairlightAudioMixOption') {
+			const migrated = migrateNumericOption(feedback.options['option'], fairlightMixOptionMap)
+			if (migrated) {
+				feedback.options['option'] = migrated
+				result.updatedFeedbacks.push(feedback)
+			}
+		} else if (feedback.feedbackId === 'transitionStyle') {
+			const migrated = migrateNumericOption(feedback.options['style'], transitionStyleMap)
+			if (migrated) {
+				feedback.options['style'] = migrated
+				result.updatedFeedbacks.push(feedback)
+			}
+		}
+	}
+
+	return result
+}
