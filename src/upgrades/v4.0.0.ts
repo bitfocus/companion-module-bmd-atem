@@ -1017,3 +1017,63 @@ export const UpgradeToExpressions: CompanionStaticUpgradeScript<AtemConfig, unde
 
 	return result
 }
+
+/**
+ * Migrate any feedbacks that still have legacy numeric option values.
+ *
+ * The initial API 2.0 upgrade script missed a few feedbacks, so fix those up now
+ */
+export const FixMissedUpgradeToExpressions: CompanionStaticUpgradeScript<AtemConfig, undefined> = (_context, props) => {
+	const result: CompanionStaticUpgradeResult<AtemConfig, undefined> = {
+		updatedConfig: null,
+		updatedSecrets: null,
+		updatedActions: [],
+		updatedFeedbacks: [],
+	}
+
+	function migrateNumericOption(
+		optionVal: ExpressionOrValue<JsonValue | undefined> | undefined,
+		lookup: Record<number, string>,
+	): ExpressionOrValue<JsonValue | undefined> | undefined {
+		if (!optionVal || optionVal.isExpression) return undefined
+		const raw = optionVal.value
+		if (typeof raw === 'number' && raw in lookup) {
+			return { isExpression: false, value: lookup[raw] }
+		}
+		return undefined
+	}
+
+	for (const feedback of props.feedbacks) {
+		let changed = false
+
+		if (feedback.feedbackId === 'fairlightAudioMixOption') {
+			const migrated = migrateNumericOption(feedback.options['option'], fairlightMixOptionValueMap)
+			if (migrated) {
+				feedback.options['option'] = migrated
+				changed = true
+			}
+		}
+
+		if (feedback.feedbackId === 'usk_type') {
+			const migrated = migrateNumericOption(feedback.options['type'], uskTypeValueMap)
+			if (migrated) {
+				feedback.options['type'] = migrated
+				changed = true
+			}
+		}
+
+		if (feedback.feedbackId === 'ssrc_art_option') {
+			const migrated = migrateNumericOption(feedback.options['artOption'], ssrcArtOptionValueMap)
+			if (migrated) {
+				feedback.options['artOption'] = migrated
+				changed = true
+			}
+		}
+
+		if (changed) {
+			result.updatedFeedbacks.push(feedback)
+		}
+	}
+
+	return result
+}
