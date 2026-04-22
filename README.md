@@ -32,6 +32,10 @@ To add a new model to the list:
 
 ## Changes
 
+## v4.0.1
+
+- Fix some broken feedbacks from the 4.0 upgrade
+
 ## v4.0.0
 
 Make sure to backup your config before updating to this version!

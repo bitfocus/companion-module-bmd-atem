@@ -1,12 +1,14 @@
 import { Enums, type Atem, Commands } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
-import { assertNever, type CompanionActionDefinitions } from '@companion-module/base'
+import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import {
 	AtemAudioInputPicker,
 	AtemFairlightAudioSourcePicker,
 	FaderLevelDeltaChoice,
 	CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION,
+	fairlightMixOptionFromProtocol,
+	fairlightMixOptionToProtocol,
 	type FairlightMixOption2,
 } from '../options/audio.js'
 import type { AtemTransitions, FadeDurationFieldsType } from '../transitions.js'
@@ -601,15 +603,6 @@ export function createFairlightAudioActions(
 
 						let newVal: Enums.FairlightAudioMixOption
 						switch (options.option) {
-							case 'on':
-								newVal = Enums.FairlightAudioMixOption.On
-								break
-							case 'off':
-								newVal = Enums.FairlightAudioMixOption.Off
-								break
-							case 'afv':
-								newVal = Enums.FairlightAudioMixOption.AudioFollowVideo
-								break
 							case 'toggle': {
 								const audioChannels = state.state.fairlight?.inputs ?? {}
 								const audioSources = audioChannels[inputId]?.sources ?? {}
@@ -621,9 +614,10 @@ export function createFairlightAudioActions(
 								break
 							}
 							default:
-								assertNever(options.option)
-								return
+								newVal = fairlightMixOptionToProtocol(options.option)
+								break
 						}
+						if (newVal === undefined) return
 
 						await atem?.setFairlightAudioMixerSourceProps(inputId, sourceId, { mixOption: newVal })
 					},
@@ -633,22 +627,8 @@ export function createFairlightAudioActions(
 						const source = audioSources[options.source]
 
 						if (source?.properties) {
-							let newMixOption: FairlightMixOption2
-							switch (source.properties.mixOption) {
-								case Enums.FairlightAudioMixOption.On:
-									newMixOption = 'on'
-									break
-								case Enums.FairlightAudioMixOption.Off:
-									newMixOption = 'off'
-									break
-								case Enums.FairlightAudioMixOption.AudioFollowVideo:
-									newMixOption = 'afv'
-									break
-								default:
-									assertNever(source.properties.mixOption)
-									newMixOption = 'on'
-									break
-							}
+							const newMixOption = fairlightMixOptionFromProtocol(source.properties.mixOption)
+							if (!newMixOption) return undefined
 
 							return {
 								option: newMixOption,

@@ -90,9 +90,10 @@ export function createTransitionFeedbacks(
 			},
 			callback: ({ options }): boolean => {
 				const me = getMixEffect(state.state, options.mixeffect - 1)
-				const parsedStyle = transitionStyleStringToEnum(options.style)
-				if (parsedStyle === null) return false
-				return me?.transitionProperties.nextStyle === parsedStyle
+				const selectedStyle = transitionStyleStringToEnum(options.style)
+				if (selectedStyle === null) return false
+
+				return me?.transitionProperties.nextStyle === selectedStyle
 			},
 			learn: ({ options }) => {
 				const me = getMixEffect(state.state, options.mixeffect - 1)
