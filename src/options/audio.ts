@@ -110,7 +110,6 @@ export const FaderLevelDeltaChoice: CompanionInputFieldNumber<'delta'> = {
 }
 
 export type FairlightMixOption2 = 'on' | 'off' | 'afv'
-
 export const CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION: DropdownChoice<FairlightMixOption2>[] = [
 	{
 		id: 'on',

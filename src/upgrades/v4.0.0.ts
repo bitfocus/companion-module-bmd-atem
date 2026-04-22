@@ -1044,12 +1044,34 @@ export const FixMissedUpgradeToExpressions: CompanionStaticUpgradeScript<AtemCon
 	}
 
 	for (const feedback of props.feedbacks) {
+		let changed = false
+
 		if (feedback.feedbackId === 'fairlightAudioMixOption') {
 			const migrated = migrateNumericOption(feedback.options['option'], fairlightMixOptionValueMap)
 			if (migrated) {
 				feedback.options['option'] = migrated
-				result.updatedFeedbacks.push(feedback)
+				changed = true
 			}
+		}
+
+		if (feedback.feedbackId === 'usk_type') {
+			const migrated = migrateNumericOption(feedback.options['type'], uskTypeValueMap)
+			if (migrated) {
+				feedback.options['type'] = migrated
+				changed = true
+			}
+		}
+
+		if (feedback.feedbackId === 'ssrc_art_option') {
+			const migrated = migrateNumericOption(feedback.options['artOption'], ssrcArtOptionValueMap)
+			if (migrated) {
+				feedback.options['artOption'] = migrated
+				changed = true
+			}
+		}
+
+		if (changed) {
+			result.updatedFeedbacks.push(feedback)
 		}
 	}
 
