@@ -1,4 +1,3 @@
-import { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
 import type { ModelSpec } from '../models/index.js'
 import type { CompanionFeedbackDefinitions } from '@companion-module/base'
@@ -16,6 +15,7 @@ import {
 	AtemSuperSourceArtSourcePicker,
 	AtemSuperSourceBoxPicker,
 	AtemSuperSourceBoxSourcePicker,
+	type SSrcArtOption,
 } from '../options/superSource.js'
 
 export type AtemSuperSourceFeedbacks = {
@@ -36,7 +36,7 @@ export type AtemSuperSourceFeedbacks = {
 		type: 'boolean'
 		options: {
 			ssrcId: number
-			artOption: Enums.SuperSourceArtOption
+			artOption: SSrcArtOption
 		}
 	}
 	['ssrc_box_source']: {
@@ -184,7 +184,9 @@ export function createSuperSourceFeedbacks(
 			callback: ({ options }): boolean => {
 				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
 				const ssrc = getSuperSource(state.state, ssrcId)
-				return ssrc.properties?.artOption === options.artOption
+				const current = ssrc.properties?.artOption
+				const expected = AtemSSrcArtOptionToProtocolEnum(options.artOption, current)
+				return expected !== undefined && current === expected
 			},
 			learn: ({ options }) => {
 				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
@@ -192,7 +194,7 @@ export function createSuperSourceFeedbacks(
 
 				if (ssrc.properties) {
 					return {
-						artOption: ssrc.properties.artOption,
+						artOption: AtemSSrcArtOptionFromProtocolEnum(ssrc.properties.artOption),
 					}
 				} else {
 					return undefined

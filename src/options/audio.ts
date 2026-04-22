@@ -125,6 +125,31 @@ export const CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION: DropdownChoice<FairlightMixOpti
 	},
 ]
 
+const FAIRLIGHT_MIX_OPTION_TO_PROTOCOL: Record<FairlightMixOption2, Enums.FairlightAudioMixOption> = {
+	on: Enums.FairlightAudioMixOption.On,
+	off: Enums.FairlightAudioMixOption.Off,
+	afv: Enums.FairlightAudioMixOption.AudioFollowVideo,
+}
+
+export function fairlightMixOptionToProtocol(option: FairlightMixOption2): Enums.FairlightAudioMixOption {
+	return FAIRLIGHT_MIX_OPTION_TO_PROTOCOL[option]
+}
+
+export function fairlightMixOptionFromProtocol(
+	option: Enums.FairlightAudioMixOption | undefined,
+): FairlightMixOption2 | undefined {
+	switch (option) {
+		case Enums.FairlightAudioMixOption.On:
+			return 'on'
+		case Enums.FairlightAudioMixOption.Off:
+			return 'off'
+		case Enums.FairlightAudioMixOption.AudioFollowVideo:
+			return 'afv'
+		default:
+			return undefined
+	}
+}
+
 export const CHOICES_CLASSIC_AUDIO_MIX_OPTION: DropdownChoice<Enums.AudioMixOption>[] = [
 	{
 		id: Enums.AudioMixOption.On,
