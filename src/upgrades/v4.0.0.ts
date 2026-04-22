@@ -683,6 +683,11 @@ const actionFixupRules: Record<string, ActionFixupRule> = {
 }
 
 const feedbackFixupRules: Record<string, FeedbackFixupRule> = {
+	fairlightAudioMixOption: {
+		options: {
+			option: { transform: { type: 'lookup', lookup: fairlightMixOptionValueMap } },
+		},
+	},
 	timecodeMode: {
 		options: {
 			mode: { transform: { type: 'lookup', lookup: timecodeModeValueMap } },

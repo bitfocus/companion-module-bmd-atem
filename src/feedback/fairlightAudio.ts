@@ -1,7 +1,6 @@
-import { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
 import type { ModelSpec } from '../models/index.js'
-import type { CompanionFeedbackDefinitions } from '@companion-module/base'
+import type { CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
 import {
 	compareNumber,
 	NumberComparitor,
@@ -9,6 +8,7 @@ import {
 	AtemFairlightAudioSourcePicker,
 	NumberComparitorPicker,
 	CHOICES_FAIRLIGHT_AUDIO_MIX_OPTION,
+	fairlightMixOptionStringToEnum,
 } from '../options/audio.js'
 import type { StateWrapper } from '../state.js'
 import {
@@ -41,7 +41,7 @@ export type AtemFairlightAudioFeedbacks = {
 		options: {
 			input: number
 			source: string
-			option: Enums.FairlightAudioMixOption
+			option: JsonValue | undefined
 		}
 	}
 	['fairlightAudioMasterGain']: {
@@ -261,7 +261,9 @@ export function createFairlightAudioFeedbacks(
 						const audioChannels = state.state.fairlight?.inputs ?? {}
 						const audioSources = audioChannels[options.input]?.sources ?? {}
 						const source = audioSources[options.source]
-						return source?.properties?.mixOption === options.option
+						const parsedOption = fairlightMixOptionStringToEnum(options.option)
+						if (parsedOption === null) return false
+						return source?.properties?.mixOption === parsedOption
 					},
 					learn: ({ options }) => {
 						const audioChannels = state.state.fairlight?.inputs ?? {}
