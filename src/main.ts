@@ -360,7 +360,11 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 				continue
 			}
 
-			if (path.match(/video.mixEffects.(\d+).upstreamKeyers.(\d+).onAir/)) {
+			const uskOnAirMatch = path.match(/video.mixEffects.(\d+).upstreamKeyers.(\d+).onAir/)
+			if (uskOnAirMatch) {
+				const meIndex = parseInt(uskOnAirMatch[1], 10)
+				const keyIndex = parseInt(uskOnAirMatch[2], 10)
+				changedVariables.usk.add([meIndex, keyIndex])
 				changedFeedbacks.add('uskOnAir')
 				continue
 			}
