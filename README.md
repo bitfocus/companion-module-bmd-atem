@@ -32,6 +32,11 @@ To add a new model to the list:
 
 ## Changes
 
+## v4.0.2
+
+- Fix supersource feedbacks/presets off by one
+- Fix media player feedbacks off by one
+
 ## v4.0.1
 
 - Fix some broken feedbacks from the 4.0 upgrade
