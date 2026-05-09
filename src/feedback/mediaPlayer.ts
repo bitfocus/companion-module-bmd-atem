@@ -47,7 +47,7 @@ export function createMediaPlayerFeedbacks(
 				const source = parseMediaPoolSource(model, options.source, defaultClips)
 				if (!source) return false
 
-				const player = state.state.media.players[options.mediaplayer]
+				const player = state.state.media.players[options.mediaplayer - 1]
 				if (
 					player?.sourceType === Enums.MediaSourceType.Still &&
 					!source.isClip &&
@@ -65,7 +65,7 @@ export function createMediaPlayerFeedbacks(
 				}
 			},
 			learn: ({ options }) => {
-				const player = state.state.media.players[options.mediaplayer]
+				const player = state.state.media.players[options.mediaplayer - 1]
 
 				if (player) {
 					return {

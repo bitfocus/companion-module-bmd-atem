@@ -65,8 +65,8 @@ export function createSuperSourcePresets(
 			{
 				feedbackId: 'ssrc_box_enable',
 				options: {
-					ssrcId: { isExpression: true, value: '$(local:ssrc) - 1' },
-					boxIndex: { isExpression: true, value: '$(local:box) - 1' },
+					ssrcId: { isExpression: true, value: '$(local:ssrc)' },
+					boxIndex: { isExpression: true, value: '$(local:box)' },
 				},
 				style: {
 					bgcolor: 0xffff00,
@@ -80,9 +80,9 @@ export function createSuperSourcePresets(
 					{
 						actionId: 'setSsrcBoxEnable',
 						options: {
-							ssrcId: { isExpression: true, value: '$(local:ssrc) - 1' },
+							ssrcId: { isExpression: true, value: '$(local:ssrc)' },
 							onair: 'toggle',
-							boxIndex: { isExpression: true, value: '$(local:box) - 1' },
+							boxIndex: { isExpression: true, value: '$(local:box)' },
 						},
 					},
 				],
@@ -116,9 +116,9 @@ export function createSuperSourcePresets(
 			{
 				feedbackId: 'ssrc_box_source',
 				options: {
-					ssrcId: { isExpression: true, value: '$(local:ssrc) - 1' },
+					ssrcId: { isExpression: true, value: '$(local:ssrc)' },
 					source: { isExpression: true, value: '$(local:input)' },
-					boxIndex: { isExpression: true, value: '$(local:box) - 1' },
+					boxIndex: { isExpression: true, value: '$(local:box)' },
 				},
 				style: {
 					bgcolor: 0xffff00,
@@ -132,9 +132,9 @@ export function createSuperSourcePresets(
 					{
 						actionId: 'setSsrcBoxSource',
 						options: {
-							ssrcId: { isExpression: true, value: '$(local:ssrc) - 1' },
+							ssrcId: { isExpression: true, value: '$(local:ssrc)' },
 							source: { isExpression: true, value: '$(local:input)' },
-							boxIndex: { isExpression: true, value: '$(local:box) - 1' },
+							boxIndex: { isExpression: true, value: '$(local:box)' },
 						},
 					},
 				],

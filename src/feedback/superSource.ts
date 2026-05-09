@@ -216,7 +216,7 @@ export function createSuperSourceFeedbacks(
 			},
 			callback: ({ options }): boolean => {
 				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
-				const box = getSuperSourceBox(state.state, options.boxIndex, ssrcId)
+				const box = getSuperSourceBox(state.state, options.boxIndex - 1, ssrcId)
 				return box?.source === options.source
 			},
 			learn: ({ options }) => {
@@ -246,7 +246,7 @@ export function createSuperSourceFeedbacks(
 			},
 			callback: ({ options }): boolean => {
 				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
-				const box = getSuperSourceBox(state.state, options.boxIndex, ssrcId)
+				const box = getSuperSourceBox(state.state, options.boxIndex - 1, ssrcId)
 				return !!(box && box.enabled)
 			},
 		},
@@ -264,7 +264,7 @@ export function createSuperSourceFeedbacks(
 			},
 			callback: ({ options }): boolean => {
 				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
-				const box = getSuperSourceBox(state.state, options.boxIndex, ssrcId)
+				const box = getSuperSourceBox(state.state, options.boxIndex - 1, ssrcId)
 
 				const props = options.properties
 				if (!box || !props || !Array.isArray(props)) return false
@@ -288,7 +288,7 @@ export function createSuperSourceFeedbacks(
 			},
 			learn: ({ options }) => {
 				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
-				const boxId = options.boxIndex
+				const boxId = options.boxIndex - 1
 				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.boxes[boxId]
 				if (ssrcConfig) {
 					return {
