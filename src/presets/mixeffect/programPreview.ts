@@ -114,6 +114,66 @@ export function createProgramPreviewPresets(
 			},
 		],
 	}
+	context.definitions[`preview_me_program_feedback`] = {
+		name: `Preview button with Program feedback for X`,
+		type: 'simple',
+		style: {
+			text: `$(atem:${pstText}$(local:input))`,
+			size: pstSize,
+			color: 0xffffff,
+			bgcolor: 0x000000,
+		},
+		feedbacks: [
+			{
+				feedbackId: 'preview',
+				options: {
+					mixeffect: { isExpression: true, value: '$(local:me)' },
+					input: { isExpression: true, value: '$(local:input)' },
+				},
+				style: {
+					bgcolor: 0x00ff00,
+					color: 0xffffff,
+				},
+			},
+			{
+				feedbackId: 'program',
+				options: {
+					mixeffect: { isExpression: true, value: '$(local:me)' },
+					input: { isExpression: true, value: '$(local:input)' },
+				},
+				style: {
+					bgcolor: 0x00ff00,
+					color: 0xffffff,
+				},
+			},
+		],
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'preview',
+						options: {
+							mixeffect: { isExpression: true, value: '$(local:me)' },
+							input: { isExpression: true, value: '$(local:input)' },
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		localVariables: [
+			{
+				variableType: 'simple',
+				variableName: 'me',
+				startupValue: 0,
+			},
+			{
+				variableType: 'simple',
+				variableName: 'input',
+				startupValue: 0,
+			},
+		],
+	}
 
 	for (let me = 0; me < context.model.MEs; ++me) {
 		groups.push(
@@ -139,6 +199,20 @@ export function createProgramPreviewPresets(
 				templateVariableName: 'input',
 				templateValues: meSources.map((src) => ({
 					name: `Preview button for ${src.shortName}`,
+					value: src.id,
+				})),
+				commonVariableValues: {
+					me: me + 1,
+				},
+			},
+			{
+				id: `preview_me_program_feedback_${me}`,
+				name: `Preview with Program feedback (M/E ${me + 1})`,
+				type: 'template',
+				presetId: 'preview_me_program_feedback',
+				templateVariableName: 'input',
+				templateValues: meSources.map((src) => ({
+					name: `Preview button with Program feedback for ${src.shortName}`,
 					value: src.id,
 				})),
 				commonVariableValues: {
