@@ -506,7 +506,7 @@ export function createUpstreamKeyerDVEActions(
 
 				if (usk?.flyProperties) {
 					return {
-						keyframe: usk.flyProperties.isAtKeyFrame as any,
+						keyframe: usk.flyProperties.isAtKeyFrame,
 					}
 				} else {
 					return undefined

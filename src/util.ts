@@ -10,7 +10,7 @@ export function assertUnreachable(_never: never): void {
 }
 
 export function compact<T>(arr: Array<T | undefined>): T[] {
-	return arr.filter((v) => v !== undefined) as T[]
+	return arr.filter((v) => v !== undefined)
 }
 
 export function iterateTimes<T>(count: number, cb: (i: number) => T): T[] {
