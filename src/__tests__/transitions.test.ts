@@ -95,3 +95,61 @@ describe('AtemTransitions.run', () => {
 		expect(calls).toHaveLength(countAfterStop)
 	})
 })
+
+describe('AtemTransitions.runForProperties', () => {
+	const noTween = { transitionEasing: undefined, transitionCurve: undefined }
+
+	test('applies non-animatable properties immediately even with a rate set (#385)', async () => {
+		const transitions = makeTransitions()
+		const calls: object[] = []
+
+		// Only a boolean changes - none of the animatable keys are present. With a rate
+		// long enough to span multiple steps this previously crashed on `[].reduce`.
+		await transitions.runForProperties(
+			'id',
+			async (props) => void calls.push(props),
+			{ transitionRate: 1000, ...noTween },
+			['size', 'x', 'y'],
+			{ enabled: false },
+			{ enabled: true, size: 500, x: 0, y: 0 },
+		)
+
+		expect(calls).toEqual([{ enabled: false }])
+	})
+
+	test('carries non-animatable properties through every tween step', async () => {
+		const transitions = makeTransitions()
+		const calls: Array<{ enabled?: boolean; x?: number }> = []
+
+		// 300ms / 100ms per frame => 3 steps. `enabled` rides along with the tweened `x`.
+		await transitions.runForProperties(
+			'id',
+			async (props: { enabled?: boolean; x?: number }) => void calls.push(props),
+			{ transitionRate: 300, ...noTween },
+			['x'],
+			{ enabled: false, x: 100 },
+			{ enabled: true, x: 0 },
+		)
+		await vi.advanceTimersByTimeAsync(400)
+
+		expect(calls).toHaveLength(3)
+		expect(calls.every((c) => c.enabled === false)).toBe(true)
+		expect(calls[calls.length - 1]).toEqual({ enabled: false, x: 100 })
+	})
+
+	test('sends once without a rate', async () => {
+		const transitions = makeTransitions()
+		const calls: object[] = []
+
+		await transitions.runForProperties(
+			'id',
+			async (props) => void calls.push(props),
+			{ transitionRate: undefined, ...noTween },
+			['x'],
+			{ enabled: false, x: 100 },
+			{ enabled: true, x: 0 },
+		)
+
+		expect(calls).toEqual([{ enabled: false, x: 100 }])
+	})
+})

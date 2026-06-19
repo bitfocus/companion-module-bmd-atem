@@ -100,7 +100,11 @@ export class AtemTransitions {
 
 			const isOnlyNumbers = (array: any[]): array is number[] => !array.find((value) => typeof value !== 'number')
 
-			if (from.length === to.length && isOnlyNumbers(from) && isOnlyNumbers(to)) {
+			// Only tween when there is at least one animatable key. If none of the changed
+			// properties are animatable (e.g. just toggling box on-air or crop-enable), fall
+			// through and apply them immediately - otherwise `run` would be handed empty
+			// from/to arrays and crash on `[].reduce` once the rate spans multiple steps.
+			if (keys.length > 0 && from.length === to.length && isOnlyNumbers(from) && isOnlyNumbers(to)) {
 				// we can safely tween between these values
 				return this.run(
 					id,

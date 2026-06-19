@@ -42,6 +42,7 @@ To add a new model to the list:
 - Add SuperSource art fill/key source variables (#393)
 - Add preview with program feedback preset (#455)
 - Fix unable to enable/disable "Upstream key: Set Flying Key" (#378)
+- Fix SuperSource box on-air/crop-enable failing when a transition rate is set (#385)
 - Fix Classic Audio master gain feedback (#448)
 - Fix some missed upgrades (#457)
 
