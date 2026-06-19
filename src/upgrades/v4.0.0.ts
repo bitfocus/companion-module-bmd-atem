@@ -1188,3 +1188,95 @@ export const FixMissedUpgradeToExpressions2: CompanionStaticUpgradeScript<AtemCo
 
 	return result
 }
+
+/**
+ * The transition animation options (`transitionRate`, `transitionEasing`, `transitionCurve`) were added to
+ * some actions after they were first released. Actions saved before that change have no value stored for
+ * these options, so they fail validation ("A value must be provided" / "Value is not in the list of
+ * choices") and refuse to execute (#458).
+ *
+ * Ensure every action which should have these options has a valid value, filling in the field defaults where
+ * a value is missing or (for the dropdowns) not one of the allowed choices. Expressions are left untouched.
+ */
+const ACTIONS_WITH_TRANSITION_ANIMATION_OPTIONS = ['setSsrcBoxProperties', 'uskDveProperties']
+
+// Keep these in sync with the choices/defaults in `AtemTransitionAnimationOptions` (src/options/fade.ts)
+const TRANSITION_EASING_CHOICES = [
+	'linear',
+	'quadratic',
+	'cubic',
+	'quartic',
+	'quintic',
+	'sinusoidal',
+	'exponential',
+	'circular',
+	'elastic',
+	'back',
+	'bounce',
+]
+const TRANSITION_CURVE_CHOICES = ['ease-in', 'ease-out', 'ease-in-out']
+
+function ensureNumericOption(
+	optionVal: ExpressionOrValue<JsonValue | undefined> | undefined,
+	defaultValue: number,
+): ExpressionOrValue<JsonValue | undefined> | undefined {
+	// Expressions and valid numbers are left untouched
+	if (optionVal?.isExpression) return undefined
+	if (typeof optionVal?.value === 'number') return undefined
+
+	return { isExpression: false, value: defaultValue }
+}
+
+function ensureChoiceOption(
+	optionVal: ExpressionOrValue<JsonValue | undefined> | undefined,
+	choices: string[],
+	defaultValue: string,
+): ExpressionOrValue<JsonValue | undefined> | undefined {
+	// Expressions and values which are already a valid choice are left untouched
+	if (optionVal?.isExpression) return undefined
+	if (typeof optionVal?.value === 'string' && choices.includes(optionVal.value)) return undefined
+
+	return { isExpression: false, value: defaultValue }
+}
+
+export const EnsureTransitionAnimationOptions: CompanionStaticUpgradeScript<AtemConfig, undefined> = (
+	_context,
+	props,
+) => {
+	const result: CompanionStaticUpgradeResult<AtemConfig, undefined> = {
+		updatedConfig: null,
+		updatedSecrets: null,
+		updatedActions: [],
+		updatedFeedbacks: [],
+	}
+
+	for (const action of props.actions) {
+		if (!ACTIONS_WITH_TRANSITION_ANIMATION_OPTIONS.includes(action.actionId)) continue
+
+		let changed = false
+
+		const rate = ensureNumericOption(action.options['transitionRate'], 0)
+		if (rate) {
+			action.options['transitionRate'] = rate
+			changed = true
+		}
+
+		const easing = ensureChoiceOption(action.options['transitionEasing'], TRANSITION_EASING_CHOICES, 'linear')
+		if (easing) {
+			action.options['transitionEasing'] = easing
+			changed = true
+		}
+
+		const curve = ensureChoiceOption(action.options['transitionCurve'], TRANSITION_CURVE_CHOICES, 'ease-in')
+		if (curve) {
+			action.options['transitionCurve'] = curve
+			changed = true
+		}
+
+		if (changed) {
+			result.updatedActions.push(action)
+		}
+	}
+
+	return result
+}
