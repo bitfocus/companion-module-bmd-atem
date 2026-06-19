@@ -294,7 +294,7 @@ function updateStreamingVariables(state: AtemState, values: Partial<VariablesSch
 	values[`stream_active`] = state.streaming?.status?.state === Enums.StreamingStatus.Streaming
 }
 
-function updateRecordingVariables(state: AtemState, values: Partial<VariablesSchema>): void {
+export function updateRecordingVariables(state: AtemState, values: Partial<VariablesSchema>): void {
 	const durations = formatDuration(state.recording?.duration)
 	const remaining = formatDurationSeconds(state.recording?.status?.recordingTimeAvailable)
 
@@ -304,9 +304,14 @@ function updateRecordingVariables(state: AtemState, values: Partial<VariablesSch
 	values['record_remaining_hm'] = remaining.hm
 	values['record_remaining_hms'] = remaining.hms
 	values['record_remaining_ms'] = remaining.ms
+	values['record_remaining_seconds'] = state.recording?.status?.recordingTimeAvailable
 
 	values['record_filename'] = state.recording?.properties.filename || ''
 	values['record_active'] = state.recording?.status?.state === Enums.RecordingStatus.Recording
+
+	const activeDiskId = state.recording?.properties.workingSet1DiskId
+	const activeDisk = activeDiskId !== undefined ? state.recording?.disks[activeDiskId] : undefined
+	values['record_disk_volume'] = activeDisk?.volumeName ?? ''
 }
 
 function formatAudioProperty(value: number | undefined, scale = 100) {
@@ -761,12 +766,18 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 		variables[`record_remaining_ms`] = {
 			name: 'Recording time remaining (mm:ss)',
 		}
+		variables[`record_remaining_seconds`] = {
+			name: 'Recording time remaining (seconds)',
+		}
 
 		variables[`record_filename`] = {
 			name: 'Recording filename',
 		}
 		variables[`record_active`] = {
 			name: 'Recording active',
+		}
+		variables[`record_disk_volume`] = {
+			name: 'Recording disk volume name',
 		}
 
 		updateRecordingVariables(state.state, values)

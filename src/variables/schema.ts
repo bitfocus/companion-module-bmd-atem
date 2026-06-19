@@ -86,8 +86,10 @@ export type VariablesSchema = {
 	record_remaining_hm?: string
 	record_remaining_hms?: string
 	record_remaining_ms?: string
+	record_remaining_seconds?: number
 	record_filename?: string
 	record_active?: boolean
+	record_disk_volume?: string
 
 	[key: `ssrc${number}_art_fill_source`]: string
 	[key: `ssrc${number}_art_fill_source_id`]: number

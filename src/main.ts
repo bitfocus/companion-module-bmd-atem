@@ -513,6 +513,10 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 				changedFeedbacks.add('recordISO')
 				continue
 			}
+			if (path.match(/recording.properties/)) {
+				changedVariables.recording = true
+				continue
+			}
 			if (path.match(/streaming.duration/) || path.match(/streaming.stats/)) {
 				changedVariables.streaming = true
 				continue
