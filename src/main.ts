@@ -327,6 +327,11 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 				continue
 			}
 
+			if (path.match(/audio.master/)) {
+				changedFeedbacks.add('classicAudioMasterGain')
+				continue
+			}
+
 			if (path.match(/fairlight.master/)) {
 				changedVariables.fairlightAudioMaster = true
 				changedFeedbacks.add('fairlightAudioMasterGain')
