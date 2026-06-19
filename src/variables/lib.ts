@@ -183,7 +183,7 @@ function updateUSKVariable(
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_positionY`] = dveSettings.positionY / 1000
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_sizeX`] = dveSettings.sizeX / 1000
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_sizeY`] = dveSettings.sizeY / 1000
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_rotation`] = dveSettings.rotation
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_rotation`] = dveSettings.rotation / 10
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordOutWidth`] = dveSettings.borderOuterWidth / 100
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordInWidth`] = dveSettings.borderInnerWidth / 100
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordOutSoft`] = dveSettings.borderOuterSoftness

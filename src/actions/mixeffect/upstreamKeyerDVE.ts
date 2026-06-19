@@ -224,7 +224,7 @@ export function createUpstreamKeyerDVEActions(
 						newProps.positionY = options.positionY * 1000
 					}
 					if (props.includes('rotation')) {
-						newProps.rotation = options.rotation
+						newProps.rotation = options.rotation * 10
 					}
 					if (props.includes('borderOuterWidth')) {
 						newProps.borderOuterWidth = options.borderOuterWidth * 100
@@ -330,7 +330,7 @@ export function createUpstreamKeyerDVEActions(
 						sizeY: usk.dveSettings.sizeY / 1000,
 						positionX: usk.dveSettings.positionX / 1000,
 						positionY: usk.dveSettings.positionY / 1000,
-						rotation: usk.dveSettings.rotation,
+						rotation: usk.dveSettings.rotation / 10,
 						borderOuterWidth: usk.dveSettings.borderOuterWidth / 100,
 						borderInnerWidth: usk.dveSettings.borderInnerWidth / 100,
 						borderOuterSoftness: usk.dveSettings.borderOuterSoftness,
@@ -397,7 +397,7 @@ export function createUpstreamKeyerDVEActions(
 						properties.positionY = options.positionY * 1000
 					}
 					if (props.includes('rotation')) {
-						properties.rotation = options.rotation
+						properties.rotation = options.rotation * 10
 					}
 					if (props.includes('borderOuterWidth')) {
 						properties.borderOuterWidth = options.borderOuterWidth * 100
@@ -458,7 +458,7 @@ export function createUpstreamKeyerDVEActions(
 						sizeY: usk.dveSettings.sizeY / 1000,
 						positionX: usk.dveSettings.positionX / 1000,
 						positionY: usk.dveSettings.positionY / 1000,
-						rotation: usk.dveSettings.rotation,
+						rotation: usk.dveSettings.rotation / 10,
 						borderOuterWidth: usk.dveSettings.borderOuterWidth / 100,
 						borderInnerWidth: usk.dveSettings.borderInnerWidth / 100,
 						borderOuterSoftness: usk.dveSettings.borderOuterSoftness,
