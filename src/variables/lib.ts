@@ -291,6 +291,7 @@ function updateStreamingVariables(state: AtemState, values: Partial<VariablesSch
 	values[`stream_duration_hms`] = durations.hms
 	values[`stream_duration_ms`] = durations.ms
 	values[`stream_cache_used`] = cacheused
+	values[`stream_active`] = state.streaming?.status?.state === Enums.StreamingStatus.Streaming
 }
 
 function updateRecordingVariables(state: AtemState, values: Partial<VariablesSchema>): void {
@@ -305,6 +306,7 @@ function updateRecordingVariables(state: AtemState, values: Partial<VariablesSch
 	values['record_remaining_ms'] = remaining.ms
 
 	values['record_filename'] = state.recording?.properties.filename || ''
+	values['record_active'] = state.recording?.status?.state === Enums.RecordingStatus.Recording
 }
 
 function formatAudioProperty(value: number | undefined, scale = 100) {
@@ -732,6 +734,9 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 		variables[`stream_cache_used`] = {
 			name: 'Streaming Cache Used',
 		}
+		variables[`stream_active`] = {
+			name: 'Streaming active',
+		}
 
 		updateStreamingVariables(state.state, values)
 	}
@@ -759,6 +764,9 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 
 		variables[`record_filename`] = {
 			name: 'Recording filename',
+		}
+		variables[`record_active`] = {
+			name: 'Recording active',
 		}
 
 		updateRecordingVariables(state.state, values)

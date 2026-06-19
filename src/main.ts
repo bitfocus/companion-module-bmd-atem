@@ -500,10 +500,12 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 			}
 
 			if (path.match(/streaming.status/)) {
+				changedVariables.streaming = true
 				changedFeedbacks.add('streamStatus')
 				continue
 			}
 			if (path.match(/recording.status/)) {
+				changedVariables.recording = true
 				changedFeedbacks.add('recordStatus')
 				continue
 			}

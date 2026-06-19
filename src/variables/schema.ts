@@ -78,6 +78,7 @@ export type VariablesSchema = {
 	stream_duration_hms?: string
 	stream_duration_ms?: string
 	stream_cache_used?: number
+	stream_active?: boolean
 
 	record_duration_hm?: string
 	record_duration_hms?: string
@@ -86,6 +87,7 @@ export type VariablesSchema = {
 	record_remaining_hms?: string
 	record_remaining_ms?: string
 	record_filename?: string
+	record_active?: boolean
 
 	[key: `ssrc${number}_art_fill_source`]: string
 	[key: `ssrc${number}_art_fill_source_id`]: number
