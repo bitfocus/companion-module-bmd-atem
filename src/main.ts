@@ -444,7 +444,9 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 				changedVariables.ssrc.add(parseInt(ssrcBoxMatch[1], 10))
 				continue
 			}
-			if (path.match(/video.superSources.(\d+).properties/)) {
+			const ssrcPropertiesMatch = path.match(/video.superSources.(\d+).properties/)
+			if (ssrcPropertiesMatch) {
+				changedVariables.ssrc.add(parseInt(ssrcPropertiesMatch[1], 10))
 				changedFeedbacks.add('ssrc_art_option')
 				changedFeedbacks.add('ssrc_art_source')
 				changedFeedbacks.add('ssrc_art_properties')

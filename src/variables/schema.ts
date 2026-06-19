@@ -87,6 +87,10 @@ export type VariablesSchema = {
 	record_remaining_ms?: string
 	record_filename?: string
 
+	[key: `ssrc${number}_art_fill_source`]: string
+	[key: `ssrc${number}_art_fill_source_id`]: number
+	[key: `ssrc${number}_art_key_source`]: string
+	[key: `ssrc${number}_art_key_source_id`]: number
 	[key: `ssrc${number}_box${number}_source`]: string
 	[key: `ssrc${number}_box${number}_source_id`]: number
 	[key: `ssrc${number}_box${number}_onair`]: boolean

@@ -39,6 +39,7 @@ To add a new model to the list:
 - Transition wipe properties (#458)
 - Add on-air variables for USK and DSK (#442)
 - Add USK border saturation variable (#411)
+- Add SuperSource art fill/key source variables (#393)
 - Add preview with program feedback preset (#455)
 - Fix unable to enable/disable "Upstream key: Set Flying Key" (#378)
 - Fix Classic Audio master gain feedback (#448)

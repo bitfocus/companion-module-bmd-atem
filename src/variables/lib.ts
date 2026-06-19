@@ -426,6 +426,14 @@ function updateSuperSourceVariables(
 	i: number,
 	values: Partial<VariablesSchema>,
 ): void {
+	const properties = state.video.superSources?.[i]?.properties
+	const artFillSource = properties?.artFillSource ?? 0
+	const artKeySource = properties?.artCutSource ?? 0
+	values[`ssrc${i + 1}_art_fill_source`] = getSourcePresetName(instance, state, artFillSource)
+	values[`ssrc${i + 1}_art_fill_source_id`] = artFillSource
+	values[`ssrc${i + 1}_art_key_source`] = getSourcePresetName(instance, state, artKeySource)
+	values[`ssrc${i + 1}_art_key_source_id`] = artKeySource
+
 	for (let b = 0; b < 4; b++) {
 		const box = getSuperSourceBox(state, b, i)
 		const input = box?.source ?? 0
@@ -758,6 +766,19 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 
 	// Supersource
 	for (let i = 0; i < model.SSrc; i++) {
+		variables[`ssrc${i + 1}_art_fill_source`] = {
+			name: `Supersource ${i + 1} art fill source`,
+		}
+		variables[`ssrc${i + 1}_art_fill_source_id`] = {
+			name: `Supersource ${i + 1} art fill source id`,
+		}
+		variables[`ssrc${i + 1}_art_key_source`] = {
+			name: `Supersource ${i + 1} art key source`,
+		}
+		variables[`ssrc${i + 1}_art_key_source_id`] = {
+			name: `Supersource ${i + 1} art key source id`,
+		}
+
 		for (let b = 0; b < 4; b++) {
 			variables[`ssrc${i + 1}_box${b + 1}_source`] = {
 				name: `Supersource ${i + 1} Box ${b + 1} source`,
