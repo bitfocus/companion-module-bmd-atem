@@ -1,0 +1,23 @@
+{
+	"name": "bmd-atem",
+	"image": "mcr.microsoft.com/devcontainers/typescript-node:22-bookworm",
+	"features": {
+		"ghcr.io/devcontainers/features/git:1": {}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode", "vitest.explorer", "anthopic.claude-code"],
+			"settings": {
+				"editor.formatOnSave": true,
+				"editor.defaultFormatter": "esbenp.prettier-vscode",
+				"eslint.format.enable": true
+			}
+		}
+	},
+	"remoteEnv": {
+		"HUSKY": "0"
+	},
+	"onCreateCommand": "COREPACK_ENABLE_DOWNLOAD_PROMPT=0 sudo corepack enable",
+	"postCreateCommand": "yarn install",
+	"remoteUser": "node"
+}

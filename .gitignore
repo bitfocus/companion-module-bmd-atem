@@ -22,3 +22,4 @@ pkg
 /*.tgz
 DEBUG-*
 /.vscode
+/.devcontainer/devcontainer-lock.json
