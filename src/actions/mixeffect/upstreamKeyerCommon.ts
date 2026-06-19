@@ -266,10 +266,14 @@ export function createUpstreamKeyerCommonActions(
 					}
 				}
 
-				if (Object.keys(newProps).length === 0 || Object.keys(newUSKTypeProps).length === 0) return
+				if (Object.keys(newProps).length === 0 && Object.keys(newUSKTypeProps).length === 0) return
 
-				await atem?.setUpstreamKeyerDVESettings(newProps, mixEffectId, keyId)
-				await atem?.setUpstreamKeyerType(newUSKTypeProps, mixEffectId, keyId)
+				if (Object.keys(newProps).length > 0) {
+					await atem?.setUpstreamKeyerDVESettings(newProps, mixEffectId, keyId)
+				}
+				if (Object.keys(newUSKTypeProps).length > 0) {
+					await atem?.setUpstreamKeyerType(newUSKTypeProps, mixEffectId, keyId)
+				}
 			},
 			learn: ({ options }) => {
 				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
