@@ -44,11 +44,14 @@ export type VariablesSchema = {
 	[key: `usk_${number}_${number}_canFlyKey`]: boolean | undefined
 	[key: `usk_${number}_${number}_flyEnabled`]: boolean | undefined
 
+	[key: `pgm${number}_usk_${number}_onAir`]: boolean
+
 	[key: `aux${number}_input`]: string
 	[key: `aux${number}_input_id`]: number
 
 	[key: `dsk_${number}_input`]: string
 	[key: `dsk_${number}_input_id`]: number
+	[key: `dsk_${number}_onAir`]: boolean
 
 	[key: `long_${number}`]: string
 	[key: `short_${number}`]: string
