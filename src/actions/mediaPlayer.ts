@@ -95,7 +95,10 @@ export function createMediaPlayerActions(
 
 				if (player) {
 					return {
-						source: player.sourceType ? `still${player.stillIndex + 1}` : `clip${player.clipIndex + 1}`,
+						source:
+							player.sourceType === Enums.MediaSourceType.Clip
+								? `clip${player.clipIndex + 1}`
+								: `still${player.stillIndex + 1}`,
 					}
 				} else {
 					return undefined
