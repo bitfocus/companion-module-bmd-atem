@@ -32,6 +32,18 @@ To add a new model to the list:
 
 ## Changes
 
+## v4.1.0
+
+- Better transition rate support, with rate variables and a relative adjust action (#390)
+- SuperSource border control (#391)
+- Transition wipe properties (#458)
+- Add on-air variables for USK and DSK (#442)
+- Add USK border saturation variable (#411)
+- Add preview with program feedback preset (#455)
+- Fix unable to enable/disable "Upstream key: Set Flying Key" (#378)
+- Fix Classic Audio master gain feedback (#448)
+- Fix some missed upgrades (#457)
+
 ## v4.0.2
 
 - Fix supersource feedbacks/presets off by one
