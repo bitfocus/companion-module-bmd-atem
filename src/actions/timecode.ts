@@ -8,7 +8,7 @@ import {
 	AtemTimecodeModePicker,
 	type TimecodeMode,
 	timecodeModeToEnum,
-	upstreamKeyerTypeEnumToString,
+	timecodeModeEnumToString,
 } from '../options/timecode.js'
 
 export type AtemTimecodeActions = {
@@ -78,7 +78,7 @@ export function createTimecodeActions(
 				const rawMode = state.state.settings.timeMode
 				if (rawMode === undefined) return undefined
 
-				const newMode = upstreamKeyerTypeEnumToString(rawMode)
+				const newMode = timecodeModeEnumToString(rawMode)
 				if (newMode === undefined) return undefined
 
 				return {

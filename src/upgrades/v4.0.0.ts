@@ -1077,3 +1077,114 @@ export const FixMissedUpgradeToExpressions: CompanionStaticUpgradeScript<AtemCon
 
 	return result
 }
+
+/**
+ * Every action/feedback dropdown whose stored value originates from a numeric atem-connection enum, but
+ * which in API 2.0 is expected to hold one of the new string ids.
+ *
+ * `UpgradeToExpressions` translated most of these via its `lookup` transforms, but it missed a handful of
+ * feedbacks (no rule, or a rule that forgot the `lookup`). `FixMissedUpgradeToExpressions` then re-migrated
+ * three of those feedbacks - but only when the value was stored as a `number`. Companion dropdowns commonly
+ * persist their values as *strings* (eg "2" rather than 2), and those were silently skipped, so the
+ * dropdowns still showed `?? (n)` (#457).
+ */
+const enumStringFeedbackFixups: Record<string, Record<string, Record<string, string>>> = {
+	timecodeMode: { mode: timecodeModeValueMap },
+	usk_type: { type: uskTypeValueMap },
+	transitionStyle: { style: transitionStyleValueMap },
+	transitionRate: { style: transitionStyleValueMap },
+	ssrc_art_option: { artOption: ssrcArtOptionValueMap },
+	ssrc_art_properties: { artOption: ssrcArtOptionValueMap },
+	fairlightAudioMixOption: { option: fairlightMixOptionValueMap },
+}
+
+const enumStringActionFixups: Record<string, Record<string, Record<string, string>>> = {
+	timecodeMode: { mode: timecodeModeValueMap },
+	uskType: { type: uskTypeValueMap },
+	uskSetKeyframe: { keyframe: flyKeyKeyFrameValueMap },
+	uskStoreKeyframe: { keyframe: flyKeyKeyFrameValueMap },
+	uskFly: { keyframe: flyKeyKeyFrameValueMap },
+	transitionStyle: { style: transitionStyleValueMap },
+	transitionRate: { style: transitionStyleValueMap },
+	ssrcArt: { artOption: ssrcArtOptionValueMap },
+	fairlightAudioMixOption: { option: fairlightMixOptionValueMap },
+}
+
+/**
+ * Translate a single legacy enum option value to its new string id.
+ *
+ * Unlike the earlier `migrateNumericOption`, this accepts the value stored either as a `number` or as a
+ * numeric `string` (eg "2"), which is how Companion frequently persists dropdown selections. Values which
+ * are already a new string id (eg 'luma') never match a numeric lookup key and so are left untouched, which
+ * makes this safe to run over options that were already migrated.
+ */
+function migrateLegacyEnumValue(
+	optionVal: ExpressionOrValue<JsonValue | undefined> | undefined,
+	lookup: Record<string, string>,
+): ExpressionOrValue<JsonValue | undefined> | undefined {
+	// Expressions and missing values are left untouched
+	if (!optionVal || optionVal.isExpression) return undefined
+
+	const raw = optionVal.value
+	if (typeof raw !== 'number' && typeof raw !== 'string') return undefined
+
+	const key = String(raw)
+	if (!(key in lookup)) return undefined
+
+	return { isExpression: false, value: lookup[key] }
+}
+
+function applyEnumStringFixups(
+	optionLookups: Record<string, Record<string, string>>,
+	entityOptions: Record<string, ExpressionOrValue<JsonValue | undefined> | undefined>,
+): boolean {
+	let changed = false
+	for (const [optionKey, lookup] of Object.entries(optionLookups)) {
+		const migrated = migrateLegacyEnumValue(entityOptions[optionKey], lookup)
+		if (migrated) {
+			entityOptions[optionKey] = migrated
+			changed = true
+		}
+	}
+	return changed
+}
+
+/**
+ * Migrate any actions/feedbacks that still have legacy numeric enum values for their string dropdowns.
+ *
+ * This is a more thorough re-run of `FixMissedUpgradeToExpressions`, covering every enum-backed string
+ * dropdown (not just the three feedbacks fixed before) and handling values stored as numeric strings as
+ * well as numbers. It is a separate script so that configs which already ran the earlier, incomplete
+ * scripts get another chance to be migrated.
+ */
+export const FixMissedUpgradeToExpressions2: CompanionStaticUpgradeScript<AtemConfig, undefined> = (
+	_context,
+	props,
+) => {
+	const result: CompanionStaticUpgradeResult<AtemConfig, undefined> = {
+		updatedConfig: null,
+		updatedSecrets: null,
+		updatedActions: [],
+		updatedFeedbacks: [],
+	}
+
+	for (const action of props.actions) {
+		const optionLookups = enumStringActionFixups[action.actionId]
+		if (!optionLookups) continue
+
+		if (applyEnumStringFixups(optionLookups, action.options)) {
+			result.updatedActions.push(action)
+		}
+	}
+
+	for (const feedback of props.feedbacks) {
+		const optionLookups = enumStringFeedbackFixups[feedback.feedbackId]
+		if (!optionLookups) continue
+
+		if (applyEnumStringFixups(optionLookups, feedback.options)) {
+			result.updatedFeedbacks.push(feedback)
+		}
+	}
+
+	return result
+}

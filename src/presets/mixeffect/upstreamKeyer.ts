@@ -9,7 +9,7 @@ import { Enums } from 'atem-connection'
 import type { PresetsBuilderContext } from '../context.js'
 import type { AtemSchema } from '../../schema.js'
 import { iterateTimes } from '../../util.js'
-import { GetUpstreamKeyerTypeChoices } from '../../options/upstreamKeyer.js'
+import { GetUpstreamKeyerTypeChoices, type FlyKeyKeyFrameString } from '../../options/upstreamKeyer.js'
 
 export function createUpstreamKeyerPresets(
 	context: PresetsBuilderContext,
@@ -33,24 +33,32 @@ export function createUpstreamKeyerPresets(
 		{ id: Enums.FlyKeyKeyFrame.B, label: 'B' },
 		{ id: Enums.FlyKeyKeyFrame.Full, label: 'Full' },
 	]
-	const flyDirections: Array<{ choice: (typeof CHOICES_KEYFRAMES)[number]; actionKeyframe: Enums.IsAtKeyFrame }> = []
+	const flyDirections: Array<{
+		choice: (typeof CHOICES_KEYFRAMES)[number]
+		actionKeyframe: Enums.IsAtKeyFrame
+		flyKeyframe: FlyKeyKeyFrameString
+	}> = []
 	for (const flydirection of CHOICES_KEYFRAMES) {
 		let actionKeyframe: Enums.IsAtKeyFrame
+		let flyKeyframe: FlyKeyKeyFrameString
 		switch (flydirection.id) {
 			case Enums.FlyKeyKeyFrame.A:
 				actionKeyframe = Enums.IsAtKeyFrame.A
+				flyKeyframe = 'a'
 				break
 			case Enums.FlyKeyKeyFrame.B:
 				actionKeyframe = Enums.IsAtKeyFrame.B
+				flyKeyframe = 'b'
 				break
 			case Enums.FlyKeyKeyFrame.Full:
 				actionKeyframe = Enums.IsAtKeyFrame.RunToInfinite
+				flyKeyframe = 'full'
 				break
 			default:
 				assertNever(flydirection.id)
 				continue
 		}
-		flyDirections.push({ choice: flydirection, actionKeyframe })
+		flyDirections.push({ choice: flydirection, actionKeyframe, flyKeyframe })
 	}
 
 	const keyTypes = GetUpstreamKeyerTypeChoices()
@@ -268,7 +276,7 @@ export function createUpstreamKeyerPresets(
 			})
 
 			const flyPresetIds: string[] = []
-			for (const { choice: flydirection, actionKeyframe } of flyDirections) {
+			for (const { choice: flydirection, actionKeyframe, flyKeyframe } of flyDirections) {
 				const defId = `usk_fly_${flydirection.id}_${me}_${key}`
 				flyPresetIds.push(defId)
 				context.definitions[defId] = {
@@ -302,7 +310,7 @@ export function createUpstreamKeyerPresets(
 									options: {
 										mixeffect: { isExpression: true, value: '$(local:me)' },
 										key: { isExpression: true, value: '$(local:key)' },
-										keyframe: flydirection.id,
+										keyframe: flyKeyframe,
 									},
 								},
 							],

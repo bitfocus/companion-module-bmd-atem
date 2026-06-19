@@ -3,7 +3,7 @@ import { convertOptionsFields } from '../options/util.js'
 import type { CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
 import type { StateWrapper } from '../state.js'
 import type { AtemConfig } from '../config.js'
-import { AtemTimecodeModePicker, timecodeModeToEnum, upstreamKeyerTypeEnumToString } from '../options/timecode.js'
+import { AtemTimecodeModePicker, timecodeModeToEnum, timecodeModeEnumToString } from '../options/timecode.js'
 
 type TimecodeMode = 'freerun' | 'timeofday'
 
@@ -48,7 +48,7 @@ export function createTimecodeFeedbacks(
 				const rawMode = state.state.settings.timeMode
 				if (rawMode === undefined) return undefined
 
-				const newMode = upstreamKeyerTypeEnumToString(rawMode)
+				const newMode = timecodeModeEnumToString(rawMode)
 				if (newMode === undefined) return undefined
 
 				return {

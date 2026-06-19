@@ -35,7 +35,7 @@ export function timecodeModeToEnum(ref: JsonValue | undefined): Enums.TimeMode |
 	}
 }
 
-export function upstreamKeyerTypeEnumToString(type: Enums.TimeMode): TimecodeMode | undefined {
+export function timecodeModeEnumToString(type: Enums.TimeMode): TimecodeMode | undefined {
 	switch (type) {
 		case Enums.TimeMode.FreeRun:
 			return 'freerun'
