@@ -21,7 +21,7 @@ import type { ModelSpec } from '../../models/index.js'
 import { AtemCommandBatching, CommandBatching } from '../../batching.js'
 import { CHOICES_KEYTRANS, CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle, AtemRatePicker } from '../../options/common.js'
 import { getTransitionProperties, getUSK, type StateWrapper } from '../../state.js'
-import { type InstanceBaseExt, assertUnreachable } from '../../util.js'
+import { type InstanceBaseExt, assertUnreachable, clamp } from '../../util.js'
 import {
 	AtemMEPicker,
 	AtemTransitionStylePicker,
@@ -48,6 +48,13 @@ export type AtemTransitionActions = {
 			mixeffect: number
 			style: TransitionStyleString | JsonValue | undefined
 			rate: number
+		}
+	}
+	['transitionRateDelta']: {
+		options: {
+			mixeffect: number
+			style: TransitionStyleString | JsonValue | undefined
+			delta: number
 		}
 	}
 	['transitionSelection']: {
@@ -239,6 +246,68 @@ export function createTransitionActions(
 					}
 				} else {
 					return undefined
+				}
+			},
+		},
+		['transitionRateDelta']: {
+			name: 'Transition: Adjust rate (relative)',
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
+				style: AtemTransitionStylePicker(true),
+				delta: {
+					type: 'number',
+					id: 'delta',
+					label: 'Adjust rate by',
+					min: -250,
+					max: 250,
+					range: true,
+					default: 1,
+					asInteger: true,
+					clampValues: true,
+				},
+			}),
+			callback: async ({ options }) => {
+				const parsedStyle = transitionStyleStringToEnum(options.style)
+				if (parsedStyle === null) return // Not valid
+
+				const me = getMixEffect(state.state, options.mixeffect - 1)
+				if (!me?.transitionSettings) return
+
+				switch (parsedStyle) {
+					case Enums.TransitionStyle.MIX:
+						if (me.transitionSettings.mix === undefined) return
+						await atem?.setMixTransitionSettings(
+							{ rate: clamp(1, 250, me.transitionSettings.mix.rate + options.delta) },
+							options.mixeffect - 1,
+						)
+						break
+					case Enums.TransitionStyle.DIP:
+						if (me.transitionSettings.dip === undefined) return
+						await atem?.setDipTransitionSettings(
+							{ rate: clamp(1, 250, me.transitionSettings.dip.rate + options.delta) },
+							options.mixeffect - 1,
+						)
+						break
+					case Enums.TransitionStyle.WIPE:
+						if (me.transitionSettings.wipe === undefined) return
+						await atem?.setWipeTransitionSettings(
+							{ rate: clamp(1, 250, me.transitionSettings.wipe.rate + options.delta) },
+							options.mixeffect - 1,
+						)
+						break
+					case Enums.TransitionStyle.DVE:
+						if (me.transitionSettings.DVE === undefined) return
+						await atem?.setDVETransitionSettings(
+							{ rate: clamp(1, 250, me.transitionSettings.DVE.rate + options.delta) },
+							options.mixeffect - 1,
+						)
+						break
+					case Enums.TransitionStyle.STING:
+						// Not supported
+						break
+					default:
+						assertUnreachable(parsedStyle)
+						instance.log('debug', 'Unknown transition style: ' + parsedStyle)
 				}
 			},
 		},

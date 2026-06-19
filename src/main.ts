@@ -274,6 +274,7 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 			meProgram: new Set(),
 			mePreview: new Set(),
 			transitionPosition: new Set(),
+			transitionRate: new Set(),
 			auxes: new Set(),
 			dsk: new Set(),
 			usk: new Set(),
@@ -450,12 +451,17 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 				continue
 			}
 
-			if (path.match(/video.mixEffects.(\d+).transitionProperties/)) {
+			const transitionPropertiesMatch = path.match(/video.mixEffects.(\d+).transitionProperties/)
+			if (transitionPropertiesMatch) {
+				// The active-style rate variable depends on the selected nextStyle
+				changedVariables.transitionRate.add(parseInt(transitionPropertiesMatch[1], 10))
 				changedFeedbacks.add('transitionStyle')
 				changedFeedbacks.add('transitionSelection')
 				continue
 			}
-			if (path.match(/video.mixEffects.(\d+).transitionSettings/)) {
+			const transitionSettingsMatch = path.match(/video.mixEffects.(\d+).transitionSettings/)
+			if (transitionSettingsMatch) {
+				changedVariables.transitionRate.add(parseInt(transitionSettingsMatch[1], 10))
 				changedFeedbacks.add('transitionRate')
 				continue
 			}

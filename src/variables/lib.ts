@@ -45,6 +45,7 @@ export interface UpdateVariablesProps {
 	meProgram: Set<number>
 	mePreview: Set<number>
 	transitionPosition: Set<number>
+	transitionRate: Set<number>
 	auxes: Set<number>
 	dsk: Set<number>
 	usk: Set<[me: number, key: number]>
@@ -72,6 +73,7 @@ export function updateChangedVariables(
 	for (const meIndex of changes.meProgram) updateMEProgramVariable(instance, state, meIndex, newValues)
 	for (const meIndex of changes.mePreview) updateMEPreviewVariable(instance, state, meIndex, newValues)
 	for (const meIndex of changes.transitionPosition) updateMETransitionPositionVariable(state, meIndex, newValues)
+	for (const meIndex of changes.transitionRate) updateMETransitionRateVariables(state, meIndex, newValues)
 
 	for (const auxIndex of changes.auxes) updateAuxVariable(instance, state, auxIndex, newValues)
 	for (const dsk of changes.dsk) updateDSKVariable(instance, state, dsk, newValues)
@@ -125,6 +127,38 @@ function updateMEPreviewVariable(
 function updateMETransitionPositionVariable(state: AtemState, meIndex: number, values: Partial<VariablesSchema>) {
 	const rawPosition = state.video.mixEffects[meIndex]?.transitionPosition?.handlePosition ?? 0
 	values[`tbar_${meIndex + 1}`] = Math.round(rawPosition / 100)
+}
+export function updateMETransitionRateVariables(
+	state: AtemState,
+	meIndex: number,
+	values: Partial<VariablesSchema>,
+): void {
+	const me = getMixEffect(state, meIndex)
+	const ts = me?.transitionSettings
+	values[`transition_${meIndex + 1}_rate_mix`] = ts?.mix?.rate
+	values[`transition_${meIndex + 1}_rate_dip`] = ts?.dip?.rate
+	values[`transition_${meIndex + 1}_rate_wipe`] = ts?.wipe?.rate
+	values[`transition_${meIndex + 1}_rate_dve`] = ts?.DVE?.rate
+
+	// The "active" rate tracks whichever style is currently selected as the next transition
+	switch (me?.transitionProperties?.nextStyle) {
+		case Enums.TransitionStyle.MIX:
+			values[`transition_${meIndex + 1}_rate`] = ts?.mix?.rate
+			break
+		case Enums.TransitionStyle.DIP:
+			values[`transition_${meIndex + 1}_rate`] = ts?.dip?.rate
+			break
+		case Enums.TransitionStyle.WIPE:
+			values[`transition_${meIndex + 1}_rate`] = ts?.wipe?.rate
+			break
+		case Enums.TransitionStyle.DVE:
+			values[`transition_${meIndex + 1}_rate`] = ts?.DVE?.rate
+			break
+		default:
+			// STING/unknown has no comparable rate
+			values[`transition_${meIndex + 1}_rate`] = undefined
+			break
+	}
 }
 
 function updateUSKVariable(
@@ -457,6 +491,23 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 			name: `Position of T-bar (M/E ${i + 1})`,
 		}
 		updateMETransitionPositionVariable(state.state, i, values)
+
+		variables[`transition_${i + 1}_rate_mix`] = {
+			name: `Mix transition rate (M/E ${i + 1})`,
+		}
+		variables[`transition_${i + 1}_rate_dip`] = {
+			name: `Dip transition rate (M/E ${i + 1})`,
+		}
+		variables[`transition_${i + 1}_rate_wipe`] = {
+			name: `Wipe transition rate (M/E ${i + 1})`,
+		}
+		variables[`transition_${i + 1}_rate_dve`] = {
+			name: `DVE transition rate (M/E ${i + 1})`,
+		}
+		variables[`transition_${i + 1}_rate`] = {
+			name: `Transition rate of selected style (M/E ${i + 1})`,
+		}
+		updateMETransitionRateVariables(state.state, i, values)
 
 		for (let k = 0; k < model.USKs; ++k) {
 			variables[`usk_${i + 1}_${k + 1}_input`] = {

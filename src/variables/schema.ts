@@ -8,6 +8,12 @@ export type VariablesSchema = {
 
 	[key: `tbar_${number}`]: number
 
+	[key: `transition_${number}_rate_mix`]: number | undefined
+	[key: `transition_${number}_rate_dip`]: number | undefined
+	[key: `transition_${number}_rate_wipe`]: number | undefined
+	[key: `transition_${number}_rate_dve`]: number | undefined
+	[key: `transition_${number}_rate`]: number | undefined
+
 	[key: `usk_${number}_${number}_input`]: string
 	[key: `usk_${number}_${number}_input_id`]: number
 	[key: `usk_${number}_${number}_maskEnabled`]: boolean | undefined
