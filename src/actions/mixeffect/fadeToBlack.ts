@@ -4,7 +4,7 @@ import type { CompanionActionDefinitions } from '@companion-module/base'
 import { AtemRatePicker } from '../../options/common.js'
 import type { ModelSpec } from '../../models/index.js'
 import { getMixEffect, type StateWrapper } from '../../state.js'
-import { AtemMEPicker } from '../../options/mixEffect.js'
+import { AtemMEPicker, resolveMixEffectIndex } from '../../options/mixEffect.js'
 
 export type AtemFadeToBlackActions = {
 	['fadeToBlackAuto']: {
@@ -32,7 +32,7 @@ export function createFadeToBlackActions(
 				mixeffect: AtemMEPicker(model),
 			}),
 			callback: async ({ options }) => {
-				await atem?.fadeToBlack(options.mixeffect - 1)
+				await atem?.fadeToBlack(resolveMixEffectIndex(model, options.mixeffect))
 			},
 		},
 		['fadeToBlackRate']: {
@@ -42,10 +42,10 @@ export function createFadeToBlackActions(
 				rate: AtemRatePicker('Rate'),
 			}),
 			callback: async ({ options }) => {
-				await atem?.setFadeToBlackRate(options.rate, options.mixeffect - 1)
+				await atem?.setFadeToBlackRate(options.rate, resolveMixEffectIndex(model, options.mixeffect))
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
 
 				if (me?.fadeToBlack) {
 					return {

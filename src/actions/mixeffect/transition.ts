@@ -24,6 +24,7 @@ import { getTransitionProperties, getUSK, type StateWrapper } from '../../state.
 import { type InstanceBaseExt, assertUnreachable, clamp } from '../../util.js'
 import {
 	AtemMEPicker,
+	resolveMixEffectIndex,
 	AtemTransitionStylePicker,
 	transitionStyleEnumToString,
 	type TransitionStyleString,
@@ -118,13 +119,13 @@ export function createTransitionActions(
 			callback: async ({ options }) => {
 				let target: boolean
 				if (options.state === 'toggle') {
-					const meState = getMixEffect(state.state, options.mixeffect - 1)
+					const meState = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
 					target = !meState.transitionPreview
 				} else {
 					target = options.state === 'true'
 				}
 
-				await atem?.previewTransition(target, options.mixeffect - 1)
+				await atem?.previewTransition(target, resolveMixEffectIndex(model, options.mixeffect))
 			},
 		},
 		['transitionStyle']: {
@@ -141,11 +142,11 @@ export function createTransitionActions(
 					{
 						nextStyle: parsedStyle,
 					},
-					options.mixeffect - 1,
+					resolveMixEffectIndex(model, options.mixeffect),
 				)
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
 
 				if (me) {
 					return {
@@ -173,7 +174,7 @@ export function createTransitionActions(
 							{
 								rate: options.rate,
 							},
-							options.mixeffect - 1,
+							resolveMixEffectIndex(model, options.mixeffect),
 						)
 						break
 					case Enums.TransitionStyle.DIP:
@@ -181,7 +182,7 @@ export function createTransitionActions(
 							{
 								rate: options.rate,
 							},
-							options.mixeffect - 1,
+							resolveMixEffectIndex(model, options.mixeffect),
 						)
 
 						break
@@ -190,7 +191,7 @@ export function createTransitionActions(
 							{
 								rate: options.rate,
 							},
-							options.mixeffect - 1,
+							resolveMixEffectIndex(model, options.mixeffect),
 						)
 
 						break
@@ -199,7 +200,7 @@ export function createTransitionActions(
 							{
 								rate: options.rate,
 							},
-							options.mixeffect - 1,
+							resolveMixEffectIndex(model, options.mixeffect),
 						)
 						break
 					case Enums.TransitionStyle.STING:
@@ -214,7 +215,7 @@ export function createTransitionActions(
 				const parsedStyle = transitionStyleStringToEnum(options.style)
 				if (parsedStyle === null) return // Not valid
 
-				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
 
 				if (me?.transitionSettings) {
 					switch (parsedStyle) {
@@ -270,7 +271,7 @@ export function createTransitionActions(
 				const parsedStyle = transitionStyleStringToEnum(options.style)
 				if (parsedStyle === null) return // Not valid
 
-				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
 				if (!me?.transitionSettings) return
 
 				switch (parsedStyle) {
@@ -278,28 +279,28 @@ export function createTransitionActions(
 						if (me.transitionSettings.mix === undefined) return
 						await atem?.setMixTransitionSettings(
 							{ rate: clamp(1, 250, me.transitionSettings.mix.rate + options.delta) },
-							options.mixeffect - 1,
+							resolveMixEffectIndex(model, options.mixeffect),
 						)
 						break
 					case Enums.TransitionStyle.DIP:
 						if (me.transitionSettings.dip === undefined) return
 						await atem?.setDipTransitionSettings(
 							{ rate: clamp(1, 250, me.transitionSettings.dip.rate + options.delta) },
-							options.mixeffect - 1,
+							resolveMixEffectIndex(model, options.mixeffect),
 						)
 						break
 					case Enums.TransitionStyle.WIPE:
 						if (me.transitionSettings.wipe === undefined) return
 						await atem?.setWipeTransitionSettings(
 							{ rate: clamp(1, 250, me.transitionSettings.wipe.rate + options.delta) },
-							options.mixeffect - 1,
+							resolveMixEffectIndex(model, options.mixeffect),
 						)
 						break
 					case Enums.TransitionStyle.DVE:
 						if (me.transitionSettings.DVE === undefined) return
 						await atem?.setDVETransitionSettings(
 							{ rate: clamp(1, 250, me.transitionSettings.DVE.rate + options.delta) },
-							options.mixeffect - 1,
+							resolveMixEffectIndex(model, options.mixeffect),
 						)
 						break
 					case Enums.TransitionStyle.STING:
@@ -322,7 +323,7 @@ export function createTransitionActions(
 					{
 						nextSelection: calculateTransitionSelection(model.USKs, options.selection),
 					},
-					options.mixeffect - 1,
+					resolveMixEffectIndex(model, options.mixeffect),
 				)
 			},
 		},
@@ -333,7 +334,7 @@ export function createTransitionActions(
 				...AtemTransitionSelectComponentsPickers(model),
 			}),
 			callback: async ({ options }) => {
-				const mixeffect = options.mixeffect - 1
+				const mixeffect = resolveMixEffectIndex(model, options.mixeffect)
 				const tp = getTransitionProperties(state.state, mixeffect)
 				if (!atem || !tp) return
 
@@ -410,7 +411,7 @@ export function createTransitionActions(
 				}
 			},
 			learn: ({ options }) => {
-				const me = options.mixeffect - 1
+				const me = resolveMixEffectIndex(model, options.mixeffect)
 				const mixeffect = getMixEffect(state.state, me)
 				const tp = getTransitionProperties(state.state, me)
 				if (mixeffect && tp) {
@@ -463,7 +464,7 @@ export function createTransitionActions(
 				},
 			}),
 			callback: async ({ options }) => {
-				const me = options.mixeffect - 1
+				const me = resolveMixEffectIndex(model, options.mixeffect)
 				const tp = getTransitionProperties(state.state, me)
 				if (tp && atem) {
 					let batch = commandBatching.meTransitionSelection.get(me)
@@ -548,10 +549,10 @@ export function createTransitionActions(
 
 				if (Object.keys(newProps).length === 0) return
 
-				await atem?.setWipeTransitionSettings(newProps, options.mixeffect - 1)
+				await atem?.setWipeTransitionSettings(newProps, resolveMixEffectIndex(model, options.mixeffect))
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
 
 				if (me?.transitionSettings?.wipe) {
 					const wipe = me.transitionSettings.wipe

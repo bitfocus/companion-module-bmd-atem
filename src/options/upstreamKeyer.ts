@@ -13,16 +13,26 @@ import { WithDropdownPropertiesPicker } from './util.js'
 import type { ModelSpec } from '../models/types.js'
 
 export function AtemUSKPicker(model: ModelSpec): CompanionInputFieldDropdown<'key'> {
+	const choices = iterateTimes(model.USKs, (i) => ({
+		id: i + 1,
+		label: `${i + 1}`,
+	}))
 	return {
 		type: 'dropdown',
 		label: 'Key',
 		id: 'key',
 		default: 1,
-		choices: iterateTimes(model.USKs, (i) => ({
-			id: i + 1,
-			label: `${i + 1}`,
-		})),
+		choices,
+		isVisibleExpression: choices.length > 1 ? undefined : 'false', // Hide if only 1 choice
 	}
+}
+
+/**
+ * Resolve the 0-based upstream keyer index from a picker value. When the model has only a single
+ * USK the picker is hidden, so any value is ignored and treated as the first (and only) key.
+ */
+export function resolveUpstreamKeyerIndex(model: ModelSpec, key: number): number {
+	return model.USKs > 1 ? key - 1 : 0
 }
 
 export type UpstreamKeyerTypeString = 'luma' | 'chroma' | 'pattern' | 'dve'

@@ -6,6 +6,7 @@ import { getMixEffect, type StateWrapper } from '../../state.js'
 import { assertUnreachable } from '../../util.js'
 import {
 	AtemMEPicker,
+	resolveMixEffectIndex,
 	AtemTransitionStylePicker,
 	transitionStyleEnumToString,
 	type TransitionStyleString,
@@ -84,7 +85,7 @@ export function createTransitionFeedbacks(
 				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
 				return !!me?.transitionPreview
 			},
 		},
@@ -100,14 +101,14 @@ export function createTransitionFeedbacks(
 				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
 				const selectedStyle = transitionStyleStringToEnum(options.style)
 				if (selectedStyle === null) return false
 
 				return me?.transitionProperties.nextStyle === selectedStyle
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
 
 				if (me) {
 					return {
@@ -131,7 +132,7 @@ export function createTransitionFeedbacks(
 				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
 				const expectedSelection = calculateTransitionSelection(model.USKs, options.selection)
 				if (me) {
 					switch (options.matchmethod) {
@@ -159,7 +160,7 @@ export function createTransitionFeedbacks(
 				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
 				if (me?.transitionSettings) {
 					const parsedStyle = transitionStyleStringToEnum(options.style)
 					if (parsedStyle === null) return false // Not valid
@@ -183,7 +184,7 @@ export function createTransitionFeedbacks(
 				return false
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
 
 				if (me?.transitionSettings) {
 					const parsedStyle = transitionStyleStringToEnum(options.style)
@@ -228,7 +229,7 @@ export function createTransitionFeedbacks(
 				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
 				return !!me?.transitionPosition?.inTransition
 			},
 		},
@@ -253,13 +254,13 @@ export function createTransitionFeedbacks(
 				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
 				const parsedPattern = wipePatternStringToEnum(options.pattern)
 				if (parsedPattern === null) return false
 				return me?.transitionSettings?.wipe?.pattern === parsedPattern
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
 
 				if (me?.transitionSettings?.wipe) {
 					return {

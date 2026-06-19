@@ -3,7 +3,7 @@ import { convertOptionsFields } from '../../options/util.js'
 import type { ModelSpec } from '../../models/index.js'
 import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { getMixEffect, type StateWrapper } from '../../state.js'
-import { AtemMEPicker } from '../../options/mixEffect.js'
+import { AtemMEPicker, resolveMixEffectIndex } from '../../options/mixEffect.js'
 import { AtemRatePicker } from '../../options/common.js'
 
 export type AtemFadeToBlackFeedbacks = {
@@ -40,7 +40,7 @@ export function createFadeToBlackFeedbacks(
 				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
 				if (me && me.fadeToBlack) {
 					switch (options.state) {
 						case 'off':
@@ -67,12 +67,12 @@ export function createFadeToBlackFeedbacks(
 				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
 				const rate = options.rate
 				return me?.fadeToBlack?.rate === rate
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
 
 				if (me?.fadeToBlack) {
 					return {

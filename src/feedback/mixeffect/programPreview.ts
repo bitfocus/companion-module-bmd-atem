@@ -2,7 +2,7 @@ import { convertOptionsFields } from '../../options/util.js'
 import type { ModelSpec } from '../../models/index.js'
 import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { getMixEffect, type StateWrapper } from '../../state.js'
-import { AtemMEPicker, AtemMESourcePicker } from '../../options/mixEffect.js'
+import { AtemMEPicker, AtemMESourcePicker, resolveMixEffectIndex } from '../../options/mixEffect.js'
 
 export type AtemProgramPreviewFeedbacks = {
 	['program']: {
@@ -38,11 +38,11 @@ export function createProgramPreviewFeedbacks(
 				bgcolor: 0x00ff00,
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
 				return me?.programInput === options.input
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
 
 				if (me) {
 					return {
@@ -65,11 +65,11 @@ export function createProgramPreviewFeedbacks(
 				bgcolor: 0x00ff00,
 			},
 			callback: ({ options }): boolean => {
-				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
 				return me?.previewInput === options.input
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
 
 				if (me) {
 					return {

@@ -14,12 +14,13 @@ import type {
 } from 'atem-connection/dist/state/video/upstreamKeyers.js'
 import type { AtemTransitions, TransitionOptions } from '../../transitions.js'
 import { AtemTransitionAnimationOptions } from '../../options/fade.js'
-import { AtemMEPicker } from '../../options/mixEffect.js'
+import { AtemMEPicker, resolveMixEffectIndex } from '../../options/mixEffect.js'
 import {
 	AtemFlyKeyKeyFramePicker,
 	type FlyKeyKeyFrameString,
 	flyKeyKeyFrameStringToEnum,
 	AtemUSKPicker,
+	resolveUpstreamKeyerIndex,
 } from '../../options/upstreamKeyer.js'
 
 export type AtemUpstreamKeyerDVEActions = {
@@ -189,8 +190,8 @@ export function createUpstreamKeyerDVEActions(
 				...AtemUSKDVEPropertiesPickers(),
 			}),
 			callback: async ({ options }) => {
-				const keyId = options.key - 1
-				const mixEffectId = options.mixeffect - 1
+				const keyId = resolveUpstreamKeyerIndex(model, options.key)
+				const mixEffectId = resolveMixEffectIndex(model, options.mixeffect)
 				const newProps: Partial<UpstreamKeyerDVESettings> = {}
 
 				const props = options.properties
@@ -312,7 +313,11 @@ export function createUpstreamKeyerDVEActions(
 				)
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
+				const usk = getUSK(
+					state.state,
+					resolveMixEffectIndex(model, options.mixeffect),
+					resolveUpstreamKeyerIndex(model, options.key),
+				)
 
 				if (usk?.dveSettings) {
 					return {
@@ -357,8 +362,8 @@ export function createUpstreamKeyerDVEActions(
 				...AtemUSKKeyframePropertiesPickers(),
 			}),
 			callback: async ({ options }) => {
-				const mixEffectId = options.mixeffect - 1
-				const keyId = options.key - 1
+				const mixEffectId = resolveMixEffectIndex(model, options.mixeffect)
+				const keyId = resolveUpstreamKeyerIndex(model, options.key)
 				const keyframeId = flyKeyKeyFrameStringToEnum(options.keyframe)
 				if (keyframeId !== Enums.FlyKeyKeyFrame.A && keyframeId !== Enums.FlyKeyKeyFrame.B)
 					throw new Error(`Cannot set invalid keyfame: ${JSON.stringify(options.keyframe)}`)
@@ -437,7 +442,11 @@ export function createUpstreamKeyerDVEActions(
 				await atem?.setUpstreamKeyerFlyKeyKeyframe(mixEffectId, keyId, keyframeId, properties)
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
+				const usk = getUSK(
+					state.state,
+					resolveMixEffectIndex(model, options.mixeffect),
+					resolveUpstreamKeyerIndex(model, options.key),
+				)
 
 				if (usk?.dveSettings) {
 					return {
@@ -480,7 +489,11 @@ export function createUpstreamKeyerDVEActions(
 				if (keyframeId !== Enums.FlyKeyKeyFrame.A && keyframeId !== Enums.FlyKeyKeyFrame.B)
 					throw new Error(`Cannot set invalid keyfame: ${JSON.stringify(options.keyframe)}`)
 
-				await atem?.storeUpstreamKeyerFlyKeyKeyframe(options.mixeffect - 1, options.key - 1, keyframeId)
+				await atem?.storeUpstreamKeyerFlyKeyKeyframe(
+					resolveMixEffectIndex(model, options.mixeffect),
+					resolveUpstreamKeyerIndex(model, options.key),
+					keyframeId,
+				)
 			},
 		},
 		['uskFly']: {
@@ -499,10 +512,18 @@ export function createUpstreamKeyerDVEActions(
 				)
 					throw new Error(`Cannot set invalid keyfame: ${JSON.stringify(options.keyframe)}`)
 
-				await atem?.runUpstreamKeyerFlyKeyTo(options.mixeffect - 1, options.key - 1, keyframeId)
+				await atem?.runUpstreamKeyerFlyKeyTo(
+					resolveMixEffectIndex(model, options.mixeffect),
+					resolveUpstreamKeyerIndex(model, options.key),
+					keyframeId,
+				)
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
+				const usk = getUSK(
+					state.state,
+					resolveMixEffectIndex(model, options.mixeffect),
+					resolveUpstreamKeyerIndex(model, options.key),
+				)
 
 				if (usk?.flyProperties) {
 					return {
@@ -528,10 +549,18 @@ export function createUpstreamKeyerDVEActions(
 				},
 			}),
 			callback: async ({ options }) => {
-				await atem?.runUpstreamKeyerFlyKeyToInfinite(options.mixeffect - 1, options.key - 1, options.flydirection)
+				await atem?.runUpstreamKeyerFlyKeyToInfinite(
+					resolveMixEffectIndex(model, options.mixeffect),
+					resolveUpstreamKeyerIndex(model, options.key),
+					options.flydirection,
+				)
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
+				const usk = getUSK(
+					state.state,
+					resolveMixEffectIndex(model, options.mixeffect),
+					resolveUpstreamKeyerIndex(model, options.key),
+				)
 
 				if (usk?.flyProperties) {
 					return {

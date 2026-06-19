@@ -40,6 +40,7 @@ To add a new model to the list:
 - Add on-air variables for USK and DSK (#442)
 - Add USK border saturation variable (#411)
 - Add SuperSource art fill/key source variables (#393)
+- Hide M/E, key, multiviewer and media player dropdowns when only one option is available (#260)
 - Add preview with program feedback preset (#455)
 - Fix unable to enable/disable "Upstream key: Set Flying Key" (#378)
 - Fix SuperSource box on-air/crop-enable failing when a transition rate is set (#385)

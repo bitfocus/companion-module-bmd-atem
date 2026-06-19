@@ -9,16 +9,26 @@ import { iterateTimes } from '../util.js'
 import { WithDropdownPropertiesPicker } from './util.js'
 
 export function AtemDSKPicker<TId extends string>(model: ModelSpec, id: TId): CompanionInputFieldDropdown<TId> {
+	const choices = iterateTimes(model.DSKs, (i) => ({
+		id: i + 1,
+		label: `${i + 1}`,
+	}))
 	return {
 		type: 'dropdown',
 		label: 'DSK',
 		id: id,
 		default: 1,
-		choices: iterateTimes(model.DSKs, (i) => ({
-			id: i + 1,
-			label: `${i + 1}`,
-		})),
+		choices,
+		isVisibleExpression: choices.length > 1 ? undefined : 'false', // Hide if only 1 choice
 	}
+}
+
+/**
+ * Resolve the 0-based downstream keyer index from a picker value. When the model has only a single
+ * DSK the picker is hidden, so any value is ignored and treated as the first (and only) key.
+ */
+export function resolveDownstreamKeyerIndex(model: ModelSpec, key: number): number {
+	return model.DSKs > 1 ? key - 1 : 0
 }
 
 export function AtemDSKPreMultipliedKeyPropertiesPickers(): {

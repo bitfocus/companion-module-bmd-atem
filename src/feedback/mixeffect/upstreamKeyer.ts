@@ -3,13 +3,14 @@ import { convertOptionsFields } from '../../options/util.js'
 import type { ModelSpec } from '../../models/index.js'
 import type { CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
 import { getUSK, type StateWrapper } from '../../state.js'
-import { AtemMEPicker } from '../../options/mixEffect.js'
+import { AtemMEPicker, resolveMixEffectIndex } from '../../options/mixEffect.js'
 import {
 	AtemUpstreamKeyerTypePicker,
 	upstreamKeyerTypeEnumToString,
 	type UpstreamKeyerTypeString,
 	upstreamKeyerTypeStringToEnum,
 	AtemUSKPicker,
+	resolveUpstreamKeyerIndex,
 } from '../../options/upstreamKeyer.js'
 import { AtemKeyFillSourcePicker } from '../../options/commonKeyer.js'
 import { CHOICES_CURRENTKEYFRAMES } from '../../options/upstreamKeyer-dve.js'
@@ -73,7 +74,11 @@ export function createUpstreamKeyerFeedbacks(
 				bgcolor: 0xff0000,
 			},
 			callback: ({ options }): boolean => {
-				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
+				const usk = getUSK(
+					state.state,
+					resolveMixEffectIndex(model, options.mixeffect),
+					resolveUpstreamKeyerIndex(model, options.key),
+				)
 				return !!usk?.onAir
 			},
 		},
@@ -93,11 +98,19 @@ export function createUpstreamKeyerFeedbacks(
 				const parsedType = upstreamKeyerTypeStringToEnum(options.type)
 				if (parsedType === null) return false
 
-				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
+				const usk = getUSK(
+					state.state,
+					resolveMixEffectIndex(model, options.mixeffect),
+					resolveUpstreamKeyerIndex(model, options.key),
+				)
 				return usk?.mixEffectKeyType === parsedType
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
+				const usk = getUSK(
+					state.state,
+					resolveMixEffectIndex(model, options.mixeffect),
+					resolveUpstreamKeyerIndex(model, options.key),
+				)
 
 				if (usk) {
 					return {
@@ -121,11 +134,19 @@ export function createUpstreamKeyerFeedbacks(
 				bgcolor: 0xeeee00,
 			},
 			callback: ({ options }): boolean => {
-				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
+				const usk = getUSK(
+					state.state,
+					resolveMixEffectIndex(model, options.mixeffect),
+					resolveUpstreamKeyerIndex(model, options.key),
+				)
 				return usk?.fillSource === options.fill
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
+				const usk = getUSK(
+					state.state,
+					resolveMixEffectIndex(model, options.mixeffect),
+					resolveUpstreamKeyerIndex(model, options.key),
+				)
 
 				if (usk) {
 					return {
@@ -157,11 +178,19 @@ export function createUpstreamKeyerFeedbacks(
 						bgcolor: 0xeeee00,
 					},
 					callback: ({ options }): boolean => {
-						const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
+						const usk = getUSK(
+							state.state,
+							resolveMixEffectIndex(model, options.mixeffect),
+							resolveUpstreamKeyerIndex(model, options.key),
+						)
 						return usk?.flyProperties?.isAtKeyFrame === Number(options.keyframe)
 					},
 					learn: ({ options }) => {
-						const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
+						const usk = getUSK(
+							state.state,
+							resolveMixEffectIndex(model, options.mixeffect),
+							resolveUpstreamKeyerIndex(model, options.key),
+						)
 
 						if (usk?.flyProperties) {
 							return {

@@ -3,7 +3,7 @@ import { convertOptionsFields } from '../options/util.js'
 import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { getMediaPlayer } from 'atem-connection/dist/state/util.js'
-import { AtemMediaPlayerPicker } from '../options/mediaPlayer.js'
+import { AtemMediaPlayerPicker, resolveMediaPlayerIndex } from '../options/mediaPlayer.js'
 import type { StateWrapper } from '../state.js'
 import {
 	AtemMediaPlayerSourcePickers,
@@ -87,11 +87,11 @@ export function createMediaPlayerActions(
 						clipIndex: source.slot,
 						stillIndex: source.slot,
 					},
-					options.mediaplayer - 1,
+					resolveMediaPlayerIndex(model, options.mediaplayer),
 				)
 			},
 			learn: ({ options }) => {
-				const player = state.state.media.players[options.mediaplayer - 1]
+				const player = state.state.media.players[resolveMediaPlayerIndex(model, options.mediaplayer)]
 
 				if (player) {
 					return {
@@ -128,7 +128,7 @@ export function createMediaPlayerActions(
 				},
 			}),
 			callback: async ({ options }) => {
-				const playerId = options.mediaplayer - 1
+				const playerId = resolveMediaPlayerIndex(model, options.mediaplayer)
 				const direction = options.direction
 				const offset = direction === 'next' ? 1 : -1
 
@@ -184,13 +184,13 @@ export function createMediaPlayerActions(
 				},
 			}),
 			callback: async ({ options }) => {
-				const playerId = options.mediaplayer - 1
+				const playerId = resolveMediaPlayerIndex(model, options.mediaplayer)
 				const player = getMediaPlayer(state.state, playerId)
 				const newVal = resolveTrueFalseToggle(options.loop, player?.loop)
 				await atem?.setMediaPlayerSettings({ loop: newVal }, playerId)
 			},
 			learn: ({ options }) => {
-				const player = getMediaPlayer(state.state, options.mediaplayer - 1)
+				const player = getMediaPlayer(state.state, resolveMediaPlayerIndex(model, options.mediaplayer))
 				if (player) {
 					return { loop: player.loop ? 'true' : 'false' }
 				} else {
@@ -216,13 +216,13 @@ export function createMediaPlayerActions(
 				},
 			}),
 			callback: async ({ options }) => {
-				const playerId = options.mediaplayer - 1
+				const playerId = resolveMediaPlayerIndex(model, options.mediaplayer)
 				const player = getMediaPlayer(state.state, playerId)
 				const newVal = resolveTrueFalseToggle(options.playing, player?.playing)
 				await atem?.setMediaPlayerSettings({ playing: newVal }, playerId)
 			},
 			learn: ({ options }) => {
-				const player = getMediaPlayer(state.state, options.mediaplayer - 1)
+				const player = getMediaPlayer(state.state, resolveMediaPlayerIndex(model, options.mediaplayer))
 				if (player) {
 					return { playing: player.playing ? 'true' : 'false' }
 				} else {
@@ -236,7 +236,7 @@ export function createMediaPlayerActions(
 				mediaplayer: AtemMediaPlayerPicker(model),
 			}),
 			callback: async ({ options }) => {
-				const playerId = options.mediaplayer - 1
+				const playerId = resolveMediaPlayerIndex(model, options.mediaplayer)
 				await atem?.setMediaPlayerSettings({ atBeginning: true }, playerId)
 			},
 		},

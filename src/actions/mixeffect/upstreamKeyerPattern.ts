@@ -4,8 +4,12 @@ import type { CompanionActionDefinitions } from '@companion-module/base'
 import type { ModelSpec } from '../../models/index.js'
 import { getUSK, type StateWrapper } from '../../state.js'
 import type { UpstreamKeyerPatternSettings } from 'atem-connection/dist/state/video/upstreamKeyers.js'
-import { AtemMEPicker } from '../../options/mixEffect.js'
-import { AtemUSKPatternPropertiesPickers, AtemUSKPicker } from '../../options/upstreamKeyer.js'
+import { AtemMEPicker, resolveMixEffectIndex } from '../../options/mixEffect.js'
+import {
+	AtemUSKPatternPropertiesPickers,
+	AtemUSKPicker,
+	resolveUpstreamKeyerIndex,
+} from '../../options/upstreamKeyer.js'
 
 export type AtemUpstreamKeyerPatternActions = {
 	['uskPatternProperties']: {
@@ -46,8 +50,8 @@ export function createUpstreamKeyerPatternActions(
 				...AtemUSKPatternPropertiesPickers(),
 			}),
 			callback: async ({ options }) => {
-				const keyId = options.key - 1
-				const mixEffectId = options.mixeffect - 1
+				const keyId = resolveUpstreamKeyerIndex(model, options.key)
+				const mixEffectId = resolveMixEffectIndex(model, options.mixeffect)
 				const newProps: Partial<UpstreamKeyerPatternSettings> = {}
 
 				const props = options.properties
@@ -80,8 +84,8 @@ export function createUpstreamKeyerPatternActions(
 				await atem?.setUpstreamKeyerPatternSettings(newProps, mixEffectId, keyId)
 			},
 			learn: async ({ options }) => {
-				const keyId = options.key - 1
-				const mixeffectId = options.mixeffect - 1
+				const keyId = resolveUpstreamKeyerIndex(model, options.key)
+				const mixeffectId = resolveMixEffectIndex(model, options.mixeffect)
 				const usk = getUSK(state.state, mixeffectId, keyId)
 
 				if (usk?.patternSettings) {

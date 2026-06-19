@@ -11,16 +11,26 @@ import { type AtemState, Enums } from 'atem-connection'
 import { SourcesToChoices } from './util.js'
 
 export function AtemMEPicker(model: ModelSpec): CompanionInputFieldDropdown<'mixeffect'> {
+	const choices = iterateTimes(model.MEs, (i) => ({
+		id: i + 1,
+		label: `M/E ${i + 1}`,
+	}))
 	return {
 		id: 'mixeffect',
 		label: `M/E`,
 		type: 'dropdown',
 		default: 1,
-		choices: iterateTimes(model.MEs, (i) => ({
-			id: i + 1,
-			label: `M/E ${i + 1}`,
-		})),
+		choices,
+		isVisibleExpression: choices.length > 1 ? undefined : 'false', // Hide if only 1 choice
 	}
+}
+
+/**
+ * Resolve the 0-based M/E index from a picker value. When the model has only a single M/E the
+ * picker is hidden, so any value is ignored and treated as the first (and only) M/E.
+ */
+export function resolveMixEffectIndex(model: ModelSpec, mixeffect: number): number {
+	return model.MEs > 1 ? mixeffect - 1 : 0
 }
 
 export function AtemMESourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown<'input'> {

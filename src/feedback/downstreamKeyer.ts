@@ -3,7 +3,7 @@ import { convertOptionsFields } from '../options/util.js'
 import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import { AtemKeyFillSourcePicker } from '../options/commonKeyer.js'
 import { getDSK, type StateWrapper } from '../state.js'
-import { AtemDSKPicker } from '../options/downstreamKeyer.js'
+import { AtemDSKPicker, resolveDownstreamKeyerIndex } from '../options/downstreamKeyer.js'
 
 export type AtemDownstreamKeyerFeedbacks = {
 	['dskOnAir']: {
@@ -50,7 +50,7 @@ export function createDownstreamKeyerFeedbacks(
 				bgcolor: 0xff0000,
 			},
 			callback: ({ options }): boolean => {
-				const dsk = getDSK(state.state, options.key - 1)
+				const dsk = getDSK(state.state, resolveDownstreamKeyerIndex(model, options.key))
 				return !!dsk?.onAir
 			},
 		},
@@ -65,7 +65,7 @@ export function createDownstreamKeyerFeedbacks(
 				bgcolor: 0xff0000,
 			},
 			callback: ({ options }): boolean => {
-				const dsk = getDSK(state.state, options.key - 1)
+				const dsk = getDSK(state.state, resolveDownstreamKeyerIndex(model, options.key))
 				return !!dsk?.properties?.tie
 			},
 		},
@@ -81,11 +81,11 @@ export function createDownstreamKeyerFeedbacks(
 				bgcolor: 0xeeee00,
 			},
 			callback: ({ options }): boolean => {
-				const dsk = getDSK(state.state, options.key - 1)
+				const dsk = getDSK(state.state, resolveDownstreamKeyerIndex(model, options.key))
 				return dsk?.sources?.fillSource === options.fill
 			},
 			learn: ({ options }) => {
-				const dsk = getDSK(state.state, options.key - 1)
+				const dsk = getDSK(state.state, resolveDownstreamKeyerIndex(model, options.key))
 
 				if (dsk?.sources) {
 					return {

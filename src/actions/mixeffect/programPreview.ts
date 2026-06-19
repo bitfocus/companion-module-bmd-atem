@@ -6,7 +6,7 @@ import type { ModelSpec } from '../../models/index.js'
 import type { StateWrapper } from '../../state.js'
 import type { AtemTransitions, FadeDurationFieldsType } from '../../transitions.js'
 import { FadeDurationFields } from '../../options/fade.js'
-import { AtemMEPicker, AtemMESourcePicker } from '../../options/mixEffect.js'
+import { AtemMEPicker, AtemMESourcePicker, resolveMixEffectIndex } from '../../options/mixEffect.js'
 
 export type AtemProgramPreviewActions = {
 	['program']: {
@@ -53,10 +53,10 @@ export function createProgramPreviewActions(
 				input: AtemMESourcePicker(model, state.state),
 			}),
 			callback: async ({ options }) => {
-				await atem?.changeProgramInput(options.input, options.mixeffect - 1)
+				await atem?.changeProgramInput(options.input, resolveMixEffectIndex(model, options.mixeffect))
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
 
 				if (me) {
 					return {
@@ -75,10 +75,10 @@ export function createProgramPreviewActions(
 				input: AtemMESourcePicker(model, state.state),
 			}),
 			callback: async ({ options }) => {
-				await atem?.changePreviewInput(options.input, options.mixeffect - 1)
+				await atem?.changePreviewInput(options.input, resolveMixEffectIndex(model, options.mixeffect))
 			},
 			learn: ({ options }) => {
-				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
 
 				if (me) {
 					return {
@@ -96,7 +96,7 @@ export function createProgramPreviewActions(
 				mixeffect: AtemMEPicker(model),
 			}),
 			callback: async ({ options }) => {
-				await atem?.cut(options.mixeffect - 1)
+				await atem?.cut(resolveMixEffectIndex(model, options.mixeffect))
 			},
 		},
 		['auto']: {
@@ -105,7 +105,7 @@ export function createProgramPreviewActions(
 				mixeffect: AtemMEPicker(model),
 			}),
 			callback: async ({ options }) => {
-				await atem?.autoTransition(options.mixeffect - 1)
+				await atem?.autoTransition(resolveMixEffectIndex(model, options.mixeffect))
 			},
 		},
 
@@ -130,7 +130,7 @@ export function createProgramPreviewActions(
 				...FadeDurationFields,
 			}),
 			callback: async ({ options }) => {
-				const meIndex = options.mixeffect - 1
+				const meIndex = resolveMixEffectIndex(model, options.mixeffect)
 				const position = options.position
 				const meState = getMixEffect(state.state, meIndex)
 

@@ -6,16 +6,26 @@ import type { ModelSpec } from '../models/types.js'
 import { SourcesToChoices } from './util.js'
 
 export function AtemMultiviewerPicker(model: ModelSpec): CompanionInputFieldDropdown<'multiViewerId'> {
+	const choices = iterateTimes(model.MVs, (i) => ({
+		id: i + 1,
+		label: `MV ${i + 1}`,
+	}))
 	return {
 		type: 'dropdown',
 		id: 'multiViewerId',
 		label: 'MV',
 		default: 1,
-		choices: iterateTimes(model.MVs, (i) => ({
-			id: i + 1,
-			label: `MV ${i + 1}`,
-		})),
+		choices,
+		isVisibleExpression: choices.length > 1 ? undefined : 'false', // Hide if only 1 choice
 	}
+}
+
+/**
+ * Resolve the 0-based multiviewer index from a picker value. When the model has only a single
+ * multiviewer the picker is hidden, so any value is ignored and treated as the first one.
+ */
+export function resolveMultiviewerIndex(model: ModelSpec, multiViewerId: number): number {
+	return model.MVs > 1 ? multiViewerId - 1 : 0
 }
 
 export function AtemMultiviewSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown<'source'> {

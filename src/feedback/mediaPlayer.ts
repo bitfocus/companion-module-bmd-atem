@@ -1,6 +1,6 @@
 import { Enums } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
-import { AtemMediaPlayerPicker } from '../options/mediaPlayer.js'
+import { AtemMediaPlayerPicker, resolveMediaPlayerIndex } from '../options/mediaPlayer.js'
 import type { ModelSpec } from '../models/index.js'
 import type { CompanionFeedbackDefinitions } from '@companion-module/base'
 import type { StateWrapper } from '../state.js'
@@ -47,7 +47,7 @@ export function createMediaPlayerFeedbacks(
 				const source = parseMediaPoolSource(model, options.source, defaultClips)
 				if (!source) return false
 
-				const player = state.state.media.players[options.mediaplayer - 1]
+				const player = state.state.media.players[resolveMediaPlayerIndex(model, options.mediaplayer)]
 				if (
 					player?.sourceType === Enums.MediaSourceType.Still &&
 					!source.isClip &&
@@ -65,7 +65,7 @@ export function createMediaPlayerFeedbacks(
 				}
 			},
 			learn: ({ options }) => {
-				const player = state.state.media.players[options.mediaplayer - 1]
+				const player = state.state.media.players[resolveMediaPlayerIndex(model, options.mediaplayer)]
 
 				if (player) {
 					return {

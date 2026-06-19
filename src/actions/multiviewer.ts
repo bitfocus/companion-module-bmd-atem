@@ -11,6 +11,7 @@ import {
 	AtemMultiviewerPicker,
 	AtemMultiviewWindowPicker,
 	AtemMultiviewSourcePicker,
+	resolveMultiviewerIndex,
 } from '../options/multiviewer.js'
 
 export type AtemMultiviewerActions = {
@@ -52,10 +53,18 @@ export function createMultiviewerActions(
 				source: AtemMultiviewSourcePicker(model, state.state),
 			}),
 			callback: async ({ options }) => {
-				await atem?.setMultiViewerWindowSource(options.source, options.multiViewerId - 1, options.windowIndex - 1)
+				await atem?.setMultiViewerWindowSource(
+					options.source,
+					resolveMultiviewerIndex(model, options.multiViewerId),
+					options.windowIndex - 1,
+				)
 			},
 			learn: ({ options }) => {
-				const window = getMultiviewerWindow(state.state, options.multiViewerId - 1, options.windowIndex - 1)
+				const window = getMultiviewerWindow(
+					state.state,
+					resolveMultiviewerIndex(model, options.multiViewerId),
+					options.windowIndex - 1,
+				)
 
 				if (window) {
 					return {
@@ -92,7 +101,7 @@ export function createMultiviewerActions(
 				},
 			}),
 			callback: async ({ options }) => {
-				const multiViewerId = options.multiViewerId - 1
+				const multiViewerId = resolveMultiviewerIndex(model, options.multiViewerId)
 
 				const mv = getMultiviewer(state.state, multiViewerId)
 				let layout: Enums.MultiViewerLayout = mv?.properties?.layout ?? Enums.MultiViewerLayout.Default
@@ -131,7 +140,7 @@ export function createMultiviewerActions(
 				await atem?.setMultiViewerProperties({ layout }, multiViewerId)
 			},
 			learn: async ({ options }) => {
-				const multiViewerId = options.multiViewerId - 1
+				const multiViewerId = resolveMultiviewerIndex(model, options.multiViewerId)
 
 				const mv = getMultiviewer(state.state, multiViewerId)
 

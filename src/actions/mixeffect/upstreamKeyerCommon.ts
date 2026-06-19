@@ -14,7 +14,7 @@ import type {
 	UpstreamKeyerDVEBase,
 	UpstreamKeyerMaskSettings,
 } from 'atem-connection/dist/state/video/upstreamKeyers.js'
-import { AtemMEPicker } from '../../options/mixEffect.js'
+import { AtemMEPicker, resolveMixEffectIndex } from '../../options/mixEffect.js'
 import {
 	AtemUpstreamKeyerTypePicker,
 	AtemUSKFlyKeyPropertiesPickers,
@@ -22,6 +22,7 @@ import {
 	type UpstreamKeyerTypeString,
 	upstreamKeyerTypeStringToEnum,
 	AtemUSKPicker,
+	resolveUpstreamKeyerIndex,
 } from '../../options/upstreamKeyer.js'
 import { AtemKeyFillSourcePicker, AtemKeyCutSourcePicker } from '../../options/commonKeyer.js'
 
@@ -102,12 +103,24 @@ export function createUpstreamKeyerCommonActions(
 			}),
 			callback: async ({ options }) => {
 				await Promise.all([
-					atem?.setUpstreamKeyerFillSource(options.fill, options.mixeffect - 1, options.key - 1),
-					atem?.setUpstreamKeyerCutSource(options.cut, options.mixeffect - 1, options.key - 1),
+					atem?.setUpstreamKeyerFillSource(
+						options.fill,
+						resolveMixEffectIndex(model, options.mixeffect),
+						resolveUpstreamKeyerIndex(model, options.key),
+					),
+					atem?.setUpstreamKeyerCutSource(
+						options.cut,
+						resolveMixEffectIndex(model, options.mixeffect),
+						resolveUpstreamKeyerIndex(model, options.key),
+					),
 				])
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
+				const usk = getUSK(
+					state.state,
+					resolveMixEffectIndex(model, options.mixeffect),
+					resolveUpstreamKeyerIndex(model, options.key),
+				)
 
 				if (usk) {
 					return {
@@ -134,12 +147,16 @@ export function createUpstreamKeyerCommonActions(
 					{
 						mixEffectKeyType: parsedType,
 					},
-					options.mixeffect - 1,
-					options.key - 1,
+					resolveMixEffectIndex(model, options.mixeffect),
+					resolveUpstreamKeyerIndex(model, options.key),
 				)
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
+				const usk = getUSK(
+					state.state,
+					resolveMixEffectIndex(model, options.mixeffect),
+					resolveUpstreamKeyerIndex(model, options.key),
+				)
 
 				if (usk) {
 					return {
@@ -165,14 +182,18 @@ export function createUpstreamKeyerCommonActions(
 				},
 			}),
 			callback: async ({ options }) => {
-				const meIndex = options.mixeffect - 1
-				const keyIndex = options.key - 1
+				const meIndex = resolveMixEffectIndex(model, options.mixeffect)
+				const keyIndex = resolveUpstreamKeyerIndex(model, options.key)
 
 				const onAir = resolveTrueFalseToggle(options.onair, getUSK(state.state, meIndex, keyIndex)?.onAir)
 				await atem?.setUpstreamKeyerOnAir(onAir, meIndex, keyIndex)
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
+				const usk = getUSK(
+					state.state,
+					resolveMixEffectIndex(model, options.mixeffect),
+					resolveUpstreamKeyerIndex(model, options.key),
+				)
 
 				if (usk) {
 					return {
@@ -191,8 +212,8 @@ export function createUpstreamKeyerCommonActions(
 				...WithDropdownPropertiesPicker(MaskPropertiesPickers(16, 9, false)),
 			}),
 			callback: async ({ options }) => {
-				const keyId = options.key - 1
-				const mixEffectId = options.mixeffect - 1
+				const keyId = resolveUpstreamKeyerIndex(model, options.key)
+				const mixEffectId = resolveMixEffectIndex(model, options.mixeffect)
 				const newProps: Partial<UpstreamKeyerMaskSettings> = {}
 
 				const props = options.properties
@@ -219,7 +240,11 @@ export function createUpstreamKeyerCommonActions(
 				await atem?.setUpstreamKeyerMaskSettings(newProps, mixEffectId, keyId)
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
+				const usk = getUSK(
+					state.state,
+					resolveMixEffectIndex(model, options.mixeffect),
+					resolveUpstreamKeyerIndex(model, options.key),
+				)
 
 				if (usk?.maskSettings) {
 					return {
@@ -242,8 +267,8 @@ export function createUpstreamKeyerCommonActions(
 				...AtemUSKFlyKeyPropertiesPickers(),
 			}),
 			callback: async ({ options }) => {
-				const keyId = options.key - 1
-				const mixEffectId = options.mixeffect - 1
+				const keyId = resolveUpstreamKeyerIndex(model, options.key)
+				const mixEffectId = resolveMixEffectIndex(model, options.mixeffect)
 				const newUSKTypeProps: Partial<UpstreamKeyerTypeSettings> = {}
 				const newProps: Partial<UpstreamKeyerDVEBase> = {}
 
@@ -276,7 +301,11 @@ export function createUpstreamKeyerCommonActions(
 				}
 			},
 			learn: ({ options }) => {
-				const usk = getUSK(state.state, options.mixeffect - 1, options.key - 1)
+				const usk = getUSK(
+					state.state,
+					resolveMixEffectIndex(model, options.mixeffect),
+					resolveUpstreamKeyerIndex(model, options.key),
+				)
 
 				if (usk?.dveSettings) {
 					return {
