@@ -12,6 +12,7 @@ import { type WithProperties, SourcesToChoices, WithDropdownPropertiesPicker } f
 import type { ModelSpec } from '../models/types.js'
 import { compact, iterateTimes } from '../util.js'
 import { GetSourcesListForType } from './sources.js'
+import { CHOICES_BORDER_BEVEL } from './upstreamKeyer-dve.js'
 
 export function AtemSuperSourceIdPicker(model: ModelSpec): CompanionInputFieldDropdown<'ssrcId'> {
 	const choices = iterateTimes(model.SSrc, (i) => ({
@@ -484,6 +485,201 @@ export function AtemSuperSourceArtPropertiesPickers(
 			label: 'Invert Key',
 			default: false,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'artInvertKey')`,
+		},
+	})
+}
+
+export type AtemSuperSourceBorderPropertiesBase = {
+	borderEnabled: boolean
+	borderBevel: Enums.BorderBevel
+	borderOuterWidth: number
+	borderInnerWidth: number
+	borderOuterSoftness: number
+	borderInnerSoftness: number
+	borderBevelSoftness: number
+	borderBevelPosition: number
+	borderHue: number
+	borderSaturation: number
+	borderLuma: number
+	borderLightSourceDirection: number
+	borderLightSourceAltitude: number
+}
+export type AtemSuperSourceBorderProperties = WithProperties<AtemSuperSourceBorderPropertiesBase>
+
+export function AtemSuperSourceBorderPropertiesPickers(): {
+	properties: CompanionInputFieldMultiDropdown<'properties'>
+	borderEnabled: CompanionInputFieldCheckbox<'borderEnabled'>
+	borderBevel: CompanionInputFieldDropdown<'borderBevel'>
+	borderOuterWidth: CompanionInputFieldNumber<'borderOuterWidth'>
+	borderInnerWidth: CompanionInputFieldNumber<'borderInnerWidth'>
+	borderOuterSoftness: CompanionInputFieldNumber<'borderOuterSoftness'>
+	borderInnerSoftness: CompanionInputFieldNumber<'borderInnerSoftness'>
+	borderBevelSoftness: CompanionInputFieldNumber<'borderBevelSoftness'>
+	borderBevelPosition: CompanionInputFieldNumber<'borderBevelPosition'>
+	borderHue: CompanionInputFieldNumber<'borderHue'>
+	borderSaturation: CompanionInputFieldNumber<'borderSaturation'>
+	borderLuma: CompanionInputFieldNumber<'borderLuma'>
+	borderLightSourceDirection: CompanionInputFieldNumber<'borderLightSourceDirection'>
+	borderLightSourceAltitude: CompanionInputFieldNumber<'borderLightSourceAltitude'>
+} {
+	return WithDropdownPropertiesPicker({
+		borderEnabled: {
+			type: 'checkbox',
+			label: 'Border: Enabled',
+			id: 'borderEnabled',
+			default: true,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderEnabled')`,
+		},
+		borderBevel: {
+			type: 'dropdown',
+			label: 'Border: Style',
+			id: 'borderBevel',
+			default: 0,
+			choices: CHOICES_BORDER_BEVEL,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderBevel')`,
+		},
+		borderOuterWidth: {
+			type: 'number',
+			label: 'Border: Outer Width',
+			id: 'borderOuterWidth',
+			default: 0,
+			min: 0,
+			range: true,
+			step: 0.01,
+			max: 16,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderOuterWidth')`,
+			asInteger: false,
+			clampValues: true,
+		},
+		borderInnerWidth: {
+			type: 'number',
+			label: 'Border: Inner Width',
+			id: 'borderInnerWidth',
+			default: 0.2,
+			min: 0,
+			range: true,
+			step: 0.01,
+			max: 16,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderInnerWidth')`,
+			asInteger: false,
+			clampValues: true,
+		},
+		borderOuterSoftness: {
+			type: 'number',
+			label: 'Border: Outer Soften',
+			id: 'borderOuterSoftness',
+			default: 0,
+			min: 0,
+			range: true,
+			step: 1,
+			max: 100,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderOuterSoftness')`,
+			asInteger: true,
+			clampValues: true,
+		},
+		borderInnerSoftness: {
+			type: 'number',
+			label: 'Border: Inner Soften',
+			id: 'borderInnerSoftness',
+			default: 0,
+			min: 0,
+			range: true,
+			step: 1,
+			max: 100,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderInnerSoftness')`,
+			asInteger: true,
+			clampValues: true,
+		},
+		borderBevelSoftness: {
+			type: 'number',
+			label: 'Border: Bevel Soften',
+			id: 'borderBevelSoftness',
+			default: 0,
+			min: 0,
+			range: true,
+			step: 1,
+			max: 100,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderBevelSoftness')`,
+			asInteger: true,
+			clampValues: true,
+		},
+		borderBevelPosition: {
+			type: 'number',
+			label: 'Border: Bevel Position',
+			id: 'borderBevelPosition',
+			default: 0,
+			min: 0,
+			range: true,
+			step: 1,
+			max: 100,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderBevelPosition')`,
+			asInteger: true,
+			clampValues: true,
+		},
+		borderHue: {
+			type: 'number',
+			label: 'Border: Hue',
+			id: 'borderHue',
+			default: 0,
+			min: 0,
+			range: true,
+			step: 0.1,
+			max: 360,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderHue')`,
+			asInteger: false,
+			clampValues: true,
+		},
+		borderSaturation: {
+			type: 'number',
+			label: 'Border: Sat',
+			id: 'borderSaturation',
+			default: 0,
+			min: 0,
+			range: true,
+			step: 0.1,
+			max: 100,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderSaturation')`,
+			asInteger: false,
+			clampValues: true,
+		},
+		borderLuma: {
+			type: 'number',
+			label: 'Border: Lum',
+			id: 'borderLuma',
+			default: 0,
+			min: 0,
+			range: true,
+			step: 0.1,
+			max: 100,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderLuma')`,
+			asInteger: false,
+			clampValues: true,
+		},
+		borderLightSourceDirection: {
+			type: 'number',
+			label: 'Border: Light Source Direction',
+			id: 'borderLightSourceDirection',
+			default: 36,
+			min: 0,
+			range: true,
+			step: 1,
+			max: 359,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderLightSourceDirection')`,
+			asInteger: false,
+			clampValues: true,
+		},
+		borderLightSourceAltitude: {
+			type: 'number',
+			label: 'Border: Light Source Altitude',
+			id: 'borderLightSourceAltitude',
+			default: 25,
+			min: 10,
+			range: true,
+			step: 1,
+			max: 100,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderLightSourceAltitude')`,
+			asInteger: true,
+			clampValues: true,
 		},
 	})
 }

@@ -16,8 +16,10 @@ import {
 	AtemSuperSourceBoxPicker,
 	AtemSuperSourceBoxSourcePicker,
 	AtemSuperSourceBoxPropertiesPickersForOffset,
+	AtemSuperSourceBorderPropertiesPickers,
 	type AtemSuperSourceBoxProperties,
 	type AtemSuperSourceArtProperties,
+	type AtemSuperSourceBorderProperties,
 } from '../options/superSource.js'
 import { AtemTransitionAnimationOptions } from '../options/fade.js'
 
@@ -26,6 +28,11 @@ export type AtemSuperSourceActions = {
 		options: {
 			ssrcId: number
 		} & AtemSuperSourceArtProperties
+	}
+	['ssrcBorder']: {
+		options: {
+			ssrcId: number
+		} & AtemSuperSourceBorderProperties
 	}
 	['setSsrcBoxSource']: {
 		options: {
@@ -74,6 +81,7 @@ export function createSuperSourceActions(
 	if (!model.SSrc) {
 		return {
 			['ssrcArt']: undefined,
+			['ssrcBorder']: undefined,
 			['setSsrcBoxSource']: undefined,
 			['setSsrcBoxEnable']: undefined,
 			['setSsrcBoxProperties']: undefined,
@@ -126,6 +134,68 @@ export function createSuperSourceActions(
 						artClip: ssrcConfig.artClip / 10,
 						artGain: ssrcConfig.artGain / 10,
 						artInvertKey: ssrcConfig.artInvertKey,
+					}
+				} else {
+					return undefined
+				}
+			},
+		},
+		['ssrcBorder']: {
+			name: 'SuperSource: Set border properties',
+			options: convertOptionsFields({
+				ssrcId: AtemSuperSourceIdPicker(model),
+				...AtemSuperSourceBorderPropertiesPickers(),
+			}),
+			callback: async ({ options }) => {
+				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
+				const newProps: Partial<VideoState.SuperSource.SuperSourceBorder> = {}
+
+				const props = options.properties
+				if (props && Array.isArray(props)) {
+					if (props.includes('borderEnabled')) newProps.borderEnabled = options.borderEnabled
+					if (props.includes('borderBevel')) newProps.borderBevel = options.borderBevel
+
+					if (props.includes('borderOuterWidth')) newProps.borderOuterWidth = options.borderOuterWidth * 100
+					if (props.includes('borderInnerWidth')) newProps.borderInnerWidth = options.borderInnerWidth * 100
+
+					if (props.includes('borderOuterSoftness')) newProps.borderOuterSoftness = options.borderOuterSoftness
+					if (props.includes('borderInnerSoftness')) newProps.borderInnerSoftness = options.borderInnerSoftness
+					if (props.includes('borderBevelSoftness')) newProps.borderBevelSoftness = options.borderBevelSoftness
+					if (props.includes('borderBevelPosition')) newProps.borderBevelPosition = options.borderBevelPosition
+
+					if (props.includes('borderHue')) newProps.borderHue = options.borderHue * 10
+					if (props.includes('borderSaturation')) newProps.borderSaturation = options.borderSaturation * 10
+					if (props.includes('borderLuma')) newProps.borderLuma = options.borderLuma * 10
+
+					if (props.includes('borderLightSourceDirection'))
+						newProps.borderLightSourceDirection = options.borderLightSourceDirection * 10
+					if (props.includes('borderLightSourceAltitude'))
+						newProps.borderLightSourceAltitude = options.borderLightSourceAltitude
+				}
+
+				if (Object.keys(newProps).length === 0) return
+
+				await atem?.setSuperSourceBorder(newProps, ssrcId)
+			},
+			learn: ({ options }) => {
+				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
+
+				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.border
+				if (ssrcConfig) {
+					return {
+						borderEnabled: ssrcConfig.borderEnabled,
+						borderBevel: ssrcConfig.borderBevel,
+						borderOuterWidth: ssrcConfig.borderOuterWidth / 100,
+						borderInnerWidth: ssrcConfig.borderInnerWidth / 100,
+						borderOuterSoftness: ssrcConfig.borderOuterSoftness,
+						borderInnerSoftness: ssrcConfig.borderInnerSoftness,
+						borderBevelSoftness: ssrcConfig.borderBevelSoftness,
+						borderBevelPosition: ssrcConfig.borderBevelPosition,
+						borderHue: ssrcConfig.borderHue / 10,
+						borderSaturation: ssrcConfig.borderSaturation / 10,
+						borderLuma: ssrcConfig.borderLuma / 10,
+						borderLightSourceDirection: ssrcConfig.borderLightSourceDirection / 10,
+						borderLightSourceAltitude: ssrcConfig.borderLightSourceAltitude,
 					}
 				} else {
 					return undefined

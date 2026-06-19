@@ -120,4 +120,54 @@ describe('SuperSource learn<->callback inverse', () => {
 		// The reconstructed properties must match the state we started from.
 		expect(props).toEqual(original)
 	})
+
+	test('ssrcBorder round-trips all border properties through learn and callback', async () => {
+		// Protocol-unit values chosen so the /100 and /10 scalings round-trip exactly.
+		const original: SuperSource.SuperSourceBorder = {
+			borderEnabled: true,
+			borderBevel: 2,
+			borderOuterWidth: 800,
+			borderInnerWidth: 300,
+			borderOuterSoftness: 40,
+			borderInnerSoftness: 50,
+			borderBevelSoftness: 60,
+			borderBevelPosition: 70,
+			borderHue: 1800,
+			borderSaturation: 500,
+			borderLuma: 750,
+			borderLightSourceDirection: 900,
+			borderLightSourceAltitude: 30,
+		}
+		const ssrc = AtemStateUtil.getSuperSource(state.state, 0)
+		ssrc.border = original
+
+		const actions = createSuperSourceActions(mock.atem, MODEL, transitions, state)
+		const def = actions.ssrcBorder as unknown as AnyDef
+
+		const learned = def.learn!({ options: { ssrcId: 1 } })
+
+		// learn does not return the `properties` selector, so apply every property back.
+		const properties = [
+			'borderEnabled',
+			'borderBevel',
+			'borderOuterWidth',
+			'borderInnerWidth',
+			'borderOuterSoftness',
+			'borderInnerSoftness',
+			'borderBevelSoftness',
+			'borderBevelPosition',
+			'borderHue',
+			'borderSaturation',
+			'borderLuma',
+			'borderLightSourceDirection',
+			'borderLightSourceAltitude',
+		]
+		await def.callback({ options: { ssrcId: 1, properties, ...learned } })
+
+		const call = mock.onlyCall('setSuperSourceBorder')
+		const [props, ssrcId] = call.args as [Partial<SuperSource.SuperSourceBorder>, number]
+		expect(ssrcId).toBe(0)
+		// The reconstructed properties must match the state we started from.
+		expect(props).toEqual(original)
+	})
 })
