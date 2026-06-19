@@ -6,11 +6,17 @@ import {
 	AtemTransitionSelectComponentsPickers,
 	AtemTransitionSelectionComponentPicker,
 	AtemTransitionSelectionPicker,
+	AtemTransitionWipePropertiesPickers,
 	calculateTransitionSelection,
 	NextTransBackgroundChoices,
 	NextTransKeyChoices,
 	type TransitionSelectionComponent,
+	type WipeTransitionProperty,
+	type WipePatternString,
+	wipePatternStringToEnum,
+	wipePatternEnumToString,
 } from '../../options/transition.js'
+import type { WipeTransitionSettings } from 'atem-connection/dist/state/video/index.js'
 import type { ModelSpec } from '../../models/index.js'
 import { AtemCommandBatching, CommandBatching } from '../../batching.js'
 import { CHOICES_KEYTRANS, CHOICES_ON_OFF_TOGGLE, type TrueFalseToggle, AtemRatePicker } from '../../options/common.js'
@@ -62,6 +68,21 @@ export type AtemTransitionActions = {
 			mixeffect: number
 			component: number
 			mode: TrueFalseToggle
+		}
+	}
+	['transitionWipeProperties']: {
+		options: {
+			mixeffect: number
+			properties: WipeTransitionProperty[]
+			pattern: WipePatternString
+			borderInput: number
+			borderWidth: number
+			borderSoftness: number
+			symmetry: number
+			xPosition: number
+			yPosition: number
+			reverseDirection: boolean
+			flipFlop: boolean
 		}
 	}
 }
@@ -412,6 +433,72 @@ export function createTransitionActions(
 							return oldVal.filter((v) => v !== component)
 						}
 					})
+				}
+			},
+		},
+		['transitionWipeProperties']: {
+			name: 'Transition: Change Wipe properties',
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
+				...AtemTransitionWipePropertiesPickers(model, state.state),
+			}),
+			callback: async ({ options }) => {
+				const newProps: Partial<WipeTransitionSettings> = {}
+
+				const props = options.properties
+				if (props && Array.isArray(props)) {
+					if (props.includes('pattern')) {
+						const parsedPattern = wipePatternStringToEnum(options.pattern)
+						if (parsedPattern !== null) newProps.pattern = parsedPattern
+					}
+					if (props.includes('borderInput')) {
+						newProps.borderInput = options.borderInput
+					}
+					if (props.includes('borderWidth')) {
+						newProps.borderWidth = options.borderWidth * 100
+					}
+					if (props.includes('borderSoftness')) {
+						newProps.borderSoftness = options.borderSoftness * 100
+					}
+					if (props.includes('symmetry')) {
+						newProps.symmetry = options.symmetry * 100
+					}
+					if (props.includes('xPosition')) {
+						newProps.xPosition = options.xPosition * 10000
+					}
+					if (props.includes('yPosition')) {
+						newProps.yPosition = options.yPosition * 10000
+					}
+					if (props.includes('reverseDirection')) {
+						newProps.reverseDirection = options.reverseDirection
+					}
+					if (props.includes('flipFlop')) {
+						newProps.flipFlop = options.flipFlop
+					}
+				}
+
+				if (Object.keys(newProps).length === 0) return
+
+				await atem?.setWipeTransitionSettings(newProps, options.mixeffect - 1)
+			},
+			learn: ({ options }) => {
+				const me = getMixEffect(state.state, options.mixeffect - 1)
+
+				if (me?.transitionSettings?.wipe) {
+					const wipe = me.transitionSettings.wipe
+					return {
+						pattern: wipePatternEnumToString(wipe.pattern),
+						borderInput: wipe.borderInput,
+						borderWidth: wipe.borderWidth / 100,
+						borderSoftness: wipe.borderSoftness / 100,
+						symmetry: wipe.symmetry / 100,
+						xPosition: wipe.xPosition / 10000,
+						yPosition: wipe.yPosition / 10000,
+						reverseDirection: wipe.reverseDirection,
+						flipFlop: wipe.flipFlop,
+					}
+				} else {
+					return undefined
 				}
 			},
 		},

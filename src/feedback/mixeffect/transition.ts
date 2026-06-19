@@ -17,6 +17,10 @@ import {
 	calculateTransitionSelection,
 	type TransitionSelectionComponent,
 	AtemMatchMethod,
+	GetWipePatternChoices,
+	wipePatternStringToEnum,
+	wipePatternEnumToString,
+	type WipePatternString,
 } from '../../options/transition.js'
 
 export type AtemTransitionFeedbacks = {
@@ -53,6 +57,13 @@ export type AtemTransitionFeedbacks = {
 		type: 'boolean'
 		options: {
 			mixeffect: number
+		}
+	}
+	['transitionWipePattern']: {
+		type: 'boolean'
+		options: {
+			mixeffect: number
+			pattern: WipePatternString
 		}
 	}
 }
@@ -219,6 +230,44 @@ export function createTransitionFeedbacks(
 			callback: ({ options }): boolean => {
 				const me = getMixEffect(state.state, options.mixeffect - 1)
 				return !!me?.transitionPosition?.inTransition
+			},
+		},
+		['transitionWipePattern']: {
+			type: 'boolean',
+			name: 'Transition: Wipe pattern',
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
+				pattern: {
+					type: 'dropdown',
+					label: 'Pattern',
+					id: 'pattern',
+					default: 'left-to-right-bar',
+					choices: GetWipePatternChoices(),
+					expressionDescription: `Should return a string: ${GetWipePatternChoices()
+						.map((c) => c.id)
+						.join(', ')}`,
+				},
+			}),
+			defaultStyle: {
+				color: 0x000000,
+				bgcolor: 0xffff00,
+			},
+			callback: ({ options }): boolean => {
+				const me = getMixEffect(state.state, options.mixeffect - 1)
+				const parsedPattern = wipePatternStringToEnum(options.pattern)
+				if (parsedPattern === null) return false
+				return me?.transitionSettings?.wipe?.pattern === parsedPattern
+			},
+			learn: ({ options }) => {
+				const me = getMixEffect(state.state, options.mixeffect - 1)
+
+				if (me?.transitionSettings?.wipe) {
+					return {
+						pattern: wipePatternEnumToString(me.transitionSettings.wipe.pattern),
+					}
+				} else {
+					return undefined
+				}
 			},
 		},
 	}
