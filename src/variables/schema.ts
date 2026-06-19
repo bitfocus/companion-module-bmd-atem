@@ -28,6 +28,7 @@ export type VariablesSchema = {
 	[key: `usk_${number}_${number}_bevelPos`]: number | undefined
 	[key: `usk_${number}_${number}_bordOpacity`]: number | undefined
 	[key: `usk_${number}_${number}_bordHue`]: number | undefined
+	[key: `usk_${number}_${number}_bordSat`]: number | undefined
 	[key: `usk_${number}_${number}_bordLum`]: number | undefined
 	[key: `usk_${number}_${number}_lightDirection`]: number | undefined
 	[key: `usk_${number}_${number}_lightAltitude`]: number | undefined

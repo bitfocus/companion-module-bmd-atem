@@ -158,6 +158,7 @@ function updateUSKVariable(
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_bevelPos`] = dveSettings.borderBevelPosition
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordOpacity`] = dveSettings.borderOpacity
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordHue`] = dveSettings.borderHue / 10
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordSat`] = dveSettings.borderSaturation / 10
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordLum`] = dveSettings.borderLuma / 10
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_lightDirection`] = dveSettings.lightSourceDirection / 10
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_lightAltitude`] = dveSettings.lightSourceAltitude
@@ -521,6 +522,9 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 				}
 				variables[`usk_${i + 1}_${k + 1}_bordHue`] = {
 					name: `Border Hue of M/E ${i + 1} Key ${k + 1}`,
+				}
+				variables[`usk_${i + 1}_${k + 1}_bordSat`] = {
+					name: `Border Saturation of M/E ${i + 1} Key ${k + 1}`,
 				}
 				variables[`usk_${i + 1}_${k + 1}_bordLum`] = {
 					name: `Border Luma of M/E ${i + 1} Key ${k + 1}`,
