@@ -82,7 +82,7 @@ export function createProgramPreviewPresets(
 					input: { isExpression: true, value: '$(local:input)' },
 				},
 				style: {
-					bgcolor: 0x00ff00,
+					bgcolor: 0xff0000,
 					color: 0xffffff,
 				},
 			},
@@ -142,7 +142,7 @@ export function createProgramPreviewPresets(
 					input: { isExpression: true, value: '$(local:input)' },
 				},
 				style: {
-					bgcolor: 0x00ff00,
+					bgcolor: 0xff0000,
 					color: 0xffffff,
 				},
 			},
