@@ -342,3 +342,103 @@ export function AtemUSKPatternPropertiesPickers(): {
 		},
 	})
 }
+
+export function AtemUSKLumaPropertiesPickers(): {
+	properties: CompanionInputFieldMultiDropdown<'properties'>
+	preMultiplied: CompanionInputFieldCheckbox<'preMultiplied'>
+	clip: CompanionInputFieldNumber<'clip'>
+	gain: CompanionInputFieldNumber<'gain'>
+	invert: CompanionInputFieldCheckbox<'invert'>
+} {
+	return WithDropdownPropertiesPicker({
+		preMultiplied: {
+			type: 'checkbox',
+			label: 'Pre-multiplied',
+			id: 'preMultiplied',
+			default: false,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'preMultiplied')`,
+		},
+		clip: {
+			type: 'number',
+			label: 'Clip',
+			id: 'clip',
+			range: true,
+			default: 0,
+			min: 0,
+			step: 0.1,
+			max: 100,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'clip')`,
+			asInteger: false,
+			clampValues: true,
+		},
+		gain: {
+			type: 'number',
+			label: 'Gain',
+			id: 'gain',
+			range: true,
+			default: 0,
+			min: 0,
+			step: 0.1,
+			max: 100,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'gain')`,
+			asInteger: false,
+			clampValues: true,
+		},
+		invert: {
+			type: 'checkbox',
+			label: 'Invert key',
+			id: 'invert',
+			default: false,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'invert')`,
+		},
+	})
+}
+
+export function AtemUSKAdvancedChromaPropertiesPickers(): {
+	properties: CompanionInputFieldMultiDropdown<'properties'>
+	foregroundLevel: CompanionInputFieldNumber<'foregroundLevel'>
+	backgroundLevel: CompanionInputFieldNumber<'backgroundLevel'>
+	keyEdge: CompanionInputFieldNumber<'keyEdge'>
+	spillSuppression: CompanionInputFieldNumber<'spillSuppression'>
+	flareSuppression: CompanionInputFieldNumber<'flareSuppression'>
+	brightness: CompanionInputFieldNumber<'brightness'>
+	contrast: CompanionInputFieldNumber<'contrast'>
+	saturation: CompanionInputFieldNumber<'saturation'>
+	red: CompanionInputFieldNumber<'red'>
+	green: CompanionInputFieldNumber<'green'>
+	blue: CompanionInputFieldNumber<'blue'>
+} {
+	const percent = <T extends string>(
+		id: T,
+		label: string,
+		min: number,
+		max: number,
+		def: number,
+	): CompanionInputFieldNumber<T> => ({
+		type: 'number',
+		label,
+		id,
+		range: true,
+		default: def,
+		min,
+		step: 0.1,
+		max,
+		isVisibleExpression: `arrayIncludes($(options:properties), '${id}')`,
+		asInteger: false,
+		clampValues: true,
+	})
+
+	return WithDropdownPropertiesPicker({
+		foregroundLevel: percent('foregroundLevel', 'Foreground level', 0, 100, 0),
+		backgroundLevel: percent('backgroundLevel', 'Background level', 0, 100, 0),
+		keyEdge: percent('keyEdge', 'Key edge', 0, 100, 0),
+		spillSuppression: percent('spillSuppression', 'Spill suppression', 0, 100, 0),
+		flareSuppression: percent('flareSuppression', 'Flare suppression', 0, 100, 0),
+		brightness: percent('brightness', 'Brightness', -100, 100, 0),
+		contrast: percent('contrast', 'Contrast', -100, 100, 0),
+		saturation: percent('saturation', 'Saturation', 0, 100, 0),
+		red: percent('red', 'Red', -100, 100, 0),
+		green: percent('green', 'Green', -100, 100, 0),
+		blue: percent('blue', 'Blue', -100, 100, 0),
+	})
+}

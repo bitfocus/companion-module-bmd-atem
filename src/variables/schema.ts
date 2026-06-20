@@ -50,6 +50,21 @@ export type VariablesSchema = {
 	[key: `usk_${number}_${number}_pattern_invert`]: boolean | undefined
 	[key: `usk_${number}_${number}_canFlyKey`]: boolean | undefined
 	[key: `usk_${number}_${number}_flyEnabled`]: boolean | undefined
+	[key: `usk_${number}_${number}_luma_preMultiplied`]: boolean | undefined
+	[key: `usk_${number}_${number}_luma_clip`]: number | undefined
+	[key: `usk_${number}_${number}_luma_gain`]: number | undefined
+	[key: `usk_${number}_${number}_luma_invert`]: boolean | undefined
+	[key: `usk_${number}_${number}_chroma_foregroundLevel`]: number | undefined
+	[key: `usk_${number}_${number}_chroma_backgroundLevel`]: number | undefined
+	[key: `usk_${number}_${number}_chroma_keyEdge`]: number | undefined
+	[key: `usk_${number}_${number}_chroma_spillSuppression`]: number | undefined
+	[key: `usk_${number}_${number}_chroma_flareSuppression`]: number | undefined
+	[key: `usk_${number}_${number}_chroma_brightness`]: number | undefined
+	[key: `usk_${number}_${number}_chroma_contrast`]: number | undefined
+	[key: `usk_${number}_${number}_chroma_saturation`]: number | undefined
+	[key: `usk_${number}_${number}_chroma_red`]: number | undefined
+	[key: `usk_${number}_${number}_chroma_green`]: number | undefined
+	[key: `usk_${number}_${number}_chroma_blue`]: number | undefined
 
 	[key: `pgm${number}_usk_${number}_onAir`]: boolean
 

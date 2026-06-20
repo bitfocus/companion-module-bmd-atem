@@ -210,6 +210,27 @@ function updateUSKVariable(
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_pattern_positionY`] = patternSettings.positionY / 10000
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_pattern_invert`] = patternSettings.invert
 	}
+	const lumaSettings = state.video.mixEffects[meIndex]?.upstreamKeyers[keyIndex]?.lumaSettings
+	if (lumaSettings) {
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_luma_preMultiplied`] = lumaSettings.preMultiplied
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_luma_clip`] = lumaSettings.clip / 10
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_luma_gain`] = lumaSettings.gain / 10
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_luma_invert`] = lumaSettings.invert
+	}
+	const chromaProperties = state.video.mixEffects[meIndex]?.upstreamKeyers[keyIndex]?.advancedChromaSettings?.properties
+	if (chromaProperties) {
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_foregroundLevel`] = chromaProperties.foregroundLevel / 10
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_backgroundLevel`] = chromaProperties.backgroundLevel / 10
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_keyEdge`] = chromaProperties.keyEdge / 10
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_spillSuppression`] = chromaProperties.spillSuppression / 10
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_flareSuppression`] = chromaProperties.flareSuppression / 10
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_brightness`] = chromaProperties.brightness / 10
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_contrast`] = chromaProperties.contrast / 10
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_saturation`] = chromaProperties.saturation / 10
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_red`] = chromaProperties.red / 10
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_green`] = chromaProperties.green / 10
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_blue`] = chromaProperties.blue / 10
+	}
 	if (state.video.mixEffects[meIndex]?.upstreamKeyers[keyIndex]) {
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_canFlyKey`] =
 			state.video.mixEffects[meIndex]?.upstreamKeyers[keyIndex]?.canFlyKey
@@ -637,6 +658,52 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 				variables[`usk_${i + 1}_${k + 1}_flyEnabled`] = {
 					name: `Fly Key Enable Status of M/E ${i + 1} Key ${k + 1}`,
 				}
+			}
+
+			variables[`usk_${i + 1}_${k + 1}_luma_preMultiplied`] = {
+				name: `Luma Pre-multiplied of M/E ${i + 1} Key ${k + 1}`,
+			}
+			variables[`usk_${i + 1}_${k + 1}_luma_clip`] = {
+				name: `Luma Clip of M/E ${i + 1} Key ${k + 1}`,
+			}
+			variables[`usk_${i + 1}_${k + 1}_luma_gain`] = {
+				name: `Luma Gain of M/E ${i + 1} Key ${k + 1}`,
+			}
+			variables[`usk_${i + 1}_${k + 1}_luma_invert`] = {
+				name: `Luma Invert of M/E ${i + 1} Key ${k + 1}`,
+			}
+			variables[`usk_${i + 1}_${k + 1}_chroma_foregroundLevel`] = {
+				name: `Advanced Chroma Foreground Level of M/E ${i + 1} Key ${k + 1}`,
+			}
+			variables[`usk_${i + 1}_${k + 1}_chroma_backgroundLevel`] = {
+				name: `Advanced Chroma Background Level of M/E ${i + 1} Key ${k + 1}`,
+			}
+			variables[`usk_${i + 1}_${k + 1}_chroma_keyEdge`] = {
+				name: `Advanced Chroma Key Edge of M/E ${i + 1} Key ${k + 1}`,
+			}
+			variables[`usk_${i + 1}_${k + 1}_chroma_spillSuppression`] = {
+				name: `Advanced Chroma Spill Suppression of M/E ${i + 1} Key ${k + 1}`,
+			}
+			variables[`usk_${i + 1}_${k + 1}_chroma_flareSuppression`] = {
+				name: `Advanced Chroma Flare Suppression of M/E ${i + 1} Key ${k + 1}`,
+			}
+			variables[`usk_${i + 1}_${k + 1}_chroma_brightness`] = {
+				name: `Advanced Chroma Brightness of M/E ${i + 1} Key ${k + 1}`,
+			}
+			variables[`usk_${i + 1}_${k + 1}_chroma_contrast`] = {
+				name: `Advanced Chroma Contrast of M/E ${i + 1} Key ${k + 1}`,
+			}
+			variables[`usk_${i + 1}_${k + 1}_chroma_saturation`] = {
+				name: `Advanced Chroma Saturation of M/E ${i + 1} Key ${k + 1}`,
+			}
+			variables[`usk_${i + 1}_${k + 1}_chroma_red`] = {
+				name: `Advanced Chroma Red of M/E ${i + 1} Key ${k + 1}`,
+			}
+			variables[`usk_${i + 1}_${k + 1}_chroma_green`] = {
+				name: `Advanced Chroma Green of M/E ${i + 1} Key ${k + 1}`,
+			}
+			variables[`usk_${i + 1}_${k + 1}_chroma_blue`] = {
+				name: `Advanced Chroma Blue of M/E ${i + 1} Key ${k + 1}`,
 			}
 
 			updateUSKVariable(instance, state.state, i, k, values)

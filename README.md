@@ -39,6 +39,7 @@ To add a new model to the list:
 - Transition wipe properties (#458)
 - Add on-air variables for USK and DSK (#442)
 - Add USK border saturation variable (#411)
+- Add USK luma and advanced chroma key adjustment actions and variables (#132)
 - Add SuperSource art fill/key source variables (#393)
 - Add recording active and streaming active variables (#330)
 - Add recording time remaining (seconds) and active disk volume name variables (#299)
