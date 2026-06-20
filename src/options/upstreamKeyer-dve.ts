@@ -613,3 +613,47 @@ export function AtemUSKKeyframePropertiesPickers(): {
 		},
 	})
 }
+
+export function AtemUSKDVEPropertiesOffsetPickers(): {
+	properties: CompanionInputFieldMultiDropdown<'properties'>
+	positionX: CompanionInputFieldNumber<'positionX'>
+	positionY: CompanionInputFieldNumber<'positionY'>
+	sizeX: CompanionInputFieldNumber<'sizeX'>
+	sizeY: CompanionInputFieldNumber<'sizeY'>
+	rotation: CompanionInputFieldNumber<'rotation'>
+	maskTop: CompanionInputFieldNumber<'maskTop'>
+	maskBottom: CompanionInputFieldNumber<'maskBottom'>
+	maskLeft: CompanionInputFieldNumber<'maskLeft'>
+	maskRight: CompanionInputFieldNumber<'maskRight'>
+} {
+	const offset = <T extends string>(
+		id: T,
+		label: string,
+		limit: number,
+		step: number,
+	): CompanionInputFieldNumber<T> => ({
+		type: 'number',
+		label,
+		id,
+		default: 0,
+		range: true,
+		min: -limit,
+		step,
+		max: limit,
+		isVisibleExpression: `arrayIncludes($(options:properties), '${id}')`,
+		asInteger: false,
+		clampValues: true,
+	})
+
+	return WithDropdownPropertiesPicker({
+		positionX: offset('positionX', 'Position: X', 2000, 0.01),
+		positionY: offset('positionY', 'Position: Y', 2000, 0.01),
+		sizeX: offset('sizeX', 'Size: X', 99.99, 0.01),
+		sizeY: offset('sizeY', 'Size: Y', 99.99, 0.01),
+		rotation: offset('rotation', 'Rotation', 360, 1),
+		maskTop: offset('maskTop', 'Mask: Top', 38, 0.01),
+		maskBottom: offset('maskBottom', 'Mask: Bottom', 38, 0.01),
+		maskLeft: offset('maskLeft', 'Mask: Left', 52, 0.01),
+		maskRight: offset('maskRight', 'Mask: Right', 52, 0.01),
+	})
+}

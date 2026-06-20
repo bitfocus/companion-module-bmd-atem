@@ -3,10 +3,12 @@ import { convertOptionsFields } from '../../options/util.js'
 import type { CompanionActionDefinitions, JsonValue } from '@companion-module/base'
 import {
 	AtemUSKDVEPropertiesPickers,
+	AtemUSKDVEPropertiesOffsetPickers,
 	AtemUSKKeyframePropertiesPickers,
 	CHOICES_FLYDIRECTIONS,
 } from '../../options/upstreamKeyer-dve.js'
 import type { ModelSpec } from '../../models/index.js'
+import { clamp } from '../../util.js'
 import { getUSK, type StateWrapper } from '../../state.js'
 import type {
 	UpstreamKeyerDVESettings,
@@ -85,6 +87,26 @@ export type AtemUpstreamKeyerDVEActions = {
 			borderBevelSoftness: number
 			rate: number
 		} & TransitionOptions
+	}
+	['uskDvePropertiesDelta']: {
+		options: {
+			mixeffect: number
+			key: number
+
+			properties: Array<
+				'positionX' | 'positionY' | 'sizeX' | 'sizeY' | 'rotation' | 'maskTop' | 'maskBottom' | 'maskLeft' | 'maskRight'
+			>
+
+			positionX: number
+			positionY: number
+			sizeX: number
+			sizeY: number
+			rotation: number
+			maskTop: number
+			maskBottom: number
+			maskLeft: number
+			maskRight: number
+		}
 	}
 	['uskSetKeyframe']: {
 		options: {
@@ -173,6 +195,7 @@ export function createUpstreamKeyerDVEActions(
 	if (!model.USKs || !model.DVEs) {
 		return {
 			['uskDveProperties']: undefined,
+			['uskDvePropertiesDelta']: undefined,
 			['uskSetKeyframe']: undefined,
 			['uskStoreKeyframe']: undefined,
 			['uskFly']: undefined,
@@ -351,6 +374,42 @@ export function createUpstreamKeyerDVEActions(
 				} else {
 					return undefined
 				}
+			},
+		},
+		['uskDvePropertiesDelta']: {
+			name: 'Upstream key: Offset DVE properties',
+			options: convertOptionsFields({
+				mixeffect: AtemMEPicker(model),
+				key: AtemUSKPicker(model),
+				...AtemUSKDVEPropertiesOffsetPickers(),
+			}),
+			callback: async ({ options }) => {
+				const mixEffectId = resolveMixEffectIndex(model, options.mixeffect)
+				const keyId = resolveUpstreamKeyerIndex(model, options.key)
+				const dve = getUSK(state.state, mixEffectId, keyId)?.dveSettings
+
+				const newProps: Partial<UpstreamKeyerDVESettings> = {}
+
+				const props = options.properties
+				if (dve && props && Array.isArray(props)) {
+					if (props.includes('positionX'))
+						newProps.positionX = clamp(-1000000, 1000000, dve.positionX + options.positionX * 1000)
+					if (props.includes('positionY'))
+						newProps.positionY = clamp(-1000000, 1000000, dve.positionY + options.positionY * 1000)
+					if (props.includes('sizeX')) newProps.sizeX = clamp(0, 99990, dve.sizeX + options.sizeX * 1000)
+					if (props.includes('sizeY')) newProps.sizeY = clamp(0, 99990, dve.sizeY + options.sizeY * 1000)
+					if (props.includes('rotation')) newProps.rotation = clamp(0, 3600, dve.rotation + options.rotation * 10)
+					if (props.includes('maskTop')) newProps.maskTop = clamp(0, 38000, dve.maskTop + options.maskTop * 1000)
+					if (props.includes('maskBottom'))
+						newProps.maskBottom = clamp(0, 38000, dve.maskBottom + options.maskBottom * 1000)
+					if (props.includes('maskLeft')) newProps.maskLeft = clamp(0, 52000, dve.maskLeft + options.maskLeft * 1000)
+					if (props.includes('maskRight'))
+						newProps.maskRight = clamp(0, 52000, dve.maskRight + options.maskRight * 1000)
+				}
+
+				if (Object.keys(newProps).length === 0) return
+
+				await atem?.setUpstreamKeyerDVESettings(newProps, mixEffectId, keyId)
 			},
 		},
 		['uskSetKeyframe']: {
