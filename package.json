@@ -33,7 +33,7 @@
 	},
 	"dependencies": {
 		"@atem-connection/camera-control": "^0.4.0",
-		"@atem-connection/image-tools": "^1.1.1",
+		"@atem-connection/image-tools": "^1.1.2",
 		"@companion-module/base": "~2.0.4",
 		"@julusian/image-rs": "^2.1.1",
 		"atem-connection": "3.9.0",
