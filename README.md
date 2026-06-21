@@ -32,6 +32,10 @@ To add a new model to the list:
 
 ## Changes
 
+## v4.1.1
+
+- Fix compatibility with windows-arm64
+
 ## v4.1.0
 
 - Better transition rate support, with rate variables and a relative adjust action (#390)
