@@ -266,14 +266,22 @@ function updateMacroVariable(state: AtemState, id: number, values: Partial<Varia
 	values[`macro_${id + 1}`] = macro?.name || `Macro ${id + 1}`
 }
 
-function updateMediaStillVariable(state: AtemState, id: number, values: Partial<VariablesSchema>): void {
+function updateMediaStillVariable(state: AtemState, id: number, variables: CompanionVariableDefinitions<VariablesSchema>, values: Partial<VariablesSchema>): void {
 	const still = state.media.stillPool[id]
 	values[`still_${id + 1}`] = still?.fileName || `Still ${id + 1}`
+	if (still?.fileName) {
+		variables[`still_name_${still?.fileName}`] = {name: "Slot name of still with file name still_name_<filename>"}
+		values[`still_name_${still?.fileName}`] = `Still ${id + 1}`
+	}
 }
 
-function updateMediaClipVariable(state: AtemState, id: number, values: Partial<VariablesSchema>): void {
+function updateMediaClipVariable(state: AtemState, id: number, variables: CompanionVariableDefinitions<VariablesSchema>, values: Partial<VariablesSchema>): void {
 	const clip = state.media.clipPool[id]
 	values[`clip_${id + 1}`] = clip?.name || `Clip ${id + 1}`
+	if (clip?.name) {
+		variables[`clip_name_${clip?.name}`] = {name: "Slot name of clip with file name clip_name_<filename>"}
+		values[`clip_name_${clip?.name}`] = `Clip ${id + 1}`
+	}
 }
 
 function updateMediaPlayerVariables(state: AtemState, id: number, values: Partial<VariablesSchema>): void {
@@ -764,14 +772,14 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 			name: `Name of still #${i + 1}`,
 		}
 
-		updateMediaStillVariable(state.state, i, values)
+		updateMediaStillVariable(state.state, i, variables, values)
 	}
 	for (let i = 0; i < model.media.clips; i++) {
 		variables[`clip_${i + 1}`] = {
 			name: `Name of clip #${i + 1}`,
 		}
 
-		updateMediaClipVariable(state.state, i, values)
+		updateMediaClipVariable(state.state, i, variables, values)
 	}
 	for (let i = 0; i < model.media.players; i++) {
 		variables[`mp_source_${i + 1}`] = {
