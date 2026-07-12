@@ -20,6 +20,7 @@ export function AtemDSKPicker<TId extends string>(model: ModelSpec, id: TId): Co
 		default: 1,
 		choices,
 		isVisibleExpression: choices.length > 1 ? undefined : 'false', // Hide if only 1 choice
+		allowInvalidValues: choices.length > 1 ? undefined : true, // Allow any value when hidden
 	}
 }
 
