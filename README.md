@@ -32,6 +32,10 @@ To add a new model to the list:
 
 ## Changes
 
+## v4.1.2
+
+- Fix actions/feedbacks with hidden dropdown fields may cause invalid value rejections
+
 ## v4.1.1
 
 - Fix compatibility with windows-arm64
