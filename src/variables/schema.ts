@@ -81,7 +81,9 @@ export type VariablesSchema = {
 	[key: `macro_${number}`]: string
 
 	[key: `still_${number}`]: string
+	[key: `still_name_${string}`]: string
 	[key: `clip_${number}`]: string
+	[key: `clip_name_${string}`]: string
 
 	[key: `mp_source_${number}`]: string
 	[key: `mp_index_${number}`]: string
