@@ -36,6 +36,8 @@ export function AtemMultiviewSourcePicker(model: ModelSpec, state: AtemState): C
 		label: 'Source',
 		default: 0,
 		choices: SourcesToChoices(GetSourcesListForType(model, state, 'mv')),
+		expressionDescription: 'Should return a source number, eg 1, 3010, 4010',
+		allowInvalidValues: true,
 	}
 }
 export function AtemMultiviewWindowPicker(model: ModelSpec): CompanionInputFieldDropdown<'windowIndex'> {

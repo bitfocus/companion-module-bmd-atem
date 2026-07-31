@@ -1,24 +1,25 @@
 import type { Atem } from 'atem-connection'
 import { convertOptionsFields } from '../../options/util.js'
-import type { CompanionActionDefinitions } from '@companion-module/base'
+import type { CompanionActionDefinitions, JsonValue } from '@companion-module/base'
 import { getMixEffect } from 'atem-connection/dist/state/util.js'
 import type { ModelSpec } from '../../models/index.js'
 import type { StateWrapper } from '../../state.js'
 import type { AtemTransitions, FadeDurationFieldsType } from '../../transitions.js'
 import { FadeDurationFields } from '../../options/fade.js'
 import { AtemMEPicker, AtemMESourcePicker, resolveMixEffectIndex } from '../../options/mixEffect.js'
+import { parseSourceIdRequired } from '../../options/sources.js'
 
 export type AtemProgramPreviewActions = {
 	['program']: {
 		options: {
 			mixeffect: number
-			input: number
+			input: JsonValue
 		}
 	}
 	['preview']: {
 		options: {
 			mixeffect: number
-			input: number
+			input: JsonValue
 		}
 	}
 	['cut']: {
@@ -53,7 +54,8 @@ export function createProgramPreviewActions(
 				input: AtemMESourcePicker(model, state.state),
 			}),
 			callback: async ({ options }) => {
-				await atem?.changeProgramInput(options.input, resolveMixEffectIndex(model, options.mixeffect))
+				const input = parseSourceIdRequired(options.input)
+				await atem?.changeProgramInput(input, resolveMixEffectIndex(model, options.mixeffect))
 			},
 			learn: ({ options }) => {
 				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
@@ -75,7 +77,8 @@ export function createProgramPreviewActions(
 				input: AtemMESourcePicker(model, state.state),
 			}),
 			callback: async ({ options }) => {
-				await atem?.changePreviewInput(options.input, resolveMixEffectIndex(model, options.mixeffect))
+				const input = parseSourceIdRequired(options.input)
+				await atem?.changePreviewInput(input, resolveMixEffectIndex(model, options.mixeffect))
 			},
 			learn: ({ options }) => {
 				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))

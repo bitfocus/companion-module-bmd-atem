@@ -13,13 +13,14 @@ import {
 	AtemMultiviewSourcePicker,
 	resolveMultiviewerIndex,
 } from '../options/multiviewer.js'
+import { parseSourceIdRequired } from '../options/sources.js'
 
 export type AtemMultiviewerActions = {
 	['setMvSource']: {
 		options: {
 			multiViewerId: number
 			windowIndex: number
-			source: number
+			source: JsonValue
 		}
 	}
 	['multiviewerLayout']: {
@@ -53,8 +54,9 @@ export function createMultiviewerActions(
 				source: AtemMultiviewSourcePicker(model, state.state),
 			}),
 			callback: async ({ options }) => {
+				const source = parseSourceIdRequired(options.source)
 				await atem?.setMultiViewerWindowSource(
-					options.source,
+					source,
 					resolveMultiviewerIndex(model, options.multiViewerId),
 					options.windowIndex - 1,
 				)

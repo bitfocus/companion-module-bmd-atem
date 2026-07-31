@@ -1,8 +1,8 @@
 import { type Atem, type InputState } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
-import type { CompanionActionDefinitions } from '@companion-module/base'
+import type { CompanionActionDefinitions, JsonValue } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
-import { AtemAllSourcePicker } from '../options/sources.js'
+import { AtemAllSourcePicker, parseSourceId, parseSourceIdRequired } from '../options/sources.js'
 import type { StateWrapper } from '../state.js'
 
 export type AtemSettingsActions = {
@@ -14,7 +14,7 @@ export type AtemSettingsActions = {
 	}
 	['inputName']: {
 		options: {
-			source: number
+			source: JsonValue
 
 			short_enable: boolean
 			short_value: string
@@ -86,7 +86,7 @@ export function createSettingsActions(
 				},
 			}),
 			callback: async ({ options }) => {
-				const source = options.source
+				const source = parseSourceIdRequired(options.source)
 				const setShort = options.short_enable
 				const setLong = options.long_enable
 
@@ -102,7 +102,8 @@ export function createSettingsActions(
 				])
 			},
 			learn: ({ options }) => {
-				const source = options.source
+				const source = parseSourceId(options.source)
+				if (source === null) return undefined
 				const props = state.state.inputs[source]
 
 				if (props) {

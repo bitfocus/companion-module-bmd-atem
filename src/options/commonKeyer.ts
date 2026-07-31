@@ -11,6 +11,8 @@ export function AtemKeyFillSourcePicker(model: ModelSpec, state: AtemState): Com
 		id: 'fill',
 		default: 1,
 		choices: SourcesToChoices(GetSourcesListForType(model, state, 'me')),
+		expressionDescription: 'Should return a source number, eg 1, 3010, 4010',
+		allowInvalidValues: true,
 	}
 }
 export function AtemKeyCutSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown<'cut'> {
@@ -20,5 +22,7 @@ export function AtemKeyCutSourcePicker(model: ModelSpec, state: AtemState): Comp
 		id: 'cut',
 		default: 0,
 		choices: SourcesToChoices(GetSourcesListForType(model, state, 'key')),
+		expressionDescription: 'Should return a source number, eg 1, 3010, 4010',
+		allowInvalidValues: true,
 	}
 }

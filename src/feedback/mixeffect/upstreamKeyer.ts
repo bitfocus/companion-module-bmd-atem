@@ -13,6 +13,7 @@ import {
 	resolveUpstreamKeyerIndex,
 } from '../../options/upstreamKeyer.js'
 import { AtemKeyFillSourcePicker } from '../../options/commonKeyer.js'
+import { parseSourceId } from '../../options/sources.js'
 import { CHOICES_CURRENTKEYFRAMES } from '../../options/upstreamKeyer-dve.js'
 
 export type AtemUpstreamKeyerFeedbacks = {
@@ -36,7 +37,7 @@ export type AtemUpstreamKeyerFeedbacks = {
 		options: {
 			mixeffect: number
 			key: number
-			fill: number
+			fill: JsonValue
 		}
 	}
 	['usk_keyframe']: {
@@ -134,12 +135,14 @@ export function createUpstreamKeyerFeedbacks(
 				bgcolor: 0xeeee00,
 			},
 			callback: ({ options }): boolean => {
+				const fill = parseSourceId(options.fill)
+				if (fill === null) return false
 				const usk = getUSK(
 					state.state,
 					resolveMixEffectIndex(model, options.mixeffect),
 					resolveUpstreamKeyerIndex(model, options.key),
 				)
-				return usk?.fillSource === options.fill
+				return usk?.fillSource === fill
 			},
 			learn: ({ options }) => {
 				const usk = getUSK(

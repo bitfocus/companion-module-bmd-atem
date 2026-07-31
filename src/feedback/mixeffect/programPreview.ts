@@ -1,22 +1,23 @@
 import { convertOptionsFields } from '../../options/util.js'
 import type { ModelSpec } from '../../models/index.js'
-import type { CompanionFeedbackDefinitions } from '@companion-module/base'
+import type { CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
 import { getMixEffect, type StateWrapper } from '../../state.js'
 import { AtemMEPicker, AtemMESourcePicker, resolveMixEffectIndex } from '../../options/mixEffect.js'
+import { parseSourceId } from '../../options/sources.js'
 
 export type AtemProgramPreviewFeedbacks = {
 	['program']: {
 		type: 'boolean'
 		options: {
 			mixeffect: number
-			input: number
+			input: JsonValue
 		}
 	}
 	['preview']: {
 		type: 'boolean'
 		options: {
 			mixeffect: number
-			input: number
+			input: JsonValue
 		}
 	}
 }
@@ -38,8 +39,10 @@ export function createProgramPreviewFeedbacks(
 				bgcolor: 0x00ff00,
 			},
 			callback: ({ options }): boolean => {
+				const input = parseSourceId(options.input)
+				if (input === null) return false
 				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
-				return me?.programInput === options.input
+				return me?.programInput === input
 			},
 			learn: ({ options }) => {
 				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
@@ -65,8 +68,10 @@ export function createProgramPreviewFeedbacks(
 				bgcolor: 0x00ff00,
 			},
 			callback: ({ options }): boolean => {
+				const input = parseSourceId(options.input)
+				if (input === null) return false
 				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))
-				return me?.previewInput === options.input
+				return me?.previewInput === input
 			},
 			learn: ({ options }) => {
 				const me = getMixEffect(state.state, resolveMixEffectIndex(model, options.mixeffect))

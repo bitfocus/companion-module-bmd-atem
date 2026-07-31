@@ -24,5 +24,7 @@ export function AtemAuxSourcePicker(model: ModelSpec, state: AtemState): Compani
 		id: 'input',
 		default: 1,
 		choices: SourcesToChoices(GetSourcesListForType(model, state, 'aux')),
+		expressionDescription: 'Should return a source number, eg 1, 3010, 4010',
+		allowInvalidValues: true,
 	}
 }

@@ -1,6 +1,6 @@
 import { convertOptionsFields } from '../options/util.js'
 import type { ModelSpec } from '../models/index.js'
-import type { CompanionFeedbackDefinitions } from '@companion-module/base'
+import type { CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
 import { getSuperSource } from 'atem-connection/dist/state/util.js'
 import { getSuperSourceBox, type StateWrapper } from '../state.js'
 import {
@@ -17,6 +17,7 @@ import {
 	AtemSuperSourceBoxSourcePicker,
 	type SSrcArtOption,
 } from '../options/superSource.js'
+import { parseSourceId } from '../options/sources.js'
 
 export type AtemSuperSourceFeedbacks = {
 	['ssrc_art_properties']: {
@@ -29,7 +30,7 @@ export type AtemSuperSourceFeedbacks = {
 		type: 'boolean'
 		options: {
 			ssrcId: number
-			source: number
+			source: JsonValue
 		}
 	}
 	['ssrc_art_option']: {
@@ -44,7 +45,7 @@ export type AtemSuperSourceFeedbacks = {
 		options: {
 			ssrcId: number
 			boxIndex: number
-			source: number
+			source: JsonValue
 		}
 	}
 	['ssrc_box_enable']: {
@@ -104,8 +105,8 @@ export function createSuperSourceFeedbacks(
 				const props = options.properties
 				if (!ssrc || !props || !Array.isArray(props)) return false
 
-				if (props.includes('fill') && ssrc.artFillSource !== options.fill) return false
-				if (props.includes('key') && ssrc.artCutSource !== options.key) return false
+				if (props.includes('fill') && ssrc.artFillSource !== parseSourceId(options.fill)) return false
+				if (props.includes('key') && ssrc.artCutSource !== parseSourceId(options.key)) return false
 
 				if (props.includes('artOption')) {
 					const currentArtOption = AtemSSrcArtOptionToProtocolEnum(options.artOption, ssrc.artOption)
@@ -152,9 +153,11 @@ export function createSuperSourceFeedbacks(
 				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
+				const source = parseSourceId(options.source)
+				if (source === null) return false
 				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
 				const ssrc = getSuperSource(state.state, ssrcId)
-				return ssrc.properties?.artFillSource === options.source
+				return ssrc.properties?.artFillSource === source
 			},
 			learn: ({ options }) => {
 				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
@@ -215,9 +218,11 @@ export function createSuperSourceFeedbacks(
 				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
+				const source = parseSourceId(options.source)
+				if (source === null) return false
 				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
 				const box = getSuperSourceBox(state.state, options.boxIndex - 1, ssrcId)
-				return box?.source === options.source
+				return box?.source === source
 			},
 			learn: ({ options }) => {
 				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
@@ -269,7 +274,7 @@ export function createSuperSourceFeedbacks(
 				const props = options.properties
 				if (!box || !props || !Array.isArray(props)) return false
 
-				if (props.includes('source') && box.source !== options.source) return false
+				if (props.includes('source') && box.source !== parseSourceId(options.source)) return false
 
 				if (props.includes('size') && !compareAsInt(options.size, box.size, 1000, 10)) return false
 				if (props.includes('x') && !compareAsInt(options.x, box.x, 100)) return false

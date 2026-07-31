@@ -41,6 +41,8 @@ export function AtemMESourcePicker(model: ModelSpec, state: AtemState): Companio
 		type: 'dropdown',
 		default: 1,
 		choices: SourcesToChoices(GetSourcesListForType(model, state, 'me')),
+		expressionDescription: 'Should return a source number, eg 1, 3010, 4010',
+		allowInvalidValues: true,
 	}
 }
 

@@ -1,7 +1,8 @@
 import type { ModelSpec } from '../models/index.js'
 import { convertOptionsFields } from '../options/util.js'
-import type { CompanionFeedbackDefinitions } from '@companion-module/base'
+import type { CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
 import { AtemAuxPicker, AtemAuxSourcePicker } from '../options/aux-outputs.js'
+import { parseSourceId } from '../options/sources.js'
 import type { StateWrapper } from '../state.js'
 
 export type AtemAuxOutputFeedbacks = {
@@ -9,7 +10,7 @@ export type AtemAuxOutputFeedbacks = {
 		type: 'boolean'
 		options: {
 			aux: number
-			input: number
+			input: JsonValue
 		}
 	}
 }
@@ -36,8 +37,10 @@ export function createAuxOutputFeedbacks(
 				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
+				const input = parseSourceId(options.input)
+				if (input === null) return false
 				const auxSource = state.state.video.auxilliaries[options.aux - 1]
-				return auxSource === options.input
+				return auxSource === input
 			},
 			learn: ({ options }) => {
 				const auxSource = state.state.video.auxilliaries[options.aux - 1]

@@ -1,8 +1,49 @@
-import type { CompanionInputFieldDropdown } from '@companion-module/base'
+import type { CompanionInputFieldDropdown, JsonValue } from '@companion-module/base'
 import { Enums, type AtemState } from 'atem-connection'
 import type { ModelSpec } from '../models/types.js'
 import { SourcesToChoices } from './util.js'
-import { assertUnreachable } from '../util.js'
+import { assertUnreachable, stringifyValueAlways } from '../util.js'
+
+/** Largest source id we will forward to the switcher (max signed int16). */
+const MAX_SOURCE_ID = 32767
+
+/**
+ * Parse a raw video-source picker value into a validated source id.
+ *
+ * Because the source pickers use `allowInvalidValues`, the value may be any expression result
+ * (a number, or a string) and is not guaranteed to be one of the listed choices. We accept any
+ * non-negative integer within safe bounds so that valid-but-unlisted source ids (e.g. mask
+ * sources) still work, while rejecting anything that would produce a malformed packet.
+ *
+ * @returns the parsed source id, or null when the value is not a usable source number. Callers
+ * that must produce a value (e.g. action callbacks) should use {@link parseSourceIdRequired}
+ * instead; feedbacks can treat null as "no match".
+ */
+export function parseSourceId(rawValue: JsonValue | undefined): number | null {
+	const str = stringifyValueAlways(rawValue).trim()
+	if (!str) return null // Number('') === 0, so guard the empty string first
+
+	const value = Number(str)
+	if (!Number.isInteger(value)) return null // rejects NaN, floats and Infinity
+	if (value < 0 || value >= MAX_SOURCE_ID) return null
+
+	return value
+}
+
+/**
+ * Parse a raw video-source picker value into a validated source id, throwing a descriptive error
+ * naming the offending value when it cannot be parsed. Use this from action callbacks so that a
+ * bad value surfaces to the user instead of silently doing nothing.
+ */
+export function parseSourceIdRequired(rawValue: JsonValue | undefined): number {
+	const value = parseSourceId(rawValue)
+	if (value === null) {
+		throw new Error(
+			`Invalid source value "${stringifyValueAlways(rawValue)}": expected a whole number between 0 and ${MAX_SOURCE_ID - 1}`,
+		)
+	}
+	return value
+}
 
 export function AtemAllSourcePicker(model: ModelSpec, state: AtemState): CompanionInputFieldDropdown<'source'> {
 	return {
@@ -11,6 +52,8 @@ export function AtemAllSourcePicker(model: ModelSpec, state: AtemState): Compani
 		label: 'Source',
 		default: 0,
 		choices: SourcesToChoices(GetSourcesListForType(model, state)),
+		expressionDescription: 'Should return a source number, eg 1, 3010, 4010',
+		allowInvalidValues: true,
 	}
 }
 

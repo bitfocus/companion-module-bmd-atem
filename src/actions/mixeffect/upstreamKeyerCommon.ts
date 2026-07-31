@@ -25,6 +25,7 @@ import {
 	resolveUpstreamKeyerIndex,
 } from '../../options/upstreamKeyer.js'
 import { AtemKeyFillSourcePicker, AtemKeyCutSourcePicker } from '../../options/commonKeyer.js'
+import { parseSourceIdRequired } from '../../options/sources.js'
 
 export type AtemUpstreamKeyerCommonActions = {
 	['uskType']: {
@@ -38,8 +39,8 @@ export type AtemUpstreamKeyerCommonActions = {
 		options: {
 			mixeffect: number
 			key: number
-			fill: number
-			cut: number
+			fill: JsonValue
+			cut: JsonValue
 		}
 	}
 	['uskOnAir']: {
@@ -102,14 +103,16 @@ export function createUpstreamKeyerCommonActions(
 				cut: AtemKeyCutSourcePicker(model, state.state),
 			}),
 			callback: async ({ options }) => {
+				const fill = parseSourceIdRequired(options.fill)
+				const cut = parseSourceIdRequired(options.cut)
 				await Promise.all([
 					atem?.setUpstreamKeyerFillSource(
-						options.fill,
+						fill,
 						resolveMixEffectIndex(model, options.mixeffect),
 						resolveUpstreamKeyerIndex(model, options.key),
 					),
 					atem?.setUpstreamKeyerCutSource(
-						options.cut,
+						cut,
 						resolveMixEffectIndex(model, options.mixeffect),
 						resolveUpstreamKeyerIndex(model, options.key),
 					),

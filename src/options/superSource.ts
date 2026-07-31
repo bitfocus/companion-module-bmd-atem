@@ -5,6 +5,7 @@ import {
 	type CompanionInputFieldCheckbox,
 	assertNever,
 	type DropdownChoice,
+	type JsonValue,
 } from '@companion-module/base'
 import { type AtemState, Enums } from 'atem-connection'
 import { type TrueFalseToggle, CHOICES_KEYTRANS } from '../options/common.js'
@@ -57,6 +58,8 @@ export function AtemSuperSourceArtSourcePicker<T extends string>(
 		label: label,
 		default: 0,
 		choices: SourcesToChoices(GetSourcesListForType(model, state, 'ssrc-art')),
+		expressionDescription: 'Should return a source number, eg 1, 3010, 4010',
+		allowInvalidValues: true,
 	}
 }
 export function AtemSuperSourceBoxSourcePicker(
@@ -69,13 +72,15 @@ export function AtemSuperSourceBoxSourcePicker(
 		label: 'Source',
 		default: 0,
 		choices: SourcesToChoices(GetSourcesListForType(model, state, 'ssrc-box')),
+		expressionDescription: 'Should return a source number, eg 1, 3010, 4010',
+		allowInvalidValues: true,
 	}
 }
 
 export type AtemSuperSourceBoxPropertiesBase = {
 	size: number
 	onair: TrueFalseToggle
-	source: number
+	source: JsonValue
 	x: number
 	y: number
 	cropEnable: boolean
@@ -133,6 +138,8 @@ export function AtemSuperSourceBoxPropertiesPickers(
 			default: 0,
 			choices: SourcesToChoices(GetSourcesListForType(model, state, 'ssrc-box')),
 			isVisibleExpression: `arrayIncludes($(options:properties), 'source')`,
+			expressionDescription: 'Should return a source number, eg 1, 3010, 4010',
+			allowInvalidValues: true,
 		},
 		x: {
 			type: 'number',
@@ -400,8 +407,8 @@ export function AtemSuperSourceArtOption(action: boolean): CompanionInputFieldDr
 }
 
 export type AtemSuperSourceArtPropertiesBase = {
-	fill: number
-	key: number
+	fill: JsonValue
+	key: JsonValue
 	artOption: SSrcArtOption
 	artPreMultiplied: boolean
 	artClip: number
@@ -434,6 +441,8 @@ export function AtemSuperSourceArtPropertiesPickers(
 			default: 0,
 			choices: artSources,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'fill')`,
+			expressionDescription: 'Should return a source number, eg 1, 3010, 4010',
+			allowInvalidValues: true,
 		},
 		key: {
 			type: 'dropdown',
@@ -442,6 +451,8 @@ export function AtemSuperSourceArtPropertiesPickers(
 			default: 0,
 			choices: artSources,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'key')`,
+			expressionDescription: 'Should return a source number, eg 1, 3010, 4010',
+			allowInvalidValues: true,
 		},
 		artOption: {
 			...AtemSuperSourceArtOption(action),

@@ -1,6 +1,6 @@
 import { type Atem } from 'atem-connection'
 import { convertOptionsFields, WithDropdownPropertiesPicker } from '../options/util.js'
-import type { CompanionActionDefinitions } from '@companion-module/base'
+import type { CompanionActionDefinitions, JsonValue } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import {
 	CHOICES_KEYTRANS,
@@ -17,13 +17,14 @@ import {
 	resolveDownstreamKeyerIndex,
 } from '../options/downstreamKeyer.js'
 import { AtemKeyFillSourcePicker, AtemKeyCutSourcePicker } from '../options/commonKeyer.js'
+import { parseSourceIdRequired } from '../options/sources.js'
 
 export type AtemDownstreamKeyerActions = {
 	['dskSource']: {
 		options: {
 			key: number
-			fill: number
-			cut: number
+			fill: JsonValue
+			cut: JsonValue
 		}
 	}
 	['dskRate']: {
@@ -100,9 +101,11 @@ export function createDownstreamKeyerActions(
 				cut: AtemKeyCutSourcePicker(model, state.state),
 			}),
 			callback: async ({ options }) => {
+				const fill = parseSourceIdRequired(options.fill)
+				const cut = parseSourceIdRequired(options.cut)
 				await Promise.all([
-					atem?.setDownstreamKeyFillSource(options.fill, resolveDownstreamKeyerIndex(model, options.key)),
-					atem?.setDownstreamKeyCutSource(options.cut, resolveDownstreamKeyerIndex(model, options.key)),
+					atem?.setDownstreamKeyFillSource(fill, resolveDownstreamKeyerIndex(model, options.key)),
+					atem?.setDownstreamKeyCutSource(cut, resolveDownstreamKeyerIndex(model, options.key)),
 				])
 			},
 			learn: ({ options }) => {

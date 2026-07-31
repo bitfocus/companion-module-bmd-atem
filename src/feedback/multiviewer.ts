@@ -13,6 +13,7 @@ import {
 	AtemMultiviewerPicker,
 	resolveMultiviewerIndex,
 } from '../options/multiviewer.js'
+import { parseSourceId } from '../options/sources.js'
 
 export type AtemMultiviewerFeedbacks = {
 	['mv_source']: {
@@ -20,7 +21,7 @@ export type AtemMultiviewerFeedbacks = {
 		options: {
 			multiViewerId: number
 			windowIndex: number
-			source: number
+			source: JsonValue
 		}
 	}
 	['multiviewerLayout']: {
@@ -59,12 +60,14 @@ export function createMultiviewerFeedbacks(
 				bgcolor: 0xffff00,
 			},
 			callback: ({ options }): boolean => {
+				const source = parseSourceId(options.source)
+				if (source === null) return false
 				const window = getMultiviewerWindow(
 					state.state,
 					resolveMultiviewerIndex(model, options.multiViewerId),
 					options.windowIndex - 1,
 				)
-				return window?.source === options.source
+				return window?.source === source
 			},
 			learn: ({ options }) => {
 				const window = getMultiviewerWindow(

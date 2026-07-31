@@ -1,30 +1,30 @@
 import { AtemMESourcePicker } from '../../options/mixEffect.js'
 import { convertOptionsFields, SourcesToChoices } from '../../options/util.js'
 import type { ModelSpec } from '../../models/index.js'
-import type { CompanionFeedbackDefinitions } from '@companion-module/base'
+import type { CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
 import type { StateWrapper } from '../../state.js'
 import { calculateTallyForInputId } from '../../util.js'
-import { GetSourcesListForType } from '../../options/sources.js'
+import { GetSourcesListForType, parseSourceId } from '../../options/sources.js'
 import { isEqual } from 'lodash-es'
 
 export type AtemTallyFeedbacks = {
 	['program_tally']: {
 		type: 'boolean'
 		options: {
-			input: number
+			input: JsonValue
 		}
 	}
 	['preview_tally']: {
 		type: 'boolean'
 		options: {
-			input: number
+			input: JsonValue
 		}
 	}
 	['advanced_tally']: {
 		type: 'boolean'
 		options: {
 			inputIds: number[]
-			input: number
+			input: JsonValue
 		}
 	}
 }
@@ -45,7 +45,9 @@ export function createTallyFeedbacks(
 				bgcolor: 0xff0000,
 			},
 			callback: ({ options }): boolean => {
-				const source = state.tally[options.input]
+				const input = parseSourceId(options.input)
+				if (input === null) return false
+				const source = state.tally[input]
 				return !!source?.program
 			},
 		},
@@ -60,7 +62,9 @@ export function createTallyFeedbacks(
 				bgcolor: 0x00ff00,
 			},
 			callback: ({ options }): boolean => {
-				const source = state.tally[options.input]
+				const input = parseSourceId(options.input)
+				if (input === null) return false
+				const source = state.tally[input]
 				return !!source?.preview
 			},
 		},
@@ -112,7 +116,8 @@ export function createTallyFeedbacks(
 				const selectedInputIds = options.inputIds
 				if (!Array.isArray(selectedInputIds)) return false
 
-				const matchInputId = options.input
+				const matchInputId = parseSourceId(options.input)
+				if (matchInputId === null) return false
 
 				for (const inputId of selectedInputIds) {
 					const cacheEntry = state.tallyCache.get(Number(inputId))

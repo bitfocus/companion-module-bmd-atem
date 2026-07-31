@@ -1,6 +1,6 @@
 import { VideoState, type Atem } from 'atem-connection'
 import { convertOptionsFields } from '../options/util.js'
-import type { CompanionActionDefinitions } from '@companion-module/base'
+import type { CompanionActionDefinitions, JsonValue } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import type { SuperSource } from 'atem-connection/dist/state/video/index.js'
 import { CHOICES_KEYTRANS, type TrueFalseToggle, resolveTrueFalseToggle } from '../options/common.js'
@@ -21,6 +21,7 @@ import {
 	type AtemSuperSourceArtProperties,
 	type AtemSuperSourceBorderProperties,
 } from '../options/superSource.js'
+import { parseSourceIdRequired } from '../options/sources.js'
 import { AtemTransitionAnimationOptions } from '../options/fade.js'
 
 export type AtemSuperSourceActions = {
@@ -38,7 +39,7 @@ export type AtemSuperSourceActions = {
 		options: {
 			ssrcId: number
 			boxIndex: number
-			source: number
+			source: JsonValue
 		}
 	}
 	['setSsrcBoxEnable']: {
@@ -101,8 +102,8 @@ export function createSuperSourceActions(
 
 				const props = options.properties
 				if (props && Array.isArray(props)) {
-					if (props.includes('fill')) newProps.artFillSource = options.fill
-					if (props.includes('key')) newProps.artCutSource = options.key
+					if (props.includes('fill')) newProps.artFillSource = parseSourceIdRequired(options.fill)
+					if (props.includes('key')) newProps.artCutSource = parseSourceIdRequired(options.key)
 
 					if (props.includes('artOption')) {
 						const ssrc = state.state.video.superSources[ssrcId]
@@ -211,9 +212,10 @@ export function createSuperSourceActions(
 				source: AtemSuperSourceBoxSourcePicker(model, state.state),
 			}),
 			callback: async ({ options }) => {
+				const source = parseSourceIdRequired(options.source)
 				await atem?.setSuperSourceBoxSettings(
 					{
-						source: options.source,
+						source: source,
 					},
 					options.boxIndex - 1,
 					options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0,
@@ -302,7 +304,7 @@ export function createSuperSourceActions(
 						}
 					}
 
-					if (props.includes('source')) newProps.source = options.source
+					if (props.includes('source')) newProps.source = parseSourceIdRequired(options.source)
 
 					if (props.includes('size')) newProps.size = options.size * 1000
 					if (props.includes('x')) newProps.x = options.x * 100

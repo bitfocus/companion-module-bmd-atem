@@ -1,7 +1,8 @@
 import type { ModelSpec } from '../models/index.js'
 import { convertOptionsFields } from '../options/util.js'
-import type { CompanionFeedbackDefinitions } from '@companion-module/base'
+import type { CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
 import { AtemKeyFillSourcePicker } from '../options/commonKeyer.js'
+import { parseSourceId } from '../options/sources.js'
 import { getDSK, type StateWrapper } from '../state.js'
 import { AtemDSKPicker, resolveDownstreamKeyerIndex } from '../options/downstreamKeyer.js'
 
@@ -22,7 +23,7 @@ export type AtemDownstreamKeyerFeedbacks = {
 		type: 'boolean'
 		options: {
 			key: number
-			fill: number
+			fill: JsonValue
 		}
 	}
 }
@@ -81,8 +82,10 @@ export function createDownstreamKeyerFeedbacks(
 				bgcolor: 0xeeee00,
 			},
 			callback: ({ options }): boolean => {
+				const fill = parseSourceId(options.fill)
+				if (fill === null) return false
 				const dsk = getDSK(state.state, resolveDownstreamKeyerIndex(model, options.key))
-				return dsk?.sources?.fillSource === options.fill
+				return dsk?.sources?.fillSource === fill
 			},
 			learn: ({ options }) => {
 				const dsk = getDSK(state.state, resolveDownstreamKeyerIndex(model, options.key))
