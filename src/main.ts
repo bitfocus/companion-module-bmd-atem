@@ -452,6 +452,11 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 				changedFeedbacks.add('ssrc_art_properties')
 				continue
 			}
+			const ssrcBorderMatch = path.match(/video.superSources.(\d+).border/)
+			if (ssrcBorderMatch) {
+				changedVariables.ssrc.add(parseInt(ssrcBorderMatch[1], 10))
+				continue
+			}
 
 			const transitionPropertiesMatch = path.match(/video.mixEffects.(\d+).transitionProperties/)
 			if (transitionPropertiesMatch) {

@@ -91,10 +91,12 @@ export function updateChangedVariables(
 	for (const classicAudioIndex of changes.classicAudio) updateClassicAudioVariables(state, classicAudioIndex, newValues)
 	if (changes.fairlightAudioMaster) updateFairlightAudioMasterVariables(state, newValues)
 	if (changes.fairlightAudioMonitor) updateFairlightAudioMonitorVariables(state, newValues)
-	for (const sourceId of changes.fairlightRoutingSources)
-		updateFairlightAudioRoutingSourceVariables(state, sourceId, newValues)
-	for (const outputId of changes.fairlightRoutingOutputs)
-		updateFairlightAudioRoutingOutputVariables(state, outputId, newValues)
+	if (instance.config.enableAudioRoutingVariables) {
+		for (const sourceId of changes.fairlightRoutingSources)
+			updateFairlightAudioRoutingSourceVariables(state, sourceId, newValues)
+		for (const outputId of changes.fairlightRoutingOutputs)
+			updateFairlightAudioRoutingOutputVariables(state, outputId, newValues)
+	}
 
 	for (const [index, window] of changes.mvWindow)
 		updateMultiviewerWindowInput(instance, state, index, window, newValues)
@@ -174,62 +176,68 @@ function updateUSKVariable(
 	values[`pgm${meIndex + 1}_usk_${keyIndex + 1}_onAir`] = !!getUSK(state, meIndex, keyIndex)?.onAir
 	const dveSettings = state.video.mixEffects[meIndex]?.upstreamKeyers[keyIndex]?.dveSettings
 	if (dveSettings) {
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_maskEnabled`] = dveSettings.maskEnabled
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_maskTop`] = dveSettings.maskTop / 1000
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_maskBottom`] = dveSettings.maskBottom / 1000
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_maskLeft`] = dveSettings.maskLeft / 1000
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_maskRight`] = dveSettings.maskRight / 1000
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_positionX`] = dveSettings.positionX / 1000
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_positionY`] = dveSettings.positionY / 1000
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_sizeX`] = dveSettings.sizeX / 1000
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_sizeY`] = dveSettings.sizeY / 1000
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_rotation`] = dveSettings.rotation / 10
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordOutWidth`] = dveSettings.borderOuterWidth / 100
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordInWidth`] = dveSettings.borderInnerWidth / 100
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordOutSoft`] = dveSettings.borderOuterSoftness
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordInSoft`] = dveSettings.borderInnerSoftness
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_bevelSoft`] = dveSettings.borderBevelSoftness
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_bevelPos`] = dveSettings.borderBevelPosition
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordOpacity`] = dveSettings.borderOpacity
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordHue`] = dveSettings.borderHue / 10
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordSat`] = dveSettings.borderSaturation / 10
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordLum`] = dveSettings.borderLuma / 10
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_lightDirection`] = dveSettings.lightSourceDirection / 10
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_lightAltitude`] = dveSettings.lightSourceAltitude
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_bordEnabled`] = dveSettings.borderEnabled
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_shadowEnabled`] = dveSettings.shadowEnabled
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_rate`] = dveSettings.rate
+
+		if (instance.config.enableAdvancedUskVariables) {
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_maskEnabled`] = dveSettings.maskEnabled
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_maskTop`] = dveSettings.maskTop / 1000
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_maskBottom`] = dveSettings.maskBottom / 1000
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_maskLeft`] = dveSettings.maskLeft / 1000
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_maskRight`] = dveSettings.maskRight / 1000
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_bordOutWidth`] = dveSettings.borderOuterWidth / 100
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_bordInWidth`] = dveSettings.borderInnerWidth / 100
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_bordOutSoft`] = dveSettings.borderOuterSoftness
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_bordInSoft`] = dveSettings.borderInnerSoftness
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_bevelSoft`] = dveSettings.borderBevelSoftness
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_bevelPos`] = dveSettings.borderBevelPosition
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_bordOpacity`] = dveSettings.borderOpacity
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_bordHue`] = dveSettings.borderHue / 10
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_bordSat`] = dveSettings.borderSaturation / 10
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_bordLum`] = dveSettings.borderLuma / 10
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_lightDirection`] = dveSettings.lightSourceDirection / 10
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_lightAltitude`] = dveSettings.lightSourceAltitude
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_bordEnabled`] = dveSettings.borderEnabled
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_shadowEnabled`] = dveSettings.shadowEnabled
+		}
 	}
-	const patternSettings = state.video.mixEffects[meIndex]?.upstreamKeyers[keyIndex]?.patternSettings
-	if (patternSettings) {
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_pattern_style`] = patternSettings.style
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_pattern_size`] = patternSettings.size / 100
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_pattern_symmetry`] = patternSettings.symmetry / 100
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_pattern_softness`] = patternSettings.softness / 100
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_pattern_positionX`] = patternSettings.positionX / 10000
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_pattern_positionY`] = patternSettings.positionY / 10000
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_pattern_invert`] = patternSettings.invert
-	}
-	const lumaSettings = state.video.mixEffects[meIndex]?.upstreamKeyers[keyIndex]?.lumaSettings
-	if (lumaSettings) {
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_luma_preMultiplied`] = lumaSettings.preMultiplied
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_luma_clip`] = lumaSettings.clip / 10
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_luma_gain`] = lumaSettings.gain / 10
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_luma_invert`] = lumaSettings.invert
-	}
-	const chromaProperties = state.video.mixEffects[meIndex]?.upstreamKeyers[keyIndex]?.advancedChromaSettings?.properties
-	if (chromaProperties) {
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_foregroundLevel`] = chromaProperties.foregroundLevel / 10
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_backgroundLevel`] = chromaProperties.backgroundLevel / 10
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_keyEdge`] = chromaProperties.keyEdge / 10
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_spillSuppression`] = chromaProperties.spillSuppression / 10
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_flareSuppression`] = chromaProperties.flareSuppression / 10
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_brightness`] = chromaProperties.brightness / 10
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_contrast`] = chromaProperties.contrast / 10
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_saturation`] = chromaProperties.saturation / 10
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_red`] = chromaProperties.red / 10
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_green`] = chromaProperties.green / 10
-		values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_blue`] = chromaProperties.blue / 10
+	if (instance.config.enableAdvancedUskVariables) {
+		const patternSettings = state.video.mixEffects[meIndex]?.upstreamKeyers[keyIndex]?.patternSettings
+		if (patternSettings) {
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_pattern_style`] = patternSettings.style
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_pattern_size`] = patternSettings.size / 100
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_pattern_symmetry`] = patternSettings.symmetry / 100
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_pattern_softness`] = patternSettings.softness / 100
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_pattern_positionX`] = patternSettings.positionX / 10000
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_pattern_positionY`] = patternSettings.positionY / 10000
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_pattern_invert`] = patternSettings.invert
+		}
+		const lumaSettings = state.video.mixEffects[meIndex]?.upstreamKeyers[keyIndex]?.lumaSettings
+		if (lumaSettings) {
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_luma_preMultiplied`] = lumaSettings.preMultiplied
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_luma_clip`] = lumaSettings.clip / 10
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_luma_gain`] = lumaSettings.gain / 10
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_luma_invert`] = lumaSettings.invert
+		}
+		const chromaProperties =
+			state.video.mixEffects[meIndex]?.upstreamKeyers[keyIndex]?.advancedChromaSettings?.properties
+		if (chromaProperties) {
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_foregroundLevel`] = chromaProperties.foregroundLevel / 10
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_backgroundLevel`] = chromaProperties.backgroundLevel / 10
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_keyEdge`] = chromaProperties.keyEdge / 10
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_spillSuppression`] = chromaProperties.spillSuppression / 10
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_flareSuppression`] = chromaProperties.flareSuppression / 10
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_brightness`] = chromaProperties.brightness / 10
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_contrast`] = chromaProperties.contrast / 10
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_saturation`] = chromaProperties.saturation / 10
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_red`] = chromaProperties.red / 10
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_green`] = chromaProperties.green / 10
+			values[`usk_${meIndex + 1}_${keyIndex + 1}_chroma_blue`] = chromaProperties.blue / 10
+		}
 	}
 	if (state.video.mixEffects[meIndex]?.upstreamKeyers[keyIndex]) {
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_canFlyKey`] =
@@ -477,6 +485,30 @@ function updateSuperSourceVariables(
 		values[`ssrc${i + 1}_box${b + 1}_cropLeft`] = (box?.cropLeft ?? 0) / 1000
 		values[`ssrc${i + 1}_box${b + 1}_cropRight`] = (box?.cropRight ?? 0) / 1000
 	}
+
+	if (instance.config.enableAdvancedSuperSourceVariables) {
+		values[`ssrc${i + 1}_art_option`] =
+			properties?.artOption === Enums.SuperSourceArtOption.Foreground ? 'Foreground' : 'Background'
+		values[`ssrc${i + 1}_art_preMultiplied`] = properties?.artPreMultiplied
+		values[`ssrc${i + 1}_art_clip`] = properties ? properties.artClip / 10 : undefined
+		values[`ssrc${i + 1}_art_gain`] = properties ? properties.artGain / 10 : undefined
+		values[`ssrc${i + 1}_art_invertKey`] = properties?.artInvertKey
+
+		const border = state.video.superSources?.[i]?.border
+		values[`ssrc${i + 1}_border_enabled`] = border?.borderEnabled
+		values[`ssrc${i + 1}_border_bevel`] = border?.borderBevel
+		values[`ssrc${i + 1}_border_outWidth`] = border ? border.borderOuterWidth / 100 : undefined
+		values[`ssrc${i + 1}_border_inWidth`] = border ? border.borderInnerWidth / 100 : undefined
+		values[`ssrc${i + 1}_border_outSoft`] = border?.borderOuterSoftness
+		values[`ssrc${i + 1}_border_inSoft`] = border?.borderInnerSoftness
+		values[`ssrc${i + 1}_border_bevelSoft`] = border?.borderBevelSoftness
+		values[`ssrc${i + 1}_border_bevelPos`] = border?.borderBevelPosition
+		values[`ssrc${i + 1}_border_hue`] = border ? border.borderHue / 10 : undefined
+		values[`ssrc${i + 1}_border_sat`] = border ? border.borderSaturation / 10 : undefined
+		values[`ssrc${i + 1}_border_lum`] = border ? border.borderLuma / 10 : undefined
+		values[`ssrc${i + 1}_border_lightDirection`] = border ? border.borderLightSourceDirection / 10 : undefined
+		values[`ssrc${i + 1}_border_lightAltitude`] = border?.borderLightSourceAltitude
+	}
 }
 
 function updateMultiviewerWindowInput(
@@ -556,21 +588,6 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 				name: `On Air state of M/E ${i + 1} Key ${k + 1}`,
 			}
 			if (model.USKs && model.DVEs) {
-				variables[`usk_${i + 1}_${k + 1}_maskEnabled`] = {
-					name: `Mask Enabled for M/E ${i + 1} Key ${k + 1}`,
-				}
-				variables[`usk_${i + 1}_${k + 1}_maskTop`] = {
-					name: `Mask cutoff from the top of M/E ${i + 1} Key ${k + 1}`,
-				}
-				variables[`usk_${i + 1}_${k + 1}_maskBottom`] = {
-					name: `Mask cutoff from the bottom of M/E ${i + 1} Key ${k + 1}`,
-				}
-				variables[`usk_${i + 1}_${k + 1}_maskLeft`] = {
-					name: `Mask cutoff from the left of M/E ${i + 1} Key ${k + 1}`,
-				}
-				variables[`usk_${i + 1}_${k + 1}_maskRight`] = {
-					name: `Mask cutoff from the right of M/E ${i + 1} Key ${k + 1}`,
-				}
 				variables[`usk_${i + 1}_${k + 1}_positionX`] = {
 					name: `X position of M/E ${i + 1} Key ${k + 1}`,
 				}
@@ -586,71 +603,8 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 				variables[`usk_${i + 1}_${k + 1}_rotation`] = {
 					name: `Rotation of M/E ${i + 1} Key ${k + 1}`,
 				}
-				variables[`usk_${i + 1}_${k + 1}_bordOutWidth`] = {
-					name: `Border Width (Outer) of M/E ${i + 1} Key ${k + 1}`,
-				}
-				variables[`usk_${i + 1}_${k + 1}_bordInWidth`] = {
-					name: `Border Width (Inner) of M/E ${i + 1} Key ${k + 1}`,
-				}
-				variables[`usk_${i + 1}_${k + 1}_bordOutSoft`] = {
-					name: `Border Softness (Outer) of M/E ${i + 1} Key ${k + 1}`,
-				}
-				variables[`usk_${i + 1}_${k + 1}_bordInSoft`] = {
-					name: `Border Softnesss (Inner) of M/E ${i + 1} Key ${k + 1}`,
-				}
-				variables[`usk_${i + 1}_${k + 1}_bevelSoft`] = {
-					name: `Border Bevel Softnesss of M/E ${i + 1} Key ${k + 1}`,
-				}
-				variables[`usk_${i + 1}_${k + 1}_bevelPos`] = {
-					name: `Border Bevel Position of M/E ${i + 1} Key ${k + 1}`,
-				}
-				variables[`usk_${i + 1}_${k + 1}_bordOpacity`] = {
-					name: `Border Opacity of M/E ${i + 1} Key ${k + 1}`,
-				}
-				variables[`usk_${i + 1}_${k + 1}_bordHue`] = {
-					name: `Border Hue of M/E ${i + 1} Key ${k + 1}`,
-				}
-				variables[`usk_${i + 1}_${k + 1}_bordSat`] = {
-					name: `Border Saturation of M/E ${i + 1} Key ${k + 1}`,
-				}
-				variables[`usk_${i + 1}_${k + 1}_bordLum`] = {
-					name: `Border Luma of M/E ${i + 1} Key ${k + 1}`,
-				}
-				variables[`usk_${i + 1}_${k + 1}_lightDirection`] = {
-					name: `Light source Angle of shadow of M/E ${i + 1} Key ${k + 1}`,
-				}
-				variables[`usk_${i + 1}_${k + 1}_lightAltitude`] = {
-					name: `Light source Altitude of shadow of M/E ${i + 1} Key ${k + 1}`,
-				}
-				variables[`usk_${i + 1}_${k + 1}_bordEnabled`] = {
-					name: `Border Enabled for M/E ${i + 1} Key ${k + 1}`,
-				}
-				variables[`usk_${i + 1}_${k + 1}_shadowEnabled`] = {
-					name: `Shadow Enabled for M/E ${i + 1} Key ${k + 1}`,
-				}
 				variables[`usk_${i + 1}_${k + 1}_rate`] = {
 					name: `Keyframe transformation Rate of M/E ${i + 1} Key ${k + 1}`,
-				}
-				variables[`usk_${i + 1}_${k + 1}_pattern_style`] = {
-					name: `Pattern Style of M/E ${i + 1} Key ${k + 1}`,
-				}
-				variables[`usk_${i + 1}_${k + 1}_pattern_size`] = {
-					name: `Pattern Size of M/E ${i + 1} Key ${k + 1}`,
-				}
-				variables[`usk_${i + 1}_${k + 1}_pattern_symmetry`] = {
-					name: `Pattern Symmetry of M/E ${i + 1} Key ${k + 1}`,
-				}
-				variables[`usk_${i + 1}_${k + 1}_pattern_softness`] = {
-					name: `Pattern Softness of M/E ${i + 1} Key ${k + 1}`,
-				}
-				variables[`usk_${i + 1}_${k + 1}_pattern_positionX`] = {
-					name: `Pattern Position X of M/E ${i + 1} Key ${k + 1}`,
-				}
-				variables[`usk_${i + 1}_${k + 1}_pattern_positionY`] = {
-					name: `Pattern Position Y of M/E ${i + 1} Key ${k + 1}`,
-				}
-				variables[`usk_${i + 1}_${k + 1}_pattern_invert`] = {
-					name: `Pattern Invert of M/E ${i + 1} Key ${k + 1}`,
 				}
 				variables[`usk_${i + 1}_${k + 1}_canFlyKey`] = {
 					name: `(read only) Ability to Enable Fly Key or DVE of M/E ${i + 1} Key ${k + 1}`,
@@ -658,52 +612,135 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 				variables[`usk_${i + 1}_${k + 1}_flyEnabled`] = {
 					name: `Fly Key Enable Status of M/E ${i + 1} Key ${k + 1}`,
 				}
+
+				if (instance.config.enableAdvancedUskVariables) {
+					variables[`usk_${i + 1}_${k + 1}_maskEnabled`] = {
+						name: `Mask Enabled for M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_maskTop`] = {
+						name: `Mask cutoff from the top of M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_maskBottom`] = {
+						name: `Mask cutoff from the bottom of M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_maskLeft`] = {
+						name: `Mask cutoff from the left of M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_maskRight`] = {
+						name: `Mask cutoff from the right of M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_bordOutWidth`] = {
+						name: `Border Width (Outer) of M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_bordInWidth`] = {
+						name: `Border Width (Inner) of M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_bordOutSoft`] = {
+						name: `Border Softness (Outer) of M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_bordInSoft`] = {
+						name: `Border Softnesss (Inner) of M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_bevelSoft`] = {
+						name: `Border Bevel Softnesss of M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_bevelPos`] = {
+						name: `Border Bevel Position of M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_bordOpacity`] = {
+						name: `Border Opacity of M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_bordHue`] = {
+						name: `Border Hue of M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_bordSat`] = {
+						name: `Border Saturation of M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_bordLum`] = {
+						name: `Border Luma of M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_lightDirection`] = {
+						name: `Light source Angle of shadow of M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_lightAltitude`] = {
+						name: `Light source Altitude of shadow of M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_bordEnabled`] = {
+						name: `Border Enabled for M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_shadowEnabled`] = {
+						name: `Shadow Enabled for M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_pattern_style`] = {
+						name: `Pattern Style of M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_pattern_size`] = {
+						name: `Pattern Size of M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_pattern_symmetry`] = {
+						name: `Pattern Symmetry of M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_pattern_softness`] = {
+						name: `Pattern Softness of M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_pattern_positionX`] = {
+						name: `Pattern Position X of M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_pattern_positionY`] = {
+						name: `Pattern Position Y of M/E ${i + 1} Key ${k + 1}`,
+					}
+					variables[`usk_${i + 1}_${k + 1}_pattern_invert`] = {
+						name: `Pattern Invert of M/E ${i + 1} Key ${k + 1}`,
+					}
+				}
 			}
 
-			variables[`usk_${i + 1}_${k + 1}_luma_preMultiplied`] = {
-				name: `Luma Pre-multiplied of M/E ${i + 1} Key ${k + 1}`,
-			}
-			variables[`usk_${i + 1}_${k + 1}_luma_clip`] = {
-				name: `Luma Clip of M/E ${i + 1} Key ${k + 1}`,
-			}
-			variables[`usk_${i + 1}_${k + 1}_luma_gain`] = {
-				name: `Luma Gain of M/E ${i + 1} Key ${k + 1}`,
-			}
-			variables[`usk_${i + 1}_${k + 1}_luma_invert`] = {
-				name: `Luma Invert of M/E ${i + 1} Key ${k + 1}`,
-			}
-			variables[`usk_${i + 1}_${k + 1}_chroma_foregroundLevel`] = {
-				name: `Advanced Chroma Foreground Level of M/E ${i + 1} Key ${k + 1}`,
-			}
-			variables[`usk_${i + 1}_${k + 1}_chroma_backgroundLevel`] = {
-				name: `Advanced Chroma Background Level of M/E ${i + 1} Key ${k + 1}`,
-			}
-			variables[`usk_${i + 1}_${k + 1}_chroma_keyEdge`] = {
-				name: `Advanced Chroma Key Edge of M/E ${i + 1} Key ${k + 1}`,
-			}
-			variables[`usk_${i + 1}_${k + 1}_chroma_spillSuppression`] = {
-				name: `Advanced Chroma Spill Suppression of M/E ${i + 1} Key ${k + 1}`,
-			}
-			variables[`usk_${i + 1}_${k + 1}_chroma_flareSuppression`] = {
-				name: `Advanced Chroma Flare Suppression of M/E ${i + 1} Key ${k + 1}`,
-			}
-			variables[`usk_${i + 1}_${k + 1}_chroma_brightness`] = {
-				name: `Advanced Chroma Brightness of M/E ${i + 1} Key ${k + 1}`,
-			}
-			variables[`usk_${i + 1}_${k + 1}_chroma_contrast`] = {
-				name: `Advanced Chroma Contrast of M/E ${i + 1} Key ${k + 1}`,
-			}
-			variables[`usk_${i + 1}_${k + 1}_chroma_saturation`] = {
-				name: `Advanced Chroma Saturation of M/E ${i + 1} Key ${k + 1}`,
-			}
-			variables[`usk_${i + 1}_${k + 1}_chroma_red`] = {
-				name: `Advanced Chroma Red of M/E ${i + 1} Key ${k + 1}`,
-			}
-			variables[`usk_${i + 1}_${k + 1}_chroma_green`] = {
-				name: `Advanced Chroma Green of M/E ${i + 1} Key ${k + 1}`,
-			}
-			variables[`usk_${i + 1}_${k + 1}_chroma_blue`] = {
-				name: `Advanced Chroma Blue of M/E ${i + 1} Key ${k + 1}`,
+			if (instance.config.enableAdvancedUskVariables) {
+				variables[`usk_${i + 1}_${k + 1}_luma_preMultiplied`] = {
+					name: `Luma Pre-multiplied of M/E ${i + 1} Key ${k + 1}`,
+				}
+				variables[`usk_${i + 1}_${k + 1}_luma_clip`] = {
+					name: `Luma Clip of M/E ${i + 1} Key ${k + 1}`,
+				}
+				variables[`usk_${i + 1}_${k + 1}_luma_gain`] = {
+					name: `Luma Gain of M/E ${i + 1} Key ${k + 1}`,
+				}
+				variables[`usk_${i + 1}_${k + 1}_luma_invert`] = {
+					name: `Luma Invert of M/E ${i + 1} Key ${k + 1}`,
+				}
+				variables[`usk_${i + 1}_${k + 1}_chroma_foregroundLevel`] = {
+					name: `Advanced Chroma Foreground Level of M/E ${i + 1} Key ${k + 1}`,
+				}
+				variables[`usk_${i + 1}_${k + 1}_chroma_backgroundLevel`] = {
+					name: `Advanced Chroma Background Level of M/E ${i + 1} Key ${k + 1}`,
+				}
+				variables[`usk_${i + 1}_${k + 1}_chroma_keyEdge`] = {
+					name: `Advanced Chroma Key Edge of M/E ${i + 1} Key ${k + 1}`,
+				}
+				variables[`usk_${i + 1}_${k + 1}_chroma_spillSuppression`] = {
+					name: `Advanced Chroma Spill Suppression of M/E ${i + 1} Key ${k + 1}`,
+				}
+				variables[`usk_${i + 1}_${k + 1}_chroma_flareSuppression`] = {
+					name: `Advanced Chroma Flare Suppression of M/E ${i + 1} Key ${k + 1}`,
+				}
+				variables[`usk_${i + 1}_${k + 1}_chroma_brightness`] = {
+					name: `Advanced Chroma Brightness of M/E ${i + 1} Key ${k + 1}`,
+				}
+				variables[`usk_${i + 1}_${k + 1}_chroma_contrast`] = {
+					name: `Advanced Chroma Contrast of M/E ${i + 1} Key ${k + 1}`,
+				}
+				variables[`usk_${i + 1}_${k + 1}_chroma_saturation`] = {
+					name: `Advanced Chroma Saturation of M/E ${i + 1} Key ${k + 1}`,
+				}
+				variables[`usk_${i + 1}_${k + 1}_chroma_red`] = {
+					name: `Advanced Chroma Red of M/E ${i + 1} Key ${k + 1}`,
+				}
+				variables[`usk_${i + 1}_${k + 1}_chroma_green`] = {
+					name: `Advanced Chroma Green of M/E ${i + 1} Key ${k + 1}`,
+				}
+				variables[`usk_${i + 1}_${k + 1}_chroma_blue`] = {
+					name: `Advanced Chroma Blue of M/E ${i + 1} Key ${k + 1}`,
+				}
 			}
 
 			updateUSKVariable(instance, state.state, i, k, values)
@@ -901,6 +938,63 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 			}
 		}
 
+		if (instance.config.enableAdvancedSuperSourceVariables) {
+			variables[`ssrc${i + 1}_art_option`] = {
+				name: `Supersource ${i + 1} art placement (Foreground/Background)`,
+			}
+			variables[`ssrc${i + 1}_art_preMultiplied`] = {
+				name: `Supersource ${i + 1} art pre-multiplied`,
+			}
+			variables[`ssrc${i + 1}_art_clip`] = {
+				name: `Supersource ${i + 1} art clip`,
+			}
+			variables[`ssrc${i + 1}_art_gain`] = {
+				name: `Supersource ${i + 1} art gain`,
+			}
+			variables[`ssrc${i + 1}_art_invertKey`] = {
+				name: `Supersource ${i + 1} art invert key`,
+			}
+			variables[`ssrc${i + 1}_border_enabled`] = {
+				name: `Supersource ${i + 1} border enabled`,
+			}
+			variables[`ssrc${i + 1}_border_bevel`] = {
+				name: `Supersource ${i + 1} border bevel`,
+			}
+			variables[`ssrc${i + 1}_border_outWidth`] = {
+				name: `Supersource ${i + 1} border outer width`,
+			}
+			variables[`ssrc${i + 1}_border_inWidth`] = {
+				name: `Supersource ${i + 1} border inner width`,
+			}
+			variables[`ssrc${i + 1}_border_outSoft`] = {
+				name: `Supersource ${i + 1} border outer softness`,
+			}
+			variables[`ssrc${i + 1}_border_inSoft`] = {
+				name: `Supersource ${i + 1} border inner softness`,
+			}
+			variables[`ssrc${i + 1}_border_bevelSoft`] = {
+				name: `Supersource ${i + 1} border bevel softness`,
+			}
+			variables[`ssrc${i + 1}_border_bevelPos`] = {
+				name: `Supersource ${i + 1} border bevel position`,
+			}
+			variables[`ssrc${i + 1}_border_hue`] = {
+				name: `Supersource ${i + 1} border hue`,
+			}
+			variables[`ssrc${i + 1}_border_sat`] = {
+				name: `Supersource ${i + 1} border saturation`,
+			}
+			variables[`ssrc${i + 1}_border_lum`] = {
+				name: `Supersource ${i + 1} border luma`,
+			}
+			variables[`ssrc${i + 1}_border_lightDirection`] = {
+				name: `Supersource ${i + 1} border light source direction`,
+			}
+			variables[`ssrc${i + 1}_border_lightAltitude`] = {
+				name: `Supersource ${i + 1} border light source altitude`,
+			}
+		}
+
 		updateSuperSourceVariables(instance, state.state, i, values)
 	}
 
@@ -986,7 +1080,7 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 		updateFairlightAudioMonitorVariables(state.state, values)
 	}
 
-	if (model.fairlightAudio?.audioRouting) {
+	if (model.fairlightAudio?.audioRouting && instance.config.enableAudioRoutingVariables) {
 		for (const output of model.fairlightAudio.audioRouting.outputs) {
 			for (const pair of output.channelPairs) {
 				const id = combineInputId(output.outputId, pair)

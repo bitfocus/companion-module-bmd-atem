@@ -19,6 +19,9 @@ export type AtemConfig = {
 
 	enableCameraControl?: boolean
 	pollTimecode?: boolean
+	enableAdvancedSuperSourceVariables?: boolean
+	enableAdvancedUskVariables?: boolean
+	enableAudioRoutingVariables?: boolean
 }
 
 export function GetConfigFields(config: AtemConfig): SomeCompanionConfigField[] {
@@ -101,6 +104,30 @@ export function GetConfigFields(config: AtemConfig): SomeCompanionConfigField[] 
 			type: 'checkbox',
 			id: 'pollTimecode',
 			label: 'Enable Timecode variable',
+			width: 6,
+			default: false,
+		},
+		{
+			type: 'checkbox',
+			id: 'enableAdvancedSuperSourceVariables',
+			label: 'Enable advanced SuperSource variables',
+			tooltip: 'Adds extra variables for SuperSource art placement and border settings',
+			width: 6,
+			default: false,
+		},
+		{
+			type: 'checkbox',
+			id: 'enableAdvancedUskVariables',
+			label: 'Enable advanced USK variables',
+			tooltip: 'Adds extra variables for the detailed USK DVE/pattern/luma/chroma settings',
+			width: 6,
+			default: false,
+		},
+		{
+			type: 'checkbox',
+			id: 'enableAudioRoutingVariables',
+			label: 'Enable audio routing variables',
+			tooltip: 'Adds extra variables for Fairlight audio routing sources and destinations',
 			width: 6,
 			default: false,
 		},

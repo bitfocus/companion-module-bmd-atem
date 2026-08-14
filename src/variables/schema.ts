@@ -122,6 +122,25 @@ export type VariablesSchema = {
 	[key: `ssrc${number}_box${number}_cropLeft`]: number
 	[key: `ssrc${number}_box${number}_cropRight`]: number
 
+	[key: `ssrc${number}_art_option`]: string | undefined
+	[key: `ssrc${number}_art_preMultiplied`]: boolean | undefined
+	[key: `ssrc${number}_art_clip`]: number | undefined
+	[key: `ssrc${number}_art_gain`]: number | undefined
+	[key: `ssrc${number}_art_invertKey`]: boolean | undefined
+	[key: `ssrc${number}_border_enabled`]: boolean | undefined
+	[key: `ssrc${number}_border_bevel`]: number | undefined
+	[key: `ssrc${number}_border_outWidth`]: number | undefined
+	[key: `ssrc${number}_border_inWidth`]: number | undefined
+	[key: `ssrc${number}_border_outSoft`]: number | undefined
+	[key: `ssrc${number}_border_inSoft`]: number | undefined
+	[key: `ssrc${number}_border_bevelSoft`]: number | undefined
+	[key: `ssrc${number}_border_bevelPos`]: number | undefined
+	[key: `ssrc${number}_border_hue`]: number | undefined
+	[key: `ssrc${number}_border_sat`]: number | undefined
+	[key: `ssrc${number}_border_lum`]: number | undefined
+	[key: `ssrc${number}_border_lightDirection`]: number | undefined
+	[key: `ssrc${number}_border_lightAltitude`]: number | undefined
+
 	[key: `audio_input_${string}_balance`]: string | undefined
 	[key: `audio_input_${string}_faderGain`]: string | undefined
 	[key: `audio_input_${string}_framesDelay`]: string | undefined
