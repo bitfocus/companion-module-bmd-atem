@@ -55,8 +55,9 @@ describe('Input connector switching (#476)', () => {
 		const inputField = def!.options.find((o) => o.id === 'input') as { choices: Array<{ id: number }> }
 		expect(inputField.choices.map((c) => c.id)).toEqual([1])
 
-		const portField = def!.options.find((o) => o.id === 'portType') as { choices: Array<{ id: number }> }
-		expect(portField.choices.map((c) => c.id)).toEqual([Enums.ExternalPortType.SDI, Enums.ExternalPortType.HDMI])
+		// Connectors are offered by human-readable name, not the raw enum number
+		const portField = def!.options.find((o) => o.id === 'portType') as { choices: Array<{ id: string }> }
+		expect(portField.choices.map((c) => c.id)).toEqual(['sdi', 'hdmi'])
 	})
 
 	test('sends the chosen connector for the input', async () => {
@@ -91,7 +92,7 @@ describe('Input connector switching (#476)', () => {
 		const def = createInputPortActions(mock.atem, makeModelWithSwitchableInput(), state)
 			.inputPortType as unknown as AnyDef
 		expect(def.learn!({ options: { input: 1, portType: Enums.ExternalPortType.SDI } })).toEqual({
-			portType: Enums.ExternalPortType.HDMI,
+			portType: 'hdmi',
 		})
 	})
 
