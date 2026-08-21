@@ -53,21 +53,28 @@ export function AtemAudioInputPicker(
 	}
 }
 
+const FAIRLIGHT_AUDIO_SOURCES: DropdownChoice[] = [
+	{
+		id: '-65280',
+		label: 'Stereo',
+	},
+	{
+		id: '-256',
+		label: 'Mono (Ch1)',
+	},
+	{
+		id: '-255',
+		label: 'Mono (Ch2)',
+	},
+]
+
+/** Describe a fairlight source id, falling back to the raw id when it is not one we know */
+export function fairlightAudioSourceLabel(sourceId: string | number): string {
+	return FAIRLIGHT_AUDIO_SOURCES.find((s) => s.id == sourceId)?.label ?? `${sourceId}`
+}
+
 export function AtemFairlightAudioSourcePicker(): CompanionInputFieldDropdown<'source'> {
-	const sources: DropdownChoice[] = [
-		{
-			id: '-65280',
-			label: 'Stereo',
-		},
-		{
-			id: '-256',
-			label: 'Mono (Ch1)',
-		},
-		{
-			id: '-255',
-			label: 'Mono (Ch2)',
-		},
-	]
+	const sources = FAIRLIGHT_AUDIO_SOURCES
 
 	return {
 		type: 'dropdown',
