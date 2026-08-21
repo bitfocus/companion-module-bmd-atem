@@ -32,6 +32,18 @@ To add a new model to the list:
 
 ## Changes
 
+## v4.2.0
+
+- Add action and feedback for switching input connectors (#476)
+- Add fairlight audio level feedbacks (#277)
+- Report when a fairlight source does not exist on an input (#356)
+- Expose the downstream keyer mask as variables (#394)
+- Allow arbitrary numeric source values in source pickers (#472)
+- Name the key mask sources (#347)
+- Only offer valid key sources for the supersource art (#369)
+- Fix classic audio gain fades starting from a muted channel (#482)
+- Hide multiviewer window-source action when no sources are available (#481)
+
 ## v4.1.2
 
 - Fix actions/feedbacks with hidden dropdown fields may cause invalid value rejections
