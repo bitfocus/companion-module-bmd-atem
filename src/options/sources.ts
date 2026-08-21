@@ -175,9 +175,24 @@ export function GetSourcesListForType(
 				break
 			}
 			case Enums.InternalPortType.Mask: {
-				// TODO
-				// const maskId = input.id - 0
-				// sources.push(getSource(input.id, `MK${maskId}`, `Key Mask ${maskId}`))
+				if (input.id < 5000) {
+					// Upstream key masks are numbered across every keyer of every me
+					const maskIndex = (input.id - 4000) / 10 - 1
+					const meId = Math.floor(maskIndex / model.USKs) + 1
+					const keyId = (maskIndex % model.USKs) + 1
+
+					sources.push(
+						getSource(
+							input.id,
+							input.portType,
+							`M${meId}K${keyId}`,
+							model.MEs > 1 ? `ME ${meId} Key ${keyId} Mask` : `Key ${keyId} Mask`,
+						),
+					)
+				} else {
+					const dskId = (input.id - 5000) / 10
+					sources.push(getSource(input.id, input.portType, `DK${dskId}M`, `DSK ${dskId} Mask`))
+				}
 				break
 			}
 			case Enums.InternalPortType.MultiViewer: {
