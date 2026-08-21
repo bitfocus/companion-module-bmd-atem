@@ -431,7 +431,8 @@ export function AtemSuperSourceArtPropertiesPickers(
 	artGain: CompanionInputFieldNumber<'artGain'>
 	artInvertKey: CompanionInputFieldCheckbox<'artInvertKey'>
 } {
-	const artSources = SourcesToChoices(GetSourcesListForType(model, state, 'ssrc-art'))
+	const artFillSources = SourcesToChoices(GetSourcesListForType(model, state, 'ssrc-art'))
+	const artKeySources = SourcesToChoices(GetSourcesListForType(model, state, 'ssrc-art-key'))
 
 	return WithDropdownPropertiesPicker({
 		fill: {
@@ -439,7 +440,7 @@ export function AtemSuperSourceArtPropertiesPickers(
 			id: 'fill',
 			label: 'Fill Source',
 			default: 0,
-			choices: artSources,
+			choices: artFillSources,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'fill')`,
 			expressionDescription: 'Should return a source number, eg 1, 3010, 4010',
 			allowInvalidValues: true,
@@ -449,7 +450,7 @@ export function AtemSuperSourceArtPropertiesPickers(
 			id: 'key',
 			label: 'Key Source',
 			default: 0,
-			choices: artSources,
+			choices: artKeySources,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'key')`,
 			expressionDescription: 'Should return a source number, eg 1, 3010, 4010',
 			allowInvalidValues: true,

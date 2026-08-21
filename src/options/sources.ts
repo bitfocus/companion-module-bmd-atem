@@ -68,7 +68,7 @@ export interface SourceInfo extends MiniSourceInfo {
 export function GetSourcesListForType(
 	model: ModelSpec,
 	state: AtemState,
-	subset?: 'me' | 'aux' | 'mv' | 'key' | 'ssrc-box' | 'ssrc-art' | 'tally',
+	subset?: 'me' | 'aux' | 'mv' | 'key' | 'ssrc-box' | 'ssrc-art' | 'ssrc-art-key' | 'tally',
 ): SourceInfo[] {
 	const getSource = (id: number, portType: Enums.InternalPortType, defShort: string, defLong: string): SourceInfo => {
 		const input = state.inputs[id]
@@ -105,6 +105,15 @@ export function GetSourcesListForType(
 				break
 			case 'ssrc-art':
 				if ((input.sourceAvailability & Enums.SourceAvailability.SuperSourceArt) === 0) continue
+				break
+			case 'ssrc-art-key':
+				// Cutting the art also requires being usable as a key source, which rules out eg the colours
+				if (
+					(input.sourceAvailability &
+						(Enums.SourceAvailability.SuperSourceArt | Enums.SourceAvailability.KeySource)) !==
+					(Enums.SourceAvailability.SuperSourceArt | Enums.SourceAvailability.KeySource)
+				)
+					continue
 				break
 			case 'tally':
 				// if (input.portType === Enums.InternalPortType.Auxiliary) break // TODO: Future
