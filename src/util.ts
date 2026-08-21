@@ -5,6 +5,14 @@ import type { AtemConfig } from './config.js'
 
 export const CLASSIC_AUDIO_MIN_GAIN = -60 // The minimum value to consider as valid for classic audio gain
 
+/**
+ * Clamp a classic audio gain read from state into the range the gain pickers use.
+ * A muted channel reads as -Infinity, which cannot be used as the start of a fade.
+ */
+export function clampClassicAudioGain(gain: number | undefined): number | undefined {
+	return gain === undefined ? undefined : Math.max(CLASSIC_AUDIO_MIN_GAIN, gain)
+}
+
 export function assertUnreachable(_never: never): void {
 	// throw new Error('Unreachable')
 }

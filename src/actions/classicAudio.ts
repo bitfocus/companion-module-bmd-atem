@@ -5,7 +5,7 @@ import type { ModelSpec } from '../models/index.js'
 import { AtemAudioInputPicker, FaderLevelDeltaChoice, CHOICES_CLASSIC_AUDIO_MIX_OPTION } from '../options/audio.js'
 import type { AtemTransitions, FadeDurationFieldsType } from '../transitions.js'
 import type { StateWrapper } from '../state.js'
-import { CLASSIC_AUDIO_MIN_GAIN } from '../util.js'
+import { clampClassicAudioGain, CLASSIC_AUDIO_MIN_GAIN } from '../util.js'
 import { FadeDurationFields } from '../options/fade.js'
 
 export type AtemClassicAudioActions = {
@@ -107,7 +107,7 @@ export function createClassicAudioActions(
 							async (value) => {
 								await atem?.setClassicAudioMixerInputProps(inputId, { gain: value })
 							},
-							channel?.gain,
+							clampClassicAudioGain(channel?.gain),
 							options.gain,
 							options,
 						)
@@ -265,7 +265,7 @@ export function createClassicAudioActions(
 					async (value) => {
 						await atem?.setClassicAudioMixerMasterProps({ gain: value })
 					},
-					state.state.audio?.master?.gain,
+					clampClassicAudioGain(state.state.audio?.master?.gain),
 					options.gain,
 					options,
 				)

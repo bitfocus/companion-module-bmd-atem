@@ -136,6 +136,10 @@ export class AtemTransitions {
 		const interval = 1000 / this.fps
 		const stepCount = Math.ceil(duration / interval)
 
+		// A non-finite start (eg the -Infinity of a muted audio channel) cannot be tweened towards
+		// the target, it would make every step NaN. Treat it as unknown and jump straight there.
+		from = from.map((value) => (value !== undefined && !isFinite(value) ? undefined : value))
+
 		// TODO - what if not sending db
 		if (stepCount <= 1 || from.reduce((a, b) => (a === undefined ? a : b)) === undefined) {
 			this.transitions.delete(id)
