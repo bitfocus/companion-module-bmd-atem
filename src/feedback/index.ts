@@ -19,6 +19,7 @@ import { createFairlightAudioFeedbacks, type AtemFairlightAudioFeedbacks } from 
 import { createTimecodeFeedbacks, type AtemTimecodeFeedbacks } from './timecode.js'
 import type { AtemConfig } from '../config.js'
 import { createMediaPoolFeedbacks, type AtemMediaPoolFeedbacks } from './mediaPool.js'
+import { createInputPortFeedbacks, type AtemInputPortFeedbacks } from './inputPorts.js'
 
 export type FeedbackTypes = AtemTallyFeedbacks &
 	AtemProgramPreviewFeedbacks &
@@ -36,6 +37,7 @@ export type FeedbackTypes = AtemTallyFeedbacks &
 	AtemMultiviewerFeedbacks &
 	AtemMediaPlayerFeedbacks &
 	AtemMediaPoolFeedbacks &
+	AtemInputPortFeedbacks &
 	AtemTimecodeFeedbacks
 
 export function GetFeedbacksList(
@@ -60,6 +62,7 @@ export function GetFeedbacksList(
 		...createMultiviewerFeedbacks(model, state),
 		...createMediaPlayerFeedbacks(model, state),
 		...createMediaPoolFeedbacks(model, state),
+		...createInputPortFeedbacks(model, state),
 		...createTimecodeFeedbacks(config, model, state),
 	}
 }

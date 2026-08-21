@@ -1230,6 +1230,10 @@ exports[`Check 1 ME Production (2) 1`] = `
       "sourceAvailability": 19,
     },
     {
+      "externalPorts": [
+        2,
+        4,
+      ],
       "id": 1,
       "meAvailability": 1,
       "portType": 0,
@@ -1469,6 +1473,10 @@ exports[`Check 1 ME Production 4K (5) 1`] = `
       "sourceAvailability": 31,
     },
     {
+      "externalPorts": [
+        1,
+        2,
+      ],
       "id": 1,
       "meAvailability": 1,
       "portType": 0,
@@ -3768,6 +3776,10 @@ exports[`Check 2 ME Production (3) 1`] = `
       "sourceAvailability": 31,
     },
     {
+      "externalPorts": [
+        1,
+        2,
+      ],
       "id": 1,
       "meAvailability": 3,
       "portType": 0,
@@ -4143,6 +4155,10 @@ exports[`Check 2 ME Production 4K (6) 1`] = `
       "sourceAvailability": 31,
     },
     {
+      "externalPorts": [
+        1,
+        2,
+      ],
       "id": 1,
       "meAvailability": 3,
       "portType": 0,
@@ -20793,12 +20809,20 @@ exports[`Check TV Studio (1) 1`] = `
       "sourceAvailability": 18,
     },
     {
+      "externalPorts": [
+        1,
+        2,
+      ],
       "id": 3,
       "meAvailability": 1,
       "portType": 0,
       "sourceAvailability": 18,
     },
     {
+      "externalPorts": [
+        1,
+        2,
+      ],
       "id": 4,
       "meAvailability": 1,
       "portType": 0,

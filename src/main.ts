@@ -356,7 +356,12 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 			}
 
 			if (path.match(/^inputs/)) {
-				// reset everything, since names of inputs might have changed
+				// Reset everything, since names of inputs might have changed.
+				// NOTE: atem-connection only emits this at `inputs.<id>` granularity, so we cannot tell a
+				// name change from a connector (externalPortType) change here. The `inputPortType` feedback
+				// therefore relies on this full reInit -> checkAllFeedbacks() to be re-evaluated; if this is
+				// ever made more granular, add a targeted `changedFeedbacks.add('inputPortType')` for the
+				// externalPortType path so that feedback keeps reacting to connector changes.
 				reInit = true
 				break
 			}

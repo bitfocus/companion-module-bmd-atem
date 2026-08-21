@@ -270,6 +270,20 @@ export class VideoInputGenerator {
 		return this
 	}
 
+	/**
+	 * Declare that the given inputs have multiple physical connectors which can be switched between,
+	 * eg an input wired to both an SDI and an HDMI socket.
+	 */
+	withExternalPorts(inputIds: number[], ports: Enums.ExternalPortType[]): VideoInputGenerator {
+		for (const inputId of inputIds) {
+			const input = this.#inputs.find((i) => i.id === inputId)
+			if (!input) throw new Error(`Cannot set external ports for unknown input ${inputId}`)
+
+			input.externalPorts = ports
+		}
+		return this
+	}
+
 	addInputs(
 		firstIndex: number,
 		count: number,

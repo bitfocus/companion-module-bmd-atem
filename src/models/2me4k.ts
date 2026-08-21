@@ -34,6 +34,7 @@ export const ModelSpecTwoME4K: ModelSpec = {
 	})
 		.addInternalColorsAndBlack()
 		.addExternalInputs(20)
+		.withExternalPorts([1], [Enums.ExternalPortType.SDI, Enums.ExternalPortType.HDMI])
 		.addMediaPlayers(2)
 		.addUpstreamKeyMasks(4)
 		.addDownstreamKeyMasksAndClean(2)

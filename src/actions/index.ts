@@ -15,6 +15,7 @@ import { createAuxOutputActions, type AtemAuxOutputActions } from './aux-outputs
 import { createMultiviewerActions, type AtemMultiviewerActions } from './multiviewer.js'
 import { createMediaPlayerActions, type AtemMediaPlayerActions } from './mediaPlayer.js'
 import { createSettingsActions, type AtemSettingsActions } from './settings.js'
+import { createInputPortActions, type AtemInputPortActions } from './inputPorts.js'
 import { createSuperSourceActions, type AtemSuperSourceActions } from './superSource.js'
 import {
 	createUpstreamKeyerCommonActions,
@@ -58,6 +59,7 @@ export type ActionTypes = AtemProgramPreviewActions &
 	AtemMultiviewerActions &
 	AtemMediaPlayerActions &
 	AtemSettingsActions &
+	AtemInputPortActions &
 	AtemDisplayClockActions &
 	AtemCameraControlLensActions &
 	AtemCameraControlDisplayActions &
@@ -95,6 +97,7 @@ export function GetActionsList(
 		...createMultiviewerActions(atem, model, state),
 		...createMediaPlayerActions(atem, model, state),
 		...createSettingsActions(atem, model, state),
+		...createInputPortActions(atem, model, state),
 
 		...createDisplayClockActions(atem, model, state),
 

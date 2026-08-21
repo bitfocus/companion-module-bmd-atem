@@ -40,6 +40,8 @@ export interface VideoInputInfo {
 	portType: Enums.InternalPortType
 	sourceAvailability: Enums.SourceAvailability
 	meAvailability: Enums.MeAvailability
+	/** The physical connectors this input can be switched between, when it has more than one */
+	externalPorts?: Enums.ExternalPortType[]
 }
 
 export interface AudioFairlightInputInfo {

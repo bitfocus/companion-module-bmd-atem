@@ -118,6 +118,7 @@ export function GetParsedModelSpec({
 		portType: inp.internalPortType,
 		sourceAvailability: inp.sourceAvailability,
 		meAvailability: inp.meAvailability,
+		externalPorts: inp.externalPorts ?? undefined,
 	}))
 	return {
 		id: info.model,

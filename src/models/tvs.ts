@@ -30,6 +30,7 @@ export const ModelSpecTVS: ModelSpec = {
 	})
 		.addInternalColorsAndBlack()
 		.addExternalInputs(6)
+		.withExternalPorts([3, 4], [Enums.ExternalPortType.SDI, Enums.ExternalPortType.HDMI])
 		.addMediaPlayers(2)
 		.addCleanFeeds(2)
 		.addProgramPreview()
