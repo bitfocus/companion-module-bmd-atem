@@ -74,6 +74,11 @@ export type VariablesSchema = {
 	[key: `dsk_${number}_input`]: string
 	[key: `dsk_${number}_input_id`]: number
 	[key: `dsk_${number}_onAir`]: boolean
+	[key: `dsk_${number}_maskEnabled`]: boolean
+	[key: `dsk_${number}_maskTop`]: number
+	[key: `dsk_${number}_maskBottom`]: number
+	[key: `dsk_${number}_maskLeft`]: number
+	[key: `dsk_${number}_maskRight`]: number
 
 	[key: `long_${number}`]: string
 	[key: `short_${number}`]: string

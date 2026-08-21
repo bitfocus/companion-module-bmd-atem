@@ -238,7 +238,7 @@ function updateUSKVariable(
 			state.video.mixEffects[meIndex]?.upstreamKeyers[keyIndex]?.flyEnabled
 	}
 }
-function updateDSKVariable(
+export function updateDSKVariable(
 	instance: InstanceBaseExt,
 	state: AtemState,
 	keyIndex: number,
@@ -248,6 +248,15 @@ function updateDSKVariable(
 	values[`dsk_${keyIndex + 1}_input`] = getSourcePresetName(instance, state, input)
 	values[`dsk_${keyIndex + 1}_input_id`] = input
 	values[`dsk_${keyIndex + 1}_onAir`] = !!getDSK(state, keyIndex)?.onAir
+
+	const mask = getDSK(state, keyIndex)?.properties?.mask
+	if (mask) {
+		values[`dsk_${keyIndex + 1}_maskEnabled`] = mask.enabled
+		values[`dsk_${keyIndex + 1}_maskTop`] = mask.top / 1000
+		values[`dsk_${keyIndex + 1}_maskBottom`] = mask.bottom / 1000
+		values[`dsk_${keyIndex + 1}_maskLeft`] = mask.left / 1000
+		values[`dsk_${keyIndex + 1}_maskRight`] = mask.right / 1000
+	}
 }
 
 function updateAuxVariable(
@@ -732,6 +741,21 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 		}
 		variables[`dsk_${k + 1}_onAir`] = {
 			name: `On Air state of DSK ${k + 1}`,
+		}
+		variables[`dsk_${k + 1}_maskEnabled`] = {
+			name: `Mask Enabled for DSK ${k + 1}`,
+		}
+		variables[`dsk_${k + 1}_maskTop`] = {
+			name: `Mask cutoff from the top of DSK ${k + 1}`,
+		}
+		variables[`dsk_${k + 1}_maskBottom`] = {
+			name: `Mask cutoff from the bottom of DSK ${k + 1}`,
+		}
+		variables[`dsk_${k + 1}_maskLeft`] = {
+			name: `Mask cutoff from the left of DSK ${k + 1}`,
+		}
+		variables[`dsk_${k + 1}_maskRight`] = {
+			name: `Mask cutoff from the right of DSK ${k + 1}`,
 		}
 
 		updateDSKVariable(instance, state.state, k, values)
