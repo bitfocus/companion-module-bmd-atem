@@ -10,6 +10,10 @@ export function createMultiviewerWindowPresets(
 	pstSize: CompanionButtonStyleProps['size'],
 	pstText: string,
 ): void {
+	// Some models have a multiviewer whose windows cannot be re-sourced, leaving no sources
+	const mvWindowSources = GetSourcesListForType(context.model, state, 'mv')
+	if (mvWindowSources.length === 0) return
+
 	const groups: CompanionPresetGroup<AtemSchema>[] = []
 	context.sections.push({
 		id: 'multiviewer_window',
@@ -73,8 +77,6 @@ export function createMultiviewerWindowPresets(
 			},
 		],
 	}
-
-	const mvWindowSources = GetSourcesListForType(context.model, state, 'mv')
 
 	for (let mv = 0; mv < context.model.MVs; mv++) {
 		const firstWindow = context.model.multiviewerFullGrid ? 0 : 2

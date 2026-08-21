@@ -45,38 +45,44 @@ export function createMultiviewerActions(
 			['multiviewerLayout']: undefined,
 		}
 	}
-	return {
-		['setMvSource']: {
-			name: 'Multiviewer: Change window source',
-			options: convertOptionsFields({
-				multiViewerId: AtemMultiviewerPicker(model),
-				windowIndex: AtemMultiviewWindowPicker(model),
-				source: AtemMultiviewSourcePicker(model, state.state),
-			}),
-			callback: async ({ options }) => {
-				const source = parseSourceIdRequired(options.source)
-				await atem?.setMultiViewerWindowSource(
-					source,
-					resolveMultiviewerIndex(model, options.multiViewerId),
-					options.windowIndex - 1,
-				)
-			},
-			learn: ({ options }) => {
-				const window = getMultiviewerWindow(
-					state.state,
-					resolveMultiviewerIndex(model, options.multiViewerId),
-					options.windowIndex - 1,
-				)
+	// Some models have a multiviewer whose windows cannot be re-sourced, leaving no choices
+	const sourcePicker = AtemMultiviewSourcePicker(model, state.state)
 
-				if (window) {
-					return {
-						source: window.source,
+	return {
+		['setMvSource']:
+			sourcePicker.choices.length > 0
+				? {
+						name: 'Multiviewer: Change window source',
+						options: convertOptionsFields({
+							multiViewerId: AtemMultiviewerPicker(model),
+							windowIndex: AtemMultiviewWindowPicker(model),
+							source: sourcePicker,
+						}),
+						callback: async ({ options }) => {
+							const source = parseSourceIdRequired(options.source)
+							await atem?.setMultiViewerWindowSource(
+								source,
+								resolveMultiviewerIndex(model, options.multiViewerId),
+								options.windowIndex - 1,
+							)
+						},
+						learn: ({ options }) => {
+							const window = getMultiviewerWindow(
+								state.state,
+								resolveMultiviewerIndex(model, options.multiViewerId),
+								options.windowIndex - 1,
+							)
+
+							if (window) {
+								return {
+									source: window.source,
+								}
+							} else {
+								return undefined
+							}
+						},
 					}
-				} else {
-					return undefined
-				}
-			},
-		},
+				: undefined,
 		['multiviewerLayout']: {
 			name: 'Multiviewer: Change layout',
 			options: convertOptionsFields({
