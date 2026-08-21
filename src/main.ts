@@ -6,6 +6,7 @@ import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, type ModelSpec } 
 import { GetPresetsList } from './presets/index.js'
 import { type StateWrapper } from './state.js'
 import { MediaPoolPreviewCache } from './mediaPoolPreviews.js'
+import { AtemAudioLevels } from './audioLevels.js'
 import { MODEL_AUTO_DETECT } from './models/types.js'
 import {
 	InitVariables,
@@ -65,6 +66,23 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 			tally: {},
 			tallyCache: new Map(),
 			atemCameraState: new AtemCameraControlStateBuilder(0), // TODO - when should this be emptied?
+
+			audioLevels: new AtemAudioLevels(
+				() => this.checkFeedbacks('fairlightAudioMasterLevel', 'fairlightAudioInputLevel'),
+				(enabled) => {
+					if (!this.atem) return
+
+					if (enabled) {
+						this.atem.startFairlightMixerSendLevels().catch((e) => {
+							this.log('debug', `Failed to start audio levels: ${e}`)
+						})
+					} else {
+						this.atem.stopFairlightMixerSendLevels().catch((e) => {
+							this.log('debug', `Failed to stop audio levels: ${e}`)
+						})
+					}
+				},
+			),
 
 			mediaPoolCache: new MediaPoolPreviewCache(
 				emptyState,
@@ -177,6 +195,7 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 		this.isActive = false
 
 		this.atemTransitions.stopAll()
+		this.wrappedState.audioLevels.destroy()
 
 		if (this.atem) {
 			this.atem.disconnect().catch(() => null)
@@ -602,6 +621,8 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 				this.wrappedState.state = this.atem.state
 				this.wrappedState.mediaPoolCache.checkUpdatedState(this.atem.state)
 				this.invalidateCachedTallyState()
+				// The switcher does not remember that we asked for levels
+				this.wrappedState.audioLevels.resume()
 
 				const atemInfo = this.wrappedState.state.info
 				this.log('info', 'Connected to a ' + atemInfo.productIdentifier)
@@ -685,6 +706,7 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 				this.updateStatus(InstanceStatus.Connecting)
 			}
 			this.log('info', 'Lost connection')
+			this.wrappedState.audioLevels.clearCache()
 
 			if (this.durationInterval) {
 				clearInterval(this.durationInterval)
@@ -692,6 +714,7 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 			}
 			// TODO - clear cached state after some timeout
 		})
+		this.atem.on('levelChanged', (levels) => this.wrappedState.audioLevels.handleLevels(levels))
 		this.atem.on('stateChanged', this.processStateChange.bind(this))
 		this.atem.on('receivedCommands', this.processReceivedCommands.bind(this))
 
