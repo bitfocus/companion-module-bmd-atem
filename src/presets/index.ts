@@ -6,6 +6,7 @@ import type { ModelSpec } from '../models/index.js'
 import { type InstanceBaseExt } from '../util.js'
 import { createStreamingPresets } from './streaming.js'
 import { createRecordingPresets } from './recording.js'
+import { createAudioMeterPresets } from './audioLevels.js'
 import { createFadeToBlackPresets } from './fadeToBlack.js'
 import { createMediaPlayerPresets } from './mediaPlayer.js'
 import { createSuperSourcePresets } from './superSource.js'
@@ -50,6 +51,7 @@ export function GetPresetsList(
 	createFadeToBlackPresets(context, pstSize, rateOptions)
 	createStreamingPresets(context)
 	createRecordingPresets(context)
+	createAudioMeterPresets(context, state)
 
 	return [context.sections, context.definitions]
 }
