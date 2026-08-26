@@ -23,13 +23,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@companion-module/base@npm:~2.0.4":
-  version: 2.0.4
-  resolution: "@companion-module/base@npm:2.0.4"
+"@companion-module/base@npm:~2.1.3":
+  version: 2.1.3
+  resolution: "@companion-module/base@npm:2.1.3"
   dependencies:
     colord: "npm:^2.9.3"
-    tslib: "npm:^2.8.1"
-  checksum: 10c0/f7499efe73b9e409dec553d86a95c9832caafbbc4a2b40f053736f8a34b126ef94aeb8fee38456550d8696a9251fdc56aaddcea3f07ee5125db8befc7fba1def
+  checksum: 10c0/182e7deec2dfa6cbd84c3fc73891e83915d1649ed8478fcaeb5051184b3fa21329fcfee2655222543d3419047ee45b7d2f48ab8975d55765537023246a7b233b
   languageName: node
   linkType: hard
 
@@ -1204,7 +1203,7 @@ __metadata:
   dependencies:
     "@atem-connection/camera-control": "npm:^0.4.0"
     "@atem-connection/image-tools": "npm:^1.1.2"
-    "@companion-module/base": "npm:~2.0.4"
+    "@companion-module/base": "npm:~2.1.3"
     "@companion-module/tools": "patch:@companion-module/tools@npm%3A3.0.1#~/.yarn/patches/@companion-module-tools-npm-3.0.1-29189c86bc.patch"
     "@julusian/image-rs": "npm:^2.2.0"
     "@types/lodash-es": "npm:^4.17.12"
