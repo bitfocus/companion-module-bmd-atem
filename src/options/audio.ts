@@ -174,7 +174,7 @@ export const CHOICES_CLASSIC_AUDIO_MIX_OPTION: DropdownChoice<Enums.AudioMixOpti
 
 export type AudioInputSubset = 'delay' | 'routing'
 
-function GetAudioInputsList(model: ModelSpec, state: AtemState, subset?: AudioInputSubset): MiniSourceInfo[] {
+export function GetAudioInputsList(model: ModelSpec, state: AtemState, subset?: AudioInputSubset): MiniSourceInfo[] {
 	const getSource = (id: number, videoId: number | undefined, defLong: string): MiniSourceInfo => {
 		const input = videoId !== undefined ? state.inputs[videoId] : undefined
 		const longName = input?.longName || defLong

@@ -1,5 +1,6 @@
 import { type AtemState, Enums } from 'atem-connection'
 import { GetSourcesListForType, type SourceInfo } from '../options/sources.js'
+import { GetAudioInputsList } from '../options/audio.js'
 import { PresetStyleName } from '../config.js'
 import type { ModelSpec } from '../models/index.js'
 import {
@@ -1008,6 +1009,14 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 			name: `Gain for Monitor/Headphone Sidetone`,
 		}
 		updateFairlightAudioMonitorVariables(state.state, values)
+	}
+
+	// Audio input names, kept live so they follow input renames (a full reInit runs on any input change)
+	for (const audioInput of GetAudioInputsList(model, state.state)) {
+		variables[`audio_input_${audioInput.id}_name`] = {
+			name: `Name of audio input ${audioInput.id}`,
+		}
+		values[`audio_input_${audioInput.id}_name`] = audioInput.longName
 	}
 
 	if (model.fairlightAudio?.audioRouting) {

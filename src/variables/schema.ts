@@ -127,6 +127,7 @@ export type VariablesSchema = {
 	[key: `ssrc${number}_box${number}_cropLeft`]: number
 	[key: `ssrc${number}_box${number}_cropRight`]: number
 
+	[key: `audio_input_${string}_name`]: string | undefined
 	[key: `audio_input_${string}_balance`]: string | undefined
 	[key: `audio_input_${string}_faderGain`]: string | undefined
 	[key: `audio_input_${string}_framesDelay`]: string | undefined
