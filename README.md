@@ -32,6 +32,12 @@ To add a new model to the list:
 
 ## Changes
 
+## v4.3.0
+
+- Multiviewer border control (#309)
+- Constellation HD/4K Supersource borders (#465)
+- Add variables for audio input names
+
 ## v4.2.0
 
 - Add action and feedback for switching input connectors (#476)
