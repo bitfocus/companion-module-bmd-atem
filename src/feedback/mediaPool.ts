@@ -76,6 +76,7 @@ export function createMediaPoolFeedbacks(
 					default: true,
 				},
 			}),
+			affectedProperties: ['imageBuffer', 'text', 'size', 'bgcolor', 'color'],
 			callback: async ({ id, options, previousOptions, image }) => {
 				const defaultClips = model.media.clips > 0 && options.defaultClip
 

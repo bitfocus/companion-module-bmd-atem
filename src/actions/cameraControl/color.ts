@@ -71,7 +71,7 @@ export function createCameraControlColorActions(
 	const createRgbaAction = (
 		name: string,
 		doSend: (cameraId: number, red: number, green: number, blue: number, luma: number) => Promise<void>,
-	): CompanionActionDefinition<RgbyAdjustmentProps> => ({
+	): CompanionActionDefinition<{ options: RgbyAdjustmentProps }> => ({
 		name: name,
 		options: convertOptionsFields({
 			cameraId: CameraControlSourcePicker(),
