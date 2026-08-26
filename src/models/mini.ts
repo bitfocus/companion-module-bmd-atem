@@ -18,6 +18,7 @@ export const ModelSpecMini: ModelSpec = {
 	DSKs: 1,
 	MVs: 0,
 	multiviewerFullGrid: false,
+	multiviewerOverlay: false,
 	DVEs: 1,
 	SSrc: 0,
 	macros: 100,

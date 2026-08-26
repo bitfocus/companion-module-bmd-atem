@@ -31,6 +31,7 @@ export const ModelSpecConstellationAsHDOr4K: ModelSpec = {
 	DSKs: 4,
 	MVs: 4,
 	multiviewerFullGrid: true,
+	multiviewerOverlay: true,
 	DVEs: 4,
 	SSrc: 2,
 	macros: 100,

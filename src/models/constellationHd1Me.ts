@@ -28,6 +28,7 @@ export const ModelSpecConstellationHD1ME: ModelSpec = {
 	DSKs: 1,
 	MVs: 1,
 	multiviewerFullGrid: true,
+	multiviewerOverlay: true,
 	DVEs: 1,
 	SSrc: 0,
 	macros: 100,

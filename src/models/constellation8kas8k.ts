@@ -31,6 +31,7 @@ export const ModelSpecConstellation8KAs8K: ModelSpec = {
 	DSKs: 2,
 	MVs: 1,
 	multiviewerFullGrid: true,
+	multiviewerOverlay: true,
 	DVEs: 1,
 	SSrc: 1,
 	macros: 100,

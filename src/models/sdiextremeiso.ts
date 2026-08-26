@@ -39,6 +39,7 @@ export const ModelSpecSDIExtremeISO: ModelSpec = {
 	DSKs: 2,
 	MVs: 1,
 	multiviewerFullGrid: true,
+	multiviewerOverlay: false,
 	DVEs: 2,
 	SSrc: 1,
 	macros: 100,

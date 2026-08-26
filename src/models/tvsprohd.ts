@@ -11,6 +11,7 @@ export const ModelSpecTVSProHD: ModelSpec = {
 	DSKs: 2,
 	MVs: 1,
 	multiviewerFullGrid: false,
+	multiviewerOverlay: false,
 	DVEs: 1,
 	SSrc: 0,
 	macros: 100,

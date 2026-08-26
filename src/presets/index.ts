@@ -9,7 +9,7 @@ import { createRecordingPresets } from './recording.js'
 import { createFadeToBlackPresets } from './fadeToBlack.js'
 import { createMediaPlayerPresets } from './mediaPlayer.js'
 import { createSuperSourcePresets } from './superSource.js'
-import { createMultiviewerWindowPresets } from './multiviewer.js'
+import { createMultiviewerWindowPresets, createMultiviewerOverlayPresets } from './multiviewer.js'
 import { createMacroPresets } from './macro.js'
 import { createProgramPreviewPresets } from './mixeffect/programPreview.js'
 import { createTransitionPresets } from './mixeffect/transition.js'
@@ -44,6 +44,7 @@ export function GetPresetsList(
 	createDownstreamKeyerPresets(context, pstSize, pstText, meSources)
 	createMacroPresets(context)
 	createMultiviewerWindowPresets(context, state, pstSize, pstText)
+	createMultiviewerOverlayPresets(context)
 	createSuperSourcePresets(context, pstSize, pstText, meSources)
 	createMediaPlayerPresets(context, pstSize)
 	createFadeToBlackPresets(context, pstSize, rateOptions)

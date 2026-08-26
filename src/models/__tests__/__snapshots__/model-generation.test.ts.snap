@@ -550,6 +550,7 @@ exports[`Check 1 M/E Constellation 4K (28) 1`] = `
     "stills": 20,
   },
   "multiviewerFullGrid": true,
+  "multiviewerOverlay": true,
   "outputs": [
     {
       "id": 0,
@@ -1132,6 +1133,7 @@ exports[`Check 1 M/E Constellation HD (18) 1`] = `
     "stills": 20,
   },
   "multiviewerFullGrid": true,
+  "multiviewerOverlay": true,
   "outputs": [
     {
       "id": 0,
@@ -1375,6 +1377,7 @@ exports[`Check 1 ME Production (2) 1`] = `
     "stills": 32,
   },
   "multiviewerFullGrid": false,
+  "multiviewerOverlay": false,
   "outputs": [
     {
       "id": 0,
@@ -1666,6 +1669,7 @@ exports[`Check 1 ME Production 4K (5) 1`] = `
     "stills": 32,
   },
   "multiviewerFullGrid": false,
+  "multiviewerOverlay": false,
   "outputs": [
     {
       "id": 0,
@@ -2626,6 +2630,7 @@ exports[`Check 2 M/E Constellation 4K (29) 1`] = `
     "stills": 40,
   },
   "multiviewerFullGrid": true,
+  "multiviewerOverlay": true,
   "outputs": [
     {
       "id": 0,
@@ -3622,6 +3627,7 @@ exports[`Check 2 M/E Constellation HD (19) 1`] = `
     "stills": 40,
   },
   "multiviewerFullGrid": true,
+  "multiviewerOverlay": true,
   "outputs": [
     {
       "id": 0,
@@ -4005,6 +4011,7 @@ exports[`Check 2 ME Production (3) 1`] = `
     "stills": 32,
   },
   "multiviewerFullGrid": false,
+  "multiviewerOverlay": false,
   "outputs": [
     {
       "id": 0,
@@ -4444,6 +4451,7 @@ exports[`Check 2 ME Production 4K (6) 1`] = `
     "stills": 32,
   },
   "multiviewerFullGrid": false,
+  "multiviewerOverlay": false,
   "outputs": [
     {
       "id": 0,
@@ -6824,6 +6832,7 @@ exports[`Check 4 M/E Constellation 4K (30) 1`] = `
     "stills": 64,
   },
   "multiviewerFullGrid": true,
+  "multiviewerOverlay": true,
   "outputs": [
     {
       "id": 0,
@@ -11244,6 +11253,7 @@ exports[`Check 4 M/E Constellation 4K Plus (31) 1`] = `
     "stills": 96,
   },
   "multiviewerFullGrid": true,
+  "multiviewerOverlay": true,
   "outputs": [
     {
       "id": 0,
@@ -13792,6 +13802,7 @@ exports[`Check 4 M/E Constellation HD (20) 1`] = `
     "stills": 60,
   },
   "multiviewerFullGrid": true,
+  "multiviewerOverlay": true,
   "outputs": [
     {
       "id": 0,
@@ -14427,6 +14438,7 @@ exports[`Check 4 ME Broadcast 4K (7) 1`] = `
     "stills": 64,
   },
   "multiviewerFullGrid": false,
+  "multiviewerOverlay": false,
   "outputs": [
     {
       "id": 0,
@@ -14588,6 +14600,7 @@ exports[`Check Auto Detect (0) 1`] = `
     "stills": 20,
   },
   "multiviewerFullGrid": false,
+  "multiviewerOverlay": false,
   "outputs": [
     {
       "id": 0,
@@ -15594,6 +15607,7 @@ exports[`Check Constellation 8K (8K Mode) (12) 1`] = `
     "stills": 24,
   },
   "multiviewerFullGrid": true,
+  "multiviewerOverlay": true,
   "outputs": [
     {
       "id": 0,
@@ -18061,6 +18075,7 @@ exports[`Check Constellation 8K (HD/4K Mode) (11) 1`] = `
     "stills": 64,
   },
   "multiviewerFullGrid": true,
+  "multiviewerOverlay": true,
   "outputs": [
     {
       "id": 0,
@@ -18301,6 +18316,7 @@ exports[`Check Mini (13) 1`] = `
     "stills": 20,
   },
   "multiviewerFullGrid": false,
+  "multiviewerOverlay": false,
   "outputs": [
     {
       "id": 0,
@@ -18553,6 +18569,7 @@ exports[`Check Mini Extreme (16) 1`] = `
     "stills": 20,
   },
   "multiviewerFullGrid": true,
+  "multiviewerOverlay": false,
   "outputs": [
     {
       "id": 0,
@@ -18809,6 +18826,7 @@ exports[`Check Mini Extreme ISO (17) 1`] = `
     "stills": 20,
   },
   "multiviewerFullGrid": true,
+  "multiviewerOverlay": false,
   "outputs": [
     {
       "id": 0,
@@ -19576,6 +19594,7 @@ exports[`Check Mini Extreme ISO G2 (33) 1`] = `
     "stills": 20,
   },
   "multiviewerFullGrid": true,
+  "multiviewerOverlay": false,
   "outputs": [
     {
       "id": 0,
@@ -19746,6 +19765,7 @@ exports[`Check Mini Pro (14) 1`] = `
     "stills": 20,
   },
   "multiviewerFullGrid": false,
+  "multiviewerOverlay": false,
   "outputs": [
     {
       "id": 0,
@@ -19904,6 +19924,7 @@ exports[`Check Mini Pro ISO (15) 1`] = `
     "stills": 20,
   },
   "multiviewerFullGrid": false,
+  "multiviewerOverlay": false,
   "outputs": [
     {
       "id": 0,
@@ -20129,6 +20150,7 @@ exports[`Check Production Studio 4K (4) 1`] = `
     "stills": 20,
   },
   "multiviewerFullGrid": false,
+  "multiviewerOverlay": false,
   "outputs": [
     {
       "id": 0,
@@ -20283,6 +20305,7 @@ exports[`Check SDI (21) 1`] = `
     "stills": 20,
   },
   "multiviewerFullGrid": false,
+  "multiviewerOverlay": false,
   "outputs": [
     {
       "id": 0,
@@ -20551,6 +20574,7 @@ exports[`Check SDI Extreme ISO (23) 1`] = `
     "stills": 20,
   },
   "multiviewerFullGrid": true,
+  "multiviewerOverlay": false,
   "outputs": [
     {
       "id": 0,
@@ -20727,6 +20751,7 @@ exports[`Check SDI Pro ISO (22) 1`] = `
     "stills": 20,
   },
   "multiviewerFullGrid": false,
+  "multiviewerOverlay": false,
   "outputs": [
     {
       "id": 0,
@@ -20916,6 +20941,7 @@ exports[`Check TV Studio (1) 1`] = `
     "stills": 20,
   },
   "multiviewerFullGrid": false,
+  "multiviewerOverlay": false,
   "outputs": [
     {
       "id": 0,
@@ -21137,6 +21163,7 @@ exports[`Check TV Studio HD (8) 1`] = `
     "stills": 20,
   },
   "multiviewerFullGrid": false,
+  "multiviewerOverlay": false,
   "outputs": [
     {
       "id": 0,
@@ -21368,6 +21395,7 @@ exports[`Check TV Studio Pro 4K (10) 1`] = `
     "stills": 20,
   },
   "multiviewerFullGrid": false,
+  "multiviewerOverlay": false,
   "outputs": [
     {
       "id": 0,
@@ -21589,6 +21617,7 @@ exports[`Check TV Studio Pro HD (9) 1`] = `
     "stills": 20,
   },
   "multiviewerFullGrid": false,
+  "multiviewerOverlay": false,
   "outputs": [
     {
       "id": 0,
@@ -22706,6 +22735,7 @@ exports[`Check Television Studio 4K8 (32) 1`] = `
     "stills": 20,
   },
   "multiviewerFullGrid": true,
+  "multiviewerOverlay": false,
   "outputs": [
     {
       "id": 0,
@@ -23651,6 +23681,7 @@ exports[`Check Television Studio HD8 (26) 1`] = `
     "stills": 20,
   },
   "multiviewerFullGrid": true,
+  "multiviewerOverlay": false,
   "outputs": [
     {
       "id": 0,
@@ -24564,6 +24595,7 @@ exports[`Check Television Studio HD8 ISO (27) 1`] = `
     "stills": 20,
   },
   "multiviewerFullGrid": true,
+  "multiviewerOverlay": false,
   "outputs": [
     {
       "id": 0,

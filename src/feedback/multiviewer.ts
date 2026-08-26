@@ -34,6 +34,20 @@ export type AtemMultiviewerFeedbacks = {
 			bottomRight: MultiviewerQuadrantState | JsonValue | undefined
 		}
 	}
+	['multiviewerWindowLabel']: {
+		type: 'boolean'
+		options: {
+			multiViewerId: number
+			windowIndex: number
+		}
+	}
+	['multiviewerWindowBorder']: {
+		type: 'boolean'
+		options: {
+			multiViewerId: number
+			windowIndex: number
+		}
+	}
 }
 
 export function createMultiviewerFeedbacks(
@@ -44,6 +58,8 @@ export function createMultiviewerFeedbacks(
 		return {
 			['mv_source']: undefined,
 			['multiviewerLayout']: undefined,
+			['multiviewerWindowLabel']: undefined,
+			['multiviewerWindowBorder']: undefined,
 		}
 	}
 	// Some models have a multiviewer whose windows cannot be re-sourced, leaving no choices
@@ -176,5 +192,49 @@ export function createMultiviewerFeedbacks(
 				}
 			},
 		},
+		['multiviewerWindowLabel']: model.multiviewerOverlay
+			? {
+					type: 'boolean',
+					name: 'Multiviewer: Window label',
+					options: convertOptionsFields({
+						multiViewerId: AtemMultiviewerPicker(model),
+						windowIndex: AtemMultiviewWindowPicker(model),
+					}),
+					defaultStyle: {
+						color: 0x000000,
+						bgcolor: 0xffff00,
+					},
+					callback: ({ options }): boolean => {
+						const window = getMultiviewerWindow(
+							state.state,
+							resolveMultiviewerIndex(model, options.multiViewerId),
+							options.windowIndex - 1,
+						)
+						return !!window?.overlayProperties?.labelVisible
+					},
+				}
+			: undefined,
+		['multiviewerWindowBorder']: model.multiviewerOverlay
+			? {
+					type: 'boolean',
+					name: 'Multiviewer: Window border',
+					options: convertOptionsFields({
+						multiViewerId: AtemMultiviewerPicker(model),
+						windowIndex: AtemMultiviewWindowPicker(model),
+					}),
+					defaultStyle: {
+						color: 0x000000,
+						bgcolor: 0xffff00,
+					},
+					callback: ({ options }): boolean => {
+						const window = getMultiviewerWindow(
+							state.state,
+							resolveMultiviewerIndex(model, options.multiViewerId),
+							options.windowIndex - 1,
+						)
+						return !!window?.overlayProperties?.borderVisible
+					},
+				}
+			: undefined,
 	}
 }

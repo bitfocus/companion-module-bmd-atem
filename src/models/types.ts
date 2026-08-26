@@ -13,6 +13,8 @@ export interface ModelSpec {
 	MVs: number
 	DVEs: number
 	multiviewerFullGrid: boolean
+	/** Whether the multiviewer supports overlay properties (window label/border visibility and border colour) */
+	multiviewerOverlay: boolean
 	SSrc: number
 	macros: number
 	displayClock: number

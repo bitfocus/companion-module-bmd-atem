@@ -1,5 +1,11 @@
-import type { DropdownChoice, JsonValue, CompanionInputFieldDropdown } from '@companion-module/base'
-import { type AtemState, Enums } from 'atem-connection'
+import {
+	type DropdownChoice,
+	type JsonValue,
+	type CompanionInputFieldDropdown,
+	type CompanionInputFieldColor,
+	splitRgb,
+} from '@companion-module/base'
+import { type AtemState, Enums, type SettingsState } from 'atem-connection'
 import { iterateTimes, stringifyValueAlways } from '../util.js'
 import { GetSourcesListForType } from '../options/sources.js'
 import type { ModelSpec } from '../models/types.js'
@@ -58,6 +64,39 @@ export function AtemMultiviewWindowPicker(model: ModelSpec): CompanionInputField
 		default: model.multiviewerFullGrid ? 1 : 3,
 		choices,
 	}
+}
+
+export function AtemMultiviewerBorderColorPicker(): CompanionInputFieldColor<'color'> {
+	return {
+		type: 'colorpicker',
+		id: 'color',
+		label: 'Border colour',
+		default: 0xffffff,
+		enableAlpha: true,
+		returnType: 'string',
+	}
+}
+
+/** Convert a Companion colour option value into the atem border colour state (components 0-1000) */
+export function multiviewerBorderColorFromOption(
+	value: JsonValue | undefined,
+): SettingsState.MultiViewerBorderColorState {
+	const rgb = splitRgb(typeof value === 'number' || typeof value === 'string' ? value : 0)
+	return {
+		red: Math.round((rgb.r / 255) * 1000),
+		green: Math.round((rgb.g / 255) * 1000),
+		blue: Math.round((rgb.b / 255) * 1000),
+		alpha: Math.round((rgb.a ?? 1) * 1000),
+	}
+}
+
+/** Convert the atem border colour state (components 0-1000) into a Companion colour option value */
+export function multiviewerBorderColorToOption(color: SettingsState.MultiViewerBorderColorState): string {
+	const red = Math.round((color.red / 1000) * 255)
+	const green = Math.round((color.green / 1000) * 255)
+	const blue = Math.round((color.blue / 1000) * 255)
+	const alpha = color.alpha / 1000
+	return `rgba(${red}, ${green}, ${blue}, ${alpha})`
 }
 
 export type MultiviewerQuadrantState = 'single' | 'quad' | 'ignore' | 'toggle'

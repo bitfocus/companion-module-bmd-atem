@@ -130,6 +130,9 @@ export function GetParsedModelSpec({
 		DSKs: info.capabilities?.downstreamKeyers ?? defaults.DSKs,
 		MVs: settings.multiViewers.length,
 		multiviewerFullGrid: (settings.multiViewers?.[0]?.windows.length || 0) > 10, // TODO verify this
+		multiviewerOverlay:
+			settings.multiViewers?.[0]?.borderColor !== undefined ||
+			settings.multiViewers?.[0]?.windows?.[0]?.overlayProperties !== undefined,
 		DVEs: info.capabilities?.DVEs ?? defaults.DVEs,
 		SSrc: info.capabilities?.superSources ?? defaults.SSrc,
 		macros: info.macroPool?.macroCount ?? defaults.macros,
