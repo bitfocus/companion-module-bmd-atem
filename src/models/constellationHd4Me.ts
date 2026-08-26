@@ -34,6 +34,7 @@ export const ModelSpecConstellationHD4ME: ModelSpec = {
 	multiviewerOverlay: true,
 	DVEs: 4,
 	SSrc: 2,
+	superSourceBoxBorder: true,
 	macros: 100,
 	displayClock: 1,
 	media: { players: 4, stills: 60, clips: 4, captureStills: true },

@@ -45,6 +45,23 @@ export function AtemSuperSourceBoxPicker(): CompanionInputFieldDropdown<'boxInde
 		],
 	}
 }
+/** Box picker that also offers an "All boxes" choice (id 0), for per-box border control */
+export function AtemSuperSourceBoxPickerWithAll(): CompanionInputFieldDropdown<'boxIndex'> {
+	return {
+		type: 'dropdown',
+		id: 'boxIndex',
+		label: 'Box #',
+		default: 0,
+		choices: [
+			{ id: 0, label: 'All boxes' },
+			{ id: 1, label: 'Box 1' },
+			{ id: 2, label: 'Box 2' },
+			{ id: 3, label: 'Box 3' },
+			{ id: 4, label: 'Box 4' },
+		],
+		expressionDescription: 'Should return a box number, eg 1, 2, 3, 4. Use 0 for all boxes',
+	}
+}
 
 export function AtemSuperSourceArtSourcePicker<T extends string>(
 	model: ModelSpec,
@@ -692,6 +709,105 @@ export function AtemSuperSourceBorderPropertiesPickers(): {
 			max: 100,
 			isVisibleExpression: `arrayIncludes($(options:properties), 'borderLightSourceAltitude')`,
 			asInteger: true,
+			clampValues: true,
+		},
+	})
+}
+
+export type AtemSuperSourceBoxBorderPropertiesBase = {
+	borderEnabled: boolean
+	borderWidthOutHorizontal: number
+	borderWidthOutVertical: number
+	borderWidthInLeft: number
+	borderWidthInRight: number
+	borderWidthInTop: number
+	borderWidthInBottom: number
+	borderHue: number
+	borderSaturation: number
+	borderLuma: number
+}
+export type AtemSuperSourceBoxBorderProperties = WithProperties<AtemSuperSourceBoxBorderPropertiesBase>
+
+function BoxBorderWidthPicker<T extends string>(id: T, label: string): CompanionInputFieldNumber<T> {
+	return {
+		type: 'number',
+		label: label,
+		id: id,
+		default: 0,
+		min: 0,
+		range: true,
+		step: 0.01,
+		max: 16,
+		isVisibleExpression: `arrayIncludes($(options:properties), '${id}')`,
+		asInteger: false,
+		clampValues: true,
+	}
+}
+
+export function AtemSuperSourceBoxBorderPropertiesPickers(): {
+	properties: CompanionInputFieldMultiDropdown<'properties'>
+	borderEnabled: CompanionInputFieldCheckbox<'borderEnabled'>
+	borderWidthOutHorizontal: CompanionInputFieldNumber<'borderWidthOutHorizontal'>
+	borderWidthOutVertical: CompanionInputFieldNumber<'borderWidthOutVertical'>
+	borderWidthInLeft: CompanionInputFieldNumber<'borderWidthInLeft'>
+	borderWidthInRight: CompanionInputFieldNumber<'borderWidthInRight'>
+	borderWidthInTop: CompanionInputFieldNumber<'borderWidthInTop'>
+	borderWidthInBottom: CompanionInputFieldNumber<'borderWidthInBottom'>
+	borderHue: CompanionInputFieldNumber<'borderHue'>
+	borderSaturation: CompanionInputFieldNumber<'borderSaturation'>
+	borderLuma: CompanionInputFieldNumber<'borderLuma'>
+} {
+	return WithDropdownPropertiesPicker({
+		borderEnabled: {
+			type: 'checkbox',
+			label: 'Border: Enabled',
+			id: 'borderEnabled',
+			default: true,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderEnabled')`,
+		},
+		borderWidthOutHorizontal: BoxBorderWidthPicker('borderWidthOutHorizontal', 'Border: Outer Width (Horizontal)'),
+		borderWidthOutVertical: BoxBorderWidthPicker('borderWidthOutVertical', 'Border: Outer Width (Vertical)'),
+		borderWidthInLeft: BoxBorderWidthPicker('borderWidthInLeft', 'Border: Inner Width (Left)'),
+		borderWidthInRight: BoxBorderWidthPicker('borderWidthInRight', 'Border: Inner Width (Right)'),
+		borderWidthInTop: BoxBorderWidthPicker('borderWidthInTop', 'Border: Inner Width (Top)'),
+		borderWidthInBottom: BoxBorderWidthPicker('borderWidthInBottom', 'Border: Inner Width (Bottom)'),
+		borderHue: {
+			type: 'number',
+			label: 'Border: Hue',
+			id: 'borderHue',
+			default: 0,
+			min: 0,
+			range: true,
+			step: 0.1,
+			max: 360,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderHue')`,
+			asInteger: false,
+			clampValues: true,
+		},
+		borderSaturation: {
+			type: 'number',
+			label: 'Border: Sat',
+			id: 'borderSaturation',
+			default: 0,
+			min: 0,
+			range: true,
+			step: 0.1,
+			max: 100,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderSaturation')`,
+			asInteger: false,
+			clampValues: true,
+		},
+		borderLuma: {
+			type: 'number',
+			label: 'Border: Lum',
+			id: 'borderLuma',
+			default: 0,
+			min: 0,
+			range: true,
+			step: 0.1,
+			max: 100,
+			isVisibleExpression: `arrayIncludes($(options:properties), 'borderLuma')`,
+			asInteger: false,
 			clampValues: true,
 		},
 	})

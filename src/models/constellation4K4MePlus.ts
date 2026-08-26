@@ -34,6 +34,7 @@ export const ModelSpecConstellation4K4MEPlus: ModelSpec = {
 	multiviewerOverlay: true,
 	DVEs: 4,
 	SSrc: 2,
+	superSourceBoxBorder: true,
 	macros: 100,
 	displayClock: 1,
 	media: {

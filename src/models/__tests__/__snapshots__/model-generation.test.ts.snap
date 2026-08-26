@@ -2684,6 +2684,7 @@ exports[`Check 2 M/E Constellation 4K (29) 1`] = `
   "recordISO": false,
   "recording": false,
   "streaming": false,
+  "superSourceBoxBorder": true,
 }
 `;
 
@@ -3681,6 +3682,7 @@ exports[`Check 2 M/E Constellation HD (19) 1`] = `
   "recordISO": false,
   "recording": false,
   "streaming": false,
+  "superSourceBoxBorder": true,
 }
 `;
 
@@ -6934,6 +6936,7 @@ exports[`Check 4 M/E Constellation 4K (30) 1`] = `
   "recordISO": false,
   "recording": false,
   "streaming": false,
+  "superSourceBoxBorder": true,
 }
 `;
 
@@ -11451,6 +11454,7 @@ exports[`Check 4 M/E Constellation 4K Plus (31) 1`] = `
   "recordISO": false,
   "recording": false,
   "streaming": false,
+  "superSourceBoxBorder": true,
 }
 `;
 
@@ -13904,6 +13908,7 @@ exports[`Check 4 M/E Constellation HD (20) 1`] = `
   "recordISO": false,
   "recording": false,
   "streaming": false,
+  "superSourceBoxBorder": true,
 }
 `;
 

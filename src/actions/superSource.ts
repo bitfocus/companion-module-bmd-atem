@@ -17,9 +17,12 @@ import {
 	AtemSuperSourceBoxSourcePicker,
 	AtemSuperSourceBoxPropertiesPickersForOffset,
 	AtemSuperSourceBorderPropertiesPickers,
+	AtemSuperSourceBoxBorderPropertiesPickers,
+	AtemSuperSourceBoxPickerWithAll,
 	type AtemSuperSourceBoxProperties,
 	type AtemSuperSourceArtProperties,
 	type AtemSuperSourceBorderProperties,
+	type AtemSuperSourceBoxBorderProperties,
 } from '../options/superSource.js'
 import { parseSourceIdRequired } from '../options/sources.js'
 import { AtemTransitionAnimationOptions } from '../options/fade.js'
@@ -34,6 +37,12 @@ export type AtemSuperSourceActions = {
 		options: {
 			ssrcId: number
 		} & AtemSuperSourceBorderProperties
+	}
+	['ssrcBoxBorder']: {
+		options: {
+			ssrcId: number
+			boxIndex: number
+		} & AtemSuperSourceBoxBorderProperties
 	}
 	['setSsrcBoxSource']: {
 		options: {
@@ -83,6 +92,7 @@ export function createSuperSourceActions(
 		return {
 			['ssrcArt']: undefined,
 			['ssrcBorder']: undefined,
+			['ssrcBoxBorder']: undefined,
 			['setSsrcBoxSource']: undefined,
 			['setSsrcBoxEnable']: undefined,
 			['setSsrcBoxProperties']: undefined,
@@ -143,36 +153,66 @@ export function createSuperSourceActions(
 		},
 		['ssrcBorder']: {
 			name: 'SuperSource: Set border properties',
+			description: model.superSourceBoxBorder
+				? 'On this model the border is per-box: this action applies to all boxes and all sides, and the bevel/softness/light-source options have no effect. Use "SuperSource: Set box border properties" for full per-box, per-side control.'
+				: undefined,
 			options: convertOptionsFields({
 				ssrcId: AtemSuperSourceIdPicker(model),
 				...AtemSuperSourceBorderPropertiesPickers(),
 			}),
 			callback: async ({ options }) => {
 				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
-				const newProps: Partial<VideoState.SuperSource.SuperSourceBorder> = {}
 
 				const props = options.properties
-				if (props && Array.isArray(props)) {
-					if (props.includes('borderEnabled')) newProps.borderEnabled = options.borderEnabled
-					if (props.includes('borderBevel')) newProps.borderBevel = options.borderBevel
+				if (!props || !Array.isArray(props)) return
 
-					if (props.includes('borderOuterWidth')) newProps.borderOuterWidth = options.borderOuterWidth * 100
-					if (props.includes('borderInnerWidth')) newProps.borderInnerWidth = options.borderInnerWidth * 100
+				if (model.superSourceBoxBorder) {
+					// Newer models use a per-box border. Map the overlapping properties onto all boxes and all
+					// sides; the bevel/softness/light-source properties are not supported and are ignored.
+					const boxProps: Partial<VideoState.SuperSource.SuperSourceBoxBorder> = {}
 
-					if (props.includes('borderOuterSoftness')) newProps.borderOuterSoftness = options.borderOuterSoftness
-					if (props.includes('borderInnerSoftness')) newProps.borderInnerSoftness = options.borderInnerSoftness
-					if (props.includes('borderBevelSoftness')) newProps.borderBevelSoftness = options.borderBevelSoftness
-					if (props.includes('borderBevelPosition')) newProps.borderBevelPosition = options.borderBevelPosition
+					if (props.includes('borderEnabled')) boxProps.borderEnabled = options.borderEnabled
+					if (props.includes('borderOuterWidth')) {
+						boxProps.borderWidthOutHorizontal = options.borderOuterWidth * 100
+						boxProps.borderWidthOutVertical = options.borderOuterWidth * 100
+					}
+					if (props.includes('borderInnerWidth')) {
+						boxProps.borderWidthInLeft = options.borderInnerWidth * 100
+						boxProps.borderWidthInRight = options.borderInnerWidth * 100
+						boxProps.borderWidthInTop = options.borderInnerWidth * 100
+						boxProps.borderWidthInBottom = options.borderInnerWidth * 100
+					}
+					if (props.includes('borderHue')) boxProps.borderHue = options.borderHue * 10
+					if (props.includes('borderSaturation')) boxProps.borderSaturation = options.borderSaturation * 10
+					if (props.includes('borderLuma')) boxProps.borderLuma = options.borderLuma * 10
 
-					if (props.includes('borderHue')) newProps.borderHue = options.borderHue * 10
-					if (props.includes('borderSaturation')) newProps.borderSaturation = options.borderSaturation * 10
-					if (props.includes('borderLuma')) newProps.borderLuma = options.borderLuma * 10
+					if (Object.keys(boxProps).length === 0) return
 
-					if (props.includes('borderLightSourceDirection'))
-						newProps.borderLightSourceDirection = options.borderLightSourceDirection * 10
-					if (props.includes('borderLightSourceAltitude'))
-						newProps.borderLightSourceAltitude = options.borderLightSourceAltitude
+					await atem?.setSuperSourceBoxBorder(boxProps, null, ssrcId)
+					return
 				}
+
+				const newProps: Partial<VideoState.SuperSource.SuperSourceBorder> = {}
+
+				if (props.includes('borderEnabled')) newProps.borderEnabled = options.borderEnabled
+				if (props.includes('borderBevel')) newProps.borderBevel = options.borderBevel
+
+				if (props.includes('borderOuterWidth')) newProps.borderOuterWidth = options.borderOuterWidth * 100
+				if (props.includes('borderInnerWidth')) newProps.borderInnerWidth = options.borderInnerWidth * 100
+
+				if (props.includes('borderOuterSoftness')) newProps.borderOuterSoftness = options.borderOuterSoftness
+				if (props.includes('borderInnerSoftness')) newProps.borderInnerSoftness = options.borderInnerSoftness
+				if (props.includes('borderBevelSoftness')) newProps.borderBevelSoftness = options.borderBevelSoftness
+				if (props.includes('borderBevelPosition')) newProps.borderBevelPosition = options.borderBevelPosition
+
+				if (props.includes('borderHue')) newProps.borderHue = options.borderHue * 10
+				if (props.includes('borderSaturation')) newProps.borderSaturation = options.borderSaturation * 10
+				if (props.includes('borderLuma')) newProps.borderLuma = options.borderLuma * 10
+
+				if (props.includes('borderLightSourceDirection'))
+					newProps.borderLightSourceDirection = options.borderLightSourceDirection * 10
+				if (props.includes('borderLightSourceAltitude'))
+					newProps.borderLightSourceAltitude = options.borderLightSourceAltitude
 
 				if (Object.keys(newProps).length === 0) return
 
@@ -180,6 +220,23 @@ export function createSuperSourceActions(
 			},
 			learn: ({ options }) => {
 				const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
+
+				if (model.superSourceBoxBorder) {
+					// Sample the first box, as this action controls all boxes together
+					const boxBorder = state.state.video.superSources?.[ssrcId]?.boxes[0]?.border
+					if (boxBorder) {
+						return {
+							borderEnabled: boxBorder.borderEnabled,
+							borderOuterWidth: boxBorder.borderWidthOutHorizontal / 100,
+							borderInnerWidth: boxBorder.borderWidthInLeft / 100,
+							borderHue: boxBorder.borderHue / 10,
+							borderSaturation: boxBorder.borderSaturation / 10,
+							borderLuma: boxBorder.borderLuma / 10,
+						}
+					} else {
+						return undefined
+					}
+				}
 
 				const ssrcConfig = state.state.video.superSources?.[ssrcId]?.border
 				if (ssrcConfig) {
@@ -203,6 +260,69 @@ export function createSuperSourceActions(
 				}
 			},
 		},
+		['ssrcBoxBorder']: model.superSourceBoxBorder
+			? {
+					name: 'SuperSource: Set box border properties',
+					options: convertOptionsFields({
+						ssrcId: AtemSuperSourceIdPicker(model),
+						boxIndex: AtemSuperSourceBoxPickerWithAll(),
+						...AtemSuperSourceBoxBorderPropertiesPickers(),
+					}),
+					callback: async ({ options }) => {
+						const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
+						// Box 0 in the picker means "all boxes", which the library expresses as null
+						const box = options.boxIndex === 0 ? null : options.boxIndex - 1
+
+						const newProps: Partial<VideoState.SuperSource.SuperSourceBoxBorder> = {}
+
+						const props = options.properties
+						if (props && Array.isArray(props)) {
+							if (props.includes('borderEnabled')) newProps.borderEnabled = options.borderEnabled
+
+							if (props.includes('borderWidthOutHorizontal'))
+								newProps.borderWidthOutHorizontal = options.borderWidthOutHorizontal * 100
+							if (props.includes('borderWidthOutVertical'))
+								newProps.borderWidthOutVertical = options.borderWidthOutVertical * 100
+							if (props.includes('borderWidthInLeft')) newProps.borderWidthInLeft = options.borderWidthInLeft * 100
+							if (props.includes('borderWidthInRight')) newProps.borderWidthInRight = options.borderWidthInRight * 100
+							if (props.includes('borderWidthInTop')) newProps.borderWidthInTop = options.borderWidthInTop * 100
+							if (props.includes('borderWidthInBottom'))
+								newProps.borderWidthInBottom = options.borderWidthInBottom * 100
+
+							if (props.includes('borderHue')) newProps.borderHue = options.borderHue * 10
+							if (props.includes('borderSaturation')) newProps.borderSaturation = options.borderSaturation * 10
+							if (props.includes('borderLuma')) newProps.borderLuma = options.borderLuma * 10
+						}
+
+						if (Object.keys(newProps).length === 0) return
+
+						await atem?.setSuperSourceBoxBorder(newProps, box, ssrcId)
+					},
+					learn: ({ options }) => {
+						const ssrcId = options.ssrcId && model.SSrc > 1 ? options.ssrcId - 1 : 0
+						// For "all boxes" sample the first box
+						const boxId = options.boxIndex === 0 ? 0 : options.boxIndex - 1
+
+						const boxBorder = state.state.video.superSources?.[ssrcId]?.boxes[boxId]?.border
+						if (boxBorder) {
+							return {
+								borderEnabled: boxBorder.borderEnabled,
+								borderWidthOutHorizontal: boxBorder.borderWidthOutHorizontal / 100,
+								borderWidthOutVertical: boxBorder.borderWidthOutVertical / 100,
+								borderWidthInLeft: boxBorder.borderWidthInLeft / 100,
+								borderWidthInRight: boxBorder.borderWidthInRight / 100,
+								borderWidthInTop: boxBorder.borderWidthInTop / 100,
+								borderWidthInBottom: boxBorder.borderWidthInBottom / 100,
+								borderHue: boxBorder.borderHue / 10,
+								borderSaturation: boxBorder.borderSaturation / 10,
+								borderLuma: boxBorder.borderLuma / 10,
+							}
+						} else {
+							return undefined
+						}
+					},
+				}
+			: undefined,
 		['setSsrcBoxSource']: {
 			// TODO - combine into 'setSsrcBoxProperties'
 			name: 'SuperSource: Set box source',
