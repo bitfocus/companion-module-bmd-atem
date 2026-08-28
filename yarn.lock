@@ -2050,13 +2050,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-running@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "is-running@npm:2.1.0"
-  checksum: 10c0/3caf610508336e7b4d3f63323138ea479f38b7f74c9318254c6c999e06cc9f9bc23727183bb103a3564d517c0b3b9ac057768b3a681c6a63a246089c3ac01c8b
-  languageName: node
-  linkType: hard
-
 "isexe@npm:^2.0.0":
   version: 2.0.0
   resolution: "isexe@npm:2.0.0"
@@ -2812,14 +2805,13 @@ __metadata:
   linkType: hard
 
 "threadedclass@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "threadedclass@npm:1.4.0"
+  version: 1.4.1
+  resolution: "threadedclass@npm:1.4.1"
   dependencies:
     callsites: "npm:^3.1.0"
     eventemitter3: "npm:^4.0.4"
-    is-running: "npm:^2.1.0"
     tslib: "npm:^1.13.0"
-  checksum: 10c0/198ad20c2737c1c8577a89e109a7684c580ed0c6fa999eee2433ede7fd1a3df36feeaf191e03cfbf2c3d038ed577e9efe77fd0d5189ed49637a9a59a453afd34
+  checksum: 10c0/392d6f9531b478318eda20791bb4c17d558a103c558643bc33ac11410064a58c604f5cc05469946a1e6deea1555708ff31559ff19b5357fc588b56aad7fbfab2
   languageName: node
   linkType: hard
 
