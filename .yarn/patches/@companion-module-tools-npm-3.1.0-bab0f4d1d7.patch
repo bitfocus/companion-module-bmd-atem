@@ -1,11 +1,12 @@
 diff --git a/dist/scripts/lib/build-util.js b/dist/scripts/lib/build-util.js
-index 8ad215e82f3f1d72e7393ebf21f987cf8764b3b1..538eb34f38757faaba3bc5f66e91576c0a50f45d 100644
+index 3aac91fc3343368da00dd3766741585b1c66ace6..9f7ea508f94c0d76082e397684e6fcc1d2e0e8e4 100644
 --- a/dist/scripts/lib/build-util.js
 +++ b/dist/scripts/lib/build-util.js
-@@ -205,6 +205,13 @@ export async function buildPackage(frameworkPackageName, validateManifest, modul
-             }
-         }
+@@ -186,6 +186,14 @@ export async function buildPackage(frameworkPackageName, validateManifest, modul
      }
+     await writeLegalArtifacts(packageBaseDir, legalInventory);
+     enforceLegalInventory(legalInventory, options);
++
 +
 +	// Some hacks that need formalizing..
 +	const freetypeVendorDir = path.join(packageBaseDir, 'node_modules', '@julusian', 'freetype2', 'vendor')
