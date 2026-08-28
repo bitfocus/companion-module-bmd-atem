@@ -78,11 +78,11 @@ export function GetTransitionStyleChoices(skipSting?: boolean): DropdownChoice<T
 }
 
 export function transitionStyleStringToEnum(ref: JsonValue | undefined): Enums.TransitionStyle | null {
-	const refStr = stringifyValueAlways(ref).toLowerCase().trim()
+	let refStr = stringifyValueAlways(ref).toLowerCase().trim()
 	if (!refStr) return null
 
 	// sanitise to <ascii>
-	ref = refStr.replace(/[^a-z]/g, '')
+	refStr = refStr.replace(/[^a-z]/g, '')
 
 	// special case
 	if (refStr.startsWith('dv')) {

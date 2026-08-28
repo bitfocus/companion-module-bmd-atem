@@ -60,11 +60,11 @@ export function GetUpstreamKeyerTypeChoices(): DropdownChoice<UpstreamKeyerTypeS
 }
 
 export function upstreamKeyerTypeStringToEnum(ref: JsonValue | undefined): Enums.MixEffectKeyType | null {
-	const refStr = stringifyValueAlways(ref).toLowerCase().trim()
+	let refStr = stringifyValueAlways(ref).toLowerCase().trim()
 	if (!refStr) return null
 
 	// sanitise to <ascii>
-	ref = refStr.replace(/[^a-z]/g, '')
+	refStr = refStr.replace(/[^a-z]/g, '')
 
 	// Fuzzy match by first character
 	if (refStr.startsWith('l')) {
