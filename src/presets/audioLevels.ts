@@ -61,9 +61,8 @@ export function createAudioMeterPresets(context: PresetsBuilderContext, state: A
 		roundedEnds: false,
 		stops: [
 			{ value: -60, color: 0x00c800, gradient: false },
-			{ value: -18, color: 0x00c800, gradient: false },
-			{ value: -9, color: 0xe6c800, gradient: false },
-			{ value: -3, color: 0xdc0000, gradient: false },
+			{ value: -20, color: 0xe6c800, gradient: false },
+			{ value: -10, color: 0xdc0000, gradient: false },
 		],
 	})
 
