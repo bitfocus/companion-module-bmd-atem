@@ -16,6 +16,11 @@ export type VariablesSchema = {
 
 	[key: `usk_${number}_${number}_input`]: string
 	[key: `usk_${number}_${number}_input_id`]: number
+	[key: `usk_${number}_${number}_nonDVEmaskEnabled`]: boolean | undefined
+	[key: `usk_${number}_${number}_nonDVEmaskTop`]: number | undefined
+	[key: `usk_${number}_${number}_nonDVEmaskBottom`]: number | undefined
+	[key: `usk_${number}_${number}_nonDVEmaskLeft`]: number | undefined
+	[key: `usk_${number}_${number}_nonDVEmaskRight`]: number | undefined
 	[key: `usk_${number}_${number}_maskEnabled`]: boolean | undefined
 	[key: `usk_${number}_${number}_maskTop`]: number | undefined
 	[key: `usk_${number}_${number}_maskBottom`]: number | undefined
