@@ -22,6 +22,10 @@ import {
 	parseAudioRoutingStringSingle,
 } from '../options/fairlight-routing.js'
 import { FadeDurationFields } from '../options/fade.js'
+import { clamp } from '../util.js'
+
+const FAIRLIGHT_MASTER_MIN_GAIN = -10000
+const FAIRLIGHT_MASTER_MAX_GAIN = 1000
 
 export type AtemFairlightAudioActions = {
 	['fairlightAudioInputGain']: {
@@ -730,7 +734,7 @@ export function createFairlightAudioActions(
 					default: 0,
 					step: 0.1,
 					min: -100,
-					max: 6,
+					max: FAIRLIGHT_MASTER_MAX_GAIN / 100,
 					description: '-100 = -inf',
 					showMinAsNegativeInfinity: true,
 					asInteger: false,
@@ -781,7 +785,7 @@ export function createFairlightAudioActions(
 							})
 						},
 						currentGain,
-						currentGain + options.delta * 100,
+						clamp(FAIRLIGHT_MASTER_MIN_GAIN, FAIRLIGHT_MASTER_MAX_GAIN, currentGain + options.delta * 100),
 						options,
 					)
 				}

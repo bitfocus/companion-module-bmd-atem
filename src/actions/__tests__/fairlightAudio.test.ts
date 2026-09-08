@@ -87,3 +87,40 @@ describe('Fairlight source validation (#356)', () => {
 		expect(mock.calls).toHaveLength(0)
 	})
 })
+
+describe('Fairlight master gain range (#486)', () => {
+	let mock: ReturnType<typeof makeMockAtem>
+	let state: ReturnType<typeof makeTestState>
+	let transitions: AtemTransitions
+
+	beforeEach(() => {
+		mock = makeMockAtem()
+		state = makeTestState()
+		transitions = new AtemTransitions({ fadeFps: 10 })
+		state.state.fairlight = {
+			master: { properties: { faderGain: 900 } },
+			inputs: {},
+		} as any
+	})
+
+	function actions() {
+		return createFairlightAudioActions(mock.atem, MODEL, transitions, state)
+	}
+
+	test('set action exposes the hardware-confirmed +10 dB maximum', () => {
+		const definition = actions().fairlightAudioMasterGain as any
+		const gain = definition.options.find((option: { id: string }) => option.id === 'gain')
+
+		expect(gain.max).toBe(10)
+	})
+
+	test('relative adjustment sends +10 dB but never exceeds it', async () => {
+		const definition = actions().fairlightAudioMasterGainDelta as unknown as AnyDef
+
+		await definition.callback({
+			options: { delta: 5, fadeDuration: 0, fadeAlgorithm: 'linear', fadeCurve: 'in' },
+		})
+
+		expect(mock.onlyCall('setFairlightAudioMixerMasterProps').args[0]).toEqual({ faderGain: 1000 })
+	})
+})
