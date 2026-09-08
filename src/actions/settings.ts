@@ -94,12 +94,14 @@ export function createSettingsActions(
 				if (setShort) newProps.shortName = options.short_value
 				if (setLong) newProps.longName = options.long_value
 
-				await Promise.all([
-					typeof newProps.longName === 'string' && !atem?.hasInternalMultiviewerLabelGeneration()
-						? atem?.drawMultiviewerLabel(source, newProps.longName)
-						: undefined,
-					Object.keys(newProps).length ? atem?.setInputSettings(newProps, source) : undefined,
-				])
+				if (Object.keys(newProps).length) await atem?.setInputSettings(newProps, source)
+
+				// Older ATEMs need a separately uploaded UMD bitmap. Upload it only
+				// after the name command, so firmware that redraws the UMD while applying
+				// the name cannot overwrite the correctly generated label.
+				if (typeof newProps.longName === 'string' && atem && !atem.hasInternalMultiviewerLabelGeneration()) {
+					await atem.drawMultiviewerLabel(source, newProps.longName)
+				}
 			},
 			learn: ({ options }) => {
 				const source = parseSourceId(options.source)
