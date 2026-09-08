@@ -61,6 +61,9 @@ export function AtemMultiviewWindowPicker(model: ModelSpec): CompanionInputField
 		type: 'dropdown',
 		id: 'windowIndex',
 		label: 'Window #',
+		description: model.multiviewerFullGrid
+			? 'Uses the underlying 4x4 grid. In a 2x2 quad layout, the quadrant anchors are 1 (top left), 3 (top right), 9 (bottom left), and 11 (bottom right).'
+			: undefined,
 		default: model.multiviewerFullGrid ? 1 : 3,
 		choices,
 	}

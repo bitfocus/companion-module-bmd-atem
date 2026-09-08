@@ -54,3 +54,18 @@ The most common cause of Companion not being able to connect to your ATEM is mis
 A good way to rule out Companion as being at fault, is to disconnect the USB to your ATEM, and use the ATEM software. If that is unable to connect then it is most likely a network configuration issue.
 
 To be able to connect to your ATEM, both the ATEM and your Companion machine must be connected to the same network (ideally cabled, but wifi should work). They must also be of the same IP address range. For example, your network could be `192.168.0.x`, where each machine has a different number instead of the `x`. In most cases the subnet mask should be 255.255.255.0, unless your network is setup to use something else.
+
+### Multiview window numbers in quad layouts
+
+ATEM addresses a full-grid multiviewer as an underlying 4×4 grid even when the selected layout combines four cells into one large quadrant. The **Multiviewer: Change window source** action therefore keeps using the underlying grid window number; it does not renumber the four visible quadrants as windows 1–4.
+
+For a four-quadrant (2×2) layout, set the source on the top-left cell of each quadrant:
+
+| Visible quadrant | Window number |
+| ---------------- | ------------- |
+| Top left         | 1             |
+| Top right        | 3             |
+| Bottom left      | 9             |
+| Bottom right     | 11            |
+
+Changing window 2 or 10 in that layout does not address a separate visible quadrant; those cells are part of the large quadrant beginning at window 1 or 9. The exact visible arrangement still follows the layout configured on the ATEM.
