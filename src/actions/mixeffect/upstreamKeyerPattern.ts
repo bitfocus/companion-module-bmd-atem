@@ -1,6 +1,6 @@
 import { Enums, type Atem } from 'atem-connection'
 import { convertOptionsFields } from '../../options/util.js'
-import type { CompanionActionDefinitions } from '@companion-module/base'
+import type { CompanionActionDefinitions, JsonValue } from '@companion-module/base'
 import type { ModelSpec } from '../../models/index.js'
 import { getUSK, type StateWrapper } from '../../state.js'
 import type { UpstreamKeyerPatternSettings } from 'atem-connection/dist/state/video/upstreamKeyers.js'
@@ -10,6 +10,7 @@ import {
 	AtemUSKPicker,
 	resolveUpstreamKeyerIndex,
 } from '../../options/upstreamKeyer.js'
+import { wipePatternEnumToString, wipePatternStringToEnum } from '../../options/transition.js'
 
 export type AtemUpstreamKeyerPatternActions = {
 	['uskPatternProperties']: {
@@ -19,7 +20,7 @@ export type AtemUpstreamKeyerPatternActions = {
 
 			properties: Array<'style' | 'size' | 'symmetry' | 'softness' | 'positionX' | 'positionY' | 'invert'>
 
-			style: Enums.Pattern
+			style: JsonValue | undefined
 			size: number
 			symmetry: number
 			softness: number
@@ -57,7 +58,8 @@ export function createUpstreamKeyerPatternActions(
 				const props = options.properties
 				if (props && Array.isArray(props)) {
 					if (props.includes('style')) {
-						newProps.style = options.style
+						const style = resolvePatternStyle(options.style)
+						if (style !== null) newProps.style = style
 					}
 					if (props.includes('size')) {
 						newProps.size = options.size * 100
@@ -90,7 +92,7 @@ export function createUpstreamKeyerPatternActions(
 
 				if (usk?.patternSettings) {
 					return {
-						style: usk.patternSettings.style,
+						style: wipePatternEnumToString(usk.patternSettings.style),
 						size: usk.patternSettings.size / 100,
 						symmetry: usk.patternSettings.symmetry / 100,
 						softness: usk.patternSettings.softness / 100,
@@ -104,4 +106,18 @@ export function createUpstreamKeyerPatternActions(
 			},
 		},
 	}
+}
+
+export function resolvePatternStyle(value: Enums.Pattern | JsonValue | undefined): Enums.Pattern | null {
+	const namedPattern = wipePatternStringToEnum(value)
+	if (namedPattern !== null) return namedPattern
+
+	// Preserve stored actions created before pattern choices changed from protocol numbers to names.
+	const numericValue =
+		typeof value === 'number' ? value : typeof value === 'string' && value.trim() !== '' ? Number(value) : Number.NaN
+	return Number.isInteger(numericValue) &&
+		numericValue >= Enums.Pattern.LeftToRightBar &&
+		numericValue <= Enums.Pattern.TopRightDiagonal
+		? numericValue
+		: null
 }

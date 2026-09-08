@@ -184,8 +184,27 @@ export function GetWipePatternChoices(): DropdownChoice<WipePatternString>[] {
 }
 
 export function wipePatternStringToEnum(ref: WipePatternString | JsonValue | undefined): Enums.Pattern | null {
-	// The field does not allow invalid values, so the value is always one of the ids below.
-	return WIPE_PATTERNS.find((p) => p.id === ref)?.pattern ?? null
+	if (typeof ref !== 'string') return null
+
+	const normalized = ref.toLowerCase().replace(/[^a-z0-9]/g, '')
+	if (!normalized) return null
+
+	const exact = WIPE_PATTERNS.find(
+		({ id, label }) =>
+			id.replace(/[^a-z0-9]/g, '') === normalized || label.toLowerCase().replace(/[^a-z0-9]/g, '') === normalized,
+	)
+	if (exact) return exact.pattern
+
+	// Accept an unambiguous shorthand while refusing ambiguous values such as "top".
+	const prefixMatches = WIPE_PATTERNS.filter(({ id, label }) =>
+		[id, label].some((candidate) =>
+			candidate
+				.toLowerCase()
+				.replace(/[^a-z0-9]/g, '')
+				.startsWith(normalized),
+		),
+	)
+	return prefixMatches.length === 1 ? prefixMatches[0].pattern : null
 }
 
 export function wipePatternEnumToString(pattern: Enums.Pattern): WipePatternString | undefined {
