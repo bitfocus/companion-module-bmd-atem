@@ -32,6 +32,12 @@ To add a new model to the list:
 
 ## Changes
 
+## v4.3.1
+
+- Improve connection reliability
+- Fix some loose value validation
+- Correct fairlight master gain range
+
 ## v4.3.0
 
 - Multiviewer border control (#309)
