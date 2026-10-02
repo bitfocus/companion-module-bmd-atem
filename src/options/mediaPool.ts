@@ -60,8 +60,6 @@ export function AtemMediaPlayerSourcePickers(
 	}
 }
 
-// Idee: Create 2 new functions that try to parse either, with the main function just calling the other 2
-// One for trying to parse the internal id like parseMediaPoolSource currently does, and the other trying to find by name
 function tryParseMediaInternalName(model: ModelSpec, ref: string, defaultAsClip: boolean) {
 	ref = ref.toLowerCase().trim()
 

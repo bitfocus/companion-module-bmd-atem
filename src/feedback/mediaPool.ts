@@ -116,9 +116,7 @@ async function executePreviewFeedback(
 	previewOptions: MediaPoolPreviewOptions,
 	source: SourceDefinition,
 ): Promise<CompanionAdvancedFeedbackResult> {
-	console.warn(source)
 	const imageBuffer = await state.mediaPoolCache.getPreviewImage(source, previewOptions)
-	console.warn(imageBuffer)
 	if (imageBuffer) {
 		return imageBuffer
 	}
