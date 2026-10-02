@@ -79,9 +79,9 @@ export function createMediaPoolFeedbacks(
 			callback: async ({ id, options, previousOptions, image }) => {
 				const defaultClips = model.media.clips > 0 && options.defaultClip
 
-				const source = parseMediaPoolSource(model, options.source, defaultClips)
+				const source = parseMediaPoolSource(model, state.state, options.source, defaultClips)
 				const previousSource = previousOptions
-					? parseMediaPoolSource(model, previousOptions.source, defaultClips)
+					? parseMediaPoolSource(model, state.state, previousOptions.source, defaultClips)
 					: null
 
 				if (!previousOptions || !isEqual(source, previousSource)) {
@@ -116,7 +116,9 @@ async function executePreviewFeedback(
 	previewOptions: MediaPoolPreviewOptions,
 	source: SourceDefinition,
 ): Promise<CompanionAdvancedFeedbackResult> {
+	console.warn(source)
 	const imageBuffer = await state.mediaPoolCache.getPreviewImage(source, previewOptions)
+	console.warn(imageBuffer)
 	if (imageBuffer) {
 		return imageBuffer
 	}
