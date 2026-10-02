@@ -78,7 +78,7 @@ export function createMediaPlayerActions(
 			callback: async ({ options }) => {
 				const defaultClips = model.media.clips > 0 && options.defaultClip
 
-				const source = parseMediaPoolSource(model, options.source, defaultClips)
+				const source = parseMediaPoolSource(model, state.state, options.source, defaultClips)
 				if (!source) return
 
 				await atem?.setMediaPlayerSource(
@@ -162,7 +162,7 @@ export function createMediaPlayerActions(
 				...AtemMediaPlayerSourcePickers(model, state.state, false),
 			}),
 			callback: async ({ options }) => {
-				const source = parseMediaPoolSource(model, options.source, false)
+				const source = parseMediaPoolSource(model, state.state, options.source, false)
 				if (!source) return
 
 				if (source.isClip) return // Unsupported by this action for now
