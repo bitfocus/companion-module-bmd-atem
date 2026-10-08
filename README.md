@@ -32,6 +32,11 @@ To add a new model to the list:
 
 ## Changes
 
+## v4.5.0
+
+- Require Companion 5.0+
+- Presets for input audio meters
+
 ## v4.4.0
 
 - Add still/clip name to slot resolver vars (#464)
