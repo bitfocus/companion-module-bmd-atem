@@ -56,6 +56,13 @@ export type AtemMultiviewerActions = {
 			color: JsonValue
 		}
 	}
+	['multiviewerWindowVu']: {
+		options: {
+			multiViewerId: number
+			windowIndex: number
+			state: TrueFalseToggle
+		}
+	}
 }
 
 export function createMultiviewerActions(
@@ -70,6 +77,7 @@ export function createMultiviewerActions(
 			['multiviewerWindowLabel']: undefined,
 			['multiviewerWindowBorder']: undefined,
 			['multiviewerBorderColor']: undefined,
+			['multiviewerWindowVu']: undefined,
 		}
 	}
 	// Some models have a multiviewer whose windows cannot be re-sourced, leaving no choices
@@ -296,5 +304,42 @@ export function createMultiviewerActions(
 					},
 				}
 			: undefined,
+		['multiviewerWindowVu']: {
+			name: 'Multiviewer: Window VU meter',
+			options: convertOptionsFields({
+				multiViewerId: AtemMultiviewerPicker(model),
+				windowIndex: AtemMultiviewWindowPicker(model),
+				state: {
+					id: 'state',
+					type: 'dropdown',
+					label: 'VU meter',
+					default: 'toggle',
+					choices: CHOICES_ON_OFF_TOGGLE,
+				},
+			}),
+			callback: async ({ options }) => {
+				const multiViewerId = resolveMultiviewerIndex(model, options.multiViewerId)
+				const window = getMultiviewerWindow(state.state, multiViewerId, options.windowIndex - 1)
+
+				const vuEnabled = resolveTrueFalseToggle(options.state, window?.audioMeter)
+
+				await atem?.setMultiViewerWindowVuEnabled(vuEnabled, multiViewerId, options.windowIndex - 1)
+			},
+			learn: ({ options }) => {
+				const window = getMultiviewerWindow(
+					state.state,
+					resolveMultiviewerIndex(model, options.multiViewerId),
+					options.windowIndex - 1,
+				)
+
+				if (window) {
+					return {
+						state: window.audioMeter ? 'true' : 'false',
+					}
+				} else {
+					return undefined
+				}
+			},
+		},
 	}
 }

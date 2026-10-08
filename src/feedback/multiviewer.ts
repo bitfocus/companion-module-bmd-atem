@@ -48,6 +48,13 @@ export type AtemMultiviewerFeedbacks = {
 			windowIndex: number
 		}
 	}
+	['multiviewerWindowVu']: {
+		type: 'boolean'
+		options: {
+			multiViewerId: number
+			windowIndex: number
+		}
+	}
 }
 
 export function createMultiviewerFeedbacks(
@@ -60,6 +67,7 @@ export function createMultiviewerFeedbacks(
 			['multiviewerLayout']: undefined,
 			['multiviewerWindowLabel']: undefined,
 			['multiviewerWindowBorder']: undefined,
+			['multiviewerWindowVu']: undefined,
 		}
 	}
 	// Some models have a multiviewer whose windows cannot be re-sourced, leaving no choices
@@ -236,5 +244,25 @@ export function createMultiviewerFeedbacks(
 					},
 				}
 			: undefined,
+		['multiviewerWindowVu']: {
+			type: 'boolean',
+			name: 'Multiviewer: Window VU meter',
+			options: convertOptionsFields({
+				multiViewerId: AtemMultiviewerPicker(model),
+				windowIndex: AtemMultiviewWindowPicker(model),
+			}),
+			defaultStyle: {
+				color: 0x000000,
+				bgcolor: 0xffff00,
+			},
+			callback: ({ options }): boolean => {
+				const window = getMultiviewerWindow(
+					state.state,
+					resolveMultiviewerIndex(model, options.multiViewerId),
+					options.windowIndex - 1,
+				)
+				return !!window?.audioMeter
+			},
+		},
 	}
 }

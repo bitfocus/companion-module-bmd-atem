@@ -36,6 +36,7 @@ To add a new model to the list:
 
 - Add actions to start/stop recording and delete a macro, plus a recording-active feedback (#508)
 - Fix advanced chroma saturation range to allow 0-200% (#504)
+- Add action to enable/disable a multiviewer window VU meter
 
 ## v4.3.1
 
