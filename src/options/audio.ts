@@ -175,6 +175,9 @@ export const CHOICES_CLASSIC_AUDIO_MIX_OPTION: DropdownChoice<Enums.AudioMixOpti
 export type AudioInputSubset = 'delay' | 'routing'
 
 export function GetAudioInputsList(model: ModelSpec, state: AtemState, subset?: AudioInputSubset): MiniSourceInfo[] {
+	const audioInputs = model.classicAudio?.inputs ?? model.fairlightAudio?.inputs ?? []
+	const xlrInputCount = audioInputs.filter((input) => input.portType === Enums.ExternalPortType.XLR).length
+
 	const getSource = (id: number, videoId: number | undefined, defLong: string): MiniSourceInfo => {
 		const input = videoId !== undefined ? state.inputs[videoId] : undefined
 		const longName = input?.longName || defLong
@@ -186,7 +189,7 @@ export function GetAudioInputsList(model: ModelSpec, state: AtemState, subset?: 
 	}
 
 	const sources: MiniSourceInfo[] = []
-	for (const input of model.classicAudio?.inputs ?? model.fairlightAudio?.inputs ?? []) {
+	for (const input of audioInputs) {
 		if (subset === 'delay' && (!('maxDelay' in input) || !input.maxDelay)) continue
 		if (subset !== 'routing' && 'routingOnly' in input && input.routingOnly) continue
 
@@ -203,7 +206,7 @@ export function GetAudioInputsList(model: ModelSpec, state: AtemState, subset?: 
 				break
 			case Enums.ExternalPortType.XLR: {
 				const offset = input.id - 1000
-				sources.push(getSource(input.id, undefined, offset > 1 ? `XLR ${offset}` : `XLR`))
+				sources.push(getSource(input.id, undefined, xlrInputCount > 1 ? `XLR ${offset}` : `XLR`))
 				break
 			}
 			case Enums.ExternalPortType.AESEBU:
