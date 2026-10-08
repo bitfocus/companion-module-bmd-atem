@@ -34,6 +34,7 @@ To add a new model to the list:
 
 ## v4.4.0
 
+- Add still/clip name to slot resolver vars (#464)
 - Add actions to start/stop recording and delete a macro, plus a recording-active feedback (#508)
 - Fix advanced chroma saturation range to allow 0-200% (#504)
 - Add action to enable/disable a multiviewer window VU meter
