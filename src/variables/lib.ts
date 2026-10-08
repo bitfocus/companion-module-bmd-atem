@@ -201,6 +201,14 @@ function updateUSKVariable(
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_shadowEnabled`] = dveSettings.shadowEnabled
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_rate`] = dveSettings.rate
 	}
+	const maskSettings = state.video.mixEffects[meIndex]?.upstreamKeyers[keyIndex]?.maskSettings
+	if (maskSettings) {
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_keyMaskEnabled`] = maskSettings.maskEnabled
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_keyMaskTop`] = maskSettings.maskTop / 1000
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_keyMaskBottom`] = maskSettings.maskBottom / 1000
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_keyMaskLeft`] = maskSettings.maskLeft / 1000
+		values[`usk_${meIndex + 1}_${keyIndex + 1}_keyMaskRight`] = maskSettings.maskRight / 1000
+	}
 	const patternSettings = state.video.mixEffects[meIndex]?.upstreamKeyers[keyIndex]?.patternSettings
 	if (patternSettings) {
 		values[`usk_${meIndex + 1}_${keyIndex + 1}_pattern_style`] = patternSettings.style
@@ -567,19 +575,19 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 			}
 			if (model.USKs && model.DVEs) {
 				variables[`usk_${i + 1}_${k + 1}_maskEnabled`] = {
-					name: `Mask Enabled for M/E ${i + 1} Key ${k + 1}`,
+					name: `DVE Mask Enabled for M/E ${i + 1} Key ${k + 1}`,
 				}
 				variables[`usk_${i + 1}_${k + 1}_maskTop`] = {
-					name: `Mask cutoff from the top of M/E ${i + 1} Key ${k + 1}`,
+					name: `DVE Mask cutoff from the top of M/E ${i + 1} Key ${k + 1}`,
 				}
 				variables[`usk_${i + 1}_${k + 1}_maskBottom`] = {
-					name: `Mask cutoff from the bottom of M/E ${i + 1} Key ${k + 1}`,
+					name: `DVE Mask cutoff from the bottom of M/E ${i + 1} Key ${k + 1}`,
 				}
 				variables[`usk_${i + 1}_${k + 1}_maskLeft`] = {
-					name: `Mask cutoff from the left of M/E ${i + 1} Key ${k + 1}`,
+					name: `DVE Mask cutoff from the left of M/E ${i + 1} Key ${k + 1}`,
 				}
 				variables[`usk_${i + 1}_${k + 1}_maskRight`] = {
-					name: `Mask cutoff from the right of M/E ${i + 1} Key ${k + 1}`,
+					name: `DVE Mask cutoff from the right of M/E ${i + 1} Key ${k + 1}`,
 				}
 				variables[`usk_${i + 1}_${k + 1}_positionX`] = {
 					name: `X position of M/E ${i + 1} Key ${k + 1}`,
@@ -624,7 +632,7 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 					name: `Border Saturation of M/E ${i + 1} Key ${k + 1}`,
 				}
 				variables[`usk_${i + 1}_${k + 1}_bordLum`] = {
-					name: `Border Luma of M/E ${i + 1} Key ${k + 1}`,
+					name: `Border Luminance of M/E ${i + 1} Key ${k + 1}`,
 				}
 				variables[`usk_${i + 1}_${k + 1}_lightDirection`] = {
 					name: `Light source Angle of shadow of M/E ${i + 1} Key ${k + 1}`,
@@ -668,6 +676,22 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 				variables[`usk_${i + 1}_${k + 1}_flyEnabled`] = {
 					name: `Fly Key Enable Status of M/E ${i + 1} Key ${k + 1}`,
 				}
+			}
+
+			variables[`usk_${i + 1}_${k + 1}_keyMaskEnabled`] = {
+				name: `Luma-Chroma-Pattern Mask Enabled for M/E ${i + 1} Key ${k + 1}`,
+			}
+			variables[`usk_${i + 1}_${k + 1}_keyMaskTop`] = {
+				name: `Luma-Chroma-Pattern Mask cutoff from the top of M/E ${i + 1} Key ${k + 1}`,
+			}
+			variables[`usk_${i + 1}_${k + 1}_keyMaskBottom`] = {
+				name: `Luma-Chroma-Pattern Mask cutoff from the bottom of M/E ${i + 1} Key ${k + 1}`,
+			}
+			variables[`usk_${i + 1}_${k + 1}_keyMaskLeft`] = {
+				name: `Luma-Chroma-Pattern Mask cutoff from the left of M/E ${i + 1} Key ${k + 1}`,
+			}
+			variables[`usk_${i + 1}_${k + 1}_keyMaskRight`] = {
+				name: `Luma-Chroma-Pattern Mask cutoff from the right of M/E ${i + 1} Key ${k + 1}`,
 			}
 
 			variables[`usk_${i + 1}_${k + 1}_luma_preMultiplied`] = {

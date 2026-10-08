@@ -39,6 +39,7 @@ To add a new model to the list:
 - Add action to enable/disable a multiviewer window VU meter
 - Fix wipe pattern feedback not updating when the pattern changes (#502)
 - Fix multiviewer window label/border feedbacks not updating when changed (#505)
+- Clarify USK mask variable descriptions and add Luma/Chroma/Pattern mask variables (#491, #483)
 
 ## v4.3.1
 

@@ -21,6 +21,11 @@ export type VariablesSchema = {
 	[key: `usk_${number}_${number}_maskBottom`]: number | undefined
 	[key: `usk_${number}_${number}_maskLeft`]: number | undefined
 	[key: `usk_${number}_${number}_maskRight`]: number | undefined
+	[key: `usk_${number}_${number}_keyMaskEnabled`]: boolean | undefined
+	[key: `usk_${number}_${number}_keyMaskTop`]: number | undefined
+	[key: `usk_${number}_${number}_keyMaskBottom`]: number | undefined
+	[key: `usk_${number}_${number}_keyMaskLeft`]: number | undefined
+	[key: `usk_${number}_${number}_keyMaskRight`]: number | undefined
 	[key: `usk_${number}_${number}_positionX`]: number | undefined
 	[key: `usk_${number}_${number}_positionY`]: number | undefined
 	[key: `usk_${number}_${number}_sizeX`]: number | undefined
