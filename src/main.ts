@@ -489,6 +489,7 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 			if (transitionSettingsMatch) {
 				changedVariables.transitionRate.add(parseInt(transitionSettingsMatch[1], 10))
 				changedFeedbacks.add('transitionRate')
+				changedFeedbacks.add('transitionWipePattern')
 				continue
 			}
 			if (path.match(/video.mixEffects.(\d+).transitionPreview/)) {
