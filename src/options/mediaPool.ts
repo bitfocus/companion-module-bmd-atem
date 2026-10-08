@@ -60,12 +60,8 @@ export function AtemMediaPlayerSourcePickers(
 	}
 }
 
-export function parseMediaPoolSource(
-	model: ModelSpec,
-	ref: JsonValue | undefined,
-	defaultAsClip: boolean,
-): SourceDefinition | null {
-	ref = stringifyValueAlways(ref).toLowerCase().trim()
+function tryParseMediaInternalName(model: ModelSpec, ref: string, defaultAsClip: boolean) {
+	ref = ref.toLowerCase().trim()
 
 	// sanitise to <ascii><number>
 	ref = ref.replace(/[^a-z0-9]/g, '')
@@ -73,8 +69,7 @@ export function parseMediaPoolSource(
 	const match = ref.match(/^([a-z]*)([0-9]+)$/)
 	if (!match) return null // Unknown format
 
-	let refType = match[1]
-	if (!refType) refType = defaultAsClip ? 'clip' : 'still' // Default to clip or still based on the parameter
+	const refType = match[1] || (defaultAsClip ? 'clip' : 'still')
 
 	const refNumber = parseInt(match[2], 10)
 	if (isNaN(refNumber)) return null
@@ -103,4 +98,48 @@ export function parseMediaPoolSource(
 		default:
 			return null
 	}
+}
+
+function tryParseMediaCustomName(
+	model: ModelSpec,
+	state: AtemState,
+	ref: string,
+	defaultAsClip: boolean,
+): SourceDefinition | null {
+	if (!ref) return null
+
+	if (model.media.clips > 0) {
+		const clip = state.media.clipPool.findIndex((clip) => clip?.isUsed && clip?.name.startsWith(ref))
+		if (clip !== -1) {
+			return {
+				isClip: true,
+				slot: clip,
+				frameIndex: 0,
+			}
+		}
+	}
+
+	const still = state.media.stillPool.findIndex((still) => still?.isUsed && still?.fileName.startsWith(ref))
+	if (!defaultAsClip && still !== -1) {
+		return {
+			isClip: false,
+			slot: still,
+			frameIndex: 0,
+		}
+	}
+
+	return null
+}
+
+export function parseMediaPoolSource(
+	model: ModelSpec,
+	state: AtemState,
+	ref: JsonValue | undefined,
+	defaultAsClip: boolean,
+): SourceDefinition | null {
+	ref = stringifyValueAlways(ref)
+
+	return (
+		tryParseMediaInternalName(model, ref, defaultAsClip) ?? tryParseMediaCustomName(model, state, ref, defaultAsClip)
+	)
 }

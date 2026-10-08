@@ -44,7 +44,7 @@ export function createMediaPlayerFeedbacks(
 			callback: ({ options }): boolean => {
 				const defaultClips = model.media.clips > 0 && options.defaultClip
 
-				const source = parseMediaPoolSource(model, options.source, defaultClips)
+				const source = parseMediaPoolSource(model, state.state, options.source, defaultClips)
 				if (!source) return false
 
 				const player = state.state.media.players[resolveMediaPlayerIndex(model, options.mediaplayer)]
