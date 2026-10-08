@@ -35,6 +35,7 @@ To add a new model to the list:
 ## v4.4.0
 
 - Add actions to start/stop recording and delete a macro, plus a recording-active feedback (#508)
+- Fix advanced chroma saturation range to allow 0-200% (#504)
 
 ## v4.3.1
 

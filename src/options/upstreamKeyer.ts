@@ -437,7 +437,7 @@ export function AtemUSKAdvancedChromaPropertiesPickers(): {
 		flareSuppression: percent('flareSuppression', 'Flare suppression', 0, 100, 0),
 		brightness: percent('brightness', 'Brightness', -100, 100, 0),
 		contrast: percent('contrast', 'Contrast', -100, 100, 0),
-		saturation: percent('saturation', 'Saturation', 0, 100, 0),
+		saturation: percent('saturation', 'Saturation', 0, 200, 100),
 		red: percent('red', 'Red', -100, 100, 0),
 		green: percent('green', 'Green', -100, 100, 0),
 		blue: percent('blue', 'Blue', -100, 100, 0),
