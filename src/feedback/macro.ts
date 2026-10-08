@@ -26,6 +26,10 @@ export type AtemMacroFeedbacks = {
 			loop: boolean
 		}
 	}
+	['macroRecording']: {
+		type: 'boolean'
+		options: Record<string, never>
+	}
 }
 
 export function createMacroFeedbacks(
@@ -36,6 +40,7 @@ export function createMacroFeedbacks(
 		return {
 			['macro']: undefined,
 			['macroloop']: undefined,
+			['macroRecording']: undefined,
 		}
 	}
 	return {
@@ -104,6 +109,18 @@ export function createMacroFeedbacks(
 			},
 			callback: ({ options }): boolean => {
 				return options.loop === !!state.state.macro.macroPlayer.loop
+			},
+		},
+		['macroRecording']: {
+			type: 'boolean',
+			name: 'Macro: Recording active',
+			options: convertOptionsFields({}),
+			defaultStyle: {
+				color: 0xffffff,
+				bgcolor: 0xee0000,
+			},
+			callback: (): boolean => {
+				return state.state.macro.macroRecorder.isRecording
 			},
 		},
 	}

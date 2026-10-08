@@ -24,6 +24,21 @@ export type AtemMacroActions = {
 			loop: TrueFalseToggle
 		}
 	}
+	['macrorecord']: {
+		options: {
+			macro: number
+			name: string
+			description: string
+		}
+	}
+	['macrostoprecord']: {
+		options: Record<string, never>
+	}
+	['macrodelete']: {
+		options: {
+			macro: number
+		}
+	}
 }
 
 export function createMacroActions(
@@ -37,6 +52,9 @@ export function createMacroActions(
 			['macrocontinue']: undefined,
 			['macrostop']: undefined,
 			['macroloop']: undefined,
+			['macrorecord']: undefined,
+			['macrostoprecord']: undefined,
+			['macrodelete']: undefined,
 		}
 	}
 	return {
@@ -98,6 +116,45 @@ export function createMacroActions(
 				const newState = resolveTrueFalseToggle(options.loop, state.state.macro.macroPlayer.loop)
 
 				await atem?.macroSetLoop(newState)
+			},
+		},
+		['macrorecord']: {
+			name: 'Macro: Start recording',
+			options: convertOptionsFields({
+				macro: AtemMacroPicker(model, state.state, 'macro'),
+				name: {
+					id: 'name',
+					type: 'textinput',
+					label: 'Name',
+					default: '',
+					useVariables: true,
+				},
+				description: {
+					id: 'description',
+					type: 'textinput',
+					label: 'Description',
+					default: '',
+					useVariables: true,
+				},
+			}),
+			callback: async ({ options }) => {
+				await atem?.macroStartRecord(options.macro - 1, options.name, options.description)
+			},
+		},
+		['macrostoprecord']: {
+			name: 'Macro: Stop recording',
+			options: convertOptionsFields({}),
+			callback: async () => {
+				await atem?.macroStopRecord()
+			},
+		},
+		['macrodelete']: {
+			name: 'Macro: Delete',
+			options: convertOptionsFields({
+				macro: AtemMacroPicker(model, state.state, 'macro'),
+			}),
+			callback: async ({ options }) => {
+				await atem?.macroDelete(options.macro - 1)
 			},
 		},
 	}
