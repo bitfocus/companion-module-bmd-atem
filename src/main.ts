@@ -432,6 +432,9 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 				changedVariables.mvWindow.add([mvIndex + 1, windowIndex + 1])
 
 				changedFeedbacks.add('mv_source')
+				changedFeedbacks.add('multiviewerWindowLabel')
+				changedFeedbacks.add('multiviewerWindowBorder')
+				changedFeedbacks.add('multiviewerWindowVu')
 				continue
 			}
 

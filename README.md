@@ -38,6 +38,7 @@ To add a new model to the list:
 - Fix advanced chroma saturation range to allow 0-200% (#504)
 - Add action to enable/disable a multiviewer window VU meter
 - Fix wipe pattern feedback not updating when the pattern changes (#502)
+- Fix multiviewer window label/border feedbacks not updating when changed (#505)
 
 ## v4.3.1
 
