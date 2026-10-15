@@ -4,6 +4,7 @@ import { type AtemConfig, GetConfigFields } from './config.js'
 import { GetFeedbacksList, type FeedbackTypes } from './feedback/index.js'
 import { GetAutoDetectModel, GetModelSpec, GetParsedModelSpec, type ModelSpec } from './models/index.js'
 import { GetPresetsList } from './presets/index.js'
+import { GetCompositeElementsList } from './compositeElements/index.js'
 import { type StateWrapper } from './state.js'
 import { MediaPoolPreviewCache } from './mediaPoolPreviews.js'
 import { AtemAudioLevels } from './audioLevels.js'
@@ -229,6 +230,7 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 		this.setActionDefinitions(
 			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.wrappedState),
 		)
+		this.setCompositeElementDefinitions(GetCompositeElementsList())
 		this.setPresetDefinitions(...GetPresetsList(this, this.model, this.wrappedState.state))
 
 		this.checkAllFeedbacks()

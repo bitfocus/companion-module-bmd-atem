@@ -1,6 +1,5 @@
 import {
 	type CompanionPresetGroup,
-	type SomeButtonGraphicsElement,
 	ButtonGraphicsDecorationType,
 	ButtonGraphicsShowStatusIcons,
 } from '@companion-module/base'
@@ -10,11 +9,13 @@ import type { PresetsBuilderContext } from './context.js'
 import type { AtemSchema } from '../schema.js'
 
 /**
- * Stereo level meters for a fairlight audio input, drawn with gauge elements (layered preset).
+ * Stereo level meters for a fairlight audio input, drawn with the `audio_meter_stereo` composite element.
  *
  * Each bar's value is driven by a feedback-typed local variable bound to the `fairlightAudioInputLevel`
- * value feedback. Binding the feedback is also what subscribes the switcher to start sending levels.
- * The label reads the live `audio_input_<id>_name` variable, so it follows input renames.
+ * value feedback, passed into the composite's level options. Binding the feedback is also what subscribes
+ * the switcher to start sending levels. The label reads the live `audio_input_<id>_name` variable, so it
+ * follows input renames. Building the preset from the shared composite means custom buttons that use the
+ * same element look identical to the one we ship.
  */
 export function createAudioMeterPresets(context: PresetsBuilderContext, state: AtemState): void {
 	// Only fairlight audio reports levels
@@ -43,29 +44,6 @@ export function createAudioMeterPresets(context: PresetsBuilderContext, state: A
 		})),
 	})
 
-	// A vertical bar, positioned in a 0-100 coordinate space. The dimmed track shows the meter extent
-	// when quiet, and the zoned stops give a classic green/amber/red look rather than a gradient wash.
-	const meterBar = (id: string, x: number, levelVariable: string): SomeButtonGraphicsElement => ({
-		type: 'gauge',
-		id,
-		x,
-		y: 6,
-		width: 20,
-		height: 70,
-		orientation: 'vertical',
-		min: -60,
-		max: 0,
-		value: { isExpression: true, value: `$(local:${levelVariable})` },
-		multiColour: true,
-		trackStyle: 'dimmed',
-		roundedEnds: false,
-		stops: [
-			{ value: -60, color: 0x00c800, gradient: false },
-			{ value: -20, color: 0xe6c800, gradient: false },
-			{ value: -10, color: 0xdc0000, gradient: false },
-		],
-	})
-
 	context.definitions[`audio_input_meter`] = {
 		name: `Audio input level meter`,
 		type: 'layered',
@@ -75,9 +53,21 @@ export function createAudioMeterPresets(context: PresetsBuilderContext, state: A
 			showStatusIcons: ButtonGraphicsShowStatusIcons.None,
 		},
 		elements: [
-			// Two bars centred as a pair (x 27..73, midpoint 50) with a 6-unit gap between them
-			meterBar('meterLeft', 27, 'levelLeft'),
-			meterBar('meterRight', 53, 'levelRight'),
+			// The shared stereo meter composite, wiring each bar to its level local variable. It carries
+			// no padding, so the preset positions it in the upper region and leaves room for the label.
+			{
+				type: 'composite',
+				id: 'meter',
+				elementId: 'audio_meter_stereo',
+				x: 27,
+				y: 6,
+				width: 46,
+				height: 70,
+				options: {
+					levelLeft: { isExpression: true, value: '$(local:levelLeft)' },
+					levelRight: { isExpression: true, value: '$(local:levelRight)' },
+				},
+			},
 			{
 				type: 'text',
 				id: 'label',
@@ -85,8 +75,8 @@ export function createAudioMeterPresets(context: PresetsBuilderContext, state: A
 				y: 78,
 				width: 100,
 				height: 20,
-				// Variable-string (not expression) mode, so the nested $(local:input) resolves first —
-				// the same pattern the multiviewer window-source preset uses for live source names
+				// Variable-string (not expression) mode, so the nested $(local:input) resolves first and
+				// the label follows input renames
 				text: '$(atem:audio_input_$(local:input)_name)',
 				halign: 'center',
 				valign: 'center',
