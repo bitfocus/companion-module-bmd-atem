@@ -9,6 +9,7 @@ import { type StateWrapper } from './state.js'
 import { MediaPoolPreviewCache } from './mediaPoolPreviews.js'
 import { AtemAudioLevels } from './audioLevels.js'
 import { buildStateJson } from './variables/stateJson.js'
+import { installCcuPadding } from './ccuPadding.js'
 import type { CompanionHTTPRequest, CompanionHTTPResponse } from '@companion-module/base'
 import { LEVELS_VARIABLE_SUBSCRIPTION } from './actions/fairlightDynamics.js'
 import { MODEL_AUTO_DETECT } from './models/types.js'
@@ -732,6 +733,7 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 
 	private setupAtemConnection(): void {
 		this.atem = new Atem()
+		installCcuPadding(this.atem, () => (this.config.enableCameraControl && this.config.ccuPadding) || 'off')
 
 		this.atem.on('connected', () => {
 			if (this.atem?.state) {
