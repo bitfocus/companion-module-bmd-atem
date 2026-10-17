@@ -9,6 +9,7 @@ import { type StateWrapper } from './state.js'
 import { MediaPoolPreviewCache } from './mediaPoolPreviews.js'
 import { AtemAudioLevels } from './audioLevels.js'
 import { buildStateJson } from './variables/stateJson.js'
+import type { CompanionHTTPRequest, CompanionHTTPResponse } from '@companion-module/base'
 import { LEVELS_VARIABLE_SUBSCRIPTION } from './actions/fairlightDynamics.js'
 import { MODEL_AUTO_DETECT } from './models/types.js'
 import {
@@ -233,9 +234,15 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 	private updateCompanionBits(): void {
 		InitVariables(this, this.model, this.wrappedState)
 		this.setFeedbackDefinitions(GetFeedbacksList(this.config, this.model, this.wrappedState))
-		this.setActionDefinitions(
-			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.wrappedState),
+		this.#actionDefinitions = GetActionsList(
+			this,
+			this.atem,
+			this.model,
+			this.commandBatching,
+			this.atemTransitions,
+			this.wrappedState,
 		)
+		this.setActionDefinitions(this.#actionDefinitions as Parameters<typeof this.setActionDefinitions>[0])
 		this.setCompositeElementDefinitions(GetCompositeElementsList())
 		this.setPresetDefinitions(...GetPresetsList(this, this.model, this.wrappedState.state))
 
@@ -603,6 +610,73 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 
 			const changedFeedbackIds = this.invalidateCachedTallyState()
 			if (changedFeedbackIds.size > 0) this.checkFeedbacksById(...changedFeedbackIds)
+		}
+	}
+
+	#actionDefinitions: Record<string, any> = {}
+
+	/**
+	 * HTTP API for controllers (at /instance/<connection label>/...):
+	 *   GET  state            the switcher state as JSON (as the state_json variable)
+	 *   GET  levels           Fairlight levels JSON (as audio_levels_json; POST levels {"enabled": bool} to start / stop)
+	 *   GET  actions          the action ids with their option ids
+	 *   POST action           {"actionId": "...", "options": {...}} runs a module action with these option values
+	 */
+	async handleHttpRequest(request: CompanionHTTPRequest): Promise<CompanionHTTPResponse> {
+		const json = (status: number, body: unknown): CompanionHTTPResponse => ({
+			status,
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(body),
+		})
+		const path = request.path.replace(/^\/+/, '')
+		try {
+			if (request.method === 'GET' && path === 'state') {
+				return {
+					status: 200,
+					headers: { 'Content-Type': 'application/json' },
+					body: buildStateJson(this.wrappedState.state),
+				}
+			}
+			if (path === 'levels') {
+				if (request.method === 'POST') {
+					const on = !!JSON.parse(request.body || '{}').enabled
+					if (on) this.wrappedState.audioLevels.subscribe(LEVELS_VARIABLE_SUBSCRIPTION)
+					else this.wrappedState.audioLevels.unsubscribe(LEVELS_VARIABLE_SUBSCRIPTION)
+					return json(200, { enabled: on })
+				}
+				return {
+					status: 200,
+					headers: { 'Content-Type': 'application/json' },
+					body: this.wrappedState.audioLevels.toJson(),
+				}
+			}
+			if (request.method === 'GET' && path === 'actions') {
+				return json(
+					200,
+					Object.fromEntries(
+						Object.entries(this.#actionDefinitions)
+							.filter(([, a]) => !!a)
+							.map(([id, a]) => [id, { name: a.name, options: (a.options ?? []).map((o: { id: string }) => o.id) }]),
+					),
+				)
+			}
+			if (request.method === 'POST' && path === 'action') {
+				const req = JSON.parse(request.body || '{}') as { actionId?: string; options?: Record<string, unknown> }
+				const def = req.actionId ? this.#actionDefinitions[req.actionId] : undefined
+				if (!def) return json(404, { error: `No action ${req.actionId}` })
+				// defaults for the options not given
+				const options: Record<string, unknown> = {}
+				for (const o of def.options ?? []) if (o.default !== undefined) options[o.id] = o.default
+				Object.assign(options, req.options ?? {})
+				await def.callback(
+					{ id: 'http', actionId: req.actionId, controlId: 'http', options, surfaceId: undefined },
+					{ parseVariablesInString: async (s: string) => s },
+				)
+				return json(200, { ok: true })
+			}
+			return json(404, { error: 'Not found' })
+		} catch (e) {
+			return json(500, { error: `${e}` })
 		}
 	}
 
