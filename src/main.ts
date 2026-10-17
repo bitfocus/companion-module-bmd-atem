@@ -8,6 +8,8 @@ import { GetCompositeElementsList } from './compositeElements/index.js'
 import { type StateWrapper } from './state.js'
 import { MediaPoolPreviewCache } from './mediaPoolPreviews.js'
 import { AtemAudioLevels } from './audioLevels.js'
+import { buildStateJson } from './variables/stateJson.js'
+import { LEVELS_VARIABLE_SUBSCRIPTION } from './actions/fairlightDynamics.js'
 import { MODEL_AUTO_DETECT } from './models/types.js'
 import {
 	InitVariables,
@@ -69,7 +71,11 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 			atemCameraState: new AtemCameraControlStateBuilder(0), // TODO - when should this be emptied?
 
 			audioLevels: new AtemAudioLevels(
-				() => this.checkFeedbacks('fairlightAudioMasterLevel', 'fairlightAudioInputLevel'),
+				() => {
+					this.checkFeedbacks('fairlightAudioMasterLevel', 'fairlightAudioInputLevel')
+					if (this.wrappedState.audioLevels.isSubscribed(LEVELS_VARIABLE_SUBSCRIPTION))
+						this.setVariableValues({ audio_levels_json: this.wrappedState.audioLevels.toJson() })
+				},
 				(enabled) => {
 					if (!this.atem) return
 
@@ -588,6 +594,7 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 			this.updateCompanionBits()
 		} else {
 			updateChangedVariables(this, this.wrappedState.state, changedVariables)
+			this.scheduleStateJson()
 			if (changedFeedbacks.size > 0) {
 				// Weird split because of types
 				const feedbackTypes = Array.from(changedFeedbacks)
@@ -597,6 +604,16 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 			const changedFeedbackIds = this.invalidateCachedTallyState()
 			if (changedFeedbackIds.size > 0) this.checkFeedbacksById(...changedFeedbackIds)
 		}
+	}
+
+	#stateJsonTimer: NodeJS.Timeout | undefined
+	/** state_json, at most 10 times a second */
+	private scheduleStateJson(): void {
+		if (this.#stateJsonTimer) return
+		this.#stateJsonTimer = setTimeout(() => {
+			this.#stateJsonTimer = undefined
+			this.setVariableValues({ state_json: buildStateJson(this.wrappedState.state) })
+		}, 100)
 	}
 
 	private invalidateCachedTallyState() {

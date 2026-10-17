@@ -33,6 +33,7 @@ import {
 } from './mixeffect/upstreamKeyerLumaChroma.js'
 import { createClassicAudioActions, type AtemClassicAudioActions } from './classicAudio.js'
 import { createFairlightAudioActions, type AtemFairlightAudioActions } from './fairlightAudio.js'
+import { createFairlightDynamicsActions, type AtemFairlightDynamicsActions } from './fairlightDynamics.js'
 import type { StateWrapper } from '../state.js'
 import { createCameraControlLensActions, type AtemCameraControlLensActions } from './cameraControl/lens.js'
 import { createCameraControlDisplayActions, type AtemCameraControlDisplayActions } from './cameraControl/display.js'
@@ -55,6 +56,7 @@ export type ActionTypes = AtemProgramPreviewActions &
 	AtemRecordingActions &
 	AtemClassicAudioActions &
 	AtemFairlightAudioActions &
+	AtemFairlightDynamicsActions &
 	AtemAuxOutputActions &
 	AtemMultiviewerActions &
 	AtemMediaPlayerActions &
@@ -92,6 +94,7 @@ export function GetActionsList(
 
 		...createClassicAudioActions(atem, model, transitions, state),
 		...createFairlightAudioActions(atem, model, transitions, state),
+		...createFairlightDynamicsActions(atem, state),
 
 		...createAuxOutputActions(atem, model, state),
 		...createMultiviewerActions(atem, model, state),

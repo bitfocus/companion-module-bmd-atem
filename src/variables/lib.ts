@@ -519,6 +519,12 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 		device_ip: {
 			name: 'IP address of the ATEM',
 		},
+		state_json: {
+			name: 'The switcher state as JSON (for controllers reading the HTTP API)',
+		},
+		audio_levels_json: {
+			name: 'Fairlight audio levels as JSON, while enabled by the "Publish levels" action',
+		},
 	}
 
 	updateDeviceIpVariable(instance, values)

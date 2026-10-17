@@ -45,6 +45,40 @@ export class AtemAudioLevels {
 		if (this.isEnabled) this.#setSendLevels(true)
 	}
 
+	isSubscribed(feedbackId: string): boolean {
+		return this.#subscriptions.has(feedbackId)
+	}
+
+	/**
+	 * All cached levels as JSON (hundredths of a dB): {"master": [...], "input.source": [...]}, each
+	 * [inputLeft, inputRight, compressorGR, limiterGR, outputLeft, outputRight] (inputs also
+	 * [..., expanderGR] at the end)
+	 */
+	toJson(): string {
+		const out: Record<string, number[]> = {}
+		const m = this.#master
+		if (m)
+			out.master = [
+				m.inputLeftLevel,
+				m.inputRightLevel,
+				m.compressorGainReduction,
+				m.limiterGainReduction,
+				m.leftLevel,
+				m.rightLevel,
+			]
+		for (const [key, l] of this.#sources)
+			out[key] = [
+				l.inputLeftLevel,
+				l.inputRightLevel,
+				l.compressorGainReduction,
+				l.limiterGainReduction,
+				l.leftLevel,
+				l.rightLevel,
+				l.expanderGainReduction,
+			]
+		return JSON.stringify(out)
+	}
+
 	subscribe(feedbackId: string): void {
 		const wasEmpty = this.#subscriptions.size === 0
 		this.#subscriptions.add(feedbackId)
