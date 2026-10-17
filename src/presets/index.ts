@@ -17,6 +17,7 @@ import { createTransitionPresets } from './mixeffect/transition.js'
 import { createAuxOutputPresets } from './aux-outputs.js'
 import { createUpstreamKeyerPresets } from './mixeffect/upstreamKeyer.js'
 import { createDownstreamKeyerPresets } from './downstreamKeyer.js'
+import { createCcuPresets } from './ccu.js'
 import type { AtemSchema } from '../schema.js'
 import type { PresetsBuilderContext } from './context.js'
 
@@ -52,6 +53,7 @@ export function GetPresetsList(
 	createStreamingPresets(context)
 	createRecordingPresets(context)
 	createAudioMeterPresets(context, state)
+	createCcuPresets(context, state, !!instance.config.enableCameraControl)
 
 	return [context.sections, context.definitions]
 }

@@ -2,6 +2,7 @@ export type VariablesSchema = {
 	device_ip: string
 	state_json: string
 	audio_levels_json: string
+	ccu_camera: number
 
 	[key: `pgm${number}_input`]: string
 	[key: `pgm${number}_input_id`]: number

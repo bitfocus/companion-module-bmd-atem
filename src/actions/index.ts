@@ -110,7 +110,7 @@ export function GetActionsList(
 		...createCameraControlMediaActions(instance.config, model, atem, state),
 		...createCameraControlVideoActions(instance.config, atem, state),
 		...createCameraControlColorActions(instance.config, atem, state),
-		...createCameraControlAllActions(instance.config, atem),
+		...createCameraControlAllActions(instance, atem, state),
 
 		...createTimecodeActions(instance, atem, state),
 	}

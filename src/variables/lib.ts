@@ -525,7 +525,11 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 		audio_levels_json: {
 			name: 'Fairlight audio levels as JSON, while enabled by the "Publish levels" action',
 		},
+		ccu_camera: {
+			name: 'The camera CCU actions act on when their camera is 0 (CCU: Select camera)',
+		},
 	}
+	values['ccu_camera'] = state.ccuSelected.camera
 
 	updateDeviceIpVariable(instance, values)
 

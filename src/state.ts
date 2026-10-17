@@ -22,6 +22,8 @@ export interface StateWrapper {
 
 	readonly atemCameraState: AtemCameraControlStateBuilder
 	/** every camera control value the cameras reported: camera -> "category.parameter" -> values */
+	/** the camera CCU actions with camera 0 act on (CCU: Select camera) */
+	readonly ccuSelected: { camera: number }
 	readonly ccu: Map<number, Record<string, Array<number | boolean | string>>>
 
 	readonly mediaPoolCache: MediaPoolPreviewCache

@@ -72,6 +72,7 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 			tallyCache: new Map(),
 			atemCameraState: new AtemCameraControlStateBuilder(0), // TODO - when should this be emptied?
 			ccu: new Map(),
+			ccuSelected: { camera: 1 },
 
 			audioLevels: new AtemAudioLevels(
 				() => {

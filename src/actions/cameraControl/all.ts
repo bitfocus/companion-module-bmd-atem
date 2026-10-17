@@ -1,6 +1,7 @@
 import { Commands, type Atem } from 'atem-connection'
 import type { CompanionActionDefinitions, SomeCompanionActionInputField } from '@companion-module/base'
-import type { AtemConfig } from '../../config.js'
+import type { StateWrapper } from '../../state.js'
+import type { InstanceBaseExt } from '../../util.js'
 import { CCU_PARAMS, type CcuField, type CcuParam, type CcuType } from './protocol.js'
 
 /*
@@ -31,9 +32,9 @@ function cameraField(): SomeCompanionActionInputField {
 	return {
 		type: 'number',
 		id: 'cameraId',
-		label: 'Camera (ATEM input, 255 = all)',
+		label: 'Camera (ATEM input; 0 = the selected camera, 255 = all)',
 		default: 1,
-		min: 1,
+		min: 0,
 		max: 255,
 		asInteger: true,
 		clampValues: true,
@@ -122,14 +123,65 @@ export function ccuCommand(
 }
 
 export function createCameraControlAllActions(
-	config: AtemConfig,
+	instance: InstanceBaseExt,
 	atem: Atem | undefined,
+	state: StateWrapper,
 ): CompanionActionDefinitions<Record<string, { options: Record<string, any> }>> {
 	const out: CompanionActionDefinitions<Record<string, { options: Record<string, any> }>> = {}
-	if (!config.enableCameraControl) {
+	if (!instance.config.enableCameraControl) {
 		for (const p of CCU_PARAMS) out[p.id] = undefined
 		out['ccuRaw'] = undefined
+		out['ccuSelectCamera'] = undefined
 		return out
+	}
+	const camera = (v: unknown): number => {
+		const n = Math.round(Number(v))
+		return n >= 1 && n <= 255 ? n : state.ccuSelected.camera
+	}
+	out['ccuSelectCamera'] = {
+		name: 'CCU: Select camera',
+		description: 'The camera the CCU actions act on when their camera is 0',
+		options: [
+			{
+				type: 'dropdown',
+				id: 'mode',
+				label: 'Select',
+				default: 'set',
+				choices: [
+					{ id: 'set', label: 'Camera' },
+					{ id: 'next', label: 'Next' },
+					{ id: 'previous', label: 'Previous' },
+				],
+				disableAutoExpression: true,
+			},
+			{
+				...cameraField(),
+				label: 'Camera (ATEM input)',
+				min: 1,
+				max: 254,
+				isVisibleExpression: `$(options:mode) == 'set'`,
+			},
+			{
+				type: 'number',
+				id: 'count',
+				label: 'Cameras (wraps after)',
+				default: 8,
+				min: 1,
+				max: 254,
+				asInteger: true,
+				isVisibleExpression: `$(options:mode) != 'set'`,
+			},
+		] as any,
+		callback: async ({ options: o }) => {
+			const count = Math.max(1, Math.round(Number(o.count)) || 8)
+			let cam = state.ccuSelected.camera
+			if (o.mode === 'next') cam = (cam % count) + 1
+			else if (o.mode === 'previous') cam = ((cam + count - 2) % count) + 1
+			else cam = Math.min(254, Math.max(1, Math.round(Number(o.cameraId)) || 1))
+			state.ccuSelected.camera = cam
+			instance.setVariableValues({ ccu_camera: cam })
+			instance.checkFeedbacks('ccuSelectedCamera')
+		},
 	}
 	const send = async (cmd: Commands.CameraControlCommand) => {
 		await atem?.sendCommand(cmd)
@@ -158,7 +210,7 @@ export function createCameraControlAllActions(
 				const relative = !!p.offset && o.mode === 'offset'
 				const values =
 					p.type === 'void' ? [] : p.type === 'string' ? [String(o.value ?? '')] : fieldValues(p, o, relative)
-				await send(ccuCommand(Math.round(Number(o.cameraId)) || 1, p.category, p.parameter, p.type, values, relative))
+				await send(ccuCommand(camera(o.cameraId), p.category, p.parameter, p.type, values, relative))
 			},
 		}
 	}
@@ -212,7 +264,7 @@ export function createCameraControlAllActions(
 				type === 'i64' ? values.map((v) => BigInt(v)) : values.map((v) => (type === 'string' ? v : Number(v)))
 			await send(
 				ccuCommand(
-					Math.round(Number(o.cameraId)) || 1,
+					camera(o.cameraId),
 					Math.round(Number(o.category)) & 255,
 					Math.round(Number(o.parameter)) & 255,
 					type,
