@@ -11,7 +11,10 @@ const bits = (arr: readonly number[] | undefined): number => (arr ?? []).reduce(
 const db100 = (db: number | undefined): number =>
 	db === undefined || !Number.isFinite(db) ? -10000 : Math.round(db * 100)
 
-export function buildStateJson(state: AtemState): string {
+export function buildStateJson(
+	state: AtemState,
+	ccu?: ReadonlyMap<number, Record<string, Array<number | boolean | string>>>,
+): string {
 	const v = state.video
 	const out: Record<string, unknown> = {
 		v: 1,
@@ -141,5 +144,7 @@ export function buildStateJson(state: AtemState): string {
 			),
 		}
 	}
+	// ccu: camera: { "category.parameter": [values] }, every value the cameras reported (fixed16 as decimals)
+	if (ccu && ccu.size) out.ccu = Object.fromEntries(ccu)
 	return JSON.stringify(out)
 }

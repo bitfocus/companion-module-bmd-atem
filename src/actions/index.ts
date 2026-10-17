@@ -41,6 +41,7 @@ import { createCameraControlVideoActions, type AtemCameraControlVideoActions } f
 import { createCameraControlColorActions, type AtemCameraControlColorActions } from './cameraControl/color.js'
 import { createTimecodeActions, type AtemTimecodeActions } from './timecode.js'
 import { createCameraControlMediaActions } from './cameraControl/media.js'
+import { createCameraControlAllActions } from './cameraControl/all.js'
 
 export type ActionTypes = AtemProgramPreviewActions &
 	AtemTransitionActions &
@@ -109,6 +110,7 @@ export function GetActionsList(
 		...createCameraControlMediaActions(instance.config, model, atem, state),
 		...createCameraControlVideoActions(instance.config, atem, state),
 		...createCameraControlColorActions(instance.config, atem, state),
+		...createCameraControlAllActions(instance.config, atem),
 
 		...createTimecodeActions(instance, atem, state),
 	}

@@ -21,6 +21,8 @@ export interface StateWrapper {
 	tallyCache: TallyCache
 
 	readonly atemCameraState: AtemCameraControlStateBuilder
+	/** every camera control value the cameras reported: camera -> "category.parameter" -> values */
+	readonly ccu: Map<number, Record<string, Array<number | boolean | string>>>
 
 	readonly mediaPoolCache: MediaPoolPreviewCache
 

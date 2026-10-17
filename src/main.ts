@@ -70,6 +70,7 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 			tally: {},
 			tallyCache: new Map(),
 			atemCameraState: new AtemCameraControlStateBuilder(0), // TODO - when should this be emptied?
+			ccu: new Map(),
 
 			audioLevels: new AtemAudioLevels(
 				() => {
@@ -160,6 +161,7 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 		// Force clear the cached state
 		this.wrappedState.state = AtemStateUtil.Create()
 		this.wrappedState.atemCameraState.reset(0)
+		this.wrappedState.ccu.clear()
 
 		this.model = GetModelSpec(this.getBestModelId() || MODEL_AUTO_DETECT) || GetAutoDetectModel()
 		this.log('debug', 'ATEM changed model: ' + this.model.id)
@@ -263,6 +265,7 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 				this.checkFeedbacks('program_tally', 'preview_tally')
 			} else if (this.config.enableCameraControl && command instanceof Commands.CameraControlUpdateCommand) {
 				cameraCommands.push(command)
+				this.recordCcu(command)
 			} else if (this.config.pollTimecode && command instanceof Commands.TimeCommand) {
 				this.timecodeSeconds =
 					command.properties.hour * 3600 + command.properties.minute * 60 + command.properties.second
@@ -634,7 +637,7 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 				return {
 					status: 200,
 					headers: { 'Content-Type': 'application/json' },
-					body: buildStateJson(this.wrappedState.state),
+					body: buildStateJson(this.wrappedState.state, this.wrappedState.ccu),
 				}
 			}
 			if (path === 'levels') {
@@ -680,13 +683,30 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 		}
 	}
 
+	/** keeps every reported camera control value for state_json (the camera-control state builder knows only some) */
+	private recordCcu(command: Commands.CameraControlUpdateCommand): void {
+		const p = command.properties
+		let values: Array<number | boolean | string>
+		if (p.type === Commands.CameraControlDataType.BOOL) values = p.boolData
+		else if (p.type === Commands.CameraControlDataType.STRING) values = [p.stringData]
+		else if (p.type === Commands.CameraControlDataType.SINT64) values = p.bigintData.map((v) => Number(v))
+		else values = p.numberData
+		let cam = this.wrappedState.ccu.get(command.source)
+		if (!cam) {
+			cam = {}
+			this.wrappedState.ccu.set(command.source, cam)
+		}
+		cam[`${command.category}.${command.parameter}`] = values
+		this.scheduleStateJson()
+	}
+
 	#stateJsonTimer: NodeJS.Timeout | undefined
 	/** state_json, at most 10 times a second */
 	private scheduleStateJson(): void {
 		if (this.#stateJsonTimer) return
 		this.#stateJsonTimer = setTimeout(() => {
 			this.#stateJsonTimer = undefined
-			this.setVariableValues({ state_json: buildStateJson(this.wrappedState.state) })
+			this.setVariableValues({ state_json: buildStateJson(this.wrappedState.state, this.wrappedState.ccu) })
 		}, 100)
 	}
 
