@@ -230,6 +230,38 @@ export function createCcuPresets(context: PresetsBuilderContext, state: AtemStat
 		{ id: 'ccu_colour_reset', name: 'Colour reset', text: 'Colour\nreset', bg: 0x600000, down: [ccu('ccuColorReset')] },
 	])
 
+	// camera audio
+	const aud = 0x1a4a4a
+	add('ccu_audio', 'Audio', [
+		...adjust('ccu_mic', 'Mic', 'ccuAudioMicLevel', 'value', 0.05, 0.02, aud),
+		...adjust('ccu_in1', 'In 1', 'ccuAudioInputLevels', 'ch1', 0.05, 0.02, aud),
+		...adjust('ccu_in2', 'In 2', 'ccuAudioInputLevels', 'ch2', 0.05, 0.02, aud),
+		...adjust('ccu_phones', 'Phones', 'ccuAudioHeadphoneLevel', 'value', 0.05, 0.02, aud),
+		...adjust('ccu_phonesmix', 'Phones mix', 'ccuAudioHeadphoneMix', 'value', 0.05, 0.02, aud),
+		...adjust('ccu_speaker', 'Speaker', 'ccuAudioSpeakerLevel', 'value', 0.05, 0.02, aud),
+		...['Internal mic', 'Line', 'Low mic', 'High mic'].map((label, value) => ({
+			id: `ccu_audio_input_${value}`,
+			name: `Audio input: ${label}`,
+			text: `Input\n${label}`,
+			bg: aud,
+			down: [ccu('ccuAudioInputType', { value })],
+		})),
+		{
+			id: 'ccu_phantom_on',
+			name: 'Phantom power on',
+			text: '48V\non',
+			bg: 0x603000,
+			down: [ccu('ccuAudioPhantomPower', { value: true })],
+		},
+		{
+			id: 'ccu_phantom_off',
+			name: 'Phantom power off',
+			text: '48V\noff',
+			bg: aud,
+			down: [ccu('ccuAudioPhantomPower', { value: false })],
+		},
+	])
+
 	// display, tally
 	const disp = 0x2f4f4f
 	add('ccu_display', 'Display and tally', [

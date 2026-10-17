@@ -115,4 +115,79 @@ export function createAudioMeterPresets(context: PresetsBuilderContext, state: A
 			},
 		],
 	}
+
+	// One button metering a range of inputs: up to MULTI_MAX stereo meters side by side, as many as
+	// $(local:count) starting at input $(local:first), each scaled to its share of the button width
+	const MULTI_MAX = 16
+	groups.push({
+		id: 'audio_inputs_meter',
+		name: `Meters for a range of inputs`,
+		description: "Set the first input and how many inputs in the button's local variables (first, count)",
+		type: 'template',
+		presetId: 'audio_inputs_meter',
+		templateVariableName: 'count',
+		templateValues: [4, 6, 8, 12, 16].map((count) => ({ name: `Inputs 1 - ${count}`, value: count })),
+		commonVariableValues: { first: 1 },
+	})
+	const slots = Array.from({ length: MULTI_MAX }, (_, i) => i)
+	const shown = (i: number) => ({ isExpression: true, value: `${i} < $(local:count)` }) as const
+	const left = (i: number) => ({ isExpression: true, value: `${i} * 100 / $(local:count)` }) as const
+	const width = (share: number) => ({ isExpression: true, value: `100 / $(local:count) * ${share}` }) as const
+	context.definitions['audio_inputs_meter'] = {
+		name: `Audio level meters for a range of inputs`,
+		type: 'layered',
+		canvas: {
+			decoration: ButtonGraphicsDecorationType.None,
+			showStatusIcons: ButtonGraphicsShowStatusIcons.None,
+		},
+		elements: slots.flatMap((i) => [
+			{
+				type: 'composite' as const,
+				id: `meter${i}`,
+				elementId: 'audio_meter_stereo' as const,
+				enabled: shown(i),
+				x: left(i),
+				y: 4,
+				width: width(0.8),
+				height: 78,
+				options: {
+					levelLeft: { isExpression: true as const, value: `$(local:levelLeft${i})` },
+					levelRight: { isExpression: true as const, value: `$(local:levelRight${i})` },
+				},
+			},
+			{
+				type: 'text' as const,
+				id: `label${i}`,
+				enabled: shown(i),
+				x: left(i),
+				y: 83,
+				width: width(1),
+				height: 15,
+				text: { isExpression: true as const, value: `$(local:first) + ${i}` },
+				halign: 'center' as const,
+				valign: 'center' as const,
+				fontsizeAllowShrink: true,
+				color: 0xffffff,
+				outlineColor: 0x000000,
+			},
+		]),
+		feedbacks: [],
+		steps: [{ down: [], up: [] }],
+		localVariables: [
+			...slots.flatMap((i) =>
+				(['Left', 'Right'] as const).map((side) => ({
+					variableType: 'feedback' as const,
+					variableName: `level${side}${i}`,
+					feedbackId: 'fairlightAudioInputLevel' as const,
+					options: {
+						input: { isExpression: true as const, value: `$(local:first) + ${i}` },
+						source: '-65280',
+						meter: side === 'Left' ? 'inputLeftLevel' : 'inputRightLevel',
+					},
+				})),
+			),
+			{ variableType: 'simple' as const, variableName: 'first', startupValue: 1 },
+			{ variableType: 'simple' as const, variableName: 'count', startupValue: 8 },
+		],
+	}
 }
