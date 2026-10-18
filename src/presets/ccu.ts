@@ -90,7 +90,7 @@ export function createCcuPresets(context: PresetsBuilderContext, state: AtemStat
 	context.definitions['ccu_select'] = {
 		name: 'Select camera',
 		type: 'simple',
-		style: { text: 'CAM\n$(local:cam)', size: '18', color: 0xffffff, bgcolor: 0x000000 },
+		style: { text: '$(atem:short_$(local:cam))', size: '18', color: 0xffffff, bgcolor: 0x000000 },
 		feedbacks: [
 			{
 				feedbackId: 'ccuSelectedCamera',
@@ -117,7 +117,10 @@ export function createCcuPresets(context: PresetsBuilderContext, state: AtemStat
 		type: 'template',
 		presetId: 'ccu_select',
 		templateVariableName: 'cam',
-		templateValues: Array.from({ length: cameras }, (_, i) => ({ name: `Camera ${i + 1}`, value: i + 1 })),
+		templateValues: Array.from({ length: cameras }, (_, i) => ({
+			name: state.inputs[i + 1]?.shortName || `Camera ${i + 1}`,
+			value: i + 1,
+		})),
 	})
 	const sel = (mode: string) => ({ actionId: 'ccuSelectCamera', options: { mode, cameraId: 1, count: cameras } })
 	add('ccu_cameras_step', 'Next / previous camera', [

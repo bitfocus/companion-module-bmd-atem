@@ -1051,6 +1051,10 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 			name: `Name of audio input ${audioInput.id}`,
 		}
 		values[`audio_input_${audioInput.id}_name`] = audioInput.longName
+		variables[`audio_input_${audioInput.id}_short`] = {
+			name: `Short name of audio input ${audioInput.id}`,
+		}
+		values[`audio_input_${audioInput.id}_short`] = audioInput.shortName
 	}
 
 	if (model.fairlightAudio?.audioRouting) {

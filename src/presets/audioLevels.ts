@@ -77,7 +77,7 @@ export function createAudioMeterPresets(context: PresetsBuilderContext, state: A
 				height: 20,
 				// Variable-string (not expression) mode, so the nested $(local:input) resolves first and
 				// the label follows input renames
-				text: '$(atem:audio_input_$(local:input)_name)',
+				text: '$(atem:audio_input_$(local:input)_short)',
 				halign: 'center',
 				valign: 'center',
 				fontsizeAllowShrink: true,
@@ -163,7 +163,7 @@ export function createAudioMeterPresets(context: PresetsBuilderContext, state: A
 				y: 83,
 				width: width(1),
 				height: 15,
-				text: { isExpression: true as const, value: `$(local:first) + ${i}` },
+				text: `$(local:label${i})`,
 				halign: 'center' as const,
 				valign: 'center' as const,
 				fontsizeAllowShrink: true,
@@ -186,6 +186,12 @@ export function createAudioMeterPresets(context: PresetsBuilderContext, state: A
 					},
 				})),
 			),
+			...slots.map((i) => ({
+				variableType: 'feedback' as const,
+				variableName: `label${i}`,
+				feedbackId: 'audioInputShortName' as const,
+				options: { input: { isExpression: true as const, value: `$(local:first) + ${i}` } },
+			})),
 			{ variableType: 'simple' as const, variableName: 'first', startupValue: 1 },
 			{ variableType: 'simple' as const, variableName: 'count', startupValue: 8 },
 		],

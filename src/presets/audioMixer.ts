@@ -1,6 +1,6 @@
 import type { CompanionPresetGroup } from '@companion-module/base'
 import type { AtemState } from 'atem-connection'
-import { AtemAudioInputPicker } from '../options/audio.js'
+import { AtemAudioInputPicker, GetAudioInputsList } from '../options/audio.js'
 import type { PresetsBuilderContext } from './context.js'
 import type { AtemSchema } from '../schema.js'
 
@@ -14,7 +14,7 @@ import type { AtemSchema } from '../schema.js'
 const NOFADE = { fadeDuration: 0, fadeAlgorithm: 'linear', fadeCurve: 'ease-in' }
 const input = { isExpression: true, value: '$(local:input)' }
 const stereo = '-65280'
-const NAME = '$(atem:audio_input_$(local:input)_name)'
+const NAME = '$(atem:audio_input_$(local:input)_short)'
 
 type Action = { actionId: string; options: Record<string, unknown> }
 interface Button {
@@ -41,7 +41,7 @@ export function createAudioMixerPresets(context: PresetsBuilderContext, state: A
 		description: 'Per input buttons come for every audio input; the input is in the button\'s local variable "input"',
 		definitions: groups,
 	})
-	const inputs = picker.choices.map((c) => ({ name: c.label, value: c.id }))
+	const inputs = GetAudioInputsList(context.model, state).map((c) => ({ name: c.shortName, value: c.id }))
 
 	const define = (b: Button, perInput: boolean) => {
 		context.definitions[b.id] = {

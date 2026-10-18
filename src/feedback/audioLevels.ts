@@ -1,7 +1,7 @@
 import type { CompanionFeedbackDefinitions, JsonValue } from '@companion-module/base'
 import type { ModelSpec } from '../models/index.js'
 import { convertOptionsFields } from '../options/util.js'
-import { AtemAudioInputPicker, AtemFairlightAudioSourcePicker } from '../options/audio.js'
+import { AtemAudioInputPicker, AtemFairlightAudioSourcePicker, GetAudioInputsList } from '../options/audio.js'
 import {
 	AtemFairlightMasterMeterPicker,
 	AtemFairlightMeterPicker,
@@ -15,6 +15,12 @@ export type AtemAudioLevelFeedbacks = {
 		type: 'value'
 		options: {
 			meter: JsonValue
+		}
+	}
+	['audioInputShortName']: {
+		type: 'value'
+		options: {
+			input: number
 		}
 	}
 	['fairlightAudioInputLevel']: {
@@ -53,6 +59,20 @@ export function createAudioLevelFeedbacks(
 						return state.audioLevels.getMasterLevel(meter)
 					},
 					unsubscribe: ({ id }) => state.audioLevels.unsubscribe(id),
+				}
+			: undefined,
+
+		['audioInputShortName']: audioInputOption
+			? {
+					type: 'value',
+					name: 'Audio: Input short name',
+					description: 'The short name of an audio input, for labels (eg on meters)',
+					options: [
+						{ type: 'number', id: 'input', label: 'Input id', default: 1, min: 0, max: 65535, asInteger: true },
+					],
+					callback: ({ options }) =>
+						GetAudioInputsList(model, state.state).find((i) => i.id === Number(options.input))?.shortName ??
+						String(options.input),
 				}
 			: undefined,
 
