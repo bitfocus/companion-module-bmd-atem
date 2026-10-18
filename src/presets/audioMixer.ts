@@ -2,6 +2,8 @@ import type { CompanionPresetGroup } from '@companion-module/base'
 import type { AtemState } from 'atem-connection'
 import { AtemAudioInputPicker, GetAudioInputsList } from '../options/audio.js'
 import type { PresetsBuilderContext } from './context.js'
+import { audioLevelVariable } from './audioLevels.js'
+import { ButtonGraphicsDecorationType, ButtonGraphicsShowStatusIcons } from '@companion-module/base'
 import type { AtemSchema } from '../schema.js'
 
 /*
@@ -26,6 +28,32 @@ interface Button {
 	left?: Action[]
 	right?: Action[]
 	feedbacks?: Array<{ feedbackId: string; options: Record<string, unknown>; style: Record<string, unknown> }>
+	/** the input's level meters down the left and right edges */
+	meters?: boolean
+}
+
+/** a vertical meter bar along one edge of the button (the look of the audio_meter_stereo composite) */
+function meterBar(id: string, x: number, level: string): any {
+	return {
+		type: 'gauge',
+		id,
+		x,
+		y: 4,
+		width: 9,
+		height: 92,
+		orientation: 'vertical',
+		min: -60,
+		max: 0,
+		value: { isExpression: true, value: level },
+		multiColour: true,
+		trackStyle: 'dimmed',
+		roundedEnds: false,
+		stops: [
+			{ value: -60, color: 0x00c800, gradient: false },
+			{ value: -20, color: 0xe6c800, gradient: false },
+			{ value: -10, color: 0xdc0000, gradient: false },
+		],
+	}
 }
 
 export function createAudioMixerPresets(context: PresetsBuilderContext, state: AtemState): void {
@@ -44,6 +72,51 @@ export function createAudioMixerPresets(context: PresetsBuilderContext, state: A
 	const inputs = GetAudioInputsList(context.model, state).map((c) => ({ name: c.shortName, value: c.id }))
 
 	const define = (b: Button, perInput: boolean) => {
+		if (b.meters) {
+			context.definitions[b.id] = {
+				name: b.name,
+				type: 'layered',
+				canvas: { decoration: ButtonGraphicsDecorationType.None, showStatusIcons: ButtonGraphicsShowStatusIcons.None },
+				elements: [
+					{ type: 'box', id: 'bg', x: 0, y: 0, width: 100, height: 100, color: b.bg ?? 0x202020 },
+					meterBar('meterLeft', 2, '$(local:levelLeft)'),
+					meterBar('meterRight', 89, '$(local:levelRight)'),
+					{
+						type: 'text',
+						id: 'label',
+						x: 13,
+						y: 0,
+						width: 74,
+						height: 100,
+						text: b.text,
+						halign: 'center',
+						valign: 'center',
+						fontsizeAllowShrink: true,
+						color: 0xffffff,
+						outlineColor: 0x000000,
+					},
+				],
+				feedbacks: (b.feedbacks ?? []).map((f) => ({
+					feedbackId: f.feedbackId,
+					options: f.options,
+					styleOverrides: [
+						...(f.style.bgcolor !== undefined
+							? [{ elementId: 'bg', elementProperty: 'color', override: f.style.bgcolor }]
+							: []),
+						...(f.style.color !== undefined
+							? [{ elementId: 'label', elementProperty: 'color', override: f.style.color }]
+							: []),
+					],
+				})),
+				steps: [{ down: b.down ?? [], up: [] }],
+				localVariables: [
+					audioLevelVariable(context, 'levelLeft', '$(local:input)', 'Left'),
+					audioLevelVariable(context, 'levelRight', '$(local:input)', 'Right'),
+					{ variableType: 'simple', variableName: 'input', startupValue: 1 },
+				],
+			} as any
+			return
+		}
 		context.definitions[b.id] = {
 			name: b.name,
 			type: 'simple',
@@ -112,6 +185,7 @@ export function createAudioMixerPresets(context: PresetsBuilderContext, state: A
 				id: 'audio_fl_onoff',
 				name: 'On / off',
 				text: NAME,
+				meters: true,
 				down: [fl('fairlightAudioMixOption', { option: 'toggle' })],
 				feedbacks: [mixFeedback('on', 0x00c800), mixFeedback('afv', 0xe6c800)],
 			},
@@ -302,21 +376,22 @@ export function createAudioMixerPresets(context: PresetsBuilderContext, state: A
 			{
 				id: 'audio_ca_onoff',
 				name: 'On / off',
-				text: '$(local:input)',
+				text: NAME,
+				meters: true,
 				down: [ca('classicAudioMixOption', { option: 'toggle' })],
 				feedbacks: [mixFeedback(1, 0x00c800), mixFeedback(2, 0xe6c800)],
 			},
 			{
 				id: 'audio_ca_afv',
 				name: 'Audio follow video',
-				text: '$(local:input)\nAFV',
+				text: `${NAME}\nAFV`,
 				down: [ca('classicAudioMixOption', { option: 2 })],
 				feedbacks: [mixFeedback(2, 0xe6c800)],
 			},
 			...adjust(
 				'audio_ca_gain',
 				'Gain',
-				'$(local:input)\ngain',
+				`${NAME}\ngain`,
 				(d) => ca('classicAudioGainDelta', { delta: d, ...NOFADE }),
 				3,
 				1,
@@ -325,7 +400,7 @@ export function createAudioMixerPresets(context: PresetsBuilderContext, state: A
 			{
 				id: 'audio_ca_gain_0',
 				name: 'Gain to 0 dB',
-				text: '$(local:input)\n0 dB',
+				text: `${NAME}\n0 dB`,
 				down: [ca('classicAudioGain', { gain: 0, ...NOFADE, fadeDuration: 500 })],
 			},
 		])

@@ -17,9 +17,35 @@ import type { AtemSchema } from '../schema.js'
  * follows input renames. Building the preset from the shared composite means custom buttons that use the
  * same element look identical to the one we ship.
  */
+/**
+ * A local variable carrying an input's level (dB) for a meter: the Fairlight level feedback, or on
+ * classic mixer switchers the classic one.
+ */
+export function audioLevelVariable(
+	context: PresetsBuilderContext,
+	variableName: string,
+	input: string,
+	side: 'Left' | 'Right',
+): any {
+	const inputValue = { isExpression: true as const, value: input }
+	return context.model.fairlightAudio
+		? {
+				variableType: 'feedback' as const,
+				variableName,
+				feedbackId: 'fairlightAudioInputLevel' as const,
+				options: { input: inputValue, source: '-65280', meter: side === 'Left' ? 'inputLeftLevel' : 'inputRightLevel' },
+			}
+		: {
+				variableType: 'feedback' as const,
+				variableName,
+				feedbackId: 'classicAudioInputLevel' as const,
+				options: { input: inputValue, meter: side === 'Left' ? 0 : 1 },
+			}
+}
+
 export function createAudioMeterPresets(context: PresetsBuilderContext, state: AtemState): void {
 	// Only fairlight audio reports levels
-	if (!context.model.fairlightAudio) return
+	if (!context.model.fairlightAudio && !context.model.classicAudio) return
 
 	const inputPicker = AtemAudioInputPicker(context.model, state)
 	if (!inputPicker) return
@@ -88,26 +114,8 @@ export function createAudioMeterPresets(context: PresetsBuilderContext, state: A
 		feedbacks: [],
 		steps: [{ down: [], up: [] }],
 		localVariables: [
-			{
-				variableType: 'feedback',
-				variableName: 'levelLeft',
-				feedbackId: 'fairlightAudioInputLevel',
-				options: {
-					input: { isExpression: true, value: '$(local:input)' },
-					source: '-65280',
-					meter: 'inputLeftLevel',
-				},
-			},
-			{
-				variableType: 'feedback',
-				variableName: 'levelRight',
-				feedbackId: 'fairlightAudioInputLevel',
-				options: {
-					input: { isExpression: true, value: '$(local:input)' },
-					source: '-65280',
-					meter: 'inputRightLevel',
-				},
-			},
+			audioLevelVariable(context, 'levelLeft', '$(local:input)', 'Left'),
+			audioLevelVariable(context, 'levelRight', '$(local:input)', 'Right'),
 			{
 				variableType: 'simple',
 				variableName: 'input',
@@ -175,16 +183,9 @@ export function createAudioMeterPresets(context: PresetsBuilderContext, state: A
 		steps: [{ down: [], up: [] }],
 		localVariables: [
 			...slots.flatMap((i) =>
-				(['Left', 'Right'] as const).map((side) => ({
-					variableType: 'feedback' as const,
-					variableName: `level${side}${i}`,
-					feedbackId: 'fairlightAudioInputLevel' as const,
-					options: {
-						input: { isExpression: true as const, value: `$(local:first) + ${i}` },
-						source: '-65280',
-						meter: side === 'Left' ? 'inputLeftLevel' : 'inputRightLevel',
-					},
-				})),
+				(['Left', 'Right'] as const).map((side) =>
+					audioLevelVariable(context, `level${side}${i}`, `$(local:first) + ${i}`, side),
+				),
 			),
 			...slots.map((i) => ({
 				variableType: 'feedback' as const,

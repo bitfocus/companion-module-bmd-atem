@@ -10,6 +10,7 @@ import { MediaPoolPreviewCache } from './mediaPoolPreviews.js'
 import { AtemAudioLevels } from './audioLevels.js'
 import { buildStateJson } from './variables/stateJson.js'
 import { installCcuPadding } from './ccuPadding.js'
+import { ClassicAudioLevelsCommand, ClassicAudioSendLevelsCommand, installClassicLevels } from './classicLevels.js'
 import type { CompanionHTTPRequest, CompanionHTTPResponse } from '@companion-module/base'
 import { LEVELS_VARIABLE_SUBSCRIPTION } from './actions/fairlightDynamics.js'
 import { MODEL_AUTO_DETECT } from './models/types.js'
@@ -76,14 +77,23 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 
 			audioLevels: new AtemAudioLevels(
 				() => {
-					this.checkFeedbacks('fairlightAudioMasterLevel', 'fairlightAudioInputLevel')
+					this.checkFeedbacks(
+						'fairlightAudioMasterLevel',
+						'fairlightAudioInputLevel',
+						'classicAudioMasterLevel',
+						'classicAudioInputLevel',
+					)
 					if (this.wrappedState.audioLevels.isSubscribed(LEVELS_VARIABLE_SUBSCRIPTION))
 						this.setVariableValues({ audio_levels_json: this.wrappedState.audioLevels.toJson() })
 				},
 				(enabled) => {
 					if (!this.atem) return
 
-					if (enabled) {
+					if (this.model.classicAudio && !this.model.fairlightAudio) {
+						this.atem.sendCommand(new ClassicAudioSendLevelsCommand({ enable: enabled })).catch((e) => {
+							this.log('debug', `Failed to ${enabled ? 'start' : 'stop'} audio levels: ${e}`)
+						})
+					} else if (enabled) {
 						this.atem.startFairlightMixerSendLevels().catch((e) => {
 							this.log('debug', `Failed to start audio levels: ${e}`)
 						})
@@ -262,7 +272,9 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 		const values: Partial<VariablesSchema> = {}
 
 		for (const command of commands) {
-			if (command instanceof Commands.TallyBySourceCommand) {
+			if (command instanceof ClassicAudioLevelsCommand) {
+				this.wrappedState.audioLevels.handleClassicLevels(command.properties)
+			} else if (command instanceof Commands.TallyBySourceCommand) {
 				this.wrappedState.tally = command.properties
 				this.checkFeedbacks('program_tally', 'preview_tally')
 			} else if (this.config.enableCameraControl && command instanceof Commands.CameraControlUpdateCommand) {
@@ -734,6 +746,7 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 
 	private setupAtemConnection(): void {
 		this.atem = new Atem()
+		installClassicLevels(this.atem)
 		installCcuPadding(this.atem, () => (this.config.enableCameraControl && this.config.ccuPadding) || 'off')
 
 		this.atem.on('connected', () => {
