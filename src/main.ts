@@ -746,7 +746,8 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 
 	private setupAtemConnection(): void {
 		this.atem = new Atem()
-		installClassicLevels(this.atem)
+		if (!installClassicLevels(this.atem))
+			this.log('debug', 'Classic audio levels unavailable: atem-connection internals changed')
 		installCcuPadding(this.atem, () => (this.config.enableCameraControl && this.config.ccuPadding) || 'off')
 
 		this.atem.on('connected', () => {

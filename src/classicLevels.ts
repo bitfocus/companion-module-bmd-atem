@@ -63,8 +63,10 @@ export class ClassicAudioSendLevelsCommand extends Commands.BasicWritableCommand
 	}
 }
 
-/** teach this connection's command parser the classic levels command */
-export function installClassicLevels(atem: Atem): void {
-	const parser = (atem as any).socket?._commandParser
-	if (parser?.commands) parser.commands[ClassicAudioLevelsCommand.rawName] = [ClassicAudioLevelsCommand]
+/** teach this connection's command parser the classic levels command (it sits in atem-connection's private AtemWrapper; false when not found) */
+export function installClassicLevels(atem: Atem): boolean {
+	const parser = (atem as any).client?.socket?._commandParser
+	if (!parser?.commands) return false
+	parser.commands[ClassicAudioLevelsCommand.rawName] = [ClassicAudioLevelsCommand]
+	return true
 }
