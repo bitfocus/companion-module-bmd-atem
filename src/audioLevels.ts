@@ -1,4 +1,5 @@
 import type { SomeAtemAudioLevels, FairlightAudioLevels } from 'atem-connection/dist/state/levels.js'
+import type { ClassicAudioLevelsProps, ClassicLevels } from './classicLevels.js'
 
 /**
  * The switcher sends levels many times a second. Feedbacks are only rechecked at this rate, to
@@ -45,6 +46,40 @@ export class AtemAudioLevels {
 		if (this.isEnabled) this.#setSendLevels(true)
 	}
 
+	isSubscribed(feedbackId: string): boolean {
+		return this.#subscriptions.has(feedbackId)
+	}
+
+	/**
+	 * All cached levels as JSON (hundredths of a dB): {"master": [...], "input.source": [...]}, each
+	 * [inputLeft, inputRight, compressorGR, limiterGR, outputLeft, outputRight] (inputs also
+	 * [..., expanderGR] at the end)
+	 */
+	toJson(): string {
+		const out: Record<string, number[]> = {}
+		const m = this.#master
+		if (m)
+			out.master = [
+				m.inputLeftLevel,
+				m.inputRightLevel,
+				m.compressorGainReduction,
+				m.limiterGainReduction,
+				m.leftLevel,
+				m.rightLevel,
+			]
+		for (const [key, l] of this.#sources)
+			out[key] = [
+				l.inputLeftLevel,
+				l.inputRightLevel,
+				l.compressorGainReduction,
+				l.limiterGainReduction,
+				l.leftLevel,
+				l.rightLevel,
+				l.expanderGainReduction,
+			]
+		return JSON.stringify(out)
+	}
+
 	subscribe(feedbackId: string): void {
 		const wasEmpty = this.#subscriptions.size === 0
 		this.#subscriptions.add(feedbackId)
@@ -58,9 +93,24 @@ export class AtemAudioLevels {
 		if (this.#subscriptions.size === 0) {
 			this.#setSendLevels(false)
 			this.#clearPendingCheck()
-			this.#master = undefined
-			this.#sources.clear()
+			this.clearCache()
 		}
+	}
+
+	readonly #classic = new Map<number, ClassicLevels>()
+	#classicMaster: ClassicLevels | undefined
+
+	/** levels of the classic audio mixer (hundredths of a dB) */
+	handleClassicLevels(levels: ClassicAudioLevelsProps): void {
+		this.#classicMaster = levels.master
+		for (const [id, l] of levels.sources) this.#classic.set(id, l)
+		this.#scheduleCheck()
+	}
+
+	/** @returns a classic mixer level in decibels (0 left, 1 right, 2 peak left, 3 peak right), or null */
+	getClassicLevel(input: number | 'master', meter: 0 | 1 | 2 | 3): number | null {
+		const l = input === 'master' ? this.#classicMaster : this.#classic.get(input)
+		return l ? l[meter] / LEVEL_SCALE : null
 	}
 
 	handleLevels(levels: SomeAtemAudioLevels): void {
@@ -70,6 +120,10 @@ export class AtemAudioLevels {
 			this.#sources.set(sourceKey(levels.index, levels.source), levels.levels)
 		}
 
+		this.#scheduleCheck()
+	}
+
+	#scheduleCheck(): void {
 		// Coalesce the updates which arrive between checks
 		if (!this.#pendingCheck) {
 			this.#pendingCheck = setTimeout(() => {
@@ -95,6 +149,8 @@ export class AtemAudioLevels {
 	clearCache(): void {
 		this.#master = undefined
 		this.#sources.clear()
+		this.#classicMaster = undefined
+		this.#classic.clear()
 	}
 
 	destroy(): void {
