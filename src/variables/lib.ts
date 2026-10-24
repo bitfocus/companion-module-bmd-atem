@@ -256,7 +256,12 @@ export function updateDSKVariable(
 	const input = getDSK(state, keyIndex)?.sources?.fillSource ?? 0
 	values[`dsk_${keyIndex + 1}_input`] = getSourcePresetName(instance, state, input)
 	values[`dsk_${keyIndex + 1}_input_id`] = input
-	values[`dsk_${keyIndex + 1}_onAir`] = !!getDSK(state, keyIndex)?.onAir
+	const dsk = getDSK(state, keyIndex)
+	values[`dsk_${keyIndex + 1}_onAir`] = !!dsk?.onAir
+	values[`dsk_${keyIndex + 1}_inTransition`] = !!dsk?.inTransition
+	// Only meaningful while a transition is running: a cut never sets it, an auto sets it for its duration
+	values[`dsk_${keyIndex + 1}_isAuto`] = !!dsk?.inTransition && !!dsk?.isAuto
+	values[`dsk_${keyIndex + 1}_remainingFrames`] = dsk?.inTransition ? (dsk?.remainingFrames ?? 0) : 0
 
 	const mask = getDSK(state, keyIndex)?.properties?.mask
 	if (mask) {
@@ -766,6 +771,15 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 		}
 		variables[`dsk_${k + 1}_onAir`] = {
 			name: `On Air state of DSK ${k + 1}`,
+		}
+		variables[`dsk_${k + 1}_inTransition`] = {
+			name: `DSK ${k + 1} is mid-transition`,
+		}
+		variables[`dsk_${k + 1}_isAuto`] = {
+			name: `DSK ${k + 1} is running an auto transition (false for a cut or when idle)`,
+		}
+		variables[`dsk_${k + 1}_remainingFrames`] = {
+			name: `Frames remaining in the DSK ${k + 1} auto transition (0 when idle)`,
 		}
 		variables[`dsk_${k + 1}_maskEnabled`] = {
 			name: `Mask Enabled for DSK ${k + 1}`,

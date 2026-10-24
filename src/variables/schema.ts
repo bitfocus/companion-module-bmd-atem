@@ -79,6 +79,9 @@ export type VariablesSchema = {
 	[key: `dsk_${number}_input`]: string
 	[key: `dsk_${number}_input_id`]: number
 	[key: `dsk_${number}_onAir`]: boolean
+	[key: `dsk_${number}_inTransition`]: boolean
+	[key: `dsk_${number}_isAuto`]: boolean
+	[key: `dsk_${number}_remainingFrames`]: number
 	[key: `dsk_${number}_maskEnabled`]: boolean
 	[key: `dsk_${number}_maskTop`]: number
 	[key: `dsk_${number}_maskBottom`]: number
