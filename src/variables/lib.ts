@@ -519,7 +519,17 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 		device_ip: {
 			name: 'IP address of the ATEM',
 		},
+		state_json: {
+			name: 'The switcher state as JSON (for controllers reading the HTTP API)',
+		},
+		audio_levels_json: {
+			name: 'Fairlight audio levels as JSON, while enabled by the "Publish levels" action',
+		},
+		ccu_camera: {
+			name: 'The camera CCU actions act on when their camera is 0 (CCU: Select camera)',
+		},
 	}
+	values['ccu_camera'] = state.ccuSelected.camera
 
 	updateDeviceIpVariable(instance, values)
 
@@ -1041,6 +1051,10 @@ export function InitVariables(instance: InstanceBaseExt, model: ModelSpec, state
 			name: `Name of audio input ${audioInput.id}`,
 		}
 		values[`audio_input_${audioInput.id}_name`] = audioInput.longName
+		variables[`audio_input_${audioInput.id}_short`] = {
+			name: `Short name of audio input ${audioInput.id}`,
+		}
+		values[`audio_input_${audioInput.id}_short`] = audioInput.shortName
 	}
 
 	if (model.fairlightAudio?.audioRouting) {

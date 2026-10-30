@@ -33,6 +33,7 @@ import {
 } from './mixeffect/upstreamKeyerLumaChroma.js'
 import { createClassicAudioActions, type AtemClassicAudioActions } from './classicAudio.js'
 import { createFairlightAudioActions, type AtemFairlightAudioActions } from './fairlightAudio.js'
+import { createFairlightDynamicsActions, type AtemFairlightDynamicsActions } from './fairlightDynamics.js'
 import type { StateWrapper } from '../state.js'
 import { createCameraControlLensActions, type AtemCameraControlLensActions } from './cameraControl/lens.js'
 import { createCameraControlDisplayActions, type AtemCameraControlDisplayActions } from './cameraControl/display.js'
@@ -40,6 +41,7 @@ import { createCameraControlVideoActions, type AtemCameraControlVideoActions } f
 import { createCameraControlColorActions, type AtemCameraControlColorActions } from './cameraControl/color.js'
 import { createTimecodeActions, type AtemTimecodeActions } from './timecode.js'
 import { createCameraControlMediaActions } from './cameraControl/media.js'
+import { createCameraControlAllActions } from './cameraControl/all.js'
 
 export type ActionTypes = AtemProgramPreviewActions &
 	AtemTransitionActions &
@@ -55,6 +57,7 @@ export type ActionTypes = AtemProgramPreviewActions &
 	AtemRecordingActions &
 	AtemClassicAudioActions &
 	AtemFairlightAudioActions &
+	AtemFairlightDynamicsActions &
 	AtemAuxOutputActions &
 	AtemMultiviewerActions &
 	AtemMediaPlayerActions &
@@ -92,6 +95,7 @@ export function GetActionsList(
 
 		...createClassicAudioActions(atem, model, transitions, state),
 		...createFairlightAudioActions(atem, model, transitions, state),
+		...createFairlightDynamicsActions(atem, state),
 
 		...createAuxOutputActions(atem, model, state),
 		...createMultiviewerActions(atem, model, state),
@@ -106,6 +110,7 @@ export function GetActionsList(
 		...createCameraControlMediaActions(instance.config, model, atem, state),
 		...createCameraControlVideoActions(instance.config, atem, state),
 		...createCameraControlColorActions(instance.config, atem, state),
+		...createCameraControlAllActions(instance, atem, state),
 
 		...createTimecodeActions(instance, atem, state),
 	}

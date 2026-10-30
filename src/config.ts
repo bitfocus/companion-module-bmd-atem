@@ -18,6 +18,7 @@ export type AtemConfig = {
 	fadeFps?: number
 
 	enableCameraControl?: boolean
+	ccuPadding?: 'off' | 'needed' | 'always'
 	pollTimecode?: boolean
 }
 
@@ -96,6 +97,21 @@ export function GetConfigFields(config: AtemConfig): SomeCompanionConfigField[] 
 			label: 'Enable Camera Control',
 			width: 6,
 			default: false,
+		},
+		{
+			type: 'dropdown',
+			id: 'ccuPadding',
+			label: 'Experimental: send CCU data padding packets',
+			tooltip:
+				'For the Blackmagic 3G-SDI Arduino Shield, which drops the last byte of every packet: a camera control packet with no zero padding at its end is followed by a harmless one (display brightness +0), so the first gets through whole',
+			width: 6,
+			default: 'off',
+			choices: [
+				{ id: 'off', label: 'Off' },
+				{ id: 'needed', label: 'After packets without zero padding' },
+				{ id: 'always', label: 'After every camera control packet' },
+			],
+			isVisibleExpression: '$(options:enableCameraControl)',
 		},
 		{
 			type: 'checkbox',

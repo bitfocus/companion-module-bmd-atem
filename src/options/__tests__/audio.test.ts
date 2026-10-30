@@ -11,14 +11,14 @@ describe('GetAudioInputsList', () => {
 		const inputs = GetAudioInputsList(ModelSpecMiniExtremeISOG2, state)
 
 		expect(inputs.filter(({ id }) => id === 1001 || id === 1002)).toEqual([
-			{ id: 1001, longName: 'XLR 1' },
-			{ id: 1002, longName: 'XLR 2' },
+			{ id: 1001, longName: 'XLR 1', shortName: 'XLR1' },
+			{ id: 1002, longName: 'XLR 2', shortName: 'XLR2' },
 		])
 	})
 
 	test('keeps the unnumbered label for models with one XLR input', () => {
 		const inputs = GetAudioInputsList(ModelSpecTVSHD8, state)
 
-		expect(inputs.find(({ id }) => id === 1001)).toEqual({ id: 1001, longName: 'XLR' })
+		expect(inputs.find(({ id }) => id === 1001)).toEqual({ id: 1001, longName: 'XLR', shortName: 'XLR' })
 	})
 })
