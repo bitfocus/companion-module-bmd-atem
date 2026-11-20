@@ -256,6 +256,7 @@ export function createFairlightAudioActions(
 	const audioSourceOption = AtemFairlightAudioSourcePicker()
 
 	const audioInputFrameDelayOption = AtemAudioInputPicker(model, state.state, 'delay')
+	const audioFrameDelaySourceOption = AtemFairlightAudioSourcePicker(state.state, audioInputFrameDelayOption?.default)
 
 	return {
 		['fairlightAudioInputGain']: audioInputOption
@@ -355,7 +356,7 @@ export function createFairlightAudioActions(
 					name: 'Fairlight Audio: Set delay',
 					options: convertOptionsFields({
 						input: audioInputFrameDelayOption,
-						source: audioSourceOption,
+						source: audioFrameDelaySourceOption,
 						delay: {
 							type: 'number',
 							label: 'Delay (frames)',
@@ -398,7 +399,7 @@ export function createFairlightAudioActions(
 					name: 'Fairlight Audio: Adjust delay',
 					options: convertOptionsFields({
 						input: audioInputFrameDelayOption,
-						source: audioSourceOption,
+						source: audioFrameDelaySourceOption,
 						delay: {
 							type: 'number',
 							label: 'Adjustment (frames)',

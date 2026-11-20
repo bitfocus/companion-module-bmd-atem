@@ -73,14 +73,26 @@ export function fairlightAudioSourceLabel(sourceId: string | number): string {
 	return FAIRLIGHT_AUDIO_SOURCES.find((s) => s.id == sourceId)?.label ?? `${sourceId}`
 }
 
-export function AtemFairlightAudioSourcePicker(): CompanionInputFieldDropdown<'source'> {
+/**
+ * @param state Optional state, used to pick a default source which exists on the given input
+ * @param defaultInputId The input whose sources are used to pick the default
+ */
+export function AtemFairlightAudioSourcePicker(
+	state?: AtemState,
+	defaultInputId?: number | string,
+): CompanionInputFieldDropdown<'source'> {
 	const sources = FAIRLIGHT_AUDIO_SOURCES
+
+	// Some inputs (eg mics) are mono only, so default to a source which exists on the default input
+	const inputSources =
+		defaultInputId !== undefined ? state?.fairlight?.inputs?.[Number(defaultInputId)]?.sources : undefined
+	const defaultSource = (inputSources && sources.find((s) => !!inputSources[s.id])) || sources[0]
 
 	return {
 		type: 'dropdown',
 		id: 'source',
 		label: 'Source',
-		default: sources[0].id,
+		default: defaultSource.id,
 		choices: sources,
 		disableAutoExpression: true, // This is a pretty messy value currently
 	}
