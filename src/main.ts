@@ -22,7 +22,7 @@ import { isEqual } from 'lodash-es'
 import { UpgradeScripts } from './upgrades/main.js'
 import { calculateTallyForInputId, type IpAndPort } from './util.js'
 import { AtemCameraControlStateBuilder, createEmptyState } from '@atem-connection/camera-control'
-import { decodeImageFromAtem } from '@atem-connection/image-tools'
+import { decodeImageFromAtemAsync } from '@atem-connection/image-tools'
 import { updateCameraControlVariables } from './variables/cameraControl.js'
 import { updateTimecodeVariables } from './variables/timecode.js'
 import type { AtemSchema } from './schema.js'
@@ -97,7 +97,7 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 						? await this.atem.downloadClipFrame(source.slot, source.frameIndex, 'raw')
 						: await this.atem.downloadStill(source.slot, 'raw')
 
-					const buffer = decodeImageFromAtem(videoMode.width, videoMode.height, rawBuffer)
+					const buffer = await decodeImageFromAtemAsync(videoMode.width, videoMode.height, rawBuffer)
 
 					return {
 						buffer,

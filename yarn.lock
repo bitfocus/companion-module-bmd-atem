@@ -16,10 +16,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@atem-connection/image-tools@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "@atem-connection/image-tools@npm:1.1.2"
-  checksum: 10c0/d7e8ab5b9cb73ea786c928fc4096774d5c70d9742eb8f8649ccb0d8f58589a2e45aa8277887c1b074f418d98173d2c89b7a17edd97b5b41aed4fbe3105ceb5b4
+"@atem-connection/image-tools@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@atem-connection/image-tools@npm:2.0.0"
+  checksum: 10c0/d5877dfa811e473a016e1180846e1356c3be6e497d9f213798bebf3e8e681034fc8dbcc8c532a25574e5795fe89a7be7d8a70525ae12527a7869c7c35f3bef91
   languageName: node
   linkType: hard
 
@@ -975,9 +975,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"atem-connection@npm:3.10.3":
-  version: 3.10.3
-  resolution: "atem-connection@npm:3.10.3"
+"atem-connection@npm:3.11.0":
+  version: 3.11.0
+  resolution: "atem-connection@npm:3.11.0"
   dependencies:
     "@julusian/freetype2": "npm:^1.3.1"
     debug: "npm:^4.4.3"
@@ -988,7 +988,7 @@ __metadata:
     threadedclass: "npm:^1.4.1"
     tslib: "npm:^2.8.1"
     wavefile: "npm:^8.4.6"
-  checksum: 10c0/df72cd6a8dc568d4fd2d1bf0468e8158bde0bd79fd58278dac5b440a64c15cf3563565e4eb32a058a836a6ebfa51a92a0c99e4db0f65fa1795dc0755297271cf
+  checksum: 10c0/eda0f01d80ed553c6ed664885e5f69974cd664b5aad40d2a663a5b213b17e6c52c736f2089ac7fa55000e493b352fb0ff60b18208ec111caf9d2f9eed5f73867
   languageName: node
   linkType: hard
 
@@ -1018,13 +1018,13 @@ __metadata:
   resolution: "bmd-atem@workspace:."
   dependencies:
     "@atem-connection/camera-control": "npm:^0.4.0"
-    "@atem-connection/image-tools": "npm:^1.1.2"
+    "@atem-connection/image-tools": "npm:^2.0.0"
     "@companion-module/base": "npm:~2.1.3"
     "@companion-module/tools": "patch:@companion-module/tools@npm%3A3.1.0#~/.yarn/patches/@companion-module-tools-npm-3.1.0-bab0f4d1d7.patch"
     "@julusian/image-rs": "npm:^2.5.0"
     "@types/lodash-es": "npm:^4.17.12"
     "@types/node": "npm:^22.20.5"
-    atem-connection: "npm:3.10.3"
+    atem-connection: "npm:3.11.0"
     eslint: "npm:^10.15.0"
     husky: "npm:^9.1.7"
     lint-staged: "npm:^17.6.1"
@@ -1097,9 +1097,9 @@ __metadata:
   linkType: hard
 
 "colord@npm:^2.9.3":
-  version: 2.9.3
-  resolution: "colord@npm:2.9.3"
-  checksum: 10c0/9699e956894d8996b28c686afe8988720785f476f59335c80ce852ded76ab3ebe252703aec53d9bef54f6219aea6b960fb3d9a8300058a1d0c0d4026460cd110
+  version: 2.13.0
+  resolution: "colord@npm:2.13.0"
+  checksum: 10c0/6071135a8bcc7d5f44ec82edf3a4f10d738a63f6ffbbe8bf9cf19043ae703843db4e50dfffe4a1d7d9d898c01aa5aacb0fc427eb1a50d73b29f0e0736638c856
   languageName: node
   linkType: hard
 
