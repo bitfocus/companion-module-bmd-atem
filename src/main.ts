@@ -416,6 +416,7 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 			if (path.match(/macro.macroRecorder/) || path.match(/macro.macroPlayer/)) {
 				changedFeedbacks.add('macro')
 				changedFeedbacks.add('macroloop')
+				changedFeedbacks.add('macroRecording')
 				continue
 			}
 
