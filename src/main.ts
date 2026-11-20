@@ -1,4 +1,4 @@
-import AtemPkg, { type Atem as IAtem, type AtemState, Commands } from 'atem-connection'
+import { Atem, AtemConnectionStatus, AtemStateUtil, type AtemState, Commands } from 'atem-connection'
 import { GetActionsList } from './actions/index.js'
 import { type AtemConfig, GetConfigFields } from './config.js'
 import { GetFeedbacksList, type FeedbackTypes } from './feedback/index.js'
@@ -28,14 +28,6 @@ import { updateTimecodeVariables } from './variables/timecode.js'
 import type { AtemSchema } from './schema.js'
 import type { VariablesSchema } from './variables/schema.js'
 
-const { Atem, AtemConnectionStatus, AtemStateUtil } = AtemPkg
-
-// eslint-disable-next-line n/no-extraneous-import
-import { ThreadedClassManager, RegisterExitHandlers } from 'threadedclass'
-
-// HACK: This stops it from registering an unhandledException handler, as that causes companion to exit on error
-ThreadedClassManager.handleExit = RegisterExitHandlers.NO
-
 export { UpgradeScripts }
 
 /**
@@ -43,7 +35,7 @@ export { UpgradeScripts }
  */
 export default class AtemInstance extends InstanceBase<AtemSchema> {
 	private model: ModelSpec
-	private atem: IAtem | undefined
+	private atem: Atem | undefined
 	private readonly wrappedState: StateWrapper
 	private commandBatching: AtemCommandBatching
 	private isActive: boolean
@@ -94,8 +86,8 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 					if (!videoMode) throw new Error('No video mode')
 
 					const rawBuffer = source.isClip
-						? await this.atem.downloadClipFrame(source.slot, source.frameIndex, 'raw')
-						: await this.atem.downloadStill(source.slot, 'raw')
+						? await this.atem.downloadClipFrame(source.slot, source.frameIndex, { format: 'raw' })
+						: await this.atem.downloadStill(source.slot, { format: 'raw' })
 
 					const buffer = await decodeImageFromAtemAsync(videoMode.width, videoMode.height, rawBuffer)
 

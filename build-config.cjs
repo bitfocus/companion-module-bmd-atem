@@ -1,17 +1,8 @@
 module.exports = {
-	entry: {
-		// atemSocketChild: './node_modules/atem-connection/dist/lib/atemSocketChild.js',
+	additionalEntrypoints: {
+		// Emitted next to main.js, where the bundled atem-connection resolves it via `new URL('./atemSocketChildWorker.js', import.meta.url)`
+		atemSocketChildWorker: './node_modules/atem-connection/dist/lib/atemSocketChildWorker.js',
 	},
-	externals: [
-		// '@julusian/freetype2',
-		// TODO: This is not good for number of files on disk, but is easy to implement
-		'atem-connection',
-	],
 	forceRemoveNodeGypFromPkg: true,
-	prebuilds: [
-		'@julusian/image-rs',
-		'@atem-connection/image-tools',
-		// Some trickery is done to be able to optimise this:
-		// '@julusian/freetype2',
-	],
+	prebuilds: ['@julusian/image-rs', '@atem-connection/image-tools', '@julusian/freetype2'],
 }
