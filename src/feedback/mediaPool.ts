@@ -9,7 +9,7 @@ import {
 	type MediaPoolSourceOptions,
 	parseMediaPoolSource,
 } from '../options/mediaPool.js'
-import { isEqual } from 'lodash-es'
+import isEqual from 'fast-deep-equal'
 
 export type AtemMediaPoolFeedbacks = {
 	['mediaPoolPreview']: {

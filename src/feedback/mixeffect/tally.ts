@@ -5,7 +5,7 @@ import type { CompanionFeedbackDefinitions, JsonValue } from '@companion-module/
 import type { StateWrapper } from '../../state.js'
 import { calculateTallyForInputId } from '../../util.js'
 import { GetSourcesListForType, parseSourceId } from '../../options/sources.js'
-import { isEqual } from 'lodash-es'
+import isEqual from 'fast-deep-equal'
 
 export type AtemTallyFeedbacks = {
 	['program_tally']: {
