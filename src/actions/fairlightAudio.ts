@@ -20,6 +20,8 @@ import {
 	AtemFairlightAudioRoutingSourcePicker,
 	parseAudioRoutingString,
 	parseAudioRoutingStringSingle,
+	AUDIO_ROUTING_STRING_TOOLTIP,
+	defaultAudioRoutingDestination,
 } from '../options/fairlight-routing.js'
 import { FadeDurationFields } from '../options/fade.js'
 import { clamp } from '../util.js'
@@ -1333,9 +1335,8 @@ function AudioRoutingActions(
 					type: 'textinput',
 					id: 'destinations',
 					label: 'Destinations',
-					default: '1-1',
-					tooltip:
-						'Comma/space separated list of destination IDs. IDs are formed as "output-channel". channel can be omitted when wanting "1/2" eg 1503-3_4 for "MADI 3 3/4"',
+					default: defaultAudioRoutingDestination(model, state.state),
+					tooltip: `Comma/space separated list of destination IDs. ${AUDIO_ROUTING_STRING_TOOLTIP}`,
 					useVariables: true,
 				},
 				source: {
@@ -1343,8 +1344,7 @@ function AudioRoutingActions(
 					id: 'source',
 					label: 'Source',
 					default: '0',
-					tooltip:
-						'IDs are formed as "output-channel". channel can be omitted when wanting "1/2" eg 1503-3_4 for "MADI 3 3/4"',
+					tooltip: AUDIO_ROUTING_STRING_TOOLTIP,
 					useVariables: true,
 				},
 			}),

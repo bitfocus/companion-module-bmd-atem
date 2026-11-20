@@ -17,6 +17,8 @@ import {
 	AtemFairlightAudioRoutingDestinationPicker,
 	AtemFairlightAudioRoutingSourcePicker,
 	parseAudioRoutingStringSingle,
+	AUDIO_ROUTING_STRING_TOOLTIP,
+	defaultAudioRoutingDestination,
 } from '../options/fairlight-routing.js'
 
 export type AtemFairlightAudioFeedbacks = {
@@ -611,9 +613,8 @@ function AudioRoutingFeedbacks(
 					type: 'textinput',
 					id: 'destination',
 					label: 'Destination',
-					default: '1-1',
-					tooltip:
-						'IDs are formed as "output-channel". channel can be omitted when wanting "1/2" eg 1503-3_4 for "MADI 3 3/4"',
+					default: defaultAudioRoutingDestination(model, state.state),
+					tooltip: AUDIO_ROUTING_STRING_TOOLTIP,
 					useVariables: true,
 				},
 				source: {
@@ -621,8 +622,7 @@ function AudioRoutingFeedbacks(
 					id: 'source',
 					label: 'Source',
 					default: '0',
-					tooltip:
-						'IDs are formed as "output-channel". channel can be omitted when wanting "1/2" eg 1503-3_4 for "MADI 3 3/4"',
+					tooltip: AUDIO_ROUTING_STRING_TOOLTIP,
 					useVariables: true,
 				},
 			}),

@@ -59,4 +59,13 @@ test('parseAudioRoutingStringSingle', () => {
 
 	const parse7 = parseAudioRoutingStringSingle('2001-15_16')
 	expect(parse7).toEqual(combineInputId(2001, Enums.AudioChannelPair.Channel15_16))
+
+	const parse8 = parseAudioRoutingStringSingle('1503-3/4')
+	expect(parse8).toEqual(combineInputId(1503, Enums.AudioChannelPair.Channel3_4))
+
+	// Incomplete or malformed ids must not parse
+	expect(parseAudioRoutingStringSingle('1-1')).toEqual(null)
+	expect(parseAudioRoutingStringSingle('x1503-3_4')).toEqual(null)
+	expect(parseAudioRoutingStringSingle('1503-3_4x')).toEqual(null)
+	expect(parseAudioRoutingStringSingle('0x10')).toEqual(null)
 })

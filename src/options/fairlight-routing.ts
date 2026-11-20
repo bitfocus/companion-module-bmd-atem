@@ -22,7 +22,10 @@ export function parseAudioRoutingString(ids: string): number[] {
 		.filter((id): id is number => id !== null)
 }
 
-const ROUTING_STRING_REGEX = /(\d+)-([\d]+_[\d]+)/i
+export const AUDIO_ROUTING_STRING_TOOLTIP =
+	'IDs are formed as "id-channels", eg 1503-3_4 for "MADI 3 3/4". The channels can be omitted when wanting "1/2", eg 1503 for "MADI 3 1/2"'
+
+const ROUTING_STRING_REGEX = /^(\d+)-(\d+[_/]\d+)$/
 export function parseAudioRoutingStringSingle(id: string): number | null {
 	id = id.trim()
 	if (!id) return null
@@ -41,8 +44,8 @@ export function parseAudioRoutingStringSingle(id: string): number | null {
 		return combineInputId(inputId, pairValue)
 	}
 
+	if (!/^\d+$/.test(id)) return null
 	const inputId = Number(id)
-	if (isNaN(inputId)) return null
 
 	return combineInputId(inputId, Enums.AudioChannelPair.Channel1_2)
 }
@@ -127,6 +130,12 @@ function compileAudioName(
 	}
 
 	return name
+}
+
+/** The first routing destination of the model, formatted for use in a text input */
+export function defaultAudioRoutingDestination(model: ModelSpec, state: AtemState): string {
+	const firstDestination = FairlightAudioRoutingDestinations(model, state)[0]
+	return firstDestination ? formatAudioRoutingAsString(Number(firstDestination.id)) : ''
 }
 
 export function AtemFairlightAudioRoutingDestinationsPicker(
