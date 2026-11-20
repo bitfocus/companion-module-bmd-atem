@@ -17,6 +17,8 @@ import { createTransitionPresets } from './mixeffect/transition.js'
 import { createAuxOutputPresets } from './aux-outputs.js'
 import { createUpstreamKeyerPresets } from './mixeffect/upstreamKeyer.js'
 import { createDownstreamKeyerPresets } from './downstreamKeyer.js'
+import { createCcuPresets } from './ccu.js'
+import { createAudioMixerPresets } from './audioMixer.js'
 import type { AtemSchema } from '../schema.js'
 import type { PresetsBuilderContext } from './context.js'
 
@@ -51,7 +53,9 @@ export function GetPresetsList(
 	createFadeToBlackPresets(context, pstSize, rateOptions)
 	createStreamingPresets(context)
 	createRecordingPresets(context)
+	createAudioMixerPresets(context, state)
 	createAudioMeterPresets(context, state)
+	createCcuPresets(context, state, !!instance.config.enableCameraControl)
 
 	return [context.sections, context.definitions]
 }

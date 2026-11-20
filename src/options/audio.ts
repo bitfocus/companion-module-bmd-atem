@@ -174,21 +174,28 @@ export const CHOICES_CLASSIC_AUDIO_MIX_OPTION: DropdownChoice<Enums.AudioMixOpti
 
 export type AudioInputSubset = 'delay' | 'routing'
 
-export function GetAudioInputsList(model: ModelSpec, state: AtemState, subset?: AudioInputSubset): MiniSourceInfo[] {
+/** an audio input, with a short (4 character) name for labels */
+export interface AudioSourceInfo extends MiniSourceInfo {
+	shortName: string
+}
+
+export function GetAudioInputsList(model: ModelSpec, state: AtemState, subset?: AudioInputSubset): AudioSourceInfo[] {
 	const audioInputs = model.classicAudio?.inputs ?? model.fairlightAudio?.inputs ?? []
 	const xlrInputCount = audioInputs.filter((input) => input.portType === Enums.ExternalPortType.XLR).length
 
-	const getSource = (id: number, videoId: number | undefined, defLong: string): MiniSourceInfo => {
+	const getSource = (id: number, videoId: number | undefined, defLong: string, defShort?: string): AudioSourceInfo => {
 		const input = videoId !== undefined ? state.inputs[videoId] : undefined
 		const longName = input?.longName || defLong
+		const shortName = input?.shortName || defShort || defLong.replace(/\s+/g, '').slice(0, 4)
 
 		return {
 			id,
 			longName,
+			shortName,
 		}
 	}
 
-	const sources: MiniSourceInfo[] = []
+	const sources: AudioSourceInfo[] = []
 	for (const input of audioInputs) {
 		if (subset === 'delay' && (!('maxDelay' in input) || !input.maxDelay)) continue
 		if (subset !== 'routing' && 'routingOnly' in input && input.routingOnly) continue
@@ -210,7 +217,7 @@ export function GetAudioInputsList(model: ModelSpec, state: AtemState, subset?: 
 				break
 			}
 			case Enums.ExternalPortType.AESEBU:
-				sources.push(getSource(input.id, undefined, `AES/EBU`))
+				sources.push(getSource(input.id, undefined, `AES/EBU`, 'AES'))
 				break
 			case Enums.ExternalPortType.RCA:
 				sources.push(getSource(input.id, undefined, `RCA`))
@@ -219,20 +226,20 @@ export function GetAudioInputsList(model: ModelSpec, state: AtemState, subset?: 
 				const mpId = input.id - 2000
 				if (mpId === 51) {
 					// No way to discover this other than to know it :(
-					sources.push(getSource(input.id, undefined, `Thunderbolt`))
+					sources.push(getSource(input.id, undefined, `Thunderbolt`, 'TB'))
 				} else {
-					sources.push(getSource(input.id, 3000 + mpId * 10, `Media Player ${mpId}`))
+					sources.push(getSource(input.id, 3000 + mpId * 10, `Media Player ${mpId}`, `MP${mpId}`))
 				}
 				break
 			}
 			case Enums.ExternalPortType.TSJack: {
 				const micId = input.id - 1300
-				sources.push(getSource(input.id, undefined, `Mic ${micId}`))
+				sources.push(getSource(input.id, undefined, `Mic ${micId}`, `MIC${micId}`))
 				break
 			}
 			case Enums.ExternalPortType.MADI: {
 				const channelId = input.id - 1500
-				sources.push(getSource(input.id, undefined, `MADI ${channelId}`))
+				sources.push(getSource(input.id, undefined, `MADI ${channelId}`, `M${channelId}`))
 				break
 			}
 			case Enums.ExternalPortType.TRSJack:

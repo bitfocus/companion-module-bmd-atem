@@ -7,6 +7,7 @@ import { createFadeToBlackFeedbacks, type AtemFadeToBlackFeedbacks } from './mix
 import { createMediaPlayerFeedbacks, type AtemMediaPlayerFeedbacks } from './mediaPlayer.js'
 import { createMultiviewerFeedbacks, type AtemMultiviewerFeedbacks } from './multiviewer.js'
 import { createMacroFeedbacks, type AtemMacroFeedbacks } from './macro.js'
+import { createCcuFeedbacks, type AtemCcuFeedbacks } from './ccu.js'
 import { createAuxOutputFeedbacks, type AtemAuxOutputFeedbacks } from './aux-outputs.js'
 import { createRecordingFeedbacks, type AtemRecordingFeedbacks } from './recording.js'
 import { createStreamingFeedbacks, type AtemStreamingFeedbacks } from './streaming.js'
@@ -40,7 +41,8 @@ export type FeedbackTypes = AtemTallyFeedbacks &
 	AtemMediaPoolFeedbacks &
 	AtemInputPortFeedbacks &
 	AtemAudioLevelFeedbacks &
-	AtemTimecodeFeedbacks
+	AtemTimecodeFeedbacks &
+	AtemCcuFeedbacks
 
 export function GetFeedbacksList(
 	config: AtemConfig,
@@ -67,5 +69,6 @@ export function GetFeedbacksList(
 		...createInputPortFeedbacks(model, state),
 		...createAudioLevelFeedbacks(model, state),
 		...createTimecodeFeedbacks(config, model, state),
+		...createCcuFeedbacks(config, state),
 	}
 }

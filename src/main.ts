@@ -8,6 +8,11 @@ import { GetCompositeElementsList } from './compositeElements/index.js'
 import { type StateWrapper } from './state.js'
 import { MediaPoolPreviewCache } from './mediaPoolPreviews.js'
 import { AtemAudioLevels } from './audioLevels.js'
+import { buildStateJson } from './variables/stateJson.js'
+import { installCcuPadding } from './ccuPadding.js'
+import { ClassicAudioLevelsCommand, ClassicAudioSendLevelsCommand, installClassicLevels } from './classicLevels.js'
+import type { CompanionHTTPRequest, CompanionHTTPResponse } from '@companion-module/base'
+import { LEVELS_VARIABLE_SUBSCRIPTION } from './actions/fairlightDynamics.js'
 import { MODEL_AUTO_DETECT } from './models/types.js'
 import {
 	InitVariables,
@@ -67,13 +72,28 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 			tally: {},
 			tallyCache: new Map(),
 			atemCameraState: new AtemCameraControlStateBuilder(0), // TODO - when should this be emptied?
+			ccu: new Map(),
+			ccuSelected: { camera: 1 },
 
 			audioLevels: new AtemAudioLevels(
-				() => this.checkFeedbacks('fairlightAudioMasterLevel', 'fairlightAudioInputLevel'),
+				() => {
+					this.checkFeedbacks(
+						'fairlightAudioMasterLevel',
+						'fairlightAudioInputLevel',
+						'classicAudioMasterLevel',
+						'classicAudioInputLevel',
+					)
+					if (this.wrappedState.audioLevels.isSubscribed(LEVELS_VARIABLE_SUBSCRIPTION))
+						this.setVariableValues({ audio_levels_json: this.wrappedState.audioLevels.toJson() })
+				},
 				(enabled) => {
 					if (!this.atem) return
 
-					if (enabled) {
+					if (this.model.classicAudio && !this.model.fairlightAudio) {
+						this.atem.sendCommand(new ClassicAudioSendLevelsCommand({ enable: enabled })).catch((e) => {
+							this.log('debug', `Failed to ${enabled ? 'start' : 'stop'} audio levels: ${e}`)
+						})
+					} else if (enabled) {
 						this.atem.startFairlightMixerSendLevels().catch((e) => {
 							this.log('debug', `Failed to start audio levels: ${e}`)
 						})
@@ -153,6 +173,7 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 		// Force clear the cached state
 		this.wrappedState.state = AtemStateUtil.Create()
 		this.wrappedState.atemCameraState.reset(0)
+		this.wrappedState.ccu.clear()
 
 		this.model = GetModelSpec(this.getBestModelId() || MODEL_AUTO_DETECT) || GetAutoDetectModel()
 		this.log('debug', 'ATEM changed model: ' + this.model.id)
@@ -227,9 +248,15 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 	private updateCompanionBits(): void {
 		InitVariables(this, this.model, this.wrappedState)
 		this.setFeedbackDefinitions(GetFeedbacksList(this.config, this.model, this.wrappedState))
-		this.setActionDefinitions(
-			GetActionsList(this, this.atem, this.model, this.commandBatching, this.atemTransitions, this.wrappedState),
+		this.#actionDefinitions = GetActionsList(
+			this,
+			this.atem,
+			this.model,
+			this.commandBatching,
+			this.atemTransitions,
+			this.wrappedState,
 		)
+		this.setActionDefinitions(this.#actionDefinitions as Parameters<typeof this.setActionDefinitions>[0])
 		this.setCompositeElementDefinitions(GetCompositeElementsList())
 		this.setPresetDefinitions(...GetPresetsList(this, this.model, this.wrappedState.state))
 
@@ -245,11 +272,14 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 		const values: Partial<VariablesSchema> = {}
 
 		for (const command of commands) {
-			if (command instanceof Commands.TallyBySourceCommand) {
+			if (command instanceof ClassicAudioLevelsCommand) {
+				this.wrappedState.audioLevels.handleClassicLevels(command.properties)
+			} else if (command instanceof Commands.TallyBySourceCommand) {
 				this.wrappedState.tally = command.properties
 				this.checkFeedbacks('program_tally', 'preview_tally')
 			} else if (this.config.enableCameraControl && command instanceof Commands.CameraControlUpdateCommand) {
 				cameraCommands.push(command)
+				this.recordCcu(command)
 			} else if (this.config.pollTimecode && command instanceof Commands.TimeCommand) {
 				this.timecodeSeconds =
 					command.properties.hour * 3600 + command.properties.minute * 60 + command.properties.second
@@ -588,6 +618,7 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 			this.updateCompanionBits()
 		} else {
 			updateChangedVariables(this, this.wrappedState.state, changedVariables)
+			this.scheduleStateJson()
 			if (changedFeedbacks.size > 0) {
 				// Weird split because of types
 				const feedbackTypes = Array.from(changedFeedbacks)
@@ -597,6 +628,100 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 			const changedFeedbackIds = this.invalidateCachedTallyState()
 			if (changedFeedbackIds.size > 0) this.checkFeedbacksById(...changedFeedbackIds)
 		}
+	}
+
+	#actionDefinitions: Record<string, any> = {}
+
+	/**
+	 * HTTP API for controllers (at /instance/<connection label>/...):
+	 *   GET  state            the switcher state as JSON (as the state_json variable)
+	 *   GET  levels           Fairlight levels JSON (as audio_levels_json; POST levels {"enabled": bool} to start / stop)
+	 *   GET  actions          the action ids with their option ids
+	 *   POST action           {"actionId": "...", "options": {...}} runs a module action with these option values
+	 */
+	async handleHttpRequest(request: CompanionHTTPRequest): Promise<CompanionHTTPResponse> {
+		const json = (status: number, body: unknown): CompanionHTTPResponse => ({
+			status,
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(body),
+		})
+		const path = request.path.replace(/^\/+/, '')
+		try {
+			if (request.method === 'GET' && path === 'state') {
+				return {
+					status: 200,
+					headers: { 'Content-Type': 'application/json' },
+					body: buildStateJson(this.wrappedState.state, this.wrappedState.ccu),
+				}
+			}
+			if (path === 'levels') {
+				if (request.method === 'POST') {
+					const on = !!JSON.parse(request.body || '{}').enabled
+					if (on) this.wrappedState.audioLevels.subscribe(LEVELS_VARIABLE_SUBSCRIPTION)
+					else this.wrappedState.audioLevels.unsubscribe(LEVELS_VARIABLE_SUBSCRIPTION)
+					return json(200, { enabled: on })
+				}
+				return {
+					status: 200,
+					headers: { 'Content-Type': 'application/json' },
+					body: this.wrappedState.audioLevels.toJson(),
+				}
+			}
+			if (request.method === 'GET' && path === 'actions') {
+				return json(
+					200,
+					Object.fromEntries(
+						Object.entries(this.#actionDefinitions)
+							.filter(([, a]) => !!a)
+							.map(([id, a]) => [id, { name: a.name, options: (a.options ?? []).map((o: { id: string }) => o.id) }]),
+					),
+				)
+			}
+			if (request.method === 'POST' && path === 'action') {
+				const req = JSON.parse(request.body || '{}') as { actionId?: string; options?: Record<string, unknown> }
+				const def = req.actionId ? this.#actionDefinitions[req.actionId] : undefined
+				if (!def) return json(404, { error: `No action ${req.actionId}` })
+				// defaults for the options not given
+				const options: Record<string, unknown> = {}
+				for (const o of def.options ?? []) if (o.default !== undefined) options[o.id] = o.default
+				Object.assign(options, req.options ?? {})
+				await def.callback(
+					{ id: 'http', actionId: req.actionId, controlId: 'http', options, surfaceId: undefined },
+					{ parseVariablesInString: async (s: string) => s },
+				)
+				return json(200, { ok: true })
+			}
+			return json(404, { error: 'Not found' })
+		} catch (e) {
+			return json(500, { error: `${e}` })
+		}
+	}
+
+	/** keeps every reported camera control value for state_json (the camera-control state builder knows only some) */
+	private recordCcu(command: Commands.CameraControlUpdateCommand): void {
+		const p = command.properties
+		let values: Array<number | boolean | string>
+		if (p.type === Commands.CameraControlDataType.BOOL) values = p.boolData
+		else if (p.type === Commands.CameraControlDataType.STRING) values = [p.stringData]
+		else if (p.type === Commands.CameraControlDataType.SINT64) values = p.bigintData.map((v) => Number(v))
+		else values = p.numberData
+		let cam = this.wrappedState.ccu.get(command.source)
+		if (!cam) {
+			cam = {}
+			this.wrappedState.ccu.set(command.source, cam)
+		}
+		cam[`${command.category}.${command.parameter}`] = values
+		this.scheduleStateJson()
+	}
+
+	#stateJsonTimer: NodeJS.Timeout | undefined
+	/** state_json, at most 10 times a second */
+	private scheduleStateJson(): void {
+		if (this.#stateJsonTimer) return
+		this.#stateJsonTimer = setTimeout(() => {
+			this.#stateJsonTimer = undefined
+			this.setVariableValues({ state_json: buildStateJson(this.wrappedState.state, this.wrappedState.ccu) })
+		}, 100)
 	}
 
 	private invalidateCachedTallyState() {
@@ -621,6 +746,9 @@ export default class AtemInstance extends InstanceBase<AtemSchema> {
 
 	private setupAtemConnection(): void {
 		this.atem = new Atem()
+		if (!installClassicLevels(this.atem))
+			this.log('debug', 'Classic audio levels unavailable: atem-connection internals changed')
+		installCcuPadding(this.atem, () => (this.config.enableCameraControl && this.config.ccuPadding) || 'off')
 
 		this.atem.on('connected', () => {
 			if (this.atem?.state) {
