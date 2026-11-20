@@ -36,6 +36,10 @@ To add a new model to the list:
 
 - Require Companion 5.0+
 - Presets for input audio meters
+- Update atem-connection. Reduces install size and install time
+- Fix 'Macro: Recording active' feedback not updating
+- Fix audio routing from variables defaults and parsing
+- Fix default fairlight delay source to one that exists on the default input
 
 ## v4.4.0
 
