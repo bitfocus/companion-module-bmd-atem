@@ -749,12 +749,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.20.5":
-  version: 22.20.5
-  resolution: "@types/node@npm:22.20.5"
+"@types/node@npm:^26.6.6":
+  version: 26.6.6
+  resolution: "@types/node@npm:26.6.6"
   dependencies:
-    undici-types: "npm:~6.21.0"
-  checksum: 10c0/0cf61a89c6a69917ab49f976a6bb11a29e3b348a6ae19f5827ceb91d3ade781faab58dcf3b8fa625f975f5d7536b9166ff94e8250c29272c667164f77c28fa88
+    undici-types: "npm:~8.9.0"
+  checksum: 10c0/5cb63f644f6e85a257a9cd2403cbcbe196760e2a35fd3ec9fb8b5cff663e14cc832b198cc17b53f870a2e30900ed45a1fb3f53e6589aba26b8e8c484aa672053
   languageName: node
   linkType: hard
 
@@ -1023,7 +1023,7 @@ __metadata:
     "@companion-module/tools": "patch:@companion-module/tools@npm%3A3.1.0#~/.yarn/patches/@companion-module-tools-npm-3.1.0-bab0f4d1d7.patch"
     "@julusian/image-rs": "npm:^2.5.0"
     "@types/lodash-es": "npm:^4.17.12"
-    "@types/node": "npm:^22.20.5"
+    "@types/node": "npm:^26.6.6"
     atem-connection: "npm:3.11.0"
     eslint: "npm:^10.15.0"
     husky: "npm:^9.1.7"
@@ -2595,10 +2595,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici-types@npm:~6.21.0":
-  version: 6.21.0
-  resolution: "undici-types@npm:6.21.0"
-  checksum: 10c0/c01ed51829b10aa72fc3ce64b747f8e74ae9b60eafa19a7b46ef624403508a54c526ffab06a14a26b3120d055e1104d7abe7c9017e83ced038ea5cf52f8d5e04
+"undici-types@npm:~8.9.0":
+  version: 8.9.0
+  resolution: "undici-types@npm:8.9.0"
+  checksum: 10c0/51c712c20c087368f62c6fc0f2bc49fa76bfe5dec28ff01584bb677ff29b0622569783c02d43e151143808c48c0503f804093bd2c491b10f2a830138034cb451
   languageName: node
   linkType: hard
 
